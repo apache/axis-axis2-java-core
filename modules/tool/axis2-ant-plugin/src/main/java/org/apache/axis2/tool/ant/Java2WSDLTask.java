@@ -31,11 +31,25 @@ import org.apache.ws.java2wsdl.NamespaceMapping;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Java2WSDLTask extends Task implements Java2WSDLConstants {
+    public static class ExtraClass {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+    
     public static final String OPEN_BRACKET = "[";
     public static final String CLOSE_BRACKET = "]";
     public static final String COMMA = ",";
@@ -60,6 +74,8 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     //names of java types not used in the service defn. directly, but for which schema must be generated
     private String[] extraClasses;
 
+    private final List<ExtraClass> extraClasses2 = new ArrayList<ExtraClass>();
+    
     //namespace generator classname
     private String nsGenClassName = null;
 
@@ -352,11 +368,25 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     }
 
     public String[] getExtraClasses() {
-        return extraClasses;
+        List<String> list = new ArrayList<String>((extraClasses == null ? 0 : extraClasses.length)
+                + extraClasses2.size());
+        if (extraClasses != null) {
+            list.addAll(Arrays.asList(extraClasses));
+        }
+        for (ExtraClass extraClass : extraClasses2) {
+            list.add(extraClass.getName());
+        }
+        return list.toArray(new String[list.size()]);
     }
 
-    public void setExtraClasses(String[] extraClasses) {
-        this.extraClasses = extraClasses;
+    public void setExtraClasses(String extraClasses) {
+        this.extraClasses = extraClasses.split(",");
+    }
+    
+    public ExtraClass createExtraClass() {
+        ExtraClass extraClass = new ExtraClass();
+        extraClasses2.add(extraClass);
+        return extraClass;
     }
 
     public String getNsGenClassName() {
