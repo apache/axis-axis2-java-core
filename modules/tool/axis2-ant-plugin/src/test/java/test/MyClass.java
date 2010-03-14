@@ -18,8 +18,14 @@
  */
 package test;
 
-public class Service {
-    public MyClass echo(MyClass in) {
-        return in;
+public class MyClass {
+    private String property;
+
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(String property) {
+        this.property = property;
     }
 }

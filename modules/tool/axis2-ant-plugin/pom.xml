@@ -126,6 +126,8 @@
                                     </classpath>
                                 </taskdef>
                                 
+                                <echo message="Generating extraclasses*.wsdl"/>
+                                
                                 <java2wsdl className="test.Service"
                                            outputLocation="${project.build.directory}/java2wsdl"
                                            outputFileName="extraclasses1.wsdl">
@@ -143,6 +145,15 @@
                                            outputFileName="extraclasses3.wsdl"
                                            extraClasses="test.ExtraClass1">
                                     <extraclass name="test.ExtraClass2"/>
+                                </java2wsdl>
+                                
+                                <echo message="Generating mappings.wsdl"/>
+                                
+                                <java2wsdl className="test.Service"
+                                           outputLocation="${project.build.directory}/java2wsdl"
+                                           outputFileName="mappings.wsdl"
+                                           schemaTargetNamespace="http://www.example.org/schema/test-service">
+                                    <mapping package="test" namespace="http://www.example.org/schema/test"/>
                                 </java2wsdl>
                             </tasks>
                         </configuration>
@@ -167,12 +178,21 @@
                                 def wsdl = new Namespace('http://schemas.xmlsoap.org/wsdl/')
                                 def xs = new Namespace('http://www.w3.org/2001/XMLSchema')
 
+                                println 'Checking extraclasses*.wsdl'
+                                
                                 for (i in 1..3) {                                
                                     def wsdlDoc = parser.parse(new File(project.build.directory, "java2wsdl/extraclasses${i}.wsdl"))
                                     def complexTypes = wsdlDoc[wsdl.types][xs.schema][xs.complexType].'@name'
                                     assert complexTypes.contains('ExtraClass1')
                                     assert complexTypes.contains('ExtraClass2')
                                 }
+                                
+                                println 'Checking mappings.wsdl'
+                                
+                                def wsdlDoc = parser.parse(new File(project.build.directory, "java2wsdl/mappings.wsdl"))
+                                def namespaces = wsdlDoc[wsdl.types][xs.schema].'@targetNamespace'
+                                assert namespaces.contains('http://www.example.org/schema/test-service')
+                                assert namespaces.contains('http://www.example.org/schema/test')
                             </source>
                         </configuration>
                     </execution>
