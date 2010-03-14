@@ -71,6 +71,13 @@
             <artifactId>xalan</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -118,6 +125,64 @@
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Generating p2n.wsdl"/>
+                                
+                                <java classname="org.apache.ws.java2wsdl.Java2WSDL" classpathref="maven.test.classpath" fork="true" failonerror="true">
+                                    <arg value="-o"/>
+                                    <arg value="${project.build.directory}/java2wsdl"/>
+                                    <arg value="-of"/>
+                                    <arg value="p2n.wsdl"/>
+                                    <arg value="-cn"/>
+                                    <arg value="org.apache.axis2.description.CalculatorService"/>
+                                    <arg value="-p2n"/>
+                                    <arg value="[org.apache.axis2.description,http://www.example.org/calculator]"/>
+                                    <arg value="-stn"/>
+                                    <arg value="http://www.example.org/calculator-service"/>
+                                </java>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.groovy.maven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                import groovy.xml.*
+                                
+                                def parser = new XmlParser()
+                                def wsdl = new Namespace('http://schemas.xmlsoap.org/wsdl/')
+                                def xs = new Namespace('http://www.w3.org/2001/XMLSchema')
+
+                                println 'Checking p2n.wsdl'
+                                
+                                def wsdlDoc = parser.parse(new File(project.build.directory, "java2wsdl/p2n.wsdl"))
+                                def namespaces = wsdlDoc[wsdl.types][xs.schema].'@targetNamespace'
+                                assert namespaces.contains('http://www.example.org/calculator')
+                                assert namespaces.contains('http://www.example.org/calculator-service')
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
