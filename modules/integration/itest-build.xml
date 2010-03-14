@@ -47,11 +47,6 @@
 			<classpath location="${compiled.classes.dir}" />
 			<arg line="-ap -o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl" />
 		</java>
-		<javac fork="true" destdir="target/classes" debug="on">
-			<classpath refid="maven.runtime.classpath" />
-			<classpath location="${compiled.classes.dir}" />
-			<src path="target/wsdl/complexdatatype" />
-		</javac>
 
 		<echo>Compiling DocumentUnwrappingTest.wsdl</echo>
 		<mkdir dir="${wsdl.output.base.dir}/documentunwrapping" />
@@ -81,16 +76,11 @@
 			<arg line="-o target/wsdl/complexdatatypebare -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl" />
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/complexdatatypebare" />
-		<copy toDir="target/classes" failonerror="false">
-			<fileset dir="target/wsdl/complexdatatypebare/build/classes">
-				<include name="**/*.class" />
-			</fileset>
-		</copy>
 
 		<!-- compile the schema for XMLbeans -->
 		<java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true">
 			<classpath refid="maven.runtime.classpath" />
-			<arg line="-src target/xmlbeans-src -d target/classes test-resources/xsd/type-test.xsd" />
+			<arg line="-src target/xmlbeans/java -d target/xmlbeans/resources -srconly test-resources/xsd/type-test.xsd" />
 		</java>
 
 		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="rpc-wsdl-codegen" />

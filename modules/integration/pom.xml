@@ -303,6 +303,9 @@
                     <include>**/*.properties</include>
                 </includes>
             </testResource>
+            <testResource>
+                <directory>${project.build.directory}/xmlbeans/resources</directory>
+            </testResource>
         </testResources>
         <plugins>
             <plugin>
@@ -362,6 +365,26 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/wsdl/complexdatatype/src</source>
+                                <source>${project.build.directory}/wsdl/complexdatatypebare/src</source>
+                                <source>${project.build.directory}/xmlbeans/java</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
