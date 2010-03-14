@@ -202,17 +202,29 @@
                                     <classpath location="${compiled.classes.dir}"/>
                                     <arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or"/>
                                 </java>
-                                <javac fork="true" destdir="target/classes" debug="on">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <src path="target/wsdl/simpleAddService"/>
-                                </javac>
-
                             </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/wsdl/simpleAddService</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
