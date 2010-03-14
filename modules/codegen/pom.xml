@@ -33,27 +33,27 @@
     <description>Axis2 Code Generation module</description>
     <dependencies>
         <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>axis2-kernel</artifactId>
-          <version>${project.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${project.version}</version>
         </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>axis2-adb</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>axis2-transport-local</artifactId>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>axis2-transport-http</artifactId>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -122,63 +122,63 @@
                     </execution>
                 </executions>
             </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <inherited>true</inherited>
-            <configuration>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
-            </configuration>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
 
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-                  <execution>
-                    <id>generate-test-sources</id>
-                    <phase>generate-test-sources</phase>
-                    <configuration>
-                      <tasks unless="maven.test.skip">
-                        <!-- Set a property that can be picked up from the ant build.xml's -->
-                        <property name="maven.class.path" refid="maven.test.classpath"/>
-                        <echo>Building WSDLs...</echo>
-                        <property name="axis2.home" value="${basedir}/../target"/>
-                        <property name="maven.junit.jvmargs" value=""/>
-                        <path id="maven.dependency.classpath">
-                          <path refid="maven.compile.classpath"/>
-                        </path>
-                        <ant antfile="build-wsdls.xml" inheritall="true" inheritrefs="true"
-                             dir="." target="wsdl-codegen"/>
-                      </tasks>
-                    </configuration>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </execution>
-                  <execution>
-                    <id>process-resources</id>
-                    <phase>process-resources</phase>
-                    <configuration>
-                      <tasks>
-                        <tstamp>
-                          <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
-                        </tstamp>
-                        <copy toDir="${basedir}/target/classes/" overwrite="true" filtering="on">
-                          <fileset dir="${basedir}/src/" includes="**/*.xsl"/>
-                          <filterset begintoken="#" endtoken="#">
-                            <filter token="axisVersion" value="${version}"/>
-                            <filter token="today" value=" Built on : ${build.time}"/>
-                          </filterset>
-                        </copy>
-                      </tasks>
-                    </configuration>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </execution>
+                    <execution>
+                        <id>generate-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <tasks unless="maven.test.skip">
+                                <!-- Set a property that can be picked up from the ant build.xml's -->
+                                <property name="maven.class.path" refid="maven.test.classpath"/>
+                                <echo>Building WSDLs...</echo>
+                                <property name="axis2.home" value="${basedir}/../target"/>
+                                <property name="maven.junit.jvmargs" value=""/>
+                                <path id="maven.dependency.classpath">
+                                    <path refid="maven.compile.classpath"/>
+                                </path>
+                                <ant antfile="build-wsdls.xml" inheritall="true" inheritrefs="true"
+                                     dir="." target="wsdl-codegen"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>process-resources</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <tstamp>
+                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
+                                </tstamp>
+                                <copy toDir="${basedir}/target/classes/" overwrite="true" filtering="on">
+                                    <fileset dir="${basedir}/src/" includes="**/*.xsl"/>
+                                    <filterset begintoken="#" endtoken="#">
+                                        <filter token="axisVersion" value="${version}"/>
+                                        <filter token="today" value=" Built on : ${build.time}"/>
+                                    </filterset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
