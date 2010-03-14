@@ -81,28 +81,7 @@
                 </includes>
             </testResource>
             <testResource>
-                <directory>../adb-codegen/src</directory>
-                <includes>
-                    <include>**/*.xsl</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <directory>../xmlbeans/src</directory>
-                <includes>
-                    <include>**/*.xsl</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <directory>../jaxbri/src</directory>
-                <includes>
-                    <include>**/*.xsl</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <directory>../jibx/src</directory>
-                <includes>
-                    <include>**/*.xsl</include>
-                </includes>
+                <directory>${project.build.directory}/templates</directory>
             </testResource>
         </testResources>
         <plugins>
@@ -178,6 +157,53 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- This execution is used to copy test resources from other modules
+                             to a temporary area inside the codegen module (which is then included
+                             as a testResource). This is necessary to allow maven-eclipe-plugin to
+                             work properly, because Eclipse doesn't support source folders located
+                             outside of the project directory. Note that for Maven, it would be
+                             sufficient to simply include these folders as testResources. -->
+                        <id>copy-templates</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/templates</outputDirectory>
+                            <resources>          
+                                <resource>
+                                    <directory>../adb-codegen/src</directory>
+                                    <includes>
+                                        <include>**/*.xsl</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../xmlbeans/src</directory>
+                                    <includes>
+                                        <include>**/*.xsl</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../jaxbri/src</directory>
+                                    <includes>
+                                        <include>**/*.xsl</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../jibx/src</directory>
+                                    <includes>
+                                        <include>**/*.xsl</include>
+                                    </includes>
+                                </resource>
+                            </resources>              
+                        </configuration>            
                     </execution>
                 </executions>
             </plugin>
