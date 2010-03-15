@@ -54,7 +54,7 @@
 			<arg file="${schema.source.dir}/mixed_minoccus0.xsd"/>
 			<arg file="${schema.source.dir}/simple/simpleType-All.xsd"/>
 			<arg file="${schema.source.dir}/derived/derivedType-All.xsd"/>
-			<arg file="${testsuite.source.dir}/complete.xsd"/>
+			<arg file="${testsuite.source.dir}/testsuite.xsd"/>
 			<arg file="${testsuite.source.dir}/extensions.xsd"/>
 			<arg file="${testsuite.source.dir}/union.xsd"/>
 			<arg file="${testsuite.source.dir}/all.xsd"/>

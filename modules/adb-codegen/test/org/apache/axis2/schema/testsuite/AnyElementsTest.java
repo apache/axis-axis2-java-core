@@ -21,11 +21,6 @@ package org.apache.axis2.schema.testsuite;
 
 import org.apache.axiom.om.OMElement;
 
-import services.echo.types.TestAny1;
-import services.echo.types.TestAny2;
-import services.echo.types.TestAny3;
-import services.echo.types.TestAny4;
-
 public class AnyElementsTest extends AbstractTest {
 
     public static final int MIN_EQUALS_ZERO = 0;

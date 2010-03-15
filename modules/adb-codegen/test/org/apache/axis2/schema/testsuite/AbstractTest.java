@@ -25,9 +25,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.schema.AbstractTestCase;
 
-import services.echo.types.BookInformation;
-
-
 public class AbstractTest  extends AbstractTestCase {
 
      protected OMElement getOMElement(){

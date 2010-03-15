@@ -17,9 +17,9 @@
   ~ under the License.
   -->
 
-<schema targetNamespace="http://types.echo.services"
+<schema targetNamespace="http://apache.org/axis2/schema/testsuite"
         xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:tns="http://types.echo.services"
+        xmlns:tns="http://apache.org/axis2/schema/testsuite"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
