@@ -62,7 +62,7 @@ public class MDQConstants {
     // Value is Map<String, List<java.lang.annotation.Annotation>> where
     // String: SEI Class name (i.e. the port name)
     // Annotation: The list of WebServiceFeatures expressed as the corresponding Annotation related to that Port
-    public static final String SEI_FEATURES_MAP = "org.apache.axis2.jaxws.description.build.SEI_FEATURES_MAP";
+    public static final String SEI_FEATURES_MAP = "org.apache.axis2.jaxws.description.builder.SEI_FEATURES_MAP";
     public static final String BINDING_PROPS_MAP = "org.apache.axis2.jaxws.description.builder.BINDING_PROPS_MAP";    
     
     //Represent SOAP/JMS Bindings
