@@ -135,7 +135,7 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <echo message="Generating p2n.wsdl"/>
                                 
                                 <java classname="org.apache.ws.java2wsdl.Java2WSDL" classpathref="maven.test.classpath" fork="true" failonerror="true">
@@ -168,6 +168,11 @@
                         <configuration>
                             <source>
                                 import groovy.xml.*
+                                
+                                if (project.properties['maven.test.skip']) {
+                                    println 'Tests are skipped'
+                                    return
+                                }
                                 
                                 def parser = new XmlParser()
                                 def wsdl = new Namespace('http://schemas.xmlsoap.org/wsdl/')

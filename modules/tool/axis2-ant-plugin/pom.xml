@@ -119,7 +119,7 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <taskdef name="java2wsdl" classname="org.apache.axis2.tool.ant.Java2WSDLTask">
                                     <classpath>
                                         <path refid="maven.test.classpath"/>
@@ -173,6 +173,11 @@
                         <configuration>
                             <source>
                                 import groovy.xml.*
+                                
+                                if (project.properties['maven.test.skip']) {
+                                    println 'Tests are skipped'
+                                    return
+                                }
                                 
                                 def parser = new XmlParser()
                                 def wsdl = new Namespace('http://schemas.xmlsoap.org/wsdl/')
