@@ -112,7 +112,7 @@ here</a> to get the Sandesha2 nightly builds compatible with the
 latest Axis2 SNAPSHOT.</td>
 </tr>
 <tr>
-<td><a href="rampart/1_3/security-module.html">Rampart</a></td>
+<td><a href="http://ws.apache.org/rampart/">Rampart</a></td>
 <td>The WS-Security and WS-SecureConversation implementation for
 axis2. Now with a new configuration model based on
 WS-SecurityPolicy</td>
