@@ -574,12 +574,34 @@ public class BeanUtil {
             omElement = ProcessElement(classType, omElement, helper, parts,
                     currentLocalName, retObjs, count, objectSupplier, genericType);
             while (omElement != null) {
-                count ++;
-                omElement = ProcessElement((Class)javaTypes[count], omElement,
+                count++;
+                // if the local part is not match. this means element is not present
+                // due to min occurs zero.
+                // we need to hard code arg and item since that has been used in RPCService client
+                // and some test cases
+                while ((parameterNames != null) &&
+                        (!omElement.getQName().getLocalPart().startsWith("arg")) &&
+                        (!omElement.getQName().getLocalPart().startsWith("item")) &&
+                        !omElement.getQName().getLocalPart().equals(parameterNames[count])) {
+                    // POJO handles OMElement in a differnt way so need this check for OMElement
+                    Class paramClassType = (Class) javaTypes[count];
+                    if (!paramClassType.getName().equals(OMElement.class.getName())) {
+                        count++;
+                    } else {
+                        break;
+                    }
+                }
+
+                currentLocalName = omElement.getLocalName();
+                classType = (Class) javaTypes[count];
+                if (genericParameterTypes != null) {
+                    genericType = genericParameterTypes[count];
+                }
+                omElement = ProcessElement((Class) javaTypes[count], omElement,
                         helper, parts, omElement.getLocalName(), retObjs, count,
                         objectSupplier, genericType);
             }
-            count ++;
+            count++;
         }
 
         // Ensure that we have at least a zero element array
