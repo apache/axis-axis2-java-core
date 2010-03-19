@@ -570,8 +570,14 @@ class OperationDescriptionImpl
     void addToAxisService(AxisService axisService) {
         AxisOperation newAxisOperation = getAxisOperation();
         QName axisOpQName = newAxisOperation.getName();
-        AxisOperation axisOperation = axisService.getOperation(axisOpQName);
-        if (axisOperation == null) {
+        // See if this operation is already added to the AxisService.  Note that we need to check the 
+        // children of the service rather than using the getOperation(axisOpQName) method.  The reason is 
+        // that method checks the alias table in addition to the children, and it is possible at this point
+        // for an operation to have just been added to the alias table but not yet as a child.  It is this method
+        // that will add that newly-created operation to the service.
+        AxisOperation existingAxisOperation = (AxisOperation) axisService.getChild(axisOpQName);
+
+        if (existingAxisOperation == null) {
             axisService.addOperation(newAxisOperation);
             // For a Doc/Lit/Bare operation, we also need to add the element mapping
         }
@@ -581,8 +587,8 @@ class OperationDescriptionImpl
                 .BARE) {
             AxisMessage axisMessage =
                     null;
-            if (axisOperation!=null) {
-                axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (existingAxisOperation!=null) {
+                axisMessage = existingAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             } else {
                 axisMessage = newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             }
