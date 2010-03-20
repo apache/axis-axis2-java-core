@@ -888,13 +888,16 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                  <!-- handle the binary case -->
                                  <xsl:when test="@binary">
                                         <!-- Handling the null byte array -->
-                                    if (<xsl:value-of select="$varName"/>!=null)
-                                    {
+                                    if (<xsl:value-of select="$varName"/>!=null)  {
                                        try {
                                            org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>, null, true);
                                        } catch (java.io.IOException ex) {
                                            throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>", ex);
                                        }
+                                    } else {
+                                         <xsl:if test="@nillable">
+                                             writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
+                                         </xsl:if>
                                     }
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -1971,7 +1974,18 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
-                                    object.set<xsl:value-of select="$javaName"/>(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
+
+                                    <xsl:if test="@nillable">
+                                        nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                        if ("true".equals(nillableValue) || "1".equals(nillableValue)){
+                                             object.set<xsl:value-of select="$javaName"/>(null);
+                                             reader.next();
+                                        } else {
+                                    </xsl:if>
+                                            object.set<xsl:value-of select="$javaName"/>(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
+                                    <xsl:if test="@nillable">
+                                        }
+                                    </xsl:if>
 
                                     <xsl:if test="($isType or $anon) and not($simple)">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
