@@ -34,6 +34,7 @@
         <xsl:variable name="extension" select="@extension"/>
         <xsl:variable name="restriction" select="@restriction"/>
         <xsl:variable name="mapperClass" select="@mapperClass"/>
+        <xsl:variable name="usewrapperclasses" select="@usewrapperclasses"/>
         <xsl:variable name="package" select="@package"/>
         <xsl:variable name="helpername"><xsl:value-of select="$name"/>Helper</xsl:variable>
 
@@ -435,7 +436,43 @@
                                 <xsl:choose>
                                    <xsl:when test="@primitive and not(@array)">
                                        // setting primitive attribute tracker to true
-                                       <xsl:value-of select="$settingTracker"/> = true;
+                                       <xsl:choose>
+                                           <xsl:when test="$usewrapperclasses">
+                                              if (false) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='int'">
+                                               if (param==java.lang.Integer.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='long'">
+                                               if (param==java.lang.Long.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='byte'">
+                                               if (param==java.lang.Byte.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='double'">
+                                               if (java.lang.Double.isNaN(param)) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='float'">
+                                               if (java.lang.Float.isNaN(param)) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='short'">
+                                               if (param==java.lang.Short.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               if (false) {
+                                           </xsl:otherwise>
+                                       </xsl:choose>
+                                            <xsl:choose>
+                                              <xsl:when test="@nillable">
+                                                  <xsl:value-of select="$settingTracker"/> = true;
+                                              </xsl:when>
+                                              <xsl:otherwise>
+                                                  <xsl:value-of select="$settingTracker"/> = false;
+                                              </xsl:otherwise>
+                                          </xsl:choose>
+                                       } else {
+                                          <xsl:value-of select="$settingTracker"/> = true;
+                                       }
                                    </xsl:when>
                                    <xsl:otherwise>
                                        if (param != null){

@@ -113,6 +113,9 @@
 	                <fork>true</fork>
 	                <meminitial>128m</meminitial>
 	                <maxmem>256m</maxmem>
+                    <testExcludes>
+                        <exclude>helper/org/apache/axis2/schema/testsuite/TestAnyType*Helper.java</exclude>
+                    </testExcludes>
 	            </configuration>
 	        </plugin>
             <plugin>

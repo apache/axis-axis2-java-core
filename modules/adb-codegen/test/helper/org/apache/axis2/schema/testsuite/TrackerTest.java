@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.schema.testsuite;
+package helper.org.apache.axis2.schema.testsuite;
 
 import junit.framework.TestCase;
 
-// NOTE: Please keep this test case in sync with the one in helper.org.apache.axis2.schema.testsuite!
+// NOTE: Please keep this test case in sync with the one in org.apache.axis2.schema.testsuite!
 public class TrackerTest extends TestCase {
     public void testInt1WithNonNullValue() {
         TestInt1 bean = new TestInt1();

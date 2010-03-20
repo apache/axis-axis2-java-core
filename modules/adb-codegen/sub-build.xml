@@ -104,6 +104,7 @@
 			<arg value="-p"/>
 			<arg value="helper."/>
 			<arg value="-h"/>
+			<arg file="${testsuite.source.dir}/testsuite.xsd"/>
 			<arg file="${testsuite.source.dir}/all.xsd"/>
 			<arg file="${testsuite.source.dir}/boolean.xsd"/>
 			<arg file="${testsuite.source.dir}/chameleon.xsd"/>
