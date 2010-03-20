@@ -179,30 +179,19 @@
                               clearAllSettingTrackers();
                          </xsl:if>
                          <xsl:if test="$min=0 or $choice">
-                            <!-- the updating of setting tracker for null values should
-                                 happen if the attribute is marked as nillable. Else
-                                 the user can set a null value and it is never marked
-                                 as set
-                            -->
                             <xsl:choose>
-                               <xsl:when test="@primitive and not(@array)">
-                                   // setting primitive variable always to true
+                               <!--
+                                   * the updating of setting tracker for null values should
+                                     happen if the attribute is marked as nillable. Else
+                                     the user can set a null value and it is never marked
+                                     as set
+                                   * setting primitive variable always to true
+                               -->
+                               <xsl:when test="(@primitive and not(@array)) or @nillable">
                                    <xsl:value-of select="$settingTracker"/> = true;
                                </xsl:when>
                                <xsl:otherwise>
-                                   if (param != null){
-                                      //update the setting tracker
-                                      <xsl:value-of select="$settingTracker"/> = true;
-                                   } else {
-                                      <xsl:choose>
-                                          <xsl:when test="@nillable">
-                                              <xsl:value-of select="$settingTracker"/> = true;
-                                          </xsl:when>
-                                          <xsl:otherwise>
-                                              <xsl:value-of select="$settingTracker"/> = false;
-                                          </xsl:otherwise>
-                                      </xsl:choose>
-                                   }
+                                   <xsl:value-of select="$settingTracker"/> = param != null;
                                </xsl:otherwise>
                             </xsl:choose>
                          </xsl:if>
@@ -352,30 +341,19 @@
                                    clearAllSettingTrackers();
                                </xsl:if>
                                <xsl:if test="$min=0 or $choice">
-                                   <!-- the updating of setting tracker for null values should
-                                     happen if the attribute is marked as nillable. Else
-                                     the user can set a null value and it is never marked
-                                     as set
-                                   -->
                                   <xsl:choose>
-                                      <xsl:when test="@primitive and not(@array)">
-                                          // setting the primitive attribute to true
+                                       <!--
+                                           * the updating of setting tracker for null values should
+                                             happen if the attribute is marked as nillable. Else
+                                             the user can set a null value and it is never marked
+                                             as set
+                                           * setting the primitive attribute to true
+                                       -->
+                                      <xsl:when test="(@primitive and not(@array)) or @nillable">
                                           <xsl:value-of select="$settingTracker"/> = true;
                                       </xsl:when>
                                       <xsl:otherwise>
-                                          if (param != null){
-                                             //update the setting tracker
-                                             <xsl:value-of select="$settingTracker"/> = true;
-                                          } else {
-                                             <xsl:choose>
-                                                 <xsl:when test="@nillable">
-                                                     <xsl:value-of select="$settingTracker"/> = true;
-                                                 </xsl:when>
-                                                 <xsl:otherwise>
-                                                     <xsl:value-of select="$settingTracker"/> = false;
-                                                 </xsl:otherwise>
-                                             </xsl:choose>
-                                          }
+                                          <xsl:value-of select="$settingTracker"/> = param != null;
                                       </xsl:otherwise>
                                    </xsl:choose>
 
@@ -434,60 +412,25 @@
                             </xsl:if>
                             <xsl:if test="$min=0 or $choice">
                                 <xsl:choose>
+                                   <xsl:when test="@nillable">
+                                       <xsl:value-of select="$settingTracker"/> = true;
+                                   </xsl:when>
                                    <xsl:when test="@primitive and not(@array)">
                                        // setting primitive attribute tracker to true
+                                       <xsl:value-of select="$settingTracker"/> =
                                        <xsl:choose>
-                                           <xsl:when test="$usewrapperclasses">
-                                              if (false) {
-                                           </xsl:when>
-                                           <xsl:when test="$propertyType='int'">
-                                               if (param==java.lang.Integer.MIN_VALUE) {
-                                           </xsl:when>
-                                           <xsl:when test="$propertyType='long'">
-                                               if (param==java.lang.Long.MIN_VALUE) {
-                                           </xsl:when>
-                                           <xsl:when test="$propertyType='byte'">
-                                               if (param==java.lang.Byte.MIN_VALUE) {
-                                           </xsl:when>
-                                           <xsl:when test="$propertyType='double'">
-                                               if (java.lang.Double.isNaN(param)) {
-                                           </xsl:when>
-                                           <xsl:when test="$propertyType='float'">
-                                               if (java.lang.Float.isNaN(param)) {
-                                           </xsl:when>
-                                           <xsl:when test="$propertyType='short'">
-                                               if (param==java.lang.Short.MIN_VALUE) {
-                                           </xsl:when>
-                                           <xsl:otherwise>
-                                               if (false) {
-                                           </xsl:otherwise>
-                                       </xsl:choose>
-                                            <xsl:choose>
-                                              <xsl:when test="@nillable">
-                                                  <xsl:value-of select="$settingTracker"/> = true;
-                                              </xsl:when>
-                                              <xsl:otherwise>
-                                                  <xsl:value-of select="$settingTracker"/> = false;
-                                              </xsl:otherwise>
-                                          </xsl:choose>
-                                       } else {
-                                          <xsl:value-of select="$settingTracker"/> = true;
-                                       }
+                                           <xsl:when test="$usewrapperclasses">true</xsl:when>
+                                           <xsl:when test="$propertyType='int'">param != java.lang.Integer.MIN_VALUE</xsl:when>
+                                           <xsl:when test="$propertyType='long'">param != java.lang.Long.MIN_VALUE</xsl:when>
+                                           <xsl:when test="$propertyType='byte'">param != java.lang.Byte.MIN_VALUE</xsl:when>
+                                           <xsl:when test="$propertyType='double'">!java.lang.Double.isNaN(param)</xsl:when>
+                                           <xsl:when test="$propertyType='float'">!java.lang.Float.isNaN(param)</xsl:when>
+                                           <xsl:when test="$propertyType='short'">param != java.lang.Short.MIN_VALUE</xsl:when>
+                                           <xsl:otherwise>true</xsl:otherwise>
+                                       </xsl:choose>;
                                    </xsl:when>
                                    <xsl:otherwise>
-                                       if (param != null){
-                                          //update the setting tracker
-                                          <xsl:value-of select="$settingTracker"/> = true;
-                                       } else {
-                                          <xsl:choose>
-                                              <xsl:when test="@nillable">
-                                                  <xsl:value-of select="$settingTracker"/> = true;
-                                              </xsl:when>
-                                              <xsl:otherwise>
-                                                  <xsl:value-of select="$settingTracker"/> = false;
-                                              </xsl:otherwise>
-                                          </xsl:choose>
-                                       }
+                                       <xsl:value-of select="$settingTracker"/> = param != null;
                                    </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:if>
