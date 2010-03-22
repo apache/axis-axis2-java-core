@@ -263,7 +263,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         
     }
     
-    protected Map<String,String> loadJavaPkg2NamespaceMap(Java2WSDLCommandLineOption option) 
+    protected Map<String,String> loadJavaPkg2NamespaceMap(Java2WSDLCommandLineOption option) throws Exception 
     { 
         Map<String,String> pkg2nsMap = new Hashtable<String,String>();
         if (option != null) 
@@ -277,8 +277,14 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
                 //an option value will be of the form [java package, namespace]
                 //hence we take the two substrings starting after '[' and upto ',' and
                 //starting after ',' and upto ']'
-                pkg2nsMap.put(anOptionValue.substring(1, anOptionValue.indexOf(COMMA)).trim(),
-                                        anOptionValue.substring(anOptionValue.indexOf(COMMA) + 1, anOptionValue.length() - 1).trim()); 
+                if (anOptionValue.charAt(0) == '[' && anOptionValue.charAt(anOptionValue.length()-1) == ']') {
+                    pkg2nsMap.put(anOptionValue.substring(1, anOptionValue.indexOf(COMMA)).trim(),
+                                            anOptionValue.substring(anOptionValue.indexOf(COMMA) + 1, anOptionValue.length() - 1).trim());
+                } else {
+                    throw new Exception("Invalid syntax for the " + Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION
+                            + " (" + Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION_LONG
+                            + ") option; must be [package,namespace]");
+                }
             }
         }
         return pkg2nsMap;
