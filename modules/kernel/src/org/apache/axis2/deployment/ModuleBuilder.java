@@ -177,7 +177,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             Iterator policyRefElements =
                     moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
-            if (policyRefElements != null && policyElements.hasNext()) {
+            if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(policyRefElements, module.getPolicySubject());
             }
 
