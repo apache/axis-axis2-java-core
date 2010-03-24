@@ -121,7 +121,6 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     String axisurl = config.getInitParameter(PARAM_AXIS2_XML_URL);
                     if (axisurl != null) {
                         axis2Stream = new URL(axisurl).openStream();
-                        axisConfig = populateAxisConfiguration(axis2Stream);
                         log.debug("loading axis2.xml from URL: " + axisurl);
                     }
                 }
