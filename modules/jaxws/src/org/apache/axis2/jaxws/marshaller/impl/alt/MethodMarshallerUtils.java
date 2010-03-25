@@ -307,7 +307,8 @@ public class MethodMarshallerUtils {
                         context.setProcessType(unmarshalByJavaType[i]);
                         context.setIsxmlList(pd.isListType());
                     }
-                    
+
+                    boolean consume = true;
                     // Unmarshal the object into a JAXB object or JAXBElement
                     if (pd.isHeader()) {
                         
@@ -319,6 +320,7 @@ public class MethodMarshallerUtils {
                                                        localName,
                                                        context,
                                                        factory);
+                        consume = false;
                     } else {
                         if (totalBodyBlocks > 1) {
                             // You must use this method if there are more than one body block
@@ -332,7 +334,7 @@ public class MethodMarshallerUtils {
                         index++;
                     }
                     
-                    Element element = new Element(block.getBusinessObject(true), 
+                    Element element = new Element(block.getBusinessObject(consume),
                                                   block.getQName());
                     PDElement pde =
                         new PDElement(pd, element, unmarshalByJavaType == null ? null
