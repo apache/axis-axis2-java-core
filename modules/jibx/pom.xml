@@ -30,7 +30,7 @@
     </parent>
     <artifactId>axis2-jibx</artifactId>
     <name>Apache Axis2 - JiBX Data Binding</name>
-    <description>JiBX data binding support for Axis 2.0</description>
+    <description>JiBX data binding support for Axis2</description>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>

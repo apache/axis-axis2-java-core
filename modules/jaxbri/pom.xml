@@ -30,7 +30,7 @@
     </parent>
     <artifactId>axis2-jaxbri</artifactId>
     <name>Apache Axis2 - JAXB-RI Data Binding</name>
-    <description>JAXB-RI data binding support for Axis 2.0</description>
+    <description>JAXB-RI data binding support for Axis2</description>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>

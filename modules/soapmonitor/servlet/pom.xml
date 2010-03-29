@@ -31,7 +31,7 @@
     <artifactId>soapmonitor-servlet</artifactId>
     <packaging>jar</packaging>
     <name>Apache Axis2 - SOAP Monitor Servlet</name>
-    <description>soapmonitor servlet for Axis 2.0</description>
+    <description>soapmonitor servlet for Axis2</description>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>

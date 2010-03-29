@@ -30,8 +30,7 @@
     </parent>
     <artifactId>axis2-samples</artifactId>
     <name>Apache Axis2 - Samples</name>
-    <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,
-    </description>
+    <description>Axis2 samples</description>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>

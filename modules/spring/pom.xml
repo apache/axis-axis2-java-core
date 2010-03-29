@@ -30,7 +30,7 @@
     </parent>
     <artifactId>axis2-spring</artifactId>
     <name>Apache Axis2 - spring</name>
-    <description>spring for Axis 2.0</description>
+    <description>spring for Axis2</description>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>

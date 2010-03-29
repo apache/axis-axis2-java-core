@@ -31,7 +31,7 @@
     <artifactId>soapmonitor</artifactId>
     <packaging>mar</packaging>
     <name>Apache Axis2 - SOAP Monitor Module</name>
-    <description>soapmonitor module for Axis 2.0</description>
+    <description>soapmonitor module for Axis2</description>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
