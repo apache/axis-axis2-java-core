@@ -62,9 +62,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -429,60 +427,11 @@ public class Utils {
     public static void fillAxisService(final AxisService axisService,
                                        AxisConfiguration axisConfig, ArrayList<String> excludeOperations,
                                        ArrayList<String> nonRpcMethods) throws Exception {
-        String serviceClass;
-        Parameter implInfoParam = axisService
-                .getParameter(Constants.SERVICE_CLASS);
-        ClassLoader serviceClassLoader = axisService.getClassLoader();
-
-        if (implInfoParam != null) {
-            serviceClass = (String)implInfoParam.getValue();
-        } else {
-            // if Service_Class is null, every AbstractMR will look for
-            // ServiceObjectSupplier. This is user specific and may contain
-            // other looks.
-            implInfoParam = axisService
-                    .getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
-            if (implInfoParam != null) {
-                String className = ((String)implInfoParam.getValue()).trim();
-                final Class serviceObjectMaker = Loader.loadClass(
-                        serviceClassLoader, className);
-                if (serviceObjectMaker.getModifiers() != Modifier.PUBLIC) {
-                    throw new AxisFault("Service class " + className
-                                        + " must have public as access Modifier");
-                }
-
-                // Find static getServiceObject() method, call it if there
-                final Method method = (Method)org.apache.axis2.java.security.AccessController
-                        .doPrivileged(new PrivilegedExceptionAction() {
-                            public Object run() throws NoSuchMethodException {
-                                return serviceObjectMaker.getMethod(
-                                        "getServiceObject",
-                                        AxisService.class);
-                            }
-                        });
-                Object obj = null;
-                if (method != null) {
-                    obj = org.apache.axis2.java.security.AccessController
-                            .doPrivileged(new PrivilegedExceptionAction() {
-                                public Object run()
-                                        throws InstantiationException,
-                                        IllegalAccessException,
-                                        InvocationTargetException {
-                                    return method.invoke(serviceObjectMaker.newInstance(),
-                                                         axisService);
-                                }
-                            });
-                }
-                if (obj == null) {
-                    log.warn("ServiceObjectSupplier implmentation Object could not be found");
-                    throw new DeploymentException(
-                            "ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
-                }
-                serviceClass = obj.getClass().getName();
-            } else {
-                return;
-            }
+        Class<?> serviceClass = org.apache.axis2.util.Utils.getServiceClass(axisService);
+        if (serviceClass == null) {
+            return;
         }
+        ClassLoader serviceClassLoader = axisService.getClassLoader();
         // adding name spaces
         NamespaceMap map = new NamespaceMap();
         map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
@@ -495,14 +444,14 @@ public class Utils {
                 .getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
         if (generateBare != null && "true".equals(generateBare.getValue())) {
             schemaGenerator = new DocLitBareSchemaGenerator(serviceClassLoader,
-                                                            serviceClass.trim(),
+                                                            serviceClass.getName(),
                                                             axisService.getSchemaTargetNamespace(),
                                                             axisService
                                                                     .getSchemaTargetNamespacePrefix(),
                                                             axisService);
         } else {
             schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
-                                                         serviceClass.trim(),
+                                                         serviceClass.getName(),
                                                          axisService.getSchemaTargetNamespace(),
                                                          axisService
                                                                  .getSchemaTargetNamespacePrefix(),

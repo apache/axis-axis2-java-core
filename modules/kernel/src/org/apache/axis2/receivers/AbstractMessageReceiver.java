@@ -34,25 +34,21 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     protected static final Log log = LogFactory.getLog(AbstractMessageReceiver.class);
@@ -214,55 +210,12 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
-        try {
-            final AxisService service = msgContext.getAxisService();
-            ClassLoader classLoader = service.getClassLoader();
-
-            // allow alternative definition of makeNewServiceObject
-            if (service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER) != null) {
-                Parameter serviceObjectParam =
-                        service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
-                final Class serviceObjectMaker = Loader.loadClass(classLoader, ((String)
-                        serviceObjectParam.getValue()).trim());
-
-                // Find static getServiceObject() method, call it if there
-                final Method method = (Method) org.apache.axis2.java.security.AccessController.doPrivileged(
-                        new PrivilegedExceptionAction() {
-                            public Object run() throws NoSuchMethodException {
-                                return serviceObjectMaker.getMethod("getServiceObject",
-                                        new Class[]{AxisService.class});
-                            }
-                        }
-                );
-                if (method != null) {
-                    return org.apache.axis2.java.security.AccessController.doPrivileged(
-                            new PrivilegedExceptionAction() {
-                                public Object run() throws InvocationTargetException, IllegalAccessException, InstantiationException {
-                                    return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
-                                }
-                            }
-                    );
-                }
-            }
-
-            Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
-            if (implInfoParam != null) {
-                final Class implClass = Loader.loadClass(
-                        classLoader,
-                        ((String) implInfoParam.getValue()).trim());
-                return org.apache.axis2.java.security.AccessController.doPrivileged(
-                        new PrivilegedExceptionAction() {
-                            public Object run() throws InstantiationException, IllegalAccessException {
-                                return implClass.newInstance();
-                            }
-                        }
-                );
-            } else {
-                throw new AxisFault(
-                        Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
-            }
-        } catch (Exception e) {
-            throw AxisFault.makeFault(e);
+        Object serviceObject = Utils.createServiceObject(msgContext.getAxisService());
+        if (serviceObject == null) {
+            throw new AxisFault(
+                    Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
+        } else {
+            return serviceObject;
         }
     }
 

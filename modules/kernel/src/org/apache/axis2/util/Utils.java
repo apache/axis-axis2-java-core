@@ -59,11 +59,14 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.NetworkInterface;
 import java.net.InetAddress;
@@ -648,5 +651,105 @@ public class Utils {
     public static String getURIScheme(String uri) {
         int index = uri.indexOf(':');
         return index > 0 ? uri.substring(0, index) : null;
+    }
+    
+    /**
+     * Create a service object for a given service. The method first looks for
+     * the {@link Constants#SERVICE_OBJECT_SUPPLIER} service parameter and if
+     * this parameter is present, it will use the specified class to create the
+     * service object. If the parameter is not present, it will create an
+     * instance of the class specified by the {@link Constants#SERVICE_CLASS}
+     * parameter.
+     * 
+     * @param service
+     *            the service
+     * @return The service object or <code>null</code> if neither the
+     *         {@link Constants#SERVICE_OBJECT_SUPPLIER} nor the
+     *         {@link Constants#SERVICE_CLASS} parameter was found on the
+     *         service, i.e. if the service doesn't specify how to create a
+     *         service object. If the return value is non null, it will always
+     *         be a newly created instance.
+     * @throws AxisFault
+     *             if an error occurred while attempting to instantiate the
+     *             service object
+     */
+    public static Object createServiceObject(final AxisService service) throws AxisFault {
+        try {
+            ClassLoader classLoader = service.getClassLoader();
+
+            // allow alternative definition of makeNewServiceObject
+            Parameter serviceObjectSupplierParam =
+                    service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
+            if (serviceObjectSupplierParam != null) {
+                final Class<?> serviceObjectMaker = Loader.loadClass(classLoader, ((String)
+                        serviceObjectSupplierParam.getValue()).trim());
+
+                // Find static getServiceObject() method, call it if there
+                final Method method = org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction<Method>() {
+                            public Method run() throws NoSuchMethodException {
+                                return serviceObjectMaker.getMethod("getServiceObject",
+                                        AxisService.class);
+                            }
+                        }
+                );
+                return org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction<Object>() {
+                            public Object run() throws InvocationTargetException, IllegalAccessException, InstantiationException {
+                                return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
+                            }
+                        }
+                );
+            } else {
+                Parameter serviceClassParam = service.getParameter(Constants.SERVICE_CLASS);
+                if (serviceClassParam != null) {
+                    final Class<?> serviceClass = Loader.loadClass(
+                            classLoader,
+                            ((String) serviceClassParam.getValue()).trim());
+                    return org.apache.axis2.java.security.AccessController.doPrivileged(
+                            new PrivilegedExceptionAction<Object>() {
+                                public Object run() throws InstantiationException, IllegalAccessException {
+                                    return serviceClass.newInstance();
+                                }
+                            }
+                    );
+                } else {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
+        }
+    }
+    
+    /**
+     * Get the service class for a given service. This method will first check
+     * the {@link Constants#SERVICE_CLASS} service parameter and if that
+     * parameter is not present, inspect the instance returned by the service
+     * object supplier specified by {@link Constants#SERVICE_OBJECT_SUPPLIER}.
+     * 
+     * @param service
+     *            the service
+     * @return The service class or <code>null</code> if neither the
+     *         {@link Constants#SERVICE_CLASS} nor the
+     *         {@link Constants#SERVICE_OBJECT_SUPPLIER} parameter was found on
+     *         the service, i.e. if the service doesn't specify a service class.
+     * @throws AxisFault
+     *             if an error occurred while attempting to load the service
+     *             class or to instantiate the service object
+     */
+    public static Class<?> getServiceClass(AxisService service) throws AxisFault {
+        Parameter serviceClassParam = service.getParameter(Constants.SERVICE_CLASS);
+        if (serviceClassParam != null) {
+            try {
+                return Loader.loadClass(service.getClassLoader(),
+                        ((String) serviceClassParam.getValue()).trim());
+            } catch (Exception e) {
+                throw AxisFault.makeFault(e);
+            }
+        } else {
+            Object serviceObject = createServiceObject(service);
+            return serviceObject == null ? null : serviceObject.getClass();
+        }
     }
 }
