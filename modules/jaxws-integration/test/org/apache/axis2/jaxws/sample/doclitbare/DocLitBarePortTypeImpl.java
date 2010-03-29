@@ -75,5 +75,16 @@ public class DocLitBarePortTypeImpl implements DocLitBarePortType {
 	        throws FaultBeanWithWrapper, SimpleFault{
 		
 	}
+	
+	 public String headerTest(
+             int allByMyself,
+             String headerParam) {
+         if (headerParam == null) {
+             return "Acknowledgement: No Header";
+         } else {
+             return "Acknowledgement: Header is " + headerParam;
+         }
+         
+     }
 	    
 }

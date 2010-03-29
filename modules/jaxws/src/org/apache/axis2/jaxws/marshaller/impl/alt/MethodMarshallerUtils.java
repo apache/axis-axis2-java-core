@@ -24,6 +24,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
@@ -34,6 +35,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.marshaller.impl.alt.Element;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -82,6 +84,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 /** Static Utilty Classes used by the MethodMarshaller implementations in the alt package. */
@@ -92,6 +95,7 @@ public class MethodMarshallerUtils {
     private static JAXBBlockFactory factory =
             (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 
+    
     /** Intentionally Private.  This is a static utility class */
     private MethodMarshallerUtils() {
     }
@@ -334,8 +338,18 @@ public class MethodMarshallerUtils {
                         index++;
                     }
                     
-                    Element element = new Element(block.getBusinessObject(consume),
-                                                  block.getQName());
+                    Element element;
+                    if (block != null) {
+                        element = new Element(block.getBusinessObject(true), 
+                                              block.getQName());
+                    } else {
+                        // The block could be null if the header is missing (which is allowed)
+                        QName qName = new QName(pd.getTargetNamespace(),pd.getParameterName());
+                        if (log.isDebugEnabled()) {
+                            log.debug("There is no value in the incoming message for " + qName);
+                        }
+                        element = new Element(null, qName, pd.getParameterActualType());
+                    }
                     PDElement pde =
                         new PDElement(pd, element, unmarshalByJavaType == null ? null
                                 : unmarshalByJavaType[i]);
@@ -503,17 +517,20 @@ public class MethodMarshallerUtils {
         }
     }
 
+    
     /**
      * Marshal the element enabled objects (pvList) to the Message
      *
      * @param pdeList  element enabled objects
      * @param message  Message
      * @param packages Packages needed to do a JAXB Marshal
+     * @param contextProperties RequestContext or ResponseContext or null
      * @throws MessageException
      */
     static void toMessage(List<PDElement> pdeList,
                           Message message,
-                          TreeSet<String> packages) throws WebServiceException {
+                          TreeSet<String> packages, 
+                          Map<String, Object> contextProperties) throws WebServiceException {
 
         int totalBodyBlocks = 0;
         for (int i = 0; i < pdeList.size(); i++) {
@@ -545,7 +562,7 @@ public class MethodMarshallerUtils {
                 }
                 // Create a JAXBBlock out of the value.
                 // (Note that the PDElement.getValue always returns an object
-                // that has an element rendering...ie. it is either a JAXBElement o
+                // that has an element rendering...ie. it is either a JAXBElement or
                 // has @XmlRootElement defined
                 Block block =
                     factory.createFrom(pde.getElement().getElementValue(),
@@ -554,8 +571,18 @@ public class MethodMarshallerUtils {
                 
                 if (pde.getParam().isHeader()) {
                     // Header block
-                    QName qname = block.getQName();
-                    message.setHeaderBlock(qname.getNamespaceURI(), qname.getLocalPart(), block);
+                    if (pde.getElement().getTypeValue() != null) {
+                        // The value is non-null, add a header.
+                        QName qname = block.getQName();
+                        message.setHeaderBlock(qname.getNamespaceURI(), qname.getLocalPart(), block);
+                    } else {
+                        // The value is null, it is still best to add a nil header.
+                        // But query to see if an override is desired.
+                        if (isWriteWithNilHeader(contextProperties)) {
+                            QName qname = block.getQName();
+                            message.setHeaderBlock(qname.getNamespaceURI(), qname.getLocalPart(), block);
+                        }
+                    }
                 } else {
                     // Body block
                     if (totalBodyBlocks < 1) {
@@ -583,6 +610,32 @@ public class MethodMarshallerUtils {
         }
     }
 
+    /**
+     * @return Determine if a null header parameter should be written with a header
+     * element containing nill (true) or whether the header element should
+     * not be written at all (false)
+     */
+    private static boolean isWriteWithNilHeader(Map<String, Object> map) {
+        if (map == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Context Properties are not available.  Return true ");
+            }
+            return true;
+        }
+        Object value = map.get(Constants.WRITE_HEADER_ELEMENT_IF_NULL);
+        if (value == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Write header element with xsi:nil because the following property is not set " + 
+                        Constants.WRITE_HEADER_ELEMENT_IF_NULL);
+            }
+            return true;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Key=" + Constants.WRITE_HEADER_ELEMENT_IF_NULL + " Value=" + value);
+            }
+            return ((Boolean) value).booleanValue();          
+        }
+    }
     /**
      * Marshals the return object to the message (used on server to marshal return object)
      *

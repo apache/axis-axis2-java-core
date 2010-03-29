@@ -394,7 +394,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 endpointDesc.getEndpointInterfaceDescription().getOperation(method);
 
         Message message = MethodMarshallerFactory.getMarshaller(operationDesc, true, null)
-                .marshalRequest(args, operationDesc);
+                .marshalRequest(args, operationDesc, this.getRequestContext());
 
         if (log.isDebugEnabled()) {
             log.debug("Request Message created successfully.");

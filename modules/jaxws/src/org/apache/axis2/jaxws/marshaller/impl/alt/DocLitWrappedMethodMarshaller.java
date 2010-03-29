@@ -409,8 +409,10 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc)
-            throws WebServiceException {
+    public Message marshalRequest(Object[] signatureArguments, 
+            OperationDescription operationDesc,
+            Map<String, Object> requestContext)
+        throws WebServiceException {
 
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();

@@ -57,6 +57,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -80,8 +81,10 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
         super();
     }
 
-    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc)
-            throws WebServiceException {
+    public Message marshalRequest(Object[] signatureArguments, 
+            OperationDescription operationDesc,
+            Map<String, Object> requestContext)
+        throws WebServiceException {
 
         if (log.isDebugEnabled()) {
             log.debug("enter marshalRequest operationDesc = " + operationDesc.getName());
@@ -155,7 +158,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             }
             
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages, requestContext);
             
             // Enable SWA for nested SwaRef attachments
             if (operationDesc.hasRequestSwaRefAttachments()) {
@@ -400,7 +403,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
 
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages, null);
             
             // Enable SWA for nested SwaRef attachments
             if (operationDesc.hasResponseSwaRefAttachments()) {

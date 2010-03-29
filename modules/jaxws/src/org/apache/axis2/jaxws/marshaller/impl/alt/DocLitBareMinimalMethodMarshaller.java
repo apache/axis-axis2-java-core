@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 
@@ -315,7 +316,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             }
 
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages, null);
             
             // Enable SWA for nested SwaRef attachments
             if (operationDesc.hasResponseSwaRefAttachments()) {
@@ -328,8 +329,10 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc)
-            throws WebServiceException {
+    public Message marshalRequest(Object[] signatureArguments, 
+            OperationDescription operationDesc,
+            Map<String, Object> requestContext)
+        throws WebServiceException {
 
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
@@ -380,7 +383,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             }
 
             // Put values onto the message...marshalling by type
-            MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages, requestContext);
             
             // Enable SWA for nested SwaRef attachments
             if (operationDesc.hasRequestSwaRefAttachments()) {

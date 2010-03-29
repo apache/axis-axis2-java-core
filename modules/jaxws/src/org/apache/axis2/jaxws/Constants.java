@@ -108,4 +108,22 @@ public interface Constants {
      * JAX-WS layer when a SOAP Fault is received on response. 
      */
     public static final String THROW_EXCEPTION_IF_SOAP_FAULT = "jaxws.response.throwExceptionIfSOAPFault";
+    
+    /** 
+     * Context Property:
+     * Name: jaxws.header.parameter.isNull.write.element.with.xsi.nil
+     * Value: Boolean.TRUE or Boolean.FALSE
+     * Default: null, which is interpretted as Boolean.TRUE
+     * 
+     * If the @WebParam indicates that the parameter is mapped to a header 
+     * and the argument for the parameter is null, this property is queried by the
+     * JAX-WS runtime to determine if 
+     *  a) TRUE: A SOAP header element is serialized with an xsi:nil="true" attribute
+     *  b) FALSE: No SOAP header element is serialized.
+     *  
+     *  The default is TRUE because the JAX-WS developers feel that this is a safer
+     *  approach.
+     * 
+     */
+    public static final String WRITE_HEADER_ELEMENT_IF_NULL = "jaxws.header.parameter.isNull.write.element.with.xsi.nil";
 }

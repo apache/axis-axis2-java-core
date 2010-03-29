@@ -20,6 +20,8 @@
 
 package org.apache.axis2.jaxws.sample.doclitbare.sei;
 
+import org.apache.axis2.jaxws.sample.doclitbare.sei.FaultBeanWithWrapper;
+import org.apache.axis2.jaxws.sample.doclitbare.sei.SimpleFault;
 import org.test.sample.doclitbare.Composite;
 
 import javax.jws.Oneway;
@@ -93,4 +95,18 @@ public interface DocLitBarePortType {
         throws FaultBeanWithWrapper, SimpleFault
     ;
 
+    /**
+     * headerTest
+     * @param bodyParam
+     * @param headerParam
+     * @return allByMyself
+     */
+    @WebMethod
+    @WebResult(name = "String", targetNamespace = "http://doclitbare.sample.test.org", partName = "allByMyself")
+    public String headerTest(
+        @WebParam(name = "BodyInteger", targetNamespace = "http://doclitbare.sample.test.org", partName = "bodyParam")
+        int allByMyself,
+        @WebParam(name = "HeaderString", targetNamespace = "http://doclitbare.sample.test.org", partName = "headerParam", header=true)
+        String headerParam)
+    ;
 }

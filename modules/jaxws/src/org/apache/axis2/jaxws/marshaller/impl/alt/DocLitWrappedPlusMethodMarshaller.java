@@ -569,7 +569,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                         pde.setByJavaTypeClass(actualType);
                     }
                 }
-                MethodMarshallerUtils.toMessage(headerPDEList, m, packages);
+                MethodMarshallerUtils.toMessage(headerPDEList, m, packages, null);
             }
             
             // Enable SWA for nested SwaRef attachments
@@ -583,8 +583,10 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc)
-            throws WebServiceException {
+    public Message marshalRequest(Object[] signatureArguments, 
+            OperationDescription operationDesc,
+            Map<String, Object> requestContext)
+        throws WebServiceException {
         if (log.isDebugEnabled()) {
             log.debug("Calling DocLitWrapperPlusMethodMarshaller.marshalRequest");
             log.debug(
@@ -702,7 +704,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     }
                 }
 
-                MethodMarshallerUtils.toMessage(headerPDEList, m, packages);
+                MethodMarshallerUtils.toMessage(headerPDEList, m, packages, requestContext);
             }
             
             // Enable SWA for nested SwaRef attachments

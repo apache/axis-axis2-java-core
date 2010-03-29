@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.marshaller;
 
+import java.util.Map;
+
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -59,9 +61,13 @@ public interface MethodMarshaller {
      * This method converts SIGNATURE_ARGS into a Message. It is used on the client
      *
      * @param signatureArgs
+     * @param opDesc
+     * @param requestContext
      * @return Message
      */
-    public Message marshalRequest(Object[] signatureArgs, OperationDescription opDesc)
+    public Message marshalRequest(Object[] signatureArgs, 
+                OperationDescription opDesc,
+                Map<String, Object> requestContext) 
             throws WebServiceException;
 
     /**
