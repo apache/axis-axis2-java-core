@@ -85,6 +85,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     private HandlerResolver handlerResolver = null;
     
+    private WebServiceFeature[] features = null;
+    
     /**
      * NON-STANDARD SPI! Set any metadata to be used on the creation of the NEXT Service by this thread.
      * NOTE that this uses ThreadLocal to store the metadata, and that ThreadLocal is cleared after it is
@@ -195,9 +197,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
        sparsePortCompositeThreadLocal.set(null);
     }
     
-    public ServiceDelegate(URL url, QName qname, Class clazz) throws WebServiceException {
+    public ServiceDelegate(URL url, QName qname, Class clazz, WebServiceFeature... features) throws WebServiceException {
         super();
         this.serviceQname = qname;
+        this.features = features;
 
         if (!isValidServiceName()) {
             throw ExceptionFactory
@@ -228,7 +231,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         ApplicationContextMigratorUtil.addApplicationContextMigrator(context,
                 Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, new PropertyMigrator());
     }
-
+    
     //================================================
     // JAX-WS API methods
     //================================================
@@ -263,7 +266,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     */
     public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Mode mode)
             throws WebServiceException {
-        return createDispatch(portName, type, mode, (WebServiceFeature[]) null);
+        return createDispatch(portName, type, mode, (WebServiceFeature[]) features);
     }
 
     /*
@@ -271,7 +274,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, javax.xml.bind.JAXBContext, javax.xml.ws.Service.Mode)
     */
     public Dispatch<java.lang.Object> createDispatch(QName portName, JAXBContext context, Mode mode) {
-        return createDispatch(portName, context, mode, (WebServiceFeature[]) null);
+        return createDispatch(portName, context, mode, (WebServiceFeature[]) features);
     }
 
     @Override
@@ -497,7 +500,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * @see javax.xml.ws.spi.ServiceDelegate#getPort(java.lang.Class)
      */
     public <T> T getPort(Class<T> sei) throws WebServiceException {
-        return getPort((QName) null, sei, (WebServiceFeature[]) null);
+        return getPort((QName) null, sei, (WebServiceFeature[]) features);
     }
 
     /*
@@ -505,12 +508,12 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#getPort(javax.xml.namespace.QName, java.lang.Class)
     */
     public <T> T getPort(QName portName, Class<T> sei) throws WebServiceException {
-        return getPort(portName, sei, (WebServiceFeature[]) null);
+        return getPort(portName, sei, (WebServiceFeature[]) features);
     }
 
     @Override
     public <T> T getPort(Class<T> sei, WebServiceFeature... features) {
-        return getPort((QName) null, sei, features);
+      return getPort((QName) null, sei, features);
     }
 
     @Override
@@ -549,7 +552,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
               makeWebServiceException(Messages.getMessage("invalidEndpointReference", 
                                                           e.toString()));
         }
-        
+
         return getPort(axis2EPR, addressingNamespace, sei, features);
     }
 
@@ -612,7 +615,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("portErr1"), e2);
             }
         }
-        
+
         JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, interfaces[0], endpointDesc, features);
         Object proxyClass = Proxy.newProxyInstance(classLoader, interfaces, proxyHandler);
         return sei.cast(proxyClass);

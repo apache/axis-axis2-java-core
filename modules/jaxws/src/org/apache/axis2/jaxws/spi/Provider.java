@@ -46,8 +46,12 @@ public class Provider extends javax.xml.ws.spi.Provider {
     
 	private static final Element[] ZERO_LENGTH_ARRAY = new Element[0];
 
-    @Override
+	@Override
     public Endpoint createAndPublishEndpoint(String s, Object obj) {
+	  return createAndPublishEndpoint(s, obj, (WebServiceFeature[]) null);
+    }
+
+    public Endpoint createAndPublishEndpoint(String s, Object obj, WebServiceFeature... features) {
         Endpoint ep = new EndpointImpl(obj);
         ep.publish(s);
         return ep;
@@ -55,12 +59,27 @@ public class Provider extends javax.xml.ws.spi.Provider {
 
     @Override
     public Endpoint createEndpoint(String binding, Object obj) {
+        return createEndpoint(binding, obj, (WebServiceFeature[])null);
+    }
+
+    //TODO: Fix the Endpoint to support WebServiceFeatures (for non-JEE users)
+    public Endpoint createEndpoint(String binding, Object obj, WebServiceFeature... features) {
         return new EndpointImpl(obj);
     }
 
+    //TODO: Fix the Endpoint to support WebServiceFeatures (for non-JEE users)
+//    @Override
+//    public Endpoint createEndpoint(String binding, Class clazz, Invoker invoker, WebServiceFeature... features) {
+//      
+//    }
+    
     @Override
     public ServiceDelegate createServiceDelegate(URL url, QName qname, Class clazz) {
-        return new org.apache.axis2.jaxws.spi.ServiceDelegate(url, qname, clazz);
+        return createServiceDelegate(url, qname, clazz, (WebServiceFeature[])null);
+    }
+
+    public ServiceDelegate createServiceDelegate(URL url, QName qname, Class clazz, WebServiceFeature... features) {
+        return new org.apache.axis2.jaxws.spi.ServiceDelegate(url, qname, clazz, features);
     }
 
     @Override
