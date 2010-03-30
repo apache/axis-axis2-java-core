@@ -86,7 +86,7 @@ public class DispatchPhase extends Phase {
 
         // If we still don't have an operation, fault.
         if (operation == null) {
-            AxisFault fault = new AxisFault(Messages.getMessage("operationnotfoundforepr",
+            AxisFault fault = new AxisFault(Messages.getMessage("operationnotfoundforepr2",
                                                     ((toEPR != null) ? toEPR.getAddress()
                                                             : ""), msgContext.getWSAAction()));
             fault.setFaultCode(org.apache.axis2.namespace.Constants.FAULT_CLIENT);
