@@ -31,6 +31,9 @@ import javax.xml.ws.WebServiceException;
 
 /** SAAJConverter Provides Conversion between SAAJ and OM Constructed via the SAAJConverterFactory */
 public interface SAAJConverter {
+	
+	public final static String OM_ATTRIBUTE_KEY = "ATTRIBUTE_TYPE_KEY";
+	
     /**
      * Convert OM SOAPEnvleope to SAAJ SOAPEnvelope
      *

@@ -21,6 +21,9 @@
 package org.apache.axis2.jaxws.message.util.impl;
 
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.util.SAAJConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.CharacterData;
@@ -33,6 +36,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
+import org.w3c.dom.TypeInfo;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -51,6 +55,7 @@ import java.util.StringTokenizer;
  * @see org.apache.axis2.jaxws.util.SOAPElementReader
  */
 public class XMLStreamReaderFromDOM implements XMLStreamReader {
+	private static final Log log = LogFactory.getLog(XMLStreamReaderFromDOM.class);
 
     private Node cursor;
     private Stack<Node> nextCursorStack = new Stack<Node>();
@@ -243,6 +248,9 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
                             attr.getName().startsWith("xmlns:")) {
                         // this is a namespace declaration
                     } else {
+                    	if (log.isDebugEnabled()) {
+                            log.debug("Attr string: " + attr.toString());
+                        }
                         attrs.add(attr);
                     }
                 }
@@ -306,8 +314,27 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
       * @see javax.xml.stream.XMLStreamReader#getAttributeType(int)
       */
     public String getAttributeType(int index) {
+        String attrType = null;    
         Attr attr = (Attr)getAttributes().get(index);
-        return attr.getSchemaTypeInfo().getTypeName();
+        TypeInfo typeInfo = attr.getSchemaTypeInfo();
+	    if (typeInfo != null) {
+	    	attrType = typeInfo.getTypeName();
+        }
+	    
+        if (attrType == null) {
+            try {
+                attrType = (String) attr.getUserData(SAAJConverter.OM_ATTRIBUTE_KEY);
+                if (log.isDebugEnabled()) {
+                	log.debug("Retrieving attrType from UserData: " + attrType);
+                }
+            } catch (Exception e) {
+           	    if (log.isDebugEnabled()) {
+         		    log.debug("An error occured while getting attrType: " + e.getMessage());
+         	    }
+            }
+        }
+              
+        return attrType;
     }
 
     /* (non-Javadoc)

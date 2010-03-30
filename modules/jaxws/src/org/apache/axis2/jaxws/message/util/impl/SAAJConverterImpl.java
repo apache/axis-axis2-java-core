@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
+import org.w3c.dom.Attr; 
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -79,6 +80,10 @@ public class SAAJConverterImpl implements SAAJConverter {
       */
     public SOAPEnvelope toSAAJ(org.apache.axiom.soap.SOAPEnvelope omEnvelope)
             throws WebServiceException {
+    	if (log.isDebugEnabled()) {
+    	    log.debug("Converting OM SOAPEnvelope to SAAJ SOAPEnvelope");
+    	}
+    	
         SOAPEnvelope soapEnvelope = null;
         try {
             // Build the default envelope
@@ -167,6 +172,10 @@ public class SAAJConverterImpl implements SAAJConverter {
 
     private org.apache.axiom.soap.SOAPEnvelope toOM(String xml)
             throws WebServiceException {
+    	if (log.isDebugEnabled()) {
+    	    log.debug("Converting SAAJ SOAPEnvelope String to an OM SOAPEnvelope");
+    	} 
+    	
         XMLStreamReader reader;
         try {
             reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(xml.getBytes()));
@@ -529,7 +538,10 @@ public class SAAJConverterImpl implements SAAJConverter {
     protected void addAttributes(NameCreator nc,
                                  SOAPElement element,
                                  XMLStreamReader reader) throws SOAPException {
-
+    	if (log.isDebugEnabled()) {
+    		log.debug("addAttributes: Entry");
+    	}
+    	
         // Add the attributes from the reader
         int size = reader.getAttributeCount();
         for (int i = 0; i < size; i++) {
@@ -538,7 +550,34 @@ public class SAAJConverterImpl implements SAAJConverter {
             String value = reader.getAttributeValue(i);
             Name name = nc.createName(qName.getLocalPart(), prefix, qName.getNamespaceURI());
             element.addAttribute(name, value);
+            
+            try {
+            	if (log.isDebugEnabled()) {
+            		log.debug("Setting attrType");
+            	}
+                String namespace = qName.getNamespaceURI();
+                Attr attr = null;  // This is an org.w3c.dom.Attr
+                if (namespace == null || namespace.length() == 0) {
+                    attr = element.getAttributeNode(qName.getLocalPart());
+                } else {
+                    attr = element.getAttributeNodeNS(namespace, qName.getLocalPart());
+                }
+                if (attr != null) {
+                    String attrType = reader.getAttributeType(i);
+                    attr.setUserData(SAAJConverter.OM_ATTRIBUTE_KEY, attrType, null);
+                    if (log.isDebugEnabled()) {
+                    	log.debug("Storing attrType in UserData: " + attrType);
+                    }
+                }                    
+             } catch (Exception e) {
+            	 if (log.isDebugEnabled()) {
+             		 log.debug("An error occured while processing attrType: " + e.getMessage());
+             	 }
+             }
         }
+    	if (log.isDebugEnabled()) {
+    		log.debug("addAttributes: Exit");
+    	}
     }
 
     private void _unexpectedEvent(String event) throws WebServiceException {

@@ -28,6 +28,10 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.TypeInfo;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
@@ -39,6 +43,8 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SAAJConverterTests
@@ -60,6 +66,18 @@ public class SAAJConverterTests extends TestCase {
 		"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
 		"<soapenv:Header /><soapenv:Body>" +
 		sampleText +
+		"</soapenv:Body></soapenv:Envelope>";
+	
+	private static final String sampleText1 =
+		"<pre:a xmlns:pre=\"urn://sample\">" +
+		"<b id=\"100\">Hello</b>" +
+		"<c>World</c>" +
+		"</pre:a>";
+	
+	private static final String sampleEnvelope1 = 
+		"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+		"<soapenv:Header /><soapenv:Body>" +
+		sampleText1 +
 		"</soapenv:Body></soapenv:Envelope>";
 	
 	private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -176,4 +194,60 @@ public class SAAJConverterTests extends TestCase {
         // Step 3: Do the conversion
         converter.toSAAJ(ome, se, sf);
     }
+    
+	/**
+	 * @testStrategy Tests conversions between OM and SAAJ SOAPEnvelopes 
+	 * and verify attribute type is correctly stored
+	 */
+	public void test4() throws Exception {
+		// Bootstrap: Create an OM SOAPEnvelope from the sample text
+		StringReader sr = new StringReader(sampleEnvelope1);
+		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
+		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+		org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
+		
+		// Step 1: Get the SAAJConverter object from the Factory
+		SAAJConverterFactory f = (SAAJConverterFactory) 
+			FactoryRegistry.getFactory(SAAJConverterFactory.class);
+		SAAJConverter converter = f.getSAAJConverter();
+		
+		// Step 2: Convert the OM SOAPEnvelope to an SAAJ SOAPEnvelope
+		SOAPEnvelope saajEnvelope = converter.toSAAJ(omEnvelope);
+		
+		// Step 3: Verify attribute type is stored after conversion
+		Element testElement = (Element) saajEnvelope.getBody().getFirstChild().getFirstChild();
+		assertTrue("b".equals(testElement.getLocalName()));
+		
+		List attrs = new ArrayList();
+        NamedNodeMap map = testElement.getAttributes();
+        
+        if (map != null) {
+            for (int i = 0; i < map.getLength(); i++) {
+                Attr attr = (Attr)map.item(i);
+                if (attr.getName().equals("xmlns") || attr.getName().startsWith("xmlns:")) {
+                    // this is a namespace declaration
+                } else {
+                    attrs.add(attr);
+                }
+            }
+        }
+        
+        Attr attr = (Attr)attrs.get(0);
+        TypeInfo typeInfo = null;
+        String attrType = null;
+        
+        try {
+        	typeInfo = attr.getSchemaTypeInfo();
+            if (typeInfo != null) {
+    	    	attrType = typeInfo.getTypeName();
+            }
+        } catch (Throwable t) {
+        	;
+        }
+        
+        if (attrType == null) {
+            attrType = (String) attr.getUserData(SAAJConverter.OM_ATTRIBUTE_KEY);
+        }
+        assert("CDATA".equals(attrType));
+	}
 }
