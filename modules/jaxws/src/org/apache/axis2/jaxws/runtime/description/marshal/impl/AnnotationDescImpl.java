@@ -40,6 +40,9 @@ class AnnotationDescImpl implements AnnotationDesc {
     private String _XmlRootElementName = null;
     private String _XmlRootElementNamespace = null;
     private Class[] _XmlSeeAlsoClasses = null;
+    private boolean _hasXmlType = false;
+    private String _XmlTypeName = null;
+    private String _XmlTypeNamespace = null;
 
     private AnnotationDescImpl() {
         super();
@@ -55,6 +58,19 @@ class AnnotationDescImpl implements AnnotationDesc {
 
     public String getXmlRootElementNamespace() {
         return _XmlRootElementNamespace;
+    }
+    
+    public boolean hasXmlType() {
+        return _hasXmlType;
+    }
+    
+    
+    public String getXmlTypeName() {
+        return _XmlTypeName;
+    }
+    
+    public String getXmlTypeNamespace() {
+        return _XmlTypeNamespace;
     }
 
     static AnnotationDesc create(Class cls) {
@@ -76,6 +92,13 @@ class AnnotationDescImpl implements AnnotationDesc {
             aDesc._XmlRootElementName = qName.getLocalPart();
             aDesc._XmlRootElementNamespace = qName.getNamespaceURI();
         }
+        
+        qName = XMLRootElementUtil.getXmlTypeQName(cls);
+        if (qName != null) {
+            aDesc._hasXmlType = true;
+            aDesc._XmlTypeName = qName.getLocalPart();
+            aDesc._XmlTypeNamespace = qName.getNamespaceURI();
+        }
         return aDesc;
     }
 
@@ -91,6 +114,15 @@ class AnnotationDescImpl implements AnnotationDesc {
             string.append("      @XMLRootElement namespace = " + this.getXmlRootElementNamespace());
             string.append(newline);
             string.append("      @XMLRootElement name      = " + this.getXmlRootElementName());
+        }
+        
+        string.append(newline);
+        string.append("      @XmlType exists = " + this.hasXmlType());
+        if (this.hasXmlRootElement()) {
+            string.append(newline);
+            string.append("      @XmlType namespace = " + this.getXmlTypeNamespace());
+            string.append(newline);
+            string.append("      @XmlType name      = " + this.getXmlTypeName());
         }
 
         if (this._XmlSeeAlsoClasses != null) {

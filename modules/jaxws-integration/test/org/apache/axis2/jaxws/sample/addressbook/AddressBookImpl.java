@@ -24,6 +24,8 @@ import org.apache.axis2.jaxws.TestLogger;
 import javax.jws.WebService;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.axis2.jaxws.sample.addressbook.data.AddressBookEntry;
+import org.apache.axis2.jaxws.sample.addressbook.data.ObjectFactory;
 
 @WebService(serviceName="AddressBookService",
 			endpointInterface="org.apache.axis2.jaxws.sample.addressbook.AddressBook")

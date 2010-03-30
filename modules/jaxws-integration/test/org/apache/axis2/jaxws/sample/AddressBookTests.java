@@ -23,11 +23,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.sample.addressbook.AddEntry;
-import org.apache.axis2.jaxws.sample.addressbook.AddEntryResponse;
+import org.apache.axis2.jaxws.sample.addressbook.data.AddEntry;
+import org.apache.axis2.jaxws.sample.addressbook.data.AddEntryResponse;
 import org.apache.axis2.jaxws.sample.addressbook.AddressBook;
-import org.apache.axis2.jaxws.sample.addressbook.AddressBookEntry;
-import org.apache.axis2.jaxws.sample.addressbook.ObjectFactory;
+import org.apache.axis2.jaxws.sample.addressbook.data.AddressBookEntry;
+import org.apache.axis2.jaxws.sample.addressbook.data.ObjectFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
@@ -63,7 +63,7 @@ public class AddressBookTests extends AbstractTestCase {
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
         
-        JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.addressbook");
+        JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.addressbook.data");
         
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);

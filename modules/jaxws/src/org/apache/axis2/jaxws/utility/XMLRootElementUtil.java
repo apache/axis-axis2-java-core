@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.namespace.QName;
 import java.beans.IntrospectionException;
@@ -110,7 +111,7 @@ public class XMLRootElementUtil {
     
     /**
      * @param clazz
-     * @return namespace of root element qname or null if this is not object does not represent a root element
+     * @return namespace of root element qname or null if this is object does not represent a root element
      */
     public static String getEnumValue(Enum myEnum){
 		Field f;
@@ -133,6 +134,40 @@ public class XMLRootElementUtil {
 		}
 		
 		return value;
+    }
+    
+    /**
+     * @param clazz
+     * @return namespace of @XmlType or null if this is object does not represent a root element
+     */
+    public static QName getXmlTypeQName(Class clazz) {
+
+        // See if the object has an @XmlType
+        XmlType t = (XmlType) getAnnotation(clazz,XmlType.class);
+        if (t == null) {
+            return null;
+        }
+
+        String name = t.name();
+        String namespace = t.namespace();
+
+        // The name may need to be defaulted
+        if (name == null || name.length() == 0 || name.equals("##default")) {
+            name = getSimpleName(clazz.getCanonicalName());
+        }
+
+        // The namespace may need to be defaulted
+        if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
+            Package pkg = clazz.getPackage();
+            XmlSchema schema = (XmlSchema) getAnnotation(pkg,XmlSchema.class);
+            if (schema != null) {
+                namespace = schema.namespace();
+            } else {
+                namespace = "";
+            }
+        }
+
+        return new QName(namespace, name);
     }
 
     /**

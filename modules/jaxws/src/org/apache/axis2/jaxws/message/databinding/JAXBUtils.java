@@ -286,13 +286,18 @@ public class JAXBUtils {
 
                     TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages); 
                     
+                    pruneDirectives(validContextPackages);
+                    
+                    int numPackages = validContextPackages.size();
+                    
                     ClassLoader tryCl = cl;
                     contextValue = createJAXBContextValue(validContextPackages, cl, forceArrays, properties);
 
                     // If we don't get all the classes, try the cached classloader 
-                    if (cacheKey != null && validContextPackages.size() != contextPackages.size()) {
+                    if (cacheKey != null && numPackages != validContextPackages.size()) {
                         tryCl = cacheKey;
                         validContextPackages = new TreeSet<String>(contextPackages);
+                        pruneDirectives(validContextPackages);
                         contextValue = createJAXBContextValue(validContextPackages, cacheKey, 
                                                               forceArrays, properties);
                     }
@@ -348,6 +353,74 @@ public class JAXBUtils {
         }
         constructionType.value = contextValue.constructionType;
         return contextValue.jaxbContext;
+    }
+    
+    /**
+     * The contextPackages may declare overrides.  
+     * Example:
+     *    "com.A"
+     *    "com.B"
+     *    "com.C"
+     *    "@com.A"   <-- Indicates a reference to a class (versus ns 2 pkg conversion)
+     *    "com.A > com.B"   <-- This says com.A overrides com.B
+     *    
+     * This method prunes the overrides and overriden packages.
+     * Example return:
+     *    "com.A"
+     *    "com.C"
+     * @param contextPackages
+     */
+    protected static void pruneDirectives(TreeSet<String> contextPackages) {
+        List<String> removePkgsList = new ArrayList<String>();
+        List<String> strongPkgsList = new ArrayList<String>();
+        
+        // Walk the contextPackages looking for entries representing directives
+        Iterator<String> it = contextPackages.iterator();
+        while (it.hasNext()) {
+            String entry = it.next();
+            // If the entry contains an override character
+            if (entry.contains(">")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Override found:" + entry);
+                }
+                // Remove the entry using an iterator remove()
+                it.remove();  
+                
+                // Store the overridden package
+                String removePkg = entry.substring(entry.indexOf(">") + 1);
+                removePkg = removePkg.trim();
+                removePkgsList.add(removePkg);
+            }
+            if (entry.startsWith("@")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Strong (class) reference found:" + entry);
+                }
+                // Remove the entry using an iterator remove()
+                it.remove();  
+                
+                // Store the overridden package
+                String strongPkg = entry.substring(1);
+                strongPkg = strongPkg.trim();
+                strongPkgsList.add(strongPkg);
+            }
+        }
+        
+        // Now walk the contextPackages and remove the overriden packages
+        it = contextPackages.iterator();
+        while (it.hasNext()) {
+            String entry = it.next();
+            // If the entry contains an override character
+            if (removePkgsList.contains(entry)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing override package:" + entry);
+                }
+                // Remove the overridden package using an iterator remove()
+                it.remove();  
+            }
+        }
+        
+        // Now add back all of the strong packages
+        contextPackages.addAll(strongPkgsList);
     }
 
     /**

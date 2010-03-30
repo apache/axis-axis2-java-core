@@ -302,6 +302,7 @@ public class PackageSetBuilder {
         }
         if (requestWrapperPkg != null) {
             set.add(requestWrapperPkg);
+            set.add("@" + requestWrapperPkg);  // Indicates a package from an actual class reference (versus namespace)
         }
         String responseWrapperPkg = getPackageFromClassName(msrd.getResponseWrapperClassName(opDesc));
         if (log.isDebugEnabled()) {
@@ -309,6 +310,7 @@ public class PackageSetBuilder {
         }
         if (responseWrapperPkg != null) {
             set.add(responseWrapperPkg);
+            set.add("@" + responseWrapperPkg);  // Indicates a package from an actual class reference (versus namespace)
         }
       
         // The wrapper class and the element defining the wrapper may be 
@@ -350,6 +352,7 @@ public class PackageSetBuilder {
             }
             if (pkg != null) {
                 set.add(pkg);
+                set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
             }
         }
     }
@@ -380,6 +383,7 @@ public class PackageSetBuilder {
                     }
                     if (pkg != null) {
                         set.add(pkg);
+                        set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
                     }
                 }
             }
@@ -466,6 +470,32 @@ public class PackageSetBuilder {
 
             if (pkg != null) {
                 set.add(pkg);
+                set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
+            }
+            // If there is an xmlType, and it maps to a package then add
+            // an override if the package is different.
+            if (pkg != null) {
+                AnnotationDesc ad = msrd.getAnnotationDesc(tClass);
+                if (ad != null && ad.hasXmlType()) {
+                    String ns = ad.getXmlTypeNamespace();
+                    if (ns != null && ns.length() > 0) {
+                        List pkgs = makePackages(ns);
+                        if (pkgs != null) {
+                            for (int i=0; i<pkgs.size(); i++) {
+                                String pkg2 = (String) pkgs.get(i);
+                                if (!pkg.equals(pkg2)) {
+                                    String override = pkg + " > " + pkg2;
+                                    if (!set.contains(override)) {
+                                        set.add(override);
+                                        if (log.isDebugEnabled()) {
+                                            log.debug("Adding override=" + override);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
             addXmlSeeAlsoPackages(tClass, msrd, set);
         }
@@ -488,6 +518,31 @@ public class PackageSetBuilder {
                 String pkg = (elementPkg != null) ? elementPkg.getName() : null;
                 if (pkg != null) {
                     set.add(pkg);
+                    set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
+                }
+                
+                if (pkg != null) {
+                    AnnotationDesc ad = msrd.getAnnotationDesc(tClass);
+                    if (ad != null && ad.hasXmlRootElement()) {
+                        String ns = ad.getXmlRootElementNamespace();
+                        if (ns != null && ns.length() > 0) {
+                            List pkgs = makePackages(ns);
+                            if (pkgs != null) {
+                                for (int i=0; i<pkgs.size(); i++) {
+                                    String pkg2 = (String) pkgs.get(i);
+                                    if (!pkg.equals(pkg2)) {
+                                        String override = pkg + " > " + pkg2;
+                                        if (!set.contains(override)) {
+                                            set.add(override);
+                                            if (log.isDebugEnabled()) {
+                                                log.debug("Adding override=" + override);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 addXmlSeeAlsoPackages(tClass, msrd, set);
             }
@@ -605,6 +660,7 @@ public class PackageSetBuilder {
                         		log.debug(" adding package = " + pkg);
                         	}
                             set.add(pkg);
+                            set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
                         }
                     }
                 }

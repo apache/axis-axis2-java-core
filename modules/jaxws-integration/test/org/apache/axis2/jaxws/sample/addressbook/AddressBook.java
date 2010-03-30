@@ -25,6 +25,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import org.apache.axis2.jaxws.sample.addressbook.data.AddressBookEntry;
 
 @WebService(name = "AddressBook", 
             targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook")
@@ -39,8 +40,8 @@ public interface AddressBook {
      */
     @WebMethod
     @WebResult(name = "status", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook")
-    @RequestWrapper(localName = "addEntry", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.AddEntry")
-    @ResponseWrapper(localName = "addEntryResponse", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.AddEntryResponse")
+    @RequestWrapper(localName = "addEntry", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.data.AddEntry")
+    @ResponseWrapper(localName = "addEntryResponse", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.data.AddEntryResponse")
     public boolean addEntry(
         @WebParam(name = "entry", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook")
         AddressBookEntry entry);
@@ -54,8 +55,8 @@ public interface AddressBook {
      */
     @WebMethod
     @WebResult(name = "entry", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook")
-    @RequestWrapper(localName = "findEntryByName", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.FindEntryByName")
-    @ResponseWrapper(localName = "findEntryByNameResponse", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.FindEntryByNameResponse")
+    @RequestWrapper(localName = "findEntryByName", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.data.FindEntryByName")
+    @ResponseWrapper(localName = "findEntryByNameResponse", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", className = "org.apache.axis2.jaxws.sample.addressbook.data.FindEntryByNameResponse")
     public AddressBookEntry findEntryByName(
         @WebParam(name = "firstname", targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook")
         String firstname,

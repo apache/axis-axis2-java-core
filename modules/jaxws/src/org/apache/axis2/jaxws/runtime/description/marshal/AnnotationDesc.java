@@ -35,4 +35,19 @@ public interface AnnotationDesc {
      * @return @XmlSeeAlso classes or null
      */
     public Class[] getXmlSeeAlsoClasses();
+    
+    /**
+     * @return true if the class has an @XmlType
+     */
+    public boolean hasXmlType();
+    
+    /**
+     * @return @XmlTypeName or (null if no @XmlType)
+     */
+    public String getXmlTypeName();
+    
+    /**
+     * @return @XmlType namepsace (null if no @XmlType)
+     */
+    public String getXmlTypeNamespace();
 }
