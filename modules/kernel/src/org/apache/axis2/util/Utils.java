@@ -26,6 +26,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.ServiceObjectSupplier;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -681,25 +682,44 @@ public class Utils {
             Parameter serviceObjectSupplierParam =
                     service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
             if (serviceObjectSupplierParam != null) {
-                final Class<?> serviceObjectMaker = Loader.loadClass(classLoader, ((String)
+                final Class<?> serviceObjectSupplierClass = Loader.loadClass(classLoader, ((String)
                         serviceObjectSupplierParam.getValue()).trim());
-
-                // Find static getServiceObject() method, call it if there
-                final Method method = org.apache.axis2.java.security.AccessController.doPrivileged(
-                        new PrivilegedExceptionAction<Method>() {
-                            public Method run() throws NoSuchMethodException {
-                                return serviceObjectMaker.getMethod("getServiceObject",
-                                        AxisService.class);
+                if (ServiceObjectSupplier.class.isAssignableFrom(serviceObjectSupplierClass)) {
+                    ServiceObjectSupplier serviceObjectSupplier = org.apache.axis2.java.security.AccessController.doPrivileged(
+                            new PrivilegedExceptionAction<ServiceObjectSupplier>() {
+                                public ServiceObjectSupplier run() throws InstantiationException, IllegalAccessException {
+                                    return (ServiceObjectSupplier)serviceObjectSupplierClass.newInstance();
+                                }
                             }
-                        }
-                );
-                return org.apache.axis2.java.security.AccessController.doPrivileged(
-                        new PrivilegedExceptionAction<Object>() {
-                            public Object run() throws InvocationTargetException, IllegalAccessException, InstantiationException {
-                                return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
+                    );
+                    return serviceObjectSupplier.getServiceObject(service);
+                } else {
+                    // Prior to r439555 service object suppliers were actually defined by a static method
+                    // with a given signature defined on an arbitrary class. The ServiceObjectSupplier
+                    // interface was only introduced by r439555. We still support the old way, but
+                    // issue a warning inviting the user to provide a proper ServiceObjectSupplier
+                    // implementation.
+                    
+                    // Find static getServiceObject() method, call it if there
+                    final Method method = org.apache.axis2.java.security.AccessController.doPrivileged(
+                            new PrivilegedExceptionAction<Method>() {
+                                public Method run() throws NoSuchMethodException {
+                                    return serviceObjectSupplierClass.getMethod("getServiceObject",
+                                            AxisService.class);
+                                }
                             }
-                        }
-                );
+                    );
+                    log.warn("The class specified by the " + Constants.SERVICE_OBJECT_SUPPLIER
+                            + " property on service " + service.getName() + " does not implement the "
+                            + ServiceObjectSupplier.class.getName() + " interface. This is deprecated.");
+                    return org.apache.axis2.java.security.AccessController.doPrivileged(
+                            new PrivilegedExceptionAction<Object>() {
+                                public Object run() throws InvocationTargetException, IllegalAccessException, InstantiationException {
+                                    return method.invoke(serviceObjectSupplierClass.newInstance(), new Object[]{service});
+                                }
+                            }
+                    );
+                }
             } else {
                 Parameter serviceClassParam = service.getParameter(Constants.SERVICE_CLASS);
                 if (serviceClassParam != null) {
