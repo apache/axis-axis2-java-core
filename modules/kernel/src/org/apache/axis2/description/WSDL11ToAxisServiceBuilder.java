@@ -2047,6 +2047,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             String prefix;
             if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName.getNamespaceURI())) {
                 prefix = xsdPrefix;
+                if(log.isDebugEnabled()) {
+                    log.debug("Unable to find a namespace for " + xsdPrefix + ". Creating a new namespace attribute");
+                }
+                cmplxTypeSequence.setAttributeNS("http://www.w3.org/2000/xmlns/",
+                        "xmlns:" + xsdPrefix,
+                        XMLSCHEMA_NAMESPACE_URI);
             } else {
                 // this schema is a third party one. So we need to have
                 // an import statement in our generated schema
