@@ -314,6 +314,9 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
+                    <!-- There is a lot of generated code to compile; use fork mode
+                         to avoid out of memory issues: -->
+                    <fork>true</fork>
                 </configuration>
             </plugin>
             <plugin>
