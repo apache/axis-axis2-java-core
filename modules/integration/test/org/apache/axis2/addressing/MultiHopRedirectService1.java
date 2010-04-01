@@ -32,7 +32,6 @@ public class MultiHopRedirectService1 {
         currOutMc.setTo(new EndpointReference("http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
                 "/axis2/services/MultiHopRedirectService2/echoRedirect"));
         currOutMc.setReplyTo(currInMc.getReplyTo());
-        currOutMc.setServerSide(false);
         return ome;
     }
 }
