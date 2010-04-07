@@ -217,4 +217,14 @@ public interface ServiceDescription {
      */
     public Map<String, Object> getBindingProperties(Object serviceDelegateKey, String key);
 
+    /**
+     * Return the MTOM Threshold as set by the Client via a sparse composite (such as a client deployment
+     * descriptor).
+     * 
+     * @param serviceDelegateKey The instance of the service delegate related to this service
+     * @param seiClass The SEI for the port to retried the MTOM threshold for
+     * @return the MTOM thredhold if set, or 0 if not set.
+     */
+    public int getMTOMThreshold(Object serviceDelegateKey, Class seiClass);
+
 }

@@ -56,12 +56,20 @@ public class MDQConstants {
     public static final String CLIENT_SEI_CLASS = "CLIENT_SEI_CLASS";
     
     public static final String HANDLER_CHAIN_DECLARING_CLASS = "HANDLER_CHAIN_DECLARING_CLASS";
-    
+    /**
+     * Indicates if MTOM is enabled for specific ports (indexed by the SEI class name) under a service on the
+     * client side.
+     * @deprecated Replaced by SEI_FEATURES_MAP with a MTOMAnnot to indicate if MTOM is enabled.
+     */
     public static final String SEI_MTOM_ENABLEMENT_MAP = "org.apache.axis2.jaxws.description.builder.SEI_MTOM_ENABLEMENT_MAP";
-    // Note that this property is ONLY used on the client-side, not the server side.
-    // Value is Map<String, List<java.lang.annotation.Annotation>> where
-    // String: SEI Class name (i.e. the port name)
-    // Annotation: The list of WebServiceFeatures expressed as the corresponding Annotation related to that Port
+    /**
+     * Sets the Web Service Features (as Annotation instances) for specific ports under a service on the 
+     * client side.  The value associated with this property is:
+     *     Map<String, List<java.lang.annotation.Annotation>> 
+     * Where:
+     *     String: SEI Class name (i.e. the port name)
+     *     Annotation: The list of WebServiceFeatures expressed as the corresponding Annotation related to that Port
+     */
     public static final String SEI_FEATURES_MAP = "org.apache.axis2.jaxws.description.builder.SEI_FEATURES_MAP";
     public static final String BINDING_PROPS_MAP = "org.apache.axis2.jaxws.description.builder.BINDING_PROPS_MAP";    
     

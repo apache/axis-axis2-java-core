@@ -196,6 +196,9 @@ public class JAXWSProxyHandler extends BindingProvider implements
             if (((SOAPBinding)bnd).isMTOMEnabled()) {
                 Message requestMsg = request.getMessage();
                 requestMsg.setMTOMEnabled(true);
+                int threshold = ((org.apache.axis2.jaxws.binding.SOAPBinding)bnd).getMTOMThreshold();
+                request.setProperty(org.apache.axis2.Constants.Configuration.MTOM_THRESHOLD, 
+                        new Integer(threshold));
             }
         }
         

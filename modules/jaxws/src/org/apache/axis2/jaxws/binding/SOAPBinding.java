@@ -43,6 +43,7 @@ import java.util.Set;
  */
 public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBinding {
     private boolean mtomEnabled = false;
+    private int mtomThreshold = 0;
 
     private static Log log = LogFactory.getLog(SOAPBinding.class);
     
@@ -54,6 +55,12 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
         super(endpointDesc);
     }
 
+    public int getMTOMThreshold() {
+        return mtomThreshold;
+    }
+    public void setMTOMThreshold(int threshold) {
+        mtomThreshold = threshold;
+    }
     /*
      * (non-Javadoc)
      * 

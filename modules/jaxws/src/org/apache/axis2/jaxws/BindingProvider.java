@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -126,6 +127,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             // MTOM can be enabled either at the ServiceDescription level (via the WSDL binding type) or
             // at the EndpointDescription level via the binding type used to create a Dispatch.
             boolean enableMTOMFromMetadata = false;
+            int mtomThreshold = 0;
             
             // if we have an SEI for the port, then we'll use it in order to search for MTOM configuration
             if(endpointDesc.getEndpointInterfaceDescription() != null
@@ -133,9 +135,13 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
                     endpointDesc.getEndpointInterfaceDescription().getSEIClass() != null) {
                 enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate, 
                                                                    endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+                mtomThreshold = getMTOMThreshold(endpointDesc.getServiceDescription(), serviceDelegate,
+                        endpointDesc.getEndpointInterfaceDescription().getSEIClass());
             }
             else {
                 enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
+                // Threshold does not need to be set here based on the sparse composite (i.e. depolyment descriptor)
+                // since it can only be applied to a port injection (i.e. an SEI) using a DD.
             }
             if (!enableMTOMFromMetadata) {
                 String bindingType = endpointDesc.getClientBindingID();
@@ -145,6 +151,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             
             if (enableMTOMFromMetadata) {
                 ((SOAPBinding) binding).setMTOMEnabled(true);
+                ((SOAPBinding) binding).setMTOMThreshold(mtomThreshold);
             }
         }
                 
@@ -177,6 +184,12 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+
+    private int getMTOMThreshold(ServiceDescription serviceDescription, ServiceDelegate serviceDelegate, Class seiClass) {
+        int threshold = serviceDescription.getMTOMThreshold(serviceDelegate, seiClass);
+        
+        return threshold;
     }
 
     public ServiceDelegate getServiceDelegate() {

@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.description.builder.MTOMAnnot;
 import org.apache.axis2.jaxws.description.builder.PortComposite;
 
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
@@ -1323,28 +1324,59 @@ public class ServiceDescriptionImpl
         }
         
         boolean mtomEnabled = false;
-        DescriptionBuilderComposite sparseComposite = getDescriptionBuilderComposite().getSparseComposite(key);
-        if(sparseComposite != null
-                &&
-                seiClass != null) {
-            Map<String, Boolean> seiToMTOM = (Map<String, Boolean>) 
-                sparseComposite.getProperties().get(MDQConstants.SEI_MTOM_ENABLEMENT_MAP);
-            if(seiToMTOM != null
+        boolean checkOldEnablementMethod = true;
+        
+        /*
+         * This is the NEW way of setting MTOM enabled using a property on the DBC that contains the 
+         * WebServiceFeatures for the ports on that service.  One of those features indicats if MTOM should
+         * be enabled
+         */
+        List<Annotation> seiFeatureList = getSEIFeatureList(key, seiClass);
+        if (seiFeatureList != null) {
+            for (int i = 0; i < seiFeatureList.size(); i++) {
+                Annotation checkAnnotation = seiFeatureList.get(i);
+                if (checkAnnotation instanceof MTOMAnnot) {
+                    MTOMAnnot mtomAnnot = (MTOMAnnot) checkAnnotation;
+                    mtomEnabled = mtomAnnot.enabled();
+                    // We found an explicit setting for this port, so do not check the old way of enabling MTOM
+                    checkOldEnablementMethod = false;
+                }
+            }
+        }
+        
+        /*
+         * This is the OLD way of setting MTOM enabled and it is deprecated.  Within the OLD way, there are
+         * two ways to enable MTOM:
+         * 1) By setting isMTOMEnabled to true on a single DBC which represents a Service.  This enables MTOM
+         *    on all the ports under it.
+         * 2) By setting the property SEI_MTOM_ENABLEMENT_MAP to a list of ports keyed by SEI name with a
+         *    Boolean value indicating if MTOM should be enabled for that port.
+         */
+        if (checkOldEnablementMethod) {
+            DescriptionBuilderComposite sparseComposite = getDescriptionBuilderComposite().getSparseComposite(key);
+            if(sparseComposite != null
                     &&
-                    seiToMTOM.get(seiClass.getName()) != null) {
-                mtomEnabled = seiToMTOM.get(seiClass.getName());
+                    seiClass != null) {
+                Map<String, Boolean> seiToMTOM = (Map<String, Boolean>) 
+                    sparseComposite.getProperties().get(MDQConstants.SEI_MTOM_ENABLEMENT_MAP);
+                if(seiToMTOM != null
+                        &&
+                        seiToMTOM.get(seiClass.getName()) != null) {
+                    mtomEnabled = seiToMTOM.get(seiClass.getName());
+                }
+                else {
+                    mtomEnabled = isMTOMEnabled(key);
+                }
             }
             else {
                 mtomEnabled = isMTOMEnabled(key);
             }
         }
-        else {
-            mtomEnabled = isMTOMEnabled(key);
-        }
         
         if(log.isDebugEnabled()) {
             log.debug("isMTOMEnabled, key= " + key + ", seiClass= " + seiClass + ", isMTOMEnabled= " + mtomEnabled);
         }
+        
         return mtomEnabled;
     }
     
@@ -2875,5 +2907,39 @@ public class ServiceDescriptionImpl
             returnCatalogManager = null;
         }
         return (returnCatalogManager);
+    }
+
+    public int getMTOMThreshold(Object serviceDelegate, Class seiClass) {
+        int threshold = 0;
+        List<Annotation> seiFeatureList = getSEIFeatureList(serviceDelegate, seiClass);
+        if (log.isDebugEnabled()) {
+            log.debug("Feature list for delegate: " + serviceDelegate + ", and SEI: " + seiClass
+                    + ", is: " + seiFeatureList);
+        }
+        if (seiFeatureList != null) {
+            for (int i = 0; i < seiFeatureList.size(); i++) {
+                Annotation checkAnnotation = seiFeatureList.get(i);
+                if (checkAnnotation instanceof MTOMAnnot) {
+                    MTOMAnnot mtomAnnot = (MTOMAnnot) checkAnnotation;
+                    threshold = mtomAnnot.threshold();
+                }
+            }
+        }
+        return threshold;
+    }
+    
+    private List<Annotation> getSEIFeatureList(Object serviceDelegate, Class seiClass) {
+        List<Annotation> featureList = null;
+
+        DescriptionBuilderComposite sparseComposite = getDescriptionBuilderComposite().getSparseComposite(serviceDelegate);
+        // The Features are only set on the sparse composite based on Depoyment Descriptor information.
+        // And the information is keyed by the SEI class.  Both need to be non-null to get the value
+        if (sparseComposite != null && seiClass != null) {
+            Map<String, List<Annotation>> featureMap = (Map<String, List<Annotation>>) sparseComposite.getProperties().get(MDQConstants.SEI_FEATURES_MAP);
+            if (featureMap != null) {
+                featureList = featureMap.get(seiClass.getName());
+            }
+        }
+        return featureList;
     }
 }
