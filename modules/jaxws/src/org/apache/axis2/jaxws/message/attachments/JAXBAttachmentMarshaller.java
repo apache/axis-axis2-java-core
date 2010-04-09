@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.message.attachments;
 
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
 
 import javax.activation.DataHandler;
@@ -32,8 +33,23 @@ public class JAXBAttachmentMarshaller extends org.apache.axis2.datasource.jaxb.J
     private Message message;
     
     public JAXBAttachmentMarshaller(Message message, XMLStreamWriter writer) {
-        super(null, writer);
+        super(getAxis2MessageContext(message), writer);
         this.message = message;
+    }
+    
+    /**
+     * Get the Axis2 Message Context out of the Message by going through the JAXWS Message Context.
+     * @param message The Message from which to get the Axis Message Context
+     * @return the Axis Message context or null if one is not found.
+     */
+    private static MessageContext getAxis2MessageContext(Message message) {
+        MessageContext axisMessageContext = null;
+        if (message != null) {
+            if (message.getMessageContext() != null) {
+                axisMessageContext = message.getMessageContext().getAxisMessageContext();
+            }
+        }
+        return axisMessageContext;
     }
     /**
      * @return if MTOM enabled calculated from the context information
