@@ -37,7 +37,8 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 /**
- * Validate the setting up of the MTOM WebServiceFeature via meta-data (such as a deployment descriptor)
+ * Validate the setting up of the MTOM WebServiceFeature on the client side via meta-data 
+ * (such as a deployment descriptor)
  */
 public class ClientMetadataMTOMFeatureTests extends TestCase {
     static final String namespaceURI = "http://description.jaxws.axis2.apache.org";
@@ -283,7 +284,8 @@ public class ClientMetadataMTOMFeatureTests extends TestCase {
     }
     
     /**
-     * Validate if there are multiple instances of the same feature for a port in the list, the last one is used.
+     * Validate if there are multiple instances of the same feature for a port in the list indicating
+     * a threshold, the last one is used.
      */
     public void testMultipleFeaturesForPortThreshold() {
         QName serviceQName = new QName(namespaceURI, svcLocalPart);
@@ -318,7 +320,11 @@ public class ClientMetadataMTOMFeatureTests extends TestCase {
         assertEquals("Threashold value incorrect", MTOM_THRESHOLD, enabledSoapBinding.getMTOMThreshold());
     }
     
-    public void testMultipoleFeaturesForPortEnable() {
+    /**
+     * Validate if there are multiple instances of the same feature for a port in the list indicating
+     * enablement, the last one is used.
+     */
+    public void testMultipleFeaturesForPortEnable() {
         QName serviceQName = new QName(namespaceURI, svcLocalPart);
         URL wsdlUrl = ClientMetadataTest.getWsdlURL(multiPortWsdl);
         DescriptionBuilderComposite serviceDBC = new DescriptionBuilderComposite();
@@ -347,7 +353,7 @@ public class ClientMetadataMTOMFeatureTests extends TestCase {
         ClientMetadataMTOMPortSEI enabledPort = service.getPort(portQN1, ClientMetadataMTOMPortSEI.class);
         BindingProvider enabledBindingProvider = (BindingProvider) enabledPort;
         SOAPBinding enabledSoapBinding = (SOAPBinding) enabledBindingProvider.getBinding();
-        assertFalse("MTOM is not enabled", enabledSoapBinding.isMTOMEnabled());
+        assertFalse("MTOM is enabled and should not be", enabledSoapBinding.isMTOMEnabled());
     }
 
     /**

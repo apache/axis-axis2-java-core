@@ -222,9 +222,19 @@ public interface ServiceDescription {
      * descriptor).
      * 
      * @param serviceDelegateKey The instance of the service delegate related to this service
-     * @param seiClass The SEI for the port to retried the MTOM threshold for
-     * @return the MTOM thredhold if set, or 0 if not set.
+     * @param seiClass The SEI for the port to retrieve the MTOM threshold for
+     * @return the MTOM threshold if set, or 0 if not set.
      */
     public int getMTOMThreshold(Object serviceDelegateKey, Class seiClass);
+
+    /**
+     * Return whether RespectBinding is enabled as set by the Client via a sparse composite (such as a client deployment
+     * descriptor).
+     * 
+     * @param serviceDelegateKey The instance of the service delegate related to this service
+     * @param seiClass The SEI for the port to retrieve the RespectBinding setting for.
+     * @return true if RespectBinding is enabled; false otherwise.
+     */
+    public abstract boolean isRespectBindingEnabled(Object serviceDelegateKey, Class seiClass);
 
 }

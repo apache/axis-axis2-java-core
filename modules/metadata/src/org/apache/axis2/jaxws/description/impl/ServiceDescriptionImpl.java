@@ -40,6 +40,7 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MTOMAnnot;
 import org.apache.axis2.jaxws.description.builder.PortComposite;
+import org.apache.axis2.jaxws.description.builder.RespectBindingAnnot;
 
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
@@ -2941,5 +2942,24 @@ public class ServiceDescriptionImpl
             }
         }
         return featureList;
+    }
+
+    public boolean isRespectBindingEnabled(Object serviceDelegateKey, Class seiClass) {
+        boolean enabled = false;
+        List<Annotation> seiFeatureList = getSEIFeatureList(serviceDelegateKey, seiClass);
+        if (log.isDebugEnabled()) {
+            log.debug("Feature list for delegate: " + serviceDelegateKey + ", and SEI: " + seiClass
+                    + ", is: " + seiFeatureList);
+        }
+        if (seiFeatureList != null) {
+            for (int i = 0; i < seiFeatureList.size(); i++) {
+                Annotation checkAnnotation = seiFeatureList.get(i);
+                if (checkAnnotation instanceof RespectBindingAnnot) {
+                    RespectBindingAnnot respectBindingAnnot = (RespectBindingAnnot) checkAnnotation;
+                    enabled = respectBindingAnnot.enabled();
+                }
+            }
+        }
+        return enabled;
     }
 }

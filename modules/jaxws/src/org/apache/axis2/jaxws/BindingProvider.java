@@ -122,37 +122,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             }
         }
 
-        // See if the metadata from creating the service indicates that MTOM should be enabled
+        // See if the metadata from creating the service indicates that MTOM and/or RespectBinding should be enabled
         if (binding instanceof SOAPBinding) {
-            // MTOM can be enabled either at the ServiceDescription level (via the WSDL binding type) or
-            // at the EndpointDescription level via the binding type used to create a Dispatch.
-            boolean enableMTOMFromMetadata = false;
-            int mtomThreshold = 0;
-            
-            // if we have an SEI for the port, then we'll use it in order to search for MTOM configuration
-            if(endpointDesc.getEndpointInterfaceDescription() != null
-                    &&
-                    endpointDesc.getEndpointInterfaceDescription().getSEIClass() != null) {
-                enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate, 
-                                                                   endpointDesc.getEndpointInterfaceDescription().getSEIClass());
-                mtomThreshold = getMTOMThreshold(endpointDesc.getServiceDescription(), serviceDelegate,
-                        endpointDesc.getEndpointInterfaceDescription().getSEIClass());
-            }
-            else {
-                enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
-                // Threshold does not need to be set here based on the sparse composite (i.e. depolyment descriptor)
-                // since it can only be applied to a port injection (i.e. an SEI) using a DD.
-            }
-            if (!enableMTOMFromMetadata) {
-                String bindingType = endpointDesc.getClientBindingID();
-                enableMTOMFromMetadata = (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) || 
-                                          bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING));
-            }
-            
-            if (enableMTOMFromMetadata) {
-                ((SOAPBinding) binding).setMTOMEnabled(true);
-                ((SOAPBinding) binding).setMTOMThreshold(mtomThreshold);
-            }
+            configureBindingFromMetadata();
         }
                 
         // check for properties that need to be set on the BindingProvider
@@ -184,6 +156,55 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+
+    /**
+     * Configure the binding from the Metadata for MTOM and RespectBinding.
+     */
+    private void configureBindingFromMetadata() {
+        // MTOM can be enabled either at the ServiceDescription level (via the WSDL binding type) or
+        // at the EndpointDescription level via the binding type used to create a Dispatch.
+        boolean enableMTOMFromMetadata = false;
+        int mtomThreshold = 0;
+        boolean enableRespectBindingdFromMetadata = false;
+        
+        // if we have an SEI for the port, then we'll use it in order to search for MTOM configuration
+        if(endpointDesc.getEndpointInterfaceDescription() != null
+                &&
+                endpointDesc.getEndpointInterfaceDescription().getSEIClass() != null) {
+            enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate, 
+                                                               endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+            mtomThreshold = getMTOMThreshold(endpointDesc.getServiceDescription(), serviceDelegate,
+                    endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+
+            enableRespectBindingdFromMetadata = isRespectBindingEnabled(endpointDesc.getServiceDescription(), serviceDelegate,
+                    endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+        }
+        else {
+            enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
+            // Threshold & RespectBinding does not need to be set here based on the sparse composite (i.e. depolyment descriptor)
+            // since it can only be applied to a port injection (i.e. an SEI) using a DD.
+        }
+        if (!enableMTOMFromMetadata) {
+            String bindingType = endpointDesc.getClientBindingID();
+            enableMTOMFromMetadata = (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) || 
+                                      bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING));
+        }
+        
+        if (enableMTOMFromMetadata) {
+            ((SOAPBinding) binding).setMTOMEnabled(true);
+            ((SOAPBinding) binding).setMTOMThreshold(mtomThreshold);
+        }
+        
+        if (enableRespectBindingdFromMetadata) {
+            ((SOAPBinding) binding).setRespectBindingEnabled(true);
+        }
+    }
+
+    private boolean isRespectBindingEnabled(ServiceDescription serviceDescription, ServiceDelegate serviceDelegateKey, 
+            Class seiClass) {
+        boolean isEnabled = serviceDescription.isRespectBindingEnabled(serviceDelegateKey, seiClass);
+        return isEnabled;
     }
 
     private int getMTOMThreshold(ServiceDescription serviceDescription, ServiceDelegate serviceDelegate, Class seiClass) {
