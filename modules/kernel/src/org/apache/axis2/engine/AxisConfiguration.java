@@ -482,8 +482,8 @@ public class AxisConfiguration extends AxisDescription {
             if (log.isTraceEnabled()) {
                 //noinspection ThrowableInstanceNeverThrown
                 log.trace("After adding to allServices map, size is "
-                          + allServices.size(), 
-                          new Exception("AxisConfiguration.addToAllServicesMap called from"));
+                          + allServices.size() + " call stack is " + 
+                          JavaUtils.stackToString(new Exception()));
             }
 
         } else {
