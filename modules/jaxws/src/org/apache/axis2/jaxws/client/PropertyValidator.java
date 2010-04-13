@@ -20,10 +20,17 @@
 package org.apache.axis2.jaxws.client;
 
 import javax.xml.ws.BindingProvider;
+
+import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.HashMap;
 
 public class PropertyValidator {
 
+    private static final Log log = LogFactory.getLog(PropertyValidator.class);
+    
     private static HashMap<String, Class> map = new HashMap<String, Class>();
 
     static {
@@ -44,11 +51,30 @@ public class PropertyValidator {
      * @return
      */
     public static boolean validate(String propName, Object value) {
+        if (log.isDebugEnabled()) {
+            String valueText;
+            if (BindingProvider.USERNAME_PROPERTY.equals(propName) ||
+                BindingProvider.PASSWORD_PROPERTY.equals(propName)) {
+                valueText = "xxxxxx";
+            } else if (value == null) {
+                valueText = "null";
+            } else if (value instanceof String ||
+                       value instanceof Boolean ||
+                       value instanceof Integer) {
+                valueText = value.toString();
+            } else {
+                valueText = JavaUtils.getObjectIdentity(value);
+            }
+            log.debug("validate property=(" + propName  + ") with value=(" + valueText + ")");
+        }
         Class expectedType = map.get(propName);
         if (expectedType != null) {
             if (expectedType.equals(value.getClass())) {
                 return true;
             } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("  not a valid property.  Expected a value of type " + expectedType);
+                }
                 return false;
             }
         }
