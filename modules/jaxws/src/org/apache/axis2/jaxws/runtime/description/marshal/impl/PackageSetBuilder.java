@@ -786,7 +786,7 @@ public class PackageSetBuilder {
                             // Class.forName does not support primitives
                             Class cls = ClassUtils.getPrimitiveClass(className);
                             if (cls == null) {
-                                cls = forName(className, initialize, classloader);
+                                cls = Class.forName(className, initialize, classloader);
                             }
                             return cls;
                         }
