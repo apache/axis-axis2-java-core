@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description;
 import org.apache.axis2.jaxws.util.Constants;
 
 import javax.wsdl.Binding;
+import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
@@ -43,6 +44,7 @@ public interface EndpointDescriptionWSDL {
     public static final QName SOAP_12_ADDRESS_ELEMENT =
             new QName(Constants.URI_WSDL_SOAP12, "address");
 
+    public Definition getWSDLDefinition();
     public Service getWSDLService();
 
     public Port getWSDLPort();

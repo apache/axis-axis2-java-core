@@ -36,6 +36,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
+import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
@@ -87,6 +88,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -186,7 +188,7 @@ public class EndpointDescriptionImpl
     
     // ANNOTATION: @RespectBinding
     private Boolean respectBinding = false;
-    private List requiredBindings;
+    private Set<WSDLValidatorElement> requiredBindings = new HashSet<WSDLValidatorElement>();
     
     private Integer portCompositeIndex = null;
     
@@ -1661,16 +1663,11 @@ public class EndpointDescriptionImpl
     }
 
 
-    public boolean addRequiredBinding(QName name) {
-        if (requiredBindings == null)
-            requiredBindings = new ArrayList();
-
-        return requiredBindings.add(name);
+    public boolean addRequiredBinding(WSDLValidatorElement element) {
+      return requiredBindings.add(element);
     }
 
-    public List getRequiredBindings() {
-        if (requiredBindings == null)
-            requiredBindings = new ArrayList();
+    public Set<WSDLValidatorElement> getRequiredBindings() {
         return requiredBindings;
     }
 
@@ -1732,7 +1729,7 @@ public class EndpointDescriptionImpl
         }   
     }
     
-    private Definition getWSDLDefinition() {
+    public Definition getWSDLDefinition() {
         return ((ServiceDescriptionWSDL)getServiceDescription()).getWSDLDefinition();
     }
 

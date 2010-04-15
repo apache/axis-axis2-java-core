@@ -19,25 +19,41 @@
 
 package org.apache.axis2.jaxws.client.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.RespectBindingFeature;
+
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.binding.SOAPBinding;
+import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.validator.EndpointDescriptionValidator;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
-
-import javax.xml.ws.RespectBindingFeature;
+import org.apache.axis2.jaxws.util.WSDLExtensionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  */
 public class RespectBindingConfigurator implements ClientConfigurator {
-
+    private static final Log log = LogFactory.getLog(RespectBindingConfigurator.class);
     /*
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator#performConfiguration(org.apache.axis2.jaxws.core.MessageContext, org.apache.axis2.jaxws.spi.BindingProvider)
      */
     public void configure(MessageContext messageContext, BindingProvider provider) {
+        if(log.isDebugEnabled()){
+            log.debug("Invoking RespectBindingConfiguration.configure() on client");
+        }
         Binding bnd = (Binding) provider.getBinding();
         RespectBindingFeature respectBindingFeature =
             (RespectBindingFeature) bnd.getFeature(RespectBindingFeature.ID);
@@ -46,8 +62,31 @@ public class RespectBindingConfigurator implements ClientConfigurator {
             throw ExceptionFactory.makeWebServiceException(
                  Messages.getMessage("respectBindingNotSpecified"));
         }
-        if (respectBindingFeature.isEnabled()) {
-            //TODO Implementation required.
+        boolean isEnabled = respectBindingFeature.isEnabled();
+        if(isEnabled){
+            if(bnd instanceof SOAPBinding){
+                ((SOAPBinding)bnd).setRespectBindingEnabled(isEnabled);
+            }
+            //Get the wsdl document location, if wsdl is not found throw a WebservicesException.
+            //If wsdl is found, look for wsdl extensions.
+            EndpointDescription endpointDescription = provider.getEndpointDescription();
+            endpointDescription.setRespectBinding(isEnabled);
+            WSDLExtensionUtils.processExtensions(endpointDescription);
+            
+            //We have build up set of extensions from wsdl
+            //let go ahead and validate these extensions now.
+            EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDescription);
+             
+            boolean isEndpointValid = endpointValidator.validate(true);
+            //throw Exception if extensions are not understood by Engine.
+            if (!isEndpointValid) {
+                String msg = Messages.getMessage("endpointDescriptionValidationErrors",
+                                                 endpointValidator.toString());
+                throw ExceptionFactory.makeWebServiceException(msg);
+            }
+        }
+        if(log.isDebugEnabled()){
+            log.debug("Exit from RespectBindingConfiguration.configure() on client.");
         }
     }
 

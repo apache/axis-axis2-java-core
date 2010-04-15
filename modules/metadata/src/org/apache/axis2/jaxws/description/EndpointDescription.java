@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
@@ -31,6 +32,7 @@ import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * An EndpointDescription corresponds to a particular Service Implementation. It can correspond to
@@ -198,7 +200,7 @@ public interface EndpointDescription {
      * @param name
      * @return
      */
-    public boolean addRequiredBinding(QName name);
+    public boolean addRequiredBinding(WSDLValidatorElement element);
     
     /**
      * Returns a list of all known bindings that should be supported based
@@ -206,7 +208,7 @@ public interface EndpointDescription {
      * 
      * @return
      */
-    public List getRequiredBindings();
+    public Set<WSDLValidatorElement> getRequiredBindings();
     
     /**
      * Return the DescriptionBuilderComposite, if any, used to build this service description.

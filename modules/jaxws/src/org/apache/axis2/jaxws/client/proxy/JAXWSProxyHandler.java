@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.validator.EndpointDescriptionValidator;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
@@ -39,6 +40,7 @@ import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
+import org.apache.axis2.jaxws.util.WSDLExtensionUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -199,6 +201,23 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 int threshold = ((org.apache.axis2.jaxws.binding.SOAPBinding)bnd).getMTOMThreshold();
                 request.setProperty(org.apache.axis2.Constants.Configuration.MTOM_THRESHOLD, 
                         new Integer(threshold));
+            }
+            if (((org.apache.axis2.jaxws.binding.SOAPBinding)bnd).isRespectBindingEnabled()) {
+                //lets invoke Utility to configure RespectBinding.
+                EndpointDescription endpointDescription = getEndpointDescription();
+                endpointDescription.setRespectBinding(true);
+                WSDLExtensionUtils.processExtensions(endpointDescription);
+                //We have build up set of extensions from wsdl
+                //let go ahead and validate these extensions now.
+                EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDescription);
+                 
+                boolean isEndpointValid = endpointValidator.validate(true);
+                //throw Exception if extensions are not understood by Engine.
+                if (!isEndpointValid) {
+                    String msg = Messages.getMessage("endpointDescriptionValidationErrors",
+                                                     endpointValidator.toString());
+                    throw ExceptionFactory.makeWebServiceException(msg);
+                }
             }
         }
         

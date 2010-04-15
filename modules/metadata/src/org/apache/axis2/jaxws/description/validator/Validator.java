@@ -36,6 +36,22 @@ public abstract class Validator {
     private ValidationLevel validationLevel = ValidationLevel.FULL;
 
     abstract public boolean validate();
+    
+    /**
+     * This validate method gives us flexibility to bypass a validation from set of
+     * validation that we need to perform.
+     * For example we may skip RespectBinding Validation if this flag is set to
+     * false.
+     * performVaidation = false - Means validation can be bypassed.
+     * performVaidation = true - Means validation cannot be bypassed.
+     * @param performVaidation - When performVaidation is false we will bypass validation 
+     * @return
+     */
+    protected boolean validate(boolean performVaidation){
+        //override the implementation where necessary.
+        //return validation successful here. 
+        return true;
+    }
 
     void addValidationFailure(Validator failingValidator, String message) {
         validationFailures.add(failingValidator, message);

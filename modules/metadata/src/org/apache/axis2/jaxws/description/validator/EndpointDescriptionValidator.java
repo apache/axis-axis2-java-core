@@ -19,26 +19,27 @@
 
 package org.apache.axis2.jaxws.description.validator;
 
+import java.util.Set;
+
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
+
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
+import org.apache.axis2.jaxws.common.config.WSDLValidatorElement.State;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.impl.DescriptionUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
-
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.spi.WebServiceFeatureAnnotation;
-
-import java.lang.annotation.Annotation;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.axis2.jaxws.util.WSDLExtensionValidatorUtil;
 
 /**
  * 
@@ -54,8 +55,9 @@ public class EndpointDescriptionValidator extends Validator {
         endpointDescWSDL = (EndpointDescriptionWSDL)endpointDesc;
     }
 
-    public boolean validate() {
-
+    @Override
+    public boolean validate(boolean performValidation) {
+       
         if (getValidationLevel() == ValidationLevel.OFF) {
             return VALID;
         }
@@ -69,16 +71,21 @@ public class EndpointDescriptionValidator extends Validator {
             if (!validateWSDLBindingType()) {
                 return INVALID;
             }
-            
-            if (!validateRespectBinding()) {
-                return INVALID;
-            }
         }
-
+        //Perform this validation only if performValidaiton is marked true.
+        //RespectBinding Validation should happen on Server and client.
+        if (!validateRespectBinding(performValidation)) {
+            return INVALID;
+        }
+        
         if (!validateEndpointInterface()) {
             return INVALID;
         }
         return VALID;
+    }
+
+    public boolean validate() {
+        return validate(false);
     }
 
     private boolean validateWSDLBindingType() {
@@ -217,57 +224,64 @@ public class EndpointDescriptionValidator extends Validator {
     /*
      * If the @RespectBinding annotation is present, then we must also have a WSDL 
      */
-    private boolean validateRespectBinding() {
+    private boolean validateRespectBinding(boolean performValidation) {
+        //if we don't have to perform validation then return true.
+        if(!performValidation){
+            return Validator.VALID;
+        }
         // If a WSDL with a valid <wsdl:port> was present, then the WSDL is considered
         // fully specified.  Without that, the @RespectBinding annotation is invalid.
         if (endpointDesc.respectBinding()) {
             String wsdlLocation = null;
-            if (!endpointDesc.isProviderBased()) {
-                wsdlLocation = endpointDescJava.getAnnoWebServiceWSDLLocation();
-            }
-            else {
-                wsdlLocation = endpointDescJava.getAnnoWebServiceProvider().wsdlLocation();
-            }
-            
-            if (wsdlLocation == null || wsdlLocation.length() == 0) {
-                addValidationFailure(this, "Annotation @RespectBinding requires that a WSDL file be specified.");    
-                return Validator.INVALID;
+            if(endpointDesc.getServiceDescription().isServerSide()){
+                if (!endpointDesc.isProviderBased()) {
+                    wsdlLocation = endpointDescJava.getAnnoWebServiceWSDLLocation();
+                }
+                else {
+                    wsdlLocation = endpointDescJava.getAnnoWebServiceProvider().wsdlLocation();
+                }
+                
+                if (wsdlLocation == null || wsdlLocation.length() == 0) {
+                    addValidationFailure(this, "Annotation @RespectBinding requires that a WSDL file be specified.");    
+                    return Validator.INVALID;
+                }
             }
             
             // We will validate the configured bindings based on their mapping
             // to a known WebServiceFeature element.  If there is not a WebServiceFeature
             // annotation for a given binding, a validation error will be returned.
-            List required = endpointDesc.getRequiredBindings();
-            if (required.size() > 0) {
-                Iterator i = required.iterator();
-                while (i.hasNext()) {
-                    QName name = (QName) i.next();
-                    String featureName = getFeatureForBinding(name);
-                    if (featureName != null && featureName.length() > 0) {
-                        EndpointDescriptionJava edj = (EndpointDescriptionJava) endpointDesc;
-                        Annotation anno = edj.getAnnoFeature(featureName);
-                        WebServiceFeatureAnnotation feature = getFeatureFromAnnotation(anno);
-                        
-                        if (feature == null) {
-                            addValidationFailure(this, "Annotation @RespectBinding was enabled, but the " +
-                                        "corresponding feature " + featureName + " was not enabled.");
-                            return Validator.INVALID;                            
-                        }
-                    }
-                    else {
-                       addValidationFailure(this, "Annotation @RespectBinding was enabled, but extensibility element " +
-                           name + " was not recognized.");
-                       return Validator.INVALID;
-                    }                    
+            Set<WSDLValidatorElement> extensionSet = endpointDesc.getRequiredBindings();
+            Definition wsdlDefinition = endpointDescWSDL.getWSDLDefinition();
+            AxisConfiguration axisConfiguration = endpointDesc.getServiceDescription().getAxisConfigContext().getAxisConfiguration();
+            
+            //This call will update the extensionSet with extension elements that are undersood by engine.
+            WSDLExtensionValidatorUtil.performValidation(axisConfiguration , extensionSet, wsdlDefinition, endpointDesc);
+            
+            //lets check here if there are any extension calls that fail validation.
+            WSDLValidatorElement[] elements = extensionSet.toArray(new WSDLValidatorElement[0]);
+            for(WSDLValidatorElement element:elements) {
+                State state = element.getState();
+                if(state  == State.NOT_SUPPORTED){
+                    QName type = element.getExtensionElement().getElementType();
+                    addValidationFailure(this, "Annotation @RespectBinding was enabled, but the " +
+                        "Extension Element " + type  + " is not supported.");
+                    return Validator.INVALID;  
                 }
-                 
+                if(state == State.NOT_RECOGNIZED){
+                    QName type = element.getExtensionElement().getElementType();
+                    addValidationFailure(this, "Annotation @RespectBinding was enabled, but the " +
+                        "Extension Element " + type  + " is not Recognized.");
+                    return Validator.INVALID;  
+                }  
+                if(state == State.ERROR){
+                    QName type = element.getExtensionElement().getElementType();
+                    addValidationFailure(this, "Annotation @RespectBinding was enabled, but following " +
+                        "Error occured while processing the Extension Element " + type  + " "+element.getErrorMessage());
+                    return Validator.INVALID;  
+                }   
             }
-        }        
+         }        
         return Validator.VALID;
-    }
-    
-    private WebServiceFeatureAnnotation getFeatureFromAnnotation(Annotation a) {
-        return a.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
     }
     
     private static String bindingHumanReadableDescription(String ns) {
@@ -291,15 +305,6 @@ public class EndpointDescriptionValidator extends Validator {
             return "XML HTTP Binding";
         } else {
             return "Unknown Binding";
-        }
-    }
-    
-    private static String getFeatureForBinding(QName name) {
-        if (name.equals(new QName("http://www.w3.org/2006/05/addressing/wsdl", "UsingAddressing"))) {
-            return AddressingFeature.ID;
-        }
-        else {
-            return null;
         }
     }
 }

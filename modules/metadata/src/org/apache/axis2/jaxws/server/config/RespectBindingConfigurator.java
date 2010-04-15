@@ -19,24 +19,37 @@
 
 package org.apache.axis2.jaxws.server.config;
 
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
-import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
-import org.apache.axis2.jaxws.feature.ServerConfigurator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.WSDLElement;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.xml.namespace.QName;
 import javax.xml.ws.RespectBinding;
 import javax.xml.ws.RespectBindingFeature;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
+import org.apache.axis2.jaxws.common.config.WSDLValidatorElement.State;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
+import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
+import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.axis2.jaxws.util.WSDLExtensionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An implementation of the <code>ServerConfigurator</code> interface that will
@@ -66,58 +79,15 @@ public class RespectBindingConfigurator implements ServerConfigurator {
             // have the "required" flag set to true.
             EndpointDescriptionWSDL edw = (EndpointDescriptionWSDL) endpointDescription;
             Binding bnd = edw.getWSDLBinding();
-            if (bnd != null) {
-                List l = bnd.getExtensibilityElements();
-                if (l == null || l.size() == 0) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("No extensibility elements found.");
-                    }
-                }
-                else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Checking list of " + l.size() + " extensibility elements for required bindings.");
-                    }
-                    
-                    Iterator i = l.iterator();
-                    List unusedElements = new ArrayList();
-                    while (i.hasNext()) {
-                        ExtensibilityElement e = (ExtensibilityElement) i.next();
-                        if (e instanceof SOAPBinding || e instanceof SOAP12Binding)
-                            continue;
-                        
-                        if (e instanceof UnknownExtensibilityElement) {
-                            UnknownExtensibilityElement ue = (UnknownExtensibilityElement) e;
-                            String reqd = ue.getElement().getAttribute("required");
-                            if (reqd.equals("true") || reqd.equals("TRUE")) {
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Found a required element: " + e.getElementType());
-                                }
-                                endpointDescription.addRequiredBinding(e.getElementType());
-                            }
-                            else {
-                                unusedElements.add(e.getElementType());
-                            }
-                        }
-                        else {
-                            if (e.getRequired() != null && e.getRequired()) {
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Found a required element: " + e.getElementType());
-                                }
-                                endpointDescription.addRequiredBinding(e.getElementType());
-                            }
-                            else {
-                                unusedElements.add(e.getElementType());
-                            }                            
-                        }
-
-                    }
-                    
-                    if (log.isDebugEnabled()) {
-                        log.debug("The following extensibility elements were found, but were not required.");
-                        for (int n = 0; n < unusedElements.size(); ++n)
-                            log.debug("[" + i + "] - " + unusedElements.get(n));
-                    }
-                }
+            Set<WSDLValidatorElement> requiredExtension = endpointDescription.getRequiredBindings();
+            List<QName> unusedExtensions = new ArrayList<QName>();
+            //invoke the search algorithm.
+            WSDLExtensionUtils.search(bnd, requiredExtension, unusedExtensions);
+                   
+            if (log.isDebugEnabled()) {
+                log.debug("The following extensibility elements were found, but were not required.");
+                for (int n = 0; n < unusedExtensions.size(); ++n)
+                    log.debug("[" + (n + 1) + "] - " + unusedExtensions.get(n));
             }
         }
         else {
@@ -126,7 +96,6 @@ public class RespectBindingConfigurator implements ServerConfigurator {
             }
         }
     }
-    
     /*
      * (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.ServerConfigurator#supports(java.lang.String)

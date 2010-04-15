@@ -228,12 +228,12 @@ public class DescriptionFactoryImpl {
         }
         return serviceDesc;
     }
-
+    
     /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromDBCMap(HashMap) */
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
-            HashMap<String, DescriptionBuilderComposite> dbcMap, ConfigurationContext configContext) {
+            HashMap<String, DescriptionBuilderComposite> dbcMap, ConfigurationContext configContext, boolean performVaidation) {
         if (log.isDebugEnabled()) {
-            log.debug("createServiceDescriptionFromDBCMap(Hashmap<String,DescriptionBuilderComposite>,ConfigurationContext " );
+            log.debug("createServiceDescriptionFromDBCMap(Hashmap<String,DescriptionBuilderComposite>,ConfigurationContext,boolean isValid " );
         }
 
         List<ServiceDescription> serviceDescriptionList = new ArrayList<ServiceDescription>();
@@ -242,7 +242,6 @@ public class DescriptionFactoryImpl {
             DescriptionBuilderComposite serviceImplComposite = nameIter.next();
             if (isImpl(serviceImplComposite)) {
                 // process this impl class
-                
                 // the implementation class represented by this DBC represents a single wsdl:service 
                 Set<QName> sQNames = serviceImplComposite.getServiceQNames();
                 if(sQNames == null
@@ -256,7 +255,7 @@ public class DescriptionFactoryImpl {
                                                                                            dbcMap, serviceImplComposite, configContext);
                     ServiceDescriptionValidator validator =
                         new ServiceDescriptionValidator(serviceDescription);
-                    if (validator.validate()) {
+                    if (validator.validate(performVaidation)) {
                         serviceDescriptionList.add(serviceDescription);
                         if (log.isDebugEnabled()) {
                             log.debug("Service Description created from DescriptionComposite: " +
@@ -286,7 +285,7 @@ public class DescriptionFactoryImpl {
                                                                                                sQName);
                         ServiceDescriptionValidator validator =
                             new ServiceDescriptionValidator(serviceDescription);
-                        if (validator.validate()) {
+                        if (validator.validate(performVaidation)) {
                             serviceDescriptionList.add(serviceDescription);
                             if (log.isDebugEnabled()) {
                                 log.debug("Service Description created from DescriptionComposite: " +
@@ -316,6 +315,16 @@ public class DescriptionFactoryImpl {
         // should be processed by themselves, and at this level
 
         return serviceDescriptionList;
+    }
+
+    /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromDBCMap(HashMap) */
+    public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
+            HashMap<String, DescriptionBuilderComposite> dbcMap, ConfigurationContext configContext) {
+        if (log.isDebugEnabled()) {
+            log.debug("createServiceDescriptionFromDBCMap(Hashmap<String,DescriptionBuilderComposite>,ConfigurationContext " );
+        }
+        return createServiceDescriptionFromDBCMap(dbcMap, configContext, false);
+        
     }
 
     /**

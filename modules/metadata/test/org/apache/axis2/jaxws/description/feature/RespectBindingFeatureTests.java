@@ -20,12 +20,17 @@
 package org.apache.axis2.jaxws.description.feature;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.jaxws.common.config.AddressingWSDLExtensionValidator;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.jaxws.util.WSDLExtensionValidatorUtil;
+import org.apache.axis2.util.JavaUtils;
 
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
@@ -68,7 +73,7 @@ public class RespectBindingFeatureTests extends TestCase {
         
         List<ServiceDescription> sdList = null;
         try {
-            sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+            sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map, null, true);
         }
         catch (Exception e) {
             // An exception is expected.
@@ -89,7 +94,7 @@ public class RespectBindingFeatureTests extends TestCase {
         composite.setwsdlURL(wsdlUrl);
         composite.setWsdlDefinition(wrapper.getDefinition());
         
-        List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+        List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map, null, true);
         ServiceDescription sd = sdList.get(0);
         
         EndpointDescription ed = sd.getEndpointDescription(new QName(ns, disabledServicePortName));
@@ -113,7 +118,7 @@ public class RespectBindingFeatureTests extends TestCase {
         
         List<ServiceDescription> sdList = null;
         try {
-            sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+            sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map, null, true);
         }
         catch (Exception e) {
             // An exception is expected.
@@ -128,15 +133,31 @@ public class RespectBindingFeatureTests extends TestCase {
         
         DescriptionBuilderComposite composite = map.get(CompleteService.class.getName());
         
+        
+        //Register 
         URL wsdlUrl = new URL("file:./" + wsdlLocation);
         WSDL4JWrapper wrapper = new WSDL4JWrapper(wsdlUrl, false, 0);
         
         composite.setwsdlURL(wsdlUrl);
         composite.setWsdlDefinition(wrapper.getDefinition());
+        ConfigurationContext configCtx = null;
         
-        List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+        //Create ConfigContext here, we need it so we can register the WSDLAddressingExtensionValditor.
+        try{
+            List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map, null, false);
+            ServiceDescription sd = sdList.get(0);
+            sd.getAxisConfigContext();
+            //Register Addressing WSDL Extensions
+            configCtx = sd.getAxisConfigContext();
+            WSDLExtensionValidatorUtil.addWSDLExtensionValidator(configCtx, new AddressingWSDLExtensionValidator());
+        }catch(Exception e){
+            String stack = JavaUtils.callStackToString();
+            fail(e.getMessage() + " \n stack trace = "+stack);
+        }
+        
+        //Create ServiceDescription
+        List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map, configCtx, true);
         ServiceDescription sd = sdList.get(0);
-        
         EndpointDescription ed = sd.getEndpointDescription(new QName(ns, completeServicePortName));
         assertTrue("The EndpointDescription should not be null.", ed != null);
 

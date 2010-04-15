@@ -49,25 +49,30 @@ public class ServiceDescriptionValidator extends Validator {
      * @return true if the ServiceDescription is valid
      */
     public boolean validate() {
+        return validate(false);
+    }
+
+    @Override
+    public boolean validate(boolean performValidation) {
         if (getValidationLevel() == ValidationLevel.OFF) {
             return VALID;
         }
 
-        if (!validateEndpointDescriptions()) {
+        if (!validateEndpointDescriptions(performValidation)) {
             return INVALID;
         }
 
         return VALID;
     }
 
-    private boolean validateEndpointDescriptions() {
+    private boolean validateEndpointDescriptions(boolean performValidation) {
         boolean areAllValid = true;
         // Validate all the Endpoints that were created under this Service Description
         Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
         for (EndpointDescription endpointDesc:endpointDescs) {
             EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
 
-            boolean isEndpointValid = endpointValidator.validate();
+            boolean isEndpointValid = endpointValidator.validate(performValidation);
             if (!isEndpointValid) {
                 addValidationFailure(endpointValidator, "Endpoint failed validation");
                 areAllValid = false;
