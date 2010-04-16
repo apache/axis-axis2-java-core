@@ -23,9 +23,10 @@ import java.lang.annotation.Annotation;
 
 public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper {
 
-    private String localName;
-    private String targetNamespace;
-    private String className;
+    private String localName = "";
+    private String targetNamespace = "";
+    private String className = "";
+    private String partName = "";
 
 
     /** A RequestWrapperAnnot cannot be instantiated. */
@@ -37,9 +38,18 @@ public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper {
             String localName,
             String targetNamespace,
             String className) {
+        this(localName, targetNamespace, className, "");
+    }
+
+    private RequestWrapperAnnot(
+            String localName,
+            String targetNamespace,
+            String className,
+	    String partName) {
         this.localName = localName;
         this.targetNamespace = targetNamespace;
         this.className = className;
+	this.partName = partName;
     }
 
     public static RequestWrapperAnnot createRequestWrapperAnnotImpl() {
@@ -56,6 +66,17 @@ public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper {
                                        className);
     }
 
+    public static RequestWrapperAnnot createRequestWrapperAnnotImpl(
+            String localName,
+            String targetNamespace,
+            String className,
+	    String partName
+    ) {
+        return new RequestWrapperAnnot(localName,
+                                       targetNamespace,
+                                       className,
+				       partName);
+    }
 
     /** @return Returns the name. */
     public String localName() {
@@ -72,6 +93,11 @@ public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper {
         return this.className;
     }
 
+    /** @return Returns the partName. */
+    public String partName() {
+        return this.partName;
+    }
+
     /** @param name The name to set. */
     public void setLocalName(String localName) {
         this.localName = localName;
@@ -85,6 +111,11 @@ public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper {
     /** @param wsdlLocation The wsdlLocation to set. */
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    /** @param partName The name of the wsdl:part. */
+    public void setPartName(String partName) {
+        this.partName = partName;
     }
 
     //hmm, should we really do this
@@ -105,6 +136,8 @@ public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper {
         sb.append("@RequestWrapper.className= " + className);
         sb.append(newLine);
         sb.append("@RequestWrapper.targetNamespace= " + targetNamespace);
+        sb.append(newLine);
+        sb.append("@RequestWrapper.partName= " + partName);
         sb.append(newLine);
         return sb.toString();
 	}

@@ -20,12 +20,14 @@
 package org.apache.axis2.jaxws.description.builder;
 
 import javax.xml.ws.soap.Addressing;
+import javax.xml.ws.soap.AddressingFeature;
 import java.lang.annotation.Annotation;
 
 public class AddressingAnnot implements Addressing {
 
     private boolean enabled = true;
     private boolean required;
+    private AddressingFeature.Responses responses = AddressingFeature.Responses.ALL;
     
     public boolean enabled() {
         return enabled;
@@ -43,6 +45,14 @@ public class AddressingAnnot implements Addressing {
         required = r;
     }
 
+    public AddressingFeature.Responses responses() {
+      return responses;
+    }
+    
+    public void setResponses(AddressingFeature.Responses r) {
+      responses = r;
+    }
+    
     public Class<? extends Annotation> annotationType() {
         return Addressing.class;
     }

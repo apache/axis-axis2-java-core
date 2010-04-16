@@ -28,6 +28,7 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
     private Class type;
     private Class value;
     private String mappedName = "";
+    private String lookup = "";
     
     // TODO: Remove the String versions of the Class attributes when the associated deprecated 
     // methods are removed.
@@ -44,12 +45,23 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
             String wsdlLocation,
             Class type,
             Class value,
-            String mappedName) {
+            String mappedName,
+	    String lookup) {
         this.name = name;
         this.wsdlLocation = wsdlLocation;
         this.type = type;
         this.value = value;
         this.mappedName = mappedName;
+	this.lookup = lookup;
+    }
+
+    private WebServiceRefAnnot(
+            String name,
+            String wsdlLocation,
+            Class type,
+            Class value,
+            String mappedName) {
+        this(name, wsdlLocation, type, value, mappedName, "");
     }
 
     /**
@@ -91,11 +103,27 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
             Class type,
             Class value,
             String mappedName) {
+
         return new WebServiceRefAnnot(name,
                                       wsdlLocation,
                                       type,
                                       value,
                                       mappedName);
+    }
+
+    public static WebServiceRefAnnot createWebServiceRefAnnotImpl(
+            String name,
+            String wsdlLocation,
+            Class type,
+            Class value,
+            String mappedName,
+            String lookup) {
+        return new WebServiceRefAnnot(name,
+                                      wsdlLocation,
+                                      type,
+                                      value,
+                                      mappedName,
+				      lookup);
     }
 
     /**
@@ -158,6 +186,11 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
         return wsdlLocation;
     }
 
+    /** @return Returns the lookup. */
+    public String lookup() {
+        return lookup;
+    }
+
     /** 
      * @deprecated Use {@link #type()} 
      * @return Returns the typeString. 
@@ -203,6 +236,11 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
         return wsdlLocation;
     }
 
+    /** @param lookup A portable JNDI lookup name that resolves to the target web service reference. */
+    public void setLookup(String lookup) {
+        this.lookup = lookup;
+    }
+
     /** 
      * @deprecated Use {@link #setType(Class)}
      * @param typeString The typeString to set. */
@@ -242,6 +280,8 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
         sb.append("@WebServiceRef.valueString= " + valueString);
         sb.append(newLine);
         sb.append("@WebServiceRef.value= " + ((value != null) ? value.toString() : null));
+        sb.append(newLine);
+        sb.append("@WebServiceRef.lookup= " + lookup);
         sb.append(newLine);
         return sb.toString();
 	}

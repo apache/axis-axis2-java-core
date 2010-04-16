@@ -26,6 +26,7 @@ public class WebFaultAnnot implements javax.xml.ws.WebFault {
     private String name = "return";
     private String targetNamespace = "";
     private String faultBean = "";
+    private String messageName = "";
 
     /** A WebFaultAnnot cannot be instantiated. */
     private WebFaultAnnot() {
@@ -53,6 +54,10 @@ public class WebFaultAnnot implements javax.xml.ws.WebFault {
         return this.faultBean;
     }
 
+    public String messageName() {
+        return this.messageName;
+    }
+
     /** @param faultBean The faultBean to set. */
     public void setFaultBean(String faultBean) {
         this.faultBean = faultBean;
@@ -66,6 +71,11 @@ public class WebFaultAnnot implements javax.xml.ws.WebFault {
     /** @param targetNamespace The targetNamespace to set. */
     public void setTargetNamespace(String targetNamespace) {
         this.targetNamespace = targetNamespace;
+    }
+
+    /** @param messageName The name of the wsdl:message. */
+    public void setMessageName(String messageName) {
+        this.messageName = messageName;
     }
 
     public Class<Annotation> annotationType() {
@@ -82,6 +92,8 @@ public class WebFaultAnnot implements javax.xml.ws.WebFault {
         sb.append("@WebFault.faultBean= " + faultBean);
         sb.append(newLine);
         sb.append("@WebFault.targetNamespace= " + targetNamespace);
+        sb.append(newLine);
+        sb.append("@WebFault.messageName= " + messageName);
         sb.append(newLine);
         return sb.toString();
     }
