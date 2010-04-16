@@ -85,8 +85,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     private HandlerResolver handlerResolver = null;
     
-    private WebServiceFeature[] features = null;
-    
     /**
      * NON-STANDARD SPI! Set any metadata to be used on the creation of the NEXT Service by this thread.
      * NOTE that this uses ThreadLocal to store the metadata, and that ThreadLocal is cleared after it is
@@ -200,12 +198,17 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     public ServiceDelegate(URL url, QName qname, Class clazz, WebServiceFeature... features) throws WebServiceException {
         super();
         this.serviceQname = qname;
-        this.features = features;
 
         if (!isValidServiceName()) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
         }
+        
+        if ((features != null) && (features.length != 0)) {
+          throw ExceptionFactory
+                  .makeWebServiceException(Messages.getMessage("serviceDelegateConstruct2", serviceQname.toString()));
+        }
+        
         // Get any metadata that is to be used to build up this service, then reset it so it isn't used
         // to create any other services.
         DescriptionBuilderComposite sparseComposite = getServiceMetadata();
@@ -266,7 +269,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     */
     public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Mode mode)
             throws WebServiceException {
-        return createDispatch(portName, type, mode, (WebServiceFeature[]) features);
+        return createDispatch(portName, type, mode, (WebServiceFeature[]) null);
     }
 
     /*
@@ -274,7 +277,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, javax.xml.bind.JAXBContext, javax.xml.ws.Service.Mode)
     */
     public Dispatch<java.lang.Object> createDispatch(QName portName, JAXBContext context, Mode mode) {
-        return createDispatch(portName, context, mode, (WebServiceFeature[]) features);
+        return createDispatch(portName, context, mode, (WebServiceFeature[]) null);
     }
 
     @Override
@@ -500,7 +503,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * @see javax.xml.ws.spi.ServiceDelegate#getPort(java.lang.Class)
      */
     public <T> T getPort(Class<T> sei) throws WebServiceException {
-        return getPort((QName) null, sei, (WebServiceFeature[]) features);
+        return getPort((QName) null, sei, (WebServiceFeature[]) null);
     }
 
     /*
@@ -508,7 +511,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#getPort(javax.xml.namespace.QName, java.lang.Class)
     */
     public <T> T getPort(QName portName, Class<T> sei) throws WebServiceException {
-        return getPort(portName, sei, (WebServiceFeature[]) features);
+        return getPort(portName, sei, (WebServiceFeature[]) null);
     }
 
     @Override
