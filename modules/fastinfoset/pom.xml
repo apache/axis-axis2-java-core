@@ -169,13 +169,32 @@
                     <execution>
                         <phase>generate-test-resources</phase>
                         <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.axis2</groupId>
+                                    <artifactId>addressing</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>mar</type>
+                               </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/repo/modules</outputDirectory>
+                        </configuration>
+                        <!-- The following configuration doesn't work as expected if the addressing module
+                             is part of the same reactor build. Probably this is due to the fact that in
+                             this case, maven-dependency-plugin tries to retrieve the artifact from the
+                             module (instead of the local repository) but fails to do so because it doesn't
+                             know how to construct a MAR file. -->
+                        <!-- goals>
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/modules</outputDirectory>
                             <includeTypes>mar</includeTypes>
                             <includeScopes>test</includeScopes>
-                        </configuration>
+                        </configuration -->
                     </execution>
                 </executions>
             </plugin>
