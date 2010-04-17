@@ -571,7 +571,9 @@
                 throw f;
             }
             } finally {
-                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                if (_messageContext.getTransportOut() != null) {
+                      _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                }
             }
         }
             </xsl:if>
@@ -1098,11 +1100,15 @@
                       throw f;
                   }
               } finally {
-                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                if (_messageContext.getTransportOut() != null) {
+                      _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                }
               }
            </xsl:if>
            <xsl:if test="not($mep='11')">
-              _messageContext.getTransportOut().getSender().cleanup(_messageContext); 
+              if (_messageContext.getTransportOut() != null) {
+                      _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+              }
            </xsl:if>
              return;
            }
