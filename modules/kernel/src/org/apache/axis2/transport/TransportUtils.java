@@ -169,27 +169,7 @@ public class TransportUtils {
         OMElement documentElement = null;
         String type = null;
         if (contentType != null) {
-            int index = contentType.indexOf(';');
-            if (index > 0) {
-                type = contentType.substring(0, index);
-            } else {
-                type = contentType;
-            }
-            // Some services send REST responces as text/xml. We should convert it to
-            // application/xml if its a REST response, if not it will try to use the SOAPMessageBuilder.
-            // isDoingREST should already be properly set by HTTPTransportUtils.initializeMessageContext
-            if (msgContext.isDoingREST() && HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(type)) {
-//            if (HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(type)) {
-                if (msgContext.isServerSide()) {
-                    if (msgContext.getSoapAction() == null) {
-                        type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
-                    }
-//                } else if (msgContext.isDoingREST() &&
-//                        !msgContext.isPropertyTrue(Constants.Configuration.SOAP_RESPONSE_MEP)) {
-                } else if (!msgContext.isPropertyTrue(Constants.Configuration.SOAP_RESPONSE_MEP)) {
-                    type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
-                }
-            }
+            type = getContentType(contentType, msgContext);
             Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
             if (builder != null) {
 	            if (log.isDebugEnabled()) {
@@ -219,6 +199,29 @@ public class TransportUtils {
             }
         }
         return documentElement;
+    }
+
+    public static String getContentType(String contentType, MessageContext msgContext) {
+        String type;
+        int index = contentType.indexOf(';');
+        if (index > 0) {
+            type = contentType.substring(0, index);
+        } else {
+            type = contentType;
+        }
+        // Some services send REST responces as text/xml. We should convert it to
+        // application/xml if its a REST response, if not it will try to use the SOAPMessageBuilder.
+        // isDoingREST should already be properly set by HTTPTransportUtils.initializeMessageContext
+        if (msgContext.isDoingREST() && HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(type)) {
+            if (msgContext.isServerSide()) {
+                if (msgContext.getSoapAction() == null) {
+                    type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+                }
+            } else if (!msgContext.isPropertyTrue(Constants.Configuration.SOAP_RESPONSE_MEP)) {
+                type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+            }
+        }
+        return type;
     }
 
     /**

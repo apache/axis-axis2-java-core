@@ -110,6 +110,7 @@ public class RESTUtil {
             SOAPEnvelope soapEnvelope;
             if (msgContext.getAxisService() == null) {
                 soapEnvelope = TransportUtils.createSOAPEnvelope(null);
+                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, TransportUtils.getContentType(contentType, msgContext));
             } else {
                 try {
                     soapEnvelope = TransportUtils.createSOAPMessage(msgContext, null, contentType);
