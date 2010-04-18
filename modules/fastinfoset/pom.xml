@@ -186,7 +186,8 @@
                              is part of the same reactor build. Probably this is due to the fact that in
                              this case, maven-dependency-plugin tries to retrieve the artifact from the
                              module (instead of the local repository) but fails to do so because it doesn't
-                             know how to construct a MAR file. -->
+                             know how to construct a MAR file. See http://jira.codehaus.org/browse/MDEP-259
+                             for more details. -->
                         <!-- goals>
                             <goal>copy-dependencies</goal>
                         </goals>
