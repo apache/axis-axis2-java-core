@@ -373,6 +373,17 @@ public class Utils {
         return moduleName;
     }
 
+    private static final String ILLEGAL_CHARACTERS = "/\n\r\t\0\f`?*\\<>|\":";
+    public static boolean isValidModuleName(String moduleName) {
+        for (int i = 0; i < moduleName.length(); i++) {
+            char c = moduleName.charAt(i);
+            if ((c > 127) || (ILLEGAL_CHARACTERS.indexOf(c) >= 0)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * - if he trying to engage the same module then method will returen false
      * - else it will return true
@@ -652,6 +663,11 @@ public class Utils {
     public static String getURIScheme(String uri) {
         int index = uri.indexOf(':');
         return index > 0 ? uri.substring(0, index) : null;
+    }
+
+    public static String sanitizeWebOutput(String text) {
+        text = text.replaceAll("<", "&lt;");
+        return text;
     }
     
     /**
