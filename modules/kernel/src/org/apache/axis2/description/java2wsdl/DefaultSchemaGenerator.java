@@ -511,9 +511,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             eltOuter.setQName(schemaTypeName);
 
             Class<?> sup = javaType.getSuperclass();
-            if ((sup != null) && !("java.lang.Object".compareTo(sup.getName()) == 0) &&
-                    !(getQualifiedName(sup.getPackage()).indexOf("org.apache.axis2") > 0)
-                    && !(getQualifiedName(sup.getPackage()).indexOf("java.util") > 0))
+            if ((sup != null) && ("java.lang.Object".compareTo(sup.getName()) != 0) &&
+                    (getQualifiedName(sup.getPackage()).indexOf("org.apache.axis2") < 0)
+                    && (getQualifiedName(sup.getPackage()).indexOf("java.util") < 0))
             {
                 String superClassName = sup.getName();
                 String superclassname = getSimpleClassName(sup);
