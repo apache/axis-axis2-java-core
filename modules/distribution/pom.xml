@@ -224,36 +224,33 @@
             </plugin>
             <plugin>
                 <!-- This generates the modules.list and services.list files -->
-                <groupId>org.apache.geronimo.genesis.plugins</groupId>
-                <artifactId>script-maven-plugin</artifactId>
-                <version>1.1</version>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
                         <goals>
-                            <goal>groovy</goal>
+                            <goal>execute</goal>
                         </goals>
                         <configuration>
                             <source>
-                                <body>
-                                    def modulesdir = new File(project.build.directory, "tmp-repository/modules");
-                                    def moduleslist = new File(modulesdir, "modules.list");
-                                    moduleslist.delete();
-                                    modulesdir.eachFile({
-                                        if (it.name.endsWith(".mar")) {
-                                            moduleslist.append("$it.name\n");
-                                        }
-                                    })
-                                    
-                                    def servicesdir = new File(project.build.directory, "tmp-repository/services");
-                                    def serviceslist = new File(servicesdir, "services.list");
-                                    serviceslist.delete();
-                                    servicesdir.eachFile({
-                                        if (it.name.endsWith(".aar")) {
-                                            serviceslist.append("$it.name\n");
-                                        }
-                                    })
-                                </body>
+                                def modulesdir = new File(project.build.directory, "tmp-repository/modules");
+                                def moduleslist = new File(modulesdir, "modules.list");
+                                moduleslist.delete();
+                                modulesdir.eachFile({
+                                    if (it.name.endsWith(".mar")) {
+                                        moduleslist.append("$it.name\n");
+                                    }
+                                })
+                                
+                                def servicesdir = new File(project.build.directory, "tmp-repository/services");
+                                def serviceslist = new File(servicesdir, "services.list");
+                                serviceslist.delete();
+                                servicesdir.eachFile({
+                                    if (it.name.endsWith(".aar")) {
+                                        serviceslist.append("$it.name\n");
+                                    }
+                                })
                             </source>
                         </configuration>
                     </execution>

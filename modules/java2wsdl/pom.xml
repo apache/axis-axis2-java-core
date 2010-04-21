@@ -158,7 +158,6 @@
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.2</version>
                 <executions>
                     <execution>
                         <phase>test</phase>
