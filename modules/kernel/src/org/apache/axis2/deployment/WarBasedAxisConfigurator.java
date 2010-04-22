@@ -137,7 +137,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     // Simple deployment, no need for conf directory either
                     axis2Stream = config.getServletContext()
                             .getResourceAsStream("/WEB-INF/axis2.xml");
-                    log.debug("trying to load axis2.xml from module: /WEB-INF/conf/axis2.xml");
+                    log.debug("trying to load axis2.xml from module: /WEB-INF/axis2.xml");
                 }
             } // try
             catch (Exception e) {
