@@ -143,15 +143,15 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-			  <artifactItems>
-			    <artifactItem>
-			      <groupId>org.apache.geronimo.specs</groupId>
-			      <artifactId>geronimo-jaxws_2.2_spec</artifactId>
-			      <type>jar</type>
-			      <overWrite>true</overWrite>
-			      <outputDirectory>target/endorsed</outputDirectory>
-			    </artifactItem>
-			  </artifactItems>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-jaxws_2.2_spec</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/endorsed</outputDirectory>
+                                 </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
@@ -257,6 +257,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
+                    <argLine>
+                        -Xbootclasspath/p:${basedir}/target/endorsed/geronimo-jaxws_2.2_spec-1.0-SNAPSHOT.jar   
+                    </argLine>
                     <includes>
                         <include>**/*Tests.java</include>
                     </includes>

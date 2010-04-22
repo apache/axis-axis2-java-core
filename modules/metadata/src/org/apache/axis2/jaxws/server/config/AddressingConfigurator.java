@@ -38,6 +38,7 @@ import org.apache.axis2.util.Utils;
 
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.AddressingFeature.Responses;
 
 /**
  * This class will enable/disable WS-Addressing for a JAX-WS 2.1 web service
@@ -62,6 +63,7 @@ public class AddressingConfigurator implements ServerConfigurator {
     	Parameter namespace = new Parameter(AddressingConstants.WS_ADDRESSING_VERSION, null);
     	Parameter disabled = new Parameter(AddressingConstants.DISABLE_ADDRESSING_FOR_IN_MESSAGES, "false");
     	Parameter required = new Parameter(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER, AddressingConstants.ADDRESSING_UNSPECIFIED);
+    	Parameter responses = null;
     	
     	if (addressing != null && submissionAddressing != null) {
             //Both annotations must have been specified.
@@ -127,11 +129,21 @@ public class AddressingConfigurator implements ServerConfigurator {
                  Messages.getMessage("NoWSAddressingFeatures"));
     	}
     	
+    	// If the Addressing annotation was used, then get the responses value from it and map it to the 
+    	// value the addressing handler expects
+    	if (addressing != null) {
+    	    responses = new Parameter(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME, 
+    	            mapResponseAttributeToAddressing(addressing.responses()));
+    	}
+    	
     	try {
             AxisService service = endpointDescription.getAxisService();
     		service.addParameter(namespace);
     		service.addParameter(disabled);
     		service.addParameter(required);
+    		if (responses != null) {
+                service.addParameter(responses);
+    		}
             
             String value = Utils.getParameterValue(disabled);
     		if (JavaUtils.isFalseExplicitly(value)) {
@@ -145,6 +157,29 @@ public class AddressingConfigurator implements ServerConfigurator {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("AddressingEngagementError", e.toString()));
     	}
+    }
+
+    /**
+     * Given a value for the Addressing.responses annotation attribute, map it to the corresponding
+     * Addressing constant to be set on the AxisSservice
+     * 
+     * @param responses Enum value from the Addressing.responses annotation attribute
+     * @return String from AddressingContstants corresponding to the responses value.
+     */
+    static private String mapResponseAttributeToAddressing(Responses responses) {
+        String addressingType = null;
+        switch (responses) {
+            case ALL:
+                addressingType = AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH;
+                break;
+            case ANONYMOUS:
+                addressingType = AddressingConstants.WSAM_INVOCATION_PATTERN_SYNCHRONOUS;
+                break;
+            case NON_ANONYMOUS:
+                addressingType = AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS;
+                break;
+        }
+        return addressingType;
     }
 
     /*
