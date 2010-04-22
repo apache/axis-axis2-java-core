@@ -770,7 +770,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 						AddressingConstants.ADDRESSING_OPTIONAL)) {
 			WSDLSerializationUtil.addExtensionElement(fac, binding,
 					AddressingConstants.USING_ADDRESSING,
-					DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true", wsaw);
+					DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "false", wsaw);
 		} else if (AddressingHelper.getAddressingRequirementParemeterValue(
 				axisService).equals(AddressingConstants.ADDRESSING_REQUIRED)) {
 			WSDLSerializationUtil.addExtensionElement(fac, binding,
@@ -911,7 +911,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 						AddressingConstants.ADDRESSING_OPTIONAL)) {
 			WSDLSerializationUtil.addExtensionElement(fac, binding,
 					AddressingConstants.USING_ADDRESSING,
-					DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true", wsaw);
+					DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "false", wsaw);
 		} else if (AddressingHelper.getAddressingRequirementParemeterValue(
 				axisService).equals(AddressingConstants.ADDRESSING_REQUIRED)) {
 			WSDLSerializationUtil.addExtensionElement(fac, binding,
