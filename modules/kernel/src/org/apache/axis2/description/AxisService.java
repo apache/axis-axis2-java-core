@@ -922,6 +922,12 @@ public class AxisService extends AxisDescription {
 		httpLocationDispatcherMap.put(string, axisOperation);
 	}
 
+	/**
+	 * Prints the schema to the given output stream.
+	 * @param out The output stream for the data to be written. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
+	 * @throws AxisFault
+	 */
 	public void printSchema(OutputStream out) throws AxisFault {
 		for (int i = 0; i < schemaList.size(); i++) {
 			XmlSchema schema = addNameSpaces(i);
@@ -1052,6 +1058,15 @@ public class AxisService extends AxisDescription {
 		return eprs;
 	}
 
+	/**
+	 * Prints the given definition object.
+	 * @param definition The definition.
+	 * @param out The output stream the data to be written to. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
+	 * @param requestIP The host IP address.
+	 * @throws AxisFault
+	 * @throws WSDLException
+	 */
 	private void printDefinitionObject(Definition definition, OutputStream out,
 			String requestIP) throws AxisFault, WSDLException {
 		if (isModifyUserWSDLPortAddress()) {
@@ -1070,6 +1085,14 @@ public class AxisService extends AxisDescription {
 			printUserWSDL(out, wsdlName, null);
 	}
 
+	/**
+	 * Prints the user WSDL.
+	 * @param out The output stream for the data to be written. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
+	 * @param wsdlName The name of the WSDL.
+	 * @param ip The host IP address.
+	 * @throws AxisFault
+	 */
 	public void printUserWSDL(OutputStream out, String wsdlName, String ip)
 			throws AxisFault {
 		Definition definition = null;
@@ -1255,7 +1278,8 @@ public class AxisService extends AxisDescription {
 	 * OutputStream.
 	 * 
 	 * @param out
-	 *            destination stream.
+	 *            destination stream, NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
 	 * @param xsd
 	 *            schema name
 	 * @return -1 implies not found, 0 implies redirect to root, 1 implies
@@ -1272,7 +1296,6 @@ public class AxisService extends AxisDescription {
 			    updateSchemaLocation(schema);
 				schema.write(new OutputStreamWriter(out, "UTF8"));
 				out.flush();
-				out.close();
 				return 1;
 			}
 		}
@@ -1296,7 +1319,6 @@ public class AxisService extends AxisDescription {
 				// schema is there - pump it outs
 				schema.write(new OutputStreamWriter(out, "UTF8"));
 				out.flush();
-				out.close();
 			} else {
                             // make sure we are only serving .xsd files and ignore requests with
                             // ".." in the name.
@@ -1328,7 +1350,6 @@ public class AxisService extends AxisDescription {
 				if (schema != null) {
 					schema.write(new OutputStreamWriter(out, "UTF8"));
 					out.flush();
-					out.close();
 				}
 			} else {
 				String xsdNotFound = "<error>"
@@ -1336,7 +1357,6 @@ public class AxisService extends AxisDescription {
 						+ "</error>";
 				out.write(xsdNotFound.getBytes());
 				out.flush();
-				out.close();
 			}
 		}
 		return 1;
@@ -1347,7 +1367,8 @@ public class AxisService extends AxisDescription {
 	 * OutputStream.
 	 * 
 	 * @param out
-	 *            destination stream. The WSDL will be sent here.
+	 *            destination stream. The WSDL will be sent here. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
 	 * @param requestIP
 	 *            the hostname the WSDL request was directed at. This should be
 	 *            the address that appears in the generated WSDL.
@@ -1408,7 +1429,8 @@ public class AxisService extends AxisDescription {
 	 * Print the WSDL with a default URL. This will be called only during
 	 * codegen time.
 	 * 
-	 * @param out
+	 * @param out The output stream for the data to be written. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
 	 * @throws AxisFault
 	 */
 	public void printWSDL(OutputStream out) throws AxisFault {
@@ -1597,6 +1619,12 @@ public class AxisService extends AxisDescription {
 		}
 	}
 
+	/**
+	 * Retrieves the WSDL data associated with the given serviceURL.
+	 * @param out The output stream for the WSDL data to be written, NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
+	 * @param serviceURL The fist element of this array i.e. serviceURL[0] is taken in retrieving the target service.
+	 */
 	private void getWSDL(OutputStream out, String[] serviceURL)
 			throws AxisFault {
 		// Retrieve WSDL using the same data retrieval path for GetMetadata
@@ -1616,17 +1644,29 @@ public class AxisService extends AxisDescription {
 			try {
 				XMLPrettyPrinter.prettify(wsdlElement, out);
 				out.flush();
-				out.close();
 			} catch (Exception e) {
 				throw AxisFault.makeFault(e);
 			}
 		}
 	}
 
+	/**
+	 * Prints generic WSDL error to the given output stream.
+	 * @param out The output stream the data to be written to. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
+	 * @throws AxisFault
+	 */
 	private void printWSDLError(OutputStream out) throws AxisFault {
 		printWSDLError(out, null);
 	}
 
+	/**
+	 * Prints WSDL error condition that is given in the exception.
+	 * @param out The output stream for the error message to be written. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
+	 * @param e The exception describing the error condition.
+	 * @throws AxisFault
+	 */
 	private void printWSDLError(OutputStream out, Exception e) throws AxisFault {
 		try {
 			String wsdlntfound = "<error>"
@@ -1641,7 +1681,6 @@ public class AxisService extends AxisDescription {
 			}
 			out.write("</error>".getBytes());
 			out.flush();
-			out.close();
 		} catch (IOException ex) {
 			throw AxisFault.makeFault(ex);
 		}
@@ -1651,13 +1690,21 @@ public class AxisService extends AxisDescription {
 	 * Print the WSDL2.0 with a default URL. This will be called only during
 	 * codegen time.
 	 * 
-	 * @param out
+	 * @param out The output stream for the data to be written for. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
 	 * @throws AxisFault
 	 */
 	public void printWSDL2(OutputStream out) throws AxisFault {
 		printWSDL2(out, null);
 	}
 
+	/**
+	 * Prints WSDL2.0 data for the service with the given host IP address.
+	 * @param out The output stream for the data to be written for. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
+	 * @param requestIP The host IP address.
+	 * @throws AxisFault
+	 */
 	public void printWSDL2(OutputStream out, String requestIP) throws AxisFault {
 		AxisService2WSDL20 axisService2WSDL2 = new AxisService2WSDL20(this);
 		try {
@@ -1667,7 +1714,6 @@ public class AxisService extends AxisDescription {
 			OMElement wsdlElement = axisService2WSDL2.generateOM();
 			wsdlElement.serialize(out);
 			out.flush();
-			out.close();
 		} catch (Exception e) {
 			throw AxisFault.makeFault(e);
 		}
@@ -1678,7 +1724,8 @@ public class AxisService extends AxisDescription {
      * OutputStream.
      * 
      * @param out
-     *            destination stream.
+     *            destination stream. NOTE: the stream is not closed after the operation, 
+	 *            it is the responsibility of the caller to close the stream after usage.
      * @param wsdl
      *            wsdl name
      * @return -1 implies not found, 0 implies redirect to root, 1 implies

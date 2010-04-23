@@ -195,12 +195,8 @@ public class ListingAgent extends AbstractAgent {
 
                     if (wsdlName != null && wsdlName.length()>0) {
                         axisService.printUserWSDL(out, wsdlName, ip);
-                        out.flush();
-                        out.close();
                     } else {
                         axisService.printWSDL(out, ip);
-                        out.flush();
-                        out.close();
                     }
                     return;
                 } else if (xsd >= 0) {
