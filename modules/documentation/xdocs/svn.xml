@@ -55,9 +55,9 @@
             </p>
             <ul>
                 <li><b>If you are not a committer:</b> <a href=
-                "http://svn.apache.org/repos/asf/webservices/axis2/trunk/java">http://svn.apache.org/repos/asf/webservices/axis2/trunk/java</a></li>
+                "http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/">http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/</a></li>
                 <li><b>If you are a committer:</b> <a href=
-                "https://svn.apache.org/repos/asf/webservices/axis2/trunk/java">https://svn.apache.org/repos/asf/webservices/axis2/trunk/java</a></li>
+                "https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/">https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/</a></li>
             </ul>
             <p>
                 If you are a committer, make sure that you have selected an
