@@ -99,7 +99,7 @@
 
 	<target name="rpc.client.run" depends="rpc.client.compile">
 		<echo message="${ant.file}" />
-		<java classname="client.WeatherSpringRPCClient">
+		<java classname="client.WeatherSpringRPCClient" fork="true">
 			<classpath refid="client.class.path" />
 		</java>
 	</target>
