@@ -389,7 +389,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 							+ ":" + inaxisMessage.getName(), null);
 					addPolicyAsExtAttribute(inaxisMessage, input,fac);
 
-					WSDLSerializationUtil.addWSAWActionAttribute(input,axisOperation.getInputAction(), wsaw);          
+					WSDLSerializationUtil.addWSAWActionAttribute(input,
+							axisOperation.getInputAction(), wsaw);
 					operation.addChild(input);
 				}
 			}
@@ -1087,9 +1088,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 						input.addChild(inputelement);
                         String inputType=(String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION);
                         inputelement.addAttribute("type", (inputType!=null? inputType:"text/xml"), null);
-						inputelement.addAttribute("part", inaxisMessage.getPartName(), null);
-
-								operation.addChild(input);
+						inputelement.addAttribute("part", axisOperation
+								.getName().getLocalPart(), null);
+						operation.addChild(input);
 					}
 				}
 			}
@@ -1113,7 +1114,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 						outElement.addChild(outElement);
                         String outputType=(String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION);
                         outElement.addAttribute("type", (outputType!=null? outputType:"text/xml"), null);
-						outElement.addAttribute("part", outAxisMessage.getPartName(), null);
+						outElement.addAttribute("part", axisOperation.getName()
+								.getLocalPart(), null);
 						output.addChild(outElement);
 						operation.addChild(output);
 					}
