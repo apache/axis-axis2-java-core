@@ -88,7 +88,7 @@
 	</target>
 
 	<target name="rpc.client.run">
-		<java classname="sample.pojo.rpcclient.WeatherRPCClient">
+		<java classname="sample.pojo.rpcclient.WeatherRPCClient" fork="true">
 			<classpath refid="client.class.path" />
 		</java>
 	</target>

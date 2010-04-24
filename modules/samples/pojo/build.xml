@@ -98,7 +98,7 @@
 	</target>
 
 	<target name="rpc.client.run">
-		<java classname="sample.addressbook.rpcclient.AddressBookRPCClient">
+		<java classname="sample.addressbook.rpcclient.AddressBookRPCClient" fork="true">
 			<classpath refid="client.class.path" />
 			<arg value="${uri}" />
 		</java>
