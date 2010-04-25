@@ -182,34 +182,34 @@
         <wsdl:operation name="processStringArray">
             <http:operation location="processStringArray"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="processStringArray"/>
+                <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
         </wsdl:operation>
         <wsdl:operation name="processStringList">
             <http:operation location="processStringList"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="processStringList"/>
+                <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="processStringList"/>
+                <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getStringList">
             <http:operation location="getStringList"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="getStringList"/>
+                <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="getStringList"/>
+                <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="processPersonList">
             <http:operation location="processPersonList"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="processPersonList"/>
+                <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="processPersonList"/>
+                <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
