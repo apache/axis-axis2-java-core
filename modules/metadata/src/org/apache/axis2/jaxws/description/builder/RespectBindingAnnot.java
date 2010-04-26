@@ -37,5 +37,17 @@ public class RespectBindingAnnot implements RespectBinding {
     public Class<? extends Annotation> annotationType() {
         return RespectBinding.class;
     }
+    
+    public String toString() {
+        String string = null;
+        try {
+            string = "@" + getClass().getName() 
+                + "(enabled=" + enabled
+                + ")";
+        } catch (Throwable t) {
+            string = super.toString() + ": caught exception in toString(): " + t;
+        }
+        return string;
+    }
 
 }

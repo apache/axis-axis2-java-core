@@ -46,4 +46,17 @@ public class MTOMAnnot implements MTOM {
     public Class<? extends Annotation> annotationType() {
         return MTOM.class;
     }
+    
+    public String toString() {
+        String string = null;
+        try {
+            string = "@" + getClass().getName() 
+                + "(enabled=" + enabled
+                + ", threshold=" + threshold
+                + ")";
+        } catch (Throwable t) {
+            string = super.toString() + ": caught exception in toString(): " + t;
+        }
+        return string;
+    }
 }

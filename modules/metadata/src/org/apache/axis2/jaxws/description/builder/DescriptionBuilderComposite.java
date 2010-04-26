@@ -924,6 +924,17 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
             FieldDescriptionComposite fdc = fdcIter.next();
 			sb.append(fdc.toString());
 		}
+
+        if (features != null && !features.isEmpty()) {
+            sb.append(newLine);
+            sb.append(newLine);
+            sb.append("WebService Feature Objects (as annotations):");
+            sb.append(newLine);
+            for (Annotation annotation : features) {
+                sb.append(annotation.toString());
+                sb.append(newLine);
+            }
+        }
         
         if(portCompositeList != null
                 &&
