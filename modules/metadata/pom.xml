@@ -148,10 +148,11 @@
                                     <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-jaxws_2.2_spec</artifactId>
                                     <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>target/endorsed</outputDirectory>
                                  </artifactItem>
                             </artifactItems>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${project.build.directory}/endorsed</outputDirectory>
+                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>
@@ -169,7 +170,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <compilerArgument>
-                        -Xbootclasspath/p:${basedir}/target/endorsed/geronimo-jaxws_2.2_spec-1.0-SNAPSHOT.jar   
+                        -Xbootclasspath/p:${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar   
                     </compilerArgument>
                     <compilerVersion>1.5</compilerVersion>
                     <source>1.5</source>
@@ -258,7 +259,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <argLine>
-                        -Xbootclasspath/p:${basedir}/target/endorsed/geronimo-jaxws_2.2_spec-1.0-SNAPSHOT.jar   
+                        -Xbootclasspath/p:${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar   
                     </argLine>
                     <includes>
                         <include>**/*Tests.java</include>
