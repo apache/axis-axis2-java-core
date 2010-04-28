@@ -23,10 +23,13 @@ import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+
 import java.io.IOException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 public class WSToolingUtils {
 
@@ -139,63 +142,86 @@ public class WSToolingUtils {
     }
 
     public static boolean isValidVersion(String wsGenVersion) {
+        if(log.isDebugEnabled()){
+            log.debug("Start isValidVersion(String)");
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("isValidVersion: Determining if WsGen version: " +wsGenVersion
                 +" is appropriate version for using new SUN RI behavior");
         }
-
+        if(wsGenVersion == null){
+            return false;
+        }
+        /*
+         * This algorithm is improvement over the old algorithm we had to validate the
+         * version. In this algorithm we don't assume that the format will be x.x.x.
+         * This algorithm looks for versionNumbers in a String token delimited by a
+         * ".", the idea is to look for the first digit in each token and compare that
+         * with the version validation requirements.
+         * we return false if version is less that 2.1.6.
+         * possible input version strings could be "JAX-WS RI 2.2-b05-", "2.1.6" "2.1.0" etc.
+         */
         // Beginning of reuseable code
         final int VERSION_FIELD_1 = 2;
         final int VERSION_FIELD_2 = 1;
         final int VERSION_FIELD_3 = 6;
 
         String version = wsGenVersion.trim();
-
-        //Algorithm assumption 1: We are assuming that the version string will always be 
-        // of the form "x.x.x" where x is a character (or series of characters) with each digit
-        // having a converted integer value of 0 - 9. 
-        //Assumption 2: We are assuming thatWsgen version 2.1.6 is the starting version 
-        // for being able to use the new Sun behavior
-
-        int dotIndex = version.indexOf(".");        
-        int subField = Integer.valueOf(version.substring(0, dotIndex));
-
-        if (subField < VERSION_FIELD_1) {
+        
+        StringTokenizer st = new StringTokenizer(version, ".");
+        if(st.countTokens()<=0){
+            if(log.isDebugEnabled()){
+                log.debug("No Tokens to validate the tooling version, Input version String is invalid.");
+            }
             return false;
-        } else if (subField > VERSION_FIELD_1) {
-            //If we are greater than 2.x.x (i.e. 3.x.x) then version is valid
-            return true;
         }
-
-        String subString2 = version.substring(dotIndex + 1);
-        dotIndex = subString2.indexOf(".");
-        subField = Integer.valueOf(subString2.substring(0, dotIndex));
-
-        if (subField < VERSION_FIELD_2) {
-            return false;
-        } else if (subField > VERSION_FIELD_2) {
-            //If we are greater than 2.1.x (i.e. 2.2.x) then version is valid
-            return true;
+        for(int tokenCnt = 1;st.hasMoreTokens();tokenCnt++){
+            String token = st.nextToken();
+            if(token == null){
+                return false;
+            }
+            int versionNumber = getDigit(token);
+            if (tokenCnt==1 && versionNumber < VERSION_FIELD_1) {
+                if(log.isDebugEnabled()){
+                    log.debug("Validation failed of tokenCnt="+tokenCnt);
+                    log.debug("Input VersionNumber ="+versionNumber);
+                }
+                return false;
+            } 
+            if(tokenCnt == 2 && versionNumber < VERSION_FIELD_2 ){  
+                if(log.isDebugEnabled()){
+                    log.debug("Validation failed of tokenCnt="+tokenCnt);
+                    log.debug("Input VersionNumber ="+versionNumber);
+                }
+                return false;
+            } 
+            if (tokenCnt==3 && versionNumber < VERSION_FIELD_3) {
+                if(log.isDebugEnabled()){
+                    log.debug("Validation failed of tokenCnt="+tokenCnt);
+                    log.debug("Input VersionNumber ="+versionNumber);
+                }
+                return false;
+            } 
         }
-
-        //Final substring, will probably hit end of string. But, check to make sure there is not
-        // another "." (i.e. We could have "2.1.6.1")yes.
-        String subString3 = subString2.substring(dotIndex + 1);
-
-        //Does string contain another dot? if so, just read up to that dot. Otherwise, assume that 
-        //this is the last sub-string
-        dotIndex = subString3.indexOf(".");
-        if (dotIndex == -1) {
-            subField = Integer.valueOf(subString3);
-        } else {
-            subField = Integer.valueOf(subString3.substring(0, dotIndex));
-        }
-
-        if (subField < VERSION_FIELD_3) {
-            return false;
+        if(log.isDebugEnabled()){
+            log.debug("Exit isValidVersion(String)");
         }
 
         return true;
+    }
+    /**
+     * look for first digit in the version token.
+     * @param s - version token.
+     * @return a digit or -1 if not digit found in the token.
+     */
+    private static int getDigit(String s){
+        for(int i=0;i<s.length();i++){
+            char ch = s.charAt(i);
+            if(Character.isDigit(ch)){
+                return Character.getNumericValue(ch);
+            }
+        }
+        return -1;
     }
 }

@@ -249,21 +249,47 @@ public class EndpointInterfaceDescriptionImpl
                 AxisService axisService = getEndpointDescription().getAxisService();
                 AxisOperation axisOperation = axisService
                         .getOperation(OperationDescriptionImpl.determineOperationQName(this, mdc));
-
+                
                 OperationDescription operation =
-                        new OperationDescriptionImpl(mdc, this, axisOperation);
-
-                if (axisOperation == null) {
+                    new OperationDescriptionImpl(mdc, this, axisOperation);
+                //In LegacyWebmethod case:
+                //1) if wsdl is defined then we should only expose operations that are in wsdl.
+                //NOTE:If wsdl is defined AxisService will have all operations found in wsdl, 
+                //AxisServiceBuilder will do that part before metadata layer is invoked.
+                //2) if wsdl not defined we need to expose operations based on annotation, in 
+                //which case we need add operations not found in AxisService. 
+                if(getWSDLDefinition() != null){
+                    if(log.isDebugEnabled()){
+                        log.debug("wsdl definition found, we will not expose operation not found in AxisService.");
+                    }
+                    if (log.isDebugEnabled())
+                        log.debug("EID: Just added operation= " + operation.getOperationName());
+                    addOperation(operation);
+                }
+                //Since wsdl is not defined add all operations we found.
+                else if (axisOperation == null) {
+                    if(log.isDebugEnabled()){
+                        log.debug("wsdl defintion NOT found, we will expose operation using annotations.");
+                    }
                     // This axisOperation did not already exist on the AxisService, and so was created
                     // with the OperationDescription, so we need to add the operation to the service
                     ((OperationDescriptionImpl)operation).addToAxisService(axisService);
+                    if (log.isDebugEnabled())
+                        log.debug("EID: Just added operation= " + operation.getOperationName());
+                    addOperation(operation);
+                }
+                //This check is to add operations in case an Async binding is used while generating
+                //jax-ws artifacts, So any async operation example invokeAsync is mapped to operation invoke.
+                //However, we will keep an operation Description that holds details of invokeAsync.
+                //this check will ensure Async operations get added to operation description list. 
+                else if(axisOperation!=null && operation.getName().getLocalPart()!=mdc.getMethodName()){
+                    if (log.isDebugEnabled())
+                        log.debug("EID: Just added operation= " + operation.getOperationName());
+                    addOperation(operation);
                 }
 
-                if (log.isDebugEnabled())
-                    log.debug("EID: Just added operation= " + operation.getOperationName());
-                addOperation(operation);
             }
-
+           
         }
 
         if (log.isDebugEnabled())
@@ -945,7 +971,7 @@ public class EndpointInterfaceDescriptionImpl
             }
         }
         
-        return newRulesFlag;
+        return newSunRulesFlag;
     }
     
 
