@@ -166,7 +166,7 @@ public class AddressingConfigurator implements ServerConfigurator {
      * @param responses Enum value from the Addressing.responses annotation attribute
      * @return String from AddressingContstants corresponding to the responses value.
      */
-    static private String mapResponseAttributeToAddressing(Responses responses) {
+    static public String mapResponseAttributeToAddressing(Responses responses) {
         String addressingType = null;
         switch (responses) {
             case ALL:

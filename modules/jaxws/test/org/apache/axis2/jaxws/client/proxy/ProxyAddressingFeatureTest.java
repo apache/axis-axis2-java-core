@@ -85,9 +85,11 @@ public class ProxyAddressingFeatureTest extends InterceptableClientTestCase {
         
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
         
         assertNull(version);
         assertTrue(disabled);
+        assertNull(responses);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
@@ -116,9 +118,11 @@ public class ProxyAddressingFeatureTest extends InterceptableClientTestCase {
         
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
         
         assertEquals(Final.WSA_NAMESPACE, version);
         assertFalse(disabled);
+        assertEquals("Wrong default responses", AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH, responses);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();

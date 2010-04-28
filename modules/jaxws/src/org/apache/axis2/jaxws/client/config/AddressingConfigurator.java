@@ -167,6 +167,13 @@ public class AddressingConfigurator implements ClientConfigurator {
 
         messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, addressingNamespace);                        
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, disableAddressing);
+        
+        // If the Addressing feature was specified, then get the responses value from it and map to the value 
+        // the addressing handler expects
+        if (addressingFeature != null) {
+            messageContext.setProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME, 
+                    org.apache.axis2.jaxws.server.config.AddressingConfigurator.mapResponseAttributeToAddressing(addressingFeature.getResponses()));
+        }
     }
 
     /*
