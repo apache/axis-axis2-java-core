@@ -81,6 +81,9 @@ public class ServerFramework {
     }
     
     public void configure(EndpointDescription endpointDescription) {
+        if(log.isDebugEnabled()){
+            log.debug("Start ServerFramework.conigure(EndpointDescription)");
+        }
         for (Annotation annotation : getAllAnnotations()) {
             WebServiceFeatureAnnotation wsfAnnotation = getWebServiceFeatureAnnotation(annotation);
             ServerConfigurator configurator = configuratorMap.get(wsfAnnotation.id());
@@ -95,6 +98,9 @@ public class ServerFramework {
             if (log.isDebugEnabled()) {
                 log.debug("Completed " + configurator.getClass().getName() + ".configure()");
             }
+        }
+        if(log.isDebugEnabled()){
+            log.debug("Exit ServerFramework.conigure(EndpointDescription)");
         }
     }
     

@@ -233,7 +233,7 @@ public class DescriptionFactoryImpl {
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
             HashMap<String, DescriptionBuilderComposite> dbcMap, ConfigurationContext configContext, boolean performVaidation) {
         if (log.isDebugEnabled()) {
-            log.debug("createServiceDescriptionFromDBCMap(Hashmap<String,DescriptionBuilderComposite>,ConfigurationContext,boolean isValid " );
+            log.debug("createServiceDescriptionFromDBCMap(Hashmap<String,DescriptionBuilderComposite>,ConfigurationContext,boolean performVaidation " );
         }
 
         List<ServiceDescription> serviceDescriptionList = new ArrayList<ServiceDescription>();

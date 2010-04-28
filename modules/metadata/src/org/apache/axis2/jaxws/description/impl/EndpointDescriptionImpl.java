@@ -340,7 +340,7 @@ public class EndpointDescriptionImpl
         properties, Integer portCompositeIndex) {
         
         if (log.isDebugEnabled()) {
-            log.debug("entry ");
+            log.debug("entry EndpointDescriptionImpl(ServiceDescriptionImpl, String, Map<String, Object>, Integer)");
             log.debug("  parent=" + parent);
             log.debug("  serviceImplName=" + parent);
             log.debug("  portCompositeIndex=" + portCompositeIndex);
@@ -605,7 +605,7 @@ public class EndpointDescriptionImpl
         setupReleaseResources(composite.getConfigurationContext());
         releaseAxisServiceResources();
         if (log.isDebugEnabled()) {
-            log.debug("exit");
+            log.debug("exit EndpointDescriptionImpl(ServiceDescriptionImpl, String, Map<String, Object>, Integer)");
         }
     }
 
@@ -1697,6 +1697,9 @@ public class EndpointDescriptionImpl
     //configuration can be overridden. Should only be called on the
     //server side.
     private void configureWebServiceFeatures() {
+        if(log.isDebugEnabled()){
+            log.debug("Start configureWebServiceFeatures().");
+        }
         String bindingType = getBindingType();
         Set<String> ids = ServerConfiguratorRegistry.getIds();
         
@@ -1726,7 +1729,10 @@ public class EndpointDescriptionImpl
             if (log.isDebugEnabled()) {
                 log.debug("No WebServiceFeatureAnnotation instances were found on the composite.");
             }
-        }   
+        }
+        if(log.isDebugEnabled()){
+            log.debug("Exit configureWebServiceFeatures().");
+        }
     }
     
     public Definition getWSDLDefinition() {

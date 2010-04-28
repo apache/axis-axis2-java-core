@@ -23,8 +23,14 @@ package org.apache.axis2.jaxws.description;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.echo.EchoServiceImplWithSEI;
+import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
+import org.apache.axis2.jaxws.description.impl.EndpointDescriptionImpl;
+import org.apache.axis2.jaxws.description.impl.EndpointInterfaceDescriptionImpl;
+import org.apache.axis2.jaxws.description.impl.LegacyMethodRetrieverImpl;
 import org.apache.axis2.jaxws.util.WSToolingUtils;
 import org.apache.log4j.BasicConfigurator;
 
@@ -39,6 +45,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Tests the creation of the Description classes based on a service implementation bean and various
@@ -546,7 +553,31 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         //Less than 2.1.6 so should fail
         assertFalse(WSToolingUtils.isValidVersion("2.1.1"));
     }
+    
+    public void testWebMethodOldBehavior3() {
+        try {
+            
+            if (WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
+                System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "true");
+                //Try new behavior
+            }            
+        } catch (ClassNotFoundException e) {
+        } catch (IOException ioex) {
+        }
+        EndpointInterfaceDescriptionImpl testEndpointInterfaceDesc =
+            (EndpointInterfaceDescriptionImpl)getEndpointInterfaceDesc(WebMethodLegacyCheck.class);
+        
+        DescriptionBuilderComposite dbc = DescriptionTestUtils.getServiceDescriptionComposite(testEndpointInterfaceDesc.getEndpointDescription().getServiceDescription());
+        dbc.setCorrespondingClass(WebMethodLegacyCheck.class);
+        LegacyMethodRetrieverImpl retrive = new LegacyMethodRetrieverImpl(dbc, testEndpointInterfaceDesc);
+        Iterator<MethodDescriptionComposite> iter = retrive.retrieveMethods();
+        while(iter.hasNext()){
+            MethodDescriptionComposite mdc = iter.next();
+            String name = mdc.getMethodName();
+            assertNotNull(name);
+        }
 
+    }
     //This test verifies that the old WebMethod behavior has not changed if the system flag is
     //not set, slightly redundant but still a safety check
     public void testWebMethodOldBehavior1() {
@@ -684,7 +715,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                 //testing new rules
                 return;
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {    
         } catch (IOException ioex) {
         }
         
@@ -1498,6 +1529,17 @@ public String method5(String s) {
 // =============================================================================
 // testWebMethod service implementaiton class
 // =============================================================================
+@WebService
+class WebMethodLegacyCheck {
+
+    @WebMethod()
+    public String echoanno(String s){return s;}
+
+    // under old jax-ws (default) behavior, legacywm=true, this unannotated method would not be exposed,
+    // but under the new rules, it is exposed.
+    //@WebMethod()
+    public String echonoanno(String s){return s;}
+}
 
 @WebService
 class WebMethodTestImpl {

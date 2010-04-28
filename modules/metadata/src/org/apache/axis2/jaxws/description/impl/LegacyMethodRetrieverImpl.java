@@ -143,7 +143,6 @@ public class LegacyMethodRetrieverImpl extends MethodRetriever {
             retrieveList = removeOverriddenMethods(retrieveList, dbc, eid);
             
         }//Done with implied SEI's
-
         return retrieveList.iterator();
     }
 

@@ -65,6 +65,9 @@ public class RespectBindingConfigurator implements ServerConfigurator {
      * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
     public void configure(EndpointDescription endpointDescription) {
+        if(log.isDebugEnabled()){
+            log.debug("Invoking RespectBindingConfiguration.configure() on Server");
+        }
     	RespectBinding annotation =
     		(RespectBinding) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(RespectBindingFeature.ID);
     	
@@ -94,6 +97,9 @@ public class RespectBindingConfigurator implements ServerConfigurator {
             if (log.isDebugEnabled()) {
                 log.debug("No @RespectBinding annotation was found.");
             }
+        }
+        if(log.isDebugEnabled()){
+            log.debug("Exit from RespectBindingConfiguration.configure() on Server.");
         }
     }
     /*

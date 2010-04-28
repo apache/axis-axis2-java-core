@@ -134,6 +134,9 @@ public class WSDLExtensionUtils {
     }
     
     private static void processWSDLElement(WSDLElement wsdlElement, Set<WSDLValidatorElement> set, List<QName> unusedExtensions){
+        if(log.isDebugEnabled()){
+            log.debug("Start processWSDLElement");
+        }
         List list = wsdlElement.getExtensibilityElements();
         if (list == null || list.size() == 0) {
             return;
@@ -171,6 +174,9 @@ public class WSDLExtensionUtils {
                     unusedExtensions.add(e.getElementType());
                 }
             }
+        }
+        if(log.isDebugEnabled()){
+            log.debug("Exit processWSDLElement");
         }
     }
     
