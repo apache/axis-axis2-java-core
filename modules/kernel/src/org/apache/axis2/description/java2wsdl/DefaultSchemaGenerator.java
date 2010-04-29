@@ -417,29 +417,6 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         XmlSchemaComplexType methodSchemaType;
         XmlSchemaSequence sequence;
         if (jMethod.getExceptionTypes().length > 0) {
-            if (!generateBaseException) {
-                if (typeTable.getComplexSchemaType(Exception.class.getName()) != null) {
-
-                } else {
-                    sequence = new XmlSchemaSequence();
-                    XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
-                    QName elementName = new QName(schemaTargetNameSpace,
-                            "Exception",
-                            schema_namespace_prefix);
-                    XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
-                    complexType.setName("Exception");
-                    xmlSchema.getItems().add(complexType);
-                    xmlSchema.getElements().add(elementName, complexType);
-                    typeTable.addComplexSchema(Exception.class.getName(), elementName);
-                    QName schemaTypeName = TypeTable.ANY_TYPE;
-                    addContentToMethodSchemaType(sequence,
-                            schemaTypeName,
-                            "Exception",
-                            false);
-                    complexType.setParticle(sequence);
-                }
-                generateBaseException = true;
-            }
             for (Class<?> extype : jMethod.getExceptionTypes()) {
                 if (AxisFault.class.getName().equals(extype.getName())) {
                     continue;
@@ -450,6 +427,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         new QName(this.schemaTargetNameSpace, partQname, this.schema_namespace_prefix);
                 sequence = new XmlSchemaSequence();
                 if (Exception.class.getName().equals(extype.getName())) {
+                    if (typeTable.getComplexSchemaType(Exception.class.getName()) == null) {
+                        generateComplexTypeforException();
+                    }
                     QName schemaTypeName = typeTable.getComplexSchemaType(Exception.class.getName());
                     addContentToMethodSchemaType(sequence,
                             schemaTypeName,
@@ -476,6 +456,20 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 axisOperation.setFaultMessages(faultMessage);
             }
         }
+    }
+
+    private void generateComplexTypeforException() {
+        XmlSchemaSequence sequence = new XmlSchemaSequence();
+        XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+        QName elementName = new QName(schemaTargetNameSpace, "Exception", schema_namespace_prefix);
+        XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+        complexType.setName("Exception");
+        xmlSchema.getItems().add(complexType);
+        xmlSchema.getElements().add(elementName, complexType);
+        typeTable.addComplexSchema(Exception.class.getName(), elementName);
+        QName schemaTypeName = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "string");
+        addContentToMethodSchemaType(sequence, schemaTypeName, "Message", false);
+        complexType.setParticle(sequence);
     }
 
     /**
@@ -511,10 +505,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             eltOuter.setQName(schemaTypeName);
 
             Class<?> sup = javaType.getSuperclass();
-            if ((sup != null) && ("java.lang.Object".compareTo(sup.getName()) != 0) &&
-                    (getQualifiedName(sup.getPackage()).indexOf("org.apache.axis2") < 0)
-                    && (getQualifiedName(sup.getPackage()).indexOf("java.util") < 0))
-            {
+            if ((sup != null)
+                    && (!"java.lang.Object".equals(sup.getName()))
+                    && (!"java.lang.Exception".equals(sup.getName())) 
+                    && !getQualifiedName(sup.getPackage()).startsWith("org.apache.axis2")
+                    && !getQualifiedName(sup.getPackage()).startsWith("java.util")){
                 String superClassName = sup.getName();
                 String superclassname = getSimpleClassName(sup);
                 String tgtNamespace;

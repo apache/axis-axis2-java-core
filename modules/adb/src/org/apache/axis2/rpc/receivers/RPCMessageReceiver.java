@@ -25,9 +25,14 @@ package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.StreamWrapper;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
@@ -35,11 +40,14 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -154,6 +162,40 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                 log.debug(msg, cause);
                 throw (AxisFault)cause;
             }
+
+            Class[] exceptionTypes = method.getExceptionTypes();
+            for (Class exceptionType : exceptionTypes){
+                if (exceptionType.getName().equals(cause.getClass().getName())){
+                    // this is an bussiness logic exception so handle it properly
+                    String partQName = getSimpleClassName(exceptionType);
+                    TypeTable typeTable = inMessage.getAxisService().getTypeTable();
+                    QName elementQName = typeTable.getQNamefortheType(partQName);
+                    SOAPFactory fac = getSOAPFactory(inMessage);
+                    OMElement exceptionElement = fac.createOMElement(elementQName);
+
+                    if (exceptionType.getName().equals(Exception.class.getName())){
+                        // this is an exception class. so create a element by hand and add the message
+                       OMElement innterExceptionElement = fac.createOMElement(elementQName);
+                       OMElement messageElement = fac.createOMElement("Message", inMessage.getAxisService().getTargetNamespace(), null);
+                       messageElement.setText(cause.getMessage());
+
+                       innterExceptionElement.addChild(messageElement);
+                       exceptionElement.addChild(innterExceptionElement);
+                    } else {
+                        // if it is a normal bussiness exception we need to generate the schema assuming it is a pojo
+                        XMLStreamReader xr = BeanUtil.getPullParser(cause,
+                                elementQName, typeTable, true, false);
+                        StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
+                        OMElement documentElement = stAXOMBuilder.getDocumentElement();
+                        exceptionElement.addChild(documentElement);
+                    }
+
+                    AxisFault axisFault = new AxisFault(cause.getMessage());
+                    axisFault.setDetail(exceptionElement);
+                    throw axisFault;
+                }
+            }
+
             log.error(msg, e);
             throw new AxisFault(msg, e);
         } catch(RuntimeException e) {
@@ -165,5 +207,15 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             log.error(msg, e);
             throw AxisFault.makeFault(e);
         }
+    }
+
+     private String getSimpleClassName(Class type) {
+        String simpleClassName = type.getName();
+        int idx = simpleClassName.lastIndexOf('.');
+        if (idx != -1 && idx < (simpleClassName.length() - 1)) {
+            simpleClassName = simpleClassName.substring(idx + 1);
+        }
+
+        return simpleClassName.replace('$', '_');
     }
 }
