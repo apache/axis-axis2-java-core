@@ -303,7 +303,15 @@ public class BeanUtil {
                 ArrayList valueList = new ArrayList();
                 Class arrayClassType = beanClass.getComponentType();
                 if ("byte".equals(arrayClassType.getName())) {
-                    return Base64.decode(beanElement.getFirstElement().getText());
+                    // find the part first and decode it
+                    OMElement partElement = null;
+                    for (Iterator iter = beanElement.getChildElements(); iter.hasNext();){
+                        partElement = (OMElement) iter.next();
+                        if (partElement.getLocalName().equals(arrayLocalName)){
+                            break;
+                        }
+                    }
+                    return Base64.decode(partElement.getText());                    
                 } else {
                     Iterator parts = beanElement.getChildElements();
                     OMElement omElement;
