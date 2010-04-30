@@ -1339,7 +1339,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (null != message) {
 
                     outMessage.setName(message.getQName().getLocalPart());
-                    copyExtensionAttributes(wsdl4jInputMessage.getExtensionAttributes(),
+                    copyExtensionAttributes(wsdl4jOutputMessage.getExtensionAttributes(),
                                            outMessage, PORT_TYPE_OPERATION_OUTPUT);
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
@@ -2275,6 +2275,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         wsdl4jExtensibilityElement.getElementType().getNamespaceURI().equals(
                                 org.apache.axis2.namespace.Constants.FORMAT_BINDING)) {
                     Element typeMapping = unknown.getElement();
+                    
                     NodeList typeMaps = typeMapping.getElementsByTagNameNS(
                             org.apache.axis2.namespace.Constants.FORMAT_BINDING,
                             "typeMap");
