@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.addressing.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.InterfaceName;
@@ -39,6 +40,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Map;
 
 public final class EndpointReferenceUtils {
     
@@ -159,6 +162,34 @@ public final class EndpointReferenceUtils {
                 axis2EPR.addReferenceParameter(omElement);
             }            
         }    	
+    }
+    
+    /**
+     * 
+     * @param axis2EPR
+     * @param elements
+     * @throws Exception
+     */
+    public static void addExtensibleElements(EndpointReference axis2EPR, Element... elements)
+    throws Exception {
+        if (elements != null) {
+            for (Element element : elements) {
+                OMElement omElement = XMLUtils.toOM(element);
+                axis2EPR.addExtensibleElement(omElement);
+            }
+        }
+    }
+    
+    public static void addExtensibleAttributes(EndpointReference axis2EPR, Map<QName, String> attributes)
+    throws Exception {
+        if (attributes != null) {
+            OMFactory fac = OMAbstractFactory.getOMFactory();
+            for (Map.Entry<QName, String> attribute : attributes.entrySet()) {
+                QName qName = attribute.getKey();
+                OMNamespace omNamespace = fac.createOMNamespace(qName.getNamespaceURI(), qName.getPrefix());
+                axis2EPR.addAttribute(qName.getLocalPart(), omNamespace, attribute.getValue());
+            }
+        }
     }
     
     /**

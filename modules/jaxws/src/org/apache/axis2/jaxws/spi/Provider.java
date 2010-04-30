@@ -40,6 +40,7 @@ import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 public class Provider extends javax.xml.ws.spi.Provider {
     private static final Log log = LogFactory.getLog(Provider.class);
@@ -103,6 +104,51 @@ public class Provider extends javax.xml.ws.spi.Provider {
             if (referenceParameters != null)
                 EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
         	
+            w3cEPR =
+                (W3CEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
+        }
+        catch (Exception e) {
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("referenceParameterConstructionErr"),
+                                    e);
+        }
+        
+        return w3cEPR;
+    }
+    
+    @Override
+    public W3CEndpointReference createW3CEndpointReference(String address,
+            QName interfaceName, 
+            QName serviceName,
+            QName portName,
+            List<Element> metadata,
+            String wsdlDocumentLocation,
+            List<Element> referenceParameters,
+            List<Element> elements,
+            Map<QName, String> attributes) {
+        String addressingNamespace =
+            EndpointReferenceUtils.getAddressingNamespace(W3CEndpointReference.class);      
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
+        
+        W3CEndpointReference w3cEPR = null;
+        
+        try {
+            if (interfaceName != null)
+                EndpointReferenceUtils.addInterface(axis2EPR, interfaceName, addressingNamespace);
+            
+            if (metadata != null)
+                EndpointReferenceUtils.addMetadata(axis2EPR, metadata.toArray(ZERO_LENGTH_ARRAY));
+            
+            if (referenceParameters != null)
+                EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
+            
+            if (elements != null)
+                EndpointReferenceUtils.addExtensibleElements(axis2EPR, elements.toArray(ZERO_LENGTH_ARRAY));
+            
+            if (attributes != null)
+                EndpointReferenceUtils.addExtensibleAttributes(axis2EPR, attributes);
+            
             w3cEPR =
                 (W3CEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
         }
