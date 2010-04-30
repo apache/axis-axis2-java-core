@@ -266,8 +266,8 @@ public class EndpointInterfaceDescriptionImpl
                         log.debug("EID: Just added operation= " + operation.getOperationName());
                     addOperation(operation);
                 }
-                //Since wsdl is not defined add all operations we found.
-                else if (axisOperation == null) {
+                //Since wsdl is not defined add all operations to AxisService and OperationDescriptionList.
+                else if(axisOperation == null) {
                     if(log.isDebugEnabled()){
                         log.debug("wsdl defintion NOT found, we will expose operation using annotations.");
                     }
@@ -278,16 +278,13 @@ public class EndpointInterfaceDescriptionImpl
                         log.debug("EID: Just added operation= " + operation.getOperationName());
                     addOperation(operation);
                 }
-                //This check is to add operations in case an Async binding is used while generating
-                //jax-ws artifacts, So any async operation example invokeAsync is mapped to operation invoke.
-                //However, we will keep an operation Description that holds details of invokeAsync.
-                //this check will ensure Async operations get added to operation description list. 
-                else if(axisOperation!=null && operation.getName().getLocalPart()!=mdc.getMethodName()){
+                //This is the case where wsdl is not defined and AxisOperation is found in Axis Service.
+                //Here we have to ensure that corresponding OperationDescription is added to OperationDescriptionList.
+                else if(getWSDLDefinition()==null && axisOperation!=null){
                     if (log.isDebugEnabled())
                         log.debug("EID: Just added operation= " + operation.getOperationName());
                     addOperation(operation);
                 }
-
             }
            
         }
