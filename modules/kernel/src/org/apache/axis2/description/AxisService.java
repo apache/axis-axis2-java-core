@@ -1306,36 +1306,36 @@ public class AxisService extends AxisDescription {
 		ArrayList<XmlSchema> schemas = getSchema();
 
 		// a name is present - try to pump the requested schema
-		if (!"".equals(xsd)) {
-			XmlSchema schema = (XmlSchema) schemaMappingtable.get(xsd);
-			if (schema == null) {
-				int dotIndex = xsd.indexOf('.');
-				if (dotIndex > 0) {
-					String schemaKey = xsd.substring(0, dotIndex);
-					schema = (XmlSchema) schemaMappingtable.get(schemaKey);
-				}
-			}
-			if (schema != null) {
-				// schema is there - pump it outs
-				schema.write(new OutputStreamWriter(out, "UTF8"));
-				out.flush();
-			} else {
-                            // make sure we are only serving .xsd files and ignore requests with
-                            // ".." in the name.
-                            if (xsd.endsWith(".xsd") && xsd.indexOf("..") == -1) {
-				InputStream in = getClassLoader().getResourceAsStream(
-						DeploymentConstants.META_INF + "/" + xsd);
-				if (in != null) {
-                                    IOUtils.copy(in, out, true);
-				} else {
-                                    // Can't find the schema
-                                    return -1;
-				}
-                            } else {
-                                // bad schema request
-                                return -1;
-                            }
-			}
+        if (!"".equals(xsd)) {
+            XmlSchema schema = (XmlSchema) schemaMappingtable.get(xsd);
+            if (schema == null) {
+                int dotIndex = xsd.indexOf('.');
+                if (dotIndex > 0) {
+                    String schemaKey = xsd.substring(0, dotIndex);
+                    schema = (XmlSchema) schemaMappingtable.get(schemaKey);
+                }
+            }
+            if (schema != null) {
+                // schema is there - pump it outs
+                schema.write(new OutputStreamWriter(out, "UTF8"));
+                out.flush();
+            } else {
+                // make sure we are only serving .xsd files and ignore requests with
+                // ".." in the name.
+                if (xsd.endsWith(".xsd") && xsd.indexOf("..") == -1) {
+                    InputStream in = getClassLoader().getResourceAsStream(
+                            DeploymentConstants.META_INF + "/" + xsd);
+                    if (in != null) {
+                        IOUtils.copy(in, out, true);
+                    } else {
+                        // Can't find the schema
+                        return -1;
+                    }
+                } else {
+                    // bad schema request
+                    return -1;
+                }
+            }
 		} else if (schemas.size() > 1) {
 			// multiple schemas are present and the user specified
 			// no name - in this case we cannot possibly pump a schema
