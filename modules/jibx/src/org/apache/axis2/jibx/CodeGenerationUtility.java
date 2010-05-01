@@ -1074,8 +1074,10 @@ public class CodeGenerationUtility {
 
                 // recurse to process included binding definitions
                 IncludeElement include = (IncludeElement)child;
-                collectTopLevelComponents(include.getBinding(), defaultns,
-                                          elementMap, complexTypeMap, simpleTypeMap, bindingMap);
+                if(include.getBinding() != null) {
+                    collectTopLevelComponents(include.getBinding(), defaultns,
+                                            elementMap, complexTypeMap, simpleTypeMap, bindingMap);
+                }
 
             } else if (child.type() == ElementBase.FORMAT_ELEMENT) {
 
