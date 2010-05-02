@@ -135,7 +135,7 @@ public class PhasesInfo {
                     globalPhaseList.add(copyPhase(phase));
                 }
             } else {
-                globalPhaseList.add(copyPhase(phase));
+                globalPhaseList.add(phase);
             }
         }
         return globalPhaseList;
