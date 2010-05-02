@@ -1146,10 +1146,23 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    if (o instanceof String){
+                    if (o instanceof String) {
                         array[i] = ConverterUtil.convertToDateTime(o.toString());
                     } else if (o instanceof Calendar) {
                         array[i] = (Calendar) o;
+                    }
+                }
+            }
+            returnArray = array;
+        } else if (Date.class.equals(baseArrayClass)) {
+            Date[] array = new Date[listSize];
+            for (int i = 0; i < listSize; i++) {
+                Object o = objectList.get(i);
+                if (o != null) {
+                    if (o instanceof String) {
+                        array[i] = ConverterUtil.convertToDate(o.toString());
+                    } else if (o instanceof Date) {
+                        array[i] = (Date) o;
                     }
                 }
             }
