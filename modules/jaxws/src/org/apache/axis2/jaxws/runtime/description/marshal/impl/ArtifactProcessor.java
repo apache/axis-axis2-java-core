@@ -56,6 +56,8 @@ class ArtifactProcessor {
     private Map<FaultDescription, FaultBeanDesc> faultBeanDescMap =
             new HashMap<FaultDescription, FaultBeanDesc>();
 
+    static final String JAXWS_SUBPACKAGE = "jaxws";
+    
     /**
      * Artifact Processor
      *
@@ -95,48 +97,30 @@ class ArtifactProcessor {
 
                     // There is no default for @RequestWrapper/@ResponseWrapper classname  None is listed in Sec. 7.3 on p. 80 of
                     // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
-                    // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
+                    // says the entire annotation "...MAY be omitted if all its properties would have default values."
                     // We will assume that this statement gives us the liberty to find a wrapper class/build a wrapper class or 
                     // implement an engine w/o the wrapper class.
 
                     // @RequestWrapper className processing
                     String requestWrapperName = opDesc.getRequestWrapperClassName();
-                    if (requestWrapperName == null) {
-                        if (packageName.length() > 0) {
-                            requestWrapperName =
-                                    packageName + "." + javaMethodToClassName(methodName);
-                        } else {
-                            requestWrapperName = javaMethodToClassName(methodName);
-                        }
-                    }
-                    String foundRequestWrapperName = findArtifact(requestWrapperName);
-                    if (foundRequestWrapperName == null) {
-                        foundRequestWrapperName = findArtifact(requestWrapperName, ed.getAxisService().getClassLoader());
-                    }
-                    if (foundRequestWrapperName == null) {
-                        foundRequestWrapperName = missingArtifact(requestWrapperName);
-                    }
+                    String foundRequestWrapperName = getWrapperClass("@RequestWrapper",
+                            requestWrapperName, 
+                            packageName, 
+                            javaMethodToClassName(methodName),
+                            ed.getAxisService().getClassLoader());
+                    
                     if (foundRequestWrapperName != null) {
                         requestWrapperMap.put(opDesc, foundRequestWrapperName);
                     }
 
                     // @ResponseWrapper className processing
                     String responseWrapperName = opDesc.getResponseWrapperClassName();
-                    if (responseWrapperName == null) {
-                        if (packageName.length() > 0) {
-                            responseWrapperName = packageName + "." +
-                                    javaMethodToClassName(methodName) + "Response";
-                        } else {
-                            responseWrapperName = javaMethodToClassName(methodName) + "Response";
-                        }
-                    }
-                    String foundResponseWrapperName = findArtifact(responseWrapperName);
-                    if (foundResponseWrapperName == null) {
-                        foundResponseWrapperName = findArtifact(responseWrapperName, ed.getAxisService().getClassLoader());
-                    }
-                    if (foundResponseWrapperName == null) {
-                        foundResponseWrapperName = missingArtifact(responseWrapperName);
-                    }
+                    String foundResponseWrapperName = getWrapperClass("@ResponseWrapper",
+                            responseWrapperName, 
+                            packageName, 
+                            javaMethodToClassName(methodName) + "Response",
+                            ed.getAxisService().getClassLoader());
+                    
                     if (foundResponseWrapperName != null) {
                         responseWrapperMap.put(opDesc, foundResponseWrapperName);
                     }
@@ -180,34 +164,151 @@ class ArtifactProcessor {
         }
     }
     
+    /**
+     * @param type "@RequestWrapper", "@ResponseWrapper", and "@WebFault"
+     * @param providedValue String name of the Wrapper or Fault Bean from annotations
+     * @param defaultPkg String name of the package to use for defaulting
+     * @param defaultClassName name of the class to use if defaulting
+     * @param altClassLoader name of the alternative classloader
+     * @return
+     */
+    static private String getWrapperClass(String type,
+            String providedValue, 
+            String defaultPkg, 
+            String defaultClassName, 
+            ClassLoader altClassLoader) {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("getWrapperClass for " + type + " with value (" + providedValue + ")");
+        }
+        
+        String wrapperClass = null;
+        try {
+            Class cls = null;
+            ClassLoader cl = getContextClassLoader();
+            if (providedValue != null  && providedValue.length() > 0) {
+                
+                // If a className is provided try to load it with the context classloader
+                // and then the alternate classloader.
+                // If the class still cannot be loaded, then try inserting the
+                // jaxws sub-package.
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Try finding the class with the name provided = " + providedValue);
+                }
+                cls = loadClassOrNull(providedValue, cl);
+                if (cls != null) {
+                    wrapperClass = providedValue;
+                }
+                else {
+                    cls = loadClassOrNull(providedValue, altClassLoader);
+                    if (cls != null) {
+                        wrapperClass = providedValue;
+                    }
+                }
+                // Legacy
+                if (cls == null) {
+                    String origPackage = getPackageName(providedValue);
+                    if (origPackage.length() > 0) {
+                        String newPackage = origPackage + "." + JAXWS_SUBPACKAGE;
+                        String clsName = getSimpleClassName(providedValue);
+                        String newValue = newPackage + "." + clsName;
+                        if (log.isDebugEnabled()) {
+                            log.debug("Did not find the name provided.  Now trying " + newValue);
+                        }
+                        cls = loadClassOrNull(newValue, cl);
+                        if (cls != null) {
+                            wrapperClass = newValue;
+                        } else {
+                            cls = loadClassOrNull(newValue, altClassLoader);
+                            if (cls != null) {
+                                wrapperClass = newValue;
+                            }
+                        }
+                    }
+                }
+            } else {
+                // If no valud is provided by the annotation, then the we try default values.
+                // The wsgen tool generates classes in the jaxws subpackage.
+                // The wsimport tool generates classes in the same package as the SEI.
+                // Note that from reading the JAX-WS spec, it seems that WSGen is doing that
+                // correctly; See the conformance requirement in JAX-WS 2.0 Spec Section 3.6.2.1 Document
+                // Wrapped on page 36: Conformance (Default wrapper bean package): In the absence of
+                // customizations, the wrapper beans package MUST be a generated jaxws subpackage of the SEI
+                // package.
+                // 
+                // Thus the following algorithm with check the jaxws subpackage first.
+                String defaultValue = null;
+                if (defaultPkg.length() > 0) {
+                    defaultValue = defaultPkg + "." + JAXWS_SUBPACKAGE + "." + defaultClassName;
+                    if (log.isDebugEnabled()) {
+                        log.debug("No provided value.  Try the default class name =  " + defaultValue);
+                    }
+                    cls = loadClassOrNull(defaultValue, cl);
+                    if (cls != null) {
+                        wrapperClass = defaultValue;
+                    } else {
+                        cls = loadClassOrNull(defaultValue, altClassLoader);
+                        if (cls != null) {
+                            wrapperClass = defaultValue;
+                        }
+                    }
+                } 
+                
+                if (cls == null) {
+                    // Try pkg without jaxws 
+                    if (defaultPkg.length() > 0) {
+                        defaultValue = defaultPkg + "." + defaultClassName;
+                    } else {
+                        defaultValue = defaultClassName;
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("Did not find the default name.  Try a different default class name =  " + defaultValue);
+                    }
+                    cls = loadClassOrNull(defaultValue, cl);
+                    if (cls != null) {
+                        wrapperClass = defaultValue;
+                    } else {
+                        cls = loadClassOrNull(defaultValue, altClassLoader);
+                        if (cls != null) {
+                            wrapperClass = defaultValue;
+                        }
+                    }
+                }
+            }
+            
+            
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unexpected error.  Processing continues. ", t);
+            }
+        } 
+        if (log.isDebugEnabled()) {
+            log.debug("exit getWrapperClass with " + wrapperClass);
+        }  
+        return wrapperClass;
+      
+    }
 
     private FaultBeanDesc create(EndpointDescription ed, FaultDescription faultDesc, OperationDescription opDesc) {
         /* FaultBeanClass algorithm
          *   1) The class defined on @WebFault of the exception
          *   2) If not present or invalid, the class defined by getFaultInfo.
-         *   3) If not present, the class is found by looking for the
-         *      a class named <exceptionName>Bean in the interface's package.
-         *   4) If not present, the class is found by looking for the
-         *      a class named <exceptionName>Bean in the interface + jaxws package
+         *   3) If not present, the class is found using the default name and location
          */
+String declaringClassName = opDesc.getJavaDeclaringClassName();
+        
+        String type = "@WebFault";
         String faultBeanClassName = faultDesc.getFaultBean();
         if (faultBeanClassName == null || faultBeanClassName.length() == 0) {
+            type = "faultInfo";
             faultBeanClassName = faultDesc.getFaultInfo();
         }
-        if (faultBeanClassName == null || faultBeanClassName.length() == 0) {
-            String declaringClassName = opDesc.getJavaDeclaringClassName();
-            String packageName = getPackageName(declaringClassName);
-            String simpleName = getSimpleClassName(faultDesc.getExceptionClassName());
-            if (packageName.length() > 0) {
-                faultBeanClassName = packageName + "." + simpleName + "Bean";
-            } else {
-                faultBeanClassName = simpleName + "Bean";
-            }
-        }
-        String foundClassName = findArtifact(faultBeanClassName);
-        if (foundClassName == null) {
-            faultBeanClassName = findArtifact(faultBeanClassName, ed.getAxisService().getClassLoader());
-        }
+        String foundClassName = getWrapperClass(type,
+                faultBeanClassName,
+                getPackageName(declaringClassName), 
+                getSimpleClassName(faultDesc.getExceptionClassName()) + "Bean",
+                ed.getAxisService().getClassLoader());
         if (foundClassName == null) {
             faultBeanClassName = missingArtifact(faultBeanClassName);
         }
@@ -332,60 +433,18 @@ class ArtifactProcessor {
     }
 
     /**
-     * Determine the actual packager name for the generated artifacts by trying to load the class
-     * from one of two packages.  This is necessary because the RI implementations of WSGen and
-     * WSImport generate the artifacts in different packages: - WSImport generates the artifacts in
-     * the same package as the SEI - WSGen generates the artifacts in a "jaxws" sub package under
-     * the SEI package. Note that from reading the JAX-WS spec, it seems that WSGen is doing that
-     * correctly; See the conformance requirement in JAX-WS 2.0 Spec Section 3.6.2.1 Document
-     * Wrapped on page 36: Conformance (Default wrapper bean package): In the absence of
-     * customizations, the wrapper beans package MUST be a generated jaxws subpackage of the SEI
-     * package. ^^^^^^^^^^^^^^^^
-     *
-     * @param artifactClassName
-     * @return
+     * @param className
+     * @param classLoader
+     * @return Class or Null
      */
-    static final String JAXWS_SUBPACKAGE = "jaxws";
-
-    private static String findArtifact(String artifactClassName) {
-        return findArtifact(artifactClassName, getContextClassLoader());
-    }
-
-    private static String findArtifact(String artifactClassName, ClassLoader classLoader) {
-        String returnArtifactClassName = null;
-        if (artifactClassName == null) {
-            return returnArtifactClassName;
-        }
-
-        // Try to load the class that was passed in
+    private static Class loadClassOrNull(String className, ClassLoader classLoader) {
         try {
-            forName(artifactClassName, true, classLoader);
-            returnArtifactClassName = artifactClassName;
-        }
-        catch (ClassNotFoundException e) {
-            // Couldn't load the class; we'll try another one below.
-        }
-
-        // If the original class couldn't be loaded, try adding ".jaxws." to the package
-        if (returnArtifactClassName == null) {
-            String originalPackage = getPackageName(artifactClassName);
-            if (originalPackage.length() > 0) {
-                String alternatePackage = originalPackage + "." + JAXWS_SUBPACKAGE;
-                String className = getSimpleClassName(artifactClassName);
-                String alternateWrapperClass = alternatePackage + "." + className;
-                try {
-                    loadClass(alternateWrapperClass, getContextClassLoader());
-                    returnArtifactClassName = alternateWrapperClass;
-                }
-                catch (ClassNotFoundException e) {
-                    // Couldn't load the class
-                }
-            }
-        }
-
-        return returnArtifactClassName;
+            return loadClass(className, classLoader);
+        } catch (Throwable t) {
+            return null;
+        }  
     }
-
+    
     private static Class loadClass(String className, ClassLoader classLoader) throws ClassNotFoundException {
         // Don't make this public, its a security exposure
         return forName(className, true, classLoader);
