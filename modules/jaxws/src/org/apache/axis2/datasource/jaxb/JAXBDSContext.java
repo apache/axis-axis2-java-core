@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.message.util.XMLStreamWriterWithOS;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
+import org.apache.axis2.jaxws.utility.XmlEnumUtils;
 import org.apache.axis2.description.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -603,12 +604,10 @@ public class JAXBDSContext {
                                         + " as Enum");
                             }
 
-                            JAXBElement<String> enumValue = u.unmarshal(reader, String.class);
+                            JAXBElement<String> enumValue = u.unmarshal(reader, XmlEnumUtils.getConversionType(type));
 
                             if (enumValue != null) {
-                                Method m =
-                                        type.getMethod("fromValue", new Class[] { String.class });
-                                jaxb = m.invoke(null, new Object[] { enumValue.getValue() });
+                                jaxb = XmlEnumUtils.fromValue(type, enumValue.getValue());
                             } else {
                                 jaxb = null;
                             }
