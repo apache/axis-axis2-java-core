@@ -165,13 +165,31 @@ public class JAXBContextFromClasses {
                     log.debug("This looks like a JAXB class. Adding it to primary list:" + 
                                        cls.getName());
                 }
-                primary.add(cls);  // This looks like a JAXB class...add it
+                Package pkg = cls.getPackage();
+                if (pkg != null && pkg.getName().endsWith(".jaxws")) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("This looks like a jaxws generated Class. Adding it to the front of the primary list:" + 
+                                           cls.getName());
+                    }
+                    primary.add(0,cls);  // Add to the front of the list
+                } else {
+                    primary.add(cls);  // This looks like a JAXB class...add it
+                }
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("This may not be a JAXB class. Adding it to secondary list:" + 
                                        cls.getName());
                 }
-                secondary.add(cls);  // This looks like it might be something else...
+                Package pkg = cls.getPackage();
+                if (pkg != null && pkg.getName().endsWith(".jaxws")) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("This looks like a jaxws generated Class. Adding it to the front of the secondary list:" + 
+                                           cls.getName());
+                    }
+                    secondary.add(0,cls);  // Add to the front of the list
+                } else {
+                    secondary.add(cls);  // This looks like it might be something else...not JAXB
+                }
             }            
         }
     }
