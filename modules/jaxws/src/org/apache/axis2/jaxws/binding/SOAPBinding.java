@@ -32,6 +32,8 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.soap.AddressingFeature.Responses;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,6 +47,10 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     private boolean mtomEnabled = false;
     private int mtomThreshold = 0;
     private boolean respectBindingEnabled = false;
+    private boolean addressingConfigured = false;
+    private boolean addressingEnabled = false;
+    private boolean addressingRequired = false;
+    private Responses addressingResponses = Responses.ALL;
 
     private static Log log = LogFactory.getLog(SOAPBinding.class);
     
@@ -68,6 +74,67 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     public void setRespectBindingEnabled(boolean enabled) {
         respectBindingEnabled = enabled;
     }
+    
+    /**
+     * Indicates if Addressing was configured explicitly via metadata, such as through a deployment descriptor.
+     * If an AddressingAnnot was specified in the DBC, then this will answer true.  The related addressing methods
+     * will return a default value if this method returns false.
+     * @see #isAddressingEnabled()
+     * @see #isAddressingRequired()
+     * @see #getAddressingResponses()
+     * @return true if addressing was explicitly configured via an AddressingAnnot in the DBC; false otherwise.
+     */
+    public boolean isAddressingConfigured() {
+        return addressingConfigured;
+    }
+    
+    /**
+     * Set whether Addressing was explicitly configured via metadata.  The default is false.
+     * @param configured boolean indicating of addressing was configured via metadata.
+     */
+    public void setAddressingConfigured(boolean configured) {
+        addressingConfigured = configured;
+    }
+    
+    /**
+     * Indicates if addressing is enabled or disabled.
+     * Note that if addressing was not explicitly configured via metadata, this will return a default value.
+     * @see #isAddressingConfigured()
+     * @return true if addressing is enabled, false (default) otherwise.
+     */
+    public boolean isAddressingEnabled() {
+        return addressingEnabled;
+    }
+    public void setAddressingEnabled(boolean enabled) {
+        addressingEnabled = enabled;
+    }
+    
+    /**
+     * Indicates if addressing is required or not.
+     * Note that if addressing was not explicitly configured via metadata, this will return a default value.
+     * @see #isAddressingConfigured()
+     * @return true if addressing is required, false (default) otherwise.
+     */
+    public boolean isAddressingRequired() {
+        return addressingRequired;
+    }
+    public void setAddressingRequired(boolean required) {
+        addressingRequired = required;
+    }
+    
+    /**
+     * Return the type of responses required by Addressing.
+     * Note that if addressing was not explicitly configured via metadata, this will return a default value.
+     * @see #isAddressingConfigured()
+     * @return AddressingFeature.Responses ENUM value indicating what type of addressing responses are required. 
+     */
+    public Responses getAddressingResponses() {
+        return addressingResponses;
+    }
+    public void setAddressingResponses(Responses responses) {
+        addressingResponses = responses;
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
@@ -36,6 +35,7 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
+import org.apache.axis2.jaxws.description.builder.AddressingAnnot;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MTOMAnnot;
@@ -69,6 +69,8 @@ import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.soap.AddressingFeature.Responses;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -2962,4 +2964,79 @@ public class ServiceDescriptionImpl
         }
         return enabled;
     }
+    
+    public boolean isAddressingConfigured(Object serviceDelegateKey, Class seiClass) {
+        boolean configured = false;
+        List<Annotation> seiFeatureList = getSEIFeatureList(serviceDelegateKey, seiClass);
+        if (log.isDebugEnabled()) {
+            log.debug("Feature list for delegate: " + serviceDelegateKey + ", and SEI: " + seiClass
+                    + ", is: " + seiFeatureList);
+        }
+        if (seiFeatureList != null) {
+            for (int i = 0; i < seiFeatureList.size(); i++) {
+                Annotation checkAnnotation = seiFeatureList.get(i);
+                if (checkAnnotation instanceof AddressingAnnot) {
+                    AddressingAnnot addressingAnnot = (AddressingAnnot) checkAnnotation;
+                    configured = true;
+                }
+            }
+        }
+        return configured;
+    }
+    
+    public boolean isAddressingEnabled(Object serviceDelegateKey, Class seiClass) {
+        boolean enabled = false;
+        List<Annotation> seiFeatureList = getSEIFeatureList(serviceDelegateKey, seiClass);
+        if (log.isDebugEnabled()) {
+            log.debug("Feature list for delegate: " + serviceDelegateKey + ", and SEI: " + seiClass
+                    + ", is: " + seiFeatureList);
+        }
+        if (seiFeatureList != null) {
+            for (int i = 0; i < seiFeatureList.size(); i++) {
+                Annotation checkAnnotation = seiFeatureList.get(i);
+                if (checkAnnotation instanceof AddressingAnnot) {
+                    AddressingAnnot addressingAnnot = (AddressingAnnot) checkAnnotation;
+                    enabled = addressingAnnot.enabled();
+                }
+            }
+        }
+        return enabled;
+    }
+    public boolean isAddressingRequired(Object serviceDelegateKey, Class seiClass) {
+        boolean enabled = false;
+        List<Annotation> seiFeatureList = getSEIFeatureList(serviceDelegateKey, seiClass);
+        if (log.isDebugEnabled()) {
+            log.debug("Feature list for delegate: " + serviceDelegateKey + ", and SEI: " + seiClass
+                    + ", is: " + seiFeatureList);
+        }
+        if (seiFeatureList != null) {
+            for (int i = 0; i < seiFeatureList.size(); i++) {
+                Annotation checkAnnotation = seiFeatureList.get(i);
+                if (checkAnnotation instanceof AddressingAnnot) {
+                    AddressingAnnot addressingAnnot = (AddressingAnnot) checkAnnotation;
+                    enabled = addressingAnnot.required();
+                }
+            }
+        }
+        return enabled;
+    }
+    public Responses getAddressingResponses(Object serviceDelegateKey, Class seiClass) {
+        Responses responses = null;
+        List<Annotation> seiFeatureList = getSEIFeatureList(serviceDelegateKey, seiClass);
+        if (log.isDebugEnabled()) {
+            log.debug("Feature list for delegate: " + serviceDelegateKey + ", and SEI: " + seiClass
+                    + ", is: " + seiFeatureList);
+        }
+        if (seiFeatureList != null) {
+            for (int i = 0; i < seiFeatureList.size(); i++) {
+                Annotation checkAnnotation = seiFeatureList.get(i);
+                if (checkAnnotation instanceof AddressingAnnot) {
+                    AddressingAnnot addressingAnnot = (AddressingAnnot) checkAnnotation;
+                    responses = addressingAnnot.responses();
+                }
+            }
+        }
+        return responses;
+    }
+
 }

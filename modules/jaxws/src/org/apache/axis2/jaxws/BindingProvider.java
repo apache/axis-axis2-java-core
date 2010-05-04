@@ -43,6 +43,7 @@ import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.soap.AddressingFeature.Responses;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.util.Hashtable;
 import java.util.Map;
@@ -122,7 +123,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             }
         }
 
-        // See if the metadata from creating the service indicates that MTOM and/or RespectBinding should be enabled
+        // See if the metadata from creating the service indicates that MTOM, Addressing and/or RespectBinding should be enabled
         if (binding instanceof SOAPBinding) {
             configureBindingFromMetadata();
         }
@@ -159,16 +160,20 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     }
 
     /**
-     * Configure the binding from the Metadata for MTOM and RespectBinding.
+     * Configure the binding from the Metadata for WebService Features.
      */
     private void configureBindingFromMetadata() {
         // MTOM can be enabled either at the ServiceDescription level (via the WSDL binding type) or
         // at the EndpointDescription level via the binding type used to create a Dispatch.
         boolean enableMTOMFromMetadata = false;
         int mtomThreshold = 0;
+        boolean isAddressingConfiguredViaMetadata = false;
         boolean enableRespectBindingdFromMetadata = false;
+        boolean enableAddressingFromMetadata = false;
+        boolean requireAddressingFromMetadata = false;
+        Responses addressingResponses = null;
         
-        // if we have an SEI for the port, then we'll use it in order to search for MTOM configuration
+        // if we have an SEI for the port, then we'll use it in order to search for WebService Feature configuration
         if(endpointDesc.getEndpointInterfaceDescription() != null
                 &&
                 endpointDesc.getEndpointInterfaceDescription().getSEIClass() != null) {
@@ -179,11 +184,24 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
             enableRespectBindingdFromMetadata = isRespectBindingEnabled(endpointDesc.getServiceDescription(), serviceDelegate,
                     endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+            
+            isAddressingConfiguredViaMetadata = isAddressingConfigured(endpointDesc.getServiceDescription(), serviceDelegate,
+                    endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+            if (isAddressingConfiguredViaMetadata) {
+                enableAddressingFromMetadata = isAddressingEnabled(endpointDesc.getServiceDescription(), serviceDelegate,
+                        endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+                requireAddressingFromMetadata = isAddressingRequired(endpointDesc.getServiceDescription(), serviceDelegate,
+                        endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+                addressingResponses = getAddressingResponses(endpointDesc.getServiceDescription(), serviceDelegate,
+                        endpointDesc.getEndpointInterfaceDescription().getSEIClass());
+            }
+           
+            
         }
         else {
             enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
-            // Threshold & RespectBinding does not need to be set here based on the sparse composite (i.e. depolyment descriptor)
-            // since it can only be applied to a port injection (i.e. an SEI) using a DD.
+            // MTOM.Threshold, RespectBinding, and Addressing does not need to be set here based on the sparse composite 
+            // (i.e. depolyment descriptor) since it can only be applied to a port injection (i.e. an SEI) using a DD.
         }
         if (!enableMTOMFromMetadata) {
             String bindingType = endpointDesc.getClientBindingID();
@@ -199,12 +217,55 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         if (enableRespectBindingdFromMetadata) {
             ((SOAPBinding) binding).setRespectBindingEnabled(true);
         }
+        
+        if (isAddressingConfiguredViaMetadata) {
+            ((SOAPBinding) binding).setAddressingConfigured(true);
+            ((SOAPBinding) binding).setAddressingEnabled(enableAddressingFromMetadata);
+            ((SOAPBinding) binding).setAddressingRequired(requireAddressingFromMetadata);
+            ((SOAPBinding) binding).setAddressingResponses(addressingResponses);
+        }
     }
 
     private boolean isRespectBindingEnabled(ServiceDescription serviceDescription, ServiceDelegate serviceDelegateKey, 
             Class seiClass) {
         boolean isEnabled = serviceDescription.isRespectBindingEnabled(serviceDelegateKey, seiClass);
         return isEnabled;
+    }
+
+    
+    /**
+     * Answer if addressing was explicitly configured via metadata.  Note that if Addressing was not explicitly configured,
+     * then the related methods will return default values.  If Addressing was explicitly configured, the related 
+     * methods will return values based on whatever configuration was specified.
+     * @see #isAddressingEnabled(ServiceDescription, ServiceDelegate, Class) 
+     * @see #isAddressingRequired(ServiceDescription, ServiceDelegate, Class)
+     * @see #getAddressingResponses(ServiceDescription, ServiceDelegate, Class)
+     * @param serviceDescription
+     * @param serviceDelegateKey
+     * @param seiClass
+     * @return true if addressing was explicitly configured via metadata, false otherwise.
+     */
+    private boolean isAddressingConfigured(ServiceDescription serviceDescription, ServiceDelegate serviceDelegateKey, 
+            Class seiClass) {
+        boolean isConfigured = serviceDescription.isAddressingConfigured(serviceDelegateKey, seiClass);
+        return isConfigured;
+    }
+    
+    private boolean isAddressingEnabled(ServiceDescription serviceDescription, ServiceDelegate serviceDelegateKey, 
+            Class seiClass) {
+        boolean isEnabled = serviceDescription.isAddressingEnabled(serviceDelegateKey, seiClass);
+        return isEnabled;
+    }
+
+    private boolean isAddressingRequired(ServiceDescription serviceDescription, ServiceDelegate serviceDelegateKey, 
+            Class seiClass) {
+        boolean isRequired = serviceDescription.isAddressingRequired(serviceDelegateKey, seiClass);
+        return isRequired;
+    }
+    private Responses getAddressingResponses(ServiceDescription serviceDescription, ServiceDelegate serviceDelegateKey, 
+            Class seiClass) {
+        Responses responses = serviceDescription.getAddressingResponses(serviceDelegateKey, seiClass);
+        return responses;
     }
 
     private int getMTOMThreshold(ServiceDescription serviceDescription, ServiceDelegate serviceDelegate, Class seiClass) {

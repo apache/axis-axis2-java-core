@@ -19,7 +19,9 @@
 
 package org.apache.axis2.jaxws.client.proxy;
 
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
@@ -265,6 +267,10 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
                 getRequestContext(), request);
 
+        // Note that configuring the MessageContext for addressing based on the metadata and for any 
+        // WebService Features needs to be done after the application context migration since it will move properties
+        // from the JAXWS RequestContext onto the Axis2 Message context, overwritting any that are already set.
+        configureAddressing(request, this);
         // Perform the WebServiceFeature configuration requested by the user.
         bnd.configure(request, this);
 
@@ -385,6 +391,44 @@ public class JAXWSProxyHandler extends BindingProvider implements
         return null;
     }
     
+    /**
+     * For a SOAP Binding, configure the Addressing-related properties on the message context based on the
+     * addressing configuration specified via metadata (such as a deployment descriptor).  Note that if
+     * addressing was not explicitly configured, then the Addressing-related propertes will not be set on the
+     * message context.
+     * <p>
+     * This code is similar to the client-side Addressing configurator what the properties on the message context
+     * are set to.
+     * @see org.apache.axis2.jaxws.client.config.AddressingConfigurator
+     * @param messageContext The message context on which Addressing properties will be set
+     * @param bindingProvider Instance of the binding provider for which property values will be determined
+     */
+    private void configureAddressing(MessageContext messageContext, BindingProvider bindingProvider) {
+        
+        Binding binding = (Binding) bindingProvider.getBinding();
+        if (binding != null && binding instanceof SOAPBinding) {
+            SOAPBinding soapBinding = (SOAPBinding) binding;
+            org.apache.axis2.jaxws.binding.SOAPBinding implBinding = (org.apache.axis2.jaxws.binding.SOAPBinding) soapBinding;
+            if (implBinding.isAddressingConfigured()) {
+                String addressingNamespace = implBinding.getAddressingNamespace();
+                Boolean disableAddressing = new Boolean(true);
+                
+                if (implBinding.isAddressingEnabled()) {
+                    addressingNamespace = Final.WSA_NAMESPACE;
+                    disableAddressing = new Boolean(false);
+                }
+                
+                messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, addressingNamespace);                        
+                messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, disableAddressing);
+            
+                // If the Addressing feature was specified, then get the responses value from it and map to the value 
+                // the addressing handler expects
+                messageContext.setProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME, 
+                        org.apache.axis2.jaxws.server.config.AddressingConfigurator.mapResponseAttributeToAddressing(implBinding.getAddressingResponses()));
+            }
+        }
+    }
+
     private AsyncResponse createProxyListener(Object[] args, OperationDescription operationDesc) {
         ProxyAsyncListener listener = new ProxyAsyncListener(operationDesc);
         listener.setHandler(this);

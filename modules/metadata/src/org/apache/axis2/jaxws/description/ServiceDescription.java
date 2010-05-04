@@ -26,6 +26,8 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.AddressingFeature.Responses;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -236,5 +238,51 @@ public interface ServiceDescription {
      * @return true if RespectBinding is enabled; false otherwise.
      */
     public abstract boolean isRespectBindingEnabled(Object serviceDelegateKey, Class seiClass);
+
+    /**
+     * Answer whether Addressing was explicitly configured via metadata (such as a deployment descriptor) on the
+     * service-requester.  Note that the related methods will return default values if Addressing was not explicitly
+     * configured; otherwise they will return values set based on the metadata configuration.
+     * @see #isAddressingEnabled(Object, Class)
+     * @see #isAddressingRequired(Object, Class)
+     * @see #getAddressingResponses(Object, Class)
+     * @param serviceDelegateKey The instance of the service delegate related to this service
+     * @param seiClass The SEI for the port to retrieve the setting for.
+     * @return true if Addressing was explicitly set via metadata, false otherwise.
+     */
+    public abstract boolean isAddressingConfigured(Object serviceDelegateKey, Class seiClass);
+
+    /**
+     * Answer whether Addressing is enabled on the service-requester.
+     * Note that if addressing was not configured via metadata, then this method will return a default value,
+     * otherwise it will return the value configured via metadata.
+     * @see #isAddressingConfigured(Object, Class)
+     * @param serviceDelegateKey The instance of the service delegate related to this service
+     * @param seiClass The SEI for the port to retrieve the setting for.
+     * @return true if Addressing is enabled on the service-requester, false (default) otherwise 
+     */
+    public abstract boolean isAddressingEnabled(Object serviceDelegateKey, Class seiClass);
+
+    /**
+     * Answer whether Addressing is required on the service-requester.
+     * Note that if addressing was not configured via metadata, then this method will return a default value,
+     * otherwise it will return the value configured via metadata.
+     * @see #isAddressingConfigured(Object, Class)
+     * @param serviceDelegateKey The instance of the service delegate related to this service
+     * @param seiClass The SEI for the port to retrieve the setting for.
+     * @return true if Addressing is required on the service-requester, false (default) otherwise 
+     */
+    public abstract boolean isAddressingRequired(Object serviceDelegateKey, Class seiClass);
+
+    /**
+     * Answer the type of Addressing responses required by the service-requester.
+     * Note that if addressing was not configured via metadata, then this method will return a default value,
+     * otherwise it will return the value configured via metadata.
+     * @see #isAddressingConfigured(Object, Class)
+     * @param serviceDelegateKey The instance of the service delegate related to this service
+     * @param seiClass The SEI for the port to retrieve the setting for.
+     * @return AddressingFeature.Responses vale corresponding to the type of responses required by service-requester. 
+     */
+    public abstract Responses getAddressingResponses(Object serviceDelegateKey, Class seiClass);
 
 }
