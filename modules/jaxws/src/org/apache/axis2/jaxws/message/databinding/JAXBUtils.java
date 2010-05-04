@@ -33,6 +33,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.ws.Holder;
@@ -721,8 +722,9 @@ public class JAXBUtils {
     }
 
     /**
-     * releaseJAXBMarshalller Do not call this method if an exception occurred while using the
-     * Marshaller. We object my be in an invalid state.
+     * releaseJAXBMarshalller 
+     * Do not call this method if an exception occurred while using the
+     * Marshaller. We don't want an object in an invalid state.
      *
      * @param context    JAXBContext
      * @param marshaller Marshaller
@@ -734,8 +736,20 @@ public class JAXBUtils {
             log.debug("  JAXBContext = " + JavaUtils.getObjectIdentity(context));
         }
         if (ENABLE_MARSHALL_POOLING) {
-            marshaller.setAttachmentMarshaller(null);
-            mpool.put(context, marshaller);
+            // Make sure to clear any state or properties
+            
+            try {
+                marshaller.setAttachmentMarshaller(null);
+                // Set the JAXB_ENCODING back to the default value UTF-8
+                marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                mpool.put(context, marshaller);
+            } catch (Throwable t) {
+                // Log the problem, and continue without pooling
+                if (log.isDebugEnabled()) {
+                    log.debug("The following exception is ignored. Processing continues " + t);
+                }
+            }
+            
         }
     }
 

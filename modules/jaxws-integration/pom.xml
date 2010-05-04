@@ -1410,6 +1410,8 @@
                         <include>**/SOAP12DispatchTest.java</include>
                         <include>**/OMElementDispatchTest.java</include>
                         <include>**/JAXBContextTest.java</include>
+                        <include>**/JAXBStringUTF16Tests.java</include>
+                        <include>**/JAXBStringUTF8Tests.java</include>
 
                         <include>**/StringProviderTests.java</include>
                         <include>**/SOAPFaultProviderTests.java</include>

@@ -27,6 +27,16 @@ public class JAXBStringUTF8Tests extends AbstractTestCase {
         runTest("a simple string");
     }
 
+    public void testSimpleStringSwitchEncoding() throws Exception {
+        String input = "a simple string";
+        String output = "a simple string";
+        
+        // Run with different encodings to verify proper processing.
+        runTestWithEncoding(input, output, null);  // no encoding means to use default, UTF-8
+        runTestWithEncoding(input, output, "UTF-16");  // Make a call with UTF-16
+        runTestWithEncoding(input, output, null);  // now try again...using default, UTF-8
+    }
+    
     public void testStringWithApostrophes() throws Exception {
         runTest("this isn't a simple string");
     }
@@ -74,15 +84,19 @@ public class JAXBStringUTF8Tests extends AbstractTestCase {
     }
 
     private void runTestWithUTF8(String input, String output) {
-        runTestWithEncoding(input, output);
+        runTestWithEncoding(input, output, null);  // no encoding means to use default, UTF-8
     }
 
-    private void runTestWithEncoding(String input, String output) {
+    private void runTestWithEncoding(String input, String output, String encoding) {
         TestLogger.logger.debug("Test : " + getName());
         try {
             JAXBStringPortType myPort = (new JAXBStringService()).getJAXBStringPort();
             BindingProvider p = (BindingProvider) myPort;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
+            if (encoding != null) {
+                p.getRequestContext().put(org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING, encoding);
+            }
 
             Echo request = new Echo();
             request.setArg(input);
@@ -94,4 +108,5 @@ public class JAXBStringUTF8Tests extends AbstractTestCase {
             fail();
         }
     }
+   
 }

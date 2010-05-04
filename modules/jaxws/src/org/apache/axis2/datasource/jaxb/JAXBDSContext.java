@@ -371,12 +371,33 @@ public class JAXBDSContext {
             Marshaller m = JAXBUtils.getJAXBMarshaller(jbc);
             if (writer instanceof MTOMXMLStreamWriter && ((MTOMXMLStreamWriter) writer).getOutputFormat() != null) {
                 String encoding = ((MTOMXMLStreamWriter) writer).getOutputFormat().getCharSetEncoding();
-                if (encoding != null && !"UTF-8".equalsIgnoreCase(encoding)) {
+                
+                String marshallerEncoding = (String) m.getProperty(Marshaller.JAXB_ENCODING);
+                
+                // Make sure that the marshaller respects the encoding of the message.
+                // This is accomplished by setting the encoding on the Marshaller's JAXB_ENCODING property.
+                if (encoding == null && marshallerEncoding == null) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Setting the Marshaller.JAXB_ENCODING to " + encoding);
+                        log.debug("The encoding and the marshaller's JAXB_ENCODING are both set to the default (UTF-8)");
                     }
-    
-                    m.setProperty(Marshaller.JAXB_ENCODING, encoding);
+                } else {
+                    // Must set the encoding to an actual String to set it on the Marshaller
+                    if (encoding == null) {
+                       encoding = "UTF-8";
+                    }
+                    if (!encoding.equalsIgnoreCase(marshallerEncoding)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("The Marshaller.JAXB_ENCODING is " + marshallerEncoding);
+                            log.debug("The Marshaller.JAXB_ENCODING is changed to the message encoding " + 
+                                    encoding);
+                        }
+                        m.setProperty(Marshaller.JAXB_ENCODING, encoding);
+                    } else {
+                        if (log.isDebugEnabled()) {
+                            log.debug("The encoding and the marshaller's JAXB_ENCODING are both set to:" + 
+                                        marshallerEncoding);
+                        }
+                    }
                 }
             }
             
