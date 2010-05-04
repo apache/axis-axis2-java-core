@@ -62,10 +62,12 @@ public class ProxyAddressingMetadataTest extends InterceptableClientTestCase {
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
         
         assertNull(version);
         assertTrue(disabled);
         assertNull(responses);
+        assertNull(required);
     }
 
     /**
@@ -98,10 +100,62 @@ public class ProxyAddressingMetadataTest extends InterceptableClientTestCase {
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         assertNotNull("Version not set", version);
         assertEquals("Wrong addressing version", Final.WSA_NAMESPACE, version);
+        
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
+        assertNotNull("Required not set", required);
+        assertEquals("Wrong addressing required", AddressingConstants.ADDRESSING_REQUIRED, required);
+
 
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         assertNotNull("Disabled not set", disabled);
         assertFalse("Addressing disabled", disabled);
+
+        String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
+        assertNotNull("Responses not set", responses);
+        assertEquals("Wrong responses value", AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS, responses);
+        
+    }
+
+    /**
+     * Validate correct behavior when addressing is disabled via addressing-related metadata specified in a sparse composite, such as
+     * would be used to represent configuration via a Deployment Descriptor.
+     */
+    public void testAddressingMetadataDisabled() {
+        Map<String, List<Annotation>> map = new HashMap();
+        ArrayList<Annotation> wsFeatures = new ArrayList<Annotation>();
+        AddressingAnnot addressingFeature = new AddressingAnnot();
+        addressingFeature.setEnabled(false);
+        addressingFeature.setRequired(true);
+        addressingFeature.setResponses(Responses.NON_ANONYMOUS);
+        wsFeatures.add(addressingFeature);
+        map.put(ProxyAddressingService.class.getName(), wsFeatures);
+        DescriptionBuilderComposite serviceDBC = new DescriptionBuilderComposite();
+        serviceDBC.getProperties().put(MDQConstants.SEI_FEATURES_MAP, map);
+        ServiceDelegate.setServiceMetadata(serviceDBC);
+
+        Service svc = Service.create(new QName("http://test", "ProxyAddressingService"));
+        ProxyAddressingService proxy = svc.getPort(ProxyAddressingService.class);
+        assertNotNull(proxy);
+        
+        proxy.doSomething("12345");
+        
+        TestClientInvocationController testController = getInvocationController();
+        InvocationContext ic = testController.getInvocationContext();
+        MessageContext request = ic.getRequestMessageContext();
+        
+        // If addressing is not enabled the version should not be set
+        String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        assertNull("Version set", version);
+        
+        Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        assertNotNull("Disabled not set", disabled);
+        assertTrue("Addressing disabled", disabled);
+
+        // Even though required=true above, per the addressing developers, they want to leave it set as unspecified when
+        // addressing is not enabled.
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
+        assertNotNull("Required not set", required);
+        assertEquals("Wrong addressing required", AddressingConstants.ADDRESSING_UNSPECIFIED, required);
 
         String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
         assertNotNull("Responses not set", responses);

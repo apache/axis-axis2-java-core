@@ -86,10 +86,12 @@ public class ProxyAddressingFeatureTest extends InterceptableClientTestCase {
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
         
         assertNull(version);
         assertTrue(disabled);
         assertNull(responses);
+        assertNull(required);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
@@ -119,10 +121,12 @@ public class ProxyAddressingFeatureTest extends InterceptableClientTestCase {
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
         
         assertEquals(Final.WSA_NAMESPACE, version);
         assertFalse(disabled);
         assertEquals("Wrong default responses", AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH, responses);
+        assertEquals("Wrong required attribute", AddressingConstants.ADDRESSING_UNSPECIFIED, required);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
@@ -153,10 +157,12 @@ public class ProxyAddressingFeatureTest extends InterceptableClientTestCase {
         
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
-        
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
+
         assertEquals(Final.WSA_NAMESPACE, version);
         assertTrue(disabled);
-        
+        assertEquals("Wrong required attribute", AddressingConstants.ADDRESSING_UNSPECIFIED, required);
+
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
         org.apache.axis2.addressing.EndpointReference epr =

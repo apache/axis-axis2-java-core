@@ -60,6 +60,7 @@ public class AddressingConfigurator implements ClientConfigurator {
         String addressingNamespace = bnd.getAddressingNamespace();
         Boolean disableAddressing =
             (Boolean) messageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String addressingRequired = AddressingConstants.ADDRESSING_UNSPECIFIED;
         
         //Figure out which WS-Addressing feature was specified causing this configurator to run. 
         if (addressingFeature != null && submissionAddressingFeature != null) {
@@ -75,6 +76,9 @@ public class AddressingConfigurator implements ClientConfigurator {
                     addressingNamespace = Final.WSA_NAMESPACE;
                 
                 disableAddressing = Boolean.FALSE;
+                if (addressingFeature.isRequired() || submissionAddressingFeature.isRequired()) {
+                    addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+                }
             }
             else if (w3cAddressingEnabled) {
                 //Enable only 2005/08 addressing
@@ -85,6 +89,9 @@ public class AddressingConfigurator implements ClientConfigurator {
                 }
                 addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
+                if (addressingFeature.isRequired()) {
+                    addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+                }
             }
             else if (submissionAddressingEnabled) {
                 //Enable only 2004/08 addressing
@@ -95,6 +102,9 @@ public class AddressingConfigurator implements ClientConfigurator {
                 }
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
+                if (submissionAddressingFeature.isRequired()) {
+                    addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+                }
             }
             else {
                 //Disable 2005/08 and 2004/08 addressing
@@ -114,6 +124,9 @@ public class AddressingConfigurator implements ClientConfigurator {
                 }
                 addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
+                if (addressingFeature.isRequired()) {
+                    addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+                }
             }
             else {
                 //Disable 2005/08 addressing
@@ -133,6 +146,9 @@ public class AddressingConfigurator implements ClientConfigurator {
                 }
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
+                if (submissionAddressingFeature.isRequired()) {
+                    addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+                }
             }
             else {
                 //Disable 2004/08 addressing
@@ -167,6 +183,7 @@ public class AddressingConfigurator implements ClientConfigurator {
 
         messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, addressingNamespace);                        
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, disableAddressing);
+        messageContext.setProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER, addressingRequired);
         
         // If the Addressing feature was specified, then get the responses value from it and map to the value 
         // the addressing handler expects

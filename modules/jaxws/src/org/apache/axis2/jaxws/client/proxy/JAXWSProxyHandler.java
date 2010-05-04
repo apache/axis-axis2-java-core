@@ -412,17 +412,21 @@ public class JAXWSProxyHandler extends BindingProvider implements
             if (implBinding.isAddressingConfigured()) {
                 String addressingNamespace = implBinding.getAddressingNamespace();
                 Boolean disableAddressing = new Boolean(true);
+                String addressingRequired = AddressingConstants.ADDRESSING_UNSPECIFIED;
                 
                 if (implBinding.isAddressingEnabled()) {
                     addressingNamespace = Final.WSA_NAMESPACE;
                     disableAddressing = new Boolean(false);
+                    if (implBinding.isAddressingRequired()) {
+                        addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+                    }
                 }
                 
                 messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, addressingNamespace);                        
                 messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, disableAddressing);
+                messageContext.setProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER, addressingRequired);
             
-                // If the Addressing feature was specified, then get the responses value from it and map to the value 
-                // the addressing handler expects
+                // Get the responses value and map to the value the addressing handler expects
                 messageContext.setProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME, 
                         org.apache.axis2.jaxws.server.config.AddressingConfigurator.mapResponseAttributeToAddressing(implBinding.getAddressingResponses()));
             }
