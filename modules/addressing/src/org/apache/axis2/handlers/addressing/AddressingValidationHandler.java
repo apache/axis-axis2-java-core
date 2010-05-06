@@ -65,26 +65,35 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
     }
 
     /**
-     * Check that if the wsaddressing="required" attribute exists on the service definition or
-     * <wsaw:UsingAddressing wsdl:required="true" /> was found in the WSDL that WS-Addressing
-     * headers were found on the inbound message
+     * Check that if the wsaddressing="required" attribute exists on the service definition
+     * (or AddressingFeature on the client) or <wsaw:UsingAddressing wsdl:required="true" />
+     * was found in the WSDL (provider side only) that WS-Addressing headers were found on
+     * the inbound message.
      */
     private void checkUsingAddressing(MessageContext msgContext)
             throws AxisFault {
+        String addressingFlag;
     	AxisDescription ad = msgContext.getAxisService();
         if (ad == null) {
+            // On client side, get required value from the message context
+            // (set by AddressingConfigurator).
+            // We do not use the UsingAddressing required attribute on the
+            // client side since it is not generated/processed by java tooling.
+            addressingFlag = AddressingHelper.getAddressingRequirementParemeterValue(msgContext);
             if (log.isTraceEnabled()) {
-                log.trace("checkUsingAddressing: axisService null, cannot check UsingAddressing");
+                log.trace("checkUsingAddressing: WSAddressingFlag from MessageContext=" + addressingFlag);
             }
-            return;
-        }
-        if(msgContext.getAxisOperation()!=null){
-        	ad = msgContext.getAxisOperation();
-        }
-        String addressingFlag =
-            AddressingHelper.getAddressingRequirementParemeterValue(ad);
-        if (log.isTraceEnabled()) {
-            log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
+        } else {
+            // On provider side, get required value from AxisOperation
+            // (set by AddressingConfigurator and UsingAddressing WSDL processing).
+            if(msgContext.getAxisOperation()!=null){
+        	   ad = msgContext.getAxisOperation();
+            }
+            addressingFlag =
+                AddressingHelper.getAddressingRequirementParemeterValue(ad);
+            if (log.isTraceEnabled()) {
+                log.trace("checkUsingAddressing: WSAddressingFlag from AxisOperation=" + addressingFlag);
+            }
         }
         if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
             AddressingFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,

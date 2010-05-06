@@ -142,7 +142,7 @@ public class ProxyAddressingFeatureTest extends InterceptableClientTestCase {
      * Test disabling the Addressing feature.
      */
     public void testDisabledAddressingFeature() {
-        // Use the default feature config
+        // Set the feature to be disabled.
         AddressingFeature feature = new AddressingFeature(false);
         
         Service svc = Service.create(new QName("http://test", "ProxyAddressingService"));
@@ -169,6 +169,43 @@ public class ProxyAddressingFeatureTest extends InterceptableClientTestCase {
             axis2Request.getTo();
         
         assertNull(epr);
+    }
+    
+    /*
+     * Test requiring the AddressingFeature.
+     */
+    public void testRequiredAddressingFeature() throws Exception {
+        // Set the feature to be required.
+        AddressingFeature feature = new AddressingFeature(true, true);
+        
+        Service svc = Service.create(new QName("http://test", "ProxyAddressingService"));
+        ProxyAddressingService proxy = svc.getPort(w3cEPR, ProxyAddressingService.class, feature);
+        assertNotNull(proxy);
+        
+        proxy.doSomething("12345");
+        
+        TestClientInvocationController testController = getInvocationController();
+        InvocationContext ic = testController.getInvocationContext();
+        MessageContext request = ic.getRequestMessageContext();
+        
+        String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String responses = (String) request.getProperty(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
+        
+        assertEquals(Final.WSA_NAMESPACE, version);
+        assertFalse(disabled);
+        assertEquals("Wrong default responses", AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH, responses);
+        assertEquals("Wrong required attribute", AddressingConstants.ADDRESSING_REQUIRED, required);
+        
+        org.apache.axis2.context.MessageContext axis2Request =
+            request.getAxisMessageContext();
+        org.apache.axis2.addressing.EndpointReference epr =
+            axis2Request.getTo();
+        
+        OMElement omElement =
+            EndpointReferenceHelper.toOM(OMF, epr, ELEMENT200508, Final.WSA_NAMESPACE);
+        assertXMLEqual(w3cEPR.toString(), omElement.toString());
     }
     
     /*

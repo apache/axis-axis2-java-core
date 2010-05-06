@@ -158,7 +158,22 @@ public class AddressingHelper {
             	value = value.trim();
             }
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("getAddressingRequirementParemeterValue: value: '" + value + "'");
+                log.debug("getAddressingRequirementParemeterValue(AxisDescription): value: '" + value + "'");
+            }
+        }
+
+        if (value == null || "".equals(value)) {
+            value = AddressingConstants.ADDRESSING_UNSPECIFIED;
+        }
+        return value;
+    }
+
+    public static String getAddressingRequirementParemeterValue(MessageContext mc){
+        String value = "";
+        if (mc != null) {
+            value = mc.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER).toString();
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug("getAddressingRequirementParemeterValue(MessageContext): value: '" + value + "'");
             }
         }
 

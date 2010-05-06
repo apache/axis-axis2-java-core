@@ -21,6 +21,10 @@ package org.apache.axis2.addressing;
 
 import junit.framework.TestCase;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.Parameter;
 
 public class AddressingHelperTest extends TestCase {
 
@@ -126,5 +130,52 @@ public class AddressingHelperTest extends TestCase {
         MessageContext mc = new MessageContext();
         mc.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
         assertTrue(AddressingHelper.isSyncFaultAllowed(mc));
+    }
+    
+    public void testGetInvocationPatternParameterValueFromAxisOperation() throws Exception {
+        AxisService axisService = new AxisService();
+        AxisOperation axisOperation = new InOutAxisOperation();
+        axisService.addOperation(axisOperation);
+        
+        // Set invocation pattern on AxisOperation only 
+        AddressingHelper.setInvocationPatternParameterValue(axisOperation,
+                AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS);
+        
+        String value = AddressingHelper
+                .getInvocationPatternParameterValue(axisOperation);
+        assertEquals(value, AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS);
+    }
+    
+    public void testGetInvocationPatternParameterValueFromAxisService() throws Exception {
+        AxisService axisService = new AxisService();
+        AxisOperation axisOperation = new InOutAxisOperation();
+        axisService.addOperation(axisOperation);
+
+        // Set invocation pattern on AxisService only
+        axisService.addParameter(new Parameter(
+                AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME,
+                AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS));
+
+        String value = AddressingHelper
+                .getInvocationPatternParameterValue(axisOperation);
+        assertEquals(value, AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS);
+    }
+    
+    public void testGetInvocationPatternParameterValueFromBoth() throws Exception {
+        AxisService axisService = new AxisService();
+        AxisOperation axisOperation = new InOutAxisOperation();
+        axisService.addOperation(axisOperation);
+
+        // Set invocation pattern on AxisOperation and AxisService 
+        AddressingHelper.setInvocationPatternParameterValue(axisOperation,
+                AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS);
+        axisService.addParameter(new Parameter(
+                AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME,
+                AddressingConstants.WSAM_INVOCATION_PATTERN_SYNCHRONOUS));
+
+        // Check that the AxisOperation value has precedence over the AxisService value
+        String value = AddressingHelper
+                .getInvocationPatternParameterValue(axisOperation);
+        assertEquals(value, AddressingConstants.WSAM_INVOCATION_PATTERN_ASYNCHRONOUS);
     }
 }

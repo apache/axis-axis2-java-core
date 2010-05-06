@@ -87,9 +87,11 @@ public class DispatchSubmissionAddressingFeatureTest extends InterceptableClient
         
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
         
         assertNull(version);
         assertTrue(disabled);
+        assertNull(required);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
@@ -118,9 +120,11 @@ public class DispatchSubmissionAddressingFeatureTest extends InterceptableClient
         
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
         
         assertEquals(Submission.WSA_NAMESPACE, version);
         assertFalse(disabled);
+        assertEquals("Wrong required attribute", AddressingConstants.ADDRESSING_UNSPECIFIED, required);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
@@ -151,9 +155,11 @@ public class DispatchSubmissionAddressingFeatureTest extends InterceptableClient
         
         String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
         
         assertEquals(Submission.WSA_NAMESPACE, version);
         assertTrue(disabled);
+        assertEquals("Wrong required attribute", AddressingConstants.ADDRESSING_UNSPECIFIED, required);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
@@ -161,6 +167,41 @@ public class DispatchSubmissionAddressingFeatureTest extends InterceptableClient
             axis2Request.getTo();
         
         assertNull(epr);
+    }
+    
+    /*
+     * Test requiring the SubmissionAddressing feature.
+     */
+    public void testRequiredSubmissionAddressingFeature() throws Exception {
+        // Set the feature to be required
+        SubmissionAddressingFeature feature = new SubmissionAddressingFeature(true, true);
+                
+        Service svc = Service.create(new QName("http://test", "TestService"));
+        svc.addPort(new QName("http://test", "TestPort"), SOAPBinding.SOAP11HTTP_BINDING, "http://localhost");
+        Dispatch<Source> d = svc.createDispatch(subEPR, Source.class, Service.Mode.PAYLOAD, feature);
+        
+        d.invoke(null);
+        
+        TestClientInvocationController testController = getInvocationController();
+        InvocationContext ic = testController.getInvocationContext();
+        MessageContext request = ic.getRequestMessageContext();
+        
+        String version = (String) request.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        String required = (String) request.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
+        
+        assertEquals(Submission.WSA_NAMESPACE, version);
+        assertFalse(disabled);
+        assertEquals("Wrong required attribute", AddressingConstants.ADDRESSING_REQUIRED, required);
+        
+        org.apache.axis2.context.MessageContext axis2Request =
+            request.getAxisMessageContext();
+        org.apache.axis2.addressing.EndpointReference epr =
+            axis2Request.getTo();
+        
+        OMElement omElement =
+            EndpointReferenceHelper.toOM(OMF, epr, ELEMENT200408, Submission.WSA_NAMESPACE);
+        assertXMLEqual(subEPR.toString(), omElement.toString());
     }
     
     // Test configurations that are not allowed with the SubmissionAddressingFeature

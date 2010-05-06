@@ -127,4 +127,27 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
         }
         fail("Validated message with missing message ID!");
     }
+    
+    public void testCheckUsingAdressingOnClient() throws Exception {
+        // Make addressing required using the same property as the AddressingConfigurator
+        MessageContext mc = new MessageContext();
+        mc.setProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER, AddressingConstants.ADDRESSING_REQUIRED);
+        
+        // Invoke the in handler for a message without addressing headers
+        mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
+        StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("addressingDisabledTest.xml");
+        mc.setEnvelope(omBuilder.getSOAPEnvelope());
+        inHandler.invoke(mc);
+        
+        // Check the correct exception is thrown by the validation handler
+        try {
+            validationHandler.invoke(mc);
+            fail("An AxisFault should have been thrown due to the absence of addressing headers.");
+        } catch (AxisFault axisFault) {
+            // Confirm this is the correct fault
+            assertEquals("Wrong fault code",
+                         new QName(Final.FAULT_ADDRESSING_HEADER_REQUIRED),
+                         axisFault.getFaultCode());
+        }
+    }
 }
