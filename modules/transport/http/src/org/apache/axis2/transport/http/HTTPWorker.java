@@ -154,8 +154,10 @@ public class HTTPWorker implements Worker {
             }
             //cater for named xsds - check for the xsd name
             if (uri.indexOf("?xsd=") > 0) {
+            	// fix for imported schemas
+            	String[] uriParts = uri.split("[?]xsd=");
                 String serviceName =
-                        uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?xsd="));
+                        uri.substring(uriParts[0].lastIndexOf("/") + 1, uriParts[0].length());
                 String schemaName = uri.substring(uri.lastIndexOf("=") + 1);
 
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
