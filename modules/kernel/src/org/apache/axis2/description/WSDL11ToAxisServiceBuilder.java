@@ -663,85 +663,170 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             BindingInput wsdl4jBindingInput = wsdl4jBindingOperation.getBindingInput();
 
-            if (wsdl4jBindingInput != null &&
-                WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
-                AxisBindingMessage axisBindingInMessage = new AxisBindingMessage();
-                axisBindingInMessage.setParent(axisBindingOperation);
-                addDocumentation(axisBindingInMessage, wsdl4jBindingInput.getDocumentationElement());
-                copyExtensibleElements(wsdl4jBindingInput.getExtensibilityElements(),
-                                       wsdl4jDefinition,
-                                       axisBindingInMessage, BINDING_OPERATION_INPUT);
+            if (isServerSide) {
+                if (wsdl4jBindingInput != null &&
+                        WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
+                    AxisBindingMessage axisBindingInMessage = new AxisBindingMessage();
+                    axisBindingInMessage.setParent(axisBindingOperation);
+                    addDocumentation(axisBindingInMessage, wsdl4jBindingInput.getDocumentationElement());
+                    copyExtensibleElements(wsdl4jBindingInput.getExtensibilityElements(),
+                            wsdl4jDefinition,
+                            axisBindingInMessage, BINDING_OPERATION_INPUT);
 
-                AxisMessage axisInMessage =
-                        axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                //This is a hack to get AXIS2-2771 working , I had to copy soap headers
-                //  from binding message to AxisMessage
-                List soapHeaders = (List) axisBindingInMessage.getProperty(
-                        WSDL2Constants.ATTR_WSOAP_HEADER);
-                if (soapHeaders != null) {
-                    for (int i = 0; i < soapHeaders.size(); i++) {
-                        SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
-                        axisInMessage.addSoapHeader(headerMessage);
+                    AxisMessage axisInMessage =
+                            axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                    //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                    //  from binding message to AxisMessage
+                    List soapHeaders = (List) axisBindingInMessage.getProperty(
+                            WSDL2Constants.ATTR_WSOAP_HEADER);
+                    if (soapHeaders != null) {
+                        for (int i = 0; i < soapHeaders.size(); i++) {
+                            SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                            axisInMessage.addSoapHeader(headerMessage);
+                        }
                     }
+
+                    if (isSetMessageQNames) {
+                        BindingOperationEntry boe = find(wrappableBOEs, wsdl4jBindingOperation);
+                        boolean isWrapped = (boe == null) ? false : boe.isWrappedInput();
+                        addQNameReference(axisInMessage, wsdl4jOperation,
+                                wsdl4jBindingInput,
+                                isWrapped);
+                    }
+
+                    axisBindingInMessage.setAxisMessage(axisInMessage);
+                    axisBindingInMessage.setName(axisInMessage.getName());
+                    axisBindingInMessage.setDirection(axisInMessage.getDirection());
+
+                    axisBindingOperation
+                            .addChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE, axisBindingInMessage);
                 }
+            } else {
+                if (wsdl4jBindingInput != null &&
+                        WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())) {
+                    AxisBindingMessage axisBindingOutMessage = new AxisBindingMessage();
+                    axisBindingOutMessage.setParent(axisBindingOperation);
+                    addDocumentation(axisBindingOutMessage, wsdl4jBindingInput.getDocumentationElement());
+                    copyExtensibleElements(wsdl4jBindingInput.getExtensibilityElements(),
+                            wsdl4jDefinition,
+                            axisBindingOutMessage, BINDING_OPERATION_OUTPUT);
 
-                if (isSetMessageQNames) {
-                    BindingOperationEntry boe = find(wrappableBOEs, wsdl4jBindingOperation);
-                    boolean isWrapped = (boe == null) ? false : boe.isWrappedInput();
-                    addQNameReference(axisInMessage, wsdl4jOperation,
-                                      wsdl4jBindingInput,
-                                      isWrapped);
+                    AxisMessage axisOutMessage =
+                            axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                    //  from binding message to AxisMessage
+                    List soapHeaders = (List) axisBindingOutMessage.getProperty(
+                            WSDL2Constants.ATTR_WSOAP_HEADER);
+                    if (soapHeaders != null) {
+                        for (int i = 0; i < soapHeaders.size(); i++) {
+                            SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                            axisOutMessage.addSoapHeader(headerMessage);
+                        }
+                    }
+
+                    if (isSetMessageQNames) {
+                        BindingOperationEntry boe = find(wrappableBOEs, wsdl4jBindingOperation);
+                        boolean isWrapped = (boe == null) ? false : boe.isWrappedInput();
+                        addQNameReference(axisOutMessage, wsdl4jOperation,
+                                wsdl4jBindingInput,
+                                isWrapped);
+                    }
+
+                    axisBindingOutMessage.setAxisMessage(axisOutMessage);
+                    axisBindingOutMessage.setName(axisOutMessage.getName());
+                    axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
+
+                    axisBindingOperation
+                            .addChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE, axisBindingOutMessage);
                 }
-
-                axisBindingInMessage.setAxisMessage(axisInMessage);
-                axisBindingInMessage.setName(axisInMessage.getName());
-                axisBindingInMessage.setDirection(axisInMessage.getDirection());
-
-                axisBindingOperation
-                        .addChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE, axisBindingInMessage);
             }
 
             BindingOutput wsdl4jBindingOutput = wsdl4jBindingOperation.getBindingOutput();
 
-            if (wsdl4jBindingOutput != null &&
-                WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())) {
-                AxisBindingMessage axisBindingOutMessage = new AxisBindingMessage();
-                axisBindingOutMessage.setParent(axisBindingOperation);
-                addDocumentation(axisBindingOutMessage, wsdl4jBindingOutput.getDocumentationElement());
-                AxisMessage axisOutMessage =
-                        axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            if (isServerSide) {
+                if (wsdl4jBindingOutput != null &&
+                        WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())) {
 
-                copyExtensibleElements(wsdl4jBindingOutput.getExtensibilityElements(),
-                                       wsdl4jDefinition,
-                                       axisBindingOutMessage, BINDING_OPERATION_OUTPUT);
+                    AxisBindingMessage axisBindingOutMessage = new AxisBindingMessage();
+                    axisBindingOutMessage.setParent(axisBindingOperation);
+                    addDocumentation(axisBindingOutMessage, wsdl4jBindingOutput.getDocumentationElement());
+                    AxisMessage axisOutMessage =
+                            axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
-                //This is a hack to get AXIS2-2771 working , I had to copy soap headers
-                //  from binding message to AxisMessage
-                List soapHeaders =
-                        (List) axisBindingOutMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
-                if (soapHeaders != null) {
-                    for (int i = 0; i < soapHeaders.size(); i++) {
-                        SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
-                        axisOutMessage.addSoapHeader(headerMessage);
+                    copyExtensibleElements(wsdl4jBindingOutput.getExtensibilityElements(),
+                            wsdl4jDefinition,
+                            axisBindingOutMessage, BINDING_OPERATION_OUTPUT);
+
+                    //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                    //  from binding message to AxisMessage
+                    List soapHeaders =
+                            (List) axisBindingOutMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
+                    if (soapHeaders != null) {
+                        for (int i = 0; i < soapHeaders.size(); i++) {
+                            SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                            axisOutMessage.addSoapHeader(headerMessage);
+                        }
                     }
+
+                    if (isSetMessageQNames) {
+                        BindingOperationEntry boe = find(wrappableBOEs, wsdl4jBindingOperation);
+                        boolean isWrapped = (boe == null) ? false : boe.isWrappedOutput();
+                        axisOutMessage.setWrapped(isWrapped);
+                        addQNameReference(axisOutMessage, wsdl4jOperation,
+                                wsdl4jBindingOutput,
+                                isWrapped);
+                    }
+
+
+                    axisBindingOutMessage.setAxisMessage(axisOutMessage);
+                    axisBindingOutMessage.setName(axisOutMessage.getName());
+                    axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
+
+                    axisBindingOperation
+                            .addChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE, axisBindingOutMessage);
                 }
+            } else {
+                if (wsdl4jBindingOutput != null &&
+                        WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
 
-                if (isSetMessageQNames) {
-                    BindingOperationEntry boe = find(wrappableBOEs, wsdl4jBindingOperation);
-                    boolean isWrapped = (boe == null) ? false : boe.isWrappedOutput();
-                    axisOutMessage.setWrapped(isWrapped);
-                    addQNameReference(axisOutMessage, wsdl4jOperation,
-                                      wsdl4jBindingOutput,
-                                      isWrapped);
+                    AxisBindingMessage axisBindingInMessage = new AxisBindingMessage();
+                    axisBindingInMessage.setParent(axisBindingOperation);
+                    addDocumentation(axisBindingInMessage, wsdl4jBindingOutput.getDocumentationElement());
+                    AxisMessage axisInMessage =
+                            axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+                    copyExtensibleElements(wsdl4jBindingOutput.getExtensibilityElements(),
+                            wsdl4jDefinition,
+                            axisBindingInMessage, BINDING_OPERATION_INPUT);
+
+                    //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                    //  from binding message to AxisMessage
+                    List soapHeaders =
+                            (List) axisBindingInMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
+                    if (soapHeaders != null) {
+                        for (int i = 0; i < soapHeaders.size(); i++) {
+                            SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                            axisInMessage.addSoapHeader(headerMessage);
+                        }
+                    }
+
+                    if (isSetMessageQNames) {
+                        BindingOperationEntry boe = find(wrappableBOEs, wsdl4jBindingOperation);
+                        boolean isWrapped = (boe == null) ? false : boe.isWrappedOutput();
+                        axisInMessage.setWrapped(isWrapped);
+                        addQNameReference(axisInMessage, wsdl4jOperation,
+                                wsdl4jBindingOutput,
+                                isWrapped);
+                    }
+
+
+                    axisBindingInMessage.setAxisMessage(axisInMessage);
+                    axisBindingInMessage.setName(axisInMessage.getName());
+                    axisBindingInMessage.setDirection(axisInMessage.getDirection());
+
+                    axisBindingOperation
+                            .addChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE, axisBindingInMessage);
                 }
-
-
-                axisBindingOutMessage.setAxisMessage(axisOutMessage);
-                axisBindingOutMessage.setName(axisOutMessage.getName());
-                axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
-
-                axisBindingOperation
-                        .addChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE, axisBindingOutMessage);
             }
 
             Map bindingFaultsMap = wsdl4jBindingOperation.getBindingFaults();
