@@ -1427,7 +1427,7 @@ public class ConverterUtil {
         } else if (value instanceof Short) {
             serializeAnyType("short", value.toString(), xmlStreamWriter);
         } else if (value instanceof BigDecimal) {
-            serializeAnyType("decimal", value.toString(), xmlStreamWriter);
+            serializeAnyType("decimal", ((BigDecimal)value).toPlainString(), xmlStreamWriter);
         } else if (value instanceof DataHandler) {
             addTypeAttribute(xmlStreamWriter,"base64Binary");
             try {
@@ -1642,5 +1642,6 @@ public class ConverterUtil {
             }
         }
     }
+
 
 }
