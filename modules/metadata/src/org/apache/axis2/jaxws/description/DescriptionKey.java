@@ -34,14 +34,17 @@ public class DescriptionKey {
     private Class serviceClass = null;
 
     private ConfigurationContext configContext = null;
+    
+    private String serviceRefName = null;
 
     public DescriptionKey(QName serviceName, URL wsdlUrl, Class serviceClass,
-                          ConfigurationContext configContext) {
+                          ConfigurationContext configContext, String serviceRefName) {
         super();
         this.serviceName = serviceName;
         this.wsdlUrl = wsdlUrl;
         this.serviceClass = serviceClass;
         this.configContext = configContext;
+        this.serviceRefName = serviceRefName;
 
     }
 
@@ -64,10 +67,12 @@ public class DescriptionKey {
         }
 
         return description.serviceName.equals(this.serviceName)
-                && description.wsdlUrl != null ? description.wsdlUrl.equals(this.wsdlUrl) :
-                this.wsdlUrl == null
-                        && description.serviceClass == this.serviceClass
-                        && description.configContext == this.configContext;
+                && description.wsdlUrl != null ? 
+                        description.wsdlUrl.equals(this.wsdlUrl) : this.wsdlUrl == null
+                && description.serviceClass == this.serviceClass
+                && description.configContext == this.configContext
+                && description.serviceRefName != null ? 
+                        description.serviceRefName.equals(this.serviceRefName) : this.serviceRefName == null;
     }
 
     @Override
@@ -78,6 +83,7 @@ public class DescriptionKey {
         hash = hash + ((wsdlUrl == null) ? 0 : wsdlUrl.hashCode());
         hash = hash + ((serviceClass == null) ? 0 : serviceClass.hashCode());
         hash = hash + ((configContext == null) ? 0 : configContext.hashCode());
+        hash = hash + ((serviceRefName == null) ? 0 : serviceRefName.hashCode());
         return hash;
 
     }
@@ -119,9 +125,9 @@ public class DescriptionKey {
         String sName = (serviceName != null) ? serviceName.toString() : "";
         String sWsdlURL = (wsdlUrl != null) ? wsdlUrl.toString() : "";
         String sClass = (serviceClass != null) ? serviceClass.toString() : "";
-        String sConfig = (configContext != null) ? configContext.toString()
-                : "";
-        String key = sName + sWsdlURL + sClass + sConfig;
+        String sConfig = (configContext != null) ? configContext.toString() : "";
+        String sServiceRefName = (serviceRefName != null) ? serviceRefName.toString() : "";
+        String key = sName + sWsdlURL + sClass + sConfig + sServiceRefName;
         return key;
     }
 }

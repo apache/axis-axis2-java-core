@@ -71,7 +71,14 @@ public class MDQConstants {
      *     Annotation: The list of WebServiceFeatures expressed as the corresponding Annotation related to that Port
      */
     public static final String SEI_FEATURES_MAP = "org.apache.axis2.jaxws.description.builder.SEI_FEATURES_MAP";
+    
     public static final String BINDING_PROPS_MAP = "org.apache.axis2.jaxws.description.builder.BINDING_PROPS_MAP";    
+    
+    /**
+     * Property indicating a Service Reference name.  This can be used to differentiate between two occurences
+     * of the same WSDL Service, for example to attach different policy configurations to each one.f
+     */
+    public static final String SERVICE_REF_NAME = "org.apache.axis2.jaxws.description.builder.SERVICE_REF_NAME";
     
     //Represent SOAP/JMS Bindings
     //REVIEW: SOAP-JMS may be using the same NS for SOAP11 and SOAP12, 

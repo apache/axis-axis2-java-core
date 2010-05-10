@@ -1029,4 +1029,34 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return sQNameToPC.get(serviceQName);
     }
     
+    
+    /**
+     * Static utility method that, given a sparse composite, returns the SERVICE_REF_NAME value from the property 
+     * on that sparse composite or null if the property was not specified.
+     * @param sparseComposite The sparse composite instance to get the SERVICE_REF_NAME parameter from
+     * @return A String containing the Service Ref Name or null if the parameter was not found.
+     */
+    public static String getServiceRefName(DescriptionBuilderComposite sparseComposite) {
+        String serviceRefName = null;
+        if (sparseComposite != null) {
+            serviceRefName = (String) sparseComposite.getProperties().get(MDQConstants.SERVICE_REF_NAME);
+        }
+        return serviceRefName;
+    }
+    
+    /**
+     * For the current composite, return the serivce ref name from the sparse composite associted with the service 
+     * delegate key.
+     * @param serviceDelegateKey The instance of the service delegate associated with the sparse composite from which
+     * the service ref name is to be retrieved.
+     * @return The service ref name associated with the service delegate key or null if one was not found.
+     */
+    public String getServiceRefName(Object serviceDelegateKey) {
+        String serviceRefName = null;
+        if (serviceDelegateKey != null) {
+            serviceRefName = getServiceRefName(getSparseComposite(serviceDelegateKey));
+        }
+        return serviceRefName;
+    }
+    
 }

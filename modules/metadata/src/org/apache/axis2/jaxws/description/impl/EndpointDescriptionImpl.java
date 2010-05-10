@@ -272,7 +272,7 @@ public class EndpointDescriptionImpl
             throw ExceptionFactory.makeWebServiceException(msg);
         }
 
-        setupAxisService();
+        setupAxisService(sparseCompositeKey);
         addToAxisService();
         setupReleaseResources(getServiceDescription().getAxisConfigContext());
 
@@ -767,7 +767,7 @@ public class EndpointDescriptionImpl
         return;
     }
 
-    private void setupAxisService() {
+    private void setupAxisService(Object sparseCompositeKey) {
         // Build up the AxisService.  Note that if this is a dynamic port, then we don't use the
         // WSDL to build up the AxisService since the port added to the Service by the client is not
         // one that will be present in the WSDL.  A null class passed in as the SEI indicates this 
@@ -816,16 +816,43 @@ public class EndpointDescriptionImpl
                       " on AxisService: " + axisService + "@" + axisService.hashCode());
         }
         seiClassNameParam.setValue(seiClassName);
-
+        
+        // If a ServiceRef Name was set on the sparse composite for the service, then store that
+        Parameter serviceRefNameParam = getServiceRefNameParam(sparseCompositeKey);
+     
         try {
             axisService.addParameter(serviceNameParameter);
             axisService.addParameter(portParameter);
             axisService.addParameter(serviceClassNameParam);
             axisService.addParameter(seiClassNameParam);
+            if (serviceRefNameParam != null) {
+                axisService.addParameter(serviceRefNameParam);
+            }
         }
         catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr2"),e);
         }
+    }
+    /**
+     * Return a Parameter instance for ServiceRefName if that name was specified on the sparse composite when the Service was created.
+     * @param sparseCompositeKey identifies the instance of the service (i.e. Service Delegate)
+     * @return A Parameter containing the ServiceRefName or null if one was not specified.
+     */
+    private Parameter getServiceRefNameParam(Object sparseCompositeKey) {
+        Parameter serviceRefNameParam = null;
+        
+        // The ServiceRefName, if specified, is set on the sparse composite associated with the service.
+        String serviceRefName = getServiceDescriptionImpl().getDescriptionBuilderComposite().getServiceRefName(sparseCompositeKey);
+        if (!DescriptionUtils.isEmpty(serviceRefName)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting service ref name: " + serviceRefName 
+                        + " on AxisService: " + axisService + "@" + axisService.hashCode());
+            }
+            serviceRefNameParam = new Parameter();
+            serviceRefNameParam.setName(MDQConstants.SERVICE_REF_NAME);
+            serviceRefNameParam.setValue(serviceRefName);
+        }
+        return serviceRefNameParam;
     }
 
     /*

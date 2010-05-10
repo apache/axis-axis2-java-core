@@ -91,7 +91,8 @@ public class DescriptionFactoryImpl {
                                                               Object sparseCompositeKey) {
         ConfigurationContext configContext = DescriptionFactory.createClientConfigurationFactory()
                 .getClientConfigurationContext();
-        DescriptionKey key = new DescriptionKey(serviceQName, wsdlURL, serviceClass, configContext);
+        DescriptionKey key = new DescriptionKey(serviceQName, wsdlURL, serviceClass, configContext,
+                DescriptionBuilderComposite.getServiceRefName(sparseComposite));
         if (log.isDebugEnabled()) {
             log.debug("Cache Map = " + cache.toString());
             if (key != null)
