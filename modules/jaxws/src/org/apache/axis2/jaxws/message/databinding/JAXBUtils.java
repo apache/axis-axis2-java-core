@@ -287,20 +287,27 @@ public class JAXBUtils {
 
                     TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages); 
                     
-                    pruneDirectives(validContextPackages);
+                    List<String> classRefs = pruneDirectives(validContextPackages);
                     
                     int numPackages = validContextPackages.size();
                     
                     ClassLoader tryCl = cl;
-                    contextValue = createJAXBContextValue(validContextPackages, cl, forceArrays, properties);
+                    contextValue = createJAXBContextValue(validContextPackages, 
+                            cl, 
+                            forceArrays, 
+                            properties, 
+                            classRefs);
 
                     // If we don't get all the classes, try the cached classloader 
                     if (cacheKey != null && numPackages != validContextPackages.size()) {
                         tryCl = cacheKey;
                         validContextPackages = new TreeSet<String>(contextPackages);
-                        pruneDirectives(validContextPackages);
-                        contextValue = createJAXBContextValue(validContextPackages, cacheKey, 
-                                                              forceArrays, properties);
+                        classRefs = pruneDirectives(validContextPackages);
+                        contextValue = createJAXBContextValue(validContextPackages, 
+                                cacheKey, 
+                                forceArrays, 
+                                properties, 
+                                classRefs);
                     }
                     synchronized (jaxbMap) {
                         // Add the context value with the original package set
@@ -370,10 +377,12 @@ public class JAXBUtils {
      *    "com.A"
      *    "com.C"
      * @param contextPackages
+     * @return List<String> class references
      */
-    protected static void pruneDirectives(TreeSet<String> contextPackages) {
+    protected static List<String> pruneDirectives(TreeSet<String> contextPackages) {
         List<String> removePkgsList = new ArrayList<String>();
         List<String> strongPkgsList = new ArrayList<String>();
+        List<String> classRefs = new ArrayList<String>();
         
         // Walk the contextPackages looking for entries representing directives
         Iterator<String> it = contextPackages.iterator();
@@ -404,6 +413,17 @@ public class JAXBUtils {
                 strongPkg = strongPkg.trim();
                 strongPkgsList.add(strongPkg);
             }
+            if (entry.startsWith("[")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Class Reference found:" + entry);
+                }
+                // Remove the entry using an iterator remove()
+                it.remove();  
+                
+                // Store the class
+                String cls = entry.substring(1, entry.length()-1);
+                classRefs.add(cls);
+            }
         }
         
         // Now walk the contextPackages and remove the overriden packages
@@ -422,6 +442,7 @@ public class JAXBUtils {
         
         // Now add back all of the strong packages
         contextPackages.addAll(strongPkgsList);
+        return classRefs;
     }
 
     /**
@@ -431,13 +452,15 @@ public class JAXBUtils {
      * @param cl              ClassLoader
      * @param forceArrays     boolean (true if JAXBContext must include all arrays)
      * @param properties      Map of properties for the JAXBContext.newInstance creation method
+     * @param classRefs       List of class references
      * @return JAXBContextValue (JAXBContext + constructionType)
      * @throws JAXBException
      */
     private static JAXBContextValue createJAXBContextValue(TreeSet<String> contextPackages,
                                                            ClassLoader cl,
                                                            boolean forceArrays,
-                                                           Map<String, ?> properties) throws JAXBException {
+                                                           Map<String, ?> properties,
+                                                           List<String> classRefs) throws JAXBException {
 
         JAXBContextValue contextValue = null;
         if (log.isDebugEnabled()) {
@@ -597,7 +620,7 @@ public class JAXBUtils {
             //Lets add all common array classes
             addCommonArrayClasses(fullList);
             Class[] classArray = fullList.toArray(new Class[0]);
-            JAXBContext context = JAXBContext_newInstance(classArray, cl, properties);
+            JAXBContext context = JAXBContext_newInstance(classArray, cl, properties, classRefs);
             if (context != null) {
                 if (forceArrays) {
                     contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS);
@@ -1287,12 +1310,15 @@ public class JAXBUtils {
      *
      * @param classArray
      * @param cl ClassLoader that loaded the classes
+     * @param properties Map<String, ?>
+     * @param ClassRefs List<String>
      * @return
      * @throws Exception
      */
     private static JAXBContext JAXBContext_newInstance(final Class[] classArray, 
                                                        final ClassLoader cl,
-                                                       Map<String, ?> properties)
+                                                       Map<String, ?> properties,
+                                                       List<String> classRefs)
     throws JAXBException {
         // NOTE: This method must remain private because it uses AccessController
         JAXBContext jaxbContext = null;
@@ -1307,7 +1333,10 @@ public class JAXBUtils {
         }
 
         // Get JAXBContext from classes
-        jaxbContext = JAXBContextFromClasses.newInstance(classArray, cl, properties);
+        jaxbContext = JAXBContextFromClasses.newInstance(classArray, 
+                cl, 
+                properties, 
+                classRefs);
 
         return jaxbContext;
     }

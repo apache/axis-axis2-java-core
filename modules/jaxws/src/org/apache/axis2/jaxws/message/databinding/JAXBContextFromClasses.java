@@ -66,12 +66,21 @@ public class JAXBContextFromClasses {
      * 
      * @param classArray
      * @param cl
+     * @param properties
+     * @param classRefs optional List<String> of class references
      * @return JAXBContext
      * @throws JAXBException
      */
     public static JAXBContext newInstance(Class[] classArray, 
+            ClassLoader cl,
+            Map<String, ?> properties) throws JAXBException {
+        return newInstance(classArray, cl, properties, new ArrayList<String>());
+    }
+            
+    public static JAXBContext newInstance(Class[] classArray, 
                                           ClassLoader cl,
-                                          Map<String, ?> properties) 
+                                          Map<String, ?> properties,
+                                          List<String> classRefs)
         throws JAXBException {
         JAXBContext jaxbContext = null;
         try {
@@ -95,7 +104,7 @@ public class JAXBContextFromClasses {
                 original.add(classArray[i]);
             }
             ArrayList<Class> best = new ArrayList<Class>();
-            jaxbContext = findBestSet(original, cl, best, properties);
+            jaxbContext = findBestSet(original, cl, best, properties, classRefs);
             
         }
 
@@ -144,40 +153,43 @@ public class JAXBContextFromClasses {
     
     /**
      * Utility class that quickly divides a list of classes into two categories.
-     * The primary category classes contain JAXB annotations.
-     * The secondary category classes do not contain JAXB annotations
+     * The primary category classes contains classes that are referenced.
+     * The secondary category classes are the remaining classes
      * @param original
      * @param primary
      * @param secondary
      */
-    static void separate(List<Class> original, List<Class> primary, List<Class> secondary) {
+    static void separate(List<Class> original, 
+                List<Class> primary, 
+                List<Class> secondary,
+                List<String> classRefs) {
         for (int i=0; i<original.size(); i++) {
             Class cls = original.get(i);
+            String clsName = cls.getCanonicalName();
             if (commonArrayClasses.contains(cls)) {
                 if (log.isDebugEnabled()) {
                     log.debug("This looks like a JAXB common class. Adding it to primary list:" + 
                                        cls.getName());
                 }
                 primary.add(cls);
-            } else if (getAnnotation(cls, XmlType.class) != null ||
-                    getAnnotation(cls, XmlRootElement.class) != null) {
+            } else if (classRefs.contains(clsName)) {
                 if (log.isDebugEnabled()) {
-                    log.debug("This looks like a JAXB class. Adding it to primary list:" + 
-                                       cls.getName());
+                    log.debug("This is a referenced class. Adding it to primary list:" + 
+                            clsName);
                 }
                 Package pkg = cls.getPackage();
                 if (pkg != null && pkg.getName().endsWith(".jaxws")) {
                     if (log.isDebugEnabled()) {
                         log.debug("This looks like a jaxws generated Class. Adding it to the front of the primary list:" + 
-                                           cls.getName());
+                                cls.getName());
                     }
                     primary.add(0,cls);  // Add to the front of the list
                 } else {
-                    primary.add(cls);  // This looks like a JAXB class...add it
+                    primary.add(cls);  
                 }
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("This may not be a JAXB class. Adding it to secondary list:" + 
+                    log.debug("This class is not referenced by the web service. Adding it to secondary list:" + 
                                        cls.getName());
                 }
                 Package pkg = cls.getPackage();
@@ -188,7 +200,7 @@ public class JAXBContextFromClasses {
                     }
                     secondary.add(0,cls);  // Add to the front of the list
                 } else {
-                    secondary.add(cls);  // This looks like it might be something else...not JAXB
+                    secondary.add(cls);  
                 }
             }            
         }
@@ -199,13 +211,15 @@ public class JAXBContextFromClasses {
      * of classes and returns the JAXBContext for this minimal set.
      * @param original List<Class>
      * @param cl ClassLoader
-     * @param ListMClass> is populated with the minimal, best set of classes
+     * @param List<Class> is populated with the minimal, best set of classes
+     * @param List<String> input list of classes that are directly referenced in the web service api
      * @return JAXBContext
      */
     static JAXBContext findBestSet(List<Class> original,
                                    ClassLoader cl,
                                    List<Class> best, 
-                                   Map<String, ?> properties) {
+                                   Map<String, ?> properties, 
+                                   List<String> classRefs) {
         
         if (log.isDebugEnabled()) {
             log.debug("Could not construct JAXBContext with the initial list.");
@@ -214,11 +228,11 @@ public class JAXBContextFromClasses {
         JAXBContext jc = null;
         Class[] clsArray = new Class[0];
             
-        // Divide the list into the classes that have JAXB annotations (primary)
-        // and those that do not (secondary)
+        // Divide the list into the classes that are referenced (primary)
+        // and the rest (secondary)
         ArrayList<Class> primary = new ArrayList<Class> ();
         ArrayList<Class> secondary = new ArrayList<Class> ();
-        separate(original, primary, secondary);
+        separate(original, primary, secondary, classRefs);
         
         // Prime the pump
         // Build a JAXBContext with the primary classes

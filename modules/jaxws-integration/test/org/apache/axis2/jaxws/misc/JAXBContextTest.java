@@ -186,4 +186,30 @@ public class JAXBContextTest extends AbstractTestCase {
         assertTrue(jaxbContext4 != jaxbContext3);
         assertTrue(context4.contains("org.test.addnumbers"));
     }
+    
+    public void test03() throws JAXBException {
+        // Simulate a web services that references a.Bean2 and b.Bean1
+        // Note that both these beans are in the same namespace
+        // but not the same package.
+        // Also note that there are other colliding classes in the
+        // packages.
+        TreeSet<String> context = new TreeSet<String>();
+        context.add("org.apache.axis2.jaxws.misc.a");
+        context.add("org.apache.axis2.jaxws.misc.b");
+        context.add("[org.apache.axis2.jaxws.misc.a.Bean2]");
+        context.add("[org.apache.axis2.jaxws.misc.b.Bean1]");
+
+         
+        JAXBContext jaxbContext = JAXBUtils.getJAXBContext(context); 
+       
+        // Ensure that the jaxbContext IS produced and contains
+        // both a.Bean2 and b.Bean1.
+        String jaxbContextString = jaxbContext.toString();
+        
+        assertTrue("The JAXBContext should contain a.Bean2: " + jaxbContextString,
+                jaxbContextString.indexOf("org.apache.axis2.jaxws.misc.a.Bean2") > 0);
+        assertTrue("The JAXBContext should contain b.Bean1: " + jaxbContextString,
+                jaxbContextString.indexOf("org.apache.axis2.jaxws.misc.b.Bean1") > 0);
+        
+    }
 }

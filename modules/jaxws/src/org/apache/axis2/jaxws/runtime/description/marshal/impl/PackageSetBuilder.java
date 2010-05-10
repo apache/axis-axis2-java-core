@@ -296,21 +296,25 @@ public class PackageSetBuilder {
         }
 
         // Also consider the request and response wrappers
-        String requestWrapperPkg = getPackageFromClassName(msrd.getRequestWrapperClassName(opDesc));
+        String requestWrapperName = msrd.getRequestWrapperClassName(opDesc);
+        String requestWrapperPkg = getPackageFromClassName(requestWrapperName);
         if (log.isDebugEnabled()) {
             log.debug("Package from Request Wrapper annotation = " + requestWrapperPkg);
         }
         if (requestWrapperPkg != null) {
             set.add(requestWrapperPkg);
             set.add("@" + requestWrapperPkg);  // Indicates a package from an actual class reference (versus namespace)
+            set.add("[" + requestWrapperName + "]");  // Indicates a actual class reference
         }
-        String responseWrapperPkg = getPackageFromClassName(msrd.getResponseWrapperClassName(opDesc));
+        String responseWrapperName = msrd.getResponseWrapperClassName(opDesc);
+        String responseWrapperPkg = getPackageFromClassName(responseWrapperName);
         if (log.isDebugEnabled()) {
             log.debug("Package from Response Wrapper annotation = " + responseWrapperPkg);
         }
         if (responseWrapperPkg != null) {
             set.add(responseWrapperPkg);
             set.add("@" + responseWrapperPkg);  // Indicates a package from an actual class reference (versus namespace)
+            set.add("[" + responseWrapperName + "]");  // Indicates a actual class reference
         }
       
         // The wrapper class and the element defining the wrapper may be 
@@ -353,6 +357,7 @@ public class PackageSetBuilder {
             if (pkg != null) {
                 set.add(pkg);
                 set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
+                set.add("[" + cls.getCanonicalName() + "]");  // Indicates a actual class reference
             }
         }
     }
@@ -384,6 +389,7 @@ public class PackageSetBuilder {
                     if (pkg != null) {
                         set.add(pkg);
                         set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
+                        set.add("[" + paramClass.getCanonicalName() + "]");  // Indicates a actual class reference
                     }
                 }
             }
@@ -471,6 +477,7 @@ public class PackageSetBuilder {
             if (pkg != null) {
                 set.add(pkg);
                 set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
+                set.add("[" + tClass.getCanonicalName() + "]");  // Indicates a actual class reference
             }
             // If there is an xmlType, and it maps to a package then add
             // an override if the package is different.
@@ -519,6 +526,7 @@ public class PackageSetBuilder {
                 if (pkg != null) {
                     set.add(pkg);
                     set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
+                    set.add("[" + eClass.getCanonicalName() + "]");  // Indicates a actual class reference
                 }
                 
                 if (pkg != null) {
@@ -661,6 +669,7 @@ public class PackageSetBuilder {
                         	}
                             set.add(pkg);
                             set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
+                            set.add("[" + seeAlso[i].getCanonicalName() + "]");  // Indicates a actual class reference
                         }
                     }
                 }
