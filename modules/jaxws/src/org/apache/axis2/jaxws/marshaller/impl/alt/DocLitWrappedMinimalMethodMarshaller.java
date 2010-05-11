@@ -61,7 +61,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 /**
- * The Doc/Lit Wrapped Minimal Marshaller is used when 
  *   1) The web service is Doc/Lit Wrapped, and 
  *   2) The wrapper and fault bean objects are missing (hence the term 'Minimal')
  *   
@@ -341,16 +340,6 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             }
 
             if (returnType != void.class) {
-
-                // TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
-                if (returnObject == null) {
-                    throw ExceptionFactory.makeWebServiceException(
-                			Messages.getMessage("NullParamErr3",operationDesc.getJavaMethodName()));
-
-                }
                 Element returnElement = null;
                 QName returnQName = new QName(returnNS, returnLocalPart);
                 if (representAsOccurrence(returnObject)) {
@@ -584,14 +573,6 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
 
                 }
                 returnValue = returnElement.getTypeValue();
-                // TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
-                if (returnValue == null) {
-                	throw ExceptionFactory.makeWebServiceException(
-                			Messages.getMessage("NullParamErr3",operationDesc.getJavaMethodName()));
-                }
             }
 
             // We want to use "by Java Type" unmarshalling for 

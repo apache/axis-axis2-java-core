@@ -100,6 +100,25 @@ public class DLWMinTests extends AbstractTestCase {
     }
     
     /**
+     * Test simple greetMe method 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     * Passing a null input and receiving a null return
+     */
+    public void testGreetMe_Null() {
+        
+        
+        Greeter proxy = getProxy("greetMe");
+        
+        String me = null;
+        String response = proxy.greetMe(me);
+        assertTrue("Expected null but received " + response, response == null);
+        
+        // Try the call again
+        response = proxy.greetMe(me);
+        assertTrue("Expected null but received " + response, response == null);
+    }
+    
+    /**
      * Test simple greetMe method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */

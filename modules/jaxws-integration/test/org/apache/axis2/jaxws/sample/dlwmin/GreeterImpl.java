@@ -35,7 +35,11 @@ import javax.xml.ws.WebServiceException;
 public class GreeterImpl implements Greeter {
 
     public String greetMe(String me) {
-        return "Hello " + me;
+        if (me == null) {
+            return null;
+        } else {
+            return "Hello " + me;
+        }
     }
 
     public String testUnqualified(String in) {
