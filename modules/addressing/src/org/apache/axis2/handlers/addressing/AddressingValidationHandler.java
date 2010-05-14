@@ -73,19 +73,19 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
     private void checkUsingAddressing(MessageContext msgContext)
             throws AxisFault {
         String addressingFlag;
-    	AxisDescription ad = msgContext.getAxisService();
-        if (ad == null) {
-            // On client side, get required value from the message context
+        if (!msgContext.isServerSide()) {
+            // On client side, get required value from the request message context
             // (set by AddressingConfigurator).
             // We do not use the UsingAddressing required attribute on the
             // client side since it is not generated/processed by java tooling.
-            addressingFlag = AddressingHelper.getAddressingRequirementParemeterValue(msgContext);
+            addressingFlag = AddressingHelper.getRequestAddressingRequirementParameterValue(msgContext);
             if (log.isTraceEnabled()) {
                 log.trace("checkUsingAddressing: WSAddressingFlag from MessageContext=" + addressingFlag);
             }
         } else {
             // On provider side, get required value from AxisOperation
             // (set by AddressingConfigurator and UsingAddressing WSDL processing).
+            AxisDescription ad = msgContext.getAxisService();
             if(msgContext.getAxisOperation()!=null){
         	   ad = msgContext.getAxisOperation();
             }

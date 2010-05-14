@@ -30,6 +30,7 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class AddressingHelper {
@@ -158,7 +159,7 @@ public class AddressingHelper {
             	value = value.trim();
             }
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("getAddressingRequirementParemeterValue(AxisDescription): value: '" + value + "'");
+                log.debug("getAddressingRequirementParemeterValue: value: '" + value + "'");
             }
         }
 
@@ -168,12 +169,23 @@ public class AddressingHelper {
         return value;
     }
 
-    public static String getAddressingRequirementParemeterValue(MessageContext mc){
+    public static String getRequestAddressingRequirementParameterValue(MessageContext response){
         String value = "";
-        if (mc != null) {
-            value = mc.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER).toString();
+        if (response != null) {
+            HashMap<String,MessageContext> operationMessageContexts = response.getOperationContext().getMessageContexts();
+            for(MessageContext messageContext : operationMessageContexts.values()) {
+                // Assumes at most 2 messages on operation, if there is more than 2 it
+                // will use the value from the first message it gets that is != response
+                if(!messageContext.equals(response)) {
+                    value = (String) messageContext.getProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER);
+                    if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                        log.debug("getRequestAddressingRequirementParameterValue: got value from MessageContext "+messageContext+", value: '" + value + "'");
+                    }
+                    break;
+                }
+            }
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("getAddressingRequirementParemeterValue(MessageContext): value: '" + value + "'");
+                log.debug("getRequestAddressingRequirementParameterValue: value: '" + value + "'");
             }
         }
 

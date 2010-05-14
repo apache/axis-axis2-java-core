@@ -23,12 +23,18 @@ import junit.framework.TestCase;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.util.TestUtil;
 
 import javax.xml.namespace.QName;
@@ -129,19 +135,40 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
     }
     
     public void testCheckUsingAdressingOnClient() throws Exception {
-        // Make addressing required using the same property as the AddressingConfigurator
-        MessageContext mc = new MessageContext();
-        mc.setProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER, AddressingConstants.ADDRESSING_REQUIRED);
+        // Need to create full description hierarchy to prevent NullPointerExceptions
+        AxisOperation axisOperation = new OutInAxisOperation(new QName("Temp"));
+        AxisService axisService = new AxisService("Temp");
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
+        axisService.addOperation(axisOperation);
+        axisConfiguration.addService(axisService);
+        ConfigurationContext configurationContext = new ConfigurationContext(axisConfiguration);
+
+        // Make addressing required using the same property as the AddressingConfigurator on the request
+        MessageContext request = configurationContext.createMessageContext();
+        request.setProperty(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER, AddressingConstants.ADDRESSING_REQUIRED);
         
-        // Invoke the in handler for a message without addressing headers
-        mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
+        // Create a response to invoke the in handler on        
+        MessageContext response = configurationContext.createMessageContext();
+
+        // Link the response to the request message context using the context hierarchy
+        ServiceGroupContext serviceGroupContext = configurationContext.createServiceGroupContext(axisService.getAxisServiceGroup());
+        ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
+        OperationContext opContext = axisOperation.findOperationContext(request, serviceContext);
+        axisOperation.registerOperationContext(request, opContext);
+        request.setServiceContext(serviceContext);
+        response.setServiceContext(serviceContext);
+        request.setOperationContext(opContext);
+        response.setOperationContext(opContext);
+        
+        // Invoke the in handler for a response message without addressing headers
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("addressingDisabledTest.xml");
-        mc.setEnvelope(omBuilder.getSOAPEnvelope());
-        inHandler.invoke(mc);
+        response.setEnvelope(omBuilder.getSOAPEnvelope());
+        inHandler.invoke(response);
         
-        // Check the correct exception is thrown by the validation handler
+        // Check an exception is thrown by the validation handler because the client
+        // requires addressing but the response message does not have addressing headers
         try {
-            validationHandler.invoke(mc);
+            validationHandler.invoke(response);
             fail("An AxisFault should have been thrown due to the absence of addressing headers.");
         } catch (AxisFault axisFault) {
             // Confirm this is the correct fault
