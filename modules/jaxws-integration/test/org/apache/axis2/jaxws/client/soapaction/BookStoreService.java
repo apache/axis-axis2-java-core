@@ -33,7 +33,7 @@ public class BookStoreService
 {
 
     private static URL BOOKSTORESERVICE_WSDL_LOCATION;
-    private static String wsdlLocation="/target/test-classes/services/BookStoreService/META-INF/SOAPActionTest.wsdl";
+    private static String wsdlLocation="/test/org/apache/axis2/jaxws/client/soapaction/server/META-INF/SOAPActionTest.wsdl";
     static {
         URL url = null;
         try {

@@ -31,7 +31,7 @@ import org.apache.log4j.BasicConfigurator;
 public class SimpleServer {
 
     private static SimpleHTTPServer server;
-    private String repositoryDir = System.getProperty("basedir",".")+"/"+System.getProperty("build.repository","");
+    private String repositoryDir = System.getProperty("build.repository","");
     private String axis2xml = System.getProperty("axis2.config");
     private int port = 6060;
 
