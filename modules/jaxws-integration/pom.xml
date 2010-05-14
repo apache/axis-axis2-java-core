@@ -470,7 +470,6 @@
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/wsgen">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -482,11 +481,9 @@
                                 <copy toDir="target/test-classes/servicejars/BasicAuthSecurityService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/security/server/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/security/server/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/security/server">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -498,11 +495,9 @@
                                 <copy toDir="target/test-classes/servicejars/StringProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/string/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/provider/string/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/string">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -514,12 +509,9 @@
                                 <copy toDir="target/test-classes/servicejars/StringMessageProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/stringmsg/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/provider/stringmsg/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/stringmsg">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -531,11 +523,9 @@
                                 <copy toDir="target/test-classes/servicejars/SourceProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/source/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/provider/source/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/source">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -547,12 +537,9 @@
                                 <copy toDir="target/test-classes/servicejars/SourceMessageProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/sourcemsg/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/provider/sourcemsg/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/sourcemsg">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -564,11 +551,9 @@
                                 <copy toDir="target/test-classes/servicejars/SoapMessageProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/soapmsg/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/provider/soapmsg/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsg">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -580,11 +565,9 @@
                                 <copy toDir="target/test-classes/servicejars/SoapMessageCheckMTOMProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/soapmsgcheckmtom/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/provider/soapmsgcheckmtom/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsgcheckmtom">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -596,12 +579,9 @@
                                 <copy toDir="target/test-classes/servicejars/SoapMessageMUProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/soapmsgmu/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/provider/soapmsgmu/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsgmu">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -613,11 +593,9 @@
                                 <copy toDir="target/test-classes/servicejars/JAXBProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/jaxb/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/provider/jaxb/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/jaxb">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="target/schema/classes">
                                         <include name="org/test/mtom/**"/>
@@ -632,11 +610,9 @@
                                 <copy toDir="target/test-classes/servicejars/SendImageService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/mtom1/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/mtom1/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/mtom1">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="target/schema/classes">
                                         <include name="org/apache/axis2/jaxws/sample/mtom1/**"/>
@@ -651,11 +627,9 @@
                                 <copy toDir="target/test-classes/servicejars/SOAP12Service/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/dispatch/server/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/dispatch/server/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/dispatch/server">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -668,11 +642,9 @@
                                <copy toDir="target/test-classes/servicejars/SWAMTOMService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/swamtom/server/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/swamtom/server/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/swamtom/server">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -685,12 +657,9 @@
                                 <copy toDir="target/test-classes/servicejars/ProxyDocLitWrapped/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/proxy/doclitwrapped/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/proxy/doclitwrapped">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -702,12 +671,9 @@
                                 <copy toDir="target/test-classes/servicejars/ProxyDocLitnonWrapped/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/proxy/doclitnonwrapped/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/proxy/doclitnonwrapped/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/proxy/doclitnonwrapped">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -719,11 +685,9 @@
                                 <copy toDir="target/test-classes/servicejars/RPCLit/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/proxy/rpclit/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/proxy/rpclit/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/proxy/rpclit">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -735,11 +699,9 @@
                                 <copy toDir="target/test-classes/servicejars/RPCLitSWA/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/proxy/rpclitswa/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/proxy/rpclitswa/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/proxy/rpclitswa">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -765,12 +727,9 @@
                                 <copy toDir="target/test-classes/servicejars/SOAP12EchoService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/proxy/soap12/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/proxy/soap12/server/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/proxy/soap12/server">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -782,11 +741,9 @@
                                 <copy toDir="target/test-classes/servicejars/gorilla_dlw/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/proxy/gorilla_dlw/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/proxy/gorilla_dlw/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/proxy/gorilla_dlw">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -804,7 +761,6 @@
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/string">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -819,7 +775,6 @@
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/string">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -834,7 +789,6 @@
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/source">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -849,7 +803,6 @@
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/source">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -865,7 +818,6 @@
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/datasource">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -880,12 +832,9 @@
                                 <copy toDir="target/test-classes/servicejars/AddressBookService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/addressbook/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/sample/addressbook/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/addressbook">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
                                 <zip destfile="target/test-classes/servicejars/AddressBookService.jar"
@@ -907,12 +856,10 @@
                                 <copy toDir="target/test-classes/servicejars/MtomSampleService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/mtom/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/mtom/META-INF/services.xml"/>
                                     </fileset>
 
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/mtom">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
 
                                 </copy>
@@ -923,11 +870,9 @@
                                 <copy toDir="target/test-classes/servicejars/DocLitNonWrapService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/nonwrap/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/nonwrap/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/nonwrap">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
                                 <zip destfile="target/test-classes/servicejars/DocLitNonWrapService.jar"
@@ -937,11 +882,9 @@
                                 <copy toDir="target/test-classes/servicejars/DocLitWrapService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/wrap/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/wrap/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/wrap">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
                                 <zip destfile="target/test-classes/servicejars/DocLitWrapService.jar"
@@ -951,11 +894,9 @@
                                 <copy toDir="target/test-classes/servicejars/AddNumbersService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/addnumbers/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/addnumbers/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/addnumbers">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
                                 <zip destfile="target/test-classes/servicejars/AddNumbersService.jar"
@@ -965,12 +906,9 @@
                                 <copy toDir="target/test-classes/servicejars/AddNumbersHandlerService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/addnumbershandler/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/sample/addnumbershandler/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/addnumbershandler">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
                                 <zip destfile="target/test-classes/servicejars/AddNumbersHandlerService.jar"
@@ -980,12 +918,9 @@
                                 <copy toDir="target/test-classes/servicejars/HeadersHandlerService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/headershandler/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/sample/headershandler/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/headershandler">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
                                 <zip destfile="target/test-classes/servicejars/HeadersHandlerService.jar"
@@ -995,11 +930,9 @@
                                 <copy toDir="target/test-classes/servicejars/GreeterService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/dlwmin/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/dlwmin/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/dlwmin">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1011,11 +944,9 @@
                                 <copy toDir="target/test-classes/servicejars/GenericService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/dlwminArrays/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/dlwminArrays/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/dlwminArrays">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1027,12 +958,9 @@
                                 <copy toDir="target/test-classes/servicejars/AsyncService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/parallelasync/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/sample/parallelasync/server/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/parallelasync/server">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1044,12 +972,9 @@
                                 <copy toDir="target/test-classes/servicejars/AsyncService2/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/asyncdoclit/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/sample/asyncdoclit/server/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/asyncdoclit/server">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1061,11 +986,9 @@
                                 <copy toDir="target/test-classes/servicejars/FaultyWebServiceService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/faults/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/faults/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/faults">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1077,12 +1000,9 @@
                                 <copy toDir="target/test-classes/servicejars/FaultsService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/faultsservice/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/sample/faultsservice/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/faultsservice">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1094,11 +1014,9 @@
                                 <copy toDir="target/test-classes/servicejars/BareDocLitService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/doclitbare/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/doclitbare/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/doclitbare">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1110,12 +1028,9 @@
                                 <copy toDir="target/test-classes/servicejars/EchoMessageService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/nonanonymous/complextype/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/nonanonymous/complextype/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/nonanonymous/complextype">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1127,11 +1042,9 @@
                                 <copy toDir="target/test-classes/servicejars/ResourceInjectionService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/resourceinjection/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/sample/resourceinjection/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/resourceinjection">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1143,11 +1056,9 @@
                                 <copy toDir="target/test-classes/servicejars/AnyTypeMessageService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/anytype/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/anytype/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/anytype">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1159,11 +1070,9 @@
                                 <copy toDir="target/test-classes/servicejars/MessageContextService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/context/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/context/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/context">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1175,11 +1084,9 @@
                                 <copy toDir="target/test-classes/servicejars/PolymorphicShapeService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/polymorphic/shape/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/polymorphic/shape/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/polymorphic/shape">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1191,11 +1098,9 @@
                                 <copy toDir="target/test-classes/servicejars/RPCLitEnumService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/rpclit/enumtype/**"/>
-                                        <exclude name="org/apache/axis2/jaxws/rpclit/enumtype/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/rpclit/enumtype">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1207,13 +1112,10 @@
                                 <copy toDir="target/test-classes/servicejars/RPCLitStringArrayService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/rpclit/stringarray/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/rpclit/stringarray/META-INF/services.xml"/>
                                         <include name="org/test/rpclit/stringarray/**"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/rpclit/stringarray/">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1226,12 +1128,9 @@
                                 <copy toDir="target/test-classes/servicejars/BareDocLitMinService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/doclitbaremin/**"/>
-                                        <exclude
-                                                name="org/apache/axis2/jaxws/sample/doclitbaremin/META-INF/services.xml"/>
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/doclitbaremin/">
                                         <include name="META-INF/**"/>
-                                        <exclude name="META-INF/services.xml"/>
                                     </fileset>
                                 </copy>
 
@@ -1256,11 +1155,9 @@
 								<copy toDir="target/test-classes/servicejars/SOAPBindingProviderService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/provider/soapbinding/SOAPBindingProvider**"/>
-									   <exclude name="org/apache/axis2/jaxws/provider/soapbinding/META-INF/services.xml" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding">
 									   <include name="META-INF/**"/>
-									   <exclude name = "services.xml" />
 									</fileset>
 								</copy>
 								<zip destfile="target/test-classes/servicejars/SOAPBindingProviderService.jar"
@@ -1272,11 +1169,9 @@
 								<copy toDir="target/test-classes/servicejars/SOAPBindingStringProviderService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/provider/soapbinding/string/**"/>
-									   <exclude name="org/apache/axis2/jaxws/provider/soapbinding/string/META-INF/services.xml" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding/string">
 									   <include name="META-INF/**"/>
-									    <exclude name = "services.xml" />
 									</fileset>
 								</copy>
 								
@@ -1288,11 +1183,9 @@
 								<copy toDir="target/test-classes/servicejars/SoapMessageProviderService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/provider/soapbinding/soapmsg/**"/>
-									   <exclude name="org/apache/axis2/jaxws/provider/soapbinding/soapmsg/META-INF/services.xml" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding/soapmsg">
 									   <include name="META-INF/**"/>
-									    <exclude name = "services.xml" />
 									</fileset>
 								</copy>
 								<zip destfile="target/test-classes/servicejars/SoapMessageProviderService.jar"
@@ -1326,11 +1219,9 @@
 								<copy toDir="target/test-classes/servicejars/ProcessDocumentService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/sample/mtomfeature/**"/>
-									   <exclude name="org/apache/axis2/jaxws/sample/mtomfeature/META-INF/services.xml" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/sample/mtomfeature/">
 									   <include name="META-INF/**"/>
-									    <exclude name = "services.xml" />
 									</fileset>
 								</copy>
 								<zip destfile="target/test-classes/servicejars/ProcessDocumentService.jar"
