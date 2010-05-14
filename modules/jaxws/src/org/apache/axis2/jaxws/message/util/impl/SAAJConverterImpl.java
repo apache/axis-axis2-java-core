@@ -158,7 +158,7 @@ public class SAAJConverterImpl implements SAAJConverter {
         //   d) possibly add an optimization to use OMSE for the body elements...to flatten the tree.
         try {
             omEnvelope.build();
-        } catch (OMException ex){
+        } catch (Exception ex){
             try {
                 // Let's try to see if we can save the envelope as a string
                 // and then make it into axiom SOAPEnvelope
