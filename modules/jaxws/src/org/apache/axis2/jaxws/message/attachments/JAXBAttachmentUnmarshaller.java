@@ -55,7 +55,7 @@ public class JAXBAttachmentUnmarshaller extends org.apache.axis2.datasource.jaxb
         }
         
         XMLStreamReader attachmentAccessor = 
-            XMLStreamReaderUtils.getOMAttachmentAccessorXMLStreamReader(xmlStreamReader);
+            XMLStreamReaderUtils.getWrappedXMLStreamReader(xmlStreamReader, OMAttachmentAccessor.class);
         
         if (attachmentAccessor != null &&
             attachmentAccessor instanceof OMAttachmentAccessor) {

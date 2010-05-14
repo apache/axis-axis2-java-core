@@ -170,7 +170,7 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
             return dh;
         }
         XMLStreamReader attachmentAccessor = 
-            XMLStreamReaderUtils.getOMAttachmentAccessorXMLStreamReader(xmlStreamReader);
+            XMLStreamReaderUtils.getWrappedXMLStreamReader(xmlStreamReader, OMAttachmentAccessor.class);
         
         if (attachmentAccessor != null &&
             attachmentAccessor instanceof OMAttachmentAccessor) {
