@@ -273,6 +273,10 @@ public class HTTPSender extends AbstractHTTPSender {
         if (statusCode == HttpStatus.SC_OK) {
             processResponse(method, msgContext);
         } else if (statusCode == HttpStatus.SC_ACCEPTED) {
+        	/* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
+        	 * of an in-only operation. In such a scenario, the HTTP response headers should be returned,
+        	 * i.e. session cookies. */
+        	obtainHTTPHeaderInformation(method, msgContext);
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
                 statusCode == HttpStatus.SC_BAD_REQUEST) {
             Header contenttypeHeader =
