@@ -339,7 +339,23 @@ public class RepositoryListener implements DeploymentConstants {
                 if (isSourceControlDir(file)) {
                     continue;
                 }
-                if (!file.isDirectory()) {
+                if (file.isDirectory()) {
+                    if (!(servicesDir && "lib".equalsIgnoreCase(file.getName())) &&
+                        !file.getName().startsWith(".")) {
+                        File servicesXML = new File(file, DeploymentConstants.SERVICES_XML);
+                        if (!servicesXML.exists()) {
+                            servicesXML =
+                                    new File(file, DeploymentConstants.SERVICES_XML.toLowerCase());
+                        }
+                        if (servicesXML.exists()) {
+                            addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
+                                            WSInfo.TYPE_SERVICE);
+                        } else {
+                            findServicesInDirectory(file);
+                        }
+                        undeployableDir = false;
+                    }
+                } else {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
                         addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
                                         WSInfo.TYPE_SERVICE);
@@ -354,21 +370,6 @@ public class RepositoryListener implements DeploymentConstants {
                             addFileToDeploy(file, deployer, WSInfo.TYPE_SERVICE);
                             undeployableDir = false;
                         }
-                    }
-                } else {
-                    if (!(servicesDir && "lib".equalsIgnoreCase(file.getName()))) {
-                        File servicesXML = new File(file, DeploymentConstants.SERVICES_XML);
-                        if (!servicesXML.exists()) {
-                            servicesXML =
-                                    new File(file, DeploymentConstants.SERVICES_XML.toLowerCase());
-                        }
-                        if (servicesXML.exists()) {
-                            addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
-                                    WSInfo.TYPE_SERVICE);
-                        } else {
-                            findServicesInDirectory(file);
-                        }
-                        undeployableDir = false;
                     }
                 }
             }
