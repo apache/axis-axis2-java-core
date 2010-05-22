@@ -197,7 +197,11 @@ public class Time implements java.io.Serializable {
         }
         calendar.set(Calendar.MILLISECOND, (int)miliSecond);
         calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
-        calendar.set(Calendar.DST_OFFSET, 0);
+
+        // set the day light off set only if time zone
+        if (source.length() > 8) {
+            calendar.set(Calendar.DST_OFFSET, 0);
+        }
 
         return calendar;
     }

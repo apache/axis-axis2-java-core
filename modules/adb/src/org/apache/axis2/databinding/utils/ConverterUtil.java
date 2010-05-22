@@ -611,7 +611,11 @@ public class ConverterUtil {
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
         calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
-        calendar.set(Calendar.DST_OFFSET, 0);
+
+        // set the day light off set only if time zone
+        if (source.length() >= 10) {
+            calendar.set(Calendar.DST_OFFSET, 0);
+        }
         calendar.getTimeInMillis();
         if (bc){
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
@@ -981,8 +985,10 @@ public class ConverterUtil {
             }
             calendar.set(Calendar.MILLISECOND, (int)miliSecond);
             calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
-            calendar.set(Calendar.DST_OFFSET, 0);
-
+            // set the day light offset only if the time zone is present
+            if (source.length() > 19){
+                calendar.set(Calendar.DST_OFFSET, 0);
+            }
 
 
         } else {
