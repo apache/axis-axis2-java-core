@@ -59,10 +59,15 @@ public class ModuleDeployer implements Deployer {
     //Will process the file and add that to axisConfig
 
     public void deploy(DeploymentFileData deploymentFileData) {
+        File deploymentFile = deploymentFileData.getFile();
+        boolean isDirectory = deploymentFile.isDirectory();
+        if (isDirectory && deploymentFileData.getName().startsWith(".")) {  // Ignore special meta directories starting with .
+            return;
+        }
+
         ArchiveReader archiveReader = new ArchiveReader();
         String moduleStatus = "";
         StringWriter errorWriter = new StringWriter();
-        boolean isDirectory = deploymentFileData.getFile().isDirectory();
         try {
 
             deploymentFileData.setClassLoader(isDirectory,
@@ -73,7 +78,7 @@ public class ModuleDeployer implements Deployer {
             metaData.setModuleClassLoader(deploymentFileData.getClassLoader());
             metaData.setParent(axisConfig);
             archiveReader.readModuleArchive(deploymentFileData, metaData, isDirectory, axisConfig);
-            URL url = deploymentFileData.getFile().toURL();
+            URL url = deploymentFile.toURL();
             metaData.setFileName(url);
             DeploymentEngine.addNewModule(metaData, axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
