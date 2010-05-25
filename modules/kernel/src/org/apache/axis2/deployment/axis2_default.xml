@@ -88,12 +88,6 @@
                          class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
         <messageReceiver mep="http://www.w3.org/2006/01/wsdl/in-out"
                          class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
-        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
-                         class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"/>
-        <messageReceiver mep="http://www.w3.org/ns/wsdl/robust-in-only"
-                         class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"/>
-        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
-                         class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
     </messageReceivers>
 
     <!-- ================================================= -->
