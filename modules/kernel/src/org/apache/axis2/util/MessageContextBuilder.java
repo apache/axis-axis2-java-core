@@ -22,7 +22,6 @@ package org.apache.axis2.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
@@ -38,6 +37,7 @@ import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axiom.soap.SOAPFaultNode;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -149,7 +149,7 @@ public class MessageContextBuilder {
                 newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
             }
 
-            newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+            newmsgCtx.setMessageID(UIDGenerator.generateURNString());
 
             // add the service group id as a reference parameter
             String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
@@ -165,7 +165,7 @@ public class MessageContextBuilder {
             Object version = newmsgCtx.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
             if (AddressingConstants.Submission.WSA_NAMESPACE.equals(version) ||
                 (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress())) {
-                newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+                newmsgCtx.setMessageID(UIDGenerator.generateURNString());
                 newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
             }
         }
@@ -322,7 +322,7 @@ public class MessageContextBuilder {
         Object version = faultContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (AddressingConstants.Submission.WSA_NAMESPACE.equals(version) ||
             (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress())) {
-            faultContext.setMessageID(UUIDGenerator.getUUID());
+            faultContext.setMessageID(UIDGenerator.generateURNString());
             faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
         }
 

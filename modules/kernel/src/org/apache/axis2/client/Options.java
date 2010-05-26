@@ -20,8 +20,8 @@
 package org.apache.axis2.client;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -1602,7 +1602,7 @@ public class Options implements Externalizable, SafeSerializable {
      */
     public String getLogCorrelationIDString() {
         if (logCorrelationIDString == null) {
-            logCorrelationIDString = myClassName + "@" + UUIDGenerator.getUUID();
+            logCorrelationIDString = myClassName + "@" + UIDGenerator.generateUID();
         }
         return logCorrelationIDString;
     }

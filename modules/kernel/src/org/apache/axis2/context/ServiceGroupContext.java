@@ -20,7 +20,7 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.externalize.ActivateUtils;
 import org.apache.axis2.context.externalize.ExternalizeConstants;
@@ -295,7 +295,7 @@ public class ServiceGroupContext extends AbstractContext
 
         if (id == null) {
             // generate an ID to use when this object is restored
-            id = UUIDGenerator.getUUID();
+            id = UIDGenerator.generateUID();
         }
         out.writeObject(id);
 

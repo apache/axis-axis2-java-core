@@ -27,7 +27,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -87,7 +87,7 @@ public abstract class AxisOperation extends AxisDescription
         moduleConfigmap = new HashMap<String, ModuleConfiguration>();
         faultMessages = new ArrayList<AxisMessage>();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UIDGenerator.generateUID());
         this.setName(tmpName);
     }
 

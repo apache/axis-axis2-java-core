@@ -28,7 +28,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.externalize.ExternalizeConstants;
 import org.apache.axis2.context.externalize.SafeObjectInputStream;
@@ -823,7 +823,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      */
     public String getLogCorrelationIDString() {
         if (logCorrelationIDString == null) {
-            logCorrelationIDString = myClassName + "@" + UUIDGenerator.getUUID();
+            logCorrelationIDString = myClassName + "@" + UIDGenerator.generateUID();
         }
         return logCorrelationIDString;
     }

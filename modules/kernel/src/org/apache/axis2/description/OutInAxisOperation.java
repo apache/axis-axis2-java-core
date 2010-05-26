@@ -23,9 +23,9 @@ import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -56,7 +56,7 @@ public class OutInAxisOperation extends TwoChannelAxisOperation {
     public OutInAxisOperation() {
         super();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UIDGenerator.generateUID());
         this.setName(tmpName);
         setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_IN);
     }

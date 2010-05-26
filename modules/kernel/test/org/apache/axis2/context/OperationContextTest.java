@@ -19,7 +19,7 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
@@ -52,14 +52,14 @@ public class OperationContextTest extends AbstractTestCase {
         ServiceContext sessionContext = sgc.getServiceContext(axisService);
         MessageContext messageContext1 = this.getBasicMessageContext();
 
-        messageContext1.setMessageID(UUIDGenerator.getUUID());
+        messageContext1.setMessageID(UIDGenerator.generateURNString());
         AxisOperation axisOperation = new InOutAxisOperation(new QName("test"));
         OperationContext operationContext1 = axisOperation
                 .findOperationContext(messageContext1, sessionContext);
         axisOperation.registerOperationContext(messageContext1, operationContext1);
 
         MessageContext messageContext2 = this.getBasicMessageContext();
-        messageContext2.setMessageID(UUIDGenerator.getUUID());
+        messageContext2.setMessageID(UIDGenerator.generateURNString());
         messageContext2.getOptions().addRelatesTo(
                 new RelatesTo(messageContext1.getMessageID()));
         messageContext2.setAxisOperation(axisOperation);

@@ -20,7 +20,7 @@
 package org.apache.axis2.client;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AxisCallback;
@@ -245,7 +245,7 @@ public abstract class OperationClient {
         // if there is no message id still, set a new one.
         String messageId = options.getMessageId();
         if (messageId == null || "".equals(messageId)) {
-            messageId = UUIDGenerator.getUUID();
+            messageId = UIDGenerator.generateURNString();
         }
         mc.setMessageID(messageId);
     }

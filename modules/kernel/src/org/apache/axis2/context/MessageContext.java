@@ -22,10 +22,10 @@ package org.apache.axis2.context;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.DetachableInputStream;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
@@ -548,7 +548,7 @@ public class MessageContext extends AbstractContext
      */
     public String getLogCorrelationID() {
         if (logCorrelationID == null) {
-            logCorrelationID = UUIDGenerator.getUUID();
+            logCorrelationID = UIDGenerator.generateUID();
         }
         return logCorrelationID;
     }
@@ -1764,7 +1764,7 @@ public class MessageContext extends AbstractContext
      * @return the auto generated content ID of the MIME attachment
      */
     public String addAttachment(DataHandler dataHandler) {
-        String contentID = UUIDGenerator.getUUID();
+        String contentID = UIDGenerator.generateContentId();
         addAttachment(contentID, dataHandler);
         return contentID;
     }
@@ -2527,7 +2527,7 @@ public class MessageContext extends AbstractContext
         String tmpID = getMessageID();
         if (tmpID == null) {
             // get an id to use when restoring this object
-            tmpID = UUIDGenerator.getUUID();
+            tmpID = UIDGenerator.generateUID();
             setMessageID(tmpID);
         }
 

@@ -20,7 +20,7 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.externalize.ActivateUtils;
 import org.apache.axis2.context.externalize.ExternalizeConstants;
@@ -1105,7 +1105,7 @@ public class OperationContext extends AbstractContext
      */
     public String getLogCorrelationIDString() {
         if (logCorrelationIDString == null) {
-            logCorrelationIDString = myClassName + "@" + UUIDGenerator.getUUID();
+            logCorrelationIDString = myClassName + "@" + UIDGenerator.generateUID();
         }
         return logCorrelationIDString;
     }

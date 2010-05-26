@@ -24,12 +24,12 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
@@ -229,7 +229,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             
             //Check whether we want to force a message id to be sent.
             if (messageID == null && includeOptionalHeaders) {
-                messageID = UUIDGenerator.getUUID();
+                messageID = UIDGenerator.generateURNString();
                 messageContextOptions.setMessageId(messageID);
             }
             
