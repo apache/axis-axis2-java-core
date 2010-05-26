@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,6 +37,8 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 /**
  * Examines a ServiceDesc and locates and/or builds the JAX-WS artifacts. The JAX-WS artifacts are:
@@ -228,7 +231,7 @@ class ArtifactProcessor {
                     }
                 }
             } else {
-                // If no valud is provided by the annotation, then the we try default values.
+                // If no value is provided by the annotation, then the we try default values.
                 // The wsgen tool generates classes in the jaxws subpackage.
                 // The wsimport tool generates classes in the same package as the SEI.
                 // Note that from reading the JAX-WS spec, it seems that WSGen is doing that
@@ -236,48 +239,49 @@ class ArtifactProcessor {
                 // Wrapped on page 36: Conformance (Default wrapper bean package): In the absence of
                 // customizations, the wrapper beans package MUST be a generated jaxws subpackage of the SEI
                 // package.
+                // However, if the class is in both places the runtime should prefer the one
+                // in the non-jaxws package.  Why ?
+                // The other classes in the non-jaxws package will cause the non-jaxws 
+                // wrapper to get pulled in first....thus the jaxws wrapper will cause a collision.
                 // 
-                // Thus the following algorithm with check the jaxws subpackage first.
+                // Thus the following algorithm with check the non-jaxws package first
                 String defaultValue = null;
                 if (defaultPkg.length() > 0) {
-                    defaultValue = defaultPkg + "." + JAXWS_SUBPACKAGE + "." + defaultClassName;
-                    if (log.isDebugEnabled()) {
-                        log.debug("No provided value.  Try the default class name =  " + defaultValue);
-                    }
-                    cls = loadClassOrNull(defaultValue, cl);
-                    if (cls != null) {
-                        wrapperClass = defaultValue;
-                    } else {
-                        cls = loadClassOrNull(defaultValue, altClassLoader);
-                        if (cls != null) {
-                            wrapperClass = defaultValue;
-                        }
-                    }
-                } 
+                    defaultValue = defaultPkg + "." + defaultClassName;
+                } else {
+                    defaultValue = defaultClassName;
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("No provided value.  Try the default class name =  " + defaultValue);
+                }
+                cls = loadClassOrNull(defaultValue, cl);
                 
                 if (cls == null) {
-                    // Try pkg without jaxws 
+                    cls = loadClassOrNull(defaultValue, altClassLoader);
+                }
+                if (cls != null) {
+                    wrapperClass = defaultValue;
+                }
+                
+                // Now try the one in the jaxws subpackage
+                if (cls == null) {
                     if (defaultPkg.length() > 0) {
-                        defaultValue = defaultPkg + "." + defaultClassName;
-                    } else {
-                        defaultValue = defaultClassName;
-                    }
-                    if (log.isDebugEnabled()) {
-                        log.debug("Did not find the default name.  Try a different default class name =  " + defaultValue);
-                    }
-                    cls = loadClassOrNull(defaultValue, cl);
-                    if (cls != null) {
-                        wrapperClass = defaultValue;
-                    } else {
-                        cls = loadClassOrNull(defaultValue, altClassLoader);
+                        defaultValue = defaultPkg + "." + JAXWS_SUBPACKAGE + "." + defaultClassName;
+                        if (log.isDebugEnabled()) {
+                            log.debug("Did not find the default name.  Try a different default class name =  " + defaultValue);
+                        }
+                        cls = loadClassOrNull(defaultValue, cl);
                         if (cls != null) {
                             wrapperClass = defaultValue;
+                        } else {
+                            cls = loadClassOrNull(defaultValue, altClassLoader);
+                            if (cls != null) {
+                                wrapperClass = defaultValue;
+                            }
                         }
-                    }
+                    }  
                 }
-            }
-            
-            
+            } 
         } catch (Throwable t) {
             if (log.isDebugEnabled()) {
                 log.debug("Unexpected error.  Processing continues. ", t);
