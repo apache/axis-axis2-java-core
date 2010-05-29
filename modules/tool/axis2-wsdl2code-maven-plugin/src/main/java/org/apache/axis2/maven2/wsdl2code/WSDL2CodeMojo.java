@@ -246,6 +246,15 @@ public class WSDL2CodeMojo extends AbstractMojo {
 
         ////////////////////////////////////////////////////////////////
         //WSDL file name
+        // here we need to set the project base uri to relative paths.
+        if (wsdlFile.indexOf(":") == -1){
+           //i.e this is not a uri
+           File file = new File(wsdlFile);
+           if (!file.isAbsolute()){
+               wsdlFile = project.getBasedir() + File.separator + wsdlFile; 
+           }
+        }
+
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
