@@ -722,6 +722,7 @@ public class SchemaCompiler {
             // here what we want is to set the schema type name for the element
             if ((referencedElement.getSchemaType() != null)
                     && (referencedElement.getSchemaType().getQName() != null)){
+
                 // i.e this element refers to an complex type name
                 if (!this.processedElementRefMap.containsKey(referencedElement.getQName())) {
                     if (this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())) {
@@ -2728,11 +2729,11 @@ public class SchemaCompiler {
         boolean isExists = false;
         switch (componetType) {
             case COMPONENT_TYPE : {
-                isExists = (schema.getTypeByName(componentQName) != null);
+                isExists = (schema.getTypeByName(componentQName.getLocalPart()) != null);
                 break;
             }
             case COMPONENT_ELEMENT : {
-                isExists = (schema.getElementByName(componentQName) != null);
+                isExists = (schema.getElementByName(componentQName.getLocalPart()) != null);
                 break;
             }
             case COMPONENT_ATTRIBUTE : {

@@ -18,6 +18,7 @@
   ~ under the License.
   -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://apache.org/axis2/schema/chameleon"
             elementFormDefault="qualified">
     <xsd:complexType name="SupportingSchemaType">
         <xsd:sequence>
