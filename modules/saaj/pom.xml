@@ -156,6 +156,13 @@
                             <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
                         </property>
                     </systemProperties>
+                    <systemProperties>
+                        <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
+                        <property>
+                            <name>java.awt.headless</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>
