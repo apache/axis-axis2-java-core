@@ -85,22 +85,6 @@
           </modules>
         </profile>
         <profile>
-            <id>transport</id>
-            <activation>
-      	        <file>
-                    <exists>../transport</exists>
-      	        </file>
-            </activation>
-            <modules>
-                <module>../transport/modules/parent</module>
-                <module>../transport/modules/base</module>
-                <module>../transport/modules/tcp</module>
-                <module>../transport/modules/xmpp</module>
-                <module>../transport/modules/mail</module>
-                <module>../transport/modules/jms</module>
-            </modules>
-        </profile>
-        <profile>
             <id>release</id>
             <activation>
                 <property>
