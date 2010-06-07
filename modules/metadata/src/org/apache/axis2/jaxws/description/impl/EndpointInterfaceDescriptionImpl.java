@@ -265,6 +265,14 @@ public class EndpointInterfaceDescriptionImpl
                     if (log.isDebugEnabled())
                         log.debug("EID: Just added operation= " + operation.getOperationName());
                     addOperation(operation);
+                    //Cater to partial wsdl case, if wsdl is found but AxisService was
+                    //not built using this wsdl we need to add operation to AxisService.
+                    if(!getEndpointDescriptionImpl().isWSDLFullySpecified()){
+                        if(log.isDebugEnabled()){
+                            log.debug("Partial wsdl definition found, we will add operation to the AxisService.");
+                        }
+                        ((OperationDescriptionImpl)operation).addToAxisService(axisService);
+                    }
                 }
                 //Since wsdl is not defined add all operations to AxisService and OperationDescriptionList.
                 else if(axisOperation == null) {
