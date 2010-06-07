@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.1</version>
+        <version>1.5.2-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <artifactId>version</artifactId>
@@ -53,7 +53,7 @@
             <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-aar-maven-plugin</artifactId>
-                <version>${version}</version>
+                <version>1.5.1</version>
                 <extensions>true</extensions>
                 <configuration>
                     <servicesXmlFile>${basedir}/src/sample/axisversion/META-INF/services.xml</servicesXmlFile>
