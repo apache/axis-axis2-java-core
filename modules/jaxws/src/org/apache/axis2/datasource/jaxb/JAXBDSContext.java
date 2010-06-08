@@ -22,6 +22,9 @@ package org.apache.axis2.datasource.jaxb;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
+import org.apache.axiom.util.stax.xop.MimePartProvider;
+import org.apache.axiom.util.stax.xop.XOPEncodedStream;
+import org.apache.axiom.util.stax.xop.XOPUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.message.OccurrenceArray;
@@ -286,8 +289,8 @@ public class JAXBDSContext {
      * Create an Attachment unmarshaller for unmarshalling MTOM/SWA Attachments
      * @return AttachmentUnmarshaller
      */
-    protected AttachmentUnmarshaller createAttachmentUnmarshaller(XMLStreamReader reader) {
-        return new JAXBAttachmentUnmarshaller(getMessageContext(), reader);
+    protected AttachmentUnmarshaller createAttachmentUnmarshaller(MimePartProvider mimePartProvider) {
+        return new JAXBAttachmentUnmarshaller(mimePartProvider, getMessageContext());
     }
 
     /**
@@ -302,10 +305,10 @@ public class JAXBDSContext {
             String clsText = (inputReader !=null) ? inputReader.getClass().toString() : "null";
             log.debug("unmarshal with inputReader=" + clsText);
         } 
-        XMLStreamReader reader = XMLStreamReaderUtils.getOriginalXMLStreamReader(inputReader);
-        if (reader == null) {
-            reader = inputReader;
-        }
+        // See the Javadoc of the CustomBuilder interface for a complete explanation of
+        // the following two instructions:
+        XOPEncodedStream xopEncodedStream = XOPUtils.getXOPEncodedStream(inputReader);
+        XMLStreamReader reader = XMLStreamReaderUtils.getOriginalXMLStreamReader(xopEncodedStream.getReader());
         if (DEBUG_ENABLED) {
             String clsText = (reader !=null) ? reader.getClass().toString() : "null";
             log.debug("  originalReader=" + clsText);
@@ -318,7 +321,7 @@ public class JAXBDSContext {
 
         
         // Create an attachment unmarshaller
-        AttachmentUnmarshaller aum = createAttachmentUnmarshaller(reader);
+        AttachmentUnmarshaller aum = createAttachmentUnmarshaller(xopEncodedStream.getMimePartProvider());
 
         if (aum != null) {
             if (DEBUG_ENABLED) {

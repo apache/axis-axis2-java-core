@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.message.databinding;
 
+import org.apache.axiom.util.stax.xop.MimePartProvider;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.jaxws.message.Message;
@@ -29,7 +30,6 @@ import org.apache.axis2.jaxws.spi.Constants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.attachment.AttachmentMarshaller;
 import javax.xml.bind.attachment.AttachmentUnmarshaller;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.TreeSet;
 
@@ -94,8 +94,8 @@ public class JAXBBlockContext extends JAXBDSContext {
     }
     
     @Override
-    protected AttachmentUnmarshaller createAttachmentUnmarshaller(XMLStreamReader reader) {
-        return new JAXBAttachmentUnmarshaller(getMessage(), reader);
+    protected AttachmentUnmarshaller createAttachmentUnmarshaller(MimePartProvider mimePartProvider) {
+        return new JAXBAttachmentUnmarshaller(mimePartProvider, getMessage());
     }
 
     public ClassLoader getClassLoader() {
