@@ -21,6 +21,7 @@ package org.apache.axis2.builder;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -54,8 +55,14 @@ public class SOAPBuilder implements Builder {
             PushbackInputStream pis = BuilderUtil.getPushbackInputStream(is);
             String actualCharSetEncoding = BuilderUtil.getCharSetEncoding(pis, charSetEncoding);
             
-            // Get the XMLStreamReader for this input stream
-            streamReader = StAXUtils.createXMLStreamReader(pis, actualCharSetEncoding);
+            // Get the XMLStreamReader for this input stream.
+            // Note: StAXSOAPModelBuilder will trigger an exception when it encounters a DTD event.
+            //       However, with StAX implementations other than Woodstox, this may already be
+            //       too late. For these parsers, additional settings may be required. We let
+            //       the StAX dialect detector in Axiom apply the necessary configuration.
+            //       See also AXIS2-4450.
+            streamReader = StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, pis,
+                    actualCharSetEncoding);
 
             StAXBuilder builder = new StAXSOAPModelBuilder(streamReader);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();

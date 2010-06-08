@@ -22,6 +22,7 @@ package org.apache.axis2.builder;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
@@ -51,7 +52,7 @@ public class MTOMBuilder implements Builder {
             String actualCharSetEncoding = BuilderUtil.getCharSetEncoding(pis, charSetEncoding);
             
             // Get the XMLStreamReader for this input stream
-            streamReader = StAXUtils.createXMLStreamReader(pis, actualCharSetEncoding);        
+            streamReader = StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, pis, actualCharSetEncoding);        
             StAXBuilder builder = new MTOMStAXSOAPModelBuilder(streamReader,
                     attachments);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();

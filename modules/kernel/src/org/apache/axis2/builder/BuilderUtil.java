@@ -32,6 +32,7 @@ import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -227,8 +228,11 @@ public class BuilderUtil {
     public static StAXBuilder getPOXBuilder(InputStream inStream, String charSetEnc)
             throws XMLStreamException {
         StAXBuilder builder;
+        // We use the StAXParserConfiguration.SOAP here as well because we don't want to allow
+        // document type declarations (that potentially reference external entities), even
+        // in plain XML messages.
         XMLStreamReader xmlreader =
-                StAXUtils.createXMLStreamReader(inStream, charSetEnc);
+                StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, inStream, charSetEnc);
         builder = new StAXOMBuilder(xmlreader);
         return builder;
     }
