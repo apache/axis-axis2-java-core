@@ -80,19 +80,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         element.discard();
     }
 
-    /* (non-Javadoc)
-      */
-    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer)
+    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer, boolean cache)
             throws XMLStreamException {
-        element.internalSerialize(writer);
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
-      */
-    public void internalSerializeAndConsume(javax.xml.stream.XMLStreamWriter writer)
-            throws XMLStreamException {
-        element.internalSerializeAndConsume(writer);
+        element.internalSerialize(writer, cache);
     }
 
     /**

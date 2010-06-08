@@ -246,14 +246,9 @@ public class TextImplEx extends NodeImplEx implements Text {
         textNode.discard();
     }
 
-    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer)
+    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer, boolean cache)
             throws XMLStreamException {
-        textNode.internalSerialize(writer);
-    }
-
-    public void internalSerializeAndConsume(javax.xml.stream.XMLStreamWriter writer)
-            throws XMLStreamException {
-        textNode.internalSerializeAndConsume(writer);
+        textNode.internalSerialize(writer, cache);
     }
 
     /**
