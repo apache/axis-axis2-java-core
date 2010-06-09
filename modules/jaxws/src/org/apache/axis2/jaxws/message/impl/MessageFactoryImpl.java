@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.WrappedDataHandler;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
@@ -118,7 +119,7 @@ public class MessageFactoryImpl implements MessageFactory {
                 m.setDoingSWA(true);
                 while (it.hasNext()) {
                     AttachmentPart ap = (AttachmentPart)it.next();
-                    m.addDataHandler(ap.getDataHandler(), ap.getContentId());
+                    m.addDataHandler(new WrappedDataHandler(ap.getDataHandler(), ap.getContentType()), ap.getContentId());
                 }
             }
             return m;
@@ -144,5 +145,4 @@ public class MessageFactoryImpl implements MessageFactory {
         }
         return createFrom(block.getXMLStreamReader(true), protocol);
     }
-
 }
