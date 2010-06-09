@@ -490,7 +490,8 @@ public class AxisConfiguration extends AxisDescription {
             // If we were already there, that's fine.  If not, fault!
             if (oldService != axisService) {
                 throw new AxisFault(Messages.getMessage("twoservicecannothavesamename",
-                                                        axisService.getName()));
+                                                        axisService.getName() +
+                                                        " [" + axisService.getFileName() + "]"));
             }
         }
     }
