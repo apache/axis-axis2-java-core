@@ -20,12 +20,7 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -37,6 +32,7 @@ import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.WrappedDataHandler;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
@@ -118,7 +114,7 @@ public class MessageFactoryImpl implements MessageFactory {
                 m.setDoingSWA(true);
                 while (it.hasNext()) {
                     AttachmentPart ap = (AttachmentPart)it.next();
-                    m.addDataHandler(ap.getDataHandler(), ap.getContentId());
+                    m.addDataHandler(new WrappedDataHandler(ap.getDataHandler(), ap.getContentType()), ap.getContentId());
                 }
             }
             return m;
@@ -144,5 +140,4 @@ public class MessageFactoryImpl implements MessageFactory {
         }
         return createFrom(block.getXMLStreamReader(true), protocol);
     }
-
 }
