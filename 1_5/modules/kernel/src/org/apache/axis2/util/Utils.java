@@ -296,6 +296,17 @@ public class Utils {
         return moduleName;
     }
 
+    private static final String ILLEGAL_CHARACTERS = "/\n\r\t\0\f`?*\\<>|\":";
+    public static boolean isValidModuleName(String moduleName) {
+        for (int i = 0; i < moduleName.length(); i++) {
+            char c = moduleName.charAt(i);
+            if ((c > 127) || (ILLEGAL_CHARACTERS.indexOf(c) >= 0)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * - if he trying to engage the same module then method will returen false
      * - else it will return true
@@ -552,5 +563,10 @@ public class Utils {
 
     private static boolean isIP(String hostAddress) {
         return hostAddress.split("[.]").length == 4;
+    }
+
+    public static String sanitizeWebOutput(String text) {
+        text = text.replaceAll("<", "&lt;");
+        return text;
     }
 }
