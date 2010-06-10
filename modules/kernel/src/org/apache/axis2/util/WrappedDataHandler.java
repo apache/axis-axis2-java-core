@@ -54,22 +54,22 @@ public class WrappedDataHandler extends DataHandler {
     // be used, however.  It's simply a placeholder.
     private static class FakeDataSource implements DataSource {
 
-        @Override
+        
         public String getContentType() {
             return "application/octet-stream";
         }
 
-        @Override
+        
         public InputStream getInputStream() throws IOException {
             throw new UnsupportedOperationException();
         }
 
-        @Override
+        
         public String getName() {
             return "FakeDataSource";
         }
 
-        @Override
+        
         public OutputStream getOutputStream() throws IOException {
             throw new UnsupportedOperationException();
         }
