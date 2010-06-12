@@ -371,7 +371,17 @@ public class SchemaCompiler {
                 }
                 if (o instanceof XmlSchemaInclude) {
                     XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
-                    if (schema1 != null) compile(schema1, isPartofGroup);
+                    if (schema1 != null){
+                        if (schema1.getTargetNamespace() == null){
+                            // the target namespace of an included shchema should be same
+                            // as the parent schema however if the schema uses the chemalon pattern
+                            // target namespace can be null. so set it here.
+                            // http://www.xfront.com/ZeroOneOrManyNamespaces.html#mixed
+                            schema1.setTargetNamespace(schema.getTargetNamespace());
+                        }
+                        compile(schema1, isPartofGroup);
+                    }
+
                 }
             }
         }
