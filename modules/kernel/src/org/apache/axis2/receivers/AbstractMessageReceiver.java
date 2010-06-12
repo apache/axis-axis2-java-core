@@ -109,6 +109,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
         try {
             invokeBusinessLogic(messageCtx);
         } catch (AxisFault fault) {
+            // signal the transport to rollback the tx, if any
+            messageCtx.setProperty(Constants.SET_ROLLBACK_ONLY, true);
             // If we're in-only, eat this.  Otherwise, toss it upwards!
             if ((messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) &&
                     !WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageCtx.getAxisOperation().getMessageExchangePattern())) {

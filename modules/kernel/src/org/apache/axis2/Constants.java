@@ -306,6 +306,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String USER_TRANSACTION = "UserTransaction";
     public static final String TRANSACTION_MANAGER = "TransactionManager";
     public static final String SUSPENDED_TRANSACTION = "SuspendedTransaction";
+    /** A message level property indicating a request to rollback the transaction associated with the message */
+    public static final String SET_ROLLBACK_ONLY = "SET_ROLLBACK_ONLY";
 
    public static final String JSR311_ANNOTATIONS="JAXRSAnnotaion";
 
