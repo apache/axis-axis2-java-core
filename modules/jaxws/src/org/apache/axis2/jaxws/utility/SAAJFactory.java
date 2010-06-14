@@ -27,6 +27,9 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
 import java.lang.reflect.Method;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides convenience methods to construct a SOAP 1.1 or SOAP 1.2 SAAJ MessageFactory or
@@ -42,6 +45,10 @@ public class SAAJFactory {
     public static final String SOAP_1_1_PROTOCOL = "SOAP 1.1 Protocol";
     public static final String SOAP_1_2_PROTOCOL = "SOAP 1.2 Protocol";
     public static final String DYNAMIC_PROTOCOL = "Dynamic Protocol";
+    
+    // Cache the MessgeFactory and SOAPFactory instances.  There will be only a few at most
+    private static Map<String, MessageFactory> _mmap = new ConcurrentHashMap<String, MessageFactory>();
+    private static Map<String, SOAPFactory> _smap = new ConcurrentHashMap<String, SOAPFactory>();
 
     /**
      * Create SOAPFactory using information from the envelope namespace
@@ -49,10 +56,18 @@ public class SAAJFactory {
      * @param namespace
      * @return
      */
+    
+    // Since there are only a few protocols, this map will only contain 3 or less MessageFactories
     public static SOAPFactory createSOAPFactory(String namespace)
             throws WebServiceException, SOAPException {
-        Method m = getSOAPFactoryNewInstanceProtocolMethod();
         SOAPFactory sf = null;
+        // Try quick cache
+        sf = _smap.get(namespace);
+        if (sf != null){
+            return sf;
+        }
+        
+        Method m = getSOAPFactoryNewInstanceProtocolMethod();
         if (m == null) {
             if (namespace.equals(SOAP11_ENV_NS)) {
                 sf = SOAPFactory.newInstance();
@@ -73,6 +88,10 @@ public class SAAJFactory {
                 throw ExceptionFactory.makeWebServiceException(e);
             }
         }
+        
+        if (sf != null) {
+            _smap.put(namespace, sf);
+        }
         return sf;
     }
 
@@ -82,10 +101,18 @@ public class SAAJFactory {
      * @param namespace
      * @return
      */
+    
     public static MessageFactory createMessageFactory(String namespace)
             throws WebServiceException, SOAPException {
-        Method m = getMessageFactoryNewInstanceProtocolMethod();
+        
+        // Try quick cache
         MessageFactory mf = null;
+        mf = _mmap.get(namespace);
+        if (mf != null){
+            return mf;
+        }
+        
+        Method m = getMessageFactoryNewInstanceProtocolMethod();
         if (m == null) {
             if (namespace.equals(SOAP11_ENV_NS)) {
                 mf = MessageFactory.newInstance();
@@ -105,6 +132,9 @@ public class SAAJFactory {
             } catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException(e);
             }
+        }
+        if (mf != null) {
+            _mmap.put(namespace, mf);
         }
         return mf;
     }
