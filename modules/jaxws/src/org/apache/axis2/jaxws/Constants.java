@@ -126,4 +126,8 @@ public interface Constants {
      * 
      */
     public static final String WRITE_HEADER_ELEMENT_IF_NULL = "jaxws.header.parameter.isNull.write.element.with.xsi.nil";
+    /**
+     * This constant will be used to store the location of JAX-WS generated artifacts cache.
+     */
+    public static final String WS_CACHE="wsCache";
 }

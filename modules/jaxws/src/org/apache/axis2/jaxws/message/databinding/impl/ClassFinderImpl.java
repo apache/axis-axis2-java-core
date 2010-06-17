@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.PrivilegedActionException;
@@ -165,5 +166,43 @@ public class ClassFinderImpl implements ClassFinder {
         }
 
         return cl;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.databinding.ClassFinder#updateClassPath(java.lang.String, java.lang.ClassLoader)
+     */
+    public void updateClassPath(final String filePath, final ClassLoader cl) throws Exception{
+        if(filePath == null){
+            return;
+        }
+        if(filePath.length()==0){
+            return;
+        }
+        if(cl instanceof URLClassLoader){
+            //lets add the path to the classloader.
+            try{
+                AccessController.doPrivileged(
+                    new PrivilegedExceptionAction()  {
+                        public Object run() throws Exception{
+                            URLClassLoader ucl = (URLClassLoader)cl;
+                            //convert file path to URL.
+                            File file = new File(filePath);
+                            URL url = file.toURI().toURL();
+                            Class uclClass = URLClassLoader.class;
+                            Method method = uclClass.getDeclaredMethod("addURL", new Class[]{URL.class});
+                            method.setAccessible(true);
+                            method.invoke(ucl, new Object[]{url});
+                            return ucl;
+                        }
+                    }
+                );
+            } catch (PrivilegedActionException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception thrown from AccessController: " + e);
+                }
+                throw ExceptionFactory.makeWebServiceException(e.getException());
+            }
+
+        }
     }
 }

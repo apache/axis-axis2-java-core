@@ -19,26 +19,27 @@
 
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
-import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.FaultDescription;
-import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
-import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
-import org.apache.axis2.jaxws.utility.ClassUtils;
-import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.Constants;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.FaultDescription;
+import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.message.databinding.ClassFinder;
+import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
+import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Examines a ServiceDesc and locates and/or builds the JAX-WS artifacts. The JAX-WS artifacts are:
@@ -51,16 +52,16 @@ class ArtifactProcessor {
 
     private ServiceDescription serviceDesc;
     private Map<OperationDescription, String> requestWrapperMap =
-            new HashMap<OperationDescription, String>();
+        new HashMap<OperationDescription, String>();
     private Map<OperationDescription, String> responseWrapperMap =
-            new HashMap<OperationDescription, String>();
+        new HashMap<OperationDescription, String>();
     private Map<OperationDescription, Method> methodMap =
         new HashMap<OperationDescription, Method>();
     private Map<FaultDescription, FaultBeanDesc> faultBeanDescMap =
-            new HashMap<FaultDescription, FaultBeanDesc>();
+        new HashMap<FaultDescription, FaultBeanDesc>();
 
     static final String JAXWS_SUBPACKAGE = "jaxws";
-    
+
     /**
      * Artifact Processor
      *
@@ -81,7 +82,7 @@ class ArtifactProcessor {
     Map<FaultDescription, FaultBeanDesc> getFaultBeanDescMap() {
         return faultBeanDescMap;
     }
-    
+
     Map<OperationDescription, Method> getMethodMap() {
         return methodMap;
     }
@@ -90,13 +91,13 @@ class ArtifactProcessor {
         for (EndpointDescription ed : serviceDesc.getEndpointDescriptions()) {
             if (ed.getEndpointInterfaceDescription() != null) {
                 for (OperationDescription opDesc : ed.getEndpointInterfaceDescription()
-                        .getOperations()) {
+                    .getOperations()) {
 
                     String declaringClassName = opDesc.getJavaDeclaringClassName();
                     String packageName = getPackageName(declaringClassName);
                     String simpleName = getSimpleClassName(declaringClassName);
                     String methodName = opDesc.getJavaMethodName();
-                    
+
 
                     // There is no default for @RequestWrapper/@ResponseWrapper classname  None is listed in Sec. 7.3 on p. 80 of
                     // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
@@ -107,11 +108,12 @@ class ArtifactProcessor {
                     // @RequestWrapper className processing
                     String requestWrapperName = opDesc.getRequestWrapperClassName();
                     String foundRequestWrapperName = getWrapperClass("@RequestWrapper",
-                            requestWrapperName, 
-                            packageName, 
-                            javaMethodToClassName(methodName),
-                            ed.getAxisService().getClassLoader());
-                    
+                        requestWrapperName, 
+                        packageName, 
+                        javaMethodToClassName(methodName),
+                        ed.getAxisService().getClassLoader(),
+                        serviceDesc);
+
                     if (foundRequestWrapperName != null) {
                         requestWrapperMap.put(opDesc, foundRequestWrapperName);
                     }
@@ -119,11 +121,12 @@ class ArtifactProcessor {
                     // @ResponseWrapper className processing
                     String responseWrapperName = opDesc.getResponseWrapperClassName();
                     String foundResponseWrapperName = getWrapperClass("@ResponseWrapper",
-                            responseWrapperName, 
-                            packageName, 
-                            javaMethodToClassName(methodName) + "Response",
-                            ed.getAxisService().getClassLoader());
-                    
+                        responseWrapperName, 
+                        packageName, 
+                        javaMethodToClassName(methodName) + "Response",
+                        ed.getAxisService().getClassLoader(),
+                        serviceDesc);
+
                     if (foundResponseWrapperName != null) {
                         responseWrapperMap.put(opDesc, foundResponseWrapperName);
                     }
@@ -132,7 +135,7 @@ class ArtifactProcessor {
                         FaultBeanDesc faultBeanDesc = create(ed, faultDesc, opDesc);
                         faultBeanDescMap.put(faultDesc, faultBeanDesc);
                     }
-                    
+
                     // Get the Method
                     Class cls = null;
                     try {
@@ -140,19 +143,19 @@ class ArtifactProcessor {
                     } catch(Exception e) {
                         if (log.isDebugEnabled()) {
                             log.debug("Class " + declaringClassName + " was not found by the Context ClassLoader.  " +
-                            		"Will use the ClassLoader associated with the service.  The exception is: " +e);
+                                "Will use the ClassLoader associated with the service.  The exception is: " +e);
                         }
                     }
-                    
+
                     if (cls == null) {
                         try {
                             cls = loadClass(declaringClassName, ed.getAxisService().getClassLoader());
                         } catch(Exception e) {
                             if (log.isDebugEnabled()) {
                                 log.debug("Class " + declaringClassName + " was not found by the AxisService ClassLoader.  " +
-                                        "Processing continues.  The exception is:" +e);
+                                    "Processing continues.  The exception is:" +e);
                             }
-                            
+
                         }
                     }
                     if (cls != null) {
@@ -161,12 +164,12 @@ class ArtifactProcessor {
                             methodMap.put(opDesc, method);
                         }
                     }
-                    
+
                 }
             }
         }
     }
-    
+
     /**
      * @param type "@RequestWrapper", "@ResponseWrapper", and "@WebFault"
      * @param providedValue String name of the Wrapper or Fault Bean from annotations
@@ -176,26 +179,27 @@ class ArtifactProcessor {
      * @return
      */
     static private String getWrapperClass(String type,
-            String providedValue, 
-            String defaultPkg, 
-            String defaultClassName, 
-            ClassLoader altClassLoader) {
-        
+        String providedValue, 
+        String defaultPkg, 
+        String defaultClassName, 
+        ClassLoader altClassLoader,
+        ServiceDescription serviceDesc) {
+
         if (log.isDebugEnabled()) {
             log.debug("getWrapperClass for " + type + " with value (" + providedValue + ")");
         }
-        
+
         String wrapperClass = null;
         try {
             Class cls = null;
             ClassLoader cl = getContextClassLoader();
             if (providedValue != null  && providedValue.length() > 0) {
-                
+
                 // If a className is provided try to load it with the context classloader
                 // and then the alternate classloader.
                 // If the class still cannot be loaded, then try inserting the
                 // jaxws sub-package.
-                
+
                 if (log.isDebugEnabled()) {
                     log.debug("Try finding the class with the name provided = " + providedValue);
                 }
@@ -228,6 +232,31 @@ class ArtifactProcessor {
                                 wrapperClass = newValue;
                             }
                         }
+                        if(cls==null && (type.equals("@WebFault")|| type.equals("faultInfo"))){
+                            //As per JAX-WS 2.2 Specification section 3.7 an application programmer can choose not to
+                            //package the faultBeans, if we have reached this point in the code then user has choosen
+                            //not to package the fault bean. If there is a cache of generated artifacts available then 
+                            //lets look for the missing faultBean there.
+
+                            ClassFinderFactory cff =
+                                (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
+                            ClassFinder cf = cff.getClassFinder();
+                            String cachePath = (String)serviceDesc.getAxisConfigContext().getProperty(Constants.WS_CACHE);
+                            if(cachePath!=null){
+                                //lets add the cache to classpath and retry loading missing artifacts.
+                                if(log.isDebugEnabled()){
+                                    log.debug("updating classpath with cache location");
+                                }
+                                cf.updateClassPath(cachePath, cl);
+                                if(log.isDebugEnabled()){
+                                    log.debug("trying to load class "+newValue+" from cache.");
+                                }
+                                cls=loadClassOrNull(newValue, cl);
+                                if(cls!=null){
+                                    wrapperClass=newValue;
+                                }
+                            }
+                        }
                     }
                 }
             } else {
@@ -255,14 +284,14 @@ class ArtifactProcessor {
                     log.debug("No provided value.  Try the default class name =  " + defaultValue);
                 }
                 cls = loadClassOrNull(defaultValue, cl);
-                
+
                 if (cls == null) {
                     cls = loadClassOrNull(defaultValue, altClassLoader);
                 }
                 if (cls != null) {
                     wrapperClass = defaultValue;
                 }
-                
+
                 // Now try the one in the jaxws subpackage
                 if (cls == null) {
                     if (defaultPkg.length() > 0) {
@@ -279,6 +308,36 @@ class ArtifactProcessor {
                                 wrapperClass = defaultValue;
                             }
                         }
+                        if(cls==null && (type.equals("faultInfo")|| type.equals("@WebFault"))){
+                            //As per JAX-WS 2.2 Specification section 3.7 an applicaiton programmer can choose not to
+                            //package the faultBeans, if we have reached this point in the code then user has choosen
+                            //not to package the fault bean. If there is a cache of generated artifacts available then 
+                            //lets look for the missing faultBean there.
+                            if(log.isDebugEnabled()){
+                                log.debug("Adding cache to classpath");
+                            }
+                            ClassFinderFactory cff =
+                                (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
+                            ClassFinder cf = cff.getClassFinder();
+                            String cachePath = (String)serviceDesc.getAxisConfigContext().getProperty(Constants.WS_CACHE);
+                            if(log.isDebugEnabled()){
+                                log.debug("cachePath = "+cachePath);
+                            }
+                            if(cachePath!=null){
+                                //lets add the cache to classpath and retry loading missing artifacts.
+                                if(log.isDebugEnabled()){
+                                    log.debug("updating classpath with cache location");
+                                }
+                                cf.updateClassPath(cachePath, cl);
+                                if(log.isDebugEnabled()){
+                                    log.debug("trying to load class "+defaultValue+" from cache.");
+                                }
+                                cls=loadClassOrNull(defaultValue, cl);
+                                if(cls!=null){
+                                    wrapperClass=defaultValue;
+                                }
+                            }
+                        }
                     }  
                 }
             } 
@@ -291,7 +350,7 @@ class ArtifactProcessor {
             log.debug("exit getWrapperClass with " + wrapperClass);
         }  
         return wrapperClass;
-      
+
     }
 
     private FaultBeanDesc create(EndpointDescription ed, FaultDescription faultDesc, OperationDescription opDesc) {
@@ -300,8 +359,8 @@ class ArtifactProcessor {
          *   2) If not present or invalid, the class defined by getFaultInfo.
          *   3) If not present, the class is found using the default name and location
          */
-String declaringClassName = opDesc.getJavaDeclaringClassName();
-        
+        String declaringClassName = opDesc.getJavaDeclaringClassName();
+
         String type = "@WebFault";
         String faultBeanClassName = faultDesc.getFaultBean();
         if (faultBeanClassName == null || faultBeanClassName.length() == 0) {
@@ -309,10 +368,11 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
             faultBeanClassName = faultDesc.getFaultInfo();
         }
         String foundClassName = getWrapperClass(type,
-                faultBeanClassName,
-                getPackageName(declaringClassName), 
-                getSimpleClassName(faultDesc.getExceptionClassName()) + "Bean",
-                ed.getAxisService().getClassLoader());
+            faultBeanClassName,
+            getPackageName(declaringClassName), 
+            getSimpleClassName(faultDesc.getExceptionClassName()) + "Bean",
+            ed.getAxisService().getClassLoader(),
+            serviceDesc);
         if (foundClassName == null) {
             faultBeanClassName = missingArtifact(faultBeanClassName);
         }
@@ -321,10 +381,10 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
         }
 
         /* Local NameAlgorithm:
-        *   1) The name defined on the @WebFault of the exception.
-        *   2) If not present, the name defined via the @XmlRootElement of the fault bean class.
-        *   3) If not present, the <exceptionName>Bean
-        */
+         *   1) The name defined on the @WebFault of the exception.
+         *   2) If not present, the name defined via the @XmlRootElement of the fault bean class.
+         *   3) If not present, the <exceptionName>Bean
+         */
         String faultBeanLocalName = faultDesc.getName();
         if (faultBeanLocalName == null || faultBeanLocalName.length() == 0) {
             if (faultBeanClassName != null && faultBeanClassName.length() > 0) {
@@ -349,10 +409,10 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
         }
 
         /* Algorithm for fault bean namespace
-        *   1) The namespace defined on the @WebFault of the exception.
-        *   2) If not present, the namespace defined via the @XmlRootElement of the class name.
-        *   3) If not present, the namespace of the method's declared class + "/jaxws"
-        */
+         *   1) The namespace defined on the @WebFault of the exception.
+         *   2) If not present, the namespace defined via the @XmlRootElement of the class name.
+         *   3) If not present, the namespace of the method's declared class + "/jaxws"
+         */
         String faultBeanNamespace = faultDesc.getTargetNamespace();
         if (faultBeanNamespace == null || faultBeanNamespace.length() == 0) {
             if (faultBeanClassName != null && faultBeanClassName.length() > 0) {
@@ -368,7 +428,7 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
                         faultBeanNamespace = aDesc.getXmlRootElementNamespace();
                     }
                 } catch (Throwable t) {
-                   throw ExceptionFactory.makeWebServiceException(t);
+                    throw ExceptionFactory.makeWebServiceException(t);
                 }
             }
         }
@@ -377,9 +437,9 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
         }
 
         return new FaultBeanDescImpl(
-                faultBeanClassName,
-                faultBeanLocalName,
-                faultBeanNamespace);
+            faultBeanClassName,
+            faultBeanLocalName,
+            faultBeanNamespace);
     }
 
     /**
@@ -448,7 +508,7 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
             return null;
         }  
     }
-    
+
     private static Class loadClass(String className, ClassLoader classLoader) throws ClassNotFoundException {
         // Don't make this public, its a security exposure
         return forName(className, true, classLoader);
@@ -460,32 +520,32 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
      * @return Class
      */
     private static Class forName(final String className, final boolean initialize,
-                                 final ClassLoader classloader) throws ClassNotFoundException {
+        final ClassLoader classloader) throws ClassNotFoundException {
         // NOTE: This method must remain protected because it uses AccessController
         Class cl = null;
         try {
             cl = (Class)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            // Class.forName does not support primitives
-                        	Class cls = ClassUtils.getPrimitiveClass(className);
-                        	try{
-                        		if (cls == null) {
-                        			cls = Class.forName(className, initialize, classloader);
-                        		}
-                        		return cls;
-                        		//Lets catch NoClassDefFoundError as its part of Throwable
-                        		//Any Exception that extends Exception will be handled by doPriv method.    
-                        	} catch (NoClassDefFoundError e) {
-                        	    /**
-                        	     * In different jaxws scenarios, some classes may be missing.  So it is normal behavior
-                        	     * to get to this point.  The exception is swallowed and a null is returned.  
-                        	     * The exception is not logged...as this would give servicability folks the idea that a problem occurred.
-                        	     */
-                        	} 
-                        	return cls;
-                        }
+                new PrivilegedExceptionAction() {
+                    public Object run() throws ClassNotFoundException {
+                        // Class.forName does not support primitives
+                        Class cls = ClassUtils.getPrimitiveClass(className);
+                        try{
+                            if (cls == null) {
+                                cls = Class.forName(className, initialize, classloader);
+                            }
+                            return cls;
+                            //Lets catch NoClassDefFoundError as its part of Throwable
+                            //Any Exception that extends Exception will be handled by doPriv method.    
+                        } catch (NoClassDefFoundError e) {
+                            /**
+                             * In different jaxws scenarios, some classes may be missing.  So it is normal behavior
+                             * to get to this point.  The exception is swallowed and a null is returned.  
+                             * The exception is not logged...as this would give servicability folks the idea that a problem occurred.
+                             */
+                        } 
+                        return cls;
                     }
+                }
             );
         } catch (PrivilegedActionException e) {
             /**
@@ -498,7 +558,7 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
 
         return cl;
     }
-    
+
     /**
      * Return the Method matching the method name or null
      * @param methodName String containing method name
@@ -511,22 +571,22 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
         Method method = null;
         try {
             method = (Method)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run()  {
-                            Method[] methods = cls.getMethods();
-                            if (methods != null) {
-                                for (int i=0; i<methods.length; i++) {
-                                    if (methods[i].getName().equals(methodName)) {
-                                        return methods[i];
-                                    }
+                new PrivilegedExceptionAction() {
+                    public Object run()  {
+                        Method[] methods = cls.getMethods();
+                        if (methods != null) {
+                            for (int i=0; i<methods.length; i++) {
+                                if (methods[i].getName().equals(methodName)) {
+                                    return methods[i];
                                 }
                             }
-                            return null;
                         }
+                        return null;
                     }
+                }
             );
         } catch (PrivilegedActionException e) {
-            
+
         }
 
         return method;
@@ -538,11 +598,11 @@ String declaringClassName = opDesc.getJavaDeclaringClassName();
         ClassLoader cl = null;
         try {
             cl = (ClassLoader)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Thread.currentThread().getContextClassLoader();
-                        }
+                new PrivilegedExceptionAction() {
+                    public Object run() throws ClassNotFoundException {
+                        return Thread.currentThread().getContextClassLoader();
                     }
+                }
             );
         } catch (PrivilegedActionException e) {
             if (log.isDebugEnabled()) {

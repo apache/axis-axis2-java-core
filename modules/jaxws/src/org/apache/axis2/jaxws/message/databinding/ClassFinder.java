@@ -39,4 +39,14 @@ public interface ClassFinder {
      */
     ArrayList<Class> getClassesFromJarFile(String pkg, ClassLoader cl)
             throws ClassNotFoundException;
+    
+    /**
+     * This method will be used to add addition paths to existing classpath.
+     * We may need to add classpath to search for jax-ws wrapper classes that
+     * applicaiton developer did not package. 
+     * @param filePath: path of the location where wrapper classes may be stored.
+     * example a cache folder.
+     * @param cl
+     */
+    public void updateClassPath(String filePath, ClassLoader cl) throws Exception;
 }
