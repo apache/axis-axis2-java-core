@@ -192,6 +192,12 @@ public class SOAPConnectionImpl extends SOAPConnection {
             return getSOAPMessage(msgCtx.getEnvelope());
         } catch (Exception e) {
             throw new SOAPException(e.getMessage(), e);
+        } finally {
+            try {
+                requestMsgCtx.getTransportOut().getSender().cleanup(requestMsgCtx);      
+            } catch (Exception e) {
+                // ignore the error, better to log somewhere if possible.
+            }
         }
     }
 
