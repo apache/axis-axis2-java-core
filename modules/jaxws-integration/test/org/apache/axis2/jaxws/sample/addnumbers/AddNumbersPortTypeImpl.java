@@ -25,6 +25,8 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,18 +42,44 @@ public class AddNumbersPortTypeImpl implements AddNumbersPortType {
 	public int addNumbers(int arg0, int arg1) throws AddNumbersFault_Exception {
         TestLogger.logger.debug(">> Received addNumbers request for " + arg0 + " and " + arg1);
         
-        checkProperties();
+        checkProperties(arg0, arg1);
         
         return arg0+arg1;
 	}
 	
-	private void checkProperties() {
+	private void checkProperties(int arg0, int arg1) {
 	    MessageContext mc = ctx.getMessageContext();
 	    Map headers = (Map)mc.get(MessageContext.HTTP_REQUEST_HEADERS);
+	    
 	    // the map should contain some headers
 	    if (headers == null || headers.isEmpty()) {
 	        throw new RuntimeException("HTTP request headers map is null or empty!");
 	    }
+	    
+	    // check for custom http headers
+	    if (arg0 == 333 && arg1 == 444) {	        
+	        List<String> values; 
+	            
+	        // test MY_HEADER_1
+	        values = (List<String>) headers.get("MY_HEADER_1");
+	        if (values == null || headers.isEmpty()) {
+	            throw new RuntimeException("No values for MY_HEADER_1 HTTP header");
+	        }
+	        if (!values.contains("hello")) {
+	            throw new RuntimeException("MY_HEADER_1 HTTP header does not contain expected value: " + values);
+	        }
+	        
+            /*
+            // test MY_HEADER_2
+            values = (List<String>) headers.get("MY_HEADER_2");
+            if (values == null || headers.isEmpty()) {
+                throw new RuntimeException("No values for MY_HEADER_2 HTTP header");
+            }
+            if (!values.contains("values1") && !values.contains("values2")) {
+                throw new RuntimeException("MY_HEADER_2 HTTP header does not contain expected values: " + values);
+            }
+            */	        	       
+	    }	    
 	}
 
 	/* (non-Javadoc)
