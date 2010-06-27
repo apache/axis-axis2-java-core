@@ -475,6 +475,19 @@
           Checksum policy when not specified always defaults to 'warn'
           which is what we want.
        -->
+        <!-- Override the Apache snapshot repository defined in
+             org.apache:apache:3 with the new Nexus snapshot
+             repository. Note: the 1.5 is not ready to use a more
+             recent version of org.apache:apache but needs snapshots
+             from the new snapshot repository (e.g. Axiom). -->
+        <repository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshot Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
         <repository>
             <releases>
                 <enabled>true</enabled>
