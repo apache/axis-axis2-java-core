@@ -90,7 +90,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <systemProperties>
                         <property>
                             <name>maven.test.haltafterfailure</name>

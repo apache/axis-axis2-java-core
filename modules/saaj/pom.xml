@@ -135,7 +135,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skip>false</skip>
                     <forkMode>once</forkMode>
                     <argLine>-Djava.endorsed.dirs=${m2Repository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/${geronimo.spec.saaj.version}/</argLine>
                     <systemProperties>
