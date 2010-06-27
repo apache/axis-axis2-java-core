@@ -96,15 +96,6 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
     <distributionManagement>
         <repository>

@@ -103,13 +103,6 @@
         </testResources>
         <plugins>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -117,7 +110,7 @@
                         <id>compile</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <java classname="org.jibx.binding.Compile" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="target/test-classes"/>
@@ -134,7 +127,7 @@
                         <id>gen-cp</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <property name="cp" refid="maven.runtime.classpath"/>
                                 <echo message="${cp}" file="target/cp.txt"/>
                             </tasks>

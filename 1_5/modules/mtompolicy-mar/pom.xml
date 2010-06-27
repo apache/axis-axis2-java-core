@@ -74,13 +74,6 @@
         </testResources>
         <plugins>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-mar-maven-plugin</artifactId>
                 <version>1.5.1</version>

@@ -83,7 +83,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <excludes>
                         <exclude>**/*Abstract*.java</exclude>
                         <exclude>**/*Util*.java</exclude>
@@ -124,7 +123,7 @@
                         <id>generate-test-sources</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <property name="maven.junit.jvmargs" value=""/>
                                 <path id="maven.dependency.classpath">
                                     <path refid="maven.compile.classpath"/>

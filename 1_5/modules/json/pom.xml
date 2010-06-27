@@ -71,14 +71,5 @@
                 <directory>test-resources</directory>
             </testResource>
         </testResources>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 </project>

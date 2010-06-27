@@ -83,7 +83,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <excludes>
                         <exclude>**/*Util.java</exclude>
                         <exclude>**/*Constants.java</exclude>
@@ -98,7 +97,7 @@
                         <id>gen-cp</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <property name="cp" refid="maven.runtime.classpath"/>
                                 <echo message="${cp}" file="target/cp.txt"/>
                             </tasks>
