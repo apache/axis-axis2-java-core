@@ -28,25 +28,24 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.marshal.impl.AnnotationDescImpl;
+import org.apache.axis2.jaxws.runtime.description.marshal.impl.MarshalServiceRuntimeDescriptionImpl;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import javax.xml.namespace.QName;
 
-/**
- * @author scheu
- *
- */
-/**
- * @author scheu
- *
- */
+
 public class MarshalServiceRuntimeDescriptionImpl implements
         MarshalServiceRuntimeDescription {
+	private static final Log log = LogFactory.getLog(MarshalServiceRuntimeDescriptionImpl.class);
 
     private ServiceDescription serviceDesc;
     private String key;
@@ -64,6 +63,10 @@ public class MarshalServiceRuntimeDescriptionImpl implements
 
     protected MarshalServiceRuntimeDescriptionImpl(String key,
                                                    ServiceDescription serviceDesc) {
+    	if (log.isDebugEnabled()) {
+     		QName qName = (serviceDesc == null) ? null : serviceDesc.getServiceQName();
+     		log.debug("Create MarshalServiceRuntimeDescriptionImpl for " + serviceDesc);
+     	}
         this.serviceDesc = serviceDesc;
         this.key = key;
     }
@@ -91,15 +94,33 @@ public class MarshalServiceRuntimeDescriptionImpl implements
     }
 
     public AnnotationDesc getAnnotationDesc(Class cls) {
-        String className = cls.getCanonicalName();
+    	if (log.isDebugEnabled()) {
+    		log.debug("getAnnotationDesc for class " + cls);
+    	}
+        String className = cls.getCanonicalName();     
         AnnotationDesc aDesc = annotationMap.get(className);
-        if (aDesc != null) {
-            // Cache hit
-            return aDesc;
+        if (aDesc == null) {
+            // Cache miss
+        	if (log.isDebugEnabled()) {
+        		log.debug("creating AnnotationDesc");
+        	}
+            aDesc = AnnotationDescImpl.create(cls);
         }
-        // Cache miss...we cannot update the map because we don't want to introduce a sync call.
-        aDesc = AnnotationDescImpl.create(cls);
-
+        
+        if (log.isDebugEnabled()) {
+    		log.debug("getAnnotationDesc is " + aDesc);
+    	}
+        return aDesc;
+    }
+    
+    public AnnotationDesc getAnnotationDesc(String clsName) {
+    	if (log.isDebugEnabled()) {
+    		log.debug("getAnnotationDesc for " + clsName);
+    	}
+        AnnotationDesc aDesc = annotationMap.get(clsName);
+        if (log.isDebugEnabled()) {
+    		log.debug("getAnnotationDesc is " + aDesc);
+    	}
         return aDesc;
     }
 

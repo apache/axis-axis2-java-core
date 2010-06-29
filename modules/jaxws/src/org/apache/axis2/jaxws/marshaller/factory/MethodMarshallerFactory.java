@@ -102,6 +102,15 @@ public class MethodMarshallerFactory {
     public static MethodMarshaller getMarshaller(OperationDescription op, boolean isClient,
                                                  ClassLoader cl) {
 
+    	// Always make sure the MarshalServiceRuntimeDescription is built before getting the MethodMarshaller.
+     	// Getting the MarshalServiceRuntimeDescription will ensure that it is built.
+     	ServiceDescription serviceDesc =
+             op.getEndpointInterfaceDescription()
+               .getEndpointDescription()
+               .getServiceDescription();
+     	MarshalServiceRuntimeDescription marshalDesc =
+             MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
+     	
         MethodMarshaller marshaller = null;
         if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
             marshaller = createDocLitMethodMarshaller(op, isClient, cl);

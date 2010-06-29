@@ -40,13 +40,19 @@ public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescript
     public String getPackagesKey();
 
     /**
-     * Get the AnnotationDesc for this class. If one is not cached, a new one is creatd
+     * Gets/Creates the AnnotationDesc for this class.
      *
      * @param cls
      * @return AnnotationDesc
      */
     public AnnotationDesc getAnnotationDesc(Class cls);
 
+    /**
+     * Gets the AnnotationDesc for this class if already determined
+     * @param clsName
+     * @return AnnotationDesc or null
+     */
+    public AnnotationDesc getAnnotationDesc(String clsName);
 
     /**
      * Get the PropertyDescriptor map for the class. The key of the map is a child xml local name.

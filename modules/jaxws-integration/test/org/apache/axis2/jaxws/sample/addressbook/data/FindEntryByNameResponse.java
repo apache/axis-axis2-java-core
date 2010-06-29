@@ -51,7 +51,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "entry"
 })
-@XmlRootElement(name = "findEntryByNameResponse")
+// Intentional comment to test support of wrapper classes that are not root elements
+// @XmlRootElement(name = "findEntryByNameResponse")
 public class FindEntryByNameResponse {
 
     @XmlElement(namespace = "http://org/apache/axis2/jaxws/sample/addressbook", required = true)

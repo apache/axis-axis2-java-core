@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
@@ -149,7 +150,15 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);
+            
             blockContext.setWebServiceNamespace(ed.getTargetNamespace());
+            // If the wrapper is not a root element, then the process type
+            // must be set on the context so that "by type" unmarshal is performed.
+            if (!isResponseWrapperAnXmlRootElement(operationDesc, marshalDesc, endpointDesc)) {
+            	String clsName = marshalDesc.getResponseWrapperClassName(operationDesc);
+            	Class cls = loadClass(clsName,endpointDesc);
+            	blockContext.setProcessType(cls);
+            }
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
@@ -313,6 +322,14 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);            
             blockContext.setWebServiceNamespace(ed.getTargetNamespace());
+            
+            // If the wrapper is not a root element, then the process type
+            // must be set on the context so that "by type" unmarshal is performed.
+            if (!isRequestWrapperAnXmlRootElement(operationDesc, marshalDesc, endpointDesc)) {
+            	String clsName = marshalDesc.getRequestWrapperClassName(operationDesc);
+            	Class cls = loadClass(clsName,endpointDesc);
+            	blockContext.setProcessType(cls);
+            }
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
@@ -531,12 +548,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
 
             // Now create the single JAXB element
             String wrapperName = marshalDesc.getResponseWrapperClassName(operationDesc);
-            Class cls;
-            try {
-                cls = MethodMarshallerUtils.loadClass(wrapperName);
-            } catch (ClassNotFoundException e){
-                cls = MethodMarshallerUtils.loadClass(wrapperName, endpointDesc.getAxisService().getClassLoader());
-            }
+            Class cls = loadClass(wrapperName, endpointDesc);
+            
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
             Object object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap,
                                              marshalDesc.getPropertyDescriptorMap(cls));
@@ -665,12 +678,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
 
             // Now create the single JAXB element 
             String wrapperName = marshalDesc.getRequestWrapperClassName(operationDesc);
-            Class cls;
-            try {
-                cls = MethodMarshallerUtils.loadClass(wrapperName);
-            } catch (ClassNotFoundException e){
-                cls = MethodMarshallerUtils.loadClass(wrapperName, endpointDesc.getAxisService().getClassLoader());
-            }
+            Class cls = loadClass(wrapperName, endpointDesc);
+            
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
             Object object = wrapperTool.wrap(cls, nameList, objectList, declardClassMap,
                                              marshalDesc.getPropertyDescriptorMap(cls));
@@ -777,4 +786,81 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
         }
     }
 
+    /**
+     * @param opDesc
+     * @param msrd
+     * @param endpointDesc
+     * @return true if request wrapper is a root element
+     */
+    boolean isRequestWrapperAnXmlRootElement(OperationDescription opDesc, 
+    			MarshalServiceRuntimeDescription msrd,
+    			EndpointDescription endpointDesc) {
+    	boolean isRootElement = false;
+		String wrapperClassName = msrd.getRequestWrapperClassName(opDesc);
+    	try {
+			
+			if (wrapperClassName != null) {
+				AnnotationDesc aDesc = msrd.getAnnotationDesc(wrapperClassName);
+				if (aDesc == null) {
+					Class cls = loadClass(wrapperClassName, endpointDesc);
+					aDesc = msrd.getAnnotationDesc(cls);
+				}
+				isRootElement = aDesc.hasXmlRootElement();
+			}
+			
+		} catch (Throwable t) {
+			if (log.isDebugEnabled()) {
+				log.debug("An error occurred while processing class " + wrapperClassName + " exception is " + t);
+				log.debug("The error is ignored and processing continues.");				
+			}
+		}
+		return isRootElement;
+    }
+    
+    /**
+     * @param opDesc
+     * @param msrd
+     * @param endpointDesc
+     * @return true if response wrapper is a root element
+     */
+    boolean isResponseWrapperAnXmlRootElement(OperationDescription opDesc, 
+    			MarshalServiceRuntimeDescription msrd,
+    			EndpointDescription endpointDesc) {
+    	boolean isRootElement = false;
+		String wrapperClassName = msrd.getResponseWrapperClassName(opDesc);
+    	try {
+			
+			if (wrapperClassName != null) {
+				AnnotationDesc aDesc = msrd.getAnnotationDesc(wrapperClassName);
+				if (aDesc == null) {
+					Class cls = loadClass(wrapperClassName, endpointDesc);
+					aDesc = msrd.getAnnotationDesc(cls);
+				}
+				isRootElement = aDesc.hasXmlRootElement();
+			}
+			
+		} catch (Throwable t) {
+			if (log.isDebugEnabled()) {
+				log.debug("An error occurred while processing class " + wrapperClassName + " exception is " + t);
+				log.debug("The error is ignored and processing continues.");				
+			}
+		}
+		return isRootElement;
+    }
+
+    /**
+     * @param clsName
+     * @param endpontDesc
+     * @return
+     * @throws ClassNotFoundException
+     */
+    Class loadClass(String clsName, EndpointDescription endpointDesc) throws ClassNotFoundException {
+    	Class cls = null;
+    	try {
+            cls = MethodMarshallerUtils.loadClass(clsName);
+        } catch (ClassNotFoundException e){
+            cls = MethodMarshallerUtils.loadClass(clsName, endpointDesc.getAxisService().getClassLoader());
+        }
+        return cls;
+    }
 }

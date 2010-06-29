@@ -236,12 +236,17 @@ public class JAXBDSContext {
     }
 
     /**
-     * Set RPC Declared Type.  The use of use this property if the message is style=document is
-     * discouraged.
+     * The procesess type to indicate the class of the target of the unmarshaling.
+     * This method should only be used in the cases where the element being unmarshaled
+     * is not known to the JAXBContext (examples include RPC/Literal processing
+     * and Doc/Literal Wrapped processing with a non-element wrapper class)
      *
      * @param type
      */
     public void setProcessType(Class type) {
+    	if (log.isDebugEnabled()) {
+     		log.debug("Process Type set to: " + type);
+     	}
         processType = type;
     }
 
@@ -254,6 +259,9 @@ public class JAXBDSContext {
     }
 
     public void setIsxmlList(boolean isxmlList) {
+    	if (log.isDebugEnabled()) {
+     		log.debug("isxmlListSet to " + isxmlList);
+     	}
         this.isxmlList = isxmlList;
     }
     
