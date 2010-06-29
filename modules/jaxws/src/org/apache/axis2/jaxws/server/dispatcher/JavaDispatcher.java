@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.server.dispatcher;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.WebServiceExceptionLogger;
@@ -315,6 +316,10 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
      * @param t Throwable
      */
     protected static void setCheckedExceptionProperty(MessageContext response, Method m, Throwable t) {
+        if (log.isDebugEnabled()) {
+          log.debug("Entered JavaDispatcher.setCheckedExceptionProperty(), t=" + t);
+        }
+     
         // Get the root of the exception
         if (t instanceof InvocationTargetException) {
             t = ((InvocationTargetException) t).getTargetException();
@@ -325,7 +330,20 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         
         // Add the property
         if (checkedException != null) {
+            if (log.isDebugEnabled()) {
+              log.debug("The exception is a checked exception: " + checkedException.getCanonicalName());
+            }
+
             response.setProperty(Constants.CHECKED_EXCEPTION, checkedException.getCanonicalName());
+                        
+            // Also set the AxisFault so that it's an "application" fault.
+            AxisFault fault = response.getCausedByException();
+            if (fault != null) {
+              fault.setFaultType(org.apache.axis2.Constants.APPLICATION_FAULT);
+              if (log.isDebugEnabled()) {
+                log.debug("Setting AxisFault's fault type to 'APPLICATION_FAULT': " + fault);
+              }
+            }
         }
     }
     
@@ -356,8 +374,16 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
     protected static void setExceptionProperties(MessageContext response, 
                                                  Method m, 
                                                  Throwable t) {
+        if (log.isDebugEnabled()) {
+          log.debug("Entering JavaDispatcher.setExceptionProperties().");
+        }
         setCheckedExceptionProperty(response, m, t);
         setWebMethodExceptionProperty(response, t);
+                
+        if (log.isDebugEnabled()) {
+          log.debug("Leaving JavaDispatcher.setExceptionProperties().");
+        }
+
     }
     
 }

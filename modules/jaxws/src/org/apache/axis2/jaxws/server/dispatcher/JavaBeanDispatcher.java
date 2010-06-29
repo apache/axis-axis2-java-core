@@ -100,6 +100,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         catch (Throwable e) {
             faultThrown = true;
             fault = e;
+            if (log.isDebugEnabled()) {
+              log.debug("Caught exception from 'invokeTargetOperation': " + fault.toString());
+            }
         }
 
         MessageContext response = null;
@@ -108,12 +111,20 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             // we cannot create a MessageContext for one-way responses.
             return null;
         } else if (faultThrown) {
+            if (log.isDebugEnabled()) {
+              log.debug("Processing fault response: " + fault.toString());
+            }
+
             response = createFaultResponse(mc, mc.getMessage().getProtocol(), fault);
             setExceptionProperties(response, target, fault);
         } else {
             response = createResponse(mc, mc.getMessage().getProtocol(), methodInputParams, output);
         }
-                
+
+        
+        if (log.isDebugEnabled()) {
+          log.debug("Returning from JavaBeanDispatcher.invoke()...");
+        }
         return response;
     }
 
@@ -329,7 +340,10 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     }
     
     public MessageContext createFaultResponse(MessageContext request, Protocol p, Throwable t) {
-        
+        if (log.isDebugEnabled()) {
+          log.debug("Entered JavaBeanDispatcher.createFaultResponse()...");
+        }
+
         // call the InvocationListener instances before marshalling
         // the fault into a message
         // call the InvocationListener instances before marshalling
@@ -354,6 +368,10 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         response.setCausedByException(axisFault);
         
         setFaultResponseAction(t, request, response);
+
+        if (log.isDebugEnabled()) {
+          log.debug("Leaving JavaBeanDispatcher.createFaultResponse()...");
+        }
         
         return response;
     }
