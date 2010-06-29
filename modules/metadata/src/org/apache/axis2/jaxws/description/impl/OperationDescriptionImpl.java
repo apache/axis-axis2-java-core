@@ -905,7 +905,11 @@ class OperationDescriptionImpl
      * @see org.apache.axis2.jaxws.description.OperationDescription#getSyncOperation()
      */
     public OperationDescription getSyncOperation() {
-
+        if (log.isDebugEnabled()) {
+            log.debug("Current OperationDescription Web Method annotation \"operation\" name: " 
+                    + getOperationName());
+            log.debug("Current OperationDescription java method name: " + getJavaMethodName());
+        }
         if (syncOperationDescription != null) {
             // No need to do anything; the sync operation has already been set and will be
             // returned below
@@ -923,16 +927,15 @@ class OperationDescriptionImpl
                     webMethodAnnoName != javaMethodName) {
                 EndpointInterfaceDescription eid = getEndpointInterfaceDescription();
                 if (eid != null) {
-                    //searching for opDesc of sync operation.
-                    OperationDescription[] ods = null;
-                    ods = eid.getOperationForJavaMethod(webMethodAnnoName);
-                    if (ods != null) {
-                        for (OperationDescription od : ods) {
-                            if (od.getJavaMethodName().equals(webMethodAnnoName)
-                                    && !od.isJAXWSAsyncClientMethod()) {
-                                opDesc = od;
-                                break;
-                            }
+                    //searching for operationDescription of synchronous operation.
+                    OperationDescription[] allOperations = eid.getOperations();
+                    // Find a method that has a matching annotation but is not 
+                    // an asynchronous operation.
+                    for (OperationDescription operation : allOperations) {
+                        if (webMethodAnnoName.equals(operation.getOperationName()) &&
+                                !operation.isJAXWSAsyncClientMethod()) {
+                            opDesc = operation;
+                            break;
                         }
                     }
                 }
@@ -940,8 +943,12 @@ class OperationDescriptionImpl
             // Note that opDesc might still be null
             syncOperationDescription = opDesc;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Synchronous operationDescription: " + syncOperationDescription);
+        }
         return syncOperationDescription;
     }
+
 
     public String getAction() {
         return getAnnoWebMethodAction();
