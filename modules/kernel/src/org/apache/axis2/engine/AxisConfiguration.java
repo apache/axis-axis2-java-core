@@ -1408,6 +1408,15 @@ public class AxisConfiguration extends AxisDescription {
         if (configurator != null) {
             configurator.cleanup();
         }
+        this.policySupportedModules.clear();
+        this.moduleConfigmap.clear();
+        this.allEndpoints.clear();
+        this.allModules.clear();
+        this.allServices.clear();
+        this.outPhases.clear();
+        this.messageReceivers.clear();
+        this.targetResolvers.clear();
+        this.configurator = null;
     }
 
     /**

@@ -786,6 +786,7 @@ public class ConfigurationContext extends AbstractContext {
         }
         axisConfiguration.cleanup();
         cleanupTemp();
+        this.axisConfiguration = null;
     }
 
     /**
