@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.framework;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -63,7 +63,7 @@ import java.util.jar.JarInputStream;
  * JAXWSDeployer is a custom deployer modeled after the POJODeployer. Its purpose
  * is to deploy .wars and expanded .war directories
  */
-public class JAXWSDeployer implements Deployer {
+public class JAXWSDeployer extends AbstractDeployer {
 
     private static Log log = LogFactory.getLog(JAXWSDeployer.class);
 
@@ -166,6 +166,7 @@ public class JAXWSDeployer implements Deployer {
                             put(deploymentFileData.getFile().getAbsolutePath(), msg);
                 }
             }
+            super.deploy(deploymentFileData);
         } catch (Throwable t) {
             log.debug(Messages.getMessage("stroringfaultyservice", t.getMessage()), t);
             storeFaultyService(deploymentFileData, t);
@@ -273,7 +274,7 @@ public class JAXWSDeployer implements Deployer {
     public void setExtension(String extension) {
     }
 
-    public void unDeploy(String fileName) {
+    public void undeploy(String fileName) {
         //find the hierarchical part of the service group name
         String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
         fileName = serviceHierarchy + Utils.getShortFileName(fileName);
@@ -283,6 +284,7 @@ public class JAXWSDeployer implements Deployer {
             if(configCtx != null) {
                 configCtx.removeServiceGroupContext(serviceGroup);
             }
+            super.undeploy(fileName);
             log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                     fileName));
         } catch (AxisFault axisFault) {

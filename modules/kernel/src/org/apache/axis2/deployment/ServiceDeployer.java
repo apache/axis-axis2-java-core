@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class ServiceDeployer implements Deployer {
+public class ServiceDeployer extends AbstractDeployer {
     private static final Log log = LogFactory.getLog(ServiceDeployer.class);
     private AxisConfiguration axisConfig;
     private ConfigurationContext configCtx;
@@ -102,6 +102,7 @@ public class ServiceDeployer implements Deployer {
                                              deploymentFileData,
                                              axisConfig);
 
+            super.deploy(deploymentFileData);
         } catch (DeploymentException de) {
             de.printStackTrace();
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
@@ -172,7 +173,7 @@ public class ServiceDeployer implements Deployer {
     public void setExtension(String extension) {
     }
 
-    public void unDeploy(String fileName) throws DeploymentException {
+    public void undeploy(String fileName) throws DeploymentException {
         try {
             //find the hierarchical part of the service group name
             String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
@@ -187,6 +188,7 @@ public class ServiceDeployer implements Deployer {
             } else {
                 axisConfig.removeFaultyService(fileName);
             }
+            super.undeploy(fileName);
         } catch (AxisFault axisFault) {
             //May be a faulty service
             axisConfig.removeFaultyService(fileName);

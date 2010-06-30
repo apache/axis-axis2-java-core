@@ -881,13 +881,13 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     if (wsInfo.getType() == WSInfo.TYPE_SERVICE) {
                         //No matter what we need to undeploy the service
                         // if user has deleted the file from the repository
-                        serviceDeployer.unDeploy(wsInfo.getFileName());
+                        serviceDeployer.undeploy(wsInfo.getFileName());
                     } else {
                         //We need to undeploy the service whether we have enable hotUpdate or not ,
                         // o.w what happen if someone delete the service from the repo
                         Deployer deployer = wsInfo.getDeployer();
                         if (deployer != null) {
-                            deployer.unDeploy(wsInfo.getFileName());
+                            deployer.undeploy(wsInfo.getFileName());
                         }
                     }
                 }
@@ -1366,6 +1366,15 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         }
         if (scheduler != null) {
             scheduler.cleanup();
+        }
+        for (Map<String, Deployer> stringDeployerMap : deployerMap.values()) {
+            for (Deployer deployer : stringDeployerMap.values()) {
+                try {
+                    deployer.cleanup();
+                } catch (DeploymentException e) {
+                    log.error("Error occurred while cleaning up deployer", e);
+                }
+            }
         }
     }
 

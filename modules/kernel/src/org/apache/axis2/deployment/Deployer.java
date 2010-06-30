@@ -59,5 +59,11 @@ public interface Deployer {
      * @param fileName name of item to remove
      * @throws DeploymentException if there is a problem
      */
-    void unDeploy(String fileName) throws DeploymentException;
+    void undeploy(String fileName) throws DeploymentException;
+
+    /**
+     * Cleanup deployment
+     * @throws DeploymentException If an error occurs during cleanup
+     */
+    void cleanup() throws DeploymentException;
 }

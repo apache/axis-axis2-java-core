@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class POJODeployer implements Deployer {
+public class POJODeployer extends AbstractDeployer {
 
     private static Log log = LogFactory.getLog(POJODeployer.class);
 
@@ -175,6 +175,7 @@ public class POJODeployer implements Deployer {
                             put(deploymentFileData.getFile().getAbsolutePath(), msg);
                 }
             }
+            super.deploy(deploymentFileData);
         } catch (Exception e) {
             log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAULTY_SERVICE,e.getMessage()),e);
             storeFaultyService(deploymentFileData, e);
@@ -316,7 +317,7 @@ public class POJODeployer implements Deployer {
     public void setExtension(String extension) {
     }
 
-    public void unDeploy(String fileName) {
+    public void undeploy(String fileName) throws DeploymentException {
         //find the hierarchical part of the service group name
         String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
         
@@ -353,6 +354,7 @@ public class POJODeployer implements Deployer {
                 configCtx.getAxisConfiguration().removeFaultyService(fileName);
             }
         }
+        super.undeploy(fileName);
     }
 }
 

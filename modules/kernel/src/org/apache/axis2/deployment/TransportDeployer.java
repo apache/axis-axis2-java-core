@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TransportDeployer implements Deployer {
+public class TransportDeployer extends AbstractDeployer {
 
     private static Log log = LogFactory.getLog(TransportDeployer.class);
 
@@ -80,8 +80,7 @@ public class TransportDeployer implements Deployer {
                     element.getChildrenWithName(new QName(DeploymentConstants.TAG_TRANSPORT_SENDER));
 
             builder.processTransportSenders(trs_senders);
-
-
+            super.deploy(deploymentFileData);
         } catch (Exception e) {
             log.error(e.getMessage());
         } finally {
@@ -95,6 +94,7 @@ public class TransportDeployer implements Deployer {
     public void setExtension(String extension) {
     }
 
-    public void unDeploy(String fileName) throws DeploymentException {
+    public void undeploy(String fileName) throws DeploymentException {
+        super.undeploy(fileName);
     }
 }

@@ -21,7 +21,7 @@ package org.apache.axis2.deployment.deployers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.commons.logging.Log;
@@ -37,7 +37,7 @@ import java.io.FileInputStream;
  * "George" (see the repo for test data).  We use static fields to keep all this information
  * in a way that the test can access it.
  */
-public class CustomDeployer implements Deployer {
+public class CustomDeployer extends AbstractDeployer {
     protected static final Log log = LogFactory.getLog(CustomDeployer.class);
 
     /** Has init() been called? */
@@ -91,6 +91,7 @@ public class CustomDeployer implements Deployer {
             if (content.indexOf("George") > -1) georgeDeployed = true;
             if (content.indexOf("Mary") > -1) maryDeployed = true;
             deployedItems++;
+            super.deploy(deploymentFileData);
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
@@ -121,7 +122,8 @@ public class CustomDeployer implements Deployer {
      * @throws org.apache.axis2.deployment.DeploymentException
      *          if there is a problem
      */
-    public void unDeploy(String fileName) throws DeploymentException {
+    public void undeploy(String fileName) throws DeploymentException {
         // Undeploy
+        super.undeploy(fileName);
     }
 }

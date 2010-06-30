@@ -25,11 +25,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +36,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class ModuleDeployer implements Deployer {
+public class ModuleDeployer extends AbstractDeployer {
 
     private static final Log log = LogFactory.getLog(ModuleDeployer.class);
     private AxisConfiguration axisConfig;
@@ -81,6 +78,7 @@ public class ModuleDeployer implements Deployer {
             URL url = deploymentFile.toURL();
             metaData.setFileName(url);
             DeploymentEngine.addNewModule(metaData, axisConfig);
+            super.deploy(deploymentFileData);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                          metaData.getArchiveName(),
                                          url.toString()));
@@ -133,6 +131,7 @@ public class ModuleDeployer implements Deployer {
     public void setExtension(String extension) {
     }
 
-    public void unDeploy(String fileName) {
+    public void undeploy(String fileName) throws DeploymentException {
+        super.undeploy(fileName);
     }
 }

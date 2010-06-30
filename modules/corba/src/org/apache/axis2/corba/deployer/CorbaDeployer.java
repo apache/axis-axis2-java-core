@@ -30,7 +30,7 @@ import org.apache.axis2.corba.idl.types.IDL;
 import org.apache.axis2.corba.idl.types.Interface;
 import org.apache.axis2.corba.idl.types.Operation;
 import org.apache.axis2.corba.receivers.CorbaUtil;
-import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
@@ -73,7 +73,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConstants {
+public class CorbaDeployer extends AbstractDeployer implements DeploymentConstants, CorbaConstants {
     private static final Log log = LogFactory.getLog(CorbaDeployer.class);
     private AxisConfiguration axisConfig;
     private ConfigurationContext configCtx;
@@ -97,6 +97,7 @@ public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConsta
             ArrayList serviceList = processService(deploymentFileData, serviceGroup, configCtx);
             DeploymentEngine.addServiceGroup(serviceGroup, serviceList, deploymentFileData.getFile().toURL(), deploymentFileData, axisConfig);
             name = deploymentFileData.getName();
+            super.deploy(deploymentFileData);
             log.info("Deploying " + name);
         } catch (AxisFault axisFault) {
             log.error("Error while deploying " + name, axisFault);
@@ -595,8 +596,9 @@ public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConsta
     public void setExtension(String extension) {
     }
 
-    public void unDeploy(String fileName) throws DeploymentException {
+    public void undeploy(String fileName) throws DeploymentException {
         try {
+            super.undeploy(fileName);
             fileName = Utils.getShortFileName(fileName);
             axisConfig.removeServiceGroup(fileName);
             log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED, fileName));
