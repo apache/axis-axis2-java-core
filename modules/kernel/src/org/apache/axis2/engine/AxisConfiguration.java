@@ -1408,6 +1408,9 @@ public class AxisConfiguration extends AxisDescription {
         if (configurator != null) {
             configurator.cleanup();
         }
+        if (clusteringAgent != null) {
+            clusteringAgent.finalize();
+        }
         this.policySupportedModules.clear();
         this.moduleConfigmap.clear();
         this.allEndpoints.clear();
@@ -1416,6 +1419,9 @@ public class AxisConfiguration extends AxisDescription {
         this.outPhases.clear();
         this.messageReceivers.clear();
         this.targetResolvers.clear();
+        if (this.engagedModules != null) {
+            this.engagedModules.clear();
+        }
         this.configurator = null;
     }
 

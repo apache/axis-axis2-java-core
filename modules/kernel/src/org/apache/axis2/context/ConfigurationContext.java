@@ -775,7 +775,7 @@ public class ConfigurationContext extends AbstractContext {
     public void terminate() throws AxisFault {
         if (listenerManager != null) {
             listenerManager.destroy();
-        }else{
+        } else {
             if(log.isDebugEnabled()){
                 log.debug("Start Invoke modules and services shutdown.");
             }
@@ -784,9 +784,11 @@ public class ConfigurationContext extends AbstractContext {
                 log.debug("End Invoke modules and services shutdown.");
             }
         }
-        axisConfiguration.cleanup();
-        cleanupTemp();
-        this.axisConfiguration = null;
+        if (axisConfiguration != null) {
+            axisConfiguration.cleanup();
+            cleanupTemp();
+            this.axisConfiguration = null;
+        }
     }
 
     /**
