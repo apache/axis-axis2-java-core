@@ -90,7 +90,7 @@ public class MarshalServiceRuntimeDescriptionImpl implements
 
     void setPackages(TreeSet<String> packages) {
         this.packages = packages;
-        this.packagesKey = packages.toString();  // Unique key for searches
+        this.packagesKey = getObjectIdentity(packages);  // Unique key for searches
     }
 
     public AnnotationDesc getAnnotationDesc(Class cls) {
@@ -265,6 +265,40 @@ public class MarshalServiceRuntimeDescriptionImpl implements
 
     public MessageFactory getMessageFactory() {
         return messageFactory;
+    }
+    
+    /**
+     * Java does not provide a way to uniquely identify an object.  This makes
+     * it difficult to distinguish one object from another in a trace.  The
+     * default Object.toString() produces a string of the form:
+     * 
+     *      obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode())
+     * 
+     * This is "as-good-as-it-gets".  If 'hashCode' has been overridden, it gets
+     * worse. Specifically, if hashCode has been overriden such that:
+     * 
+     *      obj1.equals(obj2)  ==> obj1.hashCode() == obj2.hashCode()
+     * 
+     * then it becomes impossible to distinguish between obj1 and obj2 in a trace:
+     * - dumping values is (almost) guaranteed to reveal that both have same content.
+     * - dumping hashCode (see Object.toString() comment above) gives same hashCode.
+     * 
+     * [For example, JNDI Reference objects exhibit this behavior]
+     * 
+     * The purpose of getObjectIdentity is to attempt to duplicate the "original"
+     * behavior of Object.toString().  On some JVMs, the 'original' hashCode
+     * corresponds to a memory reference to the object - which is unique.
+     * 
+     * This is NOT guaranteed to work on all JVMs.  But again, this seems to be
+     * "as-good-as-it-gets".
+     *  
+     * @return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
+     */
+    private static String getObjectIdentity(Object obj) {
+        if (obj == null) {
+            return "null";
+        }
+        return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
     }
 
 }

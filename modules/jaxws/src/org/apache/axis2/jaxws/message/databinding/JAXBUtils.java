@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.message.databinding;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtilsMonitor;
 import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.ClassUtils;
@@ -208,7 +209,7 @@ public class JAXBUtils {
                 log.debug(pkg);
             }
         }
-        JAXBUtilsMonitor.addPackageKey(key);
+        JAXBUtilsMonitor.addPackageKey(contextPackages.toString());
 
         // Get or Create The InnerMap using the package key
         ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
