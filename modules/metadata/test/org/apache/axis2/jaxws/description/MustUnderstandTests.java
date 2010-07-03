@@ -23,7 +23,9 @@ import junit.framework.TestCase;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
@@ -55,23 +57,26 @@ public class MustUnderstandTests extends TestCase {
         Parameter understoodQNamesParameter = axisOperation.getParameter(OperationDescription.HEADER_PARAMETER_QNAMES);
         assertNotNull(understoodQNamesParameter);
         ArrayList understoodQNames = (ArrayList) understoodQNamesParameter.getValue();
-        assertEquals(4, understoodQNames.size());
+        assertEquals(6, understoodQNames.size());
         
         assertTrue(understoodQNames.contains(new QName("webservice.namespace", "renamedParam1")));
         assertTrue(understoodQNames.contains(new QName("webservice.namespace", "arg1")));
         assertTrue(understoodQNames.contains(new QName("webparam.namespace", "arg2")));
         assertFalse(understoodQNames.contains(new QName("webservice.namespace", "outOnly")));
-        assertFalse(understoodQNames.contains(new QName("webservice.namespace", "arg3")));
+        assertTrue(understoodQNames.contains(new QName("webservice.namespace", "arg3")));
         assertTrue(understoodQNames.contains(new QName("webservice.namespace", "inOut")));
         assertFalse(understoodQNames.contains(new QName("webservice.namespace", "arg4")));
         assertFalse(understoodQNames.contains(new QName("webservice.namespace", "notInHeader")));
         assertFalse(understoodQNames.contains(new QName("webservice.namespace", "arg5")));
+        assertTrue(understoodQNames.contains(new QName("webservice.namespace", "headerReturn")));
         
     }
 }
 
 @WebService(targetNamespace="webservice.namespace")
 class HeaderParameters {
+    @WebMethod
+    @WebResult(name = "headerReturn", header=true)
     public String echoString(
             @WebParam(name="renamedParam1", header=true) String param1,
             @WebParam(header=true) String param2,
@@ -79,6 +84,8 @@ class HeaderParameters {
             @WebParam(mode=WebParam.Mode.OUT, header=true) Holder<String> outOnly,
             @WebParam(name="inOut", mode=WebParam.Mode.INOUT, header=true) Holder<String> inOut,
             String notInHeader) {
-                return null;
+                String headerReturn = param2; 
+                return headerReturn;
             }
 }
+

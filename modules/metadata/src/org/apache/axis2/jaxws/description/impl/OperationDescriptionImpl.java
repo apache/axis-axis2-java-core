@@ -2265,10 +2265,26 @@ class OperationDescriptionImpl
                                                paramDesc.getParameterName());
                     understoodQNames.add(headerQN);
                     if (log.isDebugEnabled()) {
-                        log.debug("OpDesc: understoodQName added to AxisOperation (if not null) " + headerQN);
+                        log.debug("OpDesc: understoodQName added to AxisOperation (if not null) as IN or INOUT param " + headerQN);
+                    }
+                } else if (paramDesc.isHeader() 
+                        && (paramDesc.getMode() == WebParam.Mode.OUT)) {
+                    QName headerQN = new QName(paramDesc.getTargetNamespace(), 
+                            paramDesc.getParameterName());
+                    understoodQNames.add(headerQN);
+                    if (log.isDebugEnabled()) {
+                        log.debug("OpDesc: understoodQName added to AxisOperation (if not null) as OUT param " + headerQN);
                     }
                 }
             }
+        }
+        // Also check for result in header
+        if (isResultHeader() && (getResultName() != null)) {
+            QName headerQN = new QName(getResultTargetNamespace(), getResultName());
+            understoodQNames.add(headerQN);
+            if (log.isDebugEnabled()) {
+                log.debug("OpDesc: understoodQName added to AxisOperation (if not null) as result param " + headerQN);
+            }            
         }
 
         if (!understoodQNames.isEmpty()) {
