@@ -1074,11 +1074,6 @@
             <artifactId>xmlunit</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-        </dependency>
-
         <!-- Stax implementation class -->
         <dependency>
             <groupId>${stax.impl.groupid}</groupId>
