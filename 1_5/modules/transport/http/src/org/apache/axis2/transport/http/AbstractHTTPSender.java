@@ -479,53 +479,35 @@ public abstract class AbstractHTTPSender {
     }
 
     protected HttpClient getHttpClient(MessageContext msgContext) {
-        ConfigurationContext configContext = msgContext.getConfigurationContext();
-
-        HttpClient httpClient = (HttpClient) msgContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
-        if (httpClient == null) {
+        HttpClient httpClient;
+        final ConfigurationContext configContext = msgContext.getConfigurationContext();
+        synchronized (lock) {
             httpClient = (HttpClient) configContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
-        }
-        if (httpClient != null) {
-            return httpClient;
-        }
+            if (httpClient == null) {
+                log.trace("Making new ConnectionManager");
+                HttpConnectionManager connManager = new MultiThreadedHttpConnectionManager();
 
-        HttpConnectionManager connManager =
-            (HttpConnectionManager) msgContext.getProperty(
-                 HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
-        if (connManager == null) {
-            connManager =
-                (HttpConnectionManager) msgContext.getProperty(
-                     HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
-        }
-        if (connManager == null) {
-            // reuse HttpConnectionManager
-            synchronized (configContext) {
-                connManager = (HttpConnectionManager) configContext.getProperty(
-                                   HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
-                if (connManager == null) {
-                    log.trace("Making new ConnectionManager");
-                    connManager = new MultiThreadedHttpConnectionManager();
-                    configContext.setProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, 
-                                              connManager);
-                }
+                // In case we need to set any params, do it here, but for now use defaults.
+//                HttpConnectionManagerParams params = new HttpConnectionManagerParams();
+//                params.setMaxConnectionsPerHost(HostConfiguration.ANY_HOST_CONFIGURATION, 200);
+//                etc...
+//                connManager.setParams(params);
+
+                httpClient = new HttpClient(connManager);
+                HttpClientParams clientParams = new HttpClientParams();
+                // Set the default timeout in case we have a connection pool starvation to 30sec
+                clientParams.setConnectionManagerTimeout(30000);
+                httpClient.setParams(clientParams);
+                configContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
             }
+
+            // Get the timeout values set in the runtime
+            initializeTimeouts(msgContext, httpClient);
         }
-
-        /*
-         * Create a new instance of HttpClient since the way
-         * it is used here it's not fully thread-safe.
-         */
-        httpClient = new HttpClient(connManager);
-
-        // Set the default timeout in case we have a connection pool starvation to 30sec
-        httpClient.getParams().setConnectionManagerTimeout(30000);
-
-        // Get the timeout values set in the runtime
-        initializeTimeouts(msgContext, httpClient);
-
         return httpClient;
     }
 
+    static final Object lock = new Object();
     protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url,
                                  HttpMethod method) throws IOException {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
