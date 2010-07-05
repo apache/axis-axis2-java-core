@@ -88,8 +88,16 @@
         <xmlschema.version>1.4.6</xmlschema.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
 
-        <mar.plugin.version>1.5</mar.plugin.version>
-        <aar.plugin.version>1.5</aar.plugin.version>
+        <!-- Unfortunately we can't use the 1.5.1 versions here because this would result
+             in corruption of the local Maven repository. The reason is that
+             the POMs of the 1.5.1 plugins refer to an incorrect java.net
+             repository. When Maven loads one of these plugins, it will
+             load dependencies using this repository and these artifacts
+             are corrupted (they are replaced by an HTML page). Note that we may
+             later use 1.5.2 (once that version is released) here to avoid
+             the chicken and egg problem. -->
+        <mar.plugin.version>SNAPSHOT</mar.plugin.version>
+        <aar.plugin.version>SNAPSHOT</aar.plugin.version>
 
 	<!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>
@@ -541,6 +549,18 @@
             <name>Apache Snapshots Repository</name>
             <url>http://people.apache.org/repo/m2-snapshot-repository</url>
             <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshot Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
