@@ -25,7 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractDeployer implements Deployer{
 
-    private Map<String, DeploymentFileData> deploymentFileDataMap
+    /**
+     * The Map<String absoluteFilePath, DeploymentFileData data> of all artifacts deployed by this
+     * deployer. 
+     */
+    protected Map<String, DeploymentFileData> deploymentFileDataMap
             = new ConcurrentHashMap<String, DeploymentFileData>();
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
@@ -37,8 +41,6 @@ public abstract class AbstractDeployer implements Deployer{
     }
 
     public void cleanup() throws DeploymentException {
-        for (String filePath : deploymentFileDataMap.keySet()) {
-            undeploy(filePath);
-        }
+        // Deployers which require cleaning up should override this method
     }
 }
