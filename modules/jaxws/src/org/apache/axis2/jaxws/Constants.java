@@ -78,6 +78,37 @@ public interface Constants {
     public static final String JAXWS_PAYLOAD_HIGH_FIDELITY =
         "jaxws.payload.highFidelity";
     
+    /**
+     * Context Property:
+     * Name: jaxws.provider.interpretNullAsOneway
+     * Value: Boolean.TRUE or Boolean.FALSE
+     * Default: TRUE.
+     * 
+     * Configuration Parameter
+     * Name: jaxws.provider.interpretNullAsOneway
+     * Value: String or Boolean representing true or false
+     * Default: true
+     * 
+     * Description:
+     * If the value is false, the jax-ws engine will interpret a null response from a provider as an empty
+     * response to a two-way operation.  As a result it will create a SOAPEnvelope with an empty SOAPBody and send that
+     * as a response.
+     * 
+     * If the value is true, the jax-ws engine will intrepret a null return value from a provider as an indication of 
+     * a one-way operation.  As a result, the engine will halt processing on the response.  Response handlers will not
+     * be invoked.  An HTTP acknowledgment will be sent back to the client.  No SOAPEnvelope will be sent.  You must use
+     * one-way client when invoking a Provider which returns null if this property is true.
+     * 
+     * This is only true for operations which are not defined in WSDL.  If the operation is defined in WSDL, the WSDL
+     * determine the response for a Provider that returns null.  If the WSDL defines a two-way operation, a null
+     * from a provider will continue to produce a SOAPEnvelope with and empty SOAPBody as the response.
+     * 
+     * The engine will first examine the Context property.  If not set, the value of the Configuration
+     * property is used.
+     */
+    public static final String JAXWS_PROVIDER_NULL_ONEWAY =
+        "jaxws.provider.interpretNullAsOneway";
+    
     public static final String MEP_CONTEXT = 
         "org.apache.axis2.jaxws.handler.MEPContext";
     

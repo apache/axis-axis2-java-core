@@ -146,6 +146,20 @@ public class ProviderDispatcher extends JavaDispatcher {
             // MessageContext, than in the response path.
             responseMsgCtx = createFaultResponse(request, fault);
             setExceptionProperties(responseMsgCtx, target, fault);
+        } else if(responseParamValue == null && 
+                MessageContextUtils.getJaxwsProviderInterpretNullOneway(request) &&
+                !request.getAxisMessageContext().getAxisService().isWsdlFound()) {
+            // If the Provider returned null, we will interpret this as a one-way op if
+            // - the custom property jaxws.provider.interpretNullAsOneway is true AND
+            // - the operation was NOT wsdl defined.   
+            if (log.isDebugEnabled()) {
+                log.debug("detected null return from Provider, " + target + 
+                        "and operation is not wsdl defined and " +
+                "interpretNullAsOneway property is true.");
+            }
+            // JAXWS 2.2 If Provider returns null, an empty response is given (no SOAPEnvelope)
+            responseMsgCtx = null; // return null, JAXWSMessageReceiver will interpret as one-way
+
         } else {
             responseMsgCtx = createResponse(request, input, responseParamValue);
         }

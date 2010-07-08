@@ -36,6 +36,13 @@
       		</xsd:sequence>
       	</xsd:complexType>
       </xsd:element>
+            <xsd:element name="echoOneway">
+      	<xsd:complexType>
+      		<xsd:sequence>
+      			<xsd:element name="A" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="echoResponse">
@@ -44,10 +51,16 @@
   <wsdl:message name="echo">
     <wsdl:part element="tns:echo" name="echo"/>
   </wsdl:message>
+  <wsdl:message name="echoOneway">
+    <wsdl:part element="tns:echoOneway" name="echoOneway"/>
+  </wsdl:message>
   <wsdl:portType name="StringProviderPortType">
     <wsdl:operation name="echoString">
       <wsdl:input message="tns:echo"/>
       <wsdl:output message="tns:echoResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="echoStringOneway">
+      <wsdl:input message="tns:echoOneway"/>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="StringProviderBinding" type="tns:StringProviderPortType">
@@ -60,6 +73,12 @@
       <wsdl:output>
         <soap:body use="literal"/>
       </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echoStringOneway">
+      <soap:operation soapAction="http://stringprovider.sample.test.org/echoStringOneway"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="StringProviderService">

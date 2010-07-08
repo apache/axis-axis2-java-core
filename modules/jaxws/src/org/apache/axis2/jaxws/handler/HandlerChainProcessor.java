@@ -216,8 +216,20 @@ public class HandlerChainProcessor {
 
 	}
 
+    public boolean processChainForClose(MEPContext mepCtx, Direction direction) {
 
-    /*
+        boolean result = true;
+        if (handlers.size() == 0)
+            return true;
+        
+        this.mepCtx = mepCtx;
+        sortChain();
+        initContext(direction);
+        callCloseHandlers(handlers.size() - 1, 0, direction);
+        return result;
+    }
+    
+     /*
       * This is the implementation of JAX-WS 2.0 section 9.3.2.1
       */
     private boolean callGenericHandlers(MEP mep, boolean expectResponse, int start, int end,

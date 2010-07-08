@@ -593,6 +593,20 @@
                                         />
                                 <delete dir="${servicejars.dir}/SoapMessageMUProviderService"/>
 
+                                <copy toDir="${servicejars.dir}/SoapMessageNullProviderService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/provider/soapmsgreturnnull/**"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsgreturnnull">
+                                        <include name="META-INF/**"/>
+                                    </fileset>
+                                </copy>
+
+                                <zip destfile="${servicejars.dir}/SoapMessageNullProviderService.jar"
+                                     basedir="${servicejars.dir}/SoapMessageNullProviderService"
+                                        />
+                                <delete dir="${servicejars.dir}/SoapMessageNullProviderService"/>
+
                                 <copy toDir="${servicejars.dir}/JAXBProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/jaxb/**"/>
@@ -1336,6 +1350,7 @@
                         <include>**/SourceProviderTests.java</include>
                         <include>**/SourceMessageProviderTests.java</include>
                         <include>**/SoapMessageMUProviderTests.java</include>
+                        <include>**/SoapMessageNullProviderTests.java</include>
                         
                         <include>**/ProxyTests.java</include>
                         <include>**/ProxyNonWrappedTests.java</include>

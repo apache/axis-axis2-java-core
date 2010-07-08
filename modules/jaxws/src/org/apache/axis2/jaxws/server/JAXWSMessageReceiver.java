@@ -31,7 +31,8 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.core.util.MessageContextUtils;
+
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
@@ -42,6 +43,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.InvocationListenerRegistry;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
@@ -163,31 +165,42 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                 // the Message data out of there and set it on the Axis2 
                 // MessageContext.
                 MessageContext responseMsgCtx = eic.getResponseMessageContext();
-                org.apache.axis2.context.MessageContext axisResponseMsgCtx =
-                        responseMsgCtx.getAxisMessageContext();
-                if (loader != null) {
-                    responseMsgCtx.setProperty(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER,
-                            loader);
-                }
-                MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(),
-                                                        axisResponseMsgCtx);
-
-                OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
-                opCtx.addMessageContext(axisResponseMsgCtx);
-
-                // If this is a fault message, we want to throw it as an
-                // exception so that the transport can do the appropriate things
-                if (responseMsgCtx.getMessage().isFault()) {
-                    
-                    //Rather than create a new AxisFault, we should use the AxisFault that was
-                    //created at the causedBy
-                    if (responseMsgCtx.getCausedByException() != null)
-                        faultToReturn = responseMsgCtx.getCausedByException();
-                    else {
-                        faultToReturn = new AxisFault("An error was detected during JAXWS processing",
-                                                          axisResponseMsgCtx);
+                // Note that responseMsgCtx may be null if the Provider returned null
+                // and no wsdl was specified.
+                // In JAX-WS 2.2 for Providers that return null we should send back
+                // an empty payload, not a SOAPEnvelope.
+                if (responseMsgCtx == null &&
+                        MessageContextUtils.getJaxwsProviderInterpretNullOneway(requestMsgCtx)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Detected a null return from a Provider, sending back an ack instead of a response.");
                     }
+                    sendAckBack(axisRequestMsgCtx);                   
                 } else {
+                    org.apache.axis2.context.MessageContext axisResponseMsgCtx =
+                        responseMsgCtx.getAxisMessageContext();
+                    if (loader != null) {
+                        responseMsgCtx.setProperty(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER,
+                                loader);
+                    }
+                    MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(),
+                            axisResponseMsgCtx);
+
+                    OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
+                    opCtx.addMessageContext(axisResponseMsgCtx);
+
+                    // If this is a fault message, we want to throw it as an
+                    // exception so that the transport can do the appropriate things
+                    if (responseMsgCtx.getMessage().isFault()) {
+
+                        //Rather than create a new AxisFault, we should use the AxisFault that was
+                        //created at the causedBy
+                        if (responseMsgCtx.getCausedByException() != null)
+                            faultToReturn = responseMsgCtx.getCausedByException();
+                        else {
+                            faultToReturn = new AxisFault("An error was detected during JAXWS processing",
+                                    axisResponseMsgCtx);
+                        }
+                    } else {
                     //This assumes that we are on the ultimate execution thread
                     ThreadContextMigratorUtil.performMigrationToContext(
                             Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
@@ -199,7 +212,7 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                             Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
                 }
             }
-
+            }
         } catch (AxisFault af) {
             throw af;
         } catch (Exception e) {
@@ -227,8 +240,29 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             throw faultToReturn;
         }
     }
+    
+    private void sendAckBack(org.apache.axis2.context.MessageContext axisMsgCtx){
+        if (log.isDebugEnabled()) {
+            log.debug("sendAckBack entry");
+        }
 
+        try {
+            Object requestResponseTransport =
+                axisMsgCtx.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+            if (requestResponseTransport != null) {
+                ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(axisMsgCtx);
+            }
+        }catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Ignoring exception from acknowledgeMessage.", e);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("sendAckBack exit");
+        }
 
+    }
+ 
     private boolean isMepInOnly(String mep) {
         boolean inOnly = mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) ||
                 mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) ||

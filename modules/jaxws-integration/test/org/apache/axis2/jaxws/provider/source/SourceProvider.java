@@ -80,6 +80,8 @@ public class SourceProvider implements Provider<Source> {
     	    "<detail>sample SOAP Fault details</detail>" +
     	    "</soapenv:Fault>";
     	    text = userFault;
+        }  else if (text != null && text.contains("ReturnNull")) {
+            return null;
     	}
         
     	

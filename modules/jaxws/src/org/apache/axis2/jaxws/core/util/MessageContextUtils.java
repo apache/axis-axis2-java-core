@@ -20,12 +20,17 @@
 package org.apache.axis2.jaxws.core.util;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** A utility class for handling some of the common issues related to the JAX-WS MessageContext. */
 public class MessageContextUtils {
+    private static Log log = LogFactory.getLog(MessageContextUtils.class);
 
     /**
      * Given a request MessageContext, create a new MessageContext from there with the necessary
@@ -92,6 +97,44 @@ public class MessageContextUtils {
         catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+    
+    public static boolean getJaxwsProviderInterpretNullOneway(MessageContext mc){
+        boolean retval = true;  // default is true
+        org.apache.axis2.context.MessageContext ac = mc.getAxisMessageContext();
+        if (ac == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("getJaxwsProviderInterpretNullOneway returns true due to missing MessageContext");
+            }
+            return retval;
+        }
+        // First examine the JaxwsProviderInterpretNullOneway flag on the context hierarchy
+        Boolean providerNullOneway = (Boolean) ac.getProperty(
+                org.apache.axis2.jaxws.Constants.JAXWS_PROVIDER_NULL_ONEWAY);
+        if (providerNullOneway != null) {
+            retval = providerNullOneway.booleanValue();
+            if (log.isDebugEnabled()) {
+                log.debug("getJaxwsProviderInterpretNullOneway returns " + retval + " per Context property " + 
+                        org.apache.axis2.jaxws.Constants.JAXWS_PROVIDER_NULL_ONEWAY);
+            }
+            return retval;
+        }
+        
+        // Now look at the JaxwsProviderInterpretNullOneway parameter
+        Parameter p = ac.getParameter(org.apache.axis2.jaxws.Constants.JAXWS_PROVIDER_NULL_ONEWAY);
+        if (p != null) {
+            retval = JavaUtils.isTrue(p.getValue());
+            if (log.isDebugEnabled()) {
+                log.debug("getJaxwsProviderInterpretNullOneway returns " + retval + " per inspection of Configuration property " + 
+                        org.apache.axis2.jaxws.Constants.JAXWS_PROVIDER_NULL_ONEWAY);
+            }
+            return retval;
+        }
+      
+        if (log.isDebugEnabled()) {
+            log.debug("getJaxwsProviderInterpretNullOneway returns the default value: " + retval);
+        }
+        return retval;
     }
 
 }

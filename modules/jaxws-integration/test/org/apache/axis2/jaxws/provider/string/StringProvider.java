@@ -42,6 +42,8 @@ public class StringProvider implements Provider<String> {
             return " ";
         } else if (text.contains("throwWebServiceException")) {
             throw new WebServiceException("provider");
+        } else if (text.contains("returnNull")) {
+            return null;
         } else if (text.contains("<Code>") && text.contains("SOAPFaultProviderTests")) { 
             // Make sure the received fault has the Reason string
             if (text.contains("<Reason>")) {

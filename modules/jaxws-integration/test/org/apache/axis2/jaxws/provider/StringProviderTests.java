@@ -54,6 +54,20 @@ public class StringProviderTests extends ProviderTestCase {
         return dispatch;
         
     }
+    private Dispatch<String> getDispatchOneway() {
+        Service svc = Service.create(serviceName);
+        svc.addPort(portName, null, endpointUrl);
+        
+        Dispatch<String> dispatch = svc
+                .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
+        
+        // Force soap action because we are passing junk over the wire
+        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,"http://stringprovider.sample.test.org/echoStringOneway");
+        
+        return dispatch;
+        
+    }
     public void testNormal() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
@@ -219,4 +233,62 @@ public class StringProviderTests extends ProviderTestCase {
             assertTrue(sf.getFaultString().equals("provider"));
         }
     }
+    /**
+     * Test that for an Operation defined as two-way in WSDL returns a 
+     * response even if the Provider returns null and 
+     * jaxws.provider.interpretNullAsOneway property is set
+     * @throws Exception
+     */
+    public void testProviderReturnsNull() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        String request = "<invoke>returnNull</invoke>";
+        try {
+            String response = dispatch.invoke(request);
+            assertTrue(response == null);
+        } catch (SOAPFaultException e) {
+            fail("Exception caught : " + e);
+}        
+        // Try again to verify
+        try {
+            String response = dispatch.invoke(request);
+            assertTrue(response == null);
+        } catch (SOAPFaultException e) {
+            fail("Exception caught : " + e);
+        }
+        
+    }
+    /**
+     * Test that for an Operation defined as one-way in WSDL is 
+     * not effected if the Provider returns null, even if the 
+     * jaxws.provider.interpretNullAsOneway property is set
+     * @throws Exception
+     */
+    public void testProviderReturnsNullOneway() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+
+        Dispatch<String> dispatch = getDispatchOneway();
+        // Because the operation is defined in WSDL, it should not be 
+        // effected by the property
+        ((BindingProvider) dispatch).getRequestContext()
+        .put(org.apache.axis2.jaxws.Constants.JAXWS_PROVIDER_NULL_ONEWAY, Boolean.FALSE);
+
+        String request = "<invoke>returnNull</invoke>";
+        try {
+            dispatch.invokeOneWay(request);
+        } catch (SOAPFaultException e) {
+            fail("Exception caught : " + e);
+        }
+
+        // Try again to verify
+        try {
+            dispatch.invokeOneWay(request);
+        } catch (SOAPFaultException e) {
+            fail("Exception caught : " + e);
+        }
+    }
+
 }

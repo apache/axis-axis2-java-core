@@ -152,5 +152,49 @@ public class HandlerInvokerUtils {
         return true;
 
     }
+    /**
+     * Invoke Inbound Handlers
+     * @param requestMsgCtx
+     */
+    public static boolean invokeInboundHandlersForClosure(MEPContext mepMessageCtx, List<Handler> handlers,
+                                                HandlerChainProcessor.MEP mep) {
 
+        if (handlers == null || handlers.isEmpty()) 
+            return true;
+        if(log.isDebugEnabled()){
+            log.debug("invokeInboundHandlersForClosure Entry");
+        }
+
+        String bindingProto = null;
+        if (mep.equals(HandlerChainProcessor.MEP.REQUEST)) // inbound request; must be on the server
+            bindingProto = mepMessageCtx.getEndpointDesc().getBindingType();
+        else {
+            // inbound response; must be on the client
+            bindingProto = mepMessageCtx.getEndpointDesc().getClientBindingID();
+        }
+        Protocol proto = Protocol.getProtocolForBinding(bindingProto);
+
+        HandlerChainProcessor processor = new HandlerChainProcessor(handlers, proto);
+        // if not one-way, expect a response
+        boolean success = true;
+        try {
+                success =
+                        processor.processChainForClose(mepMessageCtx,
+                                               HandlerChainProcessor.Direction.OUT);
+        } catch (RuntimeException re) {
+            /*
+             * handler framework should never throw an exception on close
+             */
+            if(log.isDebugEnabled()){
+                log.debug("invokeInboundHandlersForClosure caught exception from close: " + re);
+                log.debug("invokeInboundHandlersForClosure returning false");
+            }
+            return false;
+        }
+        if(log.isDebugEnabled()){
+            log.debug("invokeInboundHandlersForClosure Exit");
+        }
+
+        return true;
+    }
 }

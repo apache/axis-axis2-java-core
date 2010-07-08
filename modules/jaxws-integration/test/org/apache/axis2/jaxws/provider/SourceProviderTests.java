@@ -235,6 +235,34 @@ public class SourceProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+   
+    public void testProviderReturnsNull() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        Dispatch<Source> dispatch = getDispatch();
+        
+        String request = "<test>ReturnNull</test>";
+        Source requestSource = getSource(request);
+        try {
+            requestSource = getSource(request);
+            dispatch.invokeOneWay(requestSource);
+        }catch(Exception e){
+            e.printStackTrace();
+            fail("Caught exception " + e);
+        }
+        
+        // Try again to verify
+        try {
+            requestSource = getSource(request);
+            dispatch.invokeOneWay(requestSource);
+        }catch(Exception e){
+            e.printStackTrace();
+            fail("Caught exception " + e);
+        }
+
+    }
+        
     public void testTwoElementsString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());

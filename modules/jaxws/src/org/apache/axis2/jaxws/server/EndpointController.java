@@ -35,6 +35,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
 import org.apache.axis2.jaxws.handler.HandlerInvoker;
+import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
@@ -108,6 +109,7 @@ public class EndpointController {
             EndpointDispatcher dispatcher = eic.getDispatcher();
             if (request != null && dispatcher != null) {
                 response = dispatcher.invoke(request);    
+                // Note that response may be null in the case of a Provider returning null
                 eic.setResponseMessageContext(response);
             }
             else {
@@ -389,6 +391,14 @@ public class EndpointController {
                     HandlerInvoker handlerInvoker = hiFactory.createHandlerInvoker(response);
                     handlerInvoker.invokeOutboundHandlers(hiContext);
                     
+               }
+           } else {  // reponse is null.  
+               if (MessageContextUtils.getJaxwsProviderInterpretNullOneway(request)){
+                   // Provider must have returned null, and property is set.
+                   // so now we only need to call closure
+                   HandlerInvokerUtils.invokeInboundHandlersForClosure(request.getMEPContext(),
+                           eic.getHandlers(),
+                           HandlerChainProcessor.MEP.RESPONSE);
                }
            } 
         } catch (Exception e) {
