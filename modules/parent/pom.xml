@@ -83,7 +83,7 @@
         <version>SNAPSHOT</version>
 
 	<!-- Tracking SNAPSHOT(s) of a few projects -->
-        <axiom.version>1.2.9-SNAPSHOT</axiom.version>
+        <axiom.version>1.2.10-SNAPSHOT</axiom.version>
         <neethi.version>3.0.0-SNAPSHOT</neethi.version>
         <xmlschema.version>1.4.6</xmlschema.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
