@@ -96,8 +96,8 @@
              are corrupted (they are replaced by an HTML page). Note that we may
              later use 1.5.2 (once that version is released) here to avoid
              the chicken and egg problem. -->
-        <mar.plugin.version>SNAPSHOT</mar.plugin.version>
-        <aar.plugin.version>SNAPSHOT</aar.plugin.version>
+        <mar.plugin.version>1.5.2-SNAPSHOT</mar.plugin.version>
+        <aar.plugin.version>1.5.2-SNAPSHOT</aar.plugin.version>
 
 	<!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>
