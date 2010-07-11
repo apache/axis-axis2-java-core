@@ -308,11 +308,7 @@ public class StreamWrapper implements XMLStreamReader {
     }
 
     public Object getProperty(String s) throws IllegalArgumentException {
-        if (state != STATE_INIT) {
-            return realReader.getProperty(s);
-        } else {
-            throw new IllegalArgumentException();
-        }
+        return realReader.getProperty(s);
     }
 
     public String getText() {

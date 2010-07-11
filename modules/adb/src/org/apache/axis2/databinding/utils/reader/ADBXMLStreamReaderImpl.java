@@ -170,12 +170,8 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
      * @throws IllegalArgumentException
      */
     public Object getProperty(String key) throws IllegalArgumentException {
-        if (state == START_ELEMENT_STATE || state == END_ELEMENT_STATE) {
-            if (OPTIMIZATION_ENABLED.equals(key)) {
-                return Boolean.TRUE;
-            } else {
-                return null;
-            }
+        if (OPTIMIZATION_ENABLED.equals(key)) {
+            return Boolean.TRUE;
         } else if (state == TEXT_STATE) {
             if (IS_BINARY.equals(key)) {
                 return Boolean.FALSE;
