@@ -2,9 +2,6 @@
 <wsdl:definitions name="AddNumbers" targetNamespace="http://RespectBinding.jaxws22" xmlns:ns1="http://extension.RespectBinding.jaxws22" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://RespectBinding.jaxws22" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<wsdl:types>
 		<xsd:schema elementFormDefault="qualified" targetNamespace="http://RespectBinding.jaxws22" xmlns="http://www.w3.org/2001/XMLSchema">
-			
-			<xsd:import namespace="http://extension.RespectBinding.jaxws22" schemaLocation="../xsd/extension.xsd"/>
-			    
 			<element name="addNumbersResponse">
 				<complexType>
 					<sequence>
