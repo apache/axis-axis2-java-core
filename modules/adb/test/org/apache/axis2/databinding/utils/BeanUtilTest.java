@@ -20,12 +20,14 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.om.*;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.engine.ObjectSupplier;
 
 import junit.framework.TestCase;
 
 import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
 
 import java.util.List;
@@ -130,5 +132,19 @@ public class BeanUtilTest extends TestCase {
     
     private OMAttribute createTypeAttribute(String value) {
         return omFactory.createOMAttribute("type", xsiNamespace, value);
+    }
+    
+    /**
+     * Test that for a {@link DataHandler} object, {@link BeanUtil} creates sequence of
+     * events that allows Axiom to recognize the optimized binary.
+     */
+    public void testGetOMElementWithDataHandlerArg() {
+        DataHandler dh = new DataHandler(new ByteArrayDataSource(new byte[4096],
+                "application/octet-stream"));
+        OMElement element = BeanUtil.getOMElement(new QName("urn:ns1", "myop"),
+                new Object[] { dh }, new QName("urn:ns1", "part"), true, new TypeTable());
+        OMText text = (OMText)element.getFirstElement().getFirstOMChild();
+        assertTrue(text.isOptimized());
+        assertSame(dh, text.getDataHandler());
     }
 }
