@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.endpoint;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,10 +95,9 @@ public class BasicEndpointTests extends TestCase {
         ep.publish("test");
         assertTrue("The endpoint was not published successfully", ep.isPublished());
         
-        URL wsdl = new URL("http://test.wsdl.com/Test.wsdl");
-        String wsdlLocation = wsdl.toExternalForm();
+        String wsdlLocation = "http://test.wsdl.com/Test.wsdl"; // Dummy URL
         List<Source> metadata = new ArrayList<Source>();
-        Source source = new StreamSource(wsdl.openStream());  
+        Source source = new StreamSource(new ByteArrayInputStream(new byte[0])); // Dummy content  
         source.setSystemId(wsdlLocation);  
         metadata.add(source);
         ep.setMetadata(metadata);
