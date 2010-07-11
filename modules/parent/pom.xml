@@ -112,7 +112,7 @@
         <eclipse.plugins.version>1.4.0</eclipse.plugins.version>
         <eclipse.version>3.2.0</eclipse.version>
         <fi.version>1.1.8</fi.version>
-        <geronimo.spec.activation.version>1.0.1</geronimo.spec.activation.version>
+        <geronimo.spec.activation.version>1.0.2</geronimo.spec.activation.version>
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <geronimo.spec.javamail.version>1.6</geronimo.spec.javamail.version>
         <geronimo.spec.stax.version>1.0.1</geronimo.spec.stax.version>
@@ -142,7 +142,7 @@
         <stax.api.version>1.0.1</stax.api.version>
         <stax.impl.artifact>wstx-asl</stax.impl.artifact>
         <stax.impl.groupid>org.codehaus.woodstox</stax.impl.groupid>
-        <stax.impl.version>3.2.4</stax.impl.version>
+        <stax.impl.version>3.2.9</stax.impl.version>
         <tomcat.version>6.0.16</tomcat.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
         <xalan.version>2.7.0</xalan.version>
