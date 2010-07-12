@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.client.proxy;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
@@ -37,7 +38,10 @@ import org.apache.axis2.jaxws.description.validator.EndpointDescriptionValidator
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
@@ -47,7 +51,9 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Holder;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
@@ -55,6 +61,8 @@ import javax.xml.ws.soap.SOAPBinding;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -463,6 +471,14 @@ public class JAXWSProxyHandler extends BindingProvider implements
         OperationDescription operationDesc =
                 endpointDesc.getEndpointInterfaceDescription().getOperation(method);
 
+        MessageContext request = new MessageContext();
+        
+        // Select a Classloader to use for marshaling
+        ClassLoader cl = chooseClassLoader(seiClazz, serviceDesc);
+        
+        // Make sure the same classloader is used on the response
+        request.setProperty(Constants.CACHE_CLASSLOADER, cl);
+        
         Message message = MethodMarshallerFactory.getMarshaller(operationDesc, true, null)
                 .marshalRequest(args, operationDesc, this.getRequestContext());
 
@@ -470,7 +486,6 @@ public class JAXWSProxyHandler extends BindingProvider implements
             log.debug("Request Message created successfully.");
         }
 
-        MessageContext request = new MessageContext();
         request.setMessage(message);
 
         if (log.isDebugEnabled()) {
@@ -505,7 +520,27 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 Throwable t = getFaultResponse(responseContext, operationDesc);
                 throw t;
             }
+            
+            // Get the classloader that was used for the request processing
             ClassLoader cl = (ClassLoader) responseContext.getProperty(Constants.CACHE_CLASSLOADER);
+            if (cl == null) {
+                InvocationContext ic = responseContext.getInvocationContext();
+                if (ic != null) {
+                    MessageContext requestMC = ic.getRequestMessageContext();
+                    if (requestMC != null) {
+                        cl = (ClassLoader) responseContext.getProperty(Constants.CACHE_CLASSLOADER);
+                        if (cl != null) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Obtained ClassLoader for the request context: " + cl);
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Obtained ClassLoader for the response context: " + cl);
+                }
+            }
             Object object =
                     MethodMarshallerFactory.getMarshaller(operationDesc, true, cl)
                                        .demarshalResponse(responseMsg, args, operationDesc);
@@ -602,5 +637,163 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
     public void setSeiClazz(Class seiClazz) {
         this.seiClazz = seiClazz;
+    }
+    
+    /**
+     * Choose a classloader most likely to marshal the message
+     * successfully
+     * @param cls
+     * @return ClassLoader
+     */
+    private static ClassLoader chooseClassLoader(Class cls, ServiceDescription serviceDesc) {
+        if (log.isDebugEnabled()) {
+            log.debug("Choose Classloader for " + cls);
+        }
+        ClassLoader cl = null;
+        ClassLoader contextCL = getContextClassLoader();
+        ClassLoader classCL = getClassLoader(cls);
+        if (log.isDebugEnabled()) {
+            log.debug("Context ClassLoader is " + contextCL);
+            log.debug("Class ClassLoader is " + classCL);
+        }
+        
+        if (classCL == null ||
+            contextCL == classCL) {
+            // Normal case: Use the context ClassLoader
+            cl = contextCL;
+        } else {
+            // Choose the better of the JAXBContexts
+            MarshalServiceRuntimeDescription marshalDesc =
+                 MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
+            
+            // Get the JAXBContext for the context classloader 
+            Holder<JAXBUtils.CONSTRUCTION_TYPE> holder_contextCL = new Holder<JAXBUtils.CONSTRUCTION_TYPE>();   
+            JAXBContext jbc_contextCL = null;
+            try {
+                jbc_contextCL = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), 
+                        holder_contextCL,
+                        marshalDesc.getPackagesKey(), 
+                        contextCL, 
+                        null);
+            } catch (Throwable t) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Error occured..Processing continues " + t);
+                }
+            }
+            
+            // Get the JAXBContext using the class's ClassLoader
+            Holder<JAXBUtils.CONSTRUCTION_TYPE> holder_classCL = new Holder<JAXBUtils.CONSTRUCTION_TYPE>(); 
+            JAXBContext jbc_classCL = null;
+            try {
+                jbc_classCL = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), 
+                        holder_classCL,
+                        marshalDesc.getPackagesKey(), 
+                        contextCL, 
+                        null);
+            } catch (Throwable t) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Error occured..Processing continues " + t);
+                }
+            }
+            
+            // Heuristic to choose the better classloader to marshal the
+            // data.  Slight priority given to the classloader that loaded
+            // the sei class.
+            if (jbc_classCL == null) {
+                // A JAXBContext could not be loaded for the class's classlaoder,
+                // choose the context ClassLoader
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not load JAXBContext for Class ClassLoader");
+                }
+                cl = contextCL;
+            } else if (jbc_contextCL == null) {
+                // A JAXBContext could not be loaded for the context's classloader,
+                // choose the class ClassLoader
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not load JAXBContext for Context ClassLoader");
+                }
+                cl = classCL;
+            } else if (holder_contextCL.value == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
+                    holder_classCL.value == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
+                // Both were successfully built with the context path.
+                // Choose the one associated with the proxy class
+                if (log.isDebugEnabled()) {
+                    log.debug("Loaded both JAXBContexts with BY_CONTEXT_PATH.  Choose Class ClassLoader");
+                }
+                cl = classCL;
+            } else if (holder_contextCL.value == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
+                // Successfully found all classes with classloader, use this one
+                if (log.isDebugEnabled()) {
+                    log.debug("Successfully loaded JAXBContext with Contxst ClassLoader.  Choose Context ClassLoader");
+                }
+                cl = contextCL;
+            } else if (holder_classCL.value == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
+                // Successfully found all classes with classloader, use this one
+                if (log.isDebugEnabled()) {
+                    log.debug("Successfully loaded JAXBContext with Class ClassLoader.  Choose Class ClassLoader");
+                }
+                cl = classCL;
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Default to Class ClassLoader");
+                }
+                cl = classCL;
+            }
+        }
+        
+        
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Chosen ClassLoader is " + cls);
+        }
+        return cl;
+    }
+    
+    private static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader)AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Thread.currentThread().getContextClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+
+        return cl;
+    }
+    
+    /**
+     * @param cls
+     * @return ClassLoader or null if cannot be obtained
+     */
+    private static ClassLoader getClassLoader(final Class cls) {
+        // NOTE: This method must remain private because it uses AccessController
+        if (cls == null) {
+            return null;
+        }
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader)AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return cls.getClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+        }
+
+        return cl;
     }
 }
