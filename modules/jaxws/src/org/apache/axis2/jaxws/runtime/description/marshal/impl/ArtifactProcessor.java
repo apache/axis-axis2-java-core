@@ -19,11 +19,17 @@
 
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.Constants;
@@ -191,10 +197,10 @@ class ArtifactProcessor {
 
         String wrapperClass = null;
         try {
-            Class cls = null;
+           
             ClassLoader cl = getContextClassLoader();
             if (providedValue != null  && providedValue.length() > 0) {
-
+                Class cls = null;
                 // If a className is provided try to load it with the context classloader
                 // and then the alternate classloader.
                 // If the class still cannot be loaded, then try inserting the
@@ -274,6 +280,14 @@ class ArtifactProcessor {
                 // wrapper to get pulled in first....thus the jaxws wrapper will cause a collision.
                 // 
                 // Thus the following algorithm with check the non-jaxws package first
+                
+                Class cls1 = null;  // Class from the non-JAXWS package
+                Class cls2 = null;  // Class from the JAX-WS package
+                boolean cls1IsJAXB = false;
+                boolean cls2IsJAXB = false;
+                
+                
+                // Look for the class in the non-jaxws package first
                 String defaultValue = null;
                 if (defaultPkg.length() > 0) {
                     defaultValue = defaultPkg + "." + defaultClassName;
@@ -283,33 +297,28 @@ class ArtifactProcessor {
                 if (log.isDebugEnabled()) {
                     log.debug("No provided value.  Try the default class name =  " + defaultValue);
                 }
-                cls = loadClassOrNull(defaultValue, cl);
+                cls1 = loadClassOrNull(defaultValue, cl);
 
-                if (cls == null) {
-                    cls = loadClassOrNull(defaultValue, altClassLoader);
+                if (cls1 == null) {
+                    cls1 = loadClassOrNull(defaultValue, altClassLoader);
                 }
-                if (cls != null) {
-                    wrapperClass = defaultValue;
+                if (cls1 != null) {
+                    cls1IsJAXB = isJAXB(cls1);
                 }
 
-                // Now try the one in the jaxws subpackage
-                if (cls == null) {
+                // Now try the one in the jaxws subpackage (if cls1 is missing or perhaps not a JAXB class)
+                if (cls1 == null || !cls1IsJAXB) {
                     if (defaultPkg.length() > 0) {
                         defaultValue = defaultPkg + "." + JAXWS_SUBPACKAGE + "." + defaultClassName;
                         if (log.isDebugEnabled()) {
                             log.debug("Did not find the default name.  Try a different default class name =  " + defaultValue);
                         }
-                        cls = loadClassOrNull(defaultValue, cl);
-                        if (cls != null) {
-                            wrapperClass = defaultValue;
-                        } else {
-                            cls = loadClassOrNull(defaultValue, altClassLoader);
-                            if (cls != null) {
-                                wrapperClass = defaultValue;
-                            }
+                        cls2 = loadClassOrNull(defaultValue, cl);
+                        if (cls2 == null) {
+                            cls2 = loadClassOrNull(defaultValue, altClassLoader);
                         }
-                        if(cls==null && (type.equals("faultInfo")|| type.equals("@WebFault"))){
-                            //As per JAX-WS 2.2 Specification section 3.7 an applicaiton programmer can choose not to
+                        if(cls2==null && (type.equals("faultInfo")|| type.equals("@WebFault"))){
+                            //As per JAX-WS 2.2 Specification section 3.7 an application programmer can choose not to
                             //package the faultBeans, if we have reached this point in the code then user has choosen
                             //not to package the fault bean. If there is a cache of generated artifacts available then 
                             //lets look for the missing faultBean there.
@@ -332,14 +341,65 @@ class ArtifactProcessor {
                                 if(log.isDebugEnabled()){
                                     log.debug("trying to load class "+defaultValue+" from cache.");
                                 }
-                                cls=loadClassOrNull(defaultValue, cl);
-                                if(cls!=null){
-                                    wrapperClass=defaultValue;
-                                }
+                                cls2=loadClassOrNull(defaultValue, cl);
                             }
                         }
                     }  
                 }
+                
+                if (cls2 !=null) {
+                    cls2IsJAXB = isJAXB(cls2);
+                }
+                
+                // Choose the wrapper class
+                if (cls1 == null && cls2 == null) {
+                    if(log.isDebugEnabled()){
+                        log.debug("Could not find a wrapper class");
+                    }
+                    wrapperClass = null;
+                } else if (cls1 == null) {
+                    wrapperClass = cls2.getCanonicalName();
+                    if(log.isDebugEnabled()){
+                        log.debug("Choosing " + wrapperClass);
+                    }
+                } else if (cls2 == null) {
+                    wrapperClass = cls1.getCanonicalName();
+                    if(log.isDebugEnabled()){
+                        log.debug("Choosing " + wrapperClass);
+                    }
+                } else {
+                    if(log.isDebugEnabled()){
+                        log.debug("There are two classes that are present " + cls1 + " and " + cls2);
+                    }
+                    // Choose the one that is JAXB enabled
+                    if (!cls1IsJAXB && !cls2IsJAXB) {
+                        // If neither is JAXB enabled.  Choose the one in the jaxws package.
+                        // This is the one most likely provided by tooling.
+                        if(log.isDebugEnabled()){
+                            log.debug("Neither are JAXB enabled. Choosing " + cls2);
+                        }
+                        wrapperClass = cls2.getCanonicalName();
+                    } else if (cls1IsJAXB && cls2IsJAXB) {
+                        // If both are JAXB enabled, choose the one in the non-JAXWS package.
+                        // This generally means that multiple tools generated the packages.
+                        // Choosing the one in the non-JAXWS package will avoid a JAXBContext collision.
+                        if(log.isDebugEnabled()){
+                            log.debug("Both are JAXB enabled. Choosing " + cls1);
+                        }
+                        wrapperClass = cls1.getCanonicalName();
+                    } else if (cls1IsJAXB) {
+                        if(log.isDebugEnabled()){
+                            log.debug("Choosing " + cls1 + " because it is JAXB enabled");
+                        }
+                        wrapperClass = cls1.getCanonicalName();
+                    } else {
+                        if(log.isDebugEnabled()){
+                            log.debug("Choosing " + cls2 + " because it is JAXB enabled");
+                        }
+                        wrapperClass = cls2.getCanonicalName();
+                    }
+                }
+                
             } 
         } catch (Throwable t) {
             if (log.isDebugEnabled()) {
@@ -612,5 +672,56 @@ class ArtifactProcessor {
         }
 
         return cl;
+    }
+    
+    /**
+     * @param cls
+     * @return true if cls appears to be a JAXB enabled class
+     */
+    private static boolean isJAXB(Class cls) {
+        // See if the object represents a root element
+        XmlRootElement root = (XmlRootElement)
+            getAnnotation(cls,XmlRootElement.class);
+        if (root != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("isJAXB returns true due to presence of @XmlRootElement on " + cls);
+            }
+            return true;
+        }
+        
+        // See if the object represents an type
+        XmlType type = (XmlType)
+            getAnnotation(cls,XmlType.class);
+        if (type != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("isJAXB returns true due to presence of @XmlType on " + cls);
+            }
+            return true;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("isJAXB returns false for" + cls);
+        }
+        return false;
+    }
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        Annotation anno = null;
+        try {
+        anno = (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Problem occurred.  Continuing.  The problem is " + t);
+            }
+        }
+        return anno;
     }
 }
