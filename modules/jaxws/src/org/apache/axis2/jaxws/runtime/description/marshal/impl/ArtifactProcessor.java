@@ -238,12 +238,27 @@ class ArtifactProcessor {
                                 wrapperClass = newValue;
                             }
                         }
-                        if(cls==null && (type.equals("@WebFault")|| type.equals("faultInfo"))){
+                        
+                        if(cls==null && 
+                            (type.equals("@RequestWrapper")|| type.equals("@ResponseWrapper")||type.equals("@WebFault")|| type.equals("faultInfo"))){
+                            
+                            //Support for Fault Bean Generation
                             //As per JAX-WS 2.2 Specification section 3.7 an application programmer can choose not to
                             //package the faultBeans, if we have reached this point in the code then user has choosen
                             //not to package the fault bean. If there is a cache of generated artifacts available then 
                             //lets look for the missing faultBean there.
-
+                            
+                            //Support for Wrapper Bean Generation
+                            //As per JAX-WS 2.2 Specificaiton section 3.6.2.1 pg 41 an application programmer does not use
+                            //the wrapper bean classes, so the application need not package these classes. If we have reached
+                            //this point in the code then user has choosen not to package these beans.
+                            
+                            //NOTE:If we find Generated artifacts from cache this guarantees that we will not use
+                            //DocLitWrappedMinimum marshaller code. The advantage of normal DocLitWrappedMarshaller is
+                            //that it is very robust and has support of lot more datatypes than in DocLitWrappedMinimum.
+                            if(log.isDebugEnabled()){
+                                log.debug("Adding cache to classpath");
+                            }
                             ClassFinderFactory cff =
                                 (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
                             ClassFinder cf = cff.getClassFinder();
@@ -317,11 +332,26 @@ class ArtifactProcessor {
                         if (cls2 == null) {
                             cls2 = loadClassOrNull(defaultValue, altClassLoader);
                         }
-                        if(cls2==null && (type.equals("faultInfo")|| type.equals("@WebFault"))){
-                            //As per JAX-WS 2.2 Specification section 3.7 an application programmer can choose not to
-                            //package the faultBeans, if we have reached this point in the code then user has choosen
-                            //not to package the fault bean. If there is a cache of generated artifacts available then 
-                            //lets look for the missing faultBean there.
+                        if(cls2==null && 
+                        		(type.equals("@RequestWrapper")|| type.equals("@ResponseWrapper")||type.equals("@WebFault")|| type.equals("faultInfo"))){
+
+                        	//Support for Fault Bean Generation
+                        	//As per JAX-WS 2.2 Specification section 3.7 an application programmer can choose not to
+                        	//package the faultBeans, if we have reached this point in the code then user has choosen
+                        	//not to package the fault bean. If there is a cache of generated artifacts available then 
+                        	//lets look for the missing faultBean there.
+
+                        	//Support for Wrapper Bean Generation
+                        	//As per JAX-WS 2.2 Specificaiton section 3.6.2.1 pg 41 an application programmer does not use
+                        	//the wrapper bean classes, so the application need not package these classes. If we have reached
+                        	//this point in the code then user has choosen not to package these beans.
+
+                        	//NOTE:If we find Generated artifacts from cache this guarantees that we will not use
+                        	//DocLitWrappedMinimum marshaller code. The advantage of normal DocLitWrappedMarshaller is
+                        	//that it is very robust and has support of lot more datatypes than in DocLitWrappedMinimum.
+                        	if(log.isDebugEnabled()){
+                        		log.debug("Adding cache to classpath");
+                        	}
                             if(log.isDebugEnabled()){
                                 log.debug("Adding cache to classpath");
                             }
