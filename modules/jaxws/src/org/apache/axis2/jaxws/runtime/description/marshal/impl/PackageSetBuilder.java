@@ -48,20 +48,26 @@ import javax.jws.WebService;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.xml.bind.JAXBElement;
+import javax.xml.ws.Holder;
+import javax.xml.ws.Response;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Future;
 
 /**
  * In order to marshal or unmarshal the user data, we need to know the set of packages involved.
@@ -336,6 +342,14 @@ public class PackageSetBuilder {
             set.addAll(packages);
         }
         
+        // See if the Method is available.  If so, additional reflection
+        // can be performed to obtain the generic references
+        Method m = getMethod(opDesc, msrd);
+        if (log.isDebugEnabled()) {
+            log.debug("Method obtained:" + m);
+        }
+
+        
         // In most doc/literal cases, the @RequestWrapper or @ResponseWrapper classes are successfully found.
         // The wrapper classes contain the representation of the parameters, thus the parameters don't need
         // to be separately processed.
@@ -344,7 +358,11 @@ public class PackageSetBuilder {
             if (log.isDebugEnabled()) {
                 log.debug("Collect the packages of the parameters");
             }
-            addPackagesFromParameters(set, opDesc) ;          
+            addPackagesFromParameters(set, opDesc);
+            if (m != null) {
+                addPackagesFromParameters(set, m);
+            }
+     
         }
 
         // Finally consider the result type
@@ -359,9 +377,123 @@ public class PackageSetBuilder {
                 set.add("@" + pkg);  // Indicates a package from an actual class reference (versus namespace)
                 set.add("[" + cls.getCanonicalName() + "]");  // Indicates a actual class reference
             }
+            if (m != null) {
+                addPackagesFromReturn(set, m);
+            }
+
         }
     }
     
+    /**
+     * Get Method associated with this OperationDesc
+     * @param opDesc
+     * @param msrd
+     * @return Method or null
+     */
+    private static Method getMethod(OperationDescription opDesc, 
+            MarshalServiceRuntimeDescription msrd) {
+        Method m = null;
+        try {
+            m = msrd.getMethod(opDesc);
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Method could not be obtained due to " + t);
+            }
+        }
+        return m;
+    }
+
+    /**
+     * add package information by reflecting the parameters on Method m
+     * @param set
+     * @param m
+     */
+    private static void addPackagesFromParameters(TreeSet<String> set, Method m) {
+        if (log.isDebugEnabled()) {
+            log.debug("enter addPackagesFromParameters for " + m);
+        }
+        try {
+            if (m != null) {
+                Set<Class> classes = new HashSet<Class>();
+                // Build a set of all of the classes referenced in the parameters (including
+                // generic argument references
+                for(Type type : m.getGenericParameterTypes()) {
+                    classes = ClassUtils.getClasses(type, classes);
+                }
+                addClassesToPackageSet(classes, set);
+            }
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not reflect the information on method " + m + " due to " + t);
+                log.debug("Processing continues");
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("exit addPackagesFromParameters");
+        }
+    }
+
+    /**
+     * add package information by reflecting the return type on Method m
+     * @param set
+     * @param m
+     */
+    private static void addPackagesFromReturn(TreeSet<String> set, Method m) {
+        if (log.isDebugEnabled()) {
+            log.debug("enter addPackagesFromReturn for " + m);
+        }
+        try {
+            if (m != null) {
+                Set<Class> classes = new HashSet<Class>();
+                // Build a set of all of the classes referenced in the return(including
+                // generic argument references
+                classes = ClassUtils.getClasses(m.getGenericReturnType(), classes);
+                addClassesToPackageSet(classes, set);
+            }
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not reflect the information on method " + m + " due to " + t);
+                log.debug("Processing continues");
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("exit addPackagesFromReturn");
+        }
+    }
+
+    /**
+     * Add all of the packages/names in classSet to our package set collection
+     * @param classSet
+     * @param set
+     */
+    private static void addClassesToPackageSet(Set<Class> classSet, TreeSet<String> set) {
+        if (log.isDebugEnabled()) {
+            log.debug("enter addClassesToPackageSet");
+        }
+        if (classSet != null) {
+            for (Class clz : classSet) {
+                if (clz != null &&
+                        clz != Holder.class &&
+                        clz != Future.class &&
+                        clz != Response.class) {
+                    Package pkg = clz.getPackage();
+                    //For primitive types there is no package
+                    String pkgText = (pkg != null) ? pkg.getName() : null;
+                    if (pkg != null) {
+                        String name = clz.getCanonicalName();
+                        if (log.isDebugEnabled()) {
+                            log.debug(" adding class " + name);
+                        }   
+                        set.add("@" + pkgText);  // Indicates a package from an actual class reference
+                        set.add("[" + name + "]");  // Indicates a actual class referenced
+                    }
+                }
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("exit addClassesToPackageSet");
+        }
+    }
     
     /**
      * addPackagesFromParameters
@@ -377,10 +509,7 @@ public class PackageSetBuilder {
                     // Get the actual type of the parameter.
                     // For example if the parameter is Holder<A>, the A.class is
                     // returned.
-                    // TODO Unfortunately the ParameterDescriptor only provides
-                    // the class, not the full generic.  So if the parameter
-                    // is List<A>, only List is returned.  The ParameterDescriptor
-                    // and this logic will need to be improved to handle that case.
+                    // NOTE Generics are handled by the addPackagesFromParameters(Method..) method
                     Class paramClass = pDesc.getParameterActualType();
                     String pkg = getPackageFromClass(paramClass);
                     if (log.isDebugEnabled()) {

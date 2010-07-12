@@ -159,6 +159,8 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
                 assertTrue(observedKey.contains("org.apache.axis2.jaxws.proxy.gorilla_dlw.data"));
                 // Check for the package referenced only by an @XmlSeeAlso
                 assertTrue(observedKey.contains("org.test.stock2"));
+                // Check for the package referenced in the return type List<> generic
+                assertTrue(observedKey.contains("org.test.stock1"));
             }
             
             
@@ -178,6 +180,8 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
                 assertTrue(observedKey.contains("org.apache.axis2.jaxws.proxy.gorilla_dlw.data"));
                 // Check for the package referenced only by an @XmlSeeAlso
                 assertTrue(observedKey.contains("org.test.stock2"));
+                // Check for the package referenced in the return type List<> generic
+                assertTrue(observedKey.contains("org.test.stock1"));
             }
         }catch(Exception e){ 
             e.printStackTrace(); 

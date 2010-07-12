@@ -331,4 +331,11 @@ public interface GorillaInterface {
     public void echoPolymorphicDate(
         @WebParam(name = "request", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
         XMLGregorianCalendar request);
+    
+    /**
+     * The following non-doc method is not invoked.  It is only present to test the 
+     * generic reflection code. 
+     */
+    @WebMethod
+    public List<org.test.stock1.GetPrice> sampleMethod();
 }

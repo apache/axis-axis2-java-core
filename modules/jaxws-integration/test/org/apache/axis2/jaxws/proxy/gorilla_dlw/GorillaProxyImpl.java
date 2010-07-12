@@ -150,5 +150,11 @@ public class GorillaProxyImpl implements GorillaInterface {
 			
 		}
 	}
+	
+	/**
+     * The following non-doc method is not invoked.  It is only present to test the 
+     * generic reflection code. 
+     */
+	public List<org.test.stock1.GetPrice> sampleMethod() { return null;}
     
 }

@@ -19,9 +19,17 @@
 
 package org.apache.axis2.jaxws.utility;
 
-import org.apache.axis2.java.security.AccessController;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.security.PrivilegedAction;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
@@ -29,12 +37,10 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebFault;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceProvider;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.security.PrivilegedAction;
-import java.util.HashMap;
+
+import org.apache.axis2.java.security.AccessController;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** Contains static Class utility methods related to method parameter/argument marshalling. */
 public class ClassUtils {
@@ -305,5 +311,39 @@ public class ClassUtils {
             }
         });
     }
+    
+    /**
+     * 
+     */
+    public static Set<Class> getClasses(Type type, Set<Class> list) {
+    	if (list == null) {
+    		list = new HashSet<Class>();
+    	}
+    	try {
+    		if (type instanceof Class) {
+    			list.add( (Class)type);
+    		}
+    		if (type instanceof ParameterizedType) {
+    			ParameterizedType pt = (ParameterizedType) type;
+    			getClasses(pt.getRawType(), list);
+    			Type types[] = pt.getActualTypeArguments();
+    			if (types != null) {
+    				for (int i=0; i<types.length; i++) {
+    					getClasses(types[i], list);
+    				}
+    			}
+    		} 
+    		if (type instanceof GenericArrayType) {
+    			GenericArrayType gat = (GenericArrayType) type;
+    			getClasses(gat.getGenericComponentType(), list);
+    		}
+    	} catch (Throwable t) {
+    		if (log.isDebugEnabled()) {
+    			log.debug("Problem occurred in getClasses. Processing continues " + t);
+    		}
+    	}
+    	return list;
+    }
+    
 }
 
