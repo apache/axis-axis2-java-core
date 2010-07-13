@@ -25,12 +25,12 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -485,44 +485,55 @@ public abstract class AbstractHTTPSender {
     }
 
     protected HttpClient getHttpClient(MessageContext msgContext) {
-        HttpClient httpClient;
-        Object reuse = msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
-        if (reuse == null) {
-            reuse = msgContext.getConfigurationContext().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
+        ConfigurationContext configContext = msgContext.getConfigurationContext();
+
+        HttpClient httpClient = (HttpClient) msgContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+        if (httpClient == null) {
+            httpClient = (HttpClient) configContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
         }
-        if (reuse != null && JavaUtils.isTrueExplicitly(reuse)) {
-            httpClient = (HttpClient) msgContext.getOptions().getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
-            if (httpClient == null) {
-                httpClient = (HttpClient) msgContext.getConfigurationContext()
-                        .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
-            }
-            if (httpClient != null)
-                return httpClient;
-            MultiThreadedHttpConnectionManager connectionManager =
-                new MultiThreadedHttpConnectionManager();
-            httpClient = new HttpClient(connectionManager);
-            msgContext.getConfigurationContext()
-                .setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
-        } else {
-            HttpConnectionManager connManager =
-                    (HttpConnectionManager) msgContext.getProperty(
-                            HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
-            if (connManager == null) {
-                connManager =
-                        (HttpConnectionManager) msgContext.getProperty(
-                                HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
-            }
-            if(connManager != null){
-                httpClient = new HttpClient(connManager);
-            } else {
-                //Multi threaded http connection manager has set as the default 
-                connManager = new MultiThreadedHttpConnectionManager();
-                httpClient = new HttpClient(connManager);
+        if (httpClient != null) {
+            return httpClient;
+        }
+
+        HttpConnectionManager connManager =
+            (HttpConnectionManager) msgContext.getProperty(
+                 HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
+        if (connManager == null) {
+            connManager =
+                (HttpConnectionManager) msgContext.getProperty(
+                     HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
+        }
+        if (connManager == null) {
+            // reuse HttpConnectionManager
+            synchronized (configContext) {
+                connManager = (HttpConnectionManager) configContext.getProperty(
+                                   HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
+                if (connManager == null) {
+                    log.trace("Making new ConnectionManager");
+                    connManager = new MultiThreadedHttpConnectionManager();                    
+                    /* 
+                     * Commented out for now as bugs in other parts of Axis2 cause test failures when
+                     * proper connection reuse is enabled. 
+                     */
+                    // configContext.setProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, 
+                    //                           connManager);
+                    
+                }
             }
         }
 
+        /*
+         * Create a new instance of HttpClient since it is not
+         * used in thread-safe way here. 
+         */
+        httpClient = new HttpClient(connManager);
+
+        // Set the default timeout in case we have a connection pool starvation to 30sec
+        httpClient.getParams().setConnectionManagerTimeout(30000);
+
         // Get the timeout values set in the runtime
         initializeTimeouts(msgContext, httpClient);
+
         return httpClient;
     }
 
