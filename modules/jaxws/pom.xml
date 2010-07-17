@@ -42,17 +42,17 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-metadata</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>xml-resolver</groupId>
@@ -89,12 +89,12 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-local</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>        
     </dependencies>
@@ -288,7 +288,7 @@
                                         <include name="**/axis2.xml"/>
                                     </fileset>
                                 </copy>
-                                <property name="addressing_version" value="${version}"/>
+                                <property name="addressing_version" value="${project.version}"/>
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                      dir="." target="build-repo"/>
                             </tasks>

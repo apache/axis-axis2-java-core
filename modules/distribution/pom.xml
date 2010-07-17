@@ -252,7 +252,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>axis2-${version}</finalName>
+                            <finalName>axis2-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
 <!--                               <descriptor>src/main/assembly/src-assembly.xml</descriptor> -->
@@ -287,7 +287,7 @@
                                     <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
                                 </copy>
 
-                                <filter token="axisVersion" value="${version}"/>
+                                <filter token="axisVersion" value="${project.version}"/>
                                 <tstamp>
                                     <format property="TODAY" pattern="dd-MM-yyyy"/>
                                 </tstamp>

@@ -43,43 +43,43 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>addressing</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>mar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-metadata</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
          <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
          <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-local</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -429,13 +429,13 @@
 
                                 <!-- Enable Addressing on the client side -->
                                 <mkdir dir="./target/client-repo/modules/"/>
-                                <copy file="../addressing/target/addressing-${version}.mar"
-                                      tofile="./target/client-repo/modules/addressing-${version}.mar"/>
+                                <copy file="../addressing/target/addressing-${project.version}.mar"
+                                      tofile="./target/client-repo/modules/addressing-${project.version}.mar"/>
 
                                 <!-- Enable Addressing on the server side -->
                                 <mkdir dir="${repo.dir}/modules/"/>
-                                <copy file="../addressing/target/addressing-${version}.mar"
-                                      tofile="${repo.dir}/modules/addressing-${version}.mar"/>
+                                <copy file="../addressing/target/addressing-${project.version}.mar"
+                                      tofile="${repo.dir}/modules/addressing-${project.version}.mar"/>
 
                                 <!-- ================================================================ -->
                                 <!--- Non-JAXWS services -->

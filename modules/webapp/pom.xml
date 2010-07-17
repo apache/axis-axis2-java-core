@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jibx</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -344,7 +344,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-spring</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
@@ -423,7 +423,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-fastinfoset</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -498,7 +498,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -573,7 +573,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxbri</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -648,7 +648,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-xmlbeans</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -723,7 +723,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-json</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -798,7 +798,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>soapmonitor</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -874,7 +874,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>addressing</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -950,7 +950,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>ping</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -1026,7 +1026,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>mex</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>jar</type>
             <classifier>impl</classifier>
             <exclusions>
@@ -1103,7 +1103,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-scripting</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -1179,7 +1179,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-corba</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -1254,7 +1254,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>version</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>aar</type>
             <exclusions>
                 <exclusion>
@@ -1339,7 +1339,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-mtompolicy</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -1348,17 +1348,17 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws-mar</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <type>mar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-clustering</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>
-        <finalName>axis2-${version}</finalName>
+        <finalName>axis2-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo.jspc</groupId>

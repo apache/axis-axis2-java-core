@@ -72,16 +72,6 @@
         <url>http://issues.apache.org/jira/browse/AXIS2</url>
     </issueManagement>
     <properties>
-        <!--
-        NOTE: Project version, to be used instead of ${pom.version} since that
-              value magically changes when using SNAPSHOT versions.
-
-              This value *must* be kept in sync with the value of the <version>
-              element, and it will need to be changed manually before a release,
-              as the maven-release-plugin will not update this value.
-        -->
-        <version>SNAPSHOT</version>
-
 	<!-- Tracking SNAPSHOT(s) of a few projects -->
         <axiom.version>1.2.10-SNAPSHOT</axiom.version>
         <neethi.version>3.0.0-SNAPSHOT</neethi.version>

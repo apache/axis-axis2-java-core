@@ -147,7 +147,7 @@
                                 <copy toDir="${basedir}/target/classes/" overwrite="true" filtering="on">
                                     <fileset dir="${basedir}/src/" includes="**/*.xsl"/>
                                     <filterset begintoken="#" endtoken="#">
-                                        <filter token="axisVersion" value="${version}"/>
+                                        <filter token="axisVersion" value="${project.version}"/>
                                         <filter token="today" value=" Built on : ${build.time}"/>
                                     </filterset>
                                 </copy>
