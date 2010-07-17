@@ -56,20 +56,27 @@
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
-        <resources>
-            <resource>
-                <directory>../..</directory>
-                <includes>
-                    <include>NOTICE.txt</include>
-                    <include>LICENSE.txt</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
         <testResources>
             <testResource>
                 <directory>test-resources</directory>
             </testResource>
         </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${pom.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

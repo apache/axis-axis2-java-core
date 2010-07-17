@@ -34,6 +34,7 @@
     <packaging>pom</packaging>
     <name>Apache Axis2 - Root</name>
     <modules>
+        <module>modules/resource-bundle</module> <!-- Must be first in the list! -->
         <module>modules/adb</module>
         <module>modules/adb-codegen</module>
         <module>modules/addressing</module>
