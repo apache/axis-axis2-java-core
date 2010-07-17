@@ -36,32 +36,32 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -269,7 +269,7 @@
                                           value="../../../modules/documentation/xdocs/tools/1_4/eclipse/images"/>
                                 <property name="axis2.lib.dir" value="../../../target/lib"/>
                                 <!--Filter tockens for the copy command to filter the versions of external dependencies -->
-                                <filter token="version" value="${version}"/>
+                                <filter token="version" value="${project.version}"/>
                                 <filter token="eclipse.plugins.version" value="${eclipse.plugins.version}"/>
                                 <filter token="ant.version" value="${ant.version}"/>
                                 <filter token="commons.logging.version" value="${commons.logging.version}"/>
@@ -286,7 +286,7 @@
                                 <copy todir="./lib" file="${m2.local.repo}/org/apache/ant/ant/${ant.version}/ant-${ant.version}.jar" />
                                 <copy todir="./lib" file="${m2.local.repo}/commons-logging/commons-logging/${commons.logging.version}/commons-logging-${commons.logging.version}.jar" />
                                 <copy todir="./lib" file="${m2.local.repo}/log4j/log4j/${log4j.version}/log4j-${log4j.version}.jar" />
-                                <copy todir="./lib" file="${m2.local.repo}/org/apache/axis2/axis2/${version}/axis2-${version}.jar" />
+                                <copy todir="./lib" file="${m2.local.repo}/org/apache/axis2/axis2/${project.version}/axis2-${project.version}.jar" />
                                 
                                 <mkdir dir="./icons"/>
                                 <copy todir="./icons" overwrite="true">
@@ -303,7 +303,7 @@
                                 <mkdir dir="./target/plugin/${service.plugin.version}"/>
                                 <delete dir="./target/dist"/>
                                 <mkdir dir="./target/dist"/>
-                                <unzip src="./target/axis2.eclipse.service.plugin-${version}.jar"
+                                <unzip src="./target/axis2.eclipse.service.plugin-${project.version}.jar"
                                        dest="./target/plugin/${service.plugin.version}"/>
                                 <!-- Copy to the same position with the filtering on-->
                                 <copy todir="./target/plugin/${service.plugin.version}" filtering="on">
