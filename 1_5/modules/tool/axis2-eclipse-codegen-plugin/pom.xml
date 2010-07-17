@@ -30,7 +30,6 @@
     </parent>
     <artifactId>axis2.eclipse.codegen.plugin</artifactId>
     <name>Apache Axis2 - tool - Eclipse Codegen Plugin</name>
-    <packaging>maven-plugin</packaging>
     <description>The Axis 2 Eclipse Codegen Plugin for wsdl2java and java2wsdl</description>
     <dependencies>
         <dependency>
