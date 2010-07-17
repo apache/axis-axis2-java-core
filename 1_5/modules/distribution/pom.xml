@@ -252,7 +252,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>axis2-${version}</finalName>
+                            <finalName>axis2-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/src-assembly.xml</descriptor>
@@ -288,7 +288,7 @@
                                     <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
                                 </copy>
 
-                                <filter token="axisVersion" value="${version}"/>
+                                <filter token="axisVersion" value="${project.version}"/>
                                 <tstamp>
                                     <format property="TODAY" pattern="dd-MM-yyyy"/>
                                 </tstamp>
@@ -341,17 +341,17 @@
                                 <mkdir dir="target/tmp-repository/modules"/>
                                 <mkdir dir="target/tmp-repository/services"/>
 
-                                <copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar"
+                                <copy file="../../modules/soapmonitor/target/soapmonitor-${project.version}.mar"
                                       tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
-                                <copy file="../../modules/addressing/target/addressing-${version}.mar"
+                                <copy file="../../modules/addressing/target/addressing-${project.version}.mar"
                                       tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
-                                <copy file="../../modules/ping/target/ping-${version}.mar"
+                                <copy file="../../modules/ping/target/ping-${project.version}.mar"
                                       tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
-                                <copy file="../../modules/mex/target/mex-${version}.mar"
+                                <copy file="../../modules/mex/target/mex-${project.version}.mar"
                                       tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
-                                <copy file="../../modules/scripting/target/axis2-scripting-${version}.mar"
+                                <copy file="../../modules/scripting/target/axis2-scripting-${project.version}.mar"
                                       tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
-                                <copy file="../../modules/mtompolicy-mar/target/mtompolicy-${version}.mar"
+                                <copy file="../../modules/mtompolicy-mar/target/mtompolicy-${project.version}.mar"
                                       tofile="target/tmp-repository/modules/mtompolicy-${mtompolicy.mar.version}.mar"/>
 
                                 <!-- generate modules.list -->

@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-clustering</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -46,12 +46,12 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-local</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -61,7 +61,7 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-scripting</artifactId>
             <type>mar</type>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -105,7 +105,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -116,7 +116,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxbri</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -126,7 +126,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <artifactId>axis2-jaxws</artifactId>
             <exclusions>
                 <exclusion>
@@ -137,7 +137,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <artifactId>axis2-jaxws-integration</artifactId>
             <exclusions>
                 <exclusion>
@@ -148,7 +148,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <artifactId>axis2-jibx</artifactId>
             <exclusions>
                 <exclusion>
@@ -160,7 +160,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-json</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -171,7 +171,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -182,7 +182,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-metadata</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -193,7 +193,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-mtompolicy</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -204,7 +204,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -215,7 +215,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-spring</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -226,7 +226,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>org.apache.axis2.osgi</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -237,7 +237,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-xmlbeans</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -248,7 +248,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -497,7 +497,7 @@
                                     <equals arg1="true" arg2="${maven.test.skip}"/>
                                 </condition>
                                 <echo>${test.skip}</echo>
-                                <property name="addressing_version" value="${version}"/>
+                                <property name="addressing_version" value="${project.version}"/>
                                 <property name="maven.class.path" refid="maven.runtime.classpath"/>
                                 <property name="maven.test.path" refid="maven.compile.classpath"/>
                                 <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
@@ -517,7 +517,7 @@
                                     <equals arg1="true" arg2="${maven.test.skip}"/>
                                 </condition>
                                 <echo>${test.skip}</echo>
-                                <property name="addressing_version" value="${version}"/>
+                                <property name="addressing_version" value="${project.version}"/>
                                 <property name="groovy.all.version" value="${groovy.all.version}"/>
                                 <property name="maven.repo.local" value="${settings.localRepository}"/>
                                 <path id="maven.dependency.classpath">
