@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>3</version>
+        <version>7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
@@ -107,7 +107,7 @@
         <maven.archiver.version>2.2</maven.archiver.version>
         <maven.artifact.version>2.0.8</maven.artifact.version>
         <maven.assembly.version>2.2-beta-2</maven.assembly.version>
-        <maven.plugin.version>2.3</maven.plugin.version>
+        <maven.plugin.version>2.5</maven.plugin.version>
         <maven.plugin.testing.version>1.1</maven.plugin.testing.version>
         <maven.version>2.0.7</maven.version>
         <maven.war.version>2.0.2</maven.war.version>
@@ -457,19 +457,6 @@
           Checksum policy when not specified always defaults to 'warn'
           which is what we want.
        -->
-        <!-- Override the Apache snapshot repository defined in
-             org.apache:apache:3 with the new Nexus snapshot
-             repository. Note: the 1.5 is not ready to use a more
-             recent version of org.apache:apache but needs snapshots
-             from the new snapshot repository (e.g. Axiom). -->
-        <repository>
-            <id>apache.snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>http://repository.apache.org/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
         <repository>
             <releases>
                 <enabled>true</enabled>
@@ -1260,7 +1247,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>2.3</version>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-rar-plugin</artifactId>

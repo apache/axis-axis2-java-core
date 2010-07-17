@@ -30,7 +30,6 @@
     </parent>
     <artifactId>axis2-ant-plugin</artifactId>
     <name>Apache Axis2 - tool - Ant Plugin</name>
-    <packaging>maven-plugin</packaging>
     <description>The Axis 2 Plugin for Ant Tasks.</description>
     <dependencies>
         <dependency>
