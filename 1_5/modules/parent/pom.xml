@@ -72,14 +72,6 @@
         <url>http://issues.apache.org/jira/browse/AXIS2</url>
     </issueManagement>
     <properties>
-        <!-- Version #'s for the mars that we generate -->
-        <addressing.mar.version>1.5.2-SNAPSHOT</addressing.mar.version>
-        <soapmonitor.mar.version>1.5.2-SNAPSHOT</soapmonitor.mar.version>
-        <mex.mar.version>1.5.2-SNAPSHOT</mex.mar.version>
-        <ping.mar.version>1.5.2-SNAPSHOT</ping.mar.version>
-        <scripting.mar.version>1.5.2-SNAPSHOT</scripting.mar.version>
-        <mtompolicy.mar.version>1.5.2-SNAPSHOT</mtompolicy.mar.version>
-
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <axiom.version>1.2.9</axiom.version>
@@ -1228,7 +1220,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2-beta-1</version>
+                    <version>2.2-beta-3</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -1301,6 +1293,11 @@
                 <plugin>
                     <artifactId>maven-remote-resources-plugin</artifactId>
                     <version>1.0</version>                
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>1.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>

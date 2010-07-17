@@ -41,186 +41,141 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.sun.xml.fastinfoset</groupId>
-            <artifactId>FastInfoset</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tribes</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>juli</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-codegen</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-xmlbeans</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jibx</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-json</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-spring</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-fastinfoset</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxbri</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jettison</groupId>
-            <artifactId>jettison</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxws</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jibx</groupId>
-            <artifactId>jibx-bind</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-metadata</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jibx</groupId>
-            <artifactId>jibx-run</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-clustering</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant-launcher</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.schema</groupId>
-            <artifactId>XmlSchema</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-ant-plugin</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.neethi</groupId>
-            <artifactId>neethi</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>mex</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-corba</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-mtompolicy</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>soapmonitor</artifactId>
+            <version>${pom.version}</version>
+            <type>mar</type>
         </dependency>
         <dependency>
-            <groupId>${stax.impl.groupid}</groupId>
-            <artifactId>${stax.impl.artifact}</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>addressing</artifactId>
+            <version>${pom.version}</version>
+            <type>mar</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-activation_1.1_spec</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>ping</artifactId>
+            <version>${pom.version}</version>
+            <type>mar</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-scripting</artifactId>
+            <version>${pom.version}</version>
+            <type>mar</type>
         </dependency>
+        
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-annotation_1.0_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-saaj_1.3_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jaxws_2.1_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.woden</groupId>
-            <artifactId>woden-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.woden</groupId>
-            <artifactId>woden-impl-dom</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>rhino</groupId>
-            <artifactId>js</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>bsf</groupId>
-            <artifactId>bsf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jalopy</groupId>
-            <artifactId>jalopy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xml-resolver</groupId>
-            <artifactId>xml-resolver</artifactId>
-        </dependency>
-        <!-- Smack Jabber client libraries to be included -->
-        <dependency>
-            <groupId>org.igniterealtime</groupId>
-            <artifactId>smack</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime</groupId>
-            <artifactId>smackx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>version</artifactId>
+            <version>${pom.version}</version>
+            <type>aar</type>
         </dependency>
     </dependencies>
     <distributionManagement>
@@ -241,9 +196,65 @@
     <build>
         <plugins>
             <plugin>
+                <!-- This builds the Axis2 repository with the modules and services -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven.assembly.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>directory-single</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <finalName>tmp-repository</finalName>
+                            <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/repository.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- This generates the modules.list and services.list files -->
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                def modulesdir = new File(project.build.directory, "tmp-repository/modules");
+                                def moduleslist = new File(modulesdir, "modules.list");
+                                moduleslist.delete();
+                                modulesdir.eachFile({
+                                    if (it.name.endsWith(".mar")) {
+                                        moduleslist.append("$it.name\n");
+                                    }
+                                })
+                                
+                                def servicesdir = new File(project.build.directory, "tmp-repository/services");
+                                def serviceslist = new File(servicesdir, "services.list");
+                                serviceslist.delete();
+                                servicesdir.eachFile({
+                                    if (it.name.endsWith(".aar")) {
+                                        serviceslist.append("$it.name\n");
+                                    }
+                                })
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>distribution-package</id>
@@ -326,85 +337,6 @@
                                         <include name="**/*.properties"/>
                                     </fileset>
                                 </copy>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>service-module-list-generation</id>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/tmp-repository"/>
-                                <mkdir dir="target/tmp-repository/modules"/>
-                                <mkdir dir="target/tmp-repository/services"/>
-
-                                <copy file="../../modules/soapmonitor/target/soapmonitor-${project.version}.mar"
-                                      tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
-                                <copy file="../../modules/addressing/target/addressing-${project.version}.mar"
-                                      tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
-                                <copy file="../../modules/ping/target/ping-${project.version}.mar"
-                                      tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
-                                <copy file="../../modules/mex/target/mex-${project.version}.mar"
-                                      tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
-                                <copy file="../../modules/scripting/target/axis2-scripting-${project.version}.mar"
-                                      tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
-                                <copy file="../../modules/mtompolicy-mar/target/mtompolicy-${project.version}.mar"
-                                      tofile="target/tmp-repository/modules/mtompolicy-${mtompolicy.mar.version}.mar"/>
-
-                                <!-- generate modules.list -->
-                                <echo file="target/tmp-repository/modules/modules.list" append="false">
-                                    #
-                                    # Licensed to the Apache Software Foundation (ASF) under one
-                                    # or more contributor license agreements. See the NOTICE file
-                                    # distributed with this work for additional information
-                                    # regarding copyright ownership. The ASF licenses this file
-                                    # to you under the Apache License, Version 2.0 (the
-                                    # "License"); you may not use this file except in compliance
-                                    # with the License. You may obtain a copy of the License at
-                                    #
-                                    # http://www.apache.org/licenses/LICENSE-2.0
-                                    #
-                                    # Unless required by applicable law or agreed to in writing,
-                                    # software distributed under the License is distributed on an
-                                    # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-                                    # KIND, either express or implied. See the License for the
-                                    # specific language governing permissions and limitations
-                                    # under the License.
-                                    #
-                                    soapmonitor-${soapmonitor.mar.version}.mar
-                                    addressing-${addressing.mar.version}.mar
-                                    ping-${ping.mar.version}.mar
-                                    mex-${mex.mar.version}.mar
-                                    scripting-${scripting.mar.version}.mar
-                                </echo>
-
-                                <copy file="../../modules/samples/target/toWar/services/version.aar"
-                                      todir="target/tmp-repository/services"/>
-                                <!-- generate services.list -->
-                                <echo file="target/tmp-repository/services/services.list" append="false">
-                                    #
-                                    # Licensed to the Apache Software Foundation (ASF) under one
-                                    # or more contributor license agreements. See the NOTICE file
-                                    # distributed with this work for additional information
-                                    # regarding copyright ownership. The ASF licenses this file
-                                    # to you under the Apache License, Version 2.0 (the
-                                    # "License"); you may not use this file except in compliance
-                                    # with the License. You may obtain a copy of the License at
-                                    #
-                                    # http://www.apache.org/licenses/LICENSE-2.0
-                                    #
-                                    # Unless required by applicable law or agreed to in writing,
-                                    # software distributed under the License is distributed on an
-                                    # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-                                    # KIND, either express or implied. See the License for the
-                                    # specific language governing permissions and limitations
-                                    # under the License.
-                                    #
-                                    version.aar
-                                </echo>
                             </tasks>
                         </configuration>
                         <goals>
