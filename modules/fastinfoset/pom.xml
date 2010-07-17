@@ -143,7 +143,6 @@
                 <artifactId>maven-remote-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>legal-files</id>
                         <goals>
                             <goal>process</goal>
                         </goals>
