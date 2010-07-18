@@ -220,7 +220,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.1.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <!-- Produce the manifest in the location expected by Eclipse -->
@@ -255,7 +254,7 @@
                             <source>
                                 import java.util.jar.Manifest
                                 
-                                Manifest manifest = new Manifest(new FileInputStream("META-INF/MANIFEST.MF"))
+                                Manifest manifest = new Manifest(new FileInputStream(new File(project.basedir, "META-INF/MANIFEST.MF")))
                                 project.properties["bundle-symbolic-name"] = manifest.mainAttributes.getValue("Bundle-SymbolicName").find("^[^;]*") 
                                 project.properties["bundle-version"] = manifest.mainAttributes.getValue("Bundle-Version")
                             </source>
