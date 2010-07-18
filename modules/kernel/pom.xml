@@ -96,6 +96,11 @@
             <artifactId>jsr311-api</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>

@@ -137,6 +137,11 @@
             <artifactId>axis2-xmlbeans</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
