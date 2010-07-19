@@ -51,6 +51,11 @@
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
