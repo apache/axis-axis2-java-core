@@ -155,6 +155,9 @@ public class IntegrationTest extends TestCase {
         }
     }
 
+    // TODO: it is not clear how this method can give predictable results,
+    //       given that ByteArrayOutputStream#toString uses the platform default charset
+    //       encoding while SOAPMessage#writeTo may use another encoding!!!
     private String printSOAPMessage(final SOAPMessage msg) throws SOAPException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         msg.writeTo(baos);
@@ -365,7 +368,8 @@ public class IntegrationTest extends TestCase {
 
             printSOAPMessage(requestMessage);
             String responseStr = printSOAPMessage(response);
-            assertTrue(responseStr.indexOf("This is some text.Here are some special chars : öÆÚ®¤") != -1);
+            assertEquals("This is some text.Here are some special chars : \u00F6\u00C6\u00DA\u00AE\u00A4",
+                         response.getSOAPBody().getElementsByTagName("something").item(0).getTextContent());
             assertTrue(responseStr.indexOf("echo") != -1);
             sCon.close();
         } catch (SOAPException e) {
