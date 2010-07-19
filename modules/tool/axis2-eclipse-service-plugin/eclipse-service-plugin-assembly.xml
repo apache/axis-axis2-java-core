@@ -23,40 +23,18 @@
     <formats>
         <format>zip</format>
     </formats>
-    <fileSets>
-        <fileSet>
-            <directory>./target/classes</directory>
-            <outputDirectory>classes</outputDirectory>
-     	</fileSet>
-    </fileSets>
-	<dependencySets>
-	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${commons.logging.version}.${extension}</outputFileNameMapping>
-	        <outputDirectory>lib</outputDirectory>
-	        <includes>
-	        	<include>commons-logging:commons-logging:jar</include>
-	        </includes>
-	</dependencySet> 
-	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${version}.${extension}</outputFileNameMapping>
-	        <outputDirectory>lib</outputDirectory>
-	        <includes>
-	        	<include>org.apache.axis2:axis2:jar</include>
-	        </includes>
-	</dependencySet> 
-	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${log4j.version}.${extension}</outputFileNameMapping>
-	        <outputDirectory>lib</outputDirectory>
-	        <includes>
-	        	<include>log4j:log4j:jar</include>
-	        </includes>
-	</dependencySet> 
-	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${ant.version}.${extension}</outputFileNameMapping>
-	        <outputDirectory>lib</outputDirectory>
-	        <includes>
-	        	<include>org.apache.ant:ant:jar</include>
-	        </includes>
-	</dependencySet> 
-	</dependencySets>
+    <dependencySets>
+        <dependencySet>
+            <!-- We only want to include the main artifact of the project -->
+            <useProjectArtifact>true</useProjectArtifact>
+            <includes>
+                <include>${project.groupId}:${project.artifactId}</include>
+            </includes>
+            <outputDirectory>plugins</outputDirectory>
+            <!-- Make sure that the name of the JAR in the distribution respects the naming
+                 convention expected by Eclipse. The bundle-symbolic-name and
+                 bundle-version variables are calculated by a Groovy script executed from the POM. -->
+            <outputFileNameMapping>${bundle-symbolic-name}_${bundle-version}.jar</outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
 </assembly>
