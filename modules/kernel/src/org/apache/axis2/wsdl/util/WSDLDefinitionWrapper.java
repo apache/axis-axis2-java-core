@@ -267,11 +267,22 @@ public class WSDLDefinitionWrapper implements Definition {
             // otherwise, default to the serialization technique
 
             if (reduceWSDLMemoryType == 2) {
-                // a wrapper implementation that uses release & reload on the 
-                // underlying WSDL4J object
-                // this would be desirable for those environments where 
-                // many of the WSDL definitions are not serializable 
-                wrapperImpl = new WSDLWrapperReloadImpl(def, wURL);
+                
+                // See if the definition is reloadable
+                if (WSDLWrapperReloadImpl.isReloadable(def, wURL)) {
+                    // a wrapper implementation that uses release & reload on the 
+                    // underlying WSDL4J object
+                    // this would be desirable for those environments where 
+                    // many of the WSDL definitions are not serializable 
+                    wrapperImpl = new WSDLWrapperReloadImpl(def, wURL);
+                } else {
+                    // a wrapper implementation that is just a passthrough to the 
+                    // underlying WSDL4J object
+                    if (log.isDebugEnabled() ) {
+                        log.debug("WSDLDefinitionWrapper could not create a reloadable WSDL wrapper object.");
+                    }
+                    wrapperImpl = new WSDLWrapperBasicImpl(def, wURL);
+                }
             }
             else {
                 // a wrapper implementation that uses serialization to save the  

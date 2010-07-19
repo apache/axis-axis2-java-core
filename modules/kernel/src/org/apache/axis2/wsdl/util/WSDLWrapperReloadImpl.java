@@ -133,6 +133,49 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
         }
         prepare(def, wURL);
     }
+    
+    public static boolean isReloadable(Definition def, URL wURL) {
+        if (isDebugEnabled) {
+            log.debug("Enter " + myClassName + ".isReloadable(): " + wURL);
+        }
+        String explicitURI = null;
+        if (def != null) {
+            try {
+                String documentBaseURI = def.getDocumentBaseURI();
+
+                // build up the wURL if possible
+                if ((wURL == null) && (documentBaseURI != null)) {
+                    wURL = new URL(documentBaseURI);
+                }
+
+                // get the explicit location of the wsdl if possible
+                if (wURL != null) {
+                    explicitURI = getExplicitURI(wURL);
+                }
+
+                
+            } catch (Exception e) {
+                if (isDebugEnabled) {
+                    log.debug(myClassName + ".isReloaded(): ["
+                            + e.getClass().getName() + "]  error [" + e.getMessage() + "]", e);
+                    log.debug("Processing continues.");
+                }
+            }
+        }
+        
+        // Return true if explicitURI is available
+        if (isDebugEnabled) {
+            log.debug(" explicitURI=" + explicitURI);
+        }
+        boolean rc = explicitURI != null && explicitURI.length() > 0;
+        
+        if (isDebugEnabled) {
+            log.debug("Exit " + myClassName + ".isReloadable(): " + rc);
+        }
+        
+        return rc;
+        
+    }
 
 
     /**
@@ -1222,7 +1265,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     //-------------------------------------------------------------------------
 
 
-    private String getExplicitURI(URL wsdlURL) throws WSDLException {
+    private static String getExplicitURI(URL wsdlURL) throws WSDLException {
 
         if (isDebugEnabled) {
             log.debug(myClassName + ".getExplicitURI(" + wsdlURL + ") ");
@@ -1264,7 +1307,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
                     // Lets read the complete WSDL URL for relative path from class loader
                     // Use relative path of url to fetch complete URL.              
-                    url = getAbsoluteURL(classLoader, filePath);
+                    url = getAbsoluteURL(classLoader, filePath, wsdlURL);
 
                     if (url == null) {
                         if (isDebugEnabled) {
@@ -1308,7 +1351,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
                 if (filePath != null) {
 
-                    url = getAbsoluteURL(classLoader, filePath);
+                    url = getAbsoluteURL(classLoader, filePath, wsdlURL);
                     if (url == null) {
                         if (log.isDebugEnabled()) {
                             log.debug("Could not locate URL for wsdl. Reporting error");
@@ -1343,7 +1386,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     }
 
 
-    private URL getAbsoluteURL(final ClassLoader classLoader, final String filePath) throws WSDLException {
+    private static URL getAbsoluteURL(final ClassLoader classLoader, final String filePath, URL wURL) throws WSDLException {
         URL url = (URL) AccessController.doPrivileged(
                 new PrivilegedAction() {
                     public Object run() {
@@ -1357,7 +1400,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
             }
             if (classLoader instanceof URLClassLoader) {
                 URLClassLoader urlLoader = (URLClassLoader) classLoader;
-                url = getURLFromJAR(urlLoader, wsdlURL);
+                url = getURLFromJAR(urlLoader, wURL);
             }
         }
         return url;
@@ -1402,7 +1445,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
         return def;
     }
 
-    private URL getURLFromJAR(URLClassLoader urlLoader, URL relativeURL) throws WSDLException {
+    private static URL getURLFromJAR(URLClassLoader urlLoader, URL relativeURL) throws WSDLException {
 
         URL[] urlList = urlLoader.getURLs();
 
@@ -1493,7 +1536,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
      * may be an instance of a FileURLConnection object which would require access 
      * permissions if Java2 Security was enabled.
      */
-    private InputStream getInputStream(URLConnection urlCon) throws Exception {
+    private static InputStream getInputStream(URLConnection urlCon) throws Exception {
     	final URLConnection finalURLCon = urlCon;
     	InputStream is = null;
     	try {
