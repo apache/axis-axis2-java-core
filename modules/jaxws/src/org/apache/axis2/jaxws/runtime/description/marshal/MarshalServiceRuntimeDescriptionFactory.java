@@ -42,8 +42,18 @@ public class MarshalServiceRuntimeDescriptionFactory {
                         serviceDesc.getServiceRuntimeDesc(key);
 
         if (desc == null) {
-            desc = MarshalServiceRuntimeDescriptionBuilder.create(serviceDesc);
-            serviceDesc.setServiceRuntimeDesc(desc);
+            // There is only one MSRD per serviceDesc.  Lock
+            // on the serviceDesc while creating the MSRD
+            synchronized(serviceDesc) {
+                desc =
+                    (MarshalServiceRuntimeDescription)
+                            serviceDesc.getServiceRuntimeDesc(key);
+                if (desc == null) {
+
+                    desc = MarshalServiceRuntimeDescriptionBuilder.create(serviceDesc);
+                    serviceDesc.setServiceRuntimeDesc(desc);
+                }
+            }
         }
         return desc;
     }
