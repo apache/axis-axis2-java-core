@@ -43,6 +43,7 @@ import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import javax.xml.ws.WebFault;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -1346,6 +1347,33 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertTrue(checkParamDesc.isHeader());
     }
 
+    /**
+     * This method tests the new property updates in JAX-WS2.2 specification.
+     * @RequestWrapper(PartName)
+     * @ResponseWrapper(PartName)
+     * @WebFault(MessageName)
+     * We will ensure that these new properties are successfully set in the Metadata layer
+     */
+    public void testJAXWS22AnnotationPropertyUpdate(){
+    	EndpointInterfaceDescription testEndpointInterfaceDesc =
+    		getEndpointInterfaceDesc(ReqRspWrapperTestImpl.class);
+    	OperationDescription operationDesc =
+    		testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
+    	assertNotNull(operationDesc);
+    	
+    	assertEquals("jaxws22.RequestPartName",
+    			operationDesc.getRequestWrapperPartName());
+    	
+    	assertEquals("jaxws22.ResponsePartName",
+    			operationDesc.getResponseWrapperPartName());
+
+
+    	operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
+    	assertNotNull(operationDesc);
+    	FaultDescription faultDescription = operationDesc.getFaultDescriptions()[0];
+    	
+    	assertEquals("jaxws22MessageName", faultDescription.getMessageName());
+    }
 
     /*
     * Method to return the endpoint interface description for a given implementation class.
@@ -1461,10 +1489,12 @@ class DefaultReqRspWrapperBareTestImpl {
 //Note the default parameterStyle is WRAPPED, so no type-level annotation is required.
 class ReqRspWrapperTestImpl {
     @RequestWrapper(localName = "method1ReqWrapper", targetNamespace = "http://a.b.c.method1ReqTNS",
-                    className = "org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1ReqWrapper")
+                    className = "org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1ReqWrapper",
+                    partName = "jaxws22.RequestPartName")
     @ResponseWrapper(localName = "method1RspWrapper",
                      targetNamespace = "http://a.b.c.method1RspTNS",
-                     className = "org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1RspWrapper")
+                     className = "org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1RspWrapper",
+                     partName = "jaxws22.ResponsePartName")
     public String method1(String s) {
         return s;
     }
@@ -1473,7 +1503,7 @@ class ReqRspWrapperTestImpl {
                     className = "org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method2ReqWrapper")
     @ResponseWrapper(localName = "method2RspWrapper",
                      targetNamespace = "http://a.b.c.method2RspTNS")
-    public String method2(String s) {
+    public String method2(String s) throws ReqRspWrapperException{
         return s;
     }
 
@@ -1490,6 +1520,17 @@ class ReqRspWrapperTestImpl {
     }
 }
 
+@WebFault(messageName="jaxws22MessageName")
+class ReqRspWrapperException extends Exception{
+	private String message = null;
+	public ReqRspWrapperException(){
+		
+	}
+	public ReqRspWrapperException(String message){
+		this.message = message;
+	}
+
+}
 //=============================================================================
 //testWebMethod service implementaiton class
 //=============================================================================

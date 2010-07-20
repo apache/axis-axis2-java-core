@@ -172,7 +172,8 @@ public interface OperationDescription {
     public String getRequestWrapperTargetNamespace();
 
     public String getRequestWrapperLocalName();
-
+    
+    public String getRequestWrapperPartName();
     /**
      * @return the class name of the wrapper class. NOTE: This method will return null if the
      *         request wrapper class is not known during the description layer processing. In such
@@ -185,6 +186,8 @@ public interface OperationDescription {
     public String getResponseWrapperTargetNamespace();
 
     public String getResponseWrapperLocalName();
+    
+    public String getResponseWrapperPartName();
 
     public String[] getParamNames();
 

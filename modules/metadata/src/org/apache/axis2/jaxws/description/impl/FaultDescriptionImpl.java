@@ -46,6 +46,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
     private String name = "";  // WebFault.name
     private String faultBean = "";  // WebFault.faultBean
     private String targetNamespace = ""; // WebFault.targetNamespace
+    private String messageName = ""; //WebFault.messageName
     private String faultInfo = null;
 
     private static final String FAULT = "Fault";
@@ -163,6 +164,21 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         return name;
     }
 
+    public String getMessageName(){
+    	if(messageName.length()>0){
+    		return name;
+    	}else{
+    		WebFault annotation= this.getAnnoWebFault();
+    		if(annotation!=null && annotation.messageName().length()>0){
+    			messageName=annotation.messageName();
+    		}else{
+    			// The default is undefined.
+                // The JAX-WS layer may use the fault bean information to determine the name
+    		}
+    	}
+    	return messageName;
+    }
+    
     public String getTargetNamespace() {
         if (targetNamespace.length() > 0) {
             return targetNamespace;

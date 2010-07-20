@@ -81,6 +81,10 @@ public interface FaultDescription {
      *         if not defined.
      */
     public String getTargetNamespace();
-
-
+    
+    /**
+     *  @return the name of the wsdl:message that defines the fault element.
+     * @return
+     */
+    public String getMessageName();
 }

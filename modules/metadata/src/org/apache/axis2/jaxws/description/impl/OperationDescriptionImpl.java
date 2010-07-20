@@ -123,13 +123,13 @@ class OperationDescriptionImpl
     private String requestWrapperTargetNamespace;
     private String requestWrapperLocalName;
     private String requestWrapperClassName;
-
+    private String requestWrapperPartName;
     // ANNOTATION: @ResponseWrapper
     private ResponseWrapper responseWrapperAnnotation;
     private String responseWrapperLocalName;
     private String responseWrapperTargetNamespace;
     private String responseWrapperClassName;
-    
+    private String responseWrapperPartName;
     // ANNOTATION: @Action
     private Action actionAnnotation;
 
@@ -1089,7 +1089,37 @@ class OperationDescriptionImpl
         }
         return requestWrapperClassName;
     }
-
+    
+    public String getRequestWrapperPartName(){
+    	return getAnnoRequestWrapperPartName();
+    }
+    
+    /**
+     * Return PartName for RequestWrapper annotation if one present.
+     * @return
+     */
+    public String getAnnoRequestWrapperPartName(){
+    	if(!isWrappedParameters()){
+    		return null;
+    	}
+        if (requestWrapperPartName == null) {
+            if (getAnnoRequestWrapper() != null &&
+                    !DescriptionUtils.isEmpty(getAnnoRequestWrapper().partName())) {
+                requestWrapperPartName = getAnnoRequestWrapper().partName();
+            } else {
+                // There is no default for the RequestWrapper part name.  
+            	requestWrapperPartName = null;
+            }
+        }
+        if(log.isDebugEnabled()){
+            if(requestWrapperPartName!=null){
+                log.debug("RequestWrapperPartName ="+requestWrapperPartName);
+            }else{
+                log.debug("RequestWrapperPartName = NULL");
+            }
+        }
+        return requestWrapperPartName;
+    }
     // ===========================================
     // ANNOTATION: ResponseWrapper
     // ===========================================
@@ -1194,6 +1224,36 @@ class OperationDescriptionImpl
         return responseWrapperClassName;
     }
 
+    public String getResponseWrapperPartName(){
+    	return getAnnoResponseWrapperPartName();
+    }
+    
+    /**
+     * return ResponseWrapper PartName if one present.
+     * @return
+     */
+    public String getAnnoResponseWrapperPartName(){
+    	if(!isWrappedParameters()){
+    		return null;
+    	}
+        if (responseWrapperPartName == null) {
+            if (getAnnoResponseWrapper() != null &&
+                    !DescriptionUtils.isEmpty(getAnnoResponseWrapper().partName())) {
+                responseWrapperPartName = getAnnoResponseWrapper().partName();
+            } else {
+                // There is no default for the ResponseWrapper part name.  
+                responseWrapperPartName = null;
+            }
+        }
+        if(log.isDebugEnabled()){
+            if(responseWrapperPartName!=null){
+                log.debug("ResponseWrapperPartName ="+responseWrapperPartName);
+            }else{
+                log.debug("ResponseWrapperPartName = NULL");
+            }
+        }
+        return responseWrapperPartName;
+    }
     // ===========================================
     // ANNOTATION: WebFault
     // ===========================================
