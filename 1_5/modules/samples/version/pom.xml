@@ -58,7 +58,6 @@
             <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-aar-maven-plugin</artifactId>
-                <version>1.5.1</version>
                 <extensions>true</extensions>
                 <configuration>
                     <servicesXmlFile>${basedir}/src/sample/axisversion/META-INF/services.xml</servicesXmlFile>
