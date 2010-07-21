@@ -215,16 +215,13 @@ implementation of WS-ReliableMessaging, are the main extensibility
 mechanisms in Axis2.</p>
 <a name="distributions" id="distributions"></a>
 <h2>Axis2 Distributions</h2>
-<p>Axis2 is released in several <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+<p>Axis2 is released in several <a href="../download.cgi">
 distributions</a>. Which one you need depends on what you'll be
 doing with it.</p>
 <a name="sbd" id="sbd"></a>
 <h3>The Axis2 Standard Binary Distribution</h3>
 <p>If you're developing services and applications, you'll need the
-Axis2 <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">
-Standard Binary Distribution</a>. The distribution includes all the
+Axis2 Standard Binary Distribution. The distribution includes all the
 necessary *.jar files, as well as a variety of scripts that ease
 development. It has the following structure.</p>
 <p><b>Code Listing 1: Axis2 Standard Binary Distribution</b></p>
@@ -285,8 +282,7 @@ distributed with Axis2. See the list of <a href=
 "userguide-samples.html">samples and their descriptions</a>.</p>
 <a name="hierarchy" id="hierarchy"></a>
 <h2>axis2.war Distribution Directory Hierarchy</h2>
-<p>axis2.war is available in <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#war">
+<p>axis2.war is available in <a href="../download.cgi">
 WAR (Web Archive) Distribution</a>. The server side of Axis2 ships
 as a J2EE application, and has the following structure shown in
 Code Listing 2.</p>
@@ -338,8 +334,7 @@ phase.</p>
 Web application, but if you restart the Axis2 application, these
 changes are lost and the server goes back to the definitions in the
 axis2.xml file.</p>
-<p>Axis2 also provides a third distribution, the <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#src">
+<p>Axis2 also provides a third distribution, the <a href="../download.cgi">
 source distribution</a>, which enables you to generate this .war
 file yourself.</p>
 <a id="docs" name="docs"></a>

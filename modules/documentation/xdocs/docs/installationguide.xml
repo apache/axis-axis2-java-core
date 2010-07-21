@@ -80,8 +80,7 @@ J2EE compliant servlet container. Axis2 is distributed under the
 Apache License, version 2.0. This Installation Guide will mainly
 focus on running Apache Axis2 using the Standard Binary
 Distribution.</p>
-<p><a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+<p><a href="../download.cgi">
 Download</a> distribution packages of the Apache Axis2
 @axis2_version@ version (latest).</p>
 <p><a href="http://ws.apache.org/axis2/download.cgi">Download</a>
@@ -91,21 +90,18 @@ distribution packages of all versions of Apache Axis2.</p>
 <h3>1. Standard Binary Distribution</h3>
 <p>This is the complete version of Axis2 and includes samples and
 convenient scripts as well.</p>
-<p><a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+<p><a href="../download.cgi">
 Download</a> Standard Binary Distribution</p>
 <a name="war1" id="war1"></a>
 <h3>2. WAR (Web Archive) Distribution</h3>
 <p>This is the Web application of Axis2, which can be deployed in
 most of the servlet containers.</p>
-<p><a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+<p><a href="../download.cgi">
 Download</a> WAR (Web Archive) Distribution</p>
 <h3>3. Documents Distribution</h3>
 <p>This contains all the documentation in one package. The package
 includes the xdocs and the Java API docs of this project.</p>
-<p><a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+<p><a href="../download.cgi">
 Download</a> Documents Distribution</p>
 <h3>4. Source Distribution</h3>
 <p>This contains the sources of Axis2 standard distribution, and is
@@ -115,8 +111,7 @@ distribution using the source by typing <span class="style1">$mvn
 running this command. Step by step details on how to create the
 binary distribution is available in the <a href=
 "#advanced">Advanced</a> section.</p>
-<p><a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+<p><a href="../download.cgi">
 Download</a> Source Distribution</p>
 <a name="requirements" id="requirements"></a>
 <h2>System Requirements</h2>
@@ -183,8 +178,7 @@ Java Development Kit (JDK) release (version 1.5 or later). Install
 the JDK according to the instructions included with the release.
 Set an environment variable JAVA_HOME to the pathname of the
 directory into which you installed the JDK release.</p>
-<p>Download and unpack the <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+<p>Download and unpack the <a href="../download.cgi">
 Axis2 Standard Binary Distribution</a> into a convenient location
 so that the distribution resides in its own directory. Set an
 environment variable AXIS2_HOME to the pathname of the extracted
@@ -287,8 +281,7 @@ servlet container is as follows:</p>
 <ol>
 <li>Build the Axis2 WAR file using the Axis2 <a href=
 "#standalone3">Standard Binary Distribution</a>. (Alternatively you
-can <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">
+can <a href="../download.cgi">
 download</a> the axis2.war file or you can build axis2.war using
 the <a href="#war">Source Distribution</a>.</li>
 <li>Drop the WAR file in the webapps folder of the servlet

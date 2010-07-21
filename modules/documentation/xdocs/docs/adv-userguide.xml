@@ -41,11 +41,10 @@ the binary distribution of Axis2 are also discussed.</p>
 
 <h2>Introduction</h2>
 
-<p>This user guide is written based on the <a
-href="../download/@axis2_version_dir@/download.html/#std-bin">Axis2 Standard Binary
-Distribution</a>. The Standard Binary Distribution can be directly <a
-href="../download/@axis2_version_dir@/download.html/#std-bin">downloaded</a> or built using
-the <a href="../download/@axis2_version_dir@/download.html#src">Source Distribution</a>. If
+<p>This user guide is written based on the Axis2 Standard Binary
+Distribution. The Standard Binary Distribution can be directly <a
+href="../download.cgi">downloaded</a> or built using
+the Source Distribution. If
 you choose the latter, then the <a href="installationguide.html">Installation
 Guide</a> will instruct you on how to build Axis2 Standard Binary
 Distribution using the source.</p>
@@ -72,7 +71,7 @@ other features.</p>
 <p>In this (first) section, we will learn how to write and deploy Web
 services using Axis2. All the samples mentioned in this guide are located in
 the <b>"samples/userguide/src"</b> directory of <a
-href="../download/@axis2_version_dir@/download.html/#std-bin">Axis2 standard binary
+href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
 
 <p>Please deploy axis2.war in your servlet container and ensure that it works

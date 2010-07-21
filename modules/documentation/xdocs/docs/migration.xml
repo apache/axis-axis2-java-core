@@ -502,7 +502,7 @@ Axis2, our example uses the following Ant task:</p>
 </pre>
 <p>For an explanation of the Axis2 WSDL2Java Ant task and its
 options, see the <a href=
-"../tools/@axis2_version_dir@/CodegenToolReference.html">CodegenToolReference
+"../tools/CodegenToolReference.html">CodegenToolReference
 Guide.</a></p>
 <p>A feature of XMLBeans is that there is one class file created
 with WSDL2java, and a series of .xsb files. They must be referenced

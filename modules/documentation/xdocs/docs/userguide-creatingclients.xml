@@ -156,7 +156,7 @@ for calling each of these operations.</p>
 <p><b>The short story:</b></p>
 <ol>
 <li>
-<a href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">Download</a> and unpack the Apache Axis2 Standard
+<a href="../download.cgi">Download</a> and unpack the Apache Axis2 Standard
 Distribution, if you have not done it already.</li>
 <li>Create the client stub with the following command:
 <pre>
@@ -172,8 +172,7 @@ located in build/lib to the classpath and type: java
 org.apache.axis2.axis2userguide.Client</li>
 </ol>
 <p><b>The long story:</b></p>
-<p>If you have not done it already, <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">
+<p>If you have not done it already, <a href="../download.cgi">
 download</a> and unpack the Apache Axis2 Standard Distribution. The
 Axis2 WAR Distribution does not include the necessary utilities for
 generating code, such as WSDL2Java.</p>

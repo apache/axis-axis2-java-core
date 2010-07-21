@@ -68,7 +68,7 @@ Beans</a></li>
 </ul>
 <h3>A Quick Setup Note:</h3>
 <p>The code for the document can be found in the extracted <a href=
-"../download/@axis2_version_dir@/download.html#std-bin">Standard
+"../download.cgi">Standard
 Binary Distribution</a>, more specifically at Axis2_HOME/samples/
 inside the directories- quickstart, quickstartadb, quickstartaxiom,
 quickstartjibx and quickstartxmlbeans. (Consider getting it now as
@@ -252,7 +252,7 @@ directory.</p>
 <p>Now that you understand what we're trying to accomplish, we're
 almost ready to start building.</p>
 <p>First, <a href=
-"../download/@axis2_version_dir@/download.html#std-bin">download</a>
+"../download.cgi">download</a>
 and unzip the appropriate version of Axis2 Standard Binary
 Distribution. Make sure that you set the value of the AXIS2_HOME
 variable to match the location into which you extracted the

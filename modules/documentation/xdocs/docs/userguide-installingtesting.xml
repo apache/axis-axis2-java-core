@@ -139,8 +139,7 @@ of files to a single *.jar file. The important thing is to ensure
 that all the appropriate classes are on the classpath. In addition
 to the classes that pertain to the actual client, you must also add
 the Axis2 .jar files into the CLASSPATH. Normally you will do this
-by downloading and unpacking the <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">
+by downloading and unpacking the <a href="../download.cgi">
 Axis2 Standard Distribution</a> and adding the *.jar files in the
 lib directory to your CLASSPATH, or you also have the option of
 running your client using the axis2.bat (or axis2.sh) script, which

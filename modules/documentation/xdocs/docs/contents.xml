@@ -184,37 +184,37 @@ Transport protocol</li>
 <p><strong>Axis2 Tools:</strong></p>
 <ul>
 <li><a href=
-"../tools/@axis2_version_dir@/CodegenToolReference.html">Code
+"../tools/CodegenToolReference.html">Code
 Generator Tool Guide for Command Line and Ant Tasks</a> - Lists
 command line and Ant task references. How to build a file using
 custom Ant tasks and how to invoke a Code Generator from Ant</li>
 <li><a href=
-"../tools/@axis2_version_dir@/eclipse/wsdl2java-plugin.html">Code
+"../tools/eclipse/wsdl2java-plugin.html">Code
 Generator Wizard Guide for Eclipse Plug-in</a> - Explains the usage
 of the code generator Eclipse plug-in for WSDL2Java and/or
 Java2WSDL operations</li>
 <li><a href=
-"../tools/@axis2_version_dir@/eclipse/servicearchiver-plugin.html">Service
+"../tools/eclipse/servicearchiver-plugin.html">Service
 Archive Generator Wizard Guide for Eclipse Plug-in</a> - Describes
 the functionality of the Eclipse plugin service archive generator
 tool</li>
 <li><a href=
-"../tools/@axis2_version_dir@/idea/Idea_plug-in_userguide.html">Code
+"../tools/idea/Idea_plug-in_userguide.html">Code
 Generator Wizard Guide for IntelliJ IDEA Plug-in</a> - A guide on
 the usage of the IDEA code generation plug-in to create service
 archives and generate Java class files from WSDL files</li>
 <li><a href=
-"../tools/@axis2_version_dir@/maven-plugins/maven-aar-plugin.html">Maven2
+"../tools/maven-plugins/maven-aar-plugin.html">Maven2
 AAR Plug-in Guide</a> - A guide to generate an Axis 2 service file
 (AAR file) using the Maven plug-in.</li>
 <li><a href=
-"../tools/@axis2_version_dir@/maven-plugins/maven-java2wsdl-plugin.html">
+"../tools/maven-plugins/maven-java2wsdl-plugin.html">
 Maven2 Java2WSDL Plug-in Guide</a> - A guide to using Java2WSDL
 Maven 2 Plug-in that takes a Java class as input and generates a
 WSDL, which describes a Web service for invoking the class
 methods</li>
 <li><a href=
-"../tools/@axis2_version_dir@/maven-plugins/maven-wsdl2code-plugin.html">
+"../tools/maven-plugins/maven-wsdl2code-plugin.html">
 Maven2 WSDL2Code Plug-in Guide</a> - A guide to using this plugin
 that takes as input a WSDL and generates client and server stubs
 for calling or implementing a Web service matching the WSDL.</li>
@@ -261,8 +261,7 @@ this area.</li>
 Guide</a> - Introduction to Axis2's modular architecture</li>
 <!--<li><a href="api/index.html">Online Java Docs</a>-Java API
   documentation</li>-->
-<li><a href=
-"http://ws.apache.org/axis2/@axis2_version_dir@/api/index.html">Online
+<li><a href="../api/index.html">Online
 Java Docs</a> - Java API documentation</li>
 <li><a href="../refLib.html">Reference Library</a> - This document
 provides additional information to developers on WS-*

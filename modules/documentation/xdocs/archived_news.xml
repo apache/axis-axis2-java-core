@@ -304,23 +304,23 @@ Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
-"tools/@axis2_version_dir@/eclipse/wsdl2java-plugin.html">eclipse
+"tools/eclipse/wsdl2java-plugin.html">eclipse
 plug-in</a><a>/</a> <a href=
-"tools/@axis2_version_dir@/CodegenToolReference.html">Command line
+"tools/CodegenToolReference.html">Command line
 version</a><a>/</a><a href=
-"tools/@axis2_version_dir@/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
+"tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
 IDEA plug-in</a><a>/</a><a href=
-"tools/@axis2_version_dir@/maven-plugins/maven-wsdl2code-plugin.html">Maven2
+"tools/maven-plugins/maven-wsdl2code-plugin.html">Maven2
 WSDL2Code Plug-in</a></li>
 <li>Service Archive Wizard- <a href=
-"tools/@axis2_version_dir@/eclipse/servicearchiver-plugin.html">eclipse
+"tools/eclipse/servicearchiver-plugin.html">eclipse
 plug-in</a>/ <a href=
-"tools/@axis2_version_dir@/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
+"tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
 IntelliJ IDEA plug-in</a>/ <a href=
-"tools/@axis2_version_dir@/maven-plugins/maven-aar-plugin.html">Maven2
+"tools/maven-plugins/maven-aar-plugin.html">Maven2
 AAR Plug-in</a></li>
 <li>Java2WSDL- <a href=
-"tools/@axis2_version_dir@/maven-plugins/maven-java2wsdl-plugin.html">
+"tools/maven-plugins/maven-java2wsdl-plugin.html">
 Maven2 Java2WSDL Plug-in</a></li>
 </ol>
 <h2>Extension Modules</h2>

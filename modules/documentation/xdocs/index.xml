@@ -208,7 +208,7 @@ features below.</p>
 <ul>
 <li>Improved, XML-centric client API including full WSDL and policy
 support</li>
-<li><a href="@axis2_version_dir@/jaxws-guide.html">Support for JAXWS-style services and clients</a></li>
+<li><a href="docs/jaxws-guide.html">Support for JAXWS-style services and clients</a></li>
 <li>Support for POJO and Spring services and clients</li>
 <li>Support for any message exchange pattern</li>
 <li>Synchronous and asynchronous calls</li>

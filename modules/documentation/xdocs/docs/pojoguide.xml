@@ -98,7 +98,7 @@ this document</li>
 <p>The code for the document can be found at
 Axis2_HOME/samples/pojoguide and Axis2_HOME/samples/pojoguidespring
 once you extract the <a href=
-"../../download/@axis2_version_dir@/download.html#std-bin">Axis2
+"../download.cgi">Axis2
 Standard Distribution</a>. (It is better to get it now as it will
 help you to follow along.) Let's get started.</p>
 <a name="pojo" id="pojo"></a>
@@ -235,7 +235,7 @@ the client</li>
 <p>Before you can build the source, you'll need to download the
 Axis2 @axis2_version@-bin and @axis2_version@-war distributions
 from <a href=
-"../../download/@axis2_version_dir@/download.html">here</a>. Then
+"../download.cgi">here</a>. Then
 modify the following line inside the build.xml file (in the
 Axis2_HOME/samples/pojoguide directory in the extracted Axis2
 @axis2_version@ Standard Binary (bin) Distribution) :</p>
@@ -244,7 +244,7 @@ Axis2_HOME/samples/pojoguide directory in the extracted Axis2
 </pre>
 <p>This modification contains the path to the root of the unzipped
 Axis2 @axis2_version@-bin <a href=
-"../../download/@axis2_version_dir@/download.html#std-bin">download</a>.
+"../download.cgi">download</a>.
 With that explanation, you'll now build the source by typing the
 following: ant</p>
 <p>The following directory format should now exist at

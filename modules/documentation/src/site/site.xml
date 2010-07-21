@@ -44,36 +44,22 @@
             <item name="Tools" href="tools/index.html" />
         </menu>
         <menu name="Documentation">
-            <item name="Version 1.6" href="/@axis2_version_dir@/contents.html" >
-                <item name="Table of Contents" href="@axis2_version_dir@/toc.html" />
-                <item name="Installation Guide" href="@axis2_version_dir@/installationguide.html" />
-                <item name="QuickStart Guide" href="@axis2_version_dir@/quickstartguide.html" />
-                <item name="User Guide" href="@axis2_version_dir@/userguide.html" />
-                <item name="JAXWS Guide" href="@axis2_version_dir@/jaxws-guide.html" />
-                <item name="POJO Guide" href="@axis2_version_dir@/pojoguide.html" />
-                <item name="Spring Guide" href="@axis2_version_dir@/spring.html" />
-                <item name="Web Administrator's Guide" href="@axis2_version_dir@/webadminguide.html" />
-                <item name="Migration Guide (from Axis1)" href="@axis2_version_dir@/migration.html" />
-            </item>
-            <item name="Version 1.5.1" href="/1_5_1/contents.html"/>
-            <item name="Version 1.5" href="/1_5/contents.html"/>
-            <item name="Version 1.4.1" href="/1_4_1/contents.html"/>
-            <item name="Version 1.4" href="/1_4/contents.html"/>
-            <item name="Version 1.3" href="/1_3/contents.html" />
-            <item name="Version 1.2" href="/1_2/contents.html" />
-            <item name="Version 1.1.1" href="/1_1_1/contents.html" />
-            <item name="Version 1.1" href="/1_1/contents.html" />
-            <item name="Version 1.0" href="/1_0/index.html" />
-            <item name="Version 0.95" href="/0_95/index.html" />
-            <item name="Version 0.94" href="/0_94/index.html" />
-            <item name="Version 0.93" href="/0_93/index.html" />
+            <item name="Table of Contents" href="docs/toc.html" />
+            <item name="Installation Guide" href="docs/installationguide.html" />
+            <item name="QuickStart Guide" href="docs/quickstartguide.html" />
+            <item name="User Guide" href="docs/userguide.html" />
+            <item name="JAXWS Guide" href="docs/jaxws-guide.html" />
+            <item name="POJO Guide" href="docs/pojoguide.html" />
+            <item name="Spring Guide" href="docs/spring.html" />
+            <item name="Web Administrator's Guide" href="docs/webadminguide.html" />
+            <item name="Migration Guide (from Axis1)" href="docs/migration.html" />
         </menu>
         <menu name="Resources">
             <item name="FAQ" href="faq.html" />
             <item name="Articles" href="articles.html" />
             <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2/" />
             <item name="Reference Library" href="refLib.html" />
-            <item name="Online Java Docs" href="@axis2_version_dir@/api/index.html" />
+            <item name="Online Java Docs" href="api/index.html" />
         </menu>
         <menu name="Get Involved" href="overview.html">
             <item name="Overview" href="overview.html" />

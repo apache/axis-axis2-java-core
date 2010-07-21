@@ -389,8 +389,7 @@ based on the same WSDL file used in the <a href=
 document, you will follow the steps below.</p>
 <p><b>The short story:</b></p>
 <ol>
-<li><a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">
+<li><a href="../download.cgi">
 Download</a> the Axis2 standard distribution, if you have not done
 so already.</li>
 <li>Generate the skeleton using the WSDL2Java utility, as in:<br />
@@ -407,10 +406,8 @@ http://&lt;server&gt;:&lt;port&gt;/axis2/services/listServices to
 make sure the service has been properly deployed.</li>
 </ol>
 <p><b>The long story:</b></p>
-<p>As with generating clients, you will need the <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">
-Axis2 Standard Distribution</a>, because the <a href=
-"http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#war">
+<p>As with generating clients, you will need the <a href="../download.cgi">
+Axis2 Standard Distribution</a>, because the <a href="../download.cgi">
 Axis2 WAR Distribution</a> does not include the WSDL2Java utility.
 Once you've got it downloaded and unpacked, make sure that you set
 the AXIS2_HOME variable to point to the location in which you've
