@@ -236,9 +236,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <xdocDirectory>${basedir}/xdocs</xdocDirectory>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>install</phase>
