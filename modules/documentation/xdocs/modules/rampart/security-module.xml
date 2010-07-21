@@ -21,7 +21,6 @@
 <html>
 <head>
   <meta http-equiv="content-type" content=""/>
-  <link href="../../../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
   <title>Rampart : WS-Security module for Axis2</title>
 </head>
 

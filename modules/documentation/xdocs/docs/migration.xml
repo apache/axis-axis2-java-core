@@ -25,8 +25,6 @@
 "HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
 <meta http-equiv="content-type" content="" />
 <title>Migrating from Axis 1.x</title>
-<link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
-media="all" />
 </head>
 <body lang="en" xml:lang="en">
 <h1>Migrating from Apache Axis 1.x to Axis2</h1>

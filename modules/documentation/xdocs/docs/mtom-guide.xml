@@ -21,8 +21,6 @@
 <head>
   <meta http-equiv="content-type" content=""/>
   <title>Handling Binary data with Axis2 (MTOM/SwA)</title>
-  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
-  media="all"/>
 </head>
 
 <body>
