@@ -1272,12 +1272,12 @@
                 <plugin>
                     <groupId>org.apache.axis2</groupId>
                     <artifactId>axis2-aar-maven-plugin</artifactId>
-                    <version>1.5.2-SNAPSHOT</version>
+                    <version>${project.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.axis2</groupId>
                     <artifactId>axis2-mar-maven-plugin</artifactId>
-                    <version>1.5.2-SNAPSHOT</version>
+                    <version>${project.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
