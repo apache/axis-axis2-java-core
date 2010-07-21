@@ -25,12 +25,12 @@
 "HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
 <meta http-equiv="content-type" content=
 "text/html; charset=us-ascii" />
-<title>Axis2/Java @axis2_version@ Documentation Home</title>
+<title>Axis2/Java ${axis2_version} Documentation Home</title>
 <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
 media="all" />
 </head>
 <body lang="en" xml:lang="en">
-<h1>Apache Axis2/Java Version @axis2_version@ Documentation
+<h1>Apache Axis2/Java Version ${axis2_version} Documentation
 Index</h1>
 <h2>Introduction</h2>
 <p>Apache Axis2, the third generation Web services engine is more
@@ -39,7 +39,7 @@ efficient, more modular and more XML-oriented than its predecessor
 carefully designed to support the easy addition of plug-in modules
 that extend its functionality for features such as security and
 increased reliability.</p>
-<p>Apache Axis2 Version @axis2_version@ is a bugfix release, fixing several
+<p>Apache Axis2 Version ${axis2_version} is a bugfix release, fixing several
 problems in version 1.5.  Please see the release notes for more
 details.</p>
 <p>This page describes our list of available documents.</p>

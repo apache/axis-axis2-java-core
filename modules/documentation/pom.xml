@@ -224,6 +224,13 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
+             we can't use the project.version variable directly because of the dot. See
+             http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
+        <axis2_version>${project.version}</axis2_version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

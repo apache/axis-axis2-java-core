@@ -425,7 +425,7 @@ Service</h3>
 <pre>
 java org.apache.axis2.wsdl.WSDL2Java -uri 
 file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl -p 
-org.apache.axis2.axis2userguide -d adb -s -wv @axis2_version@ -ss -sd
+org.apache.axis2.axis2userguide -d adb -s -wv ${axis2_version} -ss -sd
 </pre>
 <p>Note: Make sure all the .jar files in the Axis2 lib directory is
 set to the CLASSPATH before you run the above code.</p>
@@ -439,19 +439,19 @@ to use the Axis2 DataBinding Framework, or ADB (-d), to generate
 only synchronous or blocking code (-s), and to generate server-side
 code (-ss) as opposed to a client, including the services.xml
 service descriptor file (-sd). It also specifies version
-@axis2_version@ for the WSDL file (-wv)<strong>.</strong></p>
+${axis2_version} for the WSDL file (-wv)<strong>.</strong></p>
 <p><strong>Code Listing 14.2:</strong></p>
 <p>You can also use the following script files to achieve the same.
 In this case you do not have the set the CLASSPATH manually.</p>
 <p>For Linux:</p>
 <pre>
 $AXIS2_HOME/bin/wsdl2java.sh -uri file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl
--p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv @axis2_version@ -ss -sd
+-p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv ${axis2_version} -ss -sd
 </pre>
 <p>For MS Windows:</p>
 <pre>
 %AXIS2_HOME%\bin\wsdl2java.bat -uri file:\\\C:\apps\axis2\samples\zSample\Axis2UserGuide.wsdl
--p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv @axis2_version@ -ss -sd
+-p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv ${axis2_version} -ss -sd
 </pre>
 <p>In both instances, at this point, you should see four new items
 in your chosen directory: the build.xml file, which includes

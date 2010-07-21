@@ -82,7 +82,7 @@ focus on running Apache Axis2 using the Standard Binary
 Distribution.</p>
 <p><a href="../download.cgi">
 Download</a> distribution packages of the Apache Axis2
-@axis2_version@ version (latest).</p>
+${axis2_version} version (latest).</p>
 <p><a href="http://ws.apache.org/axis2/download.cgi">Download</a>
 distribution packages of all versions of Apache Axis2.</p>
 <p>The distribution packages provided are as follows:</p>
@@ -182,7 +182,7 @@ directory into which you installed the JDK release.</p>
 Axis2 Standard Binary Distribution</a> into a convenient location
 so that the distribution resides in its own directory. Set an
 environment variable AXIS2_HOME to the pathname of the extracted
-directory of Axis2 (Eg: /opt/axis2-@axis2_version@). Linux users
+directory of Axis2 (Eg: /opt/axis2-${axis2_version}). Linux users
 can alternatively run the setenv.sh file available in the
 AXIS2_HOME/bin directory to set the AXIS2_HOME environment variable
 to the Axis2 classpath.</p>

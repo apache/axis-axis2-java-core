@@ -138,9 +138,9 @@ code to the web.xml (The SOAPMonitorPort is configurable.):</p>
 
 <p>Finally, the applet classes must be placed into the Web application so that
 they can be loaded by the Web browser. You can get the compiled applet
-classes from the WEB-INF/lib/soapmonitor-servlet-@axis2_version@.jar which is inside
+classes from the WEB-INF/lib/soapmonitor-servlet-${axis2_version}.jar which is inside
 the extracted axis2.war. To extract the content of the file, simply
-execute the command, <code>jar -xf soapmonitor-servlet-@axis2_version@.jar</code>.
+execute the command, <code>jar -xf soapmonitor-servlet-${axis2_version}.jar</code>.
 The applet code is in the org.apache.axis2.soapmonitor.applet package and therefore 
 the 'org' directory created by the unpacking of JAR file should be placed
 in &lt;CATALINA_HOME&gt;/webapps/axis2/.</p>
