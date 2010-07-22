@@ -19,8 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -172,107 +171,106 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="test-resources/xsd"/>
-                                <property name="wsdl.source.dir" value="test-resources/wsdl"/>
-                                <property name="schema.output.base.dir" value="target/schema"/>
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src"/>
-                                <property name="schema.generated.classes.dir"
-                                          value="${schema.output.base.dir}/classes"/>
+                                <property name="schema.source.dir" value="test-resources/xsd" />
+                                <property name="wsdl.source.dir" value="test-resources/wsdl" />
+                                <property name="schema.output.base.dir" value="target/schema" />
+                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
+                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
                                 <!-- make the dirs -->
-                                <mkdir dir="${schema.output.base.dir}"/>
-                                <mkdir dir="${schema.generated.src.dir}"/>
-                                <mkdir dir="${schema.generated.classes.dir}"/>
+                                <mkdir dir="${schema.output.base.dir}" />
+                                <mkdir dir="${schema.generated.src.dir}" />
+                                <mkdir dir="${schema.generated.classes.dir}" />
                                 <!-- Run JAXB schema compiler with designated schemas -->
                                 <echo>Generating JAX-B classes from XSDs</echo>
                                 <echo>Generating java from soap 11</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/soap11.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/soap11.xsd" />
                                 </java>
                                 <echo>Generating java from echo.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/echo.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/echo.xsd" />
                                 </java>
                                 <echo>Generating java from stock1.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd" />
                                 </java>
                                 <echo>Generating java from stock2.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd" />
                                 </java>
                                 <echo>Generating java from samplemtom.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd" />
                                 </java>
                                 <echo>Generating java from greeterTypes.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd" />
                                 </java>
                                 <echo>Generating java from ProxyDocLitWrapped.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl" />
                                 </java>
                                 <echo>Generating java from AddNumbers.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl" />
                                 </java>
                                 <echo>Generating java from ProxyDocLitnonWrapped.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl" />
                                 </java>
                                 <echo>Generating java from samplemtomjpeg.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/samplemtomjpeg.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/samplemtomjpeg.wsdl" />
                                 </java>
                                 <echo>Generating java from RPCLit.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl" />
                                 </java>
                                 <echo>Generating java from RPCLitSWA.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclitswa -quiet -wsdl ${wsdl.source.dir}/RPCLitSWA.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclitswa -quiet -wsdl ${wsdl.source.dir}/RPCLitSWA.wsdl" />
                                 </java>
                                 <echo>Generating java from gorilla_dlw.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl" />
                                 </java>
                                 <echo>Generating java from SOAP12Echo.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAP12Echo.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAP12Echo.wsdl" />
                                 </java>
                                 <echo>Generating java from AddNumbersHandler.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl" />
                                 </java>
                                 <echo>Generating java from HeadersHandler.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
@@ -282,129 +280,129 @@
                                 </java>
                                 <echo>Generating java from async_doclitwr.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl" />
                                 </java>
                                 <echo>Generating java from async_doclitwr2.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr2.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr2.wsdl" />
                                 </java>
                                 <echo>Generating java from FaultyWebService.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultyWebService.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultyWebService.wsdl" />
                                 </java>
                                 <echo>Generating java from FaultsService.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultsService.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultsService.wsdl" />
                                 </java>
                                 <echo>Generating java from jaxbsource</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd" />
                                 </java>
                                 <echo>Generating java from doclit_nonwrap.wsdl for javabean endpoint
                                     support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclit_nonwrap.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclit_nonwrap.wsdl" />
                                 </java>
                                 <echo>Generating java from doclitwrap.wsdl for javabean endpoint
                                     support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitwrap.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitwrap.wsdl" />
                                 </java>
                                 <echo>Generating java from doclitbare.wsdl for javabean endpoint
                                     support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl" />
                                 </java>
                                 
                                 <echo>Generating java from EchoMessage.wsdl for javabean endpoint
                                     support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/EchoMessage.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/EchoMessage.wsdl" />
                                 </java>
                                 
                                 <echo>Generating java from resourceinjection.wsdl for javabean
                                     endpoint Resource Injection support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl" />
                                 </java>
                                 <echo>Generating java from AnyType.wsdl for javabean endpoint
                                     AnyType support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl" />
                                 </java>
                                 <echo>Generating java from MessageContext.wsdl for message context
                                     properties support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/MessageContext.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/MessageContext.wsdl" />
                                 </java>
                                 <echo>Generating java from WSDLMultiTests.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/WSDLMultiTests.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/WSDLMultiTests.wsdl" />
                                 </java>
                                 <echo>Generating java from Polymorphic shapes.wsdl for javabean
                                     endpoint support
                                 </echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl" />
                                 </java>
                                 <echo>Generating java from SOAPActionTest.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl" />
                                 </java>
                                 <echo>Generating java from rpclitenum.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl" />
                                 </java>
                                 <echo>Generating java from rpclitstringarray.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl" />
                                 </java>
                                 <echo>Generating java from swamtomservice.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/swamtomservice.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/swamtomservice.wsdl" />
                                 </java>
                                 <echo>Generating java from ProcessDocumentService.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
@@ -428,9 +426,8 @@
                                 <property name="servicejars.dir" value="${repo.dir}/servicejars"/>
 
                                 <!-- Enable Addressing on the client side -->
-                                <mkdir dir="./target/client-repo/modules/"/>
-                                <copy file="../addressing/target/addressing-${project.version}.mar"
-                                      tofile="./target/client-repo/modules/addressing-${project.version}.mar"/>
+                                <mkdir dir="./target/client-repo/modules/" />
+                                <copy file="../addressing/target/addressing-${project.version}.mar" tofile="./target/client-repo/modules/addressing-${project.version}.mar" />
 
                                 <!-- Enable Addressing on the server side -->
                                 <mkdir dir="${repo.dir}/modules/"/>
@@ -443,18 +440,18 @@
 
                                 <copy toDir="${services.dir}/EchoService/">
                                     <fileset dir="target/test-classes">
-                                        <include name="server/**"/>
+                                        <include name="server/**" />
                                     </fileset>
                                     <fileset dir="test/server">
-                                        <exclude name="**/*.java"/>
+                                        <exclude name="**/*.java" />
                                     </fileset>
                                 </copy>
                                 <copy toDir="${services.dir}/BookStoreService/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/client/soapaction/**"/>
+                                        <include name="org/apache/axis2/jaxws/client/soapaction/**" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/client/soapaction/server">
-                                        <include name="META-INF/**"/>
+                                        <include name="META-INF/**" />
                                     </fileset>
                                 </copy>
 
@@ -467,9 +464,9 @@
                                 <!-- ================================================================ -->
                                 <copy toDir="${servicejars.dir}/WSGenService/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/sample/wsgen/WSGenInterface.class"/>
-                                        <include name="org/apache/axis2/jaxws/sample/wsgen/WSGenImpl.class"/>
-                                        <include name="org/apache/axis2/jaxws/sample/wsgen/jaxws/**"/>
+                                        <include name="org/apache/axis2/jaxws/sample/wsgen/WSGenInterface.class" />
+                                        <include name="org/apache/axis2/jaxws/sample/wsgen/WSGenImpl.class" />
+                                        <include name="org/apache/axis2/jaxws/sample/wsgen/jaxws/**" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/wsgen">
                                         <include name="META-INF/**"/>
@@ -615,7 +612,7 @@
                                         <include name="META-INF/**"/>
                                     </fileset>
                                     <fileset dir="target/schema/classes">
-                                        <include name="org/test/mtom/**"/>
+                                        <include name="org/test/mtom/**" />
                                     </fileset>
                                 </copy>
 
@@ -632,7 +629,7 @@
                                         <include name="META-INF/**"/>
                                     </fileset>
                                     <fileset dir="target/schema/classes">
-                                        <include name="org/apache/axis2/jaxws/sample/mtom1/**"/>
+                                        <include name="org/apache/axis2/jaxws/sample/mtom1/**" />
                                     </fileset>
                                 </copy>
 
@@ -729,10 +726,10 @@
 
                                 <copy toDir="${servicejars.dir}/AddressingProvider/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/provider/addressing/**"/>
+                                        <include name="org/apache/axis2/jaxws/provider/addressing/**" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/addressing/">
-                                        <include name="META-INF/**"/>
+                                        <include name="META-INF/**" />
                                     </fileset>
                                 </copy>
 
@@ -774,7 +771,7 @@
                                 <!-- ================================================================ -->
                                 <copy toDir="${servicejars.dir}/XPayloadStringProvider/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/string/*.class"/>
+                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/string/*.class" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/string">
                                         <include name="META-INF/**"/>
@@ -788,7 +785,7 @@
 
                                 <copy toDir="${servicejars.dir}/XMessageStringProvider/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/string/*.class"/>
+                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/string/*.class" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/string">
                                         <include name="META-INF/**"/>
@@ -802,7 +799,7 @@
 
                                 <copy toDir="${servicejars.dir}/XPayloadSourceProvider/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/source/*.class"/>
+                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/source/*.class" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/source">
                                         <include name="META-INF/**"/>
@@ -816,7 +813,7 @@
 
                                 <copy toDir="${servicejars.dir}/XMessageSourceProvider/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/source/*.class"/>
+                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/source/*.class" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/source">
                                         <include name="META-INF/**"/>
@@ -830,8 +827,7 @@
 
                                 <copy toDir="${servicejars.dir}/XMessageDataSourceProvider/">
                                     <fileset dir="target/test-classes">
-                                        <include
-                                                name="org/apache/axis2/jaxws/xmlhttp/provider/message/datasource/*.class"/>
+                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/datasource/*.class" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/datasource">
                                         <include name="META-INF/**"/>
@@ -862,8 +858,8 @@
 
                                 <copy toDir="${servicejars.dir}/AppleFinderService/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/type_substitution/*"/>
-                                        <include name="org/apache/axis2/jaxws/type_substitution/jaxws/*"/>
+                                        <include name="org/apache/axis2/jaxws/type_substitution/*" />
+                                        <include name="org/apache/axis2/jaxws/type_substitution/jaxws/*" />
                                     </fileset>
                                 </copy>
                                 <zip destfile="${servicejars.dir}/AppleFinderService.jar"
@@ -1158,10 +1154,10 @@
 
                                 <copy toDir="${servicejars.dir}/StringListService/">
                                     <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/sample/stringlist/**"/>
+                                        <include name="org/apache/axis2/jaxws/sample/stringlist/**" />
                                     </fileset>
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/stringlist/">
-                                        <include name="META-INF/**"/>
+                                        <include name="META-INF/**" />
                                     </fileset>
                                 </copy>
                                 <zip destfile="${servicejars.dir}/StringListService.jar"
@@ -1171,7 +1167,7 @@
                                 
 								<copy toDir="${servicejars.dir}/SOAPBindingProviderService/">
 									<fileset dir="target/test-classes">
-									   <include name="org/apache/axis2/jaxws/provider/soapbinding/SOAPBindingProvider**"/>
+									   <include name="org/apache/axis2/jaxws/provider/soapbinding/SOAPBindingProvider**" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding">
 									   <include name="META-INF/**"/>
@@ -1185,7 +1181,7 @@
 						        
 								<copy toDir="${servicejars.dir}/SOAPBindingStringProviderService/">
 									<fileset dir="target/test-classes">
-									   <include name="org/apache/axis2/jaxws/provider/soapbinding/string/**"/>
+									   <include name="org/apache/axis2/jaxws/provider/soapbinding/string/**" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding/string">
 									   <include name="META-INF/**"/>
@@ -1199,7 +1195,7 @@
 						        
 								<copy toDir="${servicejars.dir}/SoapMessageProviderService/">
 									<fileset dir="target/test-classes">
-									   <include name="org/apache/axis2/jaxws/provider/soapbinding/soapmsg/**"/>
+									   <include name="org/apache/axis2/jaxws/provider/soapbinding/soapmsg/**" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding/soapmsg">
 									   <include name="META-INF/**"/>
@@ -1212,18 +1208,18 @@
 						        
 								<copy toDir="${servicejars.dir}/HandlerHeaderService/">
 									<fileset dir="target/test-classes">
-									   <include name="org/apache/axis2/jaxws/handler/header/**"/>
+									   <include name="org/apache/axis2/jaxws/handler/header/**" />
 									</fileset>
 									<fileset dir="test/org/apache/axis2/jaxws/handler/header">
-									   <include name="META-INF/**"/>
-									   <include name="handler.xml"/>									   
+									   <include name="META-INF/**" />
+									   <include name="handler.xml" />									   
 									</fileset>
 									
 								</copy>	
 								<!-- We have to explicitly copy the xml file refered to by the client interface HandlerChain annotation -->
 								<copy toDir="target/test-classes/">
 									<fileset dir="test">
-										<include name="org/apache/axis2/jaxws/handler/header/handler.xml"/>
+										<include name="org/apache/axis2/jaxws/handler/header/handler.xml" />
 									</fileset>
 								</copy>
 								
@@ -1270,8 +1266,8 @@
 						        <delete dir="${servicejars.dir}/OMProviderService"/>      
                                 <copy toDir="target/test-classes/">
                                     <fileset dir="test-resources/">
-                                        <include name="**/*.properties"/>
-                                        <include name="**/axis2.xml"/>
+                                        <include name="**/*.properties" />
+                                        <include name="**/axis2.xml" />
                                     </fileset>
                                 </copy>
                             </tasks>

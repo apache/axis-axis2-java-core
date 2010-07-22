@@ -19,8 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -178,12 +177,11 @@
                         <configuration>
                             <tasks>
                                 <tstamp>
-                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
+                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en" />
                                 </tstamp>
-                                <filter token="axisVersion" value="${project.version}"/>
-                                <filter token="TODAY" value="${build.time}"/>
-                                <copy toDir="${basedir}/target/classes/org/apache/axis2/i18n" overwrite="true"
-                                      filtering="on" file="${basedir}/src/org/apache/axis2/i18n/resource.properties"/>
+                                <filter token="axisVersion" value="${project.version}" />
+                                <filter token="TODAY" value="${build.time}" />
+                                <copy toDir="${basedir}/target/classes/org/apache/axis2/i18n" overwrite="true" filtering="on" file="${basedir}/src/org/apache/axis2/i18n/resource.properties" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -221,9 +219,8 @@
                         <phase>test-compile</phase>
                         <configuration>
                             <tasks unless="maven.test.skip">
-                                <property name="maven.build.dir" location="${basedir}/target"/>
-                                <ant antfile="j2secbuild.xml" inheritall="true" inheritrefs="true"
-                                     dir="test-resources/"/>
+                                <property name="maven.build.dir" location="${basedir}/target" />
+                                <ant antfile="j2secbuild.xml" inheritall="true" inheritrefs="true" dir="test-resources/" />
                             </tasks>
                         </configuration>
                         <goals>

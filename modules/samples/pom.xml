@@ -19,8 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -139,18 +138,16 @@
                         <phase>process-test-resources</phase>
                         <configuration>
                             <tasks unless="maven.test.skip">
-                                <mkdir dir="target/version"/>
+                                <mkdir dir="target/version" />
                                 <jar destfile="target/version/version.jar">
                                     <fileset dir="version/target/classes">
-                                        <include name="sample/axisversion/**"/>
+                                        <include name="sample/axisversion/**" />
                                     </fileset>
                                     <fileset dir="version/src/sample/axisversion/">
-                                        <include name="META-INF/services.xml"/>
+                                        <include name="META-INF/services.xml" />
                                     </fileset>
                                 </jar>
-                                <copy file="target/version/version.jar"
-                                      tofile="target/toWar/services/version.aar"/>
-
+                                <copy file="target/version/version.jar" tofile="target/toWar/services/version.aar" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -162,7 +159,7 @@
                         <phase>test-compile</phase>
                         <configuration>
                             <tasks unless="maven.test.skip">
-                                <property name="maven.build.dir" location="${basedir}/target"/>
+                                <property name="maven.build.dir" location="${basedir}/target" />
                             </tasks>
                         </configuration>
                         <goals>

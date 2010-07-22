@@ -233,9 +233,9 @@
                                           value="${schema.output.base.dir}/classes"/>
                                
                                 <!-- make the dirs -->
-                                <mkdir dir="${schema.output.base.dir}"/>
-                                <mkdir dir="${schema.generated.src.dir}"/>
-                                <mkdir dir="${schema.generated.classes.dir}"/>
+                                <mkdir dir="${schema.output.base.dir}" />
+                                <mkdir dir="${schema.generated.src.dir}" />
+                                <mkdir dir="${schema.generated.classes.dir}" />
 
                                 <!-- Run JAXB schema compiler with designated schemas -->
                                 <echo>Generating JAX-B classes from XSDs</echo>
@@ -250,35 +250,35 @@
 
                                 <echo>Generating java from stock1.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd" />
                                 </java>
 
                                 <echo>Generating java from stock2.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd" />
                                 </java>
 
                                 <echo>Generating java from samplemtom.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd" />
                                 </java>
                                 <echo>Generating java from ProxyDocLitWrapped.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl" />
                                 </java>
                                 <echo>Generating java from AddNumbers.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl" />
                                 </java>                                
                             </tasks>
                         </configuration>
@@ -293,13 +293,12 @@
                             <tasks unless="maven.test.skip">
                                 <copy toDir="target/test-classes/">
                                     <fileset dir="test-resources/">
-                                        <include name="**/*.properties"/>
-                                        <include name="**/axis2.xml"/>
+                                        <include name="**/*.properties" />
+                                        <include name="**/axis2.xml" />
                                     </fileset>
                                 </copy>
-                                <property name="addressing_version" value="${project.version}"/>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                                     dir="." target="build-repo"/>
+                                <property name="addressing_version" value="${project.version}" />
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="." target="build-repo" />
                             </tasks>
                         </configuration>
                         <goals>

@@ -19,8 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -254,15 +253,14 @@
                                 <configuration>
                                     <tasks unless="maven.test.skip">
                                         <!-- Set a property that can be picked up from the ant build.xml's -->
-                                        <property name="maven.class.path" refid="maven.runtime.classpath"/>
+                                        <property name="maven.class.path" refid="maven.runtime.classpath" />
                                         <echo>Building enterprise WSDLs...</echo>
-                                        <property name="axis2.home" value="${basedir}/target"/>
-                                        <property name="maven.junit.jvmargs" value=""/>
+                                        <property name="axis2.home" value="${basedir}/target" />
+                                        <property name="maven.junit.jvmargs" value="" />
                                         <path id="maven.dependency.classpath">
-                                            <path refid="maven.compile.classpath"/>
+                                            <path refid="maven.compile.classpath" />
                                         </path>
-                                        <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
-                                             dir="." target="enterprise-wsdl-codegen"/>
+                                        <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="enterprise-wsdl-codegen" />
                                     </tasks>
                                 </configuration>
                                 <goals>
@@ -334,14 +332,13 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <condition property="test.skip">
-                                    <equals arg1="true" arg2="${maven.test.skip}"/>
+                                    <equals arg1="true" arg2="${maven.test.skip}" />
                                 </condition>
                                 <echo>${test.skip}</echo>
-                                <property name="addressing_version" value="${project.version}"/>
-                                <property name="maven.class.path" refid="maven.runtime.classpath"/>
-                                <property name="maven.test.path" refid="maven.compile.classpath"/>
-                                <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
-                                     dir="." target="generate-test-sources"/>
+                                <property name="addressing_version" value="${project.version}" />
+                                <property name="maven.class.path" refid="maven.runtime.classpath" />
+                                <property name="maven.test.path" refid="maven.compile.classpath" />
+                                <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="generate-test-sources" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -354,20 +351,19 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <condition property="test.skip">
-                                    <equals arg1="true" arg2="${maven.test.skip}"/>
+                                    <equals arg1="true" arg2="${maven.test.skip}" />
                                 </condition>
                                 <echo>${test.skip}</echo>
-                                <property name="addressing_version" value="${project.version}"/>
-                                <property name="groovy.all.version" value="${groovy.all.version}"/>
-                                <property name="maven.repo.local" value="${settings.localRepository}"/>
+                                <property name="addressing_version" value="${project.version}" />
+                                <property name="groovy.all.version" value="${groovy.all.version}" />
+                                <property name="maven.repo.local" value="${settings.localRepository}" />
                                 <property name="maven.class.path" refid="maven.runtime.classpath"/>
 
                                 <path id="maven.dependency.classpath">
-                                    <path refid="maven.compile.classpath"/>
-                                    <path refid="maven.runtime.classpath"/>
+                                    <path refid="maven.compile.classpath" />
+                                    <path refid="maven.runtime.classpath" />
                                 </path>
-                                <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
-                                     dir="." target="build-repos"/>
+                                <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="build-repos" />
                             </tasks>
                         </configuration>
                         <goals>
