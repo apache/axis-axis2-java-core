@@ -26,6 +26,7 @@ import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +38,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimePartDataSource;
 import javax.xml.bind.attachment.AttachmentMarshaller;
 import javax.xml.stream.XMLStreamWriter;
+
+import java.security.PrivilegedAction;
 
 /**
  * An implementation of the JAXB AttachmentMarshaller that is used to handle binary data from JAXB
@@ -113,12 +116,23 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         
         try {
             // Create MIME Body Part
-            InternetHeaders ih = new InternetHeaders();
+            final InternetHeaders ih = new InternetHeaders();
+            final byte[] dataArray = data; 
             ih.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, mimeType);
-            MimeBodyPart mbp = new MimeBodyPart(ih, data);
+            final MimeBodyPart mbp = (MimeBodyPart) AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    try {
+                        return new MimeBodyPart(ih, dataArray);
+                    } catch (MessagingException e) {
+                        throw new OMException(e);
+                    }
+                }});
 
             //Create a data source for the MIME Body Part
-            MimePartDataSource mpds = new MimePartDataSource(mbp);
+            MimePartDataSource mpds = (MimePartDataSource) AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    return new MimePartDataSource(mbp);
+                }});
             long dataLength =data.length;
             Integer value = null;
             if (msgContext != null) {
