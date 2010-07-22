@@ -19,8 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -116,13 +115,13 @@
                         <configuration>
                             <tasks>
                                 <tstamp>
-                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
+                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en" />
                                 </tstamp>
                                 <copy toDir="${basedir}/target/classes/" overwrite="true" filtering="on">
-                                    <fileset dir="${basedir}/src/" includes="**/*.xsl"/>
+                                    <fileset dir="${basedir}/src/" includes="**/*.xsl" />
                                     <filterset begintoken="#" endtoken="#">
-                                        <filter token="axisVersion" value="${project.version}"/>
-                                        <filter token="today" value=" Built on : ${build.time}"/>
+                                        <filter token="axisVersion" value="${project.version}" />
+                                        <filter token="today" value=" Built on : ${build.time}" />
                                     </filterset>
                                 </copy>
                             </tasks>
@@ -136,20 +135,18 @@
                         <phase>generate-test-sources</phase>
                         <configuration>
                             <tasks unless="maven.test.skip">
-                                <property name="maven.junit.jvmargs" value=""/>
+                                <property name="maven.junit.jvmargs" value="" />
                                 <path id="maven.dependency.classpath">
-                                    <path refid="maven.compile.classpath"/>
+                                    <path refid="maven.compile.classpath" />
                                 </path>
-                                <property name="compiled.classes.dir" value="target/classes"/>
+                                <property name="compiled.classes.dir" value="target/classes" />
                                 <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="test-resources/xsd"/>
-                                <property name="testsuite.source.dir" value="test-resources/testsuite"/>
-                                <property name="schema.output.base.dir" value="target/schema"/>
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src"/>
-                                <property name="schema.generated.classes.dir"
-                                          value="${schema.output.base.dir}/classes"/>
-                                <ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="."
-                                     target="main"/>
+                                <property name="schema.source.dir" value="test-resources/xsd" />
+                                <property name="testsuite.source.dir" value="test-resources/testsuite" />
+                                <property name="schema.output.base.dir" value="target/schema" />
+                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
+                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
+                                <ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="." target="main" />
                             </tasks>
                         </configuration>
                         <goals>

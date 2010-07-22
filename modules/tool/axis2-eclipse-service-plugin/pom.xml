@@ -19,8 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -231,7 +230,7 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <!-- Exclude imports that are actually not used -->
                         <Import-Package>!org.dom4j*,!nu.xom,!org.jdom*,!javax.portlet,!org.apache.commons.io*,*</Import-Package>
-                        <Export-Package></Export-Package>
+                        <Export-Package />
                         <Bundle-Name>Axis2 Service Maker</Bundle-Name>
                         <Bundle-Activator>org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver</Bundle-Activator>
                         <Bundle-SymbolicName>org.apache.axis2.eclipse.service.plugin;singleton:=true</Bundle-SymbolicName>
