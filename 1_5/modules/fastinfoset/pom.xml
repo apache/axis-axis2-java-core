@@ -19,8 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -167,49 +166,48 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
-                                <property name="maven.class.path" refid="maven.runtime.classpath"/>
-                                <property name="maven.test.path" refid="maven.compile.classpath"/>
+                                <property name="maven.class.path" refid="maven.runtime.classpath" />
+                                <property name="maven.test.path" refid="maven.compile.classpath" />
                                 <!-- copy the mars so that they are available on the test classpath -->
-                                <copy file="../addressing/target/addressing-${project.version}.mar"
-                                      tofile="target/test-classes/modules/addressing-${project.version}.mar"/>
+                                <copy file="../addressing/target/addressing-${project.version}.mar" tofile="target/test-classes/modules/addressing-${project.version}.mar" />
 
-                                <property name="axis2.home" value="${basedir}/target"/>
+                                <property name="axis2.home" value="${basedir}/target" />
                                 <path id="maven.dependency.classpath">
-                                    <path refid="maven.compile.classpath"/>
+                                    <path refid="maven.compile.classpath" />
                                 </path>
                                 <!-- compiling some custom wsdl files -->
-                                <property name="wsdl.source.dir" value="test-resources/wsdl"/>
-                                <property name="wsdl.output.base.dir" value="target/wsdl"/>
+                                <property name="wsdl.source.dir" value="test-resources/wsdl" />
+                                <property name="wsdl.output.base.dir" value="target/wsdl" />
                                 <!-- make the dirs -->
-                                <mkdir dir="${wsdl.output.base.dir}"/>
+                                <mkdir dir="${wsdl.output.base.dir}" />
                                 <echo>Compiling Service class</echo>
                                 <javac fork="true" destdir="target/test-classes" debug="on">
-                                    <classpath refid="maven.dependency.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <include name="**/*SimpleAddService.java"/>
-                                    <src path="test/"/>
+                                    <classpath refid="maven.dependency.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <include name="**/*SimpleAddService.java" />
+                                    <src path="test/" />
                                 </javac>
                                 <echo>Generating the WSDL</echo>
                                 <java classname="org.apache.ws.java2wsdl.Java2WSDL" fork="true">
                                     <classpath>
-                                        <path refid="maven.dependency.classpath"/>
-                                        <pathelement location="target/test-classes"/>
+                                        <path refid="maven.dependency.classpath" />
+                                        <pathelement location="target/test-classes" />
                                     </classpath>
-                                    <arg line="-o target/test-classes -of SimpleAddService.wsdl -efd unqualified -cn org.apache.axis2.fastinfoset.SimpleAddService"/>
+                                    <arg line="-o target/test-classes -of SimpleAddService.wsdl -efd unqualified -cn org.apache.axis2.fastinfoset.SimpleAddService" />
                                 </java>
 
                                 <echo>Compiling SimpleAddService.wsdl</echo>
-                                <mkdir dir="${wsdl.output.base.dir}/simpleAddService"/>
+                                <mkdir dir="${wsdl.output.base.dir}/simpleAddService" />
 
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or" />
                                 </java>
                                 <javac fork="true" destdir="target/classes" debug="on">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <src path="target/wsdl/simpleAddService"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <src path="target/wsdl/simpleAddService" />
                                 </javac>
 
                             </tasks>

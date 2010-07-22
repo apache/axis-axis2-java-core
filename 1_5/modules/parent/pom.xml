@@ -19,9 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
@@ -340,7 +338,6 @@
             <name>Davanum Srinivas</name>
             <id>dims</id>
             <email>davanum AT gmail.com</email>
-            <organization></organization>
         </developer>
         <developer>
             <name>Jayachandra Sekhara Rao Sunkara</name>
@@ -374,7 +371,6 @@
             <name>Eranga Jayasundera</name>
             <id>eranga</id>
             <email>eranga AT apache.org</email>
-            <organization></organization>
         </developer>
         <developer>
             <name>Sanjiva Weerawarana</name>
@@ -403,7 +399,6 @@
         </contributor>
         <contributor>
             <name>Dharshana Dias</name>
-            <email/>
             <organization>Lanka Software Foundation / University of Moratuwa</organization>
         </contributor>
         <contributor>
@@ -428,7 +423,6 @@
         </contributor>
         <contributor>
             <name>Chinthaka Thilakarathne</name>
-            <email/>
             <organization>Lanka Software Foundation / University of Moratuwa</organization>
         </contributor>
 

@@ -19,9 +19,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
@@ -160,16 +158,16 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <mkdir dir="target/lib"/>
+                                <mkdir dir="target/lib" />
                                 <jar destfile="target/lib/axis2-${pom.version}.jar">
-                                    <fileset dir="modules/java2wsdl/target/classes"/>
-                                    <fileset dir="modules/kernel/target/classes"/>
-                                    <fileset dir="modules/addressing/target/classes"/>
-                                    <fileset dir="modules/codegen/target/classes"/>
-                                    <fileset dir="modules/adb/target/classes"/>
-                                    <fileset dir="modules/adb-codegen/target/classes"/>
-                                    <fileset dir="modules/xmlbeans/target/classes"/>
-                                    <fileset dir="modules/clustering/target/classes"/>
+                                    <fileset dir="modules/java2wsdl/target/classes" />
+                                    <fileset dir="modules/kernel/target/classes" />
+                                    <fileset dir="modules/addressing/target/classes" />
+                                    <fileset dir="modules/codegen/target/classes" />
+                                    <fileset dir="modules/adb/target/classes" />
+                                    <fileset dir="modules/adb-codegen/target/classes" />
+                                    <fileset dir="modules/xmlbeans/target/classes" />
+                                    <fileset dir="modules/clustering/target/classes" />
                                 </jar>
                             </tasks>
                         </configuration>
