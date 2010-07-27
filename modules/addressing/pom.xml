@@ -72,6 +72,21 @@
         </testResources>
         <plugins>
             <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${pom.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
@@ -87,6 +102,19 @@
                 <configuration>
                     <includeDependencies>false</includeDependencies>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>classpath-module</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
