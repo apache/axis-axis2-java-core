@@ -31,6 +31,7 @@
     <version>SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Axis2 - Root</name>
+    <inceptionYear>2004</inceptionYear>
     <modules>
         <module>modules/resource-bundle</module> <!-- Must be first in the list! -->
         <module>modules/adb</module>
@@ -144,50 +145,35 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>axis2-jar</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/lib" />
-                                <jar destfile="target/lib/axis2-${pom.version}.jar">
-                                    <fileset dir="modules/java2wsdl/target/classes" />
-                                    <fileset dir="modules/kernel/target/classes" />
-                                    <fileset dir="modules/addressing/target/classes" />
-                                    <fileset dir="modules/codegen/target/classes" />
-                                    <fileset dir="modules/adb/target/classes" />
-                                    <fileset dir="modules/adb-codegen/target/classes" />
-                                    <fileset dir="modules/xmlbeans/target/classes" />
-                                    <fileset dir="modules/clustering/target/classes" />
-                                </jar>
-                            </tasks>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>process</goal>
                         </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${pom.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <!-- Note: the pluginManagement in axis2-parent doesn't apply here; thus
+                     we need to specify the version if we want a predictable build! -->
+                <version>2.2-beta-5</version>
                 <executions>
                     <execution>
-                        <id>axis2-jar-package</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>attach-artifact</goal>
+                            <goal>single</goal>
                         </goals>
                         <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>target/lib/axis2-${pom.version}.jar</file>
-                                    <type>jar</type>
-                                </artifact>
-                            </artifacts>
+                            <descriptors>
+                                <descriptor>src/main/assembly/jar.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
