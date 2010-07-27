@@ -1209,10 +1209,6 @@
                     <version>2.1-beta-1</version>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-remote-resources-plugin</artifactId>
-                    <version>1.0</version>                
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.4</version>
