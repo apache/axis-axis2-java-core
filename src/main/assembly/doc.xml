@@ -28,22 +28,12 @@
 
     <fileSets>
         <fileSet>
-            <directory>target/tmp-doc-distro/xdocs</directory>
-            <outputDirectory>docs/xdocs</outputDirectory>
-            <excludes>
-                <exclude>.svn/**</exclude>
-            </excludes>
+            <directory>${project.reporting.outputDirectory}</directory>
+            <outputDirectory>site</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>../../modules/documentation/target/apidocs</directory>
-            <outputDirectory>docs/javadocs</outputDirectory>
-            <excludes>
-                <exclude>.svn/**</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
-            <outputDirectory>docs</outputDirectory>
+            <directory>.</directory>
+            <outputDirectory>/</outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>
                 <include>README.txt</include>
@@ -51,7 +41,8 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
+            <!-- TODO: need to enable variable substitution for this file! -->
+            <directory>release-docs/readme-files</directory>
 	    <outputDirectory></outputDirectory>
 	    <includes>
 	       <include>README-docs.txt</include>

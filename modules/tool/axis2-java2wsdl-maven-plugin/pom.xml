@@ -79,7 +79,7 @@
             <artifactId>maven-plugin-testing-harness</artifactId>
         </dependency>
     </dependencies>
-    <reporting>
+    <!--reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -97,5 +97,5 @@
                 </reportSets>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting-->
 </project>

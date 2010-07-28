@@ -97,7 +97,7 @@
             <email>john.pfeifer@hnpsolutions.com</email>
         </contributor>
     </contributors>
-    <reporting>
+    <!--reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -115,5 +115,5 @@
                 </reportSets>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting-->
 </project>
