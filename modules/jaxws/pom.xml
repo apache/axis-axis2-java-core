@@ -165,7 +165,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
