@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,6 +83,7 @@ public class SAAJConverterImpl implements SAAJConverter {
             throws WebServiceException {
     	if (log.isDebugEnabled()) {
     	    log.debug("Converting OM SOAPEnvelope to SAAJ SOAPEnvelope");
+    	    log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}
     	
         SOAPEnvelope soapEnvelope = null;
@@ -131,6 +133,7 @@ public class SAAJConverterImpl implements SAAJConverter {
             throws WebServiceException {
     	if (log.isDebugEnabled()) {
     	    log.debug("Converting SAAJ SOAPEnvelope to an OM SOAPEnvelope");
+    	    log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}    	
     	
     	// Before we do the conversion, we have to fix the QNames for fault elements
@@ -174,6 +177,7 @@ public class SAAJConverterImpl implements SAAJConverter {
             throws WebServiceException {
     	if (log.isDebugEnabled()) {
     	    log.debug("Converting SAAJ SOAPEnvelope String to an OM SOAPEnvelope");
+    	    log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	} 
     	
         XMLStreamReader reader;
@@ -202,6 +206,7 @@ public class SAAJConverterImpl implements SAAJConverter {
     public OMElement toOM(SOAPElement soapElement) throws WebServiceException {
     	if (log.isDebugEnabled()) {
     		log.debug("Converting SAAJ SOAPElement to an OMElement");
+    		log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}
     	
         // Get a XMLStreamReader backed by a SOAPElement tree
@@ -227,6 +232,7 @@ public class SAAJConverterImpl implements SAAJConverter {
     public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent) throws WebServiceException {
     	if (log.isDebugEnabled()) {
     		log.debug("Converting OMElement to an SAAJ SOAPElement");
+    		log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}
     	
     	XMLStreamReader reader = null;
@@ -260,6 +266,7 @@ public class SAAJConverterImpl implements SAAJConverter {
             throws WebServiceException {
     	if (log.isDebugEnabled()) {
     		log.debug("Converting OMElement to an SAAJ SOAPElement");
+    		log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}
     	
     	XMLStreamReader reader = null;
@@ -707,6 +714,9 @@ public class SAAJConverterImpl implements SAAJConverter {
 
     public MessageFactory createMessageFactory(String namespace)
             throws SOAPException, WebServiceException {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating a SAAJ MessageFactory "  + JavaUtils.stackToString());
+        }
         return SAAJFactory.createMessageFactory(namespace);
     }
 }
