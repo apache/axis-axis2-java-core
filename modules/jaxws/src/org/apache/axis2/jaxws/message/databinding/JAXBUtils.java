@@ -209,7 +209,9 @@ public class JAXBUtils {
                 log.debug(pkg);
             }
         }
-        JAXBUtilsMonitor.addPackageKey(contextPackages.toString());
+        if (JAXBUtilsMonitor.isMonitoring()) {
+            JAXBUtilsMonitor.addPackageKey(contextPackages.toString());
+        }
 
         // Get or Create The InnerMap using the package key
         ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
