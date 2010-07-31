@@ -86,7 +86,6 @@
                 </property>
             </activation>
             <modules>
-                <!-- module>modules/documentation</module -->
                 <module>modules/distribution</module>
             </modules>
         </profile>
