@@ -56,6 +56,11 @@
             <artifactId>commons-logging</artifactId>
         </dependency>
     </dependencies>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/corba</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/corba</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/corba</url>
+    </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>

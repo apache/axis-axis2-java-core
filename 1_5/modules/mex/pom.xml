@@ -38,6 +38,11 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/mex</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/mex</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/mex</url>
+    </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>

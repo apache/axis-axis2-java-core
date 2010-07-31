@@ -32,6 +32,11 @@
     <description>
         A Intellij IDEA plugin for Service Archive creation and Code Generation
     </description>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-idea-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-idea-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-idea-plugin</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>

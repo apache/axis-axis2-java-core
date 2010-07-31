@@ -31,10 +31,9 @@
     <name>Apache Axis2 - SAAJ</name>
     <description>Axis2 SAAJ implementation</description>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/saaj</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/saaj
-        </developerConnection>
-        <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/saaj</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/saaj</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/saaj</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/saaj</url>
     </scm>
     <dependencies>
         <dependency>

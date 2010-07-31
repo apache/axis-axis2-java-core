@@ -49,6 +49,11 @@
             <artifactId>ant-launcher</artifactId>
         </dependency>
     </dependencies>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/xmlbeans</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/xmlbeans</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/xmlbeans</url>
+    </scm>
     <build>
         <resources>
             <resource>

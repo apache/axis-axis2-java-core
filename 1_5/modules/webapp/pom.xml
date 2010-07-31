@@ -28,6 +28,11 @@
     <artifactId>axis2-webapp</artifactId>
     <packaging>war</packaging>
     <name>Apache Axis2 - Web Application module</name>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/webapp</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/webapp</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/webapp</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>commons-io</groupId>

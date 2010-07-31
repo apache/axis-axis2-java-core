@@ -1129,14 +1129,11 @@
             </build>
         </profile>
     </profiles>
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_5</connection>
-    <developerConnection>
-      scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_5
-    </developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/webservices/axis2/branches/java/1_5</url>
-  </scm>
-
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/parent</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/parent</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/parent</url>
+    </scm>
     <distributionManagement>
         <repository>
             <id>apache-repo</id>
