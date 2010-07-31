@@ -183,6 +183,11 @@
             <type>aar</type>
         </dependency>
     </dependencies>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/distribution</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/distribution</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/distribution</url>
+    </scm>
     <build>
         <plugins>
             <plugin>

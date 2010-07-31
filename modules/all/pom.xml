@@ -171,6 +171,11 @@
 
     </dependencies>
 
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/all</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/all</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/all</url>
+    </scm>
     <build>
         <plugins>
             <plugin>

@@ -31,6 +31,11 @@
     <name>Apache Axis2 - tool - WSDL2Code Maven Plugin</name>
     <packaging>maven-plugin</packaging>
     <description>The Axis 2 Plugin for Maven allows client side and server side sources from a WSDL.</description>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-wsdl2code-maven-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-wsdl2code-maven-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/tool/axis2-wsdl2code-maven-plugin</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>

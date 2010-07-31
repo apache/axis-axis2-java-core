@@ -47,6 +47,11 @@
             <artifactId>neethi</artifactId>
         </dependency>
     </dependencies>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/mtompolicy-mar</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/mtompolicy-mar</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/mtompolicy-mar</url>
+    </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <resources>
