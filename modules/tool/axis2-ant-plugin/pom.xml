@@ -30,6 +30,11 @@
     <artifactId>axis2-ant-plugin</artifactId>
     <name>Apache Axis2 - tool - Ant Plugin</name>
     <description>The Axis 2 Plugin for Ant Tasks.</description>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-ant-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-ant-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-ant-plugin</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
