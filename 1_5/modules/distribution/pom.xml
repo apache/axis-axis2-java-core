@@ -190,7 +190,6 @@
                 <!-- This builds the Axis2 repository with the modules and services -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
