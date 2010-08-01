@@ -1262,6 +1262,14 @@
                     <artifactId>axis2-mar-maven-plugin</artifactId>
                     <version>${project.version}</version>
                 </plugin>
+                
+                <!-- No chicken and egg problem here because the plugin doesn't expose
+                     any extension. We can always use the version from the current build. -->
+                <plugin>
+                    <groupId>org.apache.axis2</groupId>
+                    <artifactId>axis2-repo-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
