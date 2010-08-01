@@ -21,8 +21,10 @@ package org.apache.axis2.maven2.repo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -126,6 +128,14 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      */
     private boolean useModules;
     
+    /**
+     * Specifies whether the plugin should generate <tt>services.list</tt> and <tt>modules.list</tt>
+     * files.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean generateFileLists;
+    
     protected abstract String getScope();
     
     protected abstract File getOutputDirectory();
@@ -151,18 +161,16 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
         }
         artifacts = replaceIncompleteArtifacts(artifacts);
         File outputDirectory = getOutputDirectory();
-        File servicesDirectory = new File(outputDirectory, this.servicesDirectory);
-        File modulesDirectory = new File(outputDirectory, this.modulesDirectory);
+        Map<String,ArchiveDeployer> deployers = new HashMap<String,ArchiveDeployer>();
+        deployers.put("aar", new ArchiveDeployer(outputDirectory, servicesDirectory, "services.list", generateFileLists));
+        deployers.put("mar", new ArchiveDeployer(outputDirectory, modulesDirectory, "modules.list", generateFileLists));
         for (Artifact artifact : artifacts) {
             String type = artifact.getType();
-            String destFileName = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + type;
-            File targetDir = type.equals("mar") ? modulesDirectory : servicesDirectory;
-            getLog().info("Adding " + destFileName);
-            try {
-                FileUtils.copyFile(artifact.getFile(), new File(targetDir, destFileName));
-            } catch (IOException ex) {
-                throw new MojoExecutionException("Error copying " + destFileName + ": " + ex.getMessage(), ex);
+            ArchiveDeployer deployer = deployers.get(type);
+            if (deployer == null) {
+                throw new MojoExecutionException("No deployer found for artifact type " + type);
             }
+            deployer.deploy(getLog(), artifact);
         }
         if (axis2xml != null) {
             getLog().info("Copying axis2.xml");
@@ -173,6 +181,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
             } catch (IOException ex) {
                 throw new MojoExecutionException("Error copying axis2.xml file: " + ex.getMessage(), ex);
             }
+        }
+        for (ArchiveDeployer deployer : deployers.values()) {
+            deployer.finish(getLog());
         }
     }
 
