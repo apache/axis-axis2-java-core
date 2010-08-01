@@ -136,6 +136,20 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      */
     private boolean generateFileLists;
     
+    /**
+     * Specifies whether the plugin strips version numbers from AAR files.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean stripServiceVersion;
+    
+    /**
+     * Specifies whether the plugin strips version numbers from MAR files.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean stripModuleVersion;
+    
     protected abstract String getScope();
     
     protected abstract File getOutputDirectory();
@@ -162,8 +176,8 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
         artifacts = replaceIncompleteArtifacts(artifacts);
         File outputDirectory = getOutputDirectory();
         Map<String,ArchiveDeployer> deployers = new HashMap<String,ArchiveDeployer>();
-        deployers.put("aar", new ArchiveDeployer(outputDirectory, servicesDirectory, "services.list", generateFileLists));
-        deployers.put("mar", new ArchiveDeployer(outputDirectory, modulesDirectory, "modules.list", generateFileLists));
+        deployers.put("aar", new ArchiveDeployer(outputDirectory, servicesDirectory, "services.list", generateFileLists, stripServiceVersion));
+        deployers.put("mar", new ArchiveDeployer(outputDirectory, modulesDirectory, "modules.list", generateFileLists, stripModuleVersion));
         for (Artifact artifact : artifacts) {
             String type = artifact.getType();
             ArchiveDeployer deployer = deployers.get(type);

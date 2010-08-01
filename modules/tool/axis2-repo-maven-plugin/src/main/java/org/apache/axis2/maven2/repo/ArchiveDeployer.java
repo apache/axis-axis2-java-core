@@ -40,16 +40,25 @@ public class ArchiveDeployer {
     private final File directory;
     private final String fileListName;
     private final boolean generateFileList;
+    private final boolean stripVersion;
     private final List<String> files = new ArrayList<String>();
     
-    public ArchiveDeployer(File repositoryDirectory, String directory, String fileListName, boolean generateFileList) {
+    public ArchiveDeployer(File repositoryDirectory, String directory, String fileListName, boolean generateFileList, boolean stripVersion) {
         this.directory = new File(repositoryDirectory, directory);
         this.fileListName = fileListName;
         this.generateFileList = generateFileList;
+        this.stripVersion = stripVersion;
     }
     
     public void deploy(Log log, Artifact artifact) throws MojoExecutionException {
-        String destFileName = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
+        StringBuilder buffer = new StringBuilder(artifact.getArtifactId());
+        if (!stripVersion) {
+            buffer.append("-");
+            buffer.append(artifact.getVersion());
+        }
+        buffer.append(".");
+        buffer.append(artifact.getType());
+        String destFileName = buffer.toString();
         log.info("Adding " + destFileName);
         try {
             FileUtils.copyFile(artifact.getFile(), new File(directory, destFileName));
