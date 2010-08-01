@@ -28,7 +28,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>mex</artifactId>
-    <packaging>jar</packaging>
+    <packaging>mar</packaging>
     <name>Apache Axis2 - MEX</name>
     <description>WS-Metadata Exchange implementation</description>
     <dependencies>
@@ -90,32 +90,35 @@
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-mar-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>generate-mar</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>mar</goal>
-                        </goals>
-                        <configuration>
-                            <includeDependencies>false</includeDependencies>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <includeDependencies>false</includeDependencies>
+                </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
-                  <execution>
-                    <phase>package</phase>
-                    <goals>
-                      <goal>jar</goal>
-                    </goals>
-                    <configuration>
-                      <classifier>impl</classifier>
-                    </configuration>
-                  </execution>
+                    <execution>
+                        <id>classpath-module</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>classpath-module</classifier>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- This JAR is used by Rampart; see AXIS2-3745 -->
+                        <id>impl</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>impl</classifier>
+                            <excludes>
+                                <exclude>META-INF/module.xml</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

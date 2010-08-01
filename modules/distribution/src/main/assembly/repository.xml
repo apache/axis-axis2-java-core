@@ -32,15 +32,6 @@
                 <include>*:*:mar</include>
             </includes>
         </dependencySet>
-        <dependencySet>
-            <!-- TODO: mex is not available as a mar artifact; this is obviously an issue -->
-            <outputDirectory>modules</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.apache.axis2:mex:jar</include>
-            </includes>
-            <outputFileNameMapping>${artifact.artifactId}-${artifact.version}.mar</outputFileNameMapping>
-        </dependencySet>
         <!-- Add services to the repository -->
         <dependencySet>
             <outputDirectory>services</outputDirectory>
