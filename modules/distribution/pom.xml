@@ -187,57 +187,16 @@
     <build>
         <plugins>
             <plugin>
-                <!-- This builds the Axis2 repository with the modules and services -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>directory-single</goal>
+                            <goal>create-repository</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                            <finalName>tmp-repository</finalName>
-                            <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/main/assembly/repository.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- This generates the modules.list and services.list files -->
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <source>
-                                def modulesdir = new File(project.build.directory, "tmp-repository/modules");
-                                def moduleslist = new File(modulesdir, "modules.list");
-                                moduleslist.delete();
-                                modulesdir.eachFile({
-                                    if (it.name.endsWith(".mar")) {
-                                        moduleslist.append("$it.name\n");
-                                    }
-                                })
-                                
-                                def servicesdir = new File(project.build.directory, "tmp-repository/services");
-                                def serviceslist = new File(servicesdir, "services.list");
-                                serviceslist.delete();
-                                servicesdir.eachFile({
-                                    if (it.name.endsWith(".aar")) {
-                                        serviceslist.append("$it.name\n");
-                                    }
-                                })
-                            </source>
+                            <outputDirectory>${project.build.directory}/tmp-repository</outputDirectory>
+                            <generateFileLists>true</generateFileLists>
                         </configuration>
                     </execution>
                 </executions>

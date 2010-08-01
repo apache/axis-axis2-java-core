@@ -26,7 +26,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Creates an Axis2 repository from the project's dependencies in scope test. Note that this goal
+ * Creates an Axis2 repository from the project's dependencies in scope test. This goal is
+ * typically used to build an Axis2 repository for use during unit tests. Note that this goal
  * is skipped if the <code>maven.test.skip</code> property is set to <code>true</code>.
  * 
  * @goal create-test-repository
