@@ -22,7 +22,6 @@ package org.apache.axis2.maven2.repo;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -43,13 +42,6 @@ import org.codehaus.plexus.util.FileUtils;
 
 public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     /**
-     * @parameter expression="${project}"
-     * @readonly
-     * @required
-     */
-    private MavenProject project;
-    
-    /**
      * @component
      */
     private ArtifactFactory factory;
@@ -60,11 +52,18 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     private ArtifactResolver resolver;
     
     /**
+     * @parameter expression="${project.artifacts}"
+     * @readonly
+     * @required
+     */
+    private Set<Artifact> projectArtifacts;
+    
+    /**
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @readonly
      * @required
      */
-    protected List remoteRepositories;
+    private List remoteRepositories;
     
     /**
      * @parameter expression="${localRepository}"
@@ -72,6 +71,13 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      * @required
      */
     private ArtifactRepository localRepository;
+    
+    /**
+     * @parameter expression="${project.collectedProjects}"
+     * @required
+     * @readonly
+     */
+    private List<MavenProject> collectedProjects;
     
     /**
      * The directory (relative to the repository root) where AAR files are copied. This should be
@@ -105,12 +111,36 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      */
     private String configurationDirectory;
     
+    /**
+     * Specifies whether the plugin should scan the project dependencies for AAR and MAR artifacts.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean useDependencies;
+    
+    /**
+     * Specifies whether the plugin should scan Maven modules for AAR and MAR artifacts. This
+     * parameter only has an effect for multimodule projects.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean useModules;
+    
     protected abstract String getScope();
     
     protected abstract File getOutputDirectory();
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Set artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = new HashSet<Artifact>();
+        if (useDependencies) {
+            artifacts.addAll(projectArtifacts);
+        }
+        if (useModules) {
+            for (MavenProject project : collectedProjects) {
+                artifacts.add(project.getArtifact());
+                artifacts.addAll(project.getAttachedArtifacts());
+            }
+        }
         FilterArtifacts filter = new FilterArtifacts();
         filter.addFilter(new ScopeFilter(getScope(), null));
         filter.addFilter(new TypeFilter("aar,mar", null));
@@ -123,8 +153,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
         File outputDirectory = getOutputDirectory();
         File servicesDirectory = new File(outputDirectory, this.servicesDirectory);
         File modulesDirectory = new File(outputDirectory, this.modulesDirectory);
-        for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
-            Artifact artifact = (Artifact)it.next();
+        for (Artifact artifact : artifacts) {
             String type = artifact.getType();
             String destFileName = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + type;
             File targetDir = type.equals("mar") ? modulesDirectory : servicesDirectory;
@@ -157,10 +186,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      * @return a set of {@link Artifact} objects built as described above
      * @throws MojoExecutionException
      */
-    private Set replaceIncompleteArtifacts(Set artifacts) throws MojoExecutionException {
-        Set result = new HashSet();
-        for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
-            Artifact artifact = (Artifact)it.next();
+    private Set<Artifact> replaceIncompleteArtifacts(Set<Artifact> artifacts) throws MojoExecutionException {
+        Set<Artifact> result = new HashSet<Artifact>();
+        for (Artifact artifact : artifacts) {
             File file = artifact.getFile();
             if (file != null && file.isDirectory()) {
                 artifact = factory.createDependencyArtifact(artifact.getGroupId(), artifact.getArtifactId(),
