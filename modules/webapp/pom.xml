@@ -1105,7 +1105,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-scripting</artifactId>
+            <artifactId>scripting</artifactId>
             <version>${project.version}</version>
             <type>mar</type>
             <exclusions>
