@@ -59,6 +59,7 @@
         <module>modules/tool/axis2-idea-plugin</module>
         <module>modules/tool/axis2-java2wsdl-maven-plugin</module>
         <module>modules/tool/axis2-mar-maven-plugin</module>
+        <module>modules/tool/axis2-repo-maven-plugin</module>
         <module>modules/tool/axis2-wsdl2code-maven-plugin</module>
         <module>modules/webapp</module>
         <module>modules/xmlbeans</module>
