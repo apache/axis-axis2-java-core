@@ -258,7 +258,6 @@
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/src-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/bin-assembly.xml</descriptor>
-                                <descriptor>src/main/assembly/doc-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -271,68 +270,6 @@
                 <version>${maven.antrun.version}</version>
                 <inherited>false</inherited>
                 <executions>
-                    <execution>
-                        <id>package</id>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <tasks>
-                                <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}">
-                                    <fileset dir="../documentation/xdocs/@axis2_version_dir@">
-                                        <exclude name="**/*.xml"/>
-                                    </fileset>
-                                </copy>
-
-                                <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
-                                <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}" filtering="on"
-                                      overwrite="true">
-                                    <globmapper from="*.xml" to="*.html"/>
-                                    <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
-                                </copy>
-
-                                <filter token="axisVersion" value="${project.version}"/>
-                                <tstamp>
-                                    <format property="TODAY" pattern="dd-MM-yyyy"/>
-                                </tstamp>
-                                <filter token="TODAY" value="${TODAY}"/>
-                                <copy toDir="target/tmp-doc-distro/docs" filtering="on" overwrite="true">
-                                    <fileset dir="../..">
-                                        <include name="LICENSE.txt"/>
-                                        <include name="README.txt"/>
-                                        <include name="release-notes.html"/>
-                                    </fileset>
-                                    <fileset dir="../../release-docs/readme-files">
-                                        <include name="*.txt"/>
-                                    </fileset>
-                                </copy>
-
-                                <copy toDir="target/tmp-doc-distro/xdocs" filtering="on" overwrite="true">
-                                    <globmapper from="*.xml" to="*.html"/>
-                                    <fileset dir="../documentation/xdocs">
-                                        <exclude name="@axis2_version_dir@/**"/>
-                                        <exclude name="**/*.gif"/>
-                                        <exclude name="**/*.jpg"/>
-                                        <exclude name="**/*.png"/>
-                                    </fileset>
-                                </copy>
-
-                                <copy toDir="target/tmp-doc-distro/xdocs" filtering="off" overwrite="true">
-                                    <fileset dir="../documentation/xdocs">
-                                        <exclude name="@axis2_version_dir@/**"/>
-                                        <include name="**/*.gif"/>
-                                        <include name="**/*.jpg"/>
-                                        <include name="**/*.png"/>
-                                        <include name="**/*.css"/>
-                                        <include name="**/*.xsd"/>
-                                        <include name="**/*.cgi"/>
-                                        <include name="**/*.properties"/>
-                                    </fileset>
-                                </copy>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
                     <execution>
                         <id>delete-temporary-files</id>
                         <phase>install</phase>
