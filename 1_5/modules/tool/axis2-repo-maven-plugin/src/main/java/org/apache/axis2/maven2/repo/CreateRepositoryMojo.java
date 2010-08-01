@@ -24,10 +24,11 @@ import java.io.File;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * Creates an Axis2 repository from the project's runtime dependencies.
+ * Creates an Axis2 repository from the project's runtime dependencies. This goal is typically
+ * used to build an Axis2 repository that will be packaged into some kind of distribution.
  * 
  * @goal create-repository
- * @phase generate-resources
+ * @phase package
  * @requiresDependencyResolution runtime
  */
 public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
