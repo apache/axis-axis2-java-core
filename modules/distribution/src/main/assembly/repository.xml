@@ -31,18 +31,6 @@
             <includes>
                 <include>*:*:mar</include>
             </includes>
-            <excludes>
-                <exclude>org.apache.axis2:axis2-scripting</exclude>
-            </excludes>
-        </dependencySet>
-        <dependencySet>
-            <!-- TODO: maybe we should rename the artifact from axis2-scripting to scripting??? -->
-            <outputDirectory>modules</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.apache.axis2:axis2-scripting:mar</include>
-            </includes>
-            <outputFileNameMapping>scripting-${artifact.version}.mar</outputFileNameMapping>
         </dependencySet>
         <dependencySet>
             <!-- TODO: mex is not available as a mar artifact; this is obviously an issue -->

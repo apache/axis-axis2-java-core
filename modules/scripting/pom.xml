@@ -27,7 +27,7 @@
         <version>SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
-    <artifactId>axis2-scripting</artifactId>
+    <artifactId>scripting</artifactId>
     <packaging>mar</packaging>
     <name>Apache Axis2 - Scripting</name>
     <description>Axis2 scripting support for services implemented with scripting languages</description>
