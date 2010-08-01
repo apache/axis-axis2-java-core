@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-scripting</artifactId>
+            <artifactId>scripting</artifactId>
             <type>mar</type>
             <version>${project.version}</version>
         </dependency>
