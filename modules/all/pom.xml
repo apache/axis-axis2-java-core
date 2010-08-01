@@ -13,11 +13,10 @@
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2-all</artifactId>
     <packaging>bundle</packaging>
-    <name>axis2-all</name>
+    <name>Apache Axis2 - all</name>
     <description>
         This bundle exports all the axis2 packages;
     </description>
-    <version>1.6-SNAPSHOT</version>
 
     <dependencies>
 
