@@ -21,10 +21,16 @@ package org.apache.axis2.maven2.repo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -42,6 +48,30 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      * @required
      */
     private MavenProject project;
+    
+    /**
+     * @component
+     */
+    private ArtifactFactory factory;
+    
+    /**
+     * @component
+     */
+    private ArtifactResolver resolver;
+    
+    /**
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @readonly
+     * @required
+     */
+    protected List remoteRepositories;
+    
+    /**
+     * @parameter expression="${localRepository}"
+     * @readonly
+     * @required
+     */
+    private ArtifactRepository localRepository;
     
     /**
      * The directory (relative to the repository root) where AAR files are copied. This should be
@@ -89,6 +119,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
         } catch (ArtifactFilterException ex) {
             throw new MojoExecutionException(ex.getMessage(), ex);
         }
+        artifacts = replaceIncompleteArtifacts(artifacts);
         File outputDirectory = getOutputDirectory();
         File servicesDirectory = new File(outputDirectory, this.servicesDirectory);
         File modulesDirectory = new File(outputDirectory, this.modulesDirectory);
@@ -114,5 +145,34 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 throw new MojoExecutionException("Error copying axis2.xml file: " + ex.getMessage(), ex);
             }
         }
+    }
+
+    /**
+     * Replace artifacts that have not been packaged yet. This occurs if the artifact is
+     * part of the reactor build and the compile phase has been executed, but not the
+     * the package phase. These artifacts will be replaced by new artifact objects
+     * resolved from the repository.
+     * 
+     * @param artifacts the original sets of {@link Artifact} objects
+     * @return a set of {@link Artifact} objects built as described above
+     * @throws MojoExecutionException
+     */
+    private Set replaceIncompleteArtifacts(Set artifacts) throws MojoExecutionException {
+        Set result = new HashSet();
+        for (Iterator it = artifacts.iterator(); it.hasNext(); ) {
+            Artifact artifact = (Artifact)it.next();
+            File file = artifact.getFile();
+            if (file != null && file.isDirectory()) {
+                artifact = factory.createDependencyArtifact(artifact.getGroupId(), artifact.getArtifactId(),
+                        artifact.getVersionRange(), artifact.getType(), artifact.getClassifier(), artifact.getScope());
+                try {
+                    resolver.resolve(artifact, remoteRepositories, localRepository);
+                } catch (AbstractArtifactResolutionException ex) {
+                    throw new MojoExecutionException(ex.getMessage(), ex);
+                }
+            }
+            result.add(artifact);
+        }
+        return result;
     }
 }

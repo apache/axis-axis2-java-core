@@ -93,6 +93,13 @@
             <artifactId>neethi</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>addressing</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <scope>test</scope>
@@ -136,6 +143,9 @@
                     <include>**/*.properties</include>
                 </includes>
             </testResource>
+            <testResource>
+                <directory>${project.build.directory}/repo</directory>
+            </testResource>
         </testResources>
         <plugins>
             <plugin>
@@ -162,6 +172,20 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -173,8 +197,7 @@
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
                                 <property name="maven.class.path" refid="maven.runtime.classpath" />
                                 <property name="maven.test.path" refid="maven.compile.classpath" />
-                                <!-- copy the mars so that they are available on the test classpath -->
-                                <copy file="../addressing/target/addressing-${project.version}.mar" tofile="target/test-classes/modules/addressing-${project.version}.mar" />
+                                <mkdir dir="target/test-classes"/>
 
                                 <property name="axis2.home" value="${basedir}/target" />
                                 <path id="maven.dependency.classpath">
