@@ -200,63 +200,21 @@
                 <include>*:*:jar</include>
             </includes>
             <excludes>
-                 <exclude>mx4j:mx4j-jmx:jar</exclude>
-                 <exclude>mx4j:mx4j-impl:jar</exclude>
-                 <exclude>mx4j:mx4j-remote:jar</exclude>
-                 <exclude>mx4j:mx4j-tools:jar</exclude>
-                 <exclude>mx4j:mx4j:jar</exclude>
-                 <exclude>rome:rome:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec:jar</exclude>
-                 <exclude>org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec:jar</exclude>
-                 <exclude>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec:jar</exclude>
-                 <exclude>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</exclude>
-                 <exclude>org.apache.geronimo.specs:geronimo-jsp_2.0_spec:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-console:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-core:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-jaas:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-optional:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-optional:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-web:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-web-demo:war</exclude>
-                 <exclude>xstream:xstream:jar</exclude>
-                 <exclude>xom:xom:jar</exclude>
-                 <exclude>xmlpull:xmlpull:jar</exclude>
-                 <exclude>xerces:xmlParserAPIs:jar</exclude>
-                 <exclude>org.apache.xbean:xbean-spring:jar</exclude>
-                 <exclude>org.springframework:spring:jar</exclude>	
                  <exclude>org.springframework:spring-beans:jar</exclude>
                  <exclude>org.springframework:spring-context:jar</exclude>	
                  <exclude>org.springframework:spring-core:jar</exclude>	
                  <exclude>org.springframework:spring-web:jar</exclude>	
-                 <exclude>logkit:logkit:jar</exclude>	
-                 <exclude>javax.xml.bind:jsr173_api:jar</exclude>	
-                 <exclude>jrms:jrms:jar</exclude>	
-                 <exclude>activemq:jmdns:jar</exclude>	
-                 <exclude>org.mortbay.jetty:jetty:jar</exclude>	
-                 <exclude>org.mortbay.jetty:jetty-util:jar</exclude>	
-                 <exclude>jdom:jdom:jar</exclude>
                  <exclude>jakarta-regexp:jakarta-regexp:jar</exclude>
-                 <exclude>com.ibm.icu:icu4j:jar</exclude>
                  <exclude>org.apache.bcel:bcel:jar</exclude>	
-                 <exclude>org.apache.activemq:activeio-core:jar</exclude>
                  <exclude>org.apache.ant:ant:jar</exclude>
                  <exclude>org.apache.ant:ant-launcher:jar</exclude>
                  <exclude>aopalliance:aopalliance:jar</exclude>
-                 <exclude>org.apache.activemq:apache-activemq:jar</exclude>
-                 <exclude>avalon-framework:avalon-framework:jar</exclude>
-                 <exclude>axis:axis:jar</exclude>
                  <exclude>bsf:bsf:jar</exclude>
-                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
-                 <exclude>commons-collections:commons-collections:jar</exclude>
-                 <exclude>commons-pool:commons-pool:jar</exclude>
-                 <exclude>dom4j:dom4j:jar</exclude>
                  <exclude>com.sun.xml.fastinfoset:FastInfoset:jar</exclude>
-                 <exclude>activesoap:jaxp-api:jar</exclude>
                  <exclude>rhino:js:jar</exclude>
-                 <exclude>junit:junit:jar</exclude>
                  <exclude>javax.servlet:servlet-api</exclude>
-                 <exclude>org.mortbay.jetty:servlet-api-2.5:jar:6.0.1</exclude>
             </excludes>
         </dependencySet>
       </dependencySets>
