@@ -33,7 +33,9 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
     private String returnType;    //Methods return type
     private String[] exceptions;
     private String declaringClass; //the class/interface that actually declares this method
-
+    private boolean staticModifier= false;//true if method is static
+    private boolean finalModifier = false; //true if method is final
+    
     boolean oneWayAnnotated;
 	// boolean that indicates if an @XmlList annotation was found on the method
 	private boolean 				isListType = false;
@@ -331,6 +333,22 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
     public void setDescriptionBuilderCompositeRef(DescriptionBuilderComposite dbc) {
 
         this.parentDBC = dbc;
+    }
+
+    public boolean isStatic() {
+        return staticModifier;
+    }
+
+    public void setStaticModifier(boolean staticModifier) {
+        this.staticModifier = staticModifier;
+    }
+
+    public boolean isFinal() {
+        return finalModifier;
+    }
+
+    public void setFinalModifier(boolean finalModifier) {
+        this.finalModifier = finalModifier;
     }
 
     public boolean compare(Object obj) {

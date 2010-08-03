@@ -70,7 +70,7 @@ public class ReflectiveConverterTests extends TestCase {
         List<MethodDescriptionComposite> mdcList = sortList(implDBC.getMethodDescriptionsList());
         sortList(mdcList);
         assertNotNull(mdcList);
-        assertEquals(mdcList.size(), 3);
+        assertEquals(mdcList.size(), 5);
         MethodDescriptionComposite mdc = mdcList.get(0);
         assertNotNull(mdc);
         assertEquals("<init>", mdc.getMethodName());
@@ -82,13 +82,20 @@ public class ReflectiveConverterTests extends TestCase {
         assertNotNull(mdc);
         assertEquals("invoke2", mdc.getMethodName());
         assertEquals("int", mdc.getReturnType());
+        mdc = mdcList.get(3);
+        assertNotNull(mdc);
+        assertTrue("invoke3 is static operation and should return true for static check", mdc.isStatic());
+        mdc = mdcList.get(4);
+        assertNotNull(mdc);
+        assertTrue("invoke4 is final operation and should return true for static check", mdc.isFinal());
+        
     }
 
     public static void testImplParams() {
         assertNotNull(implDBC);
         List<MethodDescriptionComposite> mdcList = sortList(implDBC.getMethodDescriptionsList());
         assertNotNull(mdcList);
-        assertEquals(mdcList.size(), 3);
+        assertEquals(mdcList.size(), 5);
         MethodDescriptionComposite mdc = mdcList.get(0);
         assertNotNull(mdc);
         List<ParameterDescriptionComposite> pdcList = mdc.getParameterDescriptionCompositeList();
@@ -239,6 +246,14 @@ class SimpleServiceImpl {
 
     public int invoke2(int num1, int num2) {
         return num1 + num2;
+    }
+    
+    public static String invoke3(){
+        return "static";
+    }
+    
+    public final String invoke4(){
+        return "final";
     }
 }
 

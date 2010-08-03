@@ -155,8 +155,15 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
             iter = dbc.getMethodDescriptionsList().iterator();
             while (iter.hasNext()) {
                 MethodDescriptionComposite mdc = iter.next();
-
-                if (!DescriptionUtils.isExcludeTrue(mdc)) {
+                //flag to check if the method can be exposed as webservice.
+                boolean isWebservice = !DescriptionUtils.isExcludeTrue(mdc) && !mdc.isStatic() && !mdc.isFinal();
+                if(!isWebservice){
+                    if(log.isDebugEnabled()){
+                        log.debug(mdc.getMethodName() + " has static or final modifiers in method signature or has @Webmethod(exclude=true) set");
+                        log.debug(mdc.getMethodName() + " cannot be exposed as a webservice");
+                    }
+                }
+                if (isWebservice) {
                     mdc.setDeclaringClass(dbc.getClassName());
                     retrieveList.add(mdc);
                 }

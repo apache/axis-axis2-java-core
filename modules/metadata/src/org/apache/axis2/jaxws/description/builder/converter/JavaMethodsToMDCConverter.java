@@ -75,6 +75,8 @@ public class JavaMethodsToMDCConverter {
                 mdc.setMethodName(method.getName());
                 setReturnType(mdc, method);
                 setIsListType(mdc, method);
+                mdc.setStaticModifier(Modifier.isStatic(method.getModifiers()));
+                mdc.setFinalModifier(Modifier.isFinal(method.getModifiers()));
                 mdc.setDeclaringClass(method.getDeclaringClass().getName());
                 attachHandlerChainAnnotation(mdc, method);
                 attachOnewayAnnotation(mdc, method);

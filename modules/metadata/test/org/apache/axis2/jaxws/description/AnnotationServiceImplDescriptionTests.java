@@ -507,7 +507,12 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // Test results from method with no annotation
         OperationDescription[] operationDescs =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method1");
-        assertNull(operationDescs);
+        
+        if(isLegacyBehavior()){
+            assertNull(operationDescs);
+        }else{
+            assertNotNull(operationDescs);
+        }
 
         OperationDescription operationDesc =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
@@ -556,15 +561,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     }
     
     public void testWebMethodOldBehavior3() {
-        try {
-            
-            if (WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
-                System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "true");
-                //Try new behavior
-            }            
-        } catch (ClassNotFoundException e) {
-        } catch (IOException ioex) {
-        }
+
+        System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "true");
         EndpointInterfaceDescriptionImpl testEndpointInterfaceDesc =
             (EndpointInterfaceDescriptionImpl)getEndpointInterfaceDesc(WebMethodLegacyCheck.class);
         
@@ -579,20 +577,22 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         }
 
     }
-    //This test verifies that the old WebMethod behavior has not changed if the system flag is
-    //not set, slightly redundant but still a safety check
-    public void testWebMethodOldBehavior1() {
+    //This test verifies default webMethod behavior
+    public void testWebMethodDefaultBehavior() {
         
         try {
             //If the version is valid then try the new behavior
-            if (WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
-                System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "false");
-                //Try new behavior
-            }            
+            if (!WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
+                //No point in testing this case if new behavior is not supported.
+                //default is the new tooling behavior.
+                return;
+                
+            }
         } catch (ClassNotFoundException e) {
         } catch (IOException ioex) {
         }
-        
+      //default behavior
+        System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "");
         
         EndpointInterfaceDescription testEndpointInterfaceDesc =
                 getEndpointInterfaceDesc(WebMethodTestImpl.class);
@@ -602,7 +602,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         OperationDescription[] operationDescs =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method1");
 
-        assertNull(operationDescs);
+        assertNotNull(operationDescs);
 
         OperationDescription operationDesc =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
@@ -634,27 +634,13 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
     }
 
-    //This test verifies that, if we do have the appropriate JDK installed but we do not set
-    //the System property then the old behavior remains unchanged
-    public void testWebMethodOldBehavior2() {
+    //This test verifies old webmethod behavior
+    public void testWebMethodOldBehavior() {
         
-        try {
-            //If the version is valid then try the new behavior
-            if (WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
-                //Set the property to empty just to make sure we are not trying the new behavior
-                //In order for the new behavior to work, this must be set explicitly to 'false'
-                System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "");
-                //Try new behavior
-            } else {
-                //At this point, just return as it would be redundant to continue...already tested
-                // in testWebMethodOldBehavior1
-                return;
-            }
-        } catch (ClassNotFoundException e) {
-        } catch (IOException ioex) {
-        }
+        //Weather new tooling is supported or not, Legacy behavior should
+        //always work if LegacyWebMethod property is set.
         
-        
+        System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "true");
         EndpointInterfaceDescription testEndpointInterfaceDesc =
                 getEndpointInterfaceDesc(WebMethodTestImpl.class);
         
@@ -662,7 +648,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // Test results from method with no annotation
         OperationDescription[] operationDescs =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method1");
-
+        //check legacy behavior
         assertNull(operationDescs);
 
         OperationDescription operationDesc =
@@ -702,7 +688,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     //    and
     // in this method, by forcing "validVersion" to true. Realize that by doing this other tests
     // will fail...So this should be considered temporary for testing this method
-    public void testWebMethodNewBehavior1() {
+    public void testWebMethodNewBehavior() {
         
         try {
             boolean validVersion = WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion());
@@ -713,13 +699,13 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                 System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "false");
             } else {
                 //At this point, just return since the test would be guaranteed to fail as we
-                //testing new rules
+                //testing new tooling rules and it seems new tooling is not supported here.     
                 return;
             }
         } catch (ClassNotFoundException e) {    
         } catch (IOException ioex) {
         }
-        
+        System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "true");
         EndpointInterfaceDescription testEndpointInterfaceDesc =
                 getEndpointInterfaceDesc(WebMethodTestImpl1.class);
         
@@ -756,7 +742,11 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         OperationDescription[] operationDescs =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method0");
-        assertNull(operationDescs);
+        if(isLegacyBehavior()){
+            assertNull(operationDescs);
+        }else{
+            assertNotNull(operationDescs);
+        }
 
         OperationDescription operationDesc =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
@@ -835,7 +825,11 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // DOCUMENT / LITERAL / BARE methods
 
         operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare");
-        assertNull(operationDescs);
+        if(isLegacyBehavior()){
+            assertNull(operationDescs);
+        }else{
+            assertNotNull(operationDescs);
+        }
 
         operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1_bare")[0];
         assertNotNull(operationDesc);
@@ -915,6 +909,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     }
 
     public void testWebParamWrapped() {
+        
         EndpointInterfaceDescription testEndpointInterfaceDesc =
                 getEndpointInterfaceDesc(WebParamTestImpl.class);
 
@@ -923,11 +918,20 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // method0
         OperationDescription[] operationDescs =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method0");
-        assertNull(operationDescs);
+        if(isLegacyBehavior()){
+            assertNull(operationDescs);
+        }else{
+            assertNotNull(operationDescs);
+        }
 
         // method00
         operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method00");
-        assertNull(operationDescs);
+        if(isLegacyBehavior()){
+            assertNull(operationDescs);
+        }else{
+            assertNotNull(operationDescs);
+        }
+
 
         // method1
         OperationDescription operationDesc =
@@ -1228,12 +1232,19 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // DOCUMENT / LITERAL / BARE methods
         OperationDescription[] operationDescs =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare");
-        assertNull(operationDescs);
+        if(isLegacyBehavior()){
+            assertNull(operationDescs);
+        }else{
+            assertNotNull(operationDescs);
+        }
 
         // method00
         operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method00_bare");
-        assertNull(operationDescs);
-
+        if(isLegacyBehavior()){
+            assertNull(operationDescs);
+        }else{
+            assertNotNull(operationDescs);
+        }
         // method1
         OperationDescription operationDesc =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method1_bare")[0];
@@ -1373,6 +1384,20 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     	FaultDescription faultDescription = operationDesc.getFaultDescriptions()[0];
     	
     	assertEquals("jaxws22MessageName", faultDescription.getMessageName());
+    }
+    
+    private boolean isLegacyBehavior(){
+    
+        boolean legacyBehavior=false;
+        try {
+            //If the version is valid then try the new behavior
+            if (!WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
+                legacyBehavior=true;
+            }
+        } catch (ClassNotFoundException e) {
+        } catch (IOException ioex) {
+        }
+        return legacyBehavior;
     }
 
     /*
