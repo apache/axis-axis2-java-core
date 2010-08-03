@@ -22,7 +22,7 @@
     <includeBaseDirectory>true</includeBaseDirectory> 
     <baseDirectory>axis2-${version}</baseDirectory>
     <formats>
-	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
+        <!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
         <format>zip</format>
     </formats>
 
@@ -43,10 +43,10 @@
         <fileSet>
             <!-- TODO: need to enable variable substitution for this file! -->
             <directory>release-docs/readme-files</directory>
-	    <outputDirectory></outputDirectory>
-	    <includes>
-	       <include>README-docs.txt</include>
-	    </includes>
-	</fileSet>
+            <outputDirectory></outputDirectory>
+            <includes>
+               <include>README-docs.txt</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
