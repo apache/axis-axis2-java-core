@@ -22,7 +22,7 @@
     <includeBaseDirectory>true</includeBaseDirectory> 
     <baseDirectory>axis2-${version}</baseDirectory>
     <formats>
-	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
+        <!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
         <format>zip</format>
     </formats>
 
@@ -67,29 +67,29 @@
                 <include>modules/transport/**</include>               
             </includes>
 
-	    <excludes>
-		<exclude>../../SameServiceAddingTest.java</exclude>
-		<exclude>**/target/**</exclude>
-		<exclude>../../modules/samples/eventing/**</exclude>
-		<exclude>../../modules/samples/security/**</exclude>
-		<exclude>xdocs/**</exclude>
-		<!-- 
-		<exclude>**/*class*/**</exclude> 
-		Above prevents following class being copied.
-		/modules/kernel/src/org/apache/axis2/classloader/MultiParentClassLoader.java
-		-->
-		<exclude>**/.svn/**</exclude>
-		<exclude>**/bin/**</exclude>
-		<exclude>**/*.log</exclude>
-		<!--
-		<exclude>**/.*</exclude>
-		Above prevents ".classpath" and ".project" from being copied (see
-		modules/tool/conf/codegen
-		-->
-		<exclude>**/.settings/**</exclude>
-		<exclude>**/*.license</exclude>
-		<exclude>**/*.iml</exclude>
-	    </excludes>
+            <excludes>
+                <exclude>../../SameServiceAddingTest.java</exclude>
+                <exclude>**/target/**</exclude>
+                <exclude>../../modules/samples/eventing/**</exclude>
+                <exclude>../../modules/samples/security/**</exclude>
+                <exclude>xdocs/**</exclude>
+                <!-- 
+                <exclude>**/*class*/**</exclude> 
+                Above prevents following class being copied.
+                /modules/kernel/src/org/apache/axis2/classloader/MultiParentClassLoader.java
+                -->
+                <exclude>**/.svn/**</exclude>
+                <exclude>**/bin/**</exclude>
+                <exclude>**/*.log</exclude>
+                <!--
+                <exclude>**/.*</exclude>
+                Above prevents ".classpath" and ".project" from being copied (see
+                modules/tool/conf/codegen
+                -->
+                <exclude>**/.settings/**</exclude>
+                <exclude>**/*.license</exclude>
+                <exclude>**/*.iml</exclude>
+            </excludes>
 
         </fileSet>
 
@@ -100,9 +100,9 @@
             <includes>
                 <include>*.*</include>
             </includes>
-	    <excludes>
-		<exclude>.svn/**</exclude>
-	    </excludes>
+            <excludes>
+                <exclude>.svn/**</exclude>
+            </excludes>
         </fileSet>
         <fileSet>
             <directory>target/tmp-doc-distro/docs</directory>
@@ -129,7 +129,7 @@
                 <include>pom.xml</include>
             </includes>
         </fileSet>
-	<!-- copying tools section of xdocs. This is needed by eclipse plugins -->
+        <!-- copying tools section of xdocs. This is needed by eclipse plugins -->
         <fileSet>
             <directory>../../xdocs</directory>
             <outputDirectory>xdocs</outputDirectory>
@@ -137,7 +137,7 @@
                 <include>tools/**</include>
             </includes>
         </fileSet>
-	<!-- copying licenses -->
+        <!-- copying licenses -->
         <fileSet>
             <directory>../../legal</directory>
             <outputDirectory>legal</outputDirectory>
@@ -145,7 +145,7 @@
                 <exclude>.svn/**</exclude>
             </excludes>
         </fileSet>
-    <!-- copying release docs -->
+        <!-- copying release docs -->
         <fileSet>
              <directory>../../release-docs</directory>
              <outputDirectory>release-docs</outputDirectory>
