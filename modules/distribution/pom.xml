@@ -220,7 +220,7 @@
                             <finalName>axis2-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
-<!--                               <descriptor>src/main/assembly/src-assembly.xml</descriptor> -->
+                                <descriptor>src/main/assembly/src-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/bin-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
