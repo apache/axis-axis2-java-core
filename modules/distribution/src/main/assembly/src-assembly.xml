@@ -30,6 +30,7 @@
         <fileSet>
             <directory>../..</directory>
             <outputDirectory></outputDirectory>
+            <useDefaultExcludes>true</useDefaultExcludes>
             <includes>
                 <include>../../etc/**</include>
                 <include>modules/adb/**</include>
@@ -68,27 +69,27 @@
             </includes>
 
             <excludes>
+                <!-- TODO: not sure what those are for -->
                 <exclude>../../SameServiceAddingTest.java</exclude>
-                <exclude>**/target/**</exclude>
                 <exclude>../../modules/samples/eventing/**</exclude>
                 <exclude>../../modules/samples/security/**</exclude>
                 <exclude>xdocs/**</exclude>
-                <!-- 
-                <exclude>**/*class*/**</exclude> 
-                Above prevents following class being copied.
-                /modules/kernel/src/org/apache/axis2/classloader/MultiParentClassLoader.java
-                -->
-                <exclude>**/.svn/**</exclude>
-                <exclude>**/bin/**</exclude>
-                <exclude>**/*.log</exclude>
-                <!--
-                <exclude>**/.*</exclude>
-                Above prevents ".classpath" and ".project" from being copied (see
-                modules/tool/conf/codegen
-                -->
-                <exclude>**/.settings/**</exclude>
-                <exclude>**/*.license</exclude>
-                <exclude>**/*.iml</exclude>
+                
+                <!-- Exclusions from org.apache.resources:apache-source-release-assembly-descriptor -->
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/).*${project.build.directory}.*]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?maven-eclipse\.xml]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.project]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.classpath]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?[^/]*\.iws]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?[^/]*\.ipr]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?[^/]*\.iml]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.settings(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.externalToolBuilders(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.deployables(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.wtpmodules(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?cobertura\.ser]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?pom\.xml\.releaseBackup]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?release\.properties]</exclude>
             </excludes>
 
         </fileSet>
