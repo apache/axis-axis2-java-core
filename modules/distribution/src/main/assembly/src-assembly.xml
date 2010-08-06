@@ -69,6 +69,14 @@
             </includes>
 
             <excludes>
+                <!-- For PDE support, we need to generate some files outside of the
+                     target directory. They are removed during the clean phase, but
+                     we also need to exclude them here. -->
+                <exclude>modules/tool/axis2-eclipse-service-plugin/META-INF/**</exclude>
+                <exclude>modules/tool/axis2-eclipse-service-plugin/lib/**</exclude>
+                <exclude>modules/tool/axis2-eclipse-codegen-plugin/META-INF/**</exclude>
+                <exclude>modules/tool/axis2-eclipse-codegen-plugin/lib/**</exclude>
+                
                 <!-- TODO: not sure what those are for -->
                 <exclude>../../SameServiceAddingTest.java</exclude>
                 <exclude>../../modules/samples/eventing/**</exclude>
