@@ -77,13 +77,21 @@
                 <exclude>modules/tool/axis2-eclipse-codegen-plugin/META-INF/**</exclude>
                 <exclude>modules/tool/axis2-eclipse-codegen-plugin/lib/**</exclude>
                 
+                <!-- These directories are not excluded by the rules below because of the
+                     "src" component in the path. We need to exclude them explicitly. -->
+                <exclude>modules/tool/axis2-wsdl2code-maven-plugin/src/test/test1/target/**</exclude>
+                <exclude>modules/tool/axis2-java2wsdl-maven-plugin/src/test/test1/target/**</exclude>
+                
                 <!-- TODO: not sure what those are for -->
                 <exclude>../../SameServiceAddingTest.java</exclude>
                 <exclude>../../modules/samples/eventing/**</exclude>
                 <exclude>../../modules/samples/security/**</exclude>
                 <exclude>xdocs/**</exclude>
                 
-                <!-- Exclusions from org.apache.resources:apache-source-release-assembly-descriptor -->
+                <!-- Exclusions from org.apache.resources:apache-source-release-assembly-descriptor.
+                     Note that they assume that all sources are located under an "src" directory. This
+                     is not the case for Axis2, which doesn't use the standard Maven 2 conventions.
+                     Thus we may still encounter some issues here. -->
                 <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/).*${project.build.directory}.*]</exclude>
                 <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?maven-eclipse\.xml]</exclude>
                 <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.project]</exclude>
