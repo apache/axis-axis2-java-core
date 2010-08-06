@@ -21,12 +21,14 @@ package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
+import org.apache.axiom.om.util.XMLStreamWriterRemoveIllegalChars;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axiom.util.stax.xop.MimePartProvider;
 import org.apache.axiom.util.stax.xop.XOPEncodedStream;
 import org.apache.axiom.util.stax.xop.XOPUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.message.OccurrenceArray;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.util.XMLStreamWriterWithOS;
@@ -368,23 +370,26 @@ public class JAXBDSContext {
      * @param am AttachmentMarshaller, optional Attachment
      */
     public void marshal(Object obj, 
-                        XMLStreamWriter writer) throws JAXBException {
-            if (log.isDebugEnabled()) {
-                log.debug("enter marshal");
-            }
+            XMLStreamWriter writer) throws JAXBException {
+        if (log.isDebugEnabled()) {
+            log.debug("enter marshal");
+        }
+        boolean installedFilter = false;
+
+        try {
             // There may be a preferred classloader that should be used
             ClassLoader cl = getClassLoader();
-            
-            
+
+
             // Very easy, use the Context to get the Marshaller.
             // Use the marshaller to write the object.
             JAXBContext jbc = getJAXBContext(cl);
             Marshaller m = JAXBUtils.getJAXBMarshaller(jbc);
             if (writer instanceof MTOMXMLStreamWriter && ((MTOMXMLStreamWriter) writer).getOutputFormat() != null) {
                 String encoding = ((MTOMXMLStreamWriter) writer).getOutputFormat().getCharSetEncoding();
-                
+
                 String marshallerEncoding = (String) m.getProperty(Marshaller.JAXB_ENCODING);
-                
+
                 // Make sure that the marshaller respects the encoding of the message.
                 // This is accomplished by setting the encoding on the Marshaller's JAXB_ENCODING property.
                 if (encoding == null && marshallerEncoding == null) {
@@ -394,7 +399,7 @@ public class JAXBDSContext {
                 } else {
                     // Must set the encoding to an actual String to set it on the Marshaller
                     if (encoding == null) {
-                       encoding = "UTF-8";
+                        encoding = "UTF-8";
                     }
                     if (!encoding.equalsIgnoreCase(marshallerEncoding)) {
                         if (log.isDebugEnabled()) {
@@ -406,12 +411,12 @@ public class JAXBDSContext {
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("The encoding and the marshaller's JAXB_ENCODING are both set to:" + 
-                                        marshallerEncoding);
+                                    marshallerEncoding);
                         }
                     }
                 }
             }
-            
+
             AttachmentMarshaller am = createAttachmentMarshaller(writer);
             if (am != null) {
                 if (DEBUG_ENABLED) {
@@ -420,29 +425,40 @@ public class JAXBDSContext {
                 m.setAttachmentMarshaller(am);
             }
 
+            MessageContext mc = getMessageContext();
+
+            // If requested install a filter to remove illegal characters
+            installedFilter = installFilter(mc, writer);
+
 
             // Marshal the object
             if (getProcessType() == null) {
                 marshalByElement(obj, 
-                                 m, 
-                                 writer, 
-                                 true);
-                                 //!am.isXOPPackage());
+                        m, 
+                        writer, 
+                        true);
+                //!am.isXOPPackage());
             } else {
                 marshalByType(obj,
-                              m,
-                              writer,
-                              getProcessType(),
-                              isxmlList(),
-                              getConstructionType(),
-                              true); // Attempt to optimize by writing to OutputStream
+                        m,
+                        writer,
+                        getProcessType(),
+                        isxmlList(),
+                        getConstructionType(),
+                        true); // Attempt to optimize by writing to OutputStream
             }
-            
+
             JAXBUtils.releaseJAXBMarshaller(jbc, m);
-            
+
             if (log.isDebugEnabled()) {
                 log.debug("exit marshal");
             }
+        } finally {
+            // Make sure the filter is uninstalled
+            if (installedFilter) {
+                uninstallFilter(writer);
+            }
+        }
     }
     
     
@@ -1073,4 +1089,37 @@ public class JAXBDSContext {
             throw new OMException(t);
         }
     }
+    
+
+    /**
+     * Install a JAXB filter if requested
+     * @param mc
+     * @param writer
+     * @return true if filter installed
+     */
+    private boolean installFilter(MessageContext mc, XMLStreamWriter writer) {
+        if (!(writer instanceof MTOMXMLStreamWriter)) {
+            return false;
+        }
+        if (!ContextUtils.isJAXBRemoveIllegalChars(mc)) {
+            return false;
+        }
+        
+         
+        MTOMXMLStreamWriter mtomWriter = (MTOMXMLStreamWriter) writer;
+        mtomWriter.setFilter(new XMLStreamWriterRemoveIllegalChars());
+        return true;
+    }
+    
+    /**
+     * UninstallInstall a JAXB filter if requested
+     * @param mc
+     * @param writer
+     * @return true if filter installed
+     */
+    private void uninstallFilter(XMLStreamWriter writer) {
+        MTOMXMLStreamWriter mtomWriter = (MTOMXMLStreamWriter) writer;
+        mtomWriter.removeFilter();
+    }
+
 }

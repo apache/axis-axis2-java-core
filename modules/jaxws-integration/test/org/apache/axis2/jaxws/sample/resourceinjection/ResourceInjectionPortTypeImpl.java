@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.sample.resourceinjection;
 
+import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionPortType;
 
@@ -69,7 +70,18 @@ import javax.xml.ws.handler.MessageContext;
             return "FAILURE: The WebServiceContext's MessageContext " +
                         "does not have the correct wsdlOperation";
         }
-        return "SUCCESS: " + wsdlOperation.getLocalPart();
+        
+        String response = "SUCCESS: " + wsdlOperation.getLocalPart();
+        
+        // Set a flag to force filtering of JAXB data.
+        // Also set a illegal characters in the response string
+        // to verify that the illegal character is removed.
+        msgContext.put(Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS, Boolean.TRUE);
+        char[] chars = new char[] {0x15}; // 0x15 is not a valid xml character
+        String insert = new String(chars);
+        response = insert + response + insert;
+
+        return response;
     }
 
     @PostConstruct

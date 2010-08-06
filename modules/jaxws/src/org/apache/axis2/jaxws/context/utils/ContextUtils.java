@@ -20,7 +20,11 @@
 package org.apache.axis2.jaxws.context.utils;
 
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.addressing.util.ReferenceParameterList;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -33,6 +37,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
@@ -278,5 +283,146 @@ public class ContextUtils {
                 log.debug("A WebServiceContext was not found");
             }
         }
+    }
+    
+    /**
+     * isJAXBRemoveIllegalChars
+     * 
+     * Determine if illegal characters should be removed when JAXB beans are written
+     * 
+     * @see Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS 
+     * 
+     * @param mc
+     * @return true if the property is set
+     */
+    public static boolean isJAXBRemoveIllegalChars(org.apache.axis2.context.MessageContext mc) {
+        boolean rc = _isJAXBRemoveIllegalChars(mc);
+
+        // If not true, check the related MessageContext
+        if (!rc) {
+            if (mc != null && mc != null) {
+                rc = _isJAXBRemoveIllegalChars(getRelatedMessageContext(mc));
+            }
+        }
+        return rc;
+    }
+    
+    /**
+     * getRelatedMessageContext
+     * @param mc Axis2 MessageContext
+     * @return related MessageContext
+     */
+    private static org.apache.axis2.context.MessageContext 
+        getRelatedMessageContext(org.apache.axis2.context.MessageContext mc) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter getRelatedMessageContext for:" + mc);
+        }
+        org.apache.axis2.context.MessageContext relatedMC = null;
+        if (mc != null) {
+            OperationContext oc = mc.getOperationContext();
+            if (oc != null) {
+                try {
+                    relatedMC = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                    if (relatedMC == mc) {
+                        relatedMC = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    }
+                } catch (AxisFault e) {
+                    // TODO This should never occur in this scenario, swallow and continue
+                }
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit getRelatedMessageContext related messageContext is" + relatedMC);
+        }
+        return relatedMC;
+    }
+
+    /**
+     * _isJAXBRemoveIllegalChars
+     * 
+     * Determine if illegal characters should be removed when JAXB beans are written
+     * 
+     * @see Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS 
+     * 
+     * @param mc
+     * @return true if property is set
+     */
+    private static boolean _isJAXBRemoveIllegalChars(MessageContext mc) {
+        
+        boolean value = false;
+        if (mc == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("_isJAXBRemoveIllegalChars returns false due to missing MessageContext");
+            }
+            return false;
+        }
+        
+        // First examine the property on the jaxws MessageContext
+        Boolean property = (Boolean) mc.getProperty(
+                Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+        if (property != null) {
+            value = property.booleanValue();
+            if (log.isDebugEnabled()) {
+                log.debug("_isJAXBRemoveIllegalChars returns " + value + " per jaxws MessageContext property " + 
+                        Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+            }
+            return value;
+        }
+        
+        // If not found, delegate to the Axis2 MessageContext
+        if (mc.getAxisMessageContext() != null) {
+            return _isJAXBRemoveIllegalChars(mc.getAxisMessageContext());
+        }
+        return value;
+    }
+    
+    /**
+     * _isJAXBRemoveIllegalChars
+     * 
+     * Determine if illegal characters should be removed when JAXB beans are written
+     * 
+     * @see Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS 
+     * 
+     * @param mc
+     * @return true if property is set
+     */
+    private static boolean _isJAXBRemoveIllegalChars(org.apache.axis2.context.MessageContext mc) {
+        
+        boolean value = false;
+        if (mc == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("_isJAXBRemoveIllegalChars returns false due to missing MessageContext");
+            }
+            return false;
+        }
+        
+        // First examine the property on the axis2 MessageContext hierarchy
+        Boolean property = (Boolean) mc.getProperty(
+                Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+        if (property != null) {
+            value = property.booleanValue();
+            if (log.isDebugEnabled()) {
+                log.debug("_isJAXBRemoveIllegalChars returns " + value + " per axis2 MessageContext property " + 
+                        Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+            }
+            return value;
+        }
+        
+        
+        // Now look at the configuration parameter
+        Parameter p = mc.getParameter(Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+        if (p != null) {
+            value = JavaUtils.isTrue(p.getValue());
+            if (log.isDebugEnabled()) {
+                log.debug("isJAXBRemoveIllegalChars returns " + value + " per inspection of Configuration property " + 
+                        Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+            }
+            return value;
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("isJAXBRemoveIllegalChars returns the default: false");
+        }
+        return false;
     }
 }

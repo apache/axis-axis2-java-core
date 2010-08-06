@@ -59,6 +59,10 @@ public class ResourceInjectionTests extends AbstractTestCase {
             assertTrue("The response was null", response != null);
             assertTrue("The response was not succesful: " + response, 
                        response.indexOf("SUCCESS") >= 0);
+            char[] chars = new char[] {0x15}; // 0x15 is not a valid xml character..and should be filtered
+            String insert = new String(chars);
+            assertTrue("Illegal characters were not filtered: " + response,
+                    response.indexOf(insert) < 0);
         
     }
    

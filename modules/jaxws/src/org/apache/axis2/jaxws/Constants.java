@@ -161,4 +161,33 @@ public interface Constants {
      * This constant will be used to store the location of JAX-WS generated artifacts cache.
      */
     public static final String WS_CACHE="wsCache";
+    
+    /**
+     * Context Property:
+     * Name: jaxws.jaxb.write.remove.illegal.chars
+     * Value: Boolean.TRUE or Boolean.FALSE
+     * Default: null, which is interpreted as FALSE.
+     * 
+     * Configuration Parameter
+     * Name: jaxws.jaxb.write.remove.illegal.chars
+     * Value: String or Boolean representing true or false
+     * Default: null, which is interpreted as FALSE
+     * 
+     * Description:
+     * If the value is false, the jax-ws engine will detect and remove
+     * illegal characters (characters not supported in xml) when writing
+     * a JAXB data bean associated with a jaxws web method
+     *  http://www.w3.org/TR/2008/REC-xml-20081126/#NT-Char
+     * This extra filter may degrade performance.
+     * 
+     * Customers should accept the default behavior (false), and only set the value to true if the
+     * character data produced by their web service is invalid and cannot be filtered by some
+     * other mechanism.
+     * 
+     * The engine will first examine the Context property.  If not set, the value of the Configuration
+     * property is used.
+     */
+    public static final String JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS = 
+        "jaxws.jaxb.write.remove.illegal.chars";
+
 }
