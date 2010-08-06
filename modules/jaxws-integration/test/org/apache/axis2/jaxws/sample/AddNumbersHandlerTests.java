@@ -75,7 +75,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         requestFile = new File(resourceDir+File.separator+"addnumberstest.xml");
     }
     
-    private static final String filelogname = "AddNumbersHandlerTests.log";
+    private static final String filelogname = "target/AddNumbersHandlerTests.log";
 
     public static Test suite() {
         return getTestSetup(new TestSuite(AddNumbersHandlerTests.class));

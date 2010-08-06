@@ -25,7 +25,7 @@ import java.io.StringWriter;
 
 public class HandlerTracker {
 
-    private static final String filelogname = "HeadersHandlerTests.log";
+    private static final String filelogname = "target/HeadersHandlerTests.log";
     
     private String classname;
     

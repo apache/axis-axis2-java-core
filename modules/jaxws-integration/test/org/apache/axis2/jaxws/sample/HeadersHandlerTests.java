@@ -57,7 +57,7 @@ public class HeadersHandlerTests extends AbstractTestCase {
 
     String axisEndpoint = "http://localhost:6060/axis2/services/HeadersHandlerService.HeadersHandlerPortTypeImplPort";
     
-    private static final String filelogname = "HeadersHandlerTests.log";
+    private static final String filelogname = "target/HeadersHandlerTests.log";
 
     public static Test suite() {
         return getTestSetup(new TestSuite(HeadersHandlerTests.class));
