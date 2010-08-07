@@ -33,42 +33,14 @@
             <useDefaultExcludes>true</useDefaultExcludes>
             <includes>
                 <include>../../etc/**</include>
-                <include>modules/adb/**</include>
-                <include>modules/adb-codegen/**</include>
-                <include>modules/addressing/**</include>
-                <include>modules/clustering/**</include>
-                <include>modules/codegen/**</include>
-                <include>modules/corba/**</include>
-                <include>modules/distribution/**</include>
-                <include>modules/documentation/**</include>
-                <include>modules/fastinfoset/**</include>
-                <include>modules/integration/**</include>
-                <include>modules/java2wsdl/**</include>
-                <include>modules/jaxbri/**</include>
-                <include>modules/jaxws/**</include>
-                <include>modules/jaxws-integration/**</include>
-                <include>modules/jibx/**</include>
-                <include>modules/json/**</include>
-                <include>modules/kernel/**</include>
-                <include>modules/metadata/**</include>
-                <include>modules/mex/**</include>
-                <include>modules/mtompolicy/**</include>
-                <include>modules/osgi/**</include>
-                <include>modules/parent/**</include>
-                <include>modules/ping/**</include>
-                <include>modules/saaj/**</include>
-                <include>modules/samples/**</include>
-                <include>modules/scripting/**</include>
-                <include>modules/soapmonitor/**</include>
-                <include>modules/spring/**</include>
-                <include>modules/tool/**</include>
-                <include>modules/transports/**</include>
-                <include>modules/webapp/**</include>
-                <include>modules/xmlbeans/**</include> 
-                <include>modules/transport/**</include>               
+                <include>modules/**</include>
             </includes>
 
             <excludes>
+                <!-- Exclude sources for modules that are not part of the build -->
+                <exclude>modules/all/**</exclude>
+                <exclude>modules/rmi/**</exclude>
+                
                 <!-- For PDE support, we need to generate some files outside of the
                      target directory. They are removed during the clean phase, but
                      we also need to exclude them here. -->
