@@ -91,6 +91,9 @@
         </profile>
         <profile>
             <id>apache-release</id>
+            <modules>
+                <module>modules/distribution</module>
+            </modules>
             <build>
                 <plugins>
                     <plugin>
