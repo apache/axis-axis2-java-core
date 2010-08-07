@@ -206,8 +206,6 @@
                  <exclude>org.springframework:spring-context:jar</exclude>	
                  <exclude>org.springframework:spring-core:jar</exclude>	
                  <exclude>org.springframework:spring-web:jar</exclude>	
-                 <exclude>jakarta-regexp:jakarta-regexp:jar</exclude>
-                 <exclude>org.apache.bcel:bcel:jar</exclude>	
                  <exclude>org.apache.ant:ant:jar</exclude>
                  <exclude>org.apache.ant:ant-launcher:jar</exclude>
                  <exclude>aopalliance:aopalliance:jar</exclude>
