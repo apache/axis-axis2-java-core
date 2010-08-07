@@ -32,8 +32,11 @@
             <outputDirectory></outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <includes>
-                <include>../../etc/**</include>
+                <include>pom.xml</include>
+                <include>etc/**</include>
                 <include>modules/**</include>
+                <include>legal/**</include>
+                <include>release-docs/**</include>
             </includes>
 
             <excludes>
@@ -84,16 +87,6 @@
 
 
         <fileSet>
-            <directory>../../etc</directory>
-            <outputDirectory>etc</outputDirectory>
-            <includes>
-                <include>*.*</include>
-            </includes>
-            <excludes>
-                <exclude>.svn/**</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
             <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
@@ -109,15 +102,6 @@
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>../..</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>project.xml</include>
-                <include>maven.xml</include>
-                <include>pom.xml</include>
-            </includes>
-        </fileSet>
         <!-- copying tools section of xdocs. This is needed by eclipse plugins -->
         <fileSet>
             <directory>../../xdocs</directory>
@@ -126,22 +110,6 @@
                 <include>tools/**</include>
             </includes>
         </fileSet>
-        <!-- copying licenses -->
-        <fileSet>
-            <directory>../../legal</directory>
-            <outputDirectory>legal</outputDirectory>
-            <excludes>
-                <exclude>.svn/**</exclude>
-            </excludes>
-        </fileSet>
-        <!-- copying release docs -->
-        <fileSet>
-             <directory>../../release-docs</directory>
-             <outputDirectory>release-docs</outputDirectory>
-             <excludes>
-                 <exclude>.svn/**</exclude>
-             </excludes>
-         </fileSet>    
         <fileSet>
             <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
