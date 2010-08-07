@@ -23,7 +23,7 @@ import java.io.FileWriter;
 
 public class HandlerTracker {
 
-    private static final String filelogname = "AddNumbersHandlerTests.log";
+    private static final String filelogname = "target/AddNumbersHandlerTests.log";
     
     private String classname;
     
