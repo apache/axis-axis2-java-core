@@ -30,33 +30,50 @@
         <fileSet>
             <directory>../..</directory>
             <outputDirectory></outputDirectory>
+            <useDefaultExcludes>true</useDefaultExcludes>
             <includes>
                 <include>../../etc/**</include>
                 <include>modules/**</include>
             </includes>
 
             <excludes>
+                <!-- For PDE support, we need to generate some files outside of the
+                     target directory. They are removed during the clean phase, but
+                     we also need to exclude them here. -->
+                <exclude>modules/tool/axis2-eclipse-service-plugin/META-INF/**</exclude>
+                <exclude>modules/tool/axis2-eclipse-service-plugin/lib/**</exclude>
+                <exclude>modules/tool/axis2-eclipse-codegen-plugin/META-INF/**</exclude>
+                <exclude>modules/tool/axis2-eclipse-codegen-plugin/lib/**</exclude>
+                
+                <!-- These directories are not excluded by the rules below because of the
+                     "src" component in the path. We need to exclude them explicitly. -->
+                <exclude>modules/tool/axis2-wsdl2code-maven-plugin/src/test/test1/target/**</exclude>
+                <exclude>modules/tool/axis2-java2wsdl-maven-plugin/src/test/test1/target/**</exclude>
+                
+                <!-- TODO: not sure what those are for -->
                 <exclude>../../SameServiceAddingTest.java</exclude>
-                <exclude>**/target/**</exclude>
                 <exclude>../../modules/samples/eventing/**</exclude>
                 <exclude>../../modules/samples/security/**</exclude>
                 <exclude>xdocs/**</exclude>
-                <!-- 
-                <exclude>**/*class*/**</exclude> 
-                Above prevents following class being copied.
-                /modules/kernel/src/org/apache/axis2/classloader/MultiParentClassLoader.java
-                -->
-                <exclude>**/.svn/**</exclude>
-                <exclude>**/bin/**</exclude>
-                <exclude>**/*.log</exclude>
-                <!--
-                <exclude>**/.*</exclude>
-                Above prevents ".classpath" and ".project" from being copied (see
-                modules/tool/conf/codegen
-                -->
-                <exclude>**/.settings/**</exclude>
-                <exclude>**/*.license</exclude>
-                <exclude>**/*.iml</exclude>
+                
+                <!-- Exclusions from org.apache.resources:apache-source-release-assembly-descriptor.
+                     Note that they assume that all sources are located under an "src" directory. This
+                     is not the case for Axis2, which doesn't use the standard Maven 2 conventions.
+                     Thus we may still encounter some issues here. -->
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/).*${project.build.directory}.*]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?maven-eclipse\.xml]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.project]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.classpath]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?[^/]*\.iws]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?[^/]*\.ipr]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?[^/]*\.iml]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.settings(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.externalToolBuilders(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.deployables(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?\.wtpmodules(/.*)?]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?cobertura\.ser]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?pom\.xml\.releaseBackup]</exclude>
+                <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?release\.properties]</exclude>
             </excludes>
 
         </fileSet>
