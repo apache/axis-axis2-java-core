@@ -37,6 +37,9 @@
             </includes>
 
             <excludes>
+                <!-- Exclude sources for modules that are not part of the build -->
+                <exclude>modules/rmi/**</exclude>
+                
                 <!-- For PDE support, we need to generate some files outside of the
                      target directory. They are removed during the clean phase, but
                      we also need to exclude them here. -->
