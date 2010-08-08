@@ -63,7 +63,6 @@
                 <exclude>modules/tool/axis2-java2wsdl-maven-plugin/src/test/test1/target/**</exclude>
                 
                 <!-- TODO: not sure what those are for -->
-                <exclude>../../SameServiceAddingTest.java</exclude>
                 <exclude>../../modules/samples/eventing/**</exclude>
                 <exclude>../../modules/samples/security/**</exclude>
                 <exclude>xdocs/**</exclude>
