@@ -741,14 +741,16 @@ public class ConfigurationContext extends AbstractContext {
         if(log.isDebugEnabled()){
             log.debug("Invoke modules shutdown.");
         }
-        HashMap modules = axisConfiguration.getModules();
-        if (modules != null) {
-            Iterator moduleitr = modules.values().iterator();
-            while (moduleitr.hasNext()) {
-                AxisModule axisModule = (AxisModule) moduleitr.next();
-                Module module = axisModule.getModule();
-                if (module != null) {
-                    module.shutdown(this);
+        if(axisConfiguration!=null){
+            HashMap modules = axisConfiguration.getModules();
+            if (modules != null) {
+                Iterator moduleitr = modules.values().iterator();
+                while (moduleitr.hasNext()) {
+                    AxisModule axisModule = (AxisModule) moduleitr.next();
+                    Module module = axisModule.getModule();
+                    if (module != null) {
+                        module.shutdown(this);
+                    }
                 }
             }
         }
@@ -757,12 +759,14 @@ public class ConfigurationContext extends AbstractContext {
         if(log.isDebugEnabled()){
             log.debug("Invoke services shutdown.");
         }
-        for (Iterator services = axisConfiguration.getServices().values().iterator();
-        services.hasNext();) {
-            AxisService axisService = (AxisService) services.next();
-            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
-            if (serviceLifeCycle != null) {
-                serviceLifeCycle.shutDown(this, axisService);
+        if(axisConfiguration!=null){
+            for (Iterator services = axisConfiguration.getServices().values().iterator();
+            services.hasNext();) {
+                AxisService axisService = (AxisService) services.next();
+                ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+                if (serviceLifeCycle != null) {
+                    serviceLifeCycle.shutDown(this, axisService);
+                }
             }
         }
         stopped = true;
