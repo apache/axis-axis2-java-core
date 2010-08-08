@@ -41,6 +41,7 @@
                 <include>LICENSE.txt</include>
                 <include>README.txt</include>
                 <include>release-notes.html</include>
+                <include>src/**</include>
             </includes>
 
             <excludes>
