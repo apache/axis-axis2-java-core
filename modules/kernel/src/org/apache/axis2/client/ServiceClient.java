@@ -857,7 +857,10 @@ public class ServiceClient {
                     lastOperationContext
                             .getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             if (outMessageContext != null) {
-                outMessageContext.getTransportOut().getSender().cleanup(outMessageContext);
+                if (outMessageContext.getTransportOut() != null &&
+                        outMessageContext.getTransportOut().getSender() != null) {
+                    outMessageContext.getTransportOut().getSender().cleanup(outMessageContext);
+                }
             }
         }
     }
