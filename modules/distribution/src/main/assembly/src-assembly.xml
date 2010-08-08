@@ -37,6 +37,10 @@
                 <include>modules/**</include>
                 <include>legal/**</include>
                 <include>release-docs/**</include>
+                <include>NOTICE.txt</include>
+                <include>LICENSE.txt</include>
+                <include>README.txt</include>
+                <include>release-notes.html</include>
             </includes>
 
             <excludes>
@@ -83,23 +87,6 @@
                 <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?release\.properties]</exclude>
             </excludes>
 
-        </fileSet>
-
-
-        <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>NOTICE.txt</include>
-            </includes>
-        </fileSet>
-
-        <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>LICENSE.txt</include>
-            </includes>
         </fileSet>
 
         <!-- copying tools section of xdocs. This is needed by eclipse plugins -->
