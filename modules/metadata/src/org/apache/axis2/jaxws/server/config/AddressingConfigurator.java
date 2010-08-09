@@ -35,6 +35,8 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.AddressingFeature;
@@ -51,11 +53,15 @@ import javax.xml.ws.soap.AddressingFeature.Responses;
  */
 public class AddressingConfigurator implements ServerConfigurator {
 
+    private static Log log = LogFactory.getLog(AddressingConfigurator.class);
     /*
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.ServerConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
     public void configure(EndpointDescription endpointDescription) {
+        if (log.isDebugEnabled()) {
+            log.debug("Start configure");
+        }
     	Addressing addressing =
     		(Addressing) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(AddressingFeature.ID);
     	SubmissionAddressing submissionAddressing =
@@ -66,6 +72,9 @@ public class AddressingConfigurator implements ServerConfigurator {
     	Parameter responses = null;
     	
     	if (addressing != null && submissionAddressing != null) {
+    	    if (log.isDebugEnabled()) {
+                log.debug("Both Addressing and SubmissionAddressing are specified");
+            }
             //Both annotations must have been specified.
             boolean w3cAddressingEnabled = addressing.enabled();
             boolean submissionAddressingEnabled = submissionAddressing.enabled();
@@ -96,6 +105,9 @@ public class AddressingConfigurator implements ServerConfigurator {
             }
     	}
     	else if (addressing != null) {
+    	    if (log.isDebugEnabled()) {
+                log.debug("Only Addressing is specified.  SubmissionAddressing is not specified");
+            }
             //The Addressing annotation must have been specified.
             boolean w3cAddressingEnabled = addressing.enabled();
 
@@ -110,6 +122,9 @@ public class AddressingConfigurator implements ServerConfigurator {
             }
     	}
     	else if (submissionAddressing != null) {
+    	    if (log.isDebugEnabled()) {
+                log.debug("Only SubmssionAddressing is specified.  Addressing is not specified");
+            }
             //The SubmissionAddressing annotation must have been specified.
             boolean submissionAddressingEnabled = submissionAddressing.enabled();
 
@@ -154,9 +169,15 @@ public class AddressingConfigurator implements ServerConfigurator {
     		}
     	}
     	catch (Exception e) {
+    	    if (log.isDebugEnabled()) {
+                log.debug("Unexpected Exception occurred:", e);
+            }
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("AddressingEngagementError", e.toString()));
     	}
+    	if (log.isDebugEnabled()) {
+    	    log.debug("End configure");
+        }
     }
 
     /**
