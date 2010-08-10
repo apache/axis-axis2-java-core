@@ -187,6 +187,26 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-timestamp</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                import java.util.Date 
+                                import java.text.MessageFormat 
+                                project.properties['buildTimestamp'] = MessageFormat.format("{0,date,dd-MM-yyyy}", new Date())
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-repo-maven-plugin</artifactId>
                 <executions>

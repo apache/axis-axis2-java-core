@@ -110,11 +110,12 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
+            <directory>../../release-docs/readme-files</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>README-std-src.txt</include>
             </includes>
+            <filtered>true</filtered>
         </fileSet>
     </fileSets>
 </assembly>
