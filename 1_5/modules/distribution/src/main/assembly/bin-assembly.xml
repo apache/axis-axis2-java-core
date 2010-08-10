@@ -128,11 +128,13 @@
 
         <!-- TODO: Need to rename this file to INSTALL.txt -->
         <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
+            <directory>../../release-docs/readme-files</directory>
             <outputDirectory></outputDirectory>
             <includes>
+                <include>README-std-bin.txt</include>
                 <include>installation-std-bin.txt</include>
             </includes>
+            <filtered>true</filtered>
         </fileSet>
 
         <fileSet>
