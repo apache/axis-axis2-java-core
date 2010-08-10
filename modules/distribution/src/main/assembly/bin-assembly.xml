@@ -22,10 +22,9 @@
     <includeBaseDirectory>true</includeBaseDirectory> 
     <baseDirectory>axis2-${version}</baseDirectory>
     <formats>
-	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
+        <!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
         <format>zip</format>
     </formats>
-
 
     <fileSets>
         <!--********************** creating the repository ********************** -->
@@ -127,25 +126,25 @@
             </includes>
         </fileSet>
 
-	<!-- TODO: Need to rename this file to INSTALL.txt -->
-	<fileSet>
+        <!-- TODO: Need to rename this file to INSTALL.txt -->
+        <fileSet>
             <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>installation-std-bin.txt</include>
             </includes>
-	</fileSet>
+        </fileSet>
 
-	<fileSet>
+        <fileSet>
             <directory>../../modules/kernel/conf</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>log4j.properties</include>
                 <include>commons-logging.properties</include>
             </includes>
-	</fileSet>
+        </fileSet>
 
-	<fileSet>
+        <fileSet>
             <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
@@ -154,38 +153,38 @@
                 <include>README.txt</include>
                 <include>release-notes.html</include>
             </includes>
-	</fileSet>
+        </fileSet>
 
         <!-- copy samples -->
         <fileSet>
             <directory>../../modules/samples</directory>
             <outputDirectory>samples</outputDirectory>
             <includes>
-				<include>databinding/**/*</include>
-				<include>faulthandling/**/*</include>
-				<include>jaxws-calculator/**/*</include>
-				<include>jaxws-addressbook/**/*</include>
-				<include>jaxws-samples/**/*</include>
-				<include>java_first_jaxws/**/*</include>
-				<include>jaxws-interop/**/*</include>
-				<include>jaxws-dynamic/**/*</include>
-				<include>jaxws-version/**/*</include>
-				<include>mtom/**/*</include>
-				<include>pojo/**/*</include>
-				<include>pojoguide/**/*</include>
-				<include>pojoguidespring/**/*</include>
-				<include>quickstart/**/*</include>
-				<include>quickstartadb/**/*</include>
-				<include>quickstartaxiom/**/*</include>
-				<include>quickstartjibx/**/*</include>
-				<include>quickstartxmlbeans/**/*</include>
-				<include>servicelifecycle/**/*</include>
-				<include>soapwithattachments/**/*</include>
-				<include>userguide/**/*</include>
-				<include>version/**/*</include>
-				<include>wsdl/**/*</include>
-				<include>yahoojsonsearch/**/*</include>
-				<include>yahoorestsearch/**/*</include>            
+                <include>databinding/**/*</include>
+                <include>faulthandling/**/*</include>
+                <include>jaxws-calculator/**/*</include>
+                <include>jaxws-addressbook/**/*</include>
+                <include>jaxws-samples/**/*</include>
+                <include>java_first_jaxws/**/*</include>
+                <include>jaxws-interop/**/*</include>
+                <include>jaxws-dynamic/**/*</include>
+                <include>jaxws-version/**/*</include>
+                <include>mtom/**/*</include>
+                <include>pojo/**/*</include>
+                <include>pojoguide/**/*</include>
+                <include>pojoguidespring/**/*</include>
+                <include>quickstart/**/*</include>
+                <include>quickstartadb/**/*</include>
+                <include>quickstartaxiom/**/*</include>
+                <include>quickstartjibx/**/*</include>
+                <include>quickstartxmlbeans/**/*</include>
+                <include>servicelifecycle/**/*</include>
+                <include>soapwithattachments/**/*</include>
+                <include>userguide/**/*</include>
+                <include>version/**/*</include>
+                <include>wsdl/**/*</include>
+                <include>yahoojsonsearch/**/*</include>
+                <include>yahoorestsearch/**/*</include>            
             </includes>
             <excludes>
                 <exclude>**/*.iml</exclude>
@@ -193,7 +192,7 @@
         </fileSet>
     </fileSets>
     
-      <dependencySets>
+    <dependencySets>
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <includes>
@@ -203,9 +202,9 @@
                  <exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</exclude>
                  <exclude>org.springframework:spring-beans:jar</exclude>
-                 <exclude>org.springframework:spring-context:jar</exclude>	
-                 <exclude>org.springframework:spring-core:jar</exclude>	
-                 <exclude>org.springframework:spring-web:jar</exclude>	
+                 <exclude>org.springframework:spring-context:jar</exclude>
+                 <exclude>org.springframework:spring-core:jar</exclude>
+                 <exclude>org.springframework:spring-web:jar</exclude>
                  <exclude>org.apache.ant:ant:jar</exclude>
                  <exclude>org.apache.ant:ant-launcher:jar</exclude>
                  <exclude>aopalliance:aopalliance:jar</exclude>
@@ -215,5 +214,5 @@
                  <exclude>javax.servlet:servlet-api</exclude>
             </excludes>
         </dependencySet>
-      </dependencySets>
+    </dependencySets>
 </assembly>
