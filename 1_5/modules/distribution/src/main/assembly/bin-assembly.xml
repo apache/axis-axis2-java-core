@@ -147,7 +147,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
+            <directory>../..</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>

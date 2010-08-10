@@ -37,6 +37,11 @@
                 <include>modules/**</include>
                 <include>legal/**</include>
                 <include>release-docs/**</include>
+                <include>NOTICE.txt</include>
+                <include>LICENSE.txt</include>
+                <include>README.txt</include>
+                <include>release-notes.html</include>
+                <include>src/**</include>
             </includes>
 
             <excludes>
@@ -57,7 +62,6 @@
                 <exclude>modules/tool/axis2-java2wsdl-maven-plugin/src/test/test1/target/**</exclude>
                 
                 <!-- TODO: not sure what those are for -->
-                <exclude>../../SameServiceAddingTest.java</exclude>
                 <exclude>../../modules/samples/eventing/**</exclude>
                 <exclude>../../modules/samples/security/**</exclude>
                 <exclude>xdocs/**</exclude>
@@ -82,23 +86,6 @@
                 <exclude>%regex[(?!((?!${project.build.directory}/)[^/]+/)*src/)(.*/)?release\.properties]</exclude>
             </excludes>
 
-        </fileSet>
-
-
-        <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>NOTICE.txt</include>
-            </includes>
-        </fileSet>
-
-        <fileSet>
-            <directory>target/tmp-doc-distro/docs</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>LICENSE.txt</include>
-            </includes>
         </fileSet>
 
         <!-- copying tools section of xdocs. This is needed by eclipse plugins -->
