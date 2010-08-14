@@ -1359,9 +1359,7 @@
         <finalName>axis2-${project.version}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.war.version}</version>
                 <configuration>
                     <warName>axis2</warName>
                     <archive>
