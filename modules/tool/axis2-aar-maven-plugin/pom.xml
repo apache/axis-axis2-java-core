@@ -71,23 +71,23 @@
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/tool/axis2-aar-maven-plugin</url>
     </scm>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>../../..</directory>
-                <includes>
-                    <include>NOTICE.txt</include>
-                    <include>LICENSE.txt</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${project.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
     <developers>
         <developer>
