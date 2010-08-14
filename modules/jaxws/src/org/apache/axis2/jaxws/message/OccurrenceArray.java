@@ -57,14 +57,15 @@ public class OccurrenceArray {
      */
     public Object[] getAsArray() {
         Object[] objects = null;
-        if (value instanceof List) {
+        if (value == null) {
+            return new Object[0];
+        } else if (value instanceof List) {
             List l = (List) value;
             objects = new Object[l.size()];
             for (int i=0; i<l.size(); i++) {
                 objects[i] = l.get(i);
             }
         } else {
-            
             objects = new Object[Array.getLength(value)];
             for (int i=0; i<objects.length; i++) {
                 objects[i] = Array.get(value, i);

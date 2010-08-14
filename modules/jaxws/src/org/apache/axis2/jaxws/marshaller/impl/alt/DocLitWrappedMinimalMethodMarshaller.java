@@ -342,7 +342,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             if (returnType != void.class) {
                 Element returnElement = null;
                 QName returnQName = new QName(returnNS, returnLocalPart);
-                if (representAsOccurrence(returnObject)) {
+                if (representAsOccurrence(returnObject, returnType)) {
                     if (log.isDebugEnabled()) {
                         log.debug("Return element isListOrArray");
                     }
@@ -428,7 +428,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             if (elementValue instanceof JAXBElement) {
                 JAXBElement jaxb = (JAXBElement) elementValue;
                 Object value = jaxb.getValue();
-                if (representAsOccurrence(value)) {
+                if (representAsOccurrence(value, jaxb.getDeclaredType())) {
                     if (log.isDebugEnabled()) {
                         log.debug("Build OccurrentArray");
                     }
@@ -450,23 +450,25 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
      * @return true if this value should be represented as a series of occurrence
      * elements
      */
-    private static boolean representAsOccurrence(Object value) {
+    private static boolean representAsOccurrence(Object value, Class inClass) {
         // Represent as a series of occurrence elements if not List/Array
         // but not a byte[].  A byte[] has its own encoding.
         
         boolean rc = false;
-        
-        if (value == null) {
-            rc = false;
-        } else if (value instanceof List) {
+        Class cls = (value == null) ? inClass : value.getClass();
+  
+        if (cls == null) {
+            return true;
+        }else if (List.class.isAssignableFrom(cls)) {
             rc = true;
-        } else if (value.getClass().equals(byte[].class)) {
+        } else if (cls.equals(byte[].class)) {
             rc = false;  // assume base64binary
-        } else if (value.getClass().isArray()) {
+        } else if (cls.isArray()) {
             rc = true;
         }
         if (log.isDebugEnabled()) {
-            log.debug("representAsOccurrence for " + JavaUtils.getObjectIdentity(value) + " " + rc);
+            log.debug("representAsOccurrence for " + JavaUtils.getObjectIdentity(value) + 
+                        " of class: " + inClass + rc);
         }
         return rc;
     }

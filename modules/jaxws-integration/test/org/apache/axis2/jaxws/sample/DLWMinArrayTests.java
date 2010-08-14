@@ -251,6 +251,45 @@ public class DLWMinArrayTests extends AbstractTestCase {
     
     /**
      * Test method that echos a List of beans (List<WSUser>)
+     * The list contains no items.
+     */
+    public void testEchoComplexListNull() throws Exception {
+        
+        IGenericService proxy = getProxy("echoComplexList");
+        
+        // There really is no discernible difference between
+        // an empty array and null over the wire.  Sometimes users
+        // will pass in a null on the client or server.
+        
+        List<WSUser> response = proxy.echoComplexList(null);
+        assertTrue(response != null);
+        assertTrue(response.size() == 0);
+        
+        // Try the call again
+        response = proxy.echoComplexList(null);
+        assertTrue(response != null);
+        assertTrue(response.size() == 0);
+        
+        // Now try force the server to return a null argument
+        List<WSUser> in = new ArrayList<WSUser>();
+        WSUser wsUser = new WSUser();
+        wsUser.setUserID("FORCENULL");
+        in.add(wsUser);
+        
+        response = proxy.echoComplexList(in);
+        assertTrue(response != null);
+        assertTrue(response.size() == 0);
+        
+        // Try the call again
+        response = proxy.echoComplexList(in);
+        assertTrue(response != null);
+        assertTrue(response.size() == 0);
+        
+        
+    }
+    
+    /**
+     * Test method that echos a List of beans (List<WSUser>)
      * and echos a List<String> as an inout parameter.
      * 2 WSUsers are echo'd
      * 2 Strings are echo'd

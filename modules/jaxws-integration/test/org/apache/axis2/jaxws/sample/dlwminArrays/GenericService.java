@@ -64,6 +64,9 @@ public class GenericService implements IGenericService {
     }
     
     public List<WSUser> echoComplexList(List<WSUser> in ) {
+        if (in.size() > 0 && in.get(0).getUserID().equals("FORCENULL")) {
+            return null;
+        }
         return in;
     }
 
