@@ -1359,6 +1359,51 @@
         <finalName>axis2-${project.version}</finalName>
         <plugins>
             <plugin>
+                <!-- Compile the JSPs so that syntax errors are detected during the build. -->
+                <groupId>org.codehaus.mojo.jspc</groupId>
+                <artifactId>jspc-maven-plugin</artifactId>
+                <version>2.0-alpha-3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includeInProject>false</includeInProject>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.mojo.jspc</groupId>
+                        <artifactId>jspc-compiler-tomcat6</artifactId>
+                        <version>2.0-alpha-3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- We only want to validate the JSPs, but not to include the compiled
+                             versions in the project. However, the includeInProject parameter of
+                             the jspc-maven-plugin seems to be broken (the classes are always
+                             compiled to the target/classes folder) and maven-war-plugin doesn't
+                             have an option to exclude specific classes or packages. Therefore
+                             the only way to achieve this is to delete the files after compilation. -->
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete dir="${project.build.outputDirectory}/jsp" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warName>axis2</warName>
