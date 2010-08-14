@@ -264,6 +264,9 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         // Now that all the valid wsa headers have been read, throw an exception if there was an invalid cardinality
         // This means that if for example there are multiple MessageIDs and a FaultTo, the FaultTo will be respected.
         if (!duplicateHeaderNames.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Duplicate header names found:" + duplicateHeaderNames.get(0));
+            }
             // Simply choose the first problem header we came across as we can only fault for one of them.
             AddressingFaultsHelper.triggerInvalidCardinalityFault(messageContext,
                                                                   (String) duplicateHeaderNames
@@ -512,12 +515,16 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         String wsaAction = soapHeaderBlock.getText();
 
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-            log.trace("extractActionInformation: soapAction='" + soapAction + "' wsa:Action='" +
-                      wsaAction + "'");
+            log.trace("extractActionInformation: HTTP soapAction or action ='" + soapAction + 
+                    "' wsa:Action='" + wsaAction + "'");
         }
 
         // Need to validate that the content of the wsa:Action header is not null or whitespace
         if ((wsaAction == null) || "".equals(wsaAction.trim())) {
+            if (log.isDebugEnabled()) {
+                log.debug("The wsa:Action header is present but its contents are empty.  This violates " +
+                        "rules in the WS-A specification.  The SOAP node that sent this message must be changed.");
+            }
             AddressingFaultsHelper.triggerActionNotSupportedFault(messageContext, wsaAction);
         }
 
@@ -529,6 +536,11 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         // check that soapAction==wsa:Action
         if (soapAction != null && !"".equals(soapAction) && messageContext.isServerSide()) {
             if (!soapAction.equals(wsaAction)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("The wsa:Action header is (" + wsaAction + ") which conflicts with the HTTP soapAction or action " +
+                            "(" + soapAction + ").  This is a violation of the WS-A specification.  The SOAP node that sent this message " +
+                            " must be changed.");
+                }
                 AddressingFaultsHelper.triggerActionMismatchFault(messageContext, soapAction, wsaAction);
             }
         } else {
