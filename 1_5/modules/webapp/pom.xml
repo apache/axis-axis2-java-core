@@ -1359,6 +1359,21 @@
         <finalName>axis2-${project.version}</finalName>
         <plugins>
             <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${project.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <!-- Compile the JSPs so that syntax errors are detected during the build. -->
                 <groupId>org.codehaus.mojo.jspc</groupId>
                 <artifactId>jspc-maven-plugin</artifactId>
