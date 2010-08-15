@@ -201,6 +201,15 @@
             <groupId>jalopy</groupId>
             <artifactId>jalopy</artifactId>
         </dependency>
+        
+        <!-- None of the Axis2 artifacts should have a dependency on log4j
+             because we don't want to impose a particular logging implementation
+             on our users. However, for the binary distribution, we need to
+             choose one. -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
     </dependencies>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/distribution</connection>
