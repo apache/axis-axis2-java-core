@@ -94,6 +94,7 @@
 		</java>
 
 		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="rpc-wsdl-codegen" />
+		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="wsdl20-codegen" />
 
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleB" />
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleC" />
@@ -148,6 +149,16 @@
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/helper-test2"
 					 target="jar.client"/>
 	</target>
+
+	<target name="wsdl20-codegen">
+		<echo>Running codegen for WSDL 2.0</echo>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath"/>
+			<arg line="-wv 2.0 -ap -o target/wsdl20-test -s -uri test-resources/wsdl20/HotelReservationService.wsdl"/>
+		</java>
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl20-test"
+									 target="jar.client"/>
+    </target>
 
 	<target name="enterprise-wsdl-codegen">
 		<!-- codegen for the enterprise wsdl -->

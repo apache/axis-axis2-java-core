@@ -20,7 +20,7 @@
   -->
 
 <description
-    xmlns="http://www.w3.org/2006/01/wsdl"
+    xmlns="http://www.w3.org/ns/wsdl"
     targetNamespace= "http://greath.example.com/2004/wsdl/resSvc"
     xmlns:tns= "http://greath.example.com/2004/wsdl/resSvc"
     xmlns:ghns = "http://greath.example.com/2004/schemas/resSvc"
