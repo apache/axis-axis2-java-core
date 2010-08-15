@@ -774,49 +774,11 @@
                 <groupId>org.apache.woden</groupId>
                 <artifactId>woden-api</artifactId>
                 <version>${woden.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xmlParserAPIs</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.woden</groupId>
                 <artifactId>woden-impl-dom</artifactId>
                 <version>${woden.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xmlParserAPIs</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                    <!-- For the moment, woden-impl-dom really depends on Xerces; see WODEN-152.
-                         Once this is fixed, we can also exclude xerces:xercesImpl. -->
-                    <!-- exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion -->
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
