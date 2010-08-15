@@ -122,7 +122,6 @@
         <xml_resolver.version>1.2</xml_resolver.version>
         <xmlschema.version>1.4.3</xmlschema.version>
         <xmlunit.version>1.1</xmlunit.version>
-        <smack.version>3.0.4</smack.version>
         <commons.lang.version>2.3</commons.lang.version>
         <javax.mail.version>1.4</javax.mail.version>
         <!-- The build failing if tests are skipped is very annoying -->
@@ -937,16 +936,6 @@
                 <groupId>jalopy</groupId>
                 <artifactId>jalopy</artifactId>
                 <version>${jalopy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.igniterealtime</groupId>
-                <artifactId>smack</artifactId>
-                <version>${smack.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.igniterealtime</groupId>
-                <artifactId>smackx</artifactId>
-                <version>${smack.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
