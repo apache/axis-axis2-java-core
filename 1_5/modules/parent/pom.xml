@@ -80,7 +80,7 @@
         <commons.io.version>1.4</commons.io.version>
         <commons.logging.version>1.1.1</commons.logging.version>
         <eclipse.version>3.2.0</eclipse.version>
-        <fi.version>1.1.8</fi.version>
+        <fi.version>1.2.7</fi.version>
         <geronimo.spec.activation.version>1.0.2</geronimo.spec.activation.version>
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <geronimo.spec.javamail.version>1.6</geronimo.spec.javamail.version>
@@ -448,19 +448,6 @@
           which is what we want.
        -->
         <repository>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-            <id>apache-ws-snapshots2</id>
-            <name>Apache ws.zones - 2</name>
-            <url>http://ws.zones.apache.org/repository2</url>
-        </repository>
-        <repository>
             <id>tomcat-repository</id>
             <url>http://tomcat.apache.org/dev/dist/m2-repository</url>
             <releases>
@@ -519,19 +506,6 @@
             </snapshots>
             <releases>
                 <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-        <pluginRepository>
-            <id>ws-zones</id>
-            <name>Apache WS Zones Repository</name>
-            <url>http://ws.zones.apache.org/repository2</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
             </releases>
         </pluginRepository>
     </pluginRepositories>
