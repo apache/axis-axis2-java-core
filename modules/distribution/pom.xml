@@ -183,6 +183,15 @@
             <version>${pom.version}</version>
             <type>aar</type>
         </dependency>
+        
+        <!-- Axis2 has always been shipped with Sun's implementations of
+             JavaMail and JAF, although Axiom depends on (and has been tested
+             with) Geronimo's implementations. This should probably reevaluated. -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
     </dependencies>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/distribution</connection>
