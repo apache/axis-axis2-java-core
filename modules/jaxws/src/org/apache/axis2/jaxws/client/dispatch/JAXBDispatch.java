@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.client.dispatch;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -46,6 +47,7 @@ import javax.xml.ws.WebServiceFeature;
 public class JAXBDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(JAXBDispatch.class);
     private JAXBContext jaxbContext;
+    private QName elementQName;
 
     public JAXBDispatch(ServiceDelegate svcDelegate,
                         EndpointDescription epDesc,
@@ -110,8 +112,8 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
 
             // Create a block from the value
-            QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(value);
-            Block block = factory.createFrom(value, context, qName);
+            elementQName = XMLRootElementUtil.getXmlRootElementQNameFromObject(value);
+            Block block = factory.createFrom(value, context, elementQName);
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
 
             if (mode.equals(Mode.PAYLOAD)) {
@@ -132,7 +134,19 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
 
         return message;
     }
-
+    
+    // For a JAXB element we don't need to parse the message to get the element QName (which is
+    // slow); we saved the element QName from the JAXBElement earlier.  If for some reason it was not
+    // saved, we'll try parsing the message to get it.
+    QName getBodyElementQNameFromDispatchMessage(MessageContext requestMessageCtx) {
+        QName returnElementQName = null;
+        if (elementQName != null) {
+            returnElementQName = elementQName;
+        } else {
+            returnElementQName = super.getBodyElementQNameFromDispatchMessage(requestMessageCtx);
+        }
+        return returnElementQName;
+    }
     public Object getValueFromMessage(Message message) {
         return getValue(message, mode, jaxbContext);
     }

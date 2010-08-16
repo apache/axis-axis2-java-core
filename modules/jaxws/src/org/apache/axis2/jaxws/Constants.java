@@ -189,5 +189,33 @@ public interface Constants {
      */
     public static final String JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS = 
         "jaxws.jaxb.write.remove.illegal.chars";
+    
+    /** 
+     * Context Property:
+     * Name: jaxws.dispatch.outbound.operation.resolution.enable
+     * Value: String "false" or "true"
+     * Default: null, which is interpreted as "true"
+     * Can be set on:
+     * - Axis Configuration, which affects operation resolution across all Dispatch<T> clients
+     * - Request message context, which affects only the Dispatch<T> client using that context.
+     *
+     * Indicates if a Dispatch<T> message should be parsed to determine the operation indicated in the
+     * message, and use that to determine the Action that should be placed in the outgoing message.  The
+     * Action would be placed in the SOAPAction HTTP header and any WS-Addressing Action headers if 
+     * WS-Addressing is enabled.  Prior to the introduction of this property and associated support, 
+     * for Dispatch<T> the client would have to set the Action on the Request Message context in order to 
+     * get a meaningful value set as the Action.
+     * 
+     * Note that parsing the outgoing message in order to determine the operation indicated in the
+     * message can be slow.  Therefore, this property is provided to disable that operation resolution.
+     * The default, however, is to do operation resolution.
+     * 
+     * Operation resolution will also be disabled on a Dispatch<T> client if an Action was set on the 
+     * request message context.  
+     * 
+     * @see javax.xml.ws.BindingProvider.SOAPACTION_USE_PROPERTY
+     * @see javax.xml.ws.BindingProvider.SOAPACTION_URI_PROPERTY
+     */
+    public static final String  DISPATCH_CLIENT_OUTBOUND_RESOLUTION = "jaxws.dispatch.outbound.operation.resolution.enable"; 
 
 }

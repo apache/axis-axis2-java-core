@@ -21,9 +21,12 @@ package org.apache.axis2.jaxws.client.dispatch;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.client.ClientUtils;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
@@ -31,6 +34,8 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
@@ -42,7 +47,12 @@ import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Node;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.ProtocolException;
@@ -170,6 +180,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Perform the WebServiceFeature configuration requested by the user.
             binding.configure(requestMsgCtx, this);
 
+            // Initializing the message context above will put the outbound message onto the messageContext
+            // Determine the operation if possible from the outbound message.  If it can not be determined
+            // it will be set to null.  In this case, an anonymous operation will be used.  Note that determining
+            // the operation will mean deserializing the message.  That means that any WebServiceFeatures must have
+            // been configured first so that any relevant configurations (such as MTOM) have been initialized prior to 
+            // the message being deserialized.  This is particularly true for Dispatch<JAXB Element>.
+            requestMsgCtx.setOperationDescription(getOperationDescriptionForDispatch(requestMsgCtx));
+
             // Send the request using the InvocationController
             ic.invoke(invocationContext);
 
@@ -225,6 +243,173 @@ public abstract class BaseDispatch<T> extends BindingProvider
             }  
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+
+    /**
+     * Given a JAXWS Message Context which contains an outbound service-requester Message for a Dispatch client, 
+     * determine the OperationDescription for the operation contained in that Dispatch message.
+     * 
+     * Note that operation resolution can be disabled by a property setting.
+     * @see org.apache.axis2.jaxws.Constants.DISPATCH_CLIENT_OUTBOUND_RESOLUTION
+     * 
+     * @param requestMessageCtx JAXWS Message Context containing the outbound Dispatch message
+     * @return the OperationDescription corresponding to the operation contained in the Dispatch message, or null 
+     * if it can not be determined or if dispatch operation resolution is disabled via a property.
+     */
+    private OperationDescription getOperationDescriptionForDispatch(MessageContext requestMessageCtx) {
+        OperationDescription operationDesc = null;
+        if (dispatchOperationResolutionEnabled()) {
+            EndpointInterfaceDescription endpointInterfaceDesc = getEndpointDescription().getEndpointInterfaceDescription();
+            // The SEI interface could be null (for example if there was no SEI and all the ports were dynamically added).
+            // If there is an SEI, then try to determine the operation for the outbound dispatch message.
+            if (endpointInterfaceDesc != null) {
+                QName bodyElementQName = getBodyElementQNameFromDispatchMessage(requestMessageCtx);
+                operationDesc = determineOperationDescFromBodyElementQName(endpointInterfaceDesc, bodyElementQName);
+            }
+        }
+        return operationDesc;
+    }
+    
+    /**
+     * Returns the OperationDescription corresponding to the bodyElementQName passed in.  What that body element corresponds to
+     * depends on the type of the message:
+     * - For Doc/Lit/Wrapped, the body element is the operation name
+     * - For Doc/Lit/Bare, the body element is the element name contained in the wsdl:message wsdl:part
+     * - For RPC, the body element is effectively the operation name.
+     * 
+     * @param endpointInterfaceDesc The interface (i.e. SEI) on which to search for the operation
+     * @param bodyElementQName the QName of the first body element for which to find the operation
+     * 
+     * @return The OperationDescription corresponding to the body element QName or null if one can not be found.
+     */
+    private OperationDescription determineOperationDescFromBodyElementQName(EndpointInterfaceDescription endpointInterfaceDesc,
+                                                                            QName bodyElementQName) {
+        OperationDescription operationDesc = null;
+        
+        // This logic mimics the code in SOAPMessageBodyBasedOperationDispatcher.findOperation.  We will look for
+        // the AxisOperation corresponding to the body element name.  Note that we are searching for the AxisOperation instead
+        // of searching through the OperationDescriptions so that we can use the getOperationByMessageElementQName
+        // for the Doc/Lit/Bare case.  Once we have the AxisOperation, we'll use that to find the Operation Description.
+        AxisService axisService = endpointInterfaceDesc.getEndpointDescription().getAxisService();
+        AxisOperation axisOperation = null;
+
+        // Doc/Lit/Wrapped and RPC, the operation name is the first body element qname
+        axisOperation = axisService.getOperation(new QName(bodyElementQName.getLocalPart()));
+        
+        if (axisOperation == null) {
+            // Doc/Lit/Bare, the first body element qname is the element name contained in the wsdl:message part
+            axisOperation = axisService.getOperationByMessageElementQName(bodyElementQName);
+        }
+        
+        if (axisOperation == null) {
+            // Not sure why we wouldn't have found the operation above using just the localPart rather than the full QName used here,
+            // but this is what SOAPMessageBodyBasedOperationDispatcher.findOperation does.
+            axisOperation = axisService.getOperation(bodyElementQName);
+        }
+
+        // If we found an axis operation, then find the operation description that corresponds to it
+        if (axisOperation != null) {
+            OperationDescription allOpDescs[] = endpointInterfaceDesc.getDispatchableOperations();
+            for (OperationDescription checkOpDesc : allOpDescs ) {
+                AxisOperation checkAxisOperation = checkOpDesc.getAxisOperation();
+                if (checkAxisOperation == axisOperation) {
+                    operationDesc = checkOpDesc;
+                    break;
+                }
+            }
+        }
+        return operationDesc;
+    }
+
+    /**
+     * Answer if operation resolution on outbound messages for dispatch clients should be done.  The default value 
+     * is TRUE, enabling operation resolution.  Resolution can be disabled via a property on the AxisConfiguration
+     * or on the RequestContext.  
+     * 
+     * Operation resolution is also disabled if a non-null value is specified on the request context for the Action
+     * 
+     * @see org.apache.axis2.jaxws.Constants.DISPATCH_CLIENT_OUTBOUND_RESOLUTION
+     * @see javax.xml.ws.BindingProvider.SOAPACTION_USE_PROPERTY
+     * @see javax.xml.ws.BindingProvider.SOAPACTION_URI_PROPERTY
+     * 
+     * @return true if operation resolution should be performed on outbound 
+     */
+    private boolean dispatchOperationResolutionEnabled() {
+        boolean resolutionEnabled = true;
+        
+        // See if any properties disabled operation resolution 
+        // Check for System property setting
+        String flagValue = getProperty(org.apache.axis2.jaxws.Constants.DISPATCH_CLIENT_OUTBOUND_RESOLUTION);
+
+        // If no System property was set, see if one was set on this request context.
+        if (flagValue == null) {
+            flagValue =  (String) getRequestContext().get(org.apache.axis2.jaxws.Constants.DISPATCH_CLIENT_OUTBOUND_RESOLUTION);
+        }
+        
+        // If any property was set, check the value.
+        if (flagValue != null) {
+            if ("false".equalsIgnoreCase(flagValue)) {
+                resolutionEnabled = false;
+            } else if ("true".equalsIgnoreCase(flagValue)) {
+                resolutionEnabled = true;
+            }
+        }
+
+        // If a property didn't disable resolution, then see if a URI value was specified.
+        // If so, we'll use that later and there's no need to do operation resolution.         
+        if (resolutionEnabled) {
+            Boolean useSoapAction = (Boolean) getRequestContext().get(SOAPACTION_USE_PROPERTY);
+            if (useSoapAction != null && useSoapAction.booleanValue()) {
+                String soapAction = (String) getRequestContext().get(SOAPACTION_URI_PROPERTY);
+                if (soapAction != null) {
+                    resolutionEnabled = false;
+                }
+            }
+        }
+        return resolutionEnabled;
+    }
+
+    /**
+     * Retrieve the specified property from the AxisConfiguration.
+     * 
+     * @param key The property to retrieve from the AxisConfiguration
+     * @return the value associated with the property or null if the property did not exist on the configuration.
+     */
+    private String getProperty(String key) {
+        String propertyValue = null;
+        AxisConfiguration axisConfig = serviceDelegate.getServiceDescription().getAxisConfigContext().getAxisConfiguration();
+        Parameter parameter = axisConfig.getParameter(key);
+        if (parameter != null) {
+            propertyValue = (String) parameter.getValue();
+        }
+        return propertyValue;
+    }
+
+
+    /**
+     * Given a JAXWS Message Context which contains an outbound service-requester Message for a Dispatch client,
+     * determine the QName of the first body element contained in that message.
+     * 
+     * @param requestMessageCtx requestMessageCtx JAXWS Message Context containing the outbound Dispatch message
+     * @return the QName of the first body element contained in the outbound Dispatch message, or null if it 
+     * can not be determined.
+     */
+    QName getBodyElementQNameFromDispatchMessage(MessageContext requestMessageCtx) {
+        QName bodyElementQName = null;
+        Message dispatchMessage = requestMessageCtx.getMessage();
+        SOAPMessage soapMessage = dispatchMessage.getAsSOAPMessage();
+        try {
+            SOAPBody soapBody = soapMessage.getSOAPBody();
+            Node firstElement = soapBody.getFirstChild();
+            String ns = firstElement.getNamespaceURI();
+            String lp= firstElement.getLocalName();
+            bodyElementQName = new QName(ns, lp);
+        } catch (SOAPException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unabled to get the first body element from the outbound dispatch message", e);
+            }
+        }
+        return bodyElementQName;
     }
 
     protected void initMessageContext(Object obj, MessageContext requestMsgCtx) {
@@ -287,7 +472,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             invocationContext.setHandlers(binding.getHandlerChain());
 
             initMessageContext(obj, requestMsgCtx);
-            
+
             /*
              * if SESSION_MAINTAIN_PROPERTY is true, and the client app has explicitly set a HEADER_COOKIE on the request context, assume the client
              * app is expecting the HEADER_COOKIE to be the session id.  If we were establishing a new session, no cookie would be sent, and the 
@@ -320,6 +505,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
             // Perform the WebServiceFeature configuration requested by the user.
             binding.configure(requestMsgCtx, this);
+
+            // Initializing the message context above will put the outbound message onto the messageContext
+            // Determine the operation if possible from the outbound message.  If it can not be determined
+            // it will be set to null.  In this case, an anonymous operation will be used.  Note that determining
+            // the operation will mean deserializing the message.  That means that any WebServiceFeatures must have
+            // been configured first so that any relevant configurations (such as MTOM) have been initialized prior to 
+            // the message being deserialized.  This is particularly true for Dispatch<JAXB Element>.
+            requestMsgCtx.setOperationDescription(getOperationDescriptionForDispatch(requestMsgCtx));
 
             // Send the request using the InvocationController
             ic.invokeOneWay(invocationContext);
@@ -431,6 +624,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Perform the WebServiceFeature configuration requested by the user.
             binding.configure(requestMsgCtx, this);
 
+            // Initializing the message context above will put the outbound message onto the messageContext
+            // Determine the operation if possible from the outbound message.  If it can not be determined
+            // it will be set to null.  In this case, an anonymous operation will be used.  Note that determining
+            // the operation will mean deserializing the message.  That means that any WebServiceFeatures must have
+            // been configured first so that any relevant configurations (such as MTOM) have been initialized prior to 
+            // the message being deserialized.  This is particularly true for Dispatch<JAXB Element>.
+            requestMsgCtx.setOperationDescription(getOperationDescriptionForDispatch(requestMsgCtx));
+
             // Setup the Executor that will be used to drive async responses back to 
             // the client.
             // FIXME: We shouldn't be getting this from the ServiceDelegate, rather each 
@@ -518,7 +719,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             invocationContext.setHandlers(binding.getHandlerChain());
 
             initMessageContext(obj, requestMsgCtx);
-            
+
             /*
              * if SESSION_MAINTAIN_PROPERTY is true, and the client app has explicitly set a HEADER_COOKIE on the request context, assume the client
              * app is expecting the HEADER_COOKIE to be the session id.  If we were establishing a new session, no cookie would be sent, and the 
@@ -551,6 +752,15 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
             // Perform the WebServiceFeature configuration requested by the user.
             binding.configure(requestMsgCtx, this);
+
+            // Initializing the message context above will put the outbound message onto the messageContext
+            // Determine the operation if possible from the outbound message.  If it can not be determined
+            // it will be set to null.  In this case, an anonymous operation will be used.  Note that determining
+            // the operation will mean deserializing the message.  That means that any WebServiceFeatures must have
+            // been configured first so that any relevant configurations (such as MTOM) have been initialized prior to 
+            // the message being deserialized.  This is particularly true for Dispatch<JAXB Element>.
+            requestMsgCtx.setOperationDescription(getOperationDescriptionForDispatch(requestMsgCtx));
+            
 
             // Setup the Executor that will be used to drive async responses back to 
             // the client.
