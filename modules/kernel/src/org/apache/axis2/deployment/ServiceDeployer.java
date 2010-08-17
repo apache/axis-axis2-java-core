@@ -179,7 +179,11 @@ public class ServiceDeployer extends AbstractDeployer {
             String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
             fileName = Utils.getShortFileName(fileName);
             fileName = DeploymentEngine.getAxisServiceName(fileName);
-            fileName = serviceHierarchy + fileName;
+
+            //attach the hierarchical part if it is not null
+            if (serviceHierarchy != null) {
+                fileName = serviceHierarchy + fileName;
+            }
             AxisServiceGroup serviceGroup = axisConfig.removeServiceGroup(fileName);
             if (serviceGroup != null) {
                 configCtx.removeServiceGroupContext(serviceGroup);

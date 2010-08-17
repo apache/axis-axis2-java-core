@@ -1885,6 +1885,7 @@ public class Utils {
         if (filePath == null || serviceDir == null) {
             return "";
         }
+        filePath = formatPath(filePath);
         String[] splited = filePath.split("/" + serviceDir + "/");
         String serviceHierarchy = null;
         if (splited.length > 1) {
@@ -1900,6 +1901,19 @@ public class Utils {
             serviceHierarchy = temp.substring(0, temp.lastIndexOf('/') + 1);
         }
         return serviceHierarchy;
+    }
+
+    /**
+     * Format the string paths to match any platform.. windows, linux etc..
+     *
+     * @param path - input file path
+     * @return formatted file path
+     */
+    public static String formatPath(String path) {
+        // removing white spaces
+        path = path.replaceAll("\\b\\s+\\b", "%20");
+        // replacing all "\" with "/"
+        return path.replace('\\', '/');
     }
 
     /**
