@@ -1,7 +1,0 @@
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<env:Body>
-<ns1:echoDateResponse xmlns:ns1="http://soapinterop.org/" env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-<return xmlns="" xsi:type="xsd:dateTime">xsd:dateTime</return>
-</ns1:echoDateResponse>
-</env:Body>
-</env:Envelope>

@@ -1,8 +1,0 @@
-<!--Auto generated Axis Service XML-->
-<service name="PingPort">
-	<parameter locked="false" name="ServiceClass">org.apache.axis2.oasis.ping.PingPortSkeleton</parameter>
-	<!--Mounting the method Ping-->
-	<operation name="Ping">
-		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
-	</operation>    
-</service>

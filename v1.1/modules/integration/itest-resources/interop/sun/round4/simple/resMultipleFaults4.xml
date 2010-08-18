@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-   <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns0="http://soapinterop.org/types" xmlns:ns1="http://soapinterop.org/wsdl">
-      <env:Body>
-         <env:Fault>
-            <faultcode>env:Client</faultcode>
-            <faultstring>caught exception while handling request: deserialization error: java.lang.IllegalArgumentException</faultstring>
-         </env:Fault>
-      </env:Body>
-   </env:Envelope>

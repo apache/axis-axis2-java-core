@@ -1,9 +1,0 @@
-<service name="Version">
-    <description>
-        This service is to get the running Axis version
-    </description>
-    <parameter name="ServiceClass" locked="false">sample.axisversion.Version</parameter>
-    <operation name="getVersion">
-    <messageReceiver  class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
-    </operation>
-</service>
