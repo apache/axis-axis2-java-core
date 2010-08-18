@@ -1,6 +1,0 @@
-<token-dispatcher-configuration>
-	<issuer class="org.apache.rahas.TempIssuer">
-		<tokenType>http://example.org/mySpecialToken1</tokenType>
-		<tokenType>http://example.org/mySpecialToken2</tokenType>
-	</issuer>
-</token-dispatcher-configuration>
