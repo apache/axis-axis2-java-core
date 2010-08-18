@@ -60,11 +60,7 @@
         ensure that it can be used easily to support arbitrary message exchange
         patterns.
     </description>
-    <url>http://ws.apache.org/axis2/</url>
-    <organization>
-        <name>Apache Software Foundation</name>
-        <url>http://www.apache.org/</url>
-    </organization>
+    <url>http://axis.apache.org/axis2/java/core/</url>
     <issueManagement>
         <system>jira</system>
         <url>http://issues.apache.org/jira/browse/AXIS2</url>
@@ -131,31 +127,24 @@
     </properties>
     <mailingLists>
         <mailingList>
-            <name>Axis Developer List</name>
-            <subscribe>axis-dev-subscribe@ws.apache.org</subscribe>
-            <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
-            <post>axis-dev@ws.apache.org</post>
-            <archive>http://marc.theaimsgroup.com/?l=axis-dev</archive>
+            <name>Axis2 Developer List</name>
+            <subscribe>java-dev-subscribe@axis.apache.org</subscribe>
+            <unsubscribe>java-dev-unsubscribe@axis.apache.org</unsubscribe>
+            <post>java-dev@axis.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-dev/</archive>
             <otherArchives>
                 <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-dev</otherArchive>
             </otherArchives>
         </mailingList>
         <mailingList>
-            <name>Axis User List</name>
-            <subscribe>axis-user-subscribe@ws.apache.org</subscribe>
-            <unsubscribe>axis-user-unsubscribe@ws.apache.org</unsubscribe>
-            <post>axis-user@ws.apache.org</post>
-            <archive>http://marc.theaimsgroup.com/?l=axis-user</archive>
+            <name>Axis2 User List</name>
+            <subscribe>java-user-subscribe@axis.apache.org</subscribe>
+            <unsubscribe>java-user-unsubscribe@axis.apache.org</unsubscribe>
+            <post>java-user@axis.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-user/</archive>
             <otherArchives>
                 <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-user</otherArchive>
             </otherArchives>
-        </mailingList>
-        <mailingList>
-            <name>CVS Commit Message List</name>
-            <subscribe>axis-cvs-subscribe@ws.apache.org</subscribe>
-            <unsubscribe>axis-cvs-unsubscribe@ws.apache.org</unsubscribe>
-            <post>axis-cvs@ws.apache.org</post>
-            <archive>http://markmail.org/search/list:org.apache.ws.axis-cvs</archive>
         </mailingList>
     </mailingLists>
     <developers>
