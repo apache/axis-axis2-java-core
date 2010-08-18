@@ -101,6 +101,12 @@
                 <module>modules/distribution</module>
             </modules>
         </profile>
+        <profile>
+            <id>apache-release</id>
+            <modules>
+                <module>modules/distribution</module>
+            </modules>
+        </profile>
     </profiles>
     <mailingLists>
         <mailingList>
