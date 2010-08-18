@@ -1,5 +1,0 @@
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:soapenc="http://www.w3.org/2003/05/soap-encoding" xmlns:tns="http://soapinterop.org/" xmlns:types="http://soapinterop.org/" xmlns:rpc="http://www.w3.org/2003/05/soap-rpc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-      <soap:Body>
-         <types:echoVoidResponse />
-      </soap:Body>
-   </soap:Envelope>

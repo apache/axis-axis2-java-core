@@ -1,6 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:SOAP-ENC='http://schemas.xmlsoap.org/soap/encoding/' xmlns:xsi='http://www.w3.org/1999/XMLSchema-instance' xmlns:xsd='http://www.w3.org/1999/XMLSchema' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>
-   <SOAP-ENV:Body>
-      <m:echoStringResponse xmlns:m='http://soapinterop.org/'>
-         <return xsi:type='xsd:string'>String Argument</return>
-      </m:echoStringResponse>
-   </SOAP-ENV:Body></SOAP-ENV:Envelope>

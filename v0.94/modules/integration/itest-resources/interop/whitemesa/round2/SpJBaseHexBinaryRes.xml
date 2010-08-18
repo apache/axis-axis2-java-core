@@ -1,7 +1,0 @@
-<soapenv:Envelope xmlns:tns="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://soapinterop.org/xsd" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-      <soapenv:Body>
-         <tns:echoHexBinaryResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-            <result xsi:type="xsd:hexBinary">FFFFFFAAFFFFFFABFFFFFFBAFFFFFFAE</result>
-         </tns:echoHexBinaryResponse>
-      </soapenv:Body>
-   </soapenv:Envelope>

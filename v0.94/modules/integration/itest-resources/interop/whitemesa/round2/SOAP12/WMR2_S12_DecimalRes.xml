@@ -1,8 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
-      <SOAP-ENV:Body>
-         <m:echoDecimalResponse SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding" xmlns:m="http://soapinterop.org/">
-            <SOAP-RPC:result xmlns:SOAP-RPC="http://www.w3.org/2003/05/soap-rpc">return</SOAP-RPC:result>
-            <return>455646152</return>
-         </m:echoDecimalResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

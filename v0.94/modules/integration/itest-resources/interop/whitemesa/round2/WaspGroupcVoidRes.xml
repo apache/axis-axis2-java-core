@@ -1,8 +1,0 @@
-<e:Envelope xmlns:d="http://www.w3.org/2001/XMLSchema" xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:e="http://schemas.xmlsoap.org/soap/envelope/">
-      <e:Header>
-         <ns0:echoMeStringResponse i:type="xsd:string" xmlns:ns0="http://soapinterop.org/echoheader/">string</ns0:echoMeStringResponse>
-      </e:Header>
-      <e:Body e:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-         <n0:echoVoidResponse xmlns:n0="http://soapinterop.org/"/>
-      </e:Body>
-   </e:Envelope>

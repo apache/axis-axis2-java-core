@@ -1,7 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Body>
-         <m:echoIntegerResponse SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:m="http://soapinterop.org/">
-            <return>52</return>
-         </m:echoIntegerResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

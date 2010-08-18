@@ -1,9 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
-      <SOAP-ENV:Body>
-         <m:echoStructAsSimpleTypesResponse SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding" xmlns:m="http://soapinterop.org/">
-            <outputString>strss fdfing1</outputString>
-            <outputInteger>25</outputInteger>
-            <outputFloat>25.23</outputFloat>
-         </m:echoStructAsSimpleTypesResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

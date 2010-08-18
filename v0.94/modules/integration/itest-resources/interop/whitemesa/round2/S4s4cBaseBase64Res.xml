@@ -1,7 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-      <SOAP-ENV:Body>
-         <m:echoBase64Response xmlns:m="http://soapinterop.org/">
-            <outputBase64 xsi:type="SOAP-ENC:base64">UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</outputBase64>
-         </m:echoBase64Response>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

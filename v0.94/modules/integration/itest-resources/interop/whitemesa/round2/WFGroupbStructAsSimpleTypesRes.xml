@@ -1,9 +1,0 @@
-<SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-      <SOAP-ENV:Body>
-         <ns1:echoStructAsSimpleTypesResponse xmlns:ns1="http://soapinterop.org/">
-            <outputString xsi:type="xsd:string">strss fdfing1</outputString>
-            <outputInteger xsi:type="xsd:int">25</outputInteger>
-            <outputFloat xsi:type="xsd:float">25.23</outputFloat>
-         </ns1:echoStructAsSimpleTypesResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

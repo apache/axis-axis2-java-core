@@ -1,7 +1,0 @@
-<soapenv:Envelope xmlns:tns="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://soapinterop.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-      <soapenv:Body>
-         <tns:echoDateResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-            <result xsi:type="xsd:dateTime">2002-07-19T01:40:30Z</result>
-         </tns:echoDateResponse>
-      </soapenv:Body>
-   </soapenv:Envelope>

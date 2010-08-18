@@ -1,7 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAPSDK1="http://www.w3.org/2001/XMLSchema" xmlns:SOAPSDK2="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAPSDK3="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-         <SOAPSDK4:echoHexBinaryResponse xmlns:SOAPSDK4="http://soapinterop.org/">
-            <Result>AAABBAAE</Result>
-         </SOAPSDK4:echoHexBinaryResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

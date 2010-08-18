@@ -1,7 +1,0 @@
-<e:Envelope xmlns:e="http://schemas.xmlsoap.org/soap/envelope/" xmlns:d="http://www.w3.org/2001/XMLSchema" xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:wn0="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wn1="http://idoox.com/interface" xmlns:wn2="http://soapinterop.org/xsd">
-      <e:Body e:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-         <n0:echoHexBinaryResponse xmlns:n0="http://soapinterop.org/">
-            <return i:type="d:hexBinary">AAABBAAE</return>
-         </n0:echoHexBinaryResponse>
-      </e:Body>
-   </e:Envelope>

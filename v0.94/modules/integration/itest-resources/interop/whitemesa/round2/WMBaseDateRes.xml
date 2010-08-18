@@ -1,7 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Body>
-         <m:echoDateResponse SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:m="http://soapinterop.org/">
-            <return>2002-07-19T01:40:30Z</return>
-         </m:echoDateResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

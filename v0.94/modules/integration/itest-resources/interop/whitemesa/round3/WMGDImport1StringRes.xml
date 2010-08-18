@@ -1,7 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Body>
-         <m:echoStringResponse SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:m="http://soapinterop/echoString/">
-            <Result>strss fdfing1</Result>
-         </m:echoStringResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

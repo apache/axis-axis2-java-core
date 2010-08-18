@@ -1,6 +1,0 @@
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <env:Body>
-      <ns1:echoBooleanResponse env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="http://soapinterop.org/">
-         <return xsi:type="xsd:boolean">1</return>
-      </ns1:echoBooleanResponse>
-   </env:Body></env:Envelope>
