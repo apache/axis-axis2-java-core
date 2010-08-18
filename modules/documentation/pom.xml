@@ -115,10 +115,6 @@
             <artifactId>ant</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
@@ -209,10 +205,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime</groupId>
-            <artifactId>smack</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
