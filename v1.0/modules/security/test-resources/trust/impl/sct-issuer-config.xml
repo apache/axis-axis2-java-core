@@ -1,4 +1,0 @@
-<sct-issuer-config>
-	<proofToken>EncryptedKey</proofToken>
-	<cryptoProperties>sctIssuer.properties</cryptoProperties>
-</sct-issuer-config>

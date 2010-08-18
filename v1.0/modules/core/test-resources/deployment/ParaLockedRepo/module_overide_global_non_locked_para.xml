@@ -1,3 +1,0 @@
-<module name="module1" class="org.apache.module.Module1Impl">
-    <parameter name="modulePara1" locked="true">org.apache.axis2.sample.echo.EchoImpl</parameter>
-</module>

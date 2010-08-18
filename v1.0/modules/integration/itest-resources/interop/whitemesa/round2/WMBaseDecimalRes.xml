@@ -1,1 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Body><m:echoDecimalResponse xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><return xmlns="">455646152</return></m:echoDecimalResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>

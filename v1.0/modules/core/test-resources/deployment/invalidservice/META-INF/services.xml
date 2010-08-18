@@ -1,5 +1,0 @@
-<service name="">
-    <parameter name="ServiceClass" locked="false">org.apache.axis2.InvalidService</parameter>
-    <module ref="serviceModule"/>
-    <operation name="echo"/>
-</service>

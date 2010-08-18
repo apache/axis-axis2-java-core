@@ -1,9 +1,0 @@
-<service name="MTOMService">
-    <description>
-        This is a sample Web Service with two operations,echo and ping.
-    </description>
-    <parameter name="ServiceClass" locked="false">sample.mtom.interop.service.interopService</parameter>
-    <operation name="interopService">
-        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
-    </operation>
-</service>

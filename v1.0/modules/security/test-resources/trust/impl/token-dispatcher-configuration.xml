@@ -1,6 +1,0 @@
-<token-dispatcher-configuration>
-			<issuer class="org.apache.axis2.security.trust.impl.SCTIssuer" default="true">
-				<configuration-file>sct-issuer-config.xml</configuration-file>
-				<tokenType>http://schemas.xmlsoap.org/ws/2005/02/sc/sct</tokenType>
-			</issuer>
-</token-dispatcher-configuration>
