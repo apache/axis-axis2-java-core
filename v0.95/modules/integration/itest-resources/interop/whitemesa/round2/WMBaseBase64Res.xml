@@ -1,1 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Body><m:echoBase64Response xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><return xmlns="">SGVsbG8gV29ybGQ=</return></m:echoBase64Response></SOAP-ENV:Body></SOAP-ENV:Envelope>
