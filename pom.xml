@@ -32,6 +32,11 @@
     <packaging>pom</packaging>
     <name>Apache Axis2 - Root</name>
     <inceptionYear>2004</inceptionYear>
+    <url>http://axis.apache.org/axis2/java/core/</url>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://issues.apache.org/jira/browse/AXIS2</url>
+    </issueManagement>
     <modules>
         <module>modules/resource-bundle</module> <!-- Must be first in the list! -->
         <module>modules/adb</module>
@@ -97,17 +102,299 @@
             </modules>
         </profile>
     </profiles>
-    <ciManagement>
-        <system>continuum</system>
-        <url>http://vmbuild.apache.org/continuum</url>
-        <notifiers>
-            <notifier>
-                <configuration>
-                    <ADDRESS>axis2-cvs@ws.apache.org</ADDRESS>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
+    <mailingLists>
+        <mailingList>
+            <name>Axis2 Developer List</name>
+            <subscribe>java-dev-subscribe@axis.apache.org</subscribe>
+            <unsubscribe>java-dev-unsubscribe@axis.apache.org</unsubscribe>
+            <post>java-dev@axis.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-dev/</archive>
+            <otherArchives>
+                <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-dev</otherArchive>
+            </otherArchives>
+        </mailingList>
+        <mailingList>
+            <name>Axis2 User List</name>
+            <subscribe>java-user-subscribe@axis.apache.org</subscribe>
+            <unsubscribe>java-user-unsubscribe@axis.apache.org</unsubscribe>
+            <post>java-user@axis.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-user/</archive>
+            <otherArchives>
+                <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-user</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+    <developers>
+        <developer>
+            <name>Saminda Abeyruwan</name>
+            <id>saminda</id>
+            <email>saminda AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Afkham Azeez</name>
+            <id>azeez</id>
+            <email>azeez AT wso2.com</email>
+            <organization>WSO2</organization>
+            <url>http://www.apache.org/~azeez</url>
+        </developer>
+        <developer>
+            <name>Jeff Barrett</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Eran Chinthaka</name>
+            <id>chinthaka</id>
+            <email>chinthaka AT wso2.com</email>
+            <organization>WSO2</organization>
+            <url>http://www.apache.org/~chinthaka</url>
+        </developer>
+        <developer>
+            <name>Glen Daniels</name>
+            <id>gdaniels</id>
+            <email>gdaniels AT apache.org</email>
+            <organization>Sonic Software</organization>
+        </developer>
+        <developer>
+            <name>Brian DePradine</name>
+            <id>pradine</id>
+            <email>pradine AT uk.ibm.com</email>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Jaliya Ekanayake</name>
+            <id>jaliya</id>
+            <email>jaliya AT opensource.lk</email>
+            <organization>Indiana University, USA</organization>
+            <url>http://www.apache.org/~jaliya</url>
+        </developer>
+        <developer>
+            <name>Ruchith Fernando</name>
+            <id>ruchithf</id>
+            <email>ruchith AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Nicholas Gallardo</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Thilina Gunarathne</name>
+            <id>thilina</id>
+            <email>thilina AT opensource.lk</email>
+            <organization>Lanka Software Foundation</organization>
+        </developer>
+        <developer>
+            <name>Chathura Herath</name>
+            <id>chathura</id>
+            <email>chathura AT opensource.lk</email>
+            <organization>Indiana University, USA</organization>
+            <url>www.apache.org/~chathura</url>
+        </developer>
+        <developer>
+            <name>David Illsley</name>
+            <id>davidillsley</id>
+            <organization>IBM</organization>
+            <url>http://www.illsley.org</url>
+        </developer>
+        <developer>
+            <name>Deepal Jayasinghe</name>
+            <id>deepal</id>
+            <email>deepal AT wso2.com</email>
+            <organization>WSO2</organization>
+            <url>http://www.apache.org/~deepal</url>
+        </developer>
+        <developer>
+            <name>Robert Lazarski</name>
+            <id>robertlazarski</id>
+            <email>robertlazarski AT gmail.com</email>
+            <organization>Brazil Outsource</organization>
+        </developer>
+        <developer>
+            <name>Steve Loughran</name>
+            <id>stevel</id>
+            <email>stevel AT apache.org</email>
+            <organization>HP labs</organization>
+        </developer>
+        <developer>
+            <name>Bill Nagy</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Chatra Nakkawita</name>
+            <id>chatra</id>
+            <email>chatra AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Sumedha Rubasinghe</name>
+            <id>sumedha</id>
+            <email>sumedha AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Charitha Kamkanamge</name>
+            <id>charitha</id>
+            <email>charitha AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Srinath Perera</name>
+            <id>hemapani</id>
+            <email>hemapani AT apache.org</email>
+            <organization>Indiana University, USA</organization>
+            <url>http://www.apache.org/~hemapani</url>
+        </developer>
+        <developer>
+            <name>Ajith Ranabahu</name>
+            <id>ajith</id>
+            <email>ajith AT wso2.com</email>
+            <organization>WSO2</organization>
+            <url>http://www.apache.org/~ajith</url>
+        </developer>
+        <developer>
+            <name>Venkat Reddy</name>
+            <id>venkat</id>
+            <email>vreddyp AT gmail.com</email>
+            <organization>Computer Associates</organization>
+        </developer>
+        <developer>
+            <name>Michael Rheinheimer</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Ann Robinson</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Sanka Samaranayake</name>
+            <id>sanka</id>
+            <email>sanka AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Rich Scheuerle</name>
+            <id>scheu</id>
+            <email>scheu AT us.ibm.com</email>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Ashutosh Shahi</name>
+            <id>ashu</id>
+            <email>Ashutosh.Shahi AT ca.com</email>
+            <organization>Computer Associates</organization>
+        </developer>
+        <developer>
+            <name>Aleksander Slominski</name>
+            <id>alek</id>
+            <email>aslom AT cs.indiana.edu</email>
+            <organization>Indiana University Extreme! Computing Lab</organization>
+        </developer>
+        <developer>
+            <name>Dennis Sosnoski</name>
+            <id>dsosnoski</id>
+            <email>dms AT sosnoski.com</email>
+            <organization>Sosnoski Software</organization>
+        </developer>
+        <developer>
+            <name>Davanum Srinivas</name>
+            <id>dims</id>
+            <email>davanum AT gmail.com</email>
+        </developer>
+        <developer>
+            <name>Jayachandra Sekhara Rao Sunkara</name>
+            <id>jaya</id>
+            <email>jayachandra AT gmail.com</email>
+            <organization>Computer Associates</organization>
+        </developer>
+        <developer>
+            <name>Nandana Mihindukulasooriya</name>
+            <id>nandana</id>
+            <email>nandana AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Nikhil Thaker</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Chamil Thanthrimudalige</name>
+            <id>chamil</id>
+            <email>chamil AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Dasarath Weerathunga</name>
+            <id>dasarath</id>
+            <email>dasarath AT opensource.lk</email>
+            <organization>Purdue University, USA</organization>
+        </developer>
+        <developer>
+            <name>Eranga Jayasundera</name>
+            <id>eranga</id>
+            <email>eranga AT apache.org</email>
+        </developer>
+        <developer>
+            <name>Sanjiva Weerawarana</name>
+            <id>sanjiva</id>
+            <email>sanjiva AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Keith Chapman</name>
+            <id>keithc</id>
+            <email>keith AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Andreas Veithen</name>
+            <id>veithen</id>
+            <email>veithen AT apache.org</email>
+            <url>http://www.linkedin.com/in/aveithen</url>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Gayan Asanka</name>
+            <email>gayan AT opensource.lk</email>
+            <organization>Lanka Software Foundation</organization>
+        </contributor>
+        <contributor>
+            <name>Dharshana Dias</name>
+            <organization>Lanka Software Foundation / University of Moratuwa</organization>
+        </contributor>
+        <contributor>
+            <name>Nadana Gunarathna</name>
+            <email>nadana AT opensource.lk</email>
+            <organization>Lanka Software Foundation</organization>
+        </contributor>
+        <contributor>
+            <name>Thilini Gunawardhana</name>
+            <email>thilini AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </contributor>
+        <contributor>
+            <name>Anushka Kumara</name>
+            <email>anushkakumar AT gmail.com</email>
+            <organization>Lanka Software Foundation / University of Moratuwa</organization>
+        </contributor>
+        <contributor>
+            <name>Farhaan Mohideen</name>
+            <email>fmohideen AT valista.com</email>
+            <organization>Lanka Software Foundation</organization>
+        </contributor>
+        <contributor>
+            <name>Chinthaka Thilakarathne</name>
+            <organization>Lanka Software Foundation / University of Moratuwa</organization>
+        </contributor>
+
+        <contributor>
+            <name>Shivantha Huruggamuwa</name>
+            <email>shivanthah AT gmail.com</email>
+            <organization>University Of Peradeniya , Sri Lanka</organization>
+        </contributor>
+
+    </contributors>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5</developerConnection>
