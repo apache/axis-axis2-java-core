@@ -197,7 +197,7 @@
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
                                 <property name="maven.class.path" refid="maven.runtime.classpath" />
                                 <property name="maven.test.path" refid="maven.compile.classpath" />
-                                <mkdir dir="target/test-classes"/>
+                                <mkdir dir="target/test-classes" />
 
                                 <property name="axis2.home" value="${basedir}/target" />
                                 <path id="maven.dependency.classpath">
