@@ -1,8 +1,0 @@
-<service name="SOAP12TestServiceC">
-    <description>This is a sample Web Service for SOAP 1.2 Testing</description>
-    <module ref="SOAP12TestModuleC"/>
-    <parameter name="ServiceClass" locked="xsd:false">org.apache.axis2.soap12testing.webservices.SOAP12TestWebServiceDefault</parameter>
-    <operation name="echo">
-        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
-    </operation>
-</service>

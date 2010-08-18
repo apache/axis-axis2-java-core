@@ -1,7 +1,0 @@
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <env:Body>
-    <n1:echoDecimalResponse xmlns:n1="http://soapinterop.org/" env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-      <return xmlns="" xsi:type="xsd:decimal">455646152</return>
-    </n1:echoDecimalResponse>
-  </env:Body>
-</env:Envelope>

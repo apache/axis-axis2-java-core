@@ -1,5 +1,0 @@
-<service messageReceiver="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" style="rpc" contextPath="services">
-
-    <parameter name="ServiceClass" locked="false">userguide.sample1.EchoXML</parameter>
-    <operation name="echo" qname="echo"/>
-</service>

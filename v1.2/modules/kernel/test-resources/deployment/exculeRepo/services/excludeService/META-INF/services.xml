@@ -1,6 +1,0 @@
-<service>
-    <parameter name="ServiceClass">org.apache.axis2.deployment.ExcludeService</parameter>
-    <excludeOperations>
-        <operation>add</operation>
-    </excludeOperations>
-</service>

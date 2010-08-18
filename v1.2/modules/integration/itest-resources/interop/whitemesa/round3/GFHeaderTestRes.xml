@@ -1,1 +1,0 @@
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><env:Header /><env:Body><ans1:echoStringReturn xmlns:ans1="http://soapinterop.org/xsd">apache axis2</ans1:echoStringReturn></env:Body></env:Envelope>
