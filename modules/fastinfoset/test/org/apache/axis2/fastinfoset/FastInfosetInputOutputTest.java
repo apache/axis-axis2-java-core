@@ -48,8 +48,8 @@ public class FastInfosetInputOutputTest extends XMLTestCase {
      */
     public void testInputOutput() throws Exception {
         String inputFile = "pom.xml";
-        File outputFile = new File("output.xml");
-        File tempFile = new File("test.bin");
+        File outputFile = new File("target/output.xml");
+        File tempFile = new File("target/test.bin");
 
         try {
             // first let's read the xml document in to Axiom
