@@ -55,7 +55,15 @@ public abstract class MethodRetriever {
 
     //Logging setup
     private static final Log log = LogFactory.getLog(MethodRetriever.class);
-    
+    private String legacyWebMethod = null;
+    public String getLegacyWebMethod() {
+        return legacyWebMethod;
+    }
+
+    public void setLegacyWebMethod(String legacyWebMethod) {
+        this.legacyWebMethod = legacyWebMethod;
+    }
+
     protected MethodRetriever() {}
 
     /*

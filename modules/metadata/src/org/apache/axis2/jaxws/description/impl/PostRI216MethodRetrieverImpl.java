@@ -34,6 +34,8 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ibm.xylem.ISpecialForm;
+
 /**
  * PostRI216MethodRetrieverImpl subclass implements the new SUN RI interpretation for
  * annotation processing. See MethodRetriever superclass...
@@ -51,11 +53,10 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
 
     //Logging setup
     private static final Log log = LogFactory.getLog(PostRI216MethodRetrieverImpl.class);
+    
+    private EndpointInterfaceDescriptionImpl eid = null;
 
-   private EndpointInterfaceDescriptionImpl eid = null;
-
-   private DescriptionBuilderComposite dbc = null;
-
+    private DescriptionBuilderComposite dbc = null;
     public PostRI216MethodRetrieverImpl (DescriptionBuilderComposite dbc, 
         EndpointInterfaceDescriptionImpl eid)  {
         super();
@@ -133,6 +134,25 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
                 tempDBC = superDBC;
             } //Done with implied SEI's superclasses
             retrieveList = removeOverriddenMethods(retrieveList, dbc, eid);
+            //Let check to see if there where any operations with @Webmethod
+            //If LeagcyWebmethod is NOT defined i.e default and if there 
+            //are operations with @Webmethod annotation, then lets warn the
+            //user that we may be exposing public operation that they did not
+            //intend to expose, this can happen if user is migrating application
+            //from old JAX-WS tooling version.
+            //Let also inform user that if they can use LegacyWebmethod to expose 
+            //Only those operations that have @webmethod(exclude=false) annotation on them.
+            boolean isWebmethodDefined = DescriptionUtils.isWebmethodDefined(dbc);
+            Iterator<MethodDescriptionComposite> iter = retrieveList.iterator();
+            while(iter.hasNext()){
+                MethodDescriptionComposite mdc = iter.next();
+                //If user defined a legacyWemethod, has atleast one operation with @Wemethod annotation
+                //and this is a public operation with no @Webmethod operation that is being exposed then
+                //lets warn user of possible security exposure.
+                if(getLegacyWebMethod()==null && isWebmethodDefined && mdc.getWebMethodAnnot()==null && !isConstructor(mdc)){                      
+                  log.warn(Messages.getMessage("MethodRetrieverWarning1", mdc.getMethodName()));                     
+                }
+            }
         }//Done with implied SEI's
 
         return retrieveList.iterator();
@@ -152,7 +172,8 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
         List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
 
         if (mdcList != null) {
-            iter = dbc.getMethodDescriptionsList().iterator();
+            iter = dbc.getMethodDescriptionsList().iterator();           
+            boolean isWebmethodDefined = DescriptionUtils.isWebmethodDefined(dbc);
             while (iter.hasNext()) {
                 MethodDescriptionComposite mdc = iter.next();
                 //flag to check if the method can be exposed as webservice.
@@ -168,10 +189,14 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
                     retrieveList.add(mdc);
                 }
             }
+            
         }
 
         return retrieveList;
     }
-
+    
+    private boolean isConstructor(MethodDescriptionComposite mdc){
+        return mdc.getMethodName().equals("<init>");
+    }
 
 }

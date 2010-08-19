@@ -836,7 +836,8 @@ public class EndpointInterfaceDescriptionImpl
         }
         //Now based on the outcome of LegacyWebmethod and sun property check, retrieve methods to expose.
         methodRetriever = newSunBehavior ? new PostRI216MethodRetrieverImpl(dbc, this) : new LegacyMethodRetrieverImpl(dbc, this);
-        
+        //set LegacyWebmethod Definition on MethodRetriever.
+        methodRetriever.setLegacyWebMethod(legacyWebmethod);
         if(log.isDebugEnabled()) {
             if (newSunBehavior) {
                 log.debug("getMethodRetriever: returning a PostRI216MethodRetrieverImpl");

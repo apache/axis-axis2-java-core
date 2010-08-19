@@ -126,7 +126,21 @@ public class DescriptionUtils {
 
         return mdcList;
     }
-
+    
+    static boolean isWebmethodDefined(DescriptionBuilderComposite dbc){
+        if(dbc == null){
+            return false;
+        }
+        Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
+        while (iter.hasNext()) {
+            MethodDescriptionComposite mdc = iter.next();
+            if (mdc!=null && mdc.getWebMethodAnnot() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /*
       * Check whether a MethodDescriptionComposite contains a WebMethod annotation with
       * exlude set to true
