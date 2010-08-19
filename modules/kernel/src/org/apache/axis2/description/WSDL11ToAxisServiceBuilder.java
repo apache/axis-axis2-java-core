@@ -393,12 +393,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         } catch (WSDLException e) {
             if(log.isDebugEnabled()){
-                log.error(e.getMessage(), e);
+                log.debug(e.getMessage(), e);
             }
             throw AxisFault.makeFault(e);
         } catch (Exception e) {
             if(log.isDebugEnabled()){
-                log.error(e.getMessage(), e);
+                log.debug(e.getMessage(), e);
             }
             throw AxisFault.makeFault(e);
         }

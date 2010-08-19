@@ -451,9 +451,7 @@ public class EndpointDescriptionImpl
 
         } else if (composite.getWsdlDefinition() == null) {
             //This is a SOAP12 binding that does not contain a WSDL definition, log a WARNING
-            log.warn("This implementation does not contain a WSDL definition and is not a SOAP 1.1 based binding. "
-                    + "Per JAXWS spec. - a WSDL definition cannot be generated for this implementation. Name: "
-                    + composite.getClassName());
+            log.warn(Messages.getMessage("generateWSDLNonSoap11", composite.getClassName()));
         }
 
         if (isSOAP11){
@@ -1006,7 +1004,10 @@ public class EndpointDescriptionImpl
             String wsdlLocation = (getServiceDescriptionImpl().getWSDLLocation() != null) ?
                     getServiceDescriptionImpl().getWSDLLocation().toString() : null;
             String implClassName = composite.getClassName();
-            log.warn(Messages.getMessage("bldAxisSrvcFromWSDLErr",implClassName,wsdlLocation),e);
+            log.warn(Messages.getMessage("bldAxisSrvcFromWSDLErr", implClassName, wsdlLocation, e.getMessage()));
+            if (log.isDebugEnabled()) {
+                log.debug("Exception processing WSDL file.  Impl class: " + implClassName + "; WSDL Location: "+ wsdlLocation, e);
+            }
 
             isBuiltFromWSDL = false;
         }

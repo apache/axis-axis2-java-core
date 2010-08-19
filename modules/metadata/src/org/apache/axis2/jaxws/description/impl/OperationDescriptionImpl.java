@@ -2353,7 +2353,10 @@ class OperationDescriptionImpl
             try {
                 theAxisOperation.addParameter(headerQNParameter);
             } catch (AxisFault e) {
-                log.warn(Messages.getMessage("regMUHeadersErr",theAxisOperation.getClass().getName()), e);
+                log.warn(Messages.getMessage("regMUHeadersErr", theAxisOperation.getClass().getName(), e.getMessage()));
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to add Parameter for header QNames to AxisOperation: " + theAxisOperation.getClass().getName(), e);
+                }
             }
         }
     }
