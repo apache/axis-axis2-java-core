@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.MethodRetriever;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -151,7 +153,8 @@ public class LegacyMethodRetrieverImpl extends MethodRetriever {
      */
     private ArrayList<MethodDescriptionComposite> retrieveImplicitSEIMethods(
         DescriptionBuilderComposite dbc) {
-
+        final String restrictStaticWebmethod = "jaxws.runtime.restrictStaticWebmethod";
+        
         ArrayList<MethodDescriptionComposite> retrieveList =
             new ArrayList<MethodDescriptionComposite>();
 
@@ -164,20 +167,36 @@ public class LegacyMethodRetrieverImpl extends MethodRetriever {
         if (retrieveList == null || retrieveList.size() == 0) {
             Iterator<MethodDescriptionComposite> iter = null;
             List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
-
+            AxisConfiguration ac = eid.getEndpointDescription().getServiceDescription().getAxisConfigContext().getAxisConfiguration();
+            Parameter p =ac.getParameter(restrictStaticWebmethod);
+            
+            Boolean isRestrictStaticOperation=Boolean.FALSE;
+            if(p!=null){
+                isRestrictStaticOperation = DescriptionUtils.getBooleanValue((String)p.getValue());
+                if(log.isDebugEnabled()){
+                    log.debug("System property jaxws.runtime.restrictStaticWebmethod is set to :"+isRestrictStaticOperation);
+                }
+            }
             if (mdcList != null) {
                 iter = dbc.getMethodDescriptionsList().iterator();
                 while (iter.hasNext()) {
                     MethodDescriptionComposite mdc = iter.next();
-
-                    if (!DescriptionUtils.isExcludeTrue(mdc)) {
-                        mdc.setDeclaringClass(dbc.getClassName());
-                        retrieveList.add(mdc);
+                    if(isRestrictStaticOperation){
+                        //all operation with legacy jaxws tooling excluding static operations will be exposed.
+                        if (!mdc.isStatic() && !DescriptionUtils.isExcludeTrue(mdc)) {
+                            mdc.setDeclaringClass(dbc.getClassName());
+                            retrieveList.add(mdc);
+                        }
+                    }else{
+                        //all operation with legacy jaxws tooling including static operations will be exposed.
+                        if (!DescriptionUtils.isExcludeTrue(mdc)) {
+                            mdc.setDeclaringClass(dbc.getClassName());
+                            retrieveList.add(mdc);
+                        }
                     }
                 }
             }
         }
-
         return retrieveList;
     }
 

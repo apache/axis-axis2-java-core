@@ -692,4 +692,31 @@ public class DescriptionUtils {
             return "Cannot dump DescriptionBuilderComposite due to : " + t;
         }
     }
+    
+    /**
+     * Utility method for converting a String value into a boolean.
+     * Case-insensitive forms of true, yes, and 1 correspond to true.
+     * Case-insensitive forms of false, no, and 0 correspond to false.
+     * Anything else will result in a false being returned.
+     * 
+     * @param value
+    *        the property's value
+    * @return
+    *        true or false or null if neither
+    */
+    public static Boolean getBooleanValue(String value) {
+        Boolean b = null;
+        
+        if (value.equalsIgnoreCase("true") ||
+            value.equalsIgnoreCase("yes") ||
+            value.equals("1")) {
+            b = Boolean.TRUE;
+        } else if (value.equalsIgnoreCase("false") ||
+                   value.equalsIgnoreCase("no") ||
+                   value.equals("0")) {
+            b = Boolean.FALSE;
+        }
+        // Anything else will result in false
+        return b;
+    }
 }
