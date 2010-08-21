@@ -20,10 +20,8 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.MethodRetriever;
@@ -33,8 +31,6 @@ import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.ibm.xylem.ISpecialForm;
 
 /**
  * PostRI216MethodRetrieverImpl subclass implements the new SUN RI interpretation for
