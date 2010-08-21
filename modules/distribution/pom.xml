@@ -176,6 +176,12 @@
             <version>${project.version}</version>
             <type>mar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>mtompolicy</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+        </dependency>
         
         <dependency>
             <groupId>org.apache.axis2</groupId>

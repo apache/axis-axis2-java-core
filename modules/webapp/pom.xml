@@ -147,6 +147,12 @@
             <version>${project.version}</version>
             <type>mar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>mtompolicy</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+        </dependency>
         
         <!-- Axis2 has always been shipped with Sun's implementations of
              JavaMail and JAF, although Axiom depends on (and has been tested
