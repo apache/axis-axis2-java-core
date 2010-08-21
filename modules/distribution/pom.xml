@@ -274,6 +274,18 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <!-- We don't want to deploy the distributions to the Maven repository.
+                     Reasons:
+                      * Deploying the distributions will heavily increase the size of
+                        each release on the Maven repos.
+                      * There is also the risk that users may start downloading the non-Maven
+                        archives from Maven repos rather than the mirrors. -->
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
