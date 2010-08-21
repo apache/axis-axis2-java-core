@@ -92,8 +92,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-    <artifactId>axis2-jaxbri</artifactId>
-    <version>${pom.version}</version>
+            <artifactId>axis2-jaxbri</artifactId>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -269,27 +269,17 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>delete-temporary-files</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <tasks>
-                                <delete dir="target/tmp-doc-distro"/>
-                                <delete dir="target/tmp-repository"/>
-                                <delete dir="target/archive-tmp"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <!-- We don't want to deploy the distributions to the Maven repository.
+                     Reasons:
+                      * Deploying the distributions will heavily increase the size of
+                        each release on the Maven repos.
+                      * There is also the risk that users may start downloading the non-Maven
+                        archives from Maven repos rather than the mirrors. -->
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
