@@ -435,17 +435,6 @@
           which is what we want.
        -->
         <repository>
-            <id>tomcat-repository</id>
-            <url>http://tomcat.apache.org/dev/dist/m2-repository</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>eclipse-repo</id>
             <name>eclipse maven repository</name>
             <url>http://repo1.maven.org/eclipse</url>
