@@ -55,7 +55,8 @@
         <module>modules/parent</module>
         <module>modules/ping</module>
         <module>modules/samples/version</module>
-        <module>modules/soapmonitor</module>
+        <module>modules/soapmonitor/servlet</module>
+        <module>modules/soapmonitor/module</module>
         <module>modules/spring</module>
         <module>modules/tool/axis2-aar-maven-plugin</module>
         <module>modules/tool/axis2-ant-plugin</module>

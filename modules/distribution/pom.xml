@@ -87,6 +87,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
+            <artifactId>soapmonitor-servlet</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-fastinfoset</artifactId>
             <version>${pom.version}</version>
         </dependency>
