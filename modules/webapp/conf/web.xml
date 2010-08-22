@@ -45,6 +45,18 @@
         <servlet-class>
             org.apache.axis2.webapp.AxisAdminServlet</servlet-class>
     </servlet>
+    
+    <!-- servlet>
+        <servlet-name>SOAPMonitorService</servlet-name>
+        <display-name>SOAPMonitorService</display-name>
+        <servlet-class>org.apache.axis2.soapmonitor.servlet.SOAPMonitorService</servlet-class>
+        <init-param>
+            <param-name>SOAPMonitorPort</param-name>
+            <param-value>5001</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet -->
+    
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/servlet/AxisServlet</url-pattern>
@@ -65,6 +77,11 @@
         <url-pattern>/axis2-admin/*</url-pattern>
     </servlet-mapping>
 
+    <!-- servlet-mapping>
+        <servlet-name>SOAPMonitorService</servlet-name>
+        <url-pattern>/SOAPMonitor</url-pattern>
+    </servlet-mapping -->
+    
     <mime-mapping>
         <extension>inc</extension>
         <mime-type>text/plain</mime-type>

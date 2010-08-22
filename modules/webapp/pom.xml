@@ -278,6 +278,22 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/webResources</outputDirectory>
+                            <includeArtifactIds>soapmonitor-servlet</includeArtifactIds>
+                            <includes>org/apache/axis2/soapmonitor/applet/**/*.class</includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warName>axis2</warName>
