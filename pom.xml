@@ -95,6 +95,19 @@
             </modules>
         </profile>
         <profile>
+            <!-- This profile needs to be activated when doing the release:prepare
+                 (by adding -Peverything) to make sure that the release plugin updates
+                 the version numbers of all relevant submodules. It must contain
+                 all modules not built by default, i.e. the set of modules used
+                 by this profile must be the union of the module sets of all
+                 other profiles. -->
+            <id>everything</id>
+            <modules>
+                <module>modules/documentation</module>
+                <module>modules/distribution</module>
+            </modules>
+        </profile>
+        <profile>
             <id>apache-release</id>
             <modules>
                 <module>modules/distribution</module>
@@ -539,6 +552,14 @@
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>2.2-beta-5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.0</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
