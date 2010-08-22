@@ -216,6 +216,14 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
+        
+        <!-- This is needed to build the WAR distribution -->
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-webapp</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
     </dependencies>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/distribution</connection>
