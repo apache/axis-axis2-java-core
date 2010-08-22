@@ -28,7 +28,7 @@
         <version>SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
-    <artifactId>soapmonitor-servlet</artifactId>
+    <artifactId>axis2-soapmonitor-servlet</artifactId>
     <packaging>jar</packaging>
     <name>Apache Axis2 - SOAP Monitor Servlet</name>
     <description>soapmonitor servlet for Axis2</description>

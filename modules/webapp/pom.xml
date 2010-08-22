@@ -287,7 +287,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/webResources</outputDirectory>
-                            <includeArtifactIds>soapmonitor-servlet</includeArtifactIds>
+                            <includeArtifactIds>axis2-soapmonitor-servlet</includeArtifactIds>
                             <includes>org/apache/axis2/soapmonitor/applet/**/*.class</includes>
                         </configuration>
                     </execution>

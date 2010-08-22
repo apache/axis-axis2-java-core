@@ -87,7 +87,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>soapmonitor-servlet</artifactId>
+            <artifactId>axis2-soapmonitor-servlet</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
