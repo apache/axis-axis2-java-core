@@ -21,8 +21,11 @@ package org.apache.axis2.maven2.repo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +44,7 @@ import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     /**
@@ -150,6 +154,34 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      */
     private boolean stripModuleVersion;
     
+    /**
+     * Specifies whether modules should be deployed to the repository.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean includeModules;
+    
+    /**
+     * Comma separated list of modules (by artifactId) to include in the repository.
+     * 
+     * @parameter
+     */
+    private String modules;
+    
+    /**
+     * Specifies whether services should be deployed to the repository.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean includeServices;
+    
+    /**
+     * Comma separated list of services (by artifactId) to include in the repository.
+     * 
+     * @parameter
+     */
+    private String services;
+    
     protected abstract String getScope();
     
     protected abstract File getOutputDirectory();
@@ -165,26 +197,37 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 artifacts.addAll(project.getAttachedArtifacts());
             }
         }
-        FilterArtifacts filter = new FilterArtifacts();
-        filter.addFilter(new ScopeFilter(getScope(), null));
-        filter.addFilter(new TypeFilter("aar,mar", null));
-        try {
-            artifacts = filter.filter(artifacts);
-        } catch (ArtifactFilterException ex) {
-            throw new MojoExecutionException(ex.getMessage(), ex);
-        }
-        artifacts = replaceIncompleteArtifacts(artifacts);
         File outputDirectory = getOutputDirectory();
-        Map<String,ArchiveDeployer> deployers = new HashMap<String,ArchiveDeployer>();
-        deployers.put("aar", new ArchiveDeployer(outputDirectory, servicesDirectory, "services.list", generateFileLists, stripServiceVersion));
-        deployers.put("mar", new ArchiveDeployer(outputDirectory, modulesDirectory, "modules.list", generateFileLists, stripModuleVersion));
-        for (Artifact artifact : artifacts) {
-            String type = artifact.getType();
-            ArchiveDeployer deployer = deployers.get(type);
-            if (deployer == null) {
-                throw new MojoExecutionException("No deployer found for artifact type " + type);
+        if (includeModules || includeServices) {
+            FilterArtifacts filter = new FilterArtifacts();
+            filter.addFilter(new ScopeFilter(getScope(), null));
+            if (includeModules && includeServices) {
+                filter.addFilter(new TypeFilter("aar,mar", null));
+            } else if (includeModules) {
+                filter.addFilter(new TypeFilter("mar", null));
             }
-            deployer.deploy(getLog(), artifact);
+            try {
+                artifacts = filter.filter(artifacts);
+            } catch (ArtifactFilterException ex) {
+                throw new MojoExecutionException(ex.getMessage(), ex);
+            }
+            selectArtifacts(artifacts, modules, "mar");
+            selectArtifacts(artifacts, services, "aar");
+            artifacts = replaceIncompleteArtifacts(artifacts);
+            Map<String,ArchiveDeployer> deployers = new HashMap<String,ArchiveDeployer>();
+            deployers.put("aar", new ArchiveDeployer(outputDirectory, servicesDirectory, "services.list", generateFileLists, stripServiceVersion));
+            deployers.put("mar", new ArchiveDeployer(outputDirectory, modulesDirectory, "modules.list", generateFileLists, stripModuleVersion));
+            for (Artifact artifact : artifacts) {
+                String type = artifact.getType();
+                ArchiveDeployer deployer = deployers.get(type);
+                if (deployer == null) {
+                    throw new MojoExecutionException("No deployer found for artifact type " + type);
+                }
+                deployer.deploy(getLog(), artifact);
+            }
+            for (ArchiveDeployer deployer : deployers.values()) {
+                deployer.finish(getLog());
+            }
         }
         if (axis2xml != null) {
             getLog().info("Copying axis2.xml");
@@ -196,8 +239,20 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 throw new MojoExecutionException("Error copying axis2.xml file: " + ex.getMessage(), ex);
             }
         }
-        for (ArchiveDeployer deployer : deployers.values()) {
-            deployer.finish(getLog());
+    }
+
+    private void selectArtifacts(Set<Artifact> artifacts, String list, String type) throws MojoFailureException {
+        if (list != null) {
+            Set<String> set = new HashSet<String>(Arrays.asList(StringUtils.split(list, ",")));
+            for (Iterator<Artifact> it = artifacts.iterator(); it.hasNext(); ) {
+                Artifact artifact = it.next();
+                if (artifact.getType().equals(type) && !set.remove(artifact.getArtifactId())) {
+                    it.remove();
+                }
+            }
+            if (!set.isEmpty()) {
+                throw new MojoFailureException("The following " + type + " artifacts have not been found: " + set);
+            }
         }
     }
 

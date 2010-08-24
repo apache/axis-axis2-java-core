@@ -25,8 +25,6 @@
 		<!-- Set a property that can be picked up from the ant build.xml's -->
 
 		<echo>${maven.test.path}</echo>
-		<!-- copy the mars so that they are available on the test classpath -->
-		<copy file="../addressing/target/addressing-${addressing_version}.mar" tofile="target/test-classes/modules/addressing-${addressing_version}.mar" />
 
 		<property name="axis2.home" value="${basedir}/target" />
 		<property name="maven.junit.jvmargs" value="" />
@@ -186,83 +184,9 @@
 	</target>
 
 	<target name="build-repos" unless="test.skip">
-		<mkdir dir="target/test-resources/samples/modules"/>
-		<mkdir dir="target/test-resources/samples/conf"/>
-		<mkdir dir="target/test-resources/repository-client/modules"/>
-		<mkdir dir="target/test-resources/repository-client/conf"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/test-resources/samples/modules/addressing-${addressing_version}.mar"/>
-		<copy file="conf/axis2.xml"
-    	                  tofile="target/test-resources/samples/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/test-resources/repository-client/modules/addressing-${addressing_version}.mar"/>
-		<copy file="conf/axis2.xml"
-    	                  tofile="target/test-resources/repository-client/conf/axis2.xml"/>
 		<mkdir dir="target/toWar/services/"/>
 
-		<mkdir dir="target/test-resources/local"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-		    	                  tofile="target/test-resources/local/addressing.mar"/>
-
-		<!-- Create Chunked enabled Repository -->
-		<mkdir dir="target/test-resources/chunking-enabledRepository"/>
-		<mkdir dir="target/test-resources/chunking-enabledRepository/conf"/>
-		<copy file="test/org/apache/axis2/engine/chunking-enabled-axis2.xml"
-    	                  tofile="target/test-resources/chunking-enabledRepository/conf/axis2.xml"/>
-
-		<!-- Create Chunked disabled Repository -->
-		<mkdir dir="target/test-resources/chunking-disabledRepository"/>
-		<mkdir dir="target/test-resources/chunking-disabledRepository/conf"/>
-		<copy file="test/org/apache/axis2/engine/chunking-disabled-axis2.xml"
-    	                  tofile="target/test-resources/chunking-disabledRepository/conf/axis2.xml"/>
-
 		<mkdir dir="target/test-resources/MessageContextInjectionRepo"/>
-		<mkdir dir="target/test-resources/integrationRepo/modules"/>
-		<mkdir dir="target/test-resources/integrationRepo/conf"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/test-resources/integrationRepo/modules/addressing-${addressing_version}.mar"/>
-		<copy file="conf/axis2.xml"
-    	                  tofile="target/test-resources/integrationRepo/conf/axis2.xml"/>
-
-
-		<!-- Commons transport enabled enabled Repository -->
-		<mkdir dir="target/test-resources/commons-http-enabledRepository"/>
-		<mkdir dir="target/test-resources/commons-http-enabledRepository/conf"/>
-		<copy file="test/org/apache/axis2/engine/commons-http-enabled-axis2.xml"
-    	                  tofile="target/test-resources/commons-http-enabledRepository/conf/axis2.xml"/>
-
-		<!-- MTOM enabled Repository -->
-		<mkdir dir="target/test-resources/MTOM-enabledRepository"/>
-		<mkdir dir="target/test-resources/MTOM-enabledRepository/conf"/>
-		<mkdir dir="target/test-resources/MTOM-enabledRepository/modules"/>
-		<copy file="test-resources/mtom/MTOM-enabled-axis2.xml"
-    	                  tofile="target/test-resources/MTOM-enabledRepository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	        	      tofile="target/test-resources/MTOM-enabledRepository/modules/addressing-${addressing_version}.mar"/>
-
-		<!-- MTOM file cache enabled Repository -->
-		<mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository"/>
-		<mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository/conf"/>
-		<copy file="test-resources/mtom/MTOM-fileCache-enabled-axis2.xml"
-    	                  tofile="target/test-resources/MTOM-fileCache-enabledRepository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	        	        	      tofile="target/test-resources/MTOM-fileCache-enabledRepository/modules/addressing-${addressing_version}.mar"/>
-
-		<!-- SwA enabled Repository -->
-		<mkdir dir="target/test-resources/SwA-enabledRepository"/>
-		<mkdir dir="target/test-resources/SwA-enabledRepository/conf"/>
-		<copy file="test-resources/swa/SwA-enabled-axis2.xml"
-    	                    tofile="target/test-resources/SwA-enabledRepository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	          	      tofile="target/test-resources/SwA-enabledRepository/modules/addressing-${addressing_version}.mar"/>
-
-		<!-- SwA file cache enabled Repository -->
-		<mkdir dir="target/test-resources/SwA-fileCache-enabledRepository"/>
-		<mkdir dir="target/test-resources/SwA-fileCache-enabledRepository/conf"/>
-		<copy file="test-resources/swa/SwA-fileCache-enabled-axis2.xml"
-    	                    tofile="target/test-resources/SwA-fileCache-enabledRepository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	          	        	      tofile="target/test-resources/SwA-fileCache-enabledRepository/modules/addressing-${addressing_version}.mar"/>
 
 		<!-- Spring resources -->
 		<mkdir dir="target/test-resources/spring"/>
@@ -270,46 +194,11 @@
     	                  tofile="target/test-classes/spring/applicationContext.xml"/>
 
 		<!-- Test with target resolver  -->
-		<mkdir dir="target/test-resources/deployment_repo"/>
 		<mkdir dir="target/test-resources/deployment"/>
-		<mkdir dir="target/test-resources/deployment_repo/conf"/>
-		<mkdir dir="target/test-resources/deployment_repo/services"/>
-		<mkdir dir="target/test-resources/deployment_repo/modules"/>
 
 		<copy file="test-resources/deployment/server-transport.xml"
     	            	  tofile="target/test-resources/deployment/server-transport.xml"/>
-<copy file="test-resources/deployment/deployment.both.axis2.xml"
-    	            	  tofile="target/test-resources/deployment_repo/conf/axis2.xml"/>
 
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	            	  tofile="target/test-resources/deployment_repo/modules/addressing-${addressing_version}.mar"/>
-
-
-		<!-- Standard repository -->
-		<mkdir dir="target/Repository"/>
-		<mkdir dir="target/Repository/conf"/>
-		<mkdir dir="target/Repository/services"/>
-		<mkdir dir="target/Repository/modules"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/Repository/modules/addressing-${addressing_version}.mar"/>
-		<copy file="conf/axis2.xml"
-    	                  tofile="target/Repository/conf/axis2.xml"/>
-
-		<mkdir dir="target/perf2/build/repo/conf"/>
-		<mkdir dir="target/perf/build/repo/conf"/>
-
-		<copy file="conf/axis2.xml"
-    	                  tofile="target/perf2/build/repo/conf/axis2.xml"/>
-		<copy file="conf/axis2.xml"
-    	                  tofile="target/perf/build/repo/conf/axis2.xml"/>
-
-		<mkdir dir="target/perf2/build/repo/modules"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/perf2/build/repo/modules/addressing-${addressing_version}.mar"/>
-
-		<mkdir dir="target/perf/build/repo/modules"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/perf/build/repo/modules/addressing-${addressing_version}.mar"/>
         <antcall target="build-jaxrs-services"/>
     </target>
 	<target name="build-soap12-services">
@@ -328,11 +217,5 @@
                                  dir="test-resources/jaxrs/archiveTestModule"/>
         <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                  dir="test-resources/jaxrs/pojoTestModule"/>
-        <mkdir dir="target/test-resources/jaxrs-repository/conf/"/>
-        <copy file="test-resources/jaxrs/pojo-enabled-axis2.xml"
-    	                  tofile="target/test-resources/jaxrs-repository/conf/axis2.xml"/>
-        <mkdir dir="target/test-resources/jaxrs-repository/modules"/>
-		<copy file="../addressing/target/addressing-SNAPSHOT.mar"
-    	                  tofile="target/test-resources/jaxrs-repository/modules/addressing-SNAPSHOT.mar"/>
     </target>
 </project>
