@@ -82,7 +82,10 @@ public class SourceProvider implements Provider<Source> {
     	    text = userFault;
         }  else if (text != null && text.contains("ReturnNull")) {
             return null;
-    	}
+    	}else if (text!=null && text.contains("ReturnEmpty")){
+            TestLogger.logger.debug(">> Return Empty Source: \n" + text);
+            return new StreamSource();
+        }
         
     	
     	ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());

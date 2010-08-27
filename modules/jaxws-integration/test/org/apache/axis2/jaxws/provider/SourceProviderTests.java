@@ -262,7 +262,25 @@ public class SourceProviderTests extends ProviderTestCase {
         }
 
     }
+    public void testProviderEmptySource() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
+        Dispatch<Source> dispatch = getDispatch();
+        
+        String request = "<test>ReturnEmpty</test>";
+        Source requestSource = getSource(request);
+        try {
+            requestSource = getSource(request);
+            Source responseSource = dispatch.invoke(requestSource);
+            //Expecting empty response payload back. Nothing underneath soap body.
+            assertNull(responseSource);
+        }catch(Exception e){
+            e.printStackTrace();
+            fail("Caught exception " + e);
+        }
+
+    }    
     public void testTwoElementsString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
