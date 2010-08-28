@@ -25,31 +25,8 @@ http://ws.apache.org/axis2
 
 This is the Standard Binary Release of Axis2.
 
-The lib directory contains;
-
-1. axis2-adb-${project.version}.jar
-2. axis2-adb-codegen-${project.version}.jar
-3. axis2-ant-plugin-${project.version}.jar
-4. axis2-clustering-${project.version}.jar
-5. axis2-codegen-${project.version}.jar
-6. axis2-corba-${project.version}.jar
-7. axis2-fastinfoset-${project.version}.jar
-8. axis2-java2wsdl-${project.version}.jar
-9. axis2-jaxbri-${project.version}.jar
-10. axis2-jaxws-${project.version}.jar
-11. axis2-jaxws-api-${project.version}.jar
-12. axis2-jibx-${project.version}.jar
-13. axis2-json-${project.version}.jar
-14. axis2-jws-api-${project.version}.jar
-15. axis2-kernel-${project.version}.jar
-16. axis2-metadata-${project.version}.jar
-17. axis2-saaj-${project.version}.jar
-18. axis2-saaj-api-${project.version}.jar
-19. axis2-soapmonitor-${project.version}.jar
-20. axis2-spring-${project.version}.jar
-21. axis2-xmlbeans-${project.version}.jar
-
-and all 3rd party distributable dependencies of the above jars.
+The lib directory contains the Axis2 jars and all 3rd party distributable dependencies of
+these jars.
 
 The repository/modules directory contains the deployable addressing module.
 

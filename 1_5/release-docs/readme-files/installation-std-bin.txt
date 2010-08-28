@@ -22,7 +22,7 @@
 
 1. Download and Install the Apache Axis2 Binary Distribution
 
-  Download and install a Java Development Kit (JDK) release (version 1.4 or
+  Download and install a Java Development Kit (JDK) release (version 1.5 or
   later) from http://java.sun.com/j2se/. Install the JDK according to the
   instructions included with the release. Set an environment variable JAVA_HOME 
   to the pathname of the directory into which you installed the JDK release.
@@ -30,13 +30,13 @@
   Download and unpack the Axis2 Binary Distribution into a convenient
   location so that the distribution resides in its own directory. Set an 
   environment variables AXIS2_HOME to the pathname of the extracted directory 
-  of Axis2 (Eg: /opt/axis2-1.4).
+  of Axis2 (Eg: /opt/axis2-${project.version}).
 
 
 2. Starting up Axis2 Standalone Server
 
   Standalone Axis2 server can be started by executing the following commands:
-  			$AXIS2_HOME\bin\axis2server.bat (Windows)
+  			%AXIS2_HOME%\bin\axis2server.bat (Windows)
   			$AXIS2_HOME/bin/axis2server.sh (Unix)
 
   After startup, the default web services included with Axis2 will be available 
@@ -72,7 +72,7 @@ Distribution
   essential jars are missing. At such a situation the documentation of the 
   particular servlet container should be consulted to find the problem. 
   
-  Read http://ws.apache.org/axis2/1_4/installationguide.html#servlet_container
+  Read http://ws.apache.org/axis2/1_5/installationguide.html#servlet_container
   for more information.
   
    
@@ -116,8 +116,8 @@ Distribution
      Usage: WSDL2Java.{sh|bat} [OPTION]... -uri <Location of WSDL>
         Eg: WSDL2Java.sh -uri ../wsdl/Axis2Sample.wsdl
         
-   A more detailed reference about this script can be found http://
-   ws.apache.org/axis2/1_4/reference.html.
+   A more detailed reference about this script can be found
+   http://ws.apache.org/axis2/1_5/reference.html.
    
    
    * java2wsdl.{bat|sh} 	
@@ -126,12 +126,12 @@ Distribution
      Usage: Java2WSDL.{sh|bat} [OPTION]... -cn <fully qualified class name>
         Eg: Java2WSDL.sh -cn ../samples/test/searchTool.Search
         
-   A more detailed reference about this script can be found in http://
-   ws.apache.org/axis2/1_4/reference.html
+   A more detailed reference about this script can be found in
+   http://ws.apache.org/axis2/1_5/reference.html
 
 Complete Installation Guide
 ===========================
 A complete Installation Guide on Apache Axis2 is available at
-http://ws.apache.org/axis2/1_4/installationguide.html
+http://ws.apache.org/axis2/1_5/installationguide.html
    
    

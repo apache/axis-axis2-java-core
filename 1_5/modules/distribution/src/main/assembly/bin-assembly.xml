@@ -155,6 +155,7 @@
                 <include>README.txt</include>
                 <include>release-notes.html</include>
             </includes>
+            <filtered>true</filtered>
         </fileSet>
 
         <!-- copy samples -->
