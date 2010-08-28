@@ -84,13 +84,6 @@
     </modules>
     <profiles>
         <profile>
-          <id>plugins</id>
-          <modules>
-            <module>modules/tool/axis2-aar-maven-plugin</module>
-            <module>modules/tool/axis2-mar-maven-plugin</module>            
-          </modules>
-        </profile>
-        <profile>
             <id>release</id>
             <activation>
                 <property>
