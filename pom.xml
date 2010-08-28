@@ -92,7 +92,6 @@
                  other profiles. -->
             <id>everything</id>
             <modules>
-                <module>modules/documentation</module>
                 <module>modules/distribution</module>
             </modules>
         </profile>
