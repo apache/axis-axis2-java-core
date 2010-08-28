@@ -70,17 +70,6 @@
         </fileSet>
 
         <!--********************** creating the webappp ********************** -->
-        <!-- copy the web.xml into webapp/WEB-INF directory -->
-
-        <fileSet>
-            <directory>../../modules/webapp/conf</directory>
-            <outputDirectory>webapp/WEB-INF</outputDirectory>
-            <includes>
-                <include>web.xml</include>
-            </includes>
-        </fileSet>
-
-
         <!-- copy the build.xml into webapp directory -->
         <fileSet>
             <directory>../../modules/webapp/scripts</directory>
@@ -88,40 +77,6 @@
             <includes>
                 <include>build.xml</include>
             </includes>
-        </fileSet>
-
-        <!-- copy class files to webapp/WEB-INF/classes directory -->
-        <fileSet>
-            <directory>../../modules/webapp/target/classes</directory>
-            <outputDirectory>webapp/WEB-INF/classes</outputDirectory>
-            <includes>
-                <include>**/*</include>
-            </includes>
-        </fileSet>
-
-
-        <!-- copy *.properties to webapp/WEB-INF/classes directory -->
-        <fileSet>
-            <directory>../../modules/kernel/conf</directory>
-            <outputDirectory>webapp/WEB-INF/classes</outputDirectory>
-            <includes>
-                <include>*.properties</include>
-            </includes>
-        </fileSet>
-
-
-        <!-- copy contents of the webapp module -->
-
-        <fileSet>
-            <directory>../../modules/webapp/src/main/webapp</directory>
-            <outputDirectory>webapp</outputDirectory>
-            <excludes>
-                <exclude>project.xml</exclude>
-                <exclude>**/*.iml</exclude>
-                <exclude>**/.*</exclude>
-                <exclude>**/conf/**</exclude>
-                <exclude>**/scripts/**</exclude>
-            </excludes>
         </fileSet>
 
         <fileSet>
@@ -223,6 +178,21 @@
                  <exclude>rhino:js:jar</exclude>
                  <exclude>javax.servlet:servlet-api</exclude>
             </excludes>
+        </dependencySet>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>org.apache.axis2:axis2-webapp</include>
+            </includes>
+            <unpack>true</unpack>
+            <outputDirectory>webapp</outputDirectory>
+            <unpackOptions>
+                <includes>
+                    <include>WEB-INF/classes/**/*</include>
+                    <include>WEB-INF/web.xml</include>
+                    <include>axis2-web/**/*</include>
+                </includes>
+            </unpackOptions>
         </dependencySet>
     </dependencySets>
 </assembly>
