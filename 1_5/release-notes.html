@@ -30,12 +30,20 @@
 
 <p>1.5.2 is a maintenance release to fix the security issue described in
 <a href="http://svn.apache.org/repos/asf/axis/axis2/java/core/security/CVE-2010-1632.pdf">CVE-2010-1632</a>
-as well as some other critical issues.</p>
+as well as an XSS vulnerability in the admin console and some other minor issues. It also
+upgrades Axiom to version 1.2.9.</p>
 
 <h2>Changes since 1.5.1</h2>
 
 <ul>
- <li>TODO: insert list of JIRA issues here</li>
+  	<li>[AXIS2-3290] surefire is still run even if maven.test.skip is true</li>
+    <li>[AXIS2-4113] Unable to sign axis2 jar 1.4/1.4.1: ZipException</li>
+    <li>[AXIS2-4371] Unable to compile class for JSP: axis2-web/viewphases.jsp</li>
+    <li>[AXIS2-4450] CVE-2010-1632: Message builders for SOAP and XML should not attempt to load DTDs</li>
+    <li>[AXIS2-4752] Timeout due to connection pool is starved in latest 1.5.2-SNAPSHOT code.</li>
+    <li>[AXIS2-4768] Mtom optimization doesn't work when using simple bean</li>
+    <li>[AXIS2-4787] Hardcoded Bundle-Versions in adb, jaxws, kernel, metadata and saaj modules</li>
+    <li>[AXIS2-4788] axis2-jibx has conflicting bcel dependencies</li>
 </ul>
 
 <h2>About Axis2</h2>
