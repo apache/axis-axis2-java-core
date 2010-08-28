@@ -554,6 +554,12 @@
                     <version>2.0</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <!-- "clean verify" fails because for OSGi bundles, there
+                             is a mismatch between the type of the dependency (jar)
+                             and the actual packaging (bundle) and Maven resolves
+                             the dependency from the local repository instead of the
+                             reactor. -->
+                        <preparationGoals>clean install</preparationGoals>
                     </configuration>
                 </plugin>
             </plugins>
