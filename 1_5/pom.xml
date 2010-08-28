@@ -84,18 +84,6 @@
     </modules>
     <profiles>
         <profile>
-            <id>release</id>
-            <activation>
-                <property>
-                    <name>release</name>
-                </property>
-            </activation>
-            <modules>
-                <module>modules/documentation</module>
-                <module>modules/distribution</module>
-            </modules>
-        </profile>
-        <profile>
             <!-- This profile needs to be activated when doing the release:prepare
                  (by adding -Peverything) to make sure that the release plugin updates
                  the version numbers of all relevant submodules. It must contain
@@ -414,13 +402,6 @@
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5</url>
     </scm>
     <distributionManagement>
-        <repository>
-            <id>apache-repo</id>
-            <name>Maven Central Repository</name>
-            <url>
-                scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository
-            </url>
-        </repository>
         <snapshotRepository>
             <id>apache.snapshots.https</id>
             <name>${distMgmtSnapshotsName}</name>
