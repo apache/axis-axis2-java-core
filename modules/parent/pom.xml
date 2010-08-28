@@ -978,9 +978,9 @@
         </profile>
     </profiles>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/parent</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/parent</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/parent</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/parent</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/parent</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/parent</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>

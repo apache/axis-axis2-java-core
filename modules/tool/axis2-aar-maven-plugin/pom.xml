@@ -66,9 +66,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-aar-maven-plugin</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-aar-maven-plugin</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/tool/axis2-aar-maven-plugin</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/tool/axis2-aar-maven-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/tool/axis2-aar-maven-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/tool/axis2-aar-maven-plugin</url>
     </scm>
     <build>
         <plugins>

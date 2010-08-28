@@ -32,9 +32,9 @@
     <name>Apache Axis2 - Data Binding</name>
     <description>Axis2 Data Binding module</description>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/adb</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/adb</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/adb</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/adb</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/adb</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/adb</url>
     </scm>
     <dependencies>
         <dependency>

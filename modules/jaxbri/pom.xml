@@ -65,9 +65,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/jaxbri</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/java/1_5/modules/jaxbri</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/java/1_5/modules/jaxbri</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/jaxbri</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/jaxbri</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/jaxbri</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
