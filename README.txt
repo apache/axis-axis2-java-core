@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 @axisVersion@ build  (@TODAY@)
+Apache Axis2 ${project.version} build (${buildTimestamp})
 
 http://ws.apache.org/axis2
 ------------------------------------------------------
@@ -65,10 +65,10 @@ or in the JIRA issue tracker. If you are sending an email to the mailing
 list make sure to add the [Axis2] prefix to the subject.
 
 Mailing list subscription:
-    axis-dev-subscribe@ws.apache.org
+    java-dev-subscribe@axis.apache.org
 
 Jira:
-    http://issues.apache.org/jira/secure/BrowseProject.jspa?id=10611
+    http://issues.apache.org/jira/browse/AXIS2
 
 
 Thank you for using Axis2!
