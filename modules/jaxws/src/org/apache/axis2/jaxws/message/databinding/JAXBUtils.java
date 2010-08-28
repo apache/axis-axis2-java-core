@@ -606,7 +606,7 @@ public class JAXBUtils {
 
         // CONTEXT construction
         if (contextConstruction) {
-            JAXBContext context = createJAXBContextUsingContextPath(contextPackages, cl);
+            JAXBContext context = createJAXBContextUsingContextPath(contextPackages, cl, classRefs);
             if (context != null) {
                 contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CONTEXT_PATH);
             }
@@ -885,10 +885,12 @@ public class JAXBUtils {
      *
      * @param packages
      * @param cl       ClassLoader
+     * @param List<String> classRefs
      * @return JAXBContext or null if unsuccessful
      */
     private static JAXBContext createJAXBContextUsingContextPath(TreeSet<String> packages,
-                                                                 ClassLoader cl) {
+                                                                 ClassLoader cl,
+                                                                 List<String> classRefs) {
         JAXBContext context = null;
         String contextpath = "";
 
@@ -907,6 +909,13 @@ public class JAXBUtils {
                 log.debug("Attempting to create JAXBContext with contextPath=" + contextpath);
             }
             context = JAXBContext_newInstance(contextpath, cl);
+            
+            if (!containsClasses(context, classRefs)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("  Unsuccessful: Will now use an alterative JAXBConstruct construction");
+                    return null;
+                }
+            }
             if (log.isDebugEnabled()) {
                 log.debug("  Successfully created JAXBContext:" + context);
             }
@@ -918,6 +927,32 @@ public class JAXBUtils {
             }
         }
         return context;
+    }
+    
+    /**
+     * containsClasses
+     * @param JAXBContext 
+     * @param List<String> classRefs
+     */
+    private static boolean containsClasses(JAXBContext context, List<String> classRefs) {
+        String text = context.toString();
+        
+        text = text.replace('\n', ' ');
+        text = text.replace('\t', ' ');
+        text = text.replace('\r', ' ');
+        
+        for (String classRef: classRefs) {
+            if (!classRef.endsWith(".ObjectFactory")) {
+                String search = " " + classRef + " ";
+                if (text.contains(search)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("The context does not contain " + classRef + " " + context);
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
