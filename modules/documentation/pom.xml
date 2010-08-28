@@ -344,7 +344,11 @@
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
                                     </packageset>
-                                    <packageset dir="../../modules/soapmonitor/src" defaultexcludes="yes">
+                                    <packageset dir="../../modules/soapmonitor/module/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/soapmonitor/servlet/src" defaultexcludes="yes">
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
                                     </packageset>
