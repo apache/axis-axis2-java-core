@@ -24,16 +24,16 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.2</version>
+        <version>1.5.3-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-resource-bundle</artifactId>
     <name>Apache Axis2 - Resource bundle</name>
     <description>Contains the legal files that must be included in all artifacts</description>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.2/modules/resource-bundle</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.2/modules/resource-bundle</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.2/modules/resource-bundle</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/resource-bundle</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/resource-bundle</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/resource-bundle</url>
     </scm>
     <build>
         <plugins>
