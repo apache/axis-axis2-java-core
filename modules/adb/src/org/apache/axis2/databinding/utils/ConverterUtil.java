@@ -1330,6 +1330,10 @@ public class ConverterUtil {
         return calendar.getTimeInMillis() - newCalendar.getTimeInMillis();
     }
 
+    public static long compare(UnsignedLong unsignedLong, String value) {
+        return compare(unsignedLong.longValue(), value);
+    }
+
     /**
      * Converts the given .datahandler to a string
      *

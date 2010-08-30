@@ -338,7 +338,21 @@ public class BeanUtil {
                 } else if ("java.lang.Object".equals(beanClass.getName())){
                     return beanElement.getFirstOMChild();
                 }
-                HashMap properties = new HashMap();
+
+                //use a comaprator to ignore the case of the bean element
+                //names eg. if the property descriptor is getServiceName it
+                //should accept child element with ServiceName as well.
+                //but currently accepts only serviceName
+                Comparator comparator = new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        String string1 = (String) o1;
+                        String string2 = (String) o2;
+                        return string1.compareToIgnoreCase(string2);
+                    }
+                };
+                Map properties = new TreeMap(comparator);
+
+
                 BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
                 PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
                 for (PropertyDescriptor proprty : propDescs) {
