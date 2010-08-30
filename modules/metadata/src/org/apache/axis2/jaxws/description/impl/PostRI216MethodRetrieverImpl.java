@@ -23,8 +23,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.wsdl.Definition;
+
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.MethodRetriever;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
@@ -142,11 +145,12 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
             Iterator<MethodDescriptionComposite> iter = retrieveList.iterator();
             while(iter.hasNext()){
                 MethodDescriptionComposite mdc = iter.next();
-                //If user defined a legacyWemethod, has atleast one operation with @Wemethod annotation
+                //If user defined a legacyWemethod with no wsdl, has atleast one operation with @Wemethod annotation
                 //and this is a public operation with no @Webmethod operation that is being exposed then
                 //lets warn user of possible security exposure.
-                if(getLegacyWebMethod()==null && isWebmethodDefined && mdc.getWebMethodAnnot()==null && !isConstructor(mdc)){                      
-                  log.warn(Messages.getMessage("MethodRetrieverWarning1", mdc.getMethodName()));                     
+                Definition wsdlDef = ((ServiceDescriptionWSDL)eid.getEndpointDescription().getServiceDescription()).getWSDLDefinition(); 
+                if(getLegacyWebMethod()==null && wsdlDef == null && isWebmethodDefined && mdc.getWebMethodAnnot()==null && !isConstructor(mdc)){
+                    log.warn(Messages.getMessage("MethodRetrieverWarning1", mdc.getMethodName()));
                 }
             }
         }//Done with implied SEI's
