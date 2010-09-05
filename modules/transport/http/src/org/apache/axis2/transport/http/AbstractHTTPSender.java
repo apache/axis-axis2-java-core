@@ -25,12 +25,13 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -49,6 +50,8 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -510,21 +513,16 @@ public abstract class AbstractHTTPSender {
                                    HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
                 if (connManager == null) {
                     log.trace("Making new ConnectionManager");
-                    connManager = new MultiThreadedHttpConnectionManager();                    
-                    /* 
-                     * Commented out for now as bugs in other parts of Axis2 cause test failures when
-                     * proper connection reuse is enabled. 
-                     */
-                    // configContext.setProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, 
-                    //                           connManager);
-                    
+                    connManager = new MultiThreadedHttpConnectionManager();
+                    configContext.setProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, 
+                                              connManager);
                 }
             }
         }
 
         /*
-         * Create a new instance of HttpClient since it is not
-         * used in thread-safe way here. 
+         * Create a new instance of HttpClient since the way
+         * it is used here it's not fully thread-safe.
          */
         httpClient = new HttpClient(connManager);
 
@@ -541,7 +539,8 @@ public abstract class AbstractHTTPSender {
                                  HttpMethod method) throws IOException {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
 
-        msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
+        if (!msgContext.getOptions().isUseSeparateListener())
+            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
 
         // set the custom headers, if available
         addCustomHeaders(method, msgContext);
