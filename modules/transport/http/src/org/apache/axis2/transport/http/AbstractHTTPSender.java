@@ -41,7 +41,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpVersion;import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -504,12 +505,8 @@ public abstract class AbstractHTTPSender {
                 if (connManager == null) {
                     log.trace("Making new ConnectionManager");
                     connManager = new MultiThreadedHttpConnectionManager();
-                    /* 
-                     * Commented out for now as bugs in other parts of Axis2 cause test failures when
-                     * proper connection reuse is enabled. 
-                     */
-                    // configContext.setProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, 
-                    //                           connManager);
+                    configContext.setProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, 
+                                              connManager);
                 }
             }
         }
