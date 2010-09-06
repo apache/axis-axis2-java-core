@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.2-SNAPSHOT</version>
+        <version>1.5.2</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -214,9 +214,9 @@
     </dependencies>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/documentation</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/documentation</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/documentation</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.2/modules/documentation</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.2/modules/documentation</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.2/modules/documentation</url>
     </scm>
     <build>
         <plugins>
