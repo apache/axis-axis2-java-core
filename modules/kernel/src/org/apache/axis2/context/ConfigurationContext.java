@@ -735,6 +735,9 @@ public class ConfigurationContext extends AbstractContext {
      */
     public void shutdownModulesAndServices() throws AxisFault{
         if(stopped){
+            if (log.isDebugEnabled()) {
+                log.debug("ConfigurationContext is stopped, modules and services not being shut down");
+            }
             return;
         }
         /*Shut down the modules*/
@@ -743,6 +746,9 @@ public class ConfigurationContext extends AbstractContext {
         }
         if(axisConfiguration!=null){
             HashMap modules = axisConfiguration.getModules();
+            if (log.isDebugEnabled()) {
+                log.debug("Modules to be shutdown from axisConfiguration: " + modules);
+            }
             if (modules != null) {
                 Iterator moduleitr = modules.values().iterator();
                 while (moduleitr.hasNext()) {
@@ -777,16 +783,9 @@ public class ConfigurationContext extends AbstractContext {
      * @throws AxisFault
      */
     public void terminate() throws AxisFault {
+        shutdownModulesAndServices();
         if (listenerManager != null) {
             listenerManager.destroy();
-        } else {
-            if(log.isDebugEnabled()){
-                log.debug("Start Invoke modules and services shutdown.");
-            }
-            shutdownModulesAndServices();
-            if(log.isDebugEnabled()){
-                log.debug("End Invoke modules and services shutdown.");
-            }
         }
         if (axisConfiguration != null) {
             axisConfiguration.cleanup();
