@@ -102,13 +102,7 @@ public class ListingAgent extends AbstractAgent {
 
     protected void initTransportListener(HttpServletRequest httpServletRequest) {
         // httpServletRequest.getLocalPort() , giving me a build error so I had to use the followin
-        String filePart;
-        try {
-            filePart = httpServletRequest.getRequestURL().toString();
-        } catch (Throwable t){
-            log.info("Old Servlet API (fallback to HttpServletRequest.getRequestURI) :" + t);    
-            filePart = httpServletRequest.getRequestURI();
-        }
+        String filePart = httpServletRequest.getRequestURL().toString();
         int ipindex = filePart.indexOf("//");
         String ip;
         if (ipindex >= 0) {
@@ -134,11 +128,7 @@ public class ListingAgent extends AbstractAgent {
         String serviceName = req.getParameter("serviceName");
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
-            try {
-                req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
-            } catch (Throwable t) {
-                log.info("Old Servlet API :" + t);
-            }
+            req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
         }
         renderView(LIST_FAULTY_SERVICES_JSP_NAME, req, res);
     }
@@ -224,13 +214,7 @@ public class ListingAgent extends AbstractAgent {
                                    HttpServletResponse res)
             throws IOException, ServletException {
 
-        String url;
-        try {
-        url = req.getRequestURL().toString();
-        } catch (Throwable t) {
-            log.info("Old Servlet API (Fallback to HttpServletRequest.getRequestURI) :" + t);    
-            url = req.getRequestURI();
-        }
+        String url = req.getRequestURL().toString();
         String serviceName = extractServiceName(url);
         HashMap services = configContext.getAxisConfiguration().getServices();
         String query = req.getQueryString();
@@ -369,19 +353,11 @@ public class ListingAgent extends AbstractAgent {
 
                     return;
                 } else {
-                    try {
-                        req.getSession().setAttribute(Constants.SINGLE_SERVICE,
-                                serviceObj);
-                    } catch (Throwable t) {
-                        log.info("Old Servlet API :" + t);
-                    }
+                    req.getSession().setAttribute(Constants.SINGLE_SERVICE,
+                            serviceObj);
                 }
             } else {
-                try {
-                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
-                } catch (Throwable t){
-                    log.info("Old Servlet API :" + t);    
-                }
+                req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
                     
                 res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
             }
@@ -395,12 +371,8 @@ public class ListingAgent extends AbstractAgent {
             throws IOException, ServletException {
 
         populateSessionInformation(req);
-        try {
-            req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                                          configContext.getAxisConfiguration().getFaultyServices());
-        } catch (Throwable t){
-            log.info("Old Servlet API :" + t);    
-        }
+        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
+                                      configContext.getAxisConfiguration().getFaultyServices());
         renderView(LIST_MULTIPLE_SERVICE_JSP_NAME, req, res);
     }
 
