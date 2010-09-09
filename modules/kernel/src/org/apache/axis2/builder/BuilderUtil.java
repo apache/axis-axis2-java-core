@@ -785,6 +785,9 @@ public class BuilderUtil {
             && (charsetEncodingFromTransport != null)
             && !charsetEncodingFromXML.equalsIgnoreCase(charsetEncodingFromTransport)
             && !compatibleEncodings(charsetEncodingFromXML, charsetEncodingFromTransport)) {
+            /**
+             * WS-BP Rule 1019 requires toleration if the character sets mismatch
+             * I am changing this to simply a debug statement.
             String faultCode;
 
             if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespaceURI)) {
@@ -794,10 +797,14 @@ public class BuilderUtil {
             }
 
             throw new AxisFault("Character Set Encoding from "
-                                + "transport information [" + charsetEncodingFromTransport +
-                                "] does not match with "
-                                + "character set encoding in the received SOAP message [" +
-                                charsetEncodingFromXML + "]", faultCode);
+                    + "transport information [" + charsetEncodingFromTransport + "] does not match with "
+                    + "character set encoding in the received SOAP message [" + charsetEncodingFromXML + "]", faultCode);
+            **/
+            if (log.isDebugEnabled()) {
+                log.debug("Character Set Encoding from "
+                        + "transport information [" + charsetEncodingFromTransport + "] does not match with "
+                        + "character set encoding in the received SOAP message [" + charsetEncodingFromXML + "]");
+            }
         }
     }
 
