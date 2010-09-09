@@ -62,6 +62,7 @@ public class HeadersClientProtocolHandler implements
     public boolean handleMessage(SOAPMessageContext messagecontext) {
         Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         tracker.handleMessage(outbound);
+        headerUtil.confirmMessageAsString(messagecontext);
         if (outbound) {
 
         	// this is the second client outbound handler hit

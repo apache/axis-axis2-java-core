@@ -47,6 +47,7 @@ public class HeadersServerProtocolHandler implements
     public boolean handleFault(SOAPMessageContext messagecontext) {
     	Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
     	tracker.handleFault(outbound);
+    	headerUtil.confirmMessageAsString(messagecontext);
     	if (outbound) {
     	    
     	    Map<QName, List<String>> requestHeaders = (Map<QName, List<String>>)messagecontext.get(Constants.JAXWS_OUTBOUND_SOAP_HEADERS);

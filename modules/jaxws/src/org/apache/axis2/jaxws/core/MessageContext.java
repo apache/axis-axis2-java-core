@@ -23,11 +23,14 @@ import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.api.MessageAccessor;
+import org.apache.axis2.jaxws.api.MessageAccessorFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -86,6 +89,14 @@ public class MessageContext {
     public MessageContext() {
         axisMsgCtx = new org.apache.axis2.context.MessageContext();
         isOutbound = true;
+        
+        // Set the MessageAccessor object on the MessageContext so that it can be accessed
+        MessageAccessorFactory factory = (MessageAccessorFactory)
+                FactoryRegistry.getFactory(MessageAccessorFactory.class);
+        if (factory != null) {
+            this.setProperty(org.apache.axis2.jaxws.Constants.JAXWS_MESSAGE_ACCESSOR, 
+                    factory.createMessageAccessor(this));
+        }
     }
     
     /**
@@ -112,6 +123,14 @@ public class MessageContext {
             }
         } else {
             axisMsgCtx = new org.apache.axis2.context.MessageContext();
+        }
+        
+        // Set the MessageAccessor object on the MessageContext so that it can be accessed
+        MessageAccessorFactory factory = (MessageAccessorFactory)
+                FactoryRegistry.getFactory(MessageAccessorFactory.class);
+        if (factory != null) {
+            this.setProperty(org.apache.axis2.jaxws.Constants.JAXWS_MESSAGE_ACCESSOR, 
+                    factory.createMessageAccessor(this));
         }
     }
 

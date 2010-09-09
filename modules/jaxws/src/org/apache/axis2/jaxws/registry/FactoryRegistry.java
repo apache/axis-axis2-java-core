@@ -23,6 +23,8 @@ import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.factory.impl.Axis2EndpointReferenceFactoryImpl;
 import org.apache.axis2.jaxws.addressing.factory.impl.JAXWSEndpointReferenceFactoryImpl;
+import org.apache.axis2.jaxws.api.MessageAccessorFactory;
+import org.apache.axis2.jaxws.api.MessageAccessorFactoryImpl;
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.core.controller.impl.InvocationControllerFactoryImpl;
 import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
@@ -135,6 +137,7 @@ public class FactoryRegistry {
         table.put(WebServiceContextInjector.class, wsciImpl);
         table.put(HandlerInvokerFactory.class, new HandlerInvokerFactoryImpl());
         table.put(AsyncHandlerProxyFactory.class, new AsyncHandlerProxyFactoryImpl());
+        table.put(MessageAccessorFactory.class, new MessageAccessorFactoryImpl());
     }
 
     /** FactoryRegistry is currently a static singleton */

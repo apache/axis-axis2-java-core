@@ -190,6 +190,20 @@ public interface Constants {
     public static final String JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS = 
         "jaxws.jaxb.write.remove.illegal.chars";
     
+    /**
+     * javax.xml.ws.handler.MessageContext  Property:
+     * Name: jaxws.message.as.string
+     * Value: null or MessageAccessor
+     * 
+     * Description:
+     * A handler or resource injection @WebServiceContext may use
+     * this property to get access to a MessageAccessor object.
+     * The MessageAccessor contains methods to allow a user to 
+     * get additional attributes from the message (for example getMessageAsString)
+     */
+    public static final String JAXWS_MESSAGE_ACCESSOR = 
+        "jaxws.message.accessor";
+
     /** 
      * Context Property:
      * Name: jaxws.dispatch.outbound.operation.resolution.enable

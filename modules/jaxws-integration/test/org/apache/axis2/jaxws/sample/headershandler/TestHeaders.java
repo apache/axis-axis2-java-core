@@ -27,6 +27,10 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.MessageContext;
+
+import org.apache.axis2.jaxws.Constants;
+import org.apache.axis2.jaxws.api.MessageAccessor;
 
 public class TestHeaders {
 	
@@ -167,4 +171,27 @@ public class TestHeaders {
     	}
     }
     
+    /**
+     * Throw an exception if the jaxws.message.as.string property fails.
+     * @param mc
+     */
+    public void confirmMessageAsString(MessageContext mc) {
+        String text = null;
+        if (mc != null) {
+            Object accessor =  mc.get(Constants.JAXWS_MESSAGE_ACCESSOR);
+            if (accessor != null) {
+                Boolean preMessageAccessed = (Boolean) mc.get("jaxws.isMessageAccessed");
+                text = accessor.toString();
+                Boolean postMessageAccessed = (Boolean) mc.get("jaxws.isMessageAccessed");
+                if (preMessageAccessed != postMessageAccessed) {
+                    throw new WebServiceException("The message was accessed when toString was called.");
+                }
+                if (!text.contains("Envelope") || !text.contains("Body")) {
+                    throw new WebServiceException("The message appears to be invalid: " + text);
+                }
+                return;
+            }
+        }
+        throw new WebServiceException("Could not access the MessageAccessor: " + mc);   
+    }
 }
