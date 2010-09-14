@@ -913,8 +913,8 @@ public class JAXBUtils {
             if (!containsClasses(context, classRefs)) {
                 if (log.isDebugEnabled()) {
                     log.debug("  Unsuccessful: Will now use an alterative JAXBConstruct construction");
-                    return null;
                 }
+                return null;
             }
             if (log.isDebugEnabled()) {
                 log.debug("  Successfully created JAXBContext:" + context);
