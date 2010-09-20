@@ -64,13 +64,21 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
     private static final String MODULE_NAME = "addressing";
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        //determine whether outbound addressing has been disabled or not.
-        // Get default value from module.xml or axis2.xml files
-        Parameter param = msgContext.getModuleParameter(
-                DISABLE_ADDRESSING_FOR_OUT_MESSAGES, MODULE_NAME, handlerDesc);
-        boolean disableAddressing =
-            msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
+        Parameter param = null;
+        boolean disableAddressing = false;
+        
+        Object o = msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        if (o == null || !(o instanceof Boolean)) {
+            //determine whether outbound addressing has been disabled or not.
+            // Get default value from module.xml or axis2.xml files
+            param = msgContext.getModuleParameter(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, MODULE_NAME, handlerDesc);
+            disableAddressing =
+                msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
                     JavaUtils.isTrueExplicitly(Utils.getParameterValue(param)));
+        } else {
+           Boolean bool = (Boolean)o;
+           disableAddressing = bool.booleanValue();
+        }
 
         if (disableAddressing) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
