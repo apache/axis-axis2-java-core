@@ -154,7 +154,11 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		String prefix = WSDLSerializationUtil.getPrefix(axisService.getTargetNamespace(),
                                                         namespaceMap);
 		if (prefix == null || "".equals(prefix)) {
-			prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
+            if (axisService.getTargetNamespacePrefix() != null) {
+                prefix = axisService.getTargetNamespacePrefix();
+            } else {
+                prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
+            }
 		}
 
 		namespaceMap.put(prefix, axisService.getTargetNamespace());
