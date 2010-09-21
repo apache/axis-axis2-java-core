@@ -46,7 +46,7 @@ public class BOMOutputStreamFilter extends FilterOutputStream {
             bomLength = 0;
         } else if (encoding.equalsIgnoreCase("UTF-16") || 
                    encoding.equalsIgnoreCase("UTF-16LE") || 
-                   encoding.equalsIgnoreCase("UTF-16LE")) {
+                   encoding.equalsIgnoreCase("UTF-16BE")) {
             bomLength = 2;  // FF FE or FE FF
         } else if (encoding.equalsIgnoreCase("UTF-32")) {
             // Currently not valid for SOAP...adding for completeness
