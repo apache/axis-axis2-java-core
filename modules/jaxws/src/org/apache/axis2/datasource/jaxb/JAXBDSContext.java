@@ -45,6 +45,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.attachment.AttachmentMarshaller;
 import javax.xml.bind.attachment.AttachmentUnmarshaller;
@@ -479,7 +480,7 @@ public class JAXBDSContext {
                 // XMLStreamWriter. 
                 // Take advantage of this optimization if there is an output stream.
                 try {
-                    OutputStream os = (optimize) ? getOutputStream(writer) : null;
+                    OutputStream os = (optimize) ? getOutputStream(writer,m) : null;
                     if (os != null) {
                         if (DEBUG_ENABLED) {
                             log.debug("Invoking marshalByElement.  " +
@@ -524,9 +525,11 @@ public class JAXBDSContext {
     /**
      * If the writer is backed by an OutputStream, then return the OutputStream
      * @param writer
+     * @param Marshaller
      * @return OutputStream or null
      */
-    private static OutputStream getOutputStream(XMLStreamWriter writer) throws XMLStreamException {
+    private static OutputStream getOutputStream(XMLStreamWriter writer, 
+                Marshaller m) throws XMLStreamException {
         if (log.isDebugEnabled()) {
             log.debug("XMLStreamWriter is " + writer);
         }
@@ -543,6 +546,23 @@ public class JAXBDSContext {
                 log.debug("OutputStream accessible from XMLStreamWriterWithOS is " + os);
             }
         }
+        if (os != null) {
+            String marshallerEncoding = null;
+            try {
+                marshallerEncoding = (String) m.getProperty(Marshaller.JAXB_ENCODING);
+            } catch (PropertyException e) {
+                if (DEBUG_ENABLED) {
+                    log.debug("Could not query JAXB_ENCODING..Continuing. " + e);
+                }
+            }
+            if (marshallerEncoding != null && !marshallerEncoding.equalsIgnoreCase("UTF-8")) {
+                if (DEBUG_ENABLED) {
+                    log.debug("Wrapping output stream to remove BOM");
+                }
+                os = new BOMOutputStreamFilter(marshallerEncoding, os);
+            }
+        }
+
         return os;
     }
     
@@ -951,7 +971,7 @@ public class JAXBDSContext {
                     }
 
                     // If the output stream is available, marshal directly to it
-                    OutputStream os = (optimize) ? getOutputStream(writer) : null;
+                    OutputStream os = (optimize) ? getOutputStream(writer, m) : null;
                     if (os == null){ 
                         if (DEBUG_ENABLED) {
                             log.debug("Invoking marshalByType.  " +

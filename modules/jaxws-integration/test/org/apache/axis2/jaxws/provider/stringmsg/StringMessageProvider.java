@@ -23,12 +23,15 @@ import org.apache.axis2.jaxws.TestLogger;
 
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.http.HTTPBinding;
 
 @WebServiceProvider(serviceName="StringMessageProviderService")
 @BindingType(SOAPBinding.SOAP11HTTP_BINDING)
+@ServiceMode(value=Service.Mode.MESSAGE)
 public class StringMessageProvider implements Provider<String> {
     private static String responseGood = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><provider><message>request processed</message></provider></soapenv:Body></soapenv:Envelope>";
     private static String responseBad  = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><provider><message>ERROR:null request received</message><provider></soapenv:Body></soapenv:Envelope>";
@@ -39,6 +42,22 @@ public class StringMessageProvider implements Provider<String> {
             TestLogger.logger.debug(">> StringMessageProvider received a new request");
             TestLogger.logger.debug(">> request [" + str + "]");
             
+            // Make sure there are no extra characters (like a BOM) between the Body tag and the operation element
+            if (str.contains("echo")) {
+                if (str.contains("Body><echo")) {
+                    // Good data...replace the echo with echoResponse
+                    TestLogger.logger.debug("Valid");
+                    str = str.replaceAll("echo", "echoResponse");
+                    str = str.replaceAll("arg", "response");
+                    return str;
+                   
+                } else {
+                    TestLogger.logger.debug("Bad Data detected after the SOAP body");
+                    // Bad data...simply return the bad response..this will cause an exception on the client
+                    return responseBad;
+                }
+            }
+
             return responseGood;
         }
         TestLogger.logger.debug(">> ERROR:null request received");

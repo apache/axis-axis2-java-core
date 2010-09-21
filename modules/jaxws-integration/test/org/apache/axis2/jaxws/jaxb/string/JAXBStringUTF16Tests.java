@@ -10,6 +10,7 @@ import javax.xml.ws.WebServiceException;
 
 public class JAXBStringUTF16Tests extends AbstractTestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/JAXBStringService.JAXBStringPortTypeImplPort";
+    String axis2ProviderEndpoint = "http://localhost:6060/axis2/services/StringMessageProviderService.StringMessageProviderPort";
 
     public static Test suite() {
         return getTestSetup(new TestSuite(JAXBStringUTF16Tests.class));
@@ -21,6 +22,12 @@ public class JAXBStringUTF16Tests extends AbstractTestCase {
 
     private void runTest16(String value, String value1) {
         runTestWithUTF16(value, value1);
+    }
+    
+    public void testSimpleString16BOM() throws Exception {
+        // Call the Axis2 StringMessageProvider which has a check to ensure
+        // that the BOM for UTF-16 is not written inside the message.
+        runTestWithEncoding("a simple string", "a simple string", "UTF-16", axis2ProviderEndpoint);
     }
 
     public void testSimpleString16() throws Exception {
@@ -76,13 +83,15 @@ public class JAXBStringUTF16Tests extends AbstractTestCase {
     private void runTestWithUTF16(String input, String output) {
         runTestWithEncoding(input, output, "UTF-16");
     }
-
     private void runTestWithEncoding(String input, String output, String encoding) {
+        runTestWithEncoding(input, output, encoding, axisEndpoint);
+    }
+    private void runTestWithEncoding(String input, String output, String encoding, String endpoint) {
         TestLogger.logger.debug("Test : " + getName());
         try {
             JAXBStringPortType myPort = (new JAXBStringService()).getJAXBStringPort();
             BindingProvider p = (BindingProvider) myPort;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
 
             if (encoding != null) {
                 p.getRequestContext().put(org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING, encoding);
