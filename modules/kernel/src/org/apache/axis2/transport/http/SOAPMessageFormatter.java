@@ -65,13 +65,22 @@ public class SOAPMessageFormatter implements MessageFormatter {
 
         try {
             if (!(format.isOptimized()) && format.isDoingSWA()) {
-                StringWriter bufferedSOAPBody = new StringWriter();
-                if (preserve) {
-                    element.serialize(bufferedSOAPBody, format);
-                } else {
-                    element.serializeAndConsume(bufferedSOAPBody, format);
+                // Write the SOAPBody to an output stream
+                // (We prefer an OutputStream because it is faster)
+                if (log.isDebugEnabled()) {
+                    log.debug("Doing SWA and the format is not optimized.  Buffer the SOAPBody in an OutputStream");
                 }
-                writeSwAMessage(msgCtxt, bufferedSOAPBody, out, format);
+                ByteArrayOutputStream bufferedSOAPBodyBAOS = new ByteArrayOutputStream();
+                if (preserve) {
+                    element.serialize(bufferedSOAPBodyBAOS, format);
+                } else {
+                    element.serializeAndConsume(bufferedSOAPBodyBAOS, format);
+                }
+                // Convert the ByteArrayOutputStream to StreamWriter so that SWA can 
+                // be added.
+                String bufferedSOAPBody = Utils.BAOS2String(bufferedSOAPBodyBAOS, format.getCharSetEncoding());
+                StringWriter bufferedSOAPBodySW = Utils.String2StringWriter(bufferedSOAPBody);
+                writeSwAMessage(msgCtxt, bufferedSOAPBodySW, out, format);
             } else {
                 if (preserve) {
                     element.serialize(out, format);
@@ -100,12 +109,17 @@ public class SOAPMessageFormatter implements MessageFormatter {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
             if (!format.isOptimized()) {
                 if (format.isDoingSWA()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Doing SWA and the format is not optimized.  Buffer the SOAPBody in an OutputStream");
+                    }
                     // Why are we creating a new OMOutputFormat
                     OMOutputFormat format2 = new OMOutputFormat();
                     format2.setCharSetEncoding(format.getCharSetEncoding());
-                    StringWriter bufferedSOAPBody = new StringWriter();
-                    element.serializeAndConsume(bufferedSOAPBody, format2);
-                    writeSwAMessage(msgCtxt, bufferedSOAPBody, bytesOut, format);
+                    ByteArrayOutputStream bufferedSOAPBodyBAOS = new ByteArrayOutputStream();
+                    element.serializeAndConsume(bufferedSOAPBodyBAOS, format2);
+                    String bufferedSOAPBody = Utils.BAOS2String(bufferedSOAPBodyBAOS, format2.getCharSetEncoding());
+                    StringWriter bufferedSOAPBodySW = Utils.String2StringWriter(bufferedSOAPBody);
+                    writeSwAMessage(msgCtxt, bufferedSOAPBodySW, bytesOut, format);
                 } else {
                     element.serializeAndConsume(bytesOut, format);
                 }

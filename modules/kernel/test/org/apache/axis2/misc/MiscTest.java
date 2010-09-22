@@ -21,7 +21,10 @@ package org.apache.axis2.misc;
 
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
 public class MiscTest extends AbstractTestCase {
@@ -41,4 +44,24 @@ public class MiscTest extends AbstractTestCase {
         e = new AxisFault("");
     }
 
+    public void testStringWriterConversion() throws Exception {
+        String input = " Some text \u00df with \u00fc special \u00f6 chars \u00e4. \n";
+        
+        String charset = "utf-8";
+        byte[] bytes = input.getBytes(charset);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(bytes);
+        baos.flush();
+        StringWriter sw = Utils.String2StringWriter(Utils.BAOS2String(baos, charset));
+        assertTrue(input.equals(sw.toString()));
+        
+        charset = "utf-16";
+        bytes = input.getBytes(charset);
+        baos = new ByteArrayOutputStream();
+        baos.write(bytes);
+        baos.flush();
+        sw = Utils.String2StringWriter(Utils.BAOS2String(baos, charset));
+        assertTrue(input.equals(sw.toString()));
+       
+    }
 }

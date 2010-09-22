@@ -57,7 +57,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
@@ -652,6 +656,36 @@ public class Utils {
 
     private static boolean isIP(String hostAddress) {
         return hostAddress.split("[.]").length == 4;
+    }
+    
+    /**
+     * Convert ByteArrayOutputStream to String
+     * @param baos ByteArrayOutputStream
+     * @param charset
+     * @return String
+     */
+    public static String BAOS2String(ByteArrayOutputStream baos, String charset) {
+        try {
+            return baos.toString(charset);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Convert String into a StringWriter
+     * @param input String
+     * @return StringWriter
+     */
+    public static StringWriter String2StringWriter(String input) {
+        StringWriter sw = null;
+        if (input == null || input.length() == 0) {
+            sw = new StringWriter();
+        } else {
+            sw = new StringWriter(input.length());
+            sw.append(input);
+        }
+        return sw;
     }
 
     /**
