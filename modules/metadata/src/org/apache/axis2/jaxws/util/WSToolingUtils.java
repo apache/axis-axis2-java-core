@@ -71,7 +71,7 @@ public class WSToolingUtils {
                 if (log.isDebugEnabled()) {
                     log.debug("Exception thrown from getWsGenVersion: " + e2.getMessage(), e2);
                 }
-                throw (ClassNotFoundException) e2.getException();
+                throw (ClassNotFoundException) e2;
             }
         }
 
