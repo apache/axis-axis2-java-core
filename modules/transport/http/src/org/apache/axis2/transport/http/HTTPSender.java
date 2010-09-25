@@ -196,11 +196,6 @@ public class HTTPSender extends AbstractHTTPSender {
             log.info("Unable to sendViaPost to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         } finally {
-            // If we're a dual-channel request, just auto-release the connection so it gets
-            // cleaned up and avoids starvation problems.
-            // TODO: Confirm this is OK with WS-RM, fix if not!
-            if (msgContext.getOptions().isUseSeparateListener())
-                msgContext.setProperty(HTTPConstants.AUTO_RELEASE_CONNECTION, true);
             cleanup(msgContext, postMethod);
         }
     }
@@ -277,6 +272,8 @@ public class HTTPSender extends AbstractHTTPSender {
         	 * of an in-only operation. In such a scenario, the HTTP response headers should be returned,
         	 * i.e. session cookies. */
         	obtainHTTPHeaderInformation(method, msgContext);
+        	// Since we don't expect any content with a 202 response, we must release the connection
+        	method.releaseConnection();
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
                 statusCode == HttpStatus.SC_BAD_REQUEST) {
             Header contenttypeHeader =
