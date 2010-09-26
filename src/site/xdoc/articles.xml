@@ -114,6 +114,11 @@ Invoking Web Services using Apache Axis2
 Writing Your Own services.xml for Axis2 Web Services</a>- By Deepal Jayasinghe</li>
 <li><a href="http://wso2.org/library/2068">
 ADB Generated Code in Apache Axis2</a>- By Amila Suriarachchi</li>
+<li><a href="http://wso2.org/library/articles/working-rpcserviceclient">Working with RPCServiceClient</a>- By Deepal Jayasinghe</li>
+<li><a href="http://www.developer.com/open/article.php/10930_3777111_2/Embedding-Apache-Axis2-into-Existing-Applications.htm">Embedding Apache Axis2 into Existing Applications</a>- By Deepal Jayasinghe</li>
+<li><a href="http://www.developer.com/java/web/article.php/10935_3863416_2/Using-Axis2-and-Java-for-Asynchronous-Web-Service-Invocation-on-the-Client-Side.htm">Using Axis2 and Java for Asynchronous Web Service Invocation on the Client Side</a>- By Deepal Jayasinghe</li>
+
+
 
 <li><a href="http://www.ibm.com/developerworks/webservices/library/ws-java2/">Java
 Web services, Part 2: Digging into Axis2: AXIOM</a> - By Dennis Sosnoski (30 Nov
