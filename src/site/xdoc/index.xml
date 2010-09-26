@@ -38,6 +38,12 @@ Apache Axis2/C</p>
 here, you can visit the <a href=
 "http://ws.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
 Web site for Axis2/C implementation information.</p>
+<h3>September 6, 2010 - Apache Axis2/Java Version 1.5.2 Released!</h3>
+<p>1.5.2 is a maintenance release to fix the security issue described in
+<a href="http://svn.apache.org/repos/asf/axis/axis2/java/core/security/CVE-2010-1632.pdf">CVE-2010-1632</a>
+as well as an XSS vulnerability in the admin console and some other minor issues. It also
+upgrades Axiom to version 1.2.9.</p>
+<p><a href="./download.cgi"><strong>Download</strong></a></p>
 <h3>October 23, 2009 - Apache Axis2/Java Version 1.5.1 Released!</h3>
 <p>The 1.5.1 version fixes some <a href="http://issues.apache.org/jira/browse/AXIS2">bugs</a>, including most notably a connection starvation issue that would cause a large number of sockets stuck in CLOSE_WAIT or TIME_WAIT.</p>
 <p><b>PLEASE NOTE:</b> As of Axis2 1.5, we now <i>require</i> JDK 1.5 or above.  JDKs 1.4 or previous are no longer supported.</p>
