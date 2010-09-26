@@ -79,6 +79,29 @@
                         <th>Documents Distribution</th>
                     </tr>
                     <tr>
+                        <td><strong>1.5.2</strong></td>
+                        <td>06 - Sep - 2009</td>
+                        <td>1.5.2 Release (Mirrored)</td>
+                        <td>
+                            <a href="[preferred]/axis/axis2/java/core/1.5.2/axis2-1.5.2-bin.zip">zip</a>
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.2/axis2-1.5.1-bin.zip.md5">MD5</a>
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.2/axis2-1.5.1-bin.zip.asc">PGP</a>
+                        </td>
+                        <td>
+                            <a href="[preferred]/axis/axis2/java/core/1.5.2/axis2-1.5.2-src.zip">zip</a>
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.2/axis2-1.5.2-src.zip.md5">MD5</a>
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.2/axis2-1.5.2-src.zip.asc">PGP</a>
+                        </td>
+                        <td>
+                            <a href="[preferred]/axis/axis2/java/core/1.5.2/axis2-1.5.2-war.zip">zip</a>
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.2/axis2-1.5.2-war.zip.md5">MD5</a>
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.2/axis2-1.5.2-war.zip.asc">PGP</a>
+                        </td>
+                        <td>
+                            Not available.
+                        </td>
+                    </tr>
+                    <tr>
                         <td><strong>1.5.1</strong></td>
                         <td>23 - Oct - 2009</td>
                         <td>1.5.1 Release (Mirrored)</td>
