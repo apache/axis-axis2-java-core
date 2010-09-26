@@ -139,19 +139,19 @@
                         <phase>test</phase>
                         <configuration>
                             <tasks unless="maven.test.skip">
-                                <echo message="Generating p2n.wsdl"/>
+                                <echo message="Generating p2n.wsdl" />
                                 
                                 <java classname="org.apache.ws.java2wsdl.Java2WSDL" classpathref="maven.test.classpath" fork="true" failonerror="true">
-                                    <arg value="-o"/>
-                                    <arg value="${project.build.directory}/java2wsdl"/>
-                                    <arg value="-of"/>
-                                    <arg value="p2n.wsdl"/>
-                                    <arg value="-cn"/>
-                                    <arg value="org.apache.axis2.description.CalculatorService"/>
-                                    <arg value="-p2n"/>
-                                    <arg value="[org.apache.axis2.description,http://www.example.org/calculator]"/>
-                                    <arg value="-stn"/>
-                                    <arg value="http://www.example.org/calculator-service"/>
+                                    <arg value="-o" />
+                                    <arg value="${project.build.directory}/java2wsdl" />
+                                    <arg value="-of" />
+                                    <arg value="p2n.wsdl" />
+                                    <arg value="-cn" />
+                                    <arg value="org.apache.axis2.description.CalculatorService" />
+                                    <arg value="-p2n" />
+                                    <arg value="[org.apache.axis2.description,http://www.example.org/calculator]" />
+                                    <arg value="-stn" />
+                                    <arg value="http://www.example.org/calculator-service" />
                                 </java>
                             </tasks>
                         </configuration>

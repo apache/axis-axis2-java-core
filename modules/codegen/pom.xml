@@ -125,15 +125,14 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
-                                <property name="maven.class.path" refid="maven.test.classpath"/>
+                                <property name="maven.class.path" refid="maven.test.classpath" />
                                 <echo>Building WSDLs...</echo>
-                                <property name="axis2.home" value="${basedir}/../target"/>
-                                <property name="maven.junit.jvmargs" value=""/>
+                                <property name="axis2.home" value="${basedir}/../target" />
+                                <property name="maven.junit.jvmargs" value="" />
                                 <path id="maven.dependency.classpath">
-                                    <path refid="maven.compile.classpath"/>
+                                    <path refid="maven.compile.classpath" />
                                 </path>
-                                <ant antfile="build-wsdls.xml" inheritall="true" inheritrefs="true"
-                                     dir="." target="wsdl-codegen"/>
+                                <ant antfile="build-wsdls.xml" inheritall="true" inheritrefs="true" dir="." target="wsdl-codegen" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -146,13 +145,13 @@
                         <configuration>
                             <tasks>
                                 <tstamp>
-                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
+                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en" />
                                 </tstamp>
                                 <copy toDir="${basedir}/target/classes/" overwrite="true" filtering="on">
-                                    <fileset dir="${basedir}/src/" includes="**/*.xsl"/>
+                                    <fileset dir="${basedir}/src/" includes="**/*.xsl" />
                                     <filterset begintoken="#" endtoken="#">
-                                        <filter token="axisVersion" value="${project.version}"/>
-                                        <filter token="today" value=" Built on : ${build.time}"/>
+                                        <filter token="axisVersion" value="${project.version}" />
+                                        <filter token="today" value=" Built on : ${build.time}" />
                                     </filterset>
                                 </copy>
                             </tasks>

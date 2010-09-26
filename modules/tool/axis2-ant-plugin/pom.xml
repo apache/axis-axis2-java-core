@@ -125,38 +125,27 @@
                             <tasks unless="maven.test.skip">
                                 <taskdef name="java2wsdl" classname="org.apache.axis2.tool.ant.Java2WSDLTask">
                                     <classpath>
-                                        <path refid="maven.test.classpath"/>
+                                        <path refid="maven.test.classpath" />
                                     </classpath>
                                 </taskdef>
                                 
-                                <echo message="Generating extraclasses*.wsdl"/>
+                                <echo message="Generating extraclasses*.wsdl" />
                                 
-                                <java2wsdl className="test.Service"
-                                           outputLocation="${project.build.directory}/java2wsdl"
-                                           outputFileName="extraclasses1.wsdl">
-                                    <extraclass name="test.ExtraClass1"/>
-                                    <extraclass name="test.ExtraClass2"/>
+                                <java2wsdl className="test.Service" outputLocation="${project.build.directory}/java2wsdl" outputFileName="extraclasses1.wsdl">
+                                    <extraclass name="test.ExtraClass1" />
+                                    <extraclass name="test.ExtraClass2" />
                                 </java2wsdl>
                                 
-                                <java2wsdl className="test.Service"
-                                           outputLocation="${project.build.directory}/java2wsdl"
-                                           outputFileName="extraclasses2.wsdl"
-                                           extraClasses="test.ExtraClass1,test.ExtraClass2"/>
+                                <java2wsdl className="test.Service" outputLocation="${project.build.directory}/java2wsdl" outputFileName="extraclasses2.wsdl" extraClasses="test.ExtraClass1,test.ExtraClass2" />
                                 
-                                <java2wsdl className="test.Service"
-                                           outputLocation="${project.build.directory}/java2wsdl"
-                                           outputFileName="extraclasses3.wsdl"
-                                           extraClasses="test.ExtraClass1">
-                                    <extraclass name="test.ExtraClass2"/>
+                                <java2wsdl className="test.Service" outputLocation="${project.build.directory}/java2wsdl" outputFileName="extraclasses3.wsdl" extraClasses="test.ExtraClass1">
+                                    <extraclass name="test.ExtraClass2" />
                                 </java2wsdl>
                                 
-                                <echo message="Generating mappings.wsdl"/>
+                                <echo message="Generating mappings.wsdl" />
                                 
-                                <java2wsdl className="test.Service"
-                                           outputLocation="${project.build.directory}/java2wsdl"
-                                           outputFileName="mappings.wsdl"
-                                           schemaTargetNamespace="http://www.example.org/schema/test-service">
-                                    <mapping package="test" namespace="http://www.example.org/schema/test"/>
+                                <java2wsdl className="test.Service" outputLocation="${project.build.directory}/java2wsdl" outputFileName="mappings.wsdl" schemaTargetNamespace="http://www.example.org/schema/test-service">
+                                    <mapping package="test" namespace="http://www.example.org/schema/test" />
                                 </java2wsdl>
                             </tasks>
                         </configuration>

@@ -191,20 +191,14 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <copy todir="${project.build.directory}/test-resources">
-                                    <fileset dir="${basedir}/test-resources"/>
+                                    <fileset dir="${basedir}/test-resources" />
                                 </copy>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                                     dir="test-resources/deployment/service2"/>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                                     dir="test-resources/deployment/echo"/>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                                     dir="test-resources/deployment/invalidservice"/>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                                     dir="test-resources/deployment/module1"/>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                                     dir="test-resources/deployment/serviceModule"/>
-                                <copy file="${basedir}/test-resources/deployment/axis2.xml"
-                                      tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/service2" />
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/echo" />
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/invalidservice" />
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/module1" />
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/serviceModule" />
+                                <copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml" />
                             </tasks>
                         </configuration>
                         <goals>

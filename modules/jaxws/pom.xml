@@ -18,8 +18,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">   
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">   
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
@@ -226,12 +225,11 @@
                         <configuration>
                             <tasks unless="maven.test.skip"> 
                                 <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="test-resources/xsd"/>
-                                <property name="wsdl.source.dir" value="test-resources/wsdl"/>
-                                <property name="schema.output.base.dir" value="target/schema"/>                             
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src"/>
-                                <property name="schema.generated.classes.dir"
-                                          value="${schema.output.base.dir}/classes"/>
+                                <property name="schema.source.dir" value="test-resources/xsd" />
+                                <property name="wsdl.source.dir" value="test-resources/wsdl" />
+                                <property name="schema.output.base.dir" value="target/schema" />                             
+                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
+                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
                                
                                 <!-- make the dirs -->
                                 <mkdir dir="${schema.output.base.dir}" />
@@ -243,10 +241,10 @@
 
                                 <echo>Generating java from echo.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath refid="maven.runtime.classpath" />
                                     
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/echo.xsd"/>
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/echo.xsd" />
                                 </java>
 
                                 <echo>Generating java from stock1.xsd</echo>
