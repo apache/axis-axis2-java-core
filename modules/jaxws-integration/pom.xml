@@ -445,7 +445,7 @@
                                       tofile="${repo.dir}/modules/addressing-${project.version}.mar"/>
 
                                 <!-- ================================================================ -->
-                                <!--- Non-JAXWS services -->
+                                <!-- Non-JAXWS services -->
                                 <!-- ================================================================ -->
 
                                 <copy toDir="${services.dir}/EchoService/">
@@ -467,10 +467,10 @@
 
                                 <mkdir dir="${servicejars.dir}"/>
                                 <!-- ================================================================ -->
-                                <!--- JAXWS services -->
+                                <!-- JAXWS services -->
                                 <!-- ================================================================ -->
                                 <!-- ================================================================ -->
-                                <!--- Provider endpoint Service Samples -->
+                                <!-- Provider endpoint Service Samples -->
                                 <!-- ================================================================ -->
                                 <copy toDir="${servicejars.dir}/WSGenService/">
                                     <fileset dir="target/test-classes">
@@ -676,7 +676,7 @@
                                      basedir="${servicejars.dir}/SWAMTOMService"/>
                                 <delete dir="${servicejars.dir}/SWAMTOMService"/>
                                 <!-- ================================================================ -->
-                                <!--- Proxy endpoint Service Samples -->
+                                <!-- Proxy endpoint Service Samples -->
                                 <!-- ================================================================ -->
                                 <copy toDir="${servicejars.dir}/ProxyDocLitWrapped/">
                                     <fileset dir="target/test-classes">
@@ -777,7 +777,7 @@
                                 <delete dir="${servicejars.dir}/gorilla_dlw"/>
 
                                 <!-- ================================================================ -->
-                                <!--- XML HTTP Tests -->
+                                <!-- XML HTTP Tests -->
                                 <!-- ================================================================ -->
                                 <copy toDir="${servicejars.dir}/XPayloadStringProvider/">
                                     <fileset dir="target/test-classes">
@@ -850,7 +850,7 @@
                                 <delete dir="${servicejars.dir}/XMessageDataSourceProvider"/>
 
                                 <!-- ================================================================ -->
-                                <!--- Java Bean Endpoint Samples -->
+                                <!-- Java Bean Endpoint Samples -->
                                 <!-- ================================================================ -->
                                 <copy toDir="${servicejars.dir}/AddressBookService/">
                                     <fileset dir="target/test-classes">
