@@ -32,18 +32,15 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpFactory;
-import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.SessionManager;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.util.OptionsParser;
-import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.Iterator;
 
 /**
@@ -60,14 +57,12 @@ public class SimpleHTTPServer implements TransportListener {
      * Embedded commons http core based server
      */
     SimpleHttpServer embedded = null;
-    private String localAddress;
     int port = -1;
 
     public static int DEFAULT_PORT = 8080;
 
-    private String hostAddress = null;
-
     protected ConfigurationContext configurationContext;
+    private TransportInDescription trpInDesc;
     protected HttpFactory httpFactory;
     private SessionManager sessionManager;
 
@@ -91,6 +86,7 @@ public class SimpleHTTPServer implements TransportListener {
         TransportInDescription httpDescription =
                 new TransportInDescription(Constants.TRANSPORT_HTTP);
         httpDescription.setReceiver(this);
+        trpInDesc = httpDescription;
         httpFactory.getListenerManager().addListener(httpDescription, true);
         sessionManager = new SessionManager();
     }
@@ -106,6 +102,7 @@ public class SimpleHTTPServer implements TransportListener {
             throws AxisFault {
         try {
             this.configurationContext = axisConf;
+            this.trpInDesc = transprtIn;
 
             Parameter param = transprtIn.getParameter(PARAM_PORT);
             if (param != null) {
@@ -114,13 +111,6 @@ public class SimpleHTTPServer implements TransportListener {
 
             if (httpFactory == null) {
                 httpFactory = new HttpFactory(configurationContext, port);
-            }
-
-            param = transprtIn.getParameter(HOST_ADDRESS);
-            if (param != null) {
-                hostAddress = ((String) param.getValue()).trim();
-            } else {
-                hostAddress = httpFactory.getHostAddress();
             }
         } catch (Exception e1) {
             throw AxisFault.makeFault(e1);
@@ -248,55 +238,10 @@ public class SimpleHTTPServer implements TransportListener {
      * @see org.apache.axis2.transport.TransportListener#getEPRForService(String,String)
      */
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-        //if host address is present
-        if (hostAddress != null) {
-            if (embedded != null) {
-                String endpointRefernce = hostAddress ;
-                if(configurationContext.getServiceContextPath().startsWith("/")){
-                    endpointRefernce =  endpointRefernce +
-                            configurationContext.getServiceContextPath() + "/" + serviceName;
-                } else {
-                    endpointRefernce = endpointRefernce + '/' +
-                            configurationContext.getServiceContextPath() + "/" + serviceName;
-                }
-                return new EndpointReference[]{new EndpointReference(endpointRefernce + "/")};
-            } else {
-                throw new AxisFault("Unable to generate EPR for the transport : http");
-            }
-        }
-        //if the host address is not present
-        String ipAddress;
-        if (ip != null) {
-            ipAddress = ip;
-        } else {
-            try {
-                if(localAddress==null){
-                    localAddress = Utils.getIpAddress(configurationContext.getAxisConfiguration());
-                }
-                if (localAddress == null) {
-                   ipAddress = "127.0.0.1";
-                 } else {
-                    ipAddress = localAddress;
-                 }
-            } catch (SocketException e) {
-                throw AxisFault.makeFault(e);
-            }
-        }
-        if (embedded != null) {
-            String endpointRefernce = "http://" + ipAddress + ":" + embedded.getPort() ;
-            if(configurationContext.getServiceContextPath().startsWith("/")){
-                endpointRefernce =  endpointRefernce +
-                        configurationContext.getServiceContextPath() + "/" + serviceName;
-            } else {
-                endpointRefernce = endpointRefernce + '/' +
-                        configurationContext.getServiceContextPath() + "/" + serviceName;
-            }
-
-
-            return new EndpointReference[]{new EndpointReference(endpointRefernce + "/")};
-        } else {
+        if (embedded == null) {
             throw new AxisFault("Unable to generate EPR for the transport : http");
         }
+        return HTTPTransportUtils.getEPRsForService(configurationContext, trpInDesc, serviceName, ip, embedded.getPort());
     }
 
     /**

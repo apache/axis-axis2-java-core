@@ -262,7 +262,7 @@
                             <outputDirectory>${project.build.directory}/webResources/WEB-INF/conf</outputDirectory>
                             <resources>          
                                 <resource>
-                                    <directory>../kernel/conf</directory>
+                                    <directory>conf</directory>
                                     <includes>
                                         <include>axis2.xml</include>
                                     </includes>
