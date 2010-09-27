@@ -145,7 +145,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
 
             if(optimizedThreshold==0 || dataLength > optimizedThreshold){
                 DataHandler dataHandler = new DataHandler(mpds);
-                cid = addDataHandler(dataHandler);
+                cid = addDataHandler(dataHandler, false);
             }
 
             // Add the content id to the mime body part
@@ -166,7 +166,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
             log.debug("Adding MTOM/XOP datahandler attachment for element: " + 
                       "{" + namespace + "}" + localPart);
         }
-        String cid = addDataHandler(data);
+        String cid = addDataHandler(data, false);
         return cid == null ? null : "cid:" + cid;
     }
     
@@ -179,7 +179,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
             log.debug("Adding SWAREF attachment");
         }
         
-        String cid = addDataHandler(data);
+        String cid = addDataHandler(data, true);
         setDoingSWA();
         return "cid:" + cid;
     }
@@ -189,21 +189,45 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
      * @param dh
      * @return
      */
-    private String addDataHandler(DataHandler dh) {
+    private String addDataHandler(DataHandler dh, boolean isSWA) {
         String cid = null;
         OMText textNode = null;
         
         // If this is an MTOMXMLStreamWriter then inform the writer 
-        // that it must write out this attchment (I guess we should do this
+        // that it must write out this attachment (I guess we should do this
         // even if the attachment is SWAREF ?)
-        if (writer instanceof MTOMXMLStreamWriter) {
+        if (isSWA) {
+            if (log.isDebugEnabled()){ 
+                log.debug("adding DataHandler for SWA");
+            }
             textNode = new OMTextImpl(dh, null);
-        	if(((MTOMXMLStreamWriter) writer).isOptimizedThreshold(textNode)){
-        		cid = textNode.getContentID();
-        		((MTOMXMLStreamWriter) writer).writeOptimized(textNode);
-        		// Remember the attachment on the message.
-        		addDataHandler(dh, cid);
-        	}        	
+            // If old SWA attachments, get the ID and add the attachment to message
+            cid = textNode.getContentID();
+            addDataHandler(dh, cid);   
+        } else {
+            if (log.isDebugEnabled()){ 
+                log.debug("adding DataHandler for MTOM");
+            }
+            if (writer instanceof MTOMXMLStreamWriter) {
+                textNode = new OMTextImpl(dh, null);
+                if(((MTOMXMLStreamWriter) writer).isOptimizedThreshold(textNode)){
+                    if (log.isDebugEnabled()){ 
+                        log.debug("The MTOM attachment is written as an attachment part.");
+                    }
+                    cid = textNode.getContentID();
+                    ((MTOMXMLStreamWriter) writer).writeOptimized(textNode);
+                    // Remember the attachment on the message.
+                    addDataHandler(dh, cid);
+                } else {
+                    if (log.isDebugEnabled()){ 
+                        log.debug("The MTOM attachment is inlined.");
+                    }
+                }
+            } else {
+                if (log.isDebugEnabled()){ 
+                    log.debug("writer is not MTOM capable.  The attachment will be inlined.");
+                }
+            }
         }
         
         if (log.isDebugEnabled()){ 
@@ -243,6 +267,12 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
     public void addDataHandler(DataHandler dh, String cid) {
         if (msgContext != null) {
             msgContext.addAttachment(cid, dh);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("The msgContext is null.  The attachment is not stored");
+                log.debug("   content id=" + cid);
+                log.debug("   dataHandler  =" + dh);
+            }
         }
     }
 }

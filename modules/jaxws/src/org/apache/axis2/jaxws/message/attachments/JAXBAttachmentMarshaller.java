@@ -21,6 +21,8 @@ package org.apache.axis2.jaxws.message.attachments;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamWriter;
@@ -30,6 +32,8 @@ import javax.xml.stream.XMLStreamWriter;
  * and create populate the appropriate constructs within the JAX-WS Message Model.
  */
 public class JAXBAttachmentMarshaller extends org.apache.axis2.datasource.jaxb.JAXBAttachmentMarshaller {
+    
+    private static final Log log = LogFactory.getLog(JAXBAttachmentMarshaller.class);
     private Message message;
     
     public JAXBAttachmentMarshaller(Message message, XMLStreamWriter writer) {
@@ -79,6 +83,12 @@ public class JAXBAttachmentMarshaller extends org.apache.axis2.datasource.jaxb.J
     public void addDataHandler(DataHandler dh, String cid) {
         if (message != null) {
             message.addDataHandler(dh, cid);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("The msgContext is null.  The attachment is not stored");
+                log.debug("   content id=" + cid);
+                log.debug("   dataHandler  =" + dh);
+            }
         }
     }
 }
