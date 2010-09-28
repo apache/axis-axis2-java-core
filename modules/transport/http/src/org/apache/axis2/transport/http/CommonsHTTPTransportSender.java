@@ -66,9 +66,18 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     private static final Log log = LogFactory
             .getLog(CommonsHTTPTransportSender.class);
 
-    protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+    /**
+     * Default HTTP version as configured in <tt>axis2.xml</tt>. This may be overridden on a per
+     * message basis using the {@link HTTPConstants#HTTP_PROTOCOL_VERSION} property.
+     */
+    private String defaultHttpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
-    private boolean chunked = false;
+    /**
+     * Specifies whether chunked encoding is enabled by default. This is configured in
+     * <tt>axis2.xml</tt> and may be overridden on a per message basis using the
+     * {@link HTTPConstants#CHUNKED} property.
+     */
+    private boolean defaultChunked = false;
 
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
@@ -95,7 +104,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 .getParameter(HTTPConstants.PROTOCOL_VERSION);
         if (version != null) {
             if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
-                httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+                defaultHttpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
                 Parameter transferEncoding = transportOut
                         .getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
@@ -103,11 +112,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 if ((transferEncoding != null)
                         && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED
                         .equals(transferEncoding.getValue())) {
-                    chunked = true;
+                    defaultChunked = true;
                 }
             } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version
                     .getValue())) {
-                httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+                defaultHttpVersion = HTTPConstants.HEADER_PROTOCOL_10;
             } else {
                 throw new AxisFault("Parameter "
                         + HTTPConstants.PROTOCOL_VERSION
@@ -368,14 +377,20 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
             sender = new HTTPSender();
 
+            boolean chunked;
             if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
                 chunked = JavaUtils.isTrueExplicitly(messageContext
                         .getProperty(HTTPConstants.CHUNKED));
+            } else {
+                chunked = defaultChunked;
             }
 
+            String httpVersion;
             if (messageContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
                 httpVersion = (String) messageContext
                         .getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION);
+            } else {
+                httpVersion = defaultHttpVersion;
             }
             // Following order needed to be preserved because,
             // HTTP/1.0 does not support chunk encoding
