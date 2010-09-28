@@ -59,16 +59,7 @@ import java.util.zip.GZIPOutputStream;
 public class CommonsHTTPTransportSender extends AbstractHandler implements
         TransportSender {
 
-    protected static final String PROXY_HOST_NAME = "proxy_host";
-
-    protected static final String PROXY_PORT = "proxy_port";
-
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
-
-    /**
-     * proxydiscription
-     */
-    protected TransportOutDescription proxyOutSetting = null;
 
     private static final Log log = LogFactory
             .getLog(CommonsHTTPTransportSender.class);
