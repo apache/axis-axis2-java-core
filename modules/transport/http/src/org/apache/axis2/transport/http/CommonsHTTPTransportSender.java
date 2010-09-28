@@ -22,16 +22,13 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
@@ -58,7 +55,12 @@ import java.util.zip.GZIPOutputStream;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements
         TransportSender {
-
+    /**
+     * The {@link TransportOutDescription} object received by the call to
+     * {@link #init(ConfigurationContext, TransportOutDescription)}.
+     */
+    private TransportOutDescription transportOut;
+    
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     private static final Log log = LogFactory
@@ -84,7 +86,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
     public void init(ConfigurationContext confContext,
                      TransportOutDescription transportOut) throws AxisFault {
-
+        this.transportOut = transportOut;
+        
         // <parameter name="PROTOCOL">HTTP/1.0</parameter> or
         // <parameter name="PROTOCOL">HTTP/1.1</parameter> is
         // checked
@@ -158,19 +161,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 format.setMimeBoundary((String) mimeBoundaryProperty);
             }
 
-            AxisConfiguration axisConfiguration = msgContext.getConfigurationContext().getAxisConfiguration();
-            TransportOutDescription transportOut = null;
-            if (msgContext.getTransportOut() != null){
-                 transportOut = msgContext.getTransportOut();
-            } else if (msgContext.getIncomingTransportName() != null){
-                transportOut = axisConfiguration.getTransportOut(msgContext.getIncomingTransportName());
-            } else if (msgContext.getOperationContext().getMessageContext(WSDL2Constants.MESSAGE_LABEL_IN) != null){
-                String transportName = msgContext.getOperationContext().getMessageContext(WSDL2Constants.MESSAGE_LABEL_IN).getIncomingTransportName();
-                transportOut = msgContext.getConfigurationContext().getAxisConfiguration().getTransportOut(transportName);
-            } else {
-                transportOut = msgContext.getConfigurationContext().getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
-            }
-
              // set the timeout properteies
 
             Parameter soTimeoutParam = transportOut.getParameter(HTTPConstants.SO_TIMEOUT);
@@ -186,21 +176,19 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             }
 
             //if a parameter has set been set, we will omit the SOAP action for SOAP 1.2
-            if (transportOut != null) {
-                if (!msgContext.isSOAP11()) {
-                    Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
-                    Object parameterValue = null;
-                    if (param != null) {
-                        parameterValue = param.getValue();
-                    }
+            if (!msgContext.isSOAP11()) {
+                Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
+                Object parameterValue = null;
+                if (param != null) {
+                    parameterValue = param.getValue();
+                }
 
-                    if (parameterValue != null && JavaUtils.isTrueExplicitly(parameterValue)) {
-                        //Check whether user has already overridden this.
-                        Object propertyValue = msgContext.getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
-                        if (propertyValue == null || !JavaUtils.isFalseExplicitly(propertyValue)) {
-                            msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
-                                    Boolean.TRUE);
-                        }
+                if (parameterValue != null && JavaUtils.isTrueExplicitly(parameterValue)) {
+                    //Check whether user has already overridden this.
+                    Object propertyValue = msgContext.getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+                    if (propertyValue == null || !JavaUtils.isFalseExplicitly(propertyValue)) {
+                        msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
+                                Boolean.TRUE);
                     }
                 }
             }
