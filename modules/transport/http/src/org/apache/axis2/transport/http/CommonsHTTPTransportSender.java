@@ -25,10 +25,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
@@ -398,14 +396,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             sender.setHttpVersion(httpVersion);
             sender.setFormat(format);
 
-            final OperationContext opContext = messageContext.getOperationContext();
-            if (opContext.getAxisOperation() instanceof InOutAxisOperation) {
-                // TODO: Kludge to make sure async reply connections get cleaned up. Fix for real?
-
-                // If we're using this sender to send a dual-channel reply, we don't care about
-                // reading the response for now, so make sure we clean up the HTTPMethod.
-                messageContext.setProperty(HTTPConstants.AUTO_RELEASE_CONNECTION, true);
-            }
             sender.send(messageContext, url, findSOAPAction(messageContext));
         } catch (MalformedURLException e) {
             log.debug(e);
