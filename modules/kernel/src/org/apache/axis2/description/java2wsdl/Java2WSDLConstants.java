@@ -45,7 +45,7 @@ public interface Java2WSDLConstants {
 
     String HTTP_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/http/";
     String MIME_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/mime/";
-    String HTTP_PREFIX = "http1";
+    String HTTP_PREFIX = "http";
     String MIME_PREFIX = "mime";
     String URN_PREFIX = "urn";
     String COLON_SEPARATOR = ":";
