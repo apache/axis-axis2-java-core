@@ -20,6 +20,7 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
@@ -37,6 +38,10 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
+import javax.wsdl.Output;
+import javax.wsdl.Input;
+import javax.wsdl.extensions.AttributeExtensible;
+import javax.wsdl.extensions.ExtensionRegistry;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -285,6 +290,16 @@ public class CodeGenerationEngine {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.importDocuments", true);
+
+        ExtensionRegistry extReg = WSDLFactory.newInstance().newPopulatedExtensionRegistry();
+        extReg.registerExtensionAttributeType(Input.class,
+                new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION),
+                AttributeExtensible.STRING_TYPE);
+        extReg.registerExtensionAttributeType(Output.class,
+                new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION),
+                AttributeExtensible.STRING_TYPE);
+        reader.setExtensionRegistry(extReg);
+
         return reader.readWSDL(uri);
         
     }
