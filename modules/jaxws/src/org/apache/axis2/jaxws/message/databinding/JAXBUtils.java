@@ -936,15 +936,32 @@ public class JAXBUtils {
      */
     private static boolean containsClasses(JAXBContext context, List<String> classRefs) {
         String text = context.toString();
-        
         text = text.replace('\n', ' ');
         text = text.replace('\t', ' ');
         text = text.replace('\r', ' ');
+        text = text.replace('<', ' ');
+        text = text.replace('[', ' ');
+        text = text.replace(']', ' ');
         
         for (String classRef: classRefs) {
-            if (!classRef.endsWith(".ObjectFactory")) {
+            // Strip off generic and array chars
+            int index = classRef.indexOf('<');
+            if (index > 0) {
+                classRef = classRef.substring(0, index);
+            }
+            index = classRef.indexOf('[');
+            if (index > 0) {
+                classRef = classRef.substring(0, index);
+            }
+            
+            if (classRef.length() > 0 ||
+                classRef.endsWith(".ObjectFactory") ||
+                classRef.startsWith("java.util.") ||
+                classRef.startsWith("java.lang.")) {
+                // skip these
+            } else {
                 String search = " " + classRef + " ";
-                if (text.contains(search)) {
+                if (!text.contains(search)) {               
                     if (log.isDebugEnabled()) {
                         log.debug("The context does not contain " + classRef + " " + context);
                     }
