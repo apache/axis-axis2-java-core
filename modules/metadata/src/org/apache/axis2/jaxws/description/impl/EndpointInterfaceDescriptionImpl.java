@@ -57,6 +57,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.description.impl.ServiceDescriptionImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSToolingUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -111,7 +112,20 @@ public class EndpointInterfaceDescriptionImpl
      * @param operation The operation description to add to this endpoint interface
      */
     void addOperation(OperationDescription operation) {
+        if (log.isDebugEnabled()) {
+            log.debug("start addOperation for " + operation);
+        }
         operationDescriptions.add(operation);
+        // Clear the runtime description information, it will need to be rebuilt.
+        ServiceDescriptionImpl sd = (getEndpointDescriptionImpl() == null) ? null:
+            getEndpointDescriptionImpl().getServiceDescriptionImpl();
+        if (sd != null) {
+            sd.runtimeDescMap.clear();
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("end addOperation");
+        }
     }
 
     /**
