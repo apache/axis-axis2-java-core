@@ -1260,9 +1260,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                                           wsdl4jMessage.getQName().getLocalPart());
                     }
                 } else {
-                    // this is allowed in the spec in this case element qname is null and nothing is send
-                    // in the soap body
+                    // This is allowed in the spec in this case element qname is null and nothing is send
+                    // in the soap body.  This is true for Doc/Lit/Bare operations that do not have any paramaters.
+                    // In this case, add a mapping of the operation to a null key so the empty body can be routed on
+                    // (for example in SOAPMessageBodyBasedDispatcher).
                     message.setElementQName(null);
+                    AxisOperation operation = message.getAxisOperation();
+                    AxisService service = operation.getAxisService();
+                    service.addMessageElementQNameToOperationMapping(null, operation);
                 }
             } else {
                 if (bindingPartsList.size() == 0) {

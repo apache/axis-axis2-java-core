@@ -497,6 +497,13 @@ class OperationDescriptionImpl
                         break;
                     }
                 }
+            } else {
+                // There are no parameters for this Doc/Lit/Bare operation.  That means the inbound soap:Body will
+                // be empty, so when asking the Body for the first element QName for routing purposes, a null will 
+                // be returned.  By mapping a null key to this operation here, it will be the one found for the null
+                // element during routing.
+                getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService()
+                    .addMessageElementQNameToOperationMapping(null, newAxisOperation);
             }
         }
         return newAxisOperation;

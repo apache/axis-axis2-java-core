@@ -173,10 +173,16 @@ public class DocLitBareResolveOperationTests extends TestCase {
 
         QName messageElementQName = new QName("http://description.jaxws.axis2.apache.org/",
                                               "op7");
+        // We should *not* be able to find the operation based on a QName containing the name, but
+        // we should be able to find it based on a null.  That is because a Doc/Lit/Bare no-argument 
+        // message will have an empty soap:Body
         AxisOperation axisOperationFromElement =
                 axisService.getOperationByMessageElementQName(messageElementQName);
         assertNull(axisOperationFromElement);
-
+        axisOperationFromElement =
+            axisService.getOperationByMessageElementQName(null);
+        assertNotNull(axisOperationFromElement);
+        assertEquals(axisOperationFromOpName, axisOperationFromElement);
     }
 
     public void testDocLitBareHeaderParamFirst() {

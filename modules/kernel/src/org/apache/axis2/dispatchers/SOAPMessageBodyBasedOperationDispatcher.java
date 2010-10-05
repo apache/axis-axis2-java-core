@@ -40,7 +40,9 @@ public class SOAPMessageBodyBasedOperationDispatcher extends AbstractOperationDi
             throws AxisFault {
         String localPart = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
         if (localPart == null) {
-            return null;
+            // Doc/Lit/Bare no arg; see if an operation is registered.
+            AxisOperation axisOperation = service.getOperationByMessageElementQName(null);
+            return axisOperation;
         }
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug(messageContext.getLogIDString() +

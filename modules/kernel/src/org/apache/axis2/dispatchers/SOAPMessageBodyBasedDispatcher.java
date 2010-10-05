@@ -52,7 +52,6 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             throws AxisFault {
 
         String localName = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
-
         AxisOperation axisOperation = null;
         if (localName != null){
            OMNamespace ns = messageContext.getEnvelope().getSOAPBodyFirstElementNS();
@@ -68,6 +67,10 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                axisOperation = service.getOperation(operationName);
            }
 
+        } else {
+            // Doc/Lit/Bare no arg messages can have an empty body.
+            // See if any operations were registered with an empty body
+            axisOperation = service.getOperationByMessageElementQName(null);
         }
         return axisOperation;
     }
