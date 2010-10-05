@@ -20,6 +20,8 @@
 
 package org.apache.axis2.deployment.scheduler;
 
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.RepositoryListener;
 
 import java.util.TimerTask;
@@ -31,12 +33,14 @@ public class SchedulerTask implements Runnable {
     int state = 0;
     TimerTask timerTask;
     private RepositoryListener wsListener;
+    private ConfigurationContext configCtx;
 
     /**
      * Creates a new scheduler task.
      */
-    public SchedulerTask(RepositoryListener listener) {
+    public SchedulerTask(RepositoryListener listener, ConfigurationContext configCtx) {
         this.wsListener = listener;
+        this.configCtx = configCtx;
     }
 
     /**
@@ -68,6 +72,13 @@ public class SchedulerTask implements Runnable {
      * The action to be performed by this scheduler task.
      */
     public void run() {
-        checkRepository();
+        synchronized (configCtx) {
+            try {
+                configCtx.setNonReplicableProperty(DeploymentEngine.DEPLOYMENT_TASK_RUNNING, "true");
+                checkRepository();
+            } finally {
+                configCtx.removePropertyNonReplicable(DeploymentEngine.DEPLOYMENT_TASK_RUNNING);
+            }
+        }
     }
 }

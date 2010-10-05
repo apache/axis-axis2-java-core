@@ -75,6 +75,11 @@ import java.util.zip.ZipInputStream;
 public abstract class DeploymentEngine implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
 
+    /**
+     * Indicates that the deployment task is running
+     */
+    public static final String  DEPLOYMENT_TASK_RUNNING = "deployment.task.running";
+
     //to keep the web resource location if any
     protected static String webLocationString = null;
     protected Scheduler scheduler;
@@ -870,7 +875,19 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     protected void startSearch(RepositoryListener listener) {
         scheduler = new Scheduler();
 
-        scheduler.schedule(new SchedulerTask(listener), new DeploymentIterator());
+        scheduler.schedule(new SchedulerTask(listener, configContext), new DeploymentIterator());
+    }
+
+    /**
+     * Method to check whether the deployment task is currently running. Will be used is graceful
+     * shutdown & restart scenarios.
+     *
+     * @return true - if the deployment task is running, false - otherwise
+     */
+    public boolean isDeploymentTaskRunning() {
+        Boolean deploymentTaskRunning =
+                (Boolean)configContext.getProperty(DeploymentEngine.DEPLOYMENT_TASK_RUNNING);
+        return deploymentTaskRunning != null && deploymentTaskRunning;
     }
 
     public synchronized void unDeploy() {
