@@ -20,12 +20,12 @@
 
 package org.apache.axis2.deployment.scheduler;
 
+import org.apache.axis2.java.security.AccessController;
+
 import java.security.PrivilegedAction;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.apache.axis2.java.security.AccessController;
 
 public class Scheduler {
     private final Timer timer = (Timer)AccessController.doPrivileged(new PrivilegedAction() {
@@ -73,8 +73,11 @@ public class Scheduler {
         }
     }
 
-    public void cleanup(){
-        timer.cancel();
+    public void cleanup(SchedulerTask schedulerTask){
+        synchronized (schedulerTask.lock) {
+            schedulerTask.state = SchedulerTask.CANCELLED;
+            timer.cancel();
+        }
     }
 
     public class SchedulerTimerTask extends TimerTask {

@@ -74,7 +74,8 @@ public class SchedulerTask implements Runnable {
     public void run() {
         synchronized (configCtx) {
             try {
-                configCtx.setNonReplicableProperty(DeploymentEngine.DEPLOYMENT_TASK_RUNNING, "true");
+                configCtx.setNonReplicableProperty(DeploymentEngine.DEPLOYMENT_TASK_RUNNING,
+                                                   Boolean.TRUE);
                 checkRepository();
             } finally {
                 configCtx.removePropertyNonReplicable(DeploymentEngine.DEPLOYMENT_TASK_RUNNING);
