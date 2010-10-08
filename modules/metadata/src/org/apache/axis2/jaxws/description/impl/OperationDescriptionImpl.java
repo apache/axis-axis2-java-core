@@ -529,6 +529,10 @@ class OperationDescriptionImpl
                                         portTypeName, 
                                         operationName, 
                                         faultMessage.getName());
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Default faultAction = "+faultAction);
+                }
                 
                 newAxisOperation.addFaultAction(faultDesc.getExceptionClassName(),  faultAction);
                 newAxisOperation.setFaultMessages(faultMessage);
@@ -559,7 +563,24 @@ class OperationDescriptionImpl
                     }
                     FaultDescription faultDesc = resolveFaultByExceptionName(className);
                     if (faultDesc != null)  {
-                        newAxisOperation.addFaultAction(className, faultAction.value());
+                        
+                        String faultActionString = faultAction.value();
+                        if (log.isDebugEnabled()) {
+                            log.debug("SANDERKA: faultAction value = "+faultActionString);
+                        }
+                        
+                        if (faultActionString.equals("")) {
+                            faultActionString = 
+                                WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
+                                                portTypeName, 
+                                                operationName, 
+                                                className.substring((className.lastIndexOf('.'))+1));
+                            
+                            if (log.isDebugEnabled()) {
+                                log.debug("New faultAction value = "+faultActionString);
+                            }
+                        }
+                        newAxisOperation.addFaultAction(className, faultActionString);
                     }
                 }
             }
