@@ -174,7 +174,7 @@ public interface Constants {
      * Default: null, which is interpreted as FALSE
      * 
      * Description:
-     * If the value is false, the jax-ws engine will detect and remove
+     * If the value is true, the jax-ws engine will detect and remove
      * illegal characters (characters not supported in xml) when writing
      * a JAXB data bean associated with a jaxws web method
      *  http://www.w3.org/TR/2008/REC-xml-20081126/#NT-Char

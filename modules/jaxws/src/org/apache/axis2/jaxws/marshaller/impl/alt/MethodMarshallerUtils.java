@@ -1411,6 +1411,30 @@ public class MethodMarshallerUtils {
      * @param packages
      * @param packagesKey
      */
+    static Parameter getUnmarshalInfoParameter(MessageContext mc) throws AxisFault {
+        
+        // The information is registered on the AxisOperation.
+        if (mc == null ||
+            mc.getAxisMessageContext() == null ||
+            mc.getAxisMessageContext().getAxisService() == null ||
+            mc.getAxisMessageContext().getAxisOperation() == null) {
+            return null;
+        }
+        
+        // This needs to be stored on the AxisOperation as unmarshalling
+        // info will be specific to a method and its parameters
+        AxisOperation axisOp = mc.getAxisMessageContext().getAxisOperation();
+        
+        Parameter param = axisOp.getParameter(UnmarshalInfo.KEY);
+        return param;
+    }
+    /**
+     * Register the unmarshalling information so that it can 
+     * be used to speed up subsequent marshalling events.
+     * @param mc
+     * @param packages
+     * @param packagesKey
+     */
     static void registerUnmarshalInfo(MessageContext mc, 
                                  TreeSet<String> packages, 
                                  String packagesKey) throws AxisFault {

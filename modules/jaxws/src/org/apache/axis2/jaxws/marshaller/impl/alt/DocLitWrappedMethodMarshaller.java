@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeD
 import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -92,7 +93,9 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             
             // Remember this unmarshal information so that we can speed up processing
             // the next time.
-            if (shouldRegiserUnmarshalInfo(operationDesc, marshalDesc, endpointDesc)) {
+            MessageContext mc = message.getMessageContext();
+            if (MethodMarshallerUtils.getUnmarshalInfoParameter(mc) == null &&
+                shouldRegiserUnmarshalInfo(operationDesc, marshalDesc, endpointDesc)) {
             	MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
                                                         packages,
                                                         packagesKey);
