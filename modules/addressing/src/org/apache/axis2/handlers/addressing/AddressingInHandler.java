@@ -75,6 +75,12 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
         msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
 
+
+        // if there are not headers put a flag to disable addressing temporary
+        SOAPHeader header = msgContext.getEnvelope().getHeader();
+        if (header == null) {
+            return InvocationResponse.CONTINUE;
+        }
         //Determine if we want to ignore addressing headers. This parameter must
         //be retrieved from the message context because it's value can vary on a
         //per service basis.
@@ -88,11 +94,6 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             return InvocationResponse.CONTINUE;         
         }
 
-        // if there are not headers put a flag to disable addressing temporary
-        SOAPHeader header = msgContext.getEnvelope().getHeader();
-        if (header == null) {
-            return InvocationResponse.CONTINUE;
-        }
 
         if(configuration == null){
         	AxisConfiguration conf = msgContext.getConfigurationContext().getAxisConfiguration();
