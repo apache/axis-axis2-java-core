@@ -647,8 +647,8 @@ public class AxisConfiguration extends AxisDescription {
             try {
                 observer.serviceUpdate(event, service);
             } catch (Throwable e) {
-                // No need to stop the system due to this, so log and ignore
-                log.debug(e);
+                // No need to stop the system due to this, so log an error and ignore
+                log.error("Error occured while notifying observer", e);
             }
         }
     }
@@ -660,8 +660,8 @@ public class AxisConfiguration extends AxisDescription {
             try {
                 anObserversList.moduleUpdate(event, moule);
             } catch (Throwable e) {
-                // No need to stop the system due to this, so log and ignore
-                log.debug(e);
+                // No need to stop the system due to this, so log an error and ignore
+                log.error("Error occured while notifying observer", e);
             }
         }
     }
@@ -673,8 +673,8 @@ public class AxisConfiguration extends AxisDescription {
             try {
                 anObserversList.serviceGroupUpdate(event, serviceGroup);
             } catch (Throwable e) {
-                // No need to stop the system due to this, so log and ignore
-                log.debug(e);
+                // No need to stop the system due to this, so log an error and ignore
+                log.error("Error occured while notifying observer", e);
             }
         }
     }
