@@ -350,19 +350,13 @@ public class PackageSetBuilder {
         }
 
         
-        // In most doc/literal cases, the @RequestWrapper or @ResponseWrapper classes are successfully found.
-        // The wrapper classes contain the representation of the parameters, thus the parameters don't need
-        // to be separately processed.
-        // However if the @RequestWrapper or @ResponseWrappers are not found, then the parameters must be examined.
-        if (requestWrapperPkg == null || responseWrapperPkg == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Collect the packages of the parameters");
-            }
-            addPackagesFromParameters(set, opDesc);
-            if (m != null) {
-                addPackagesFromParameters(set, m);
-            }
-     
+        // Examine the parameters
+        if (log.isDebugEnabled()) {
+            log.debug("Collect the packages of the parameters");
+        }
+        addPackagesFromParameters(set, opDesc) ; 
+        if (m != null) {
+            addPackagesFromParameters(set, m);
         }
 
         // Finally consider the result type
