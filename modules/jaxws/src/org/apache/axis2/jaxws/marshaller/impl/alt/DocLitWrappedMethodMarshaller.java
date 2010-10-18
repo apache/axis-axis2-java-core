@@ -235,8 +235,10 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             TreeSet<String> packages = marshalDesc.getPackages();
             String packagesKey = marshalDesc.getPackagesKey();
             
-            if (shouldRegiserUnmarshalInfo(operationDesc, marshalDesc, endpointDesc)) {
-            	MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
+            MessageContext mc = message.getMessageContext();
+            if (MethodMarshallerUtils.getUnmarshalInfoParameter(mc) == null &&
+                shouldRegiserUnmarshalInfo(operationDesc, marshalDesc, endpointDesc)) {
+                MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
                                                         packages,
                                                         packagesKey);
             }
