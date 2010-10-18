@@ -21,9 +21,11 @@ package org.apache.axis2.jaxws.context.utils;
 
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.addressing.util.ReferenceParameterList;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
@@ -357,18 +359,6 @@ public class ContextUtils {
             return false;
         }
         
-        // First examine the property on the jaxws MessageContext
-        Boolean property = (Boolean) mc.getProperty(
-                Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
-        if (property != null) {
-            value = property.booleanValue();
-            if (log.isDebugEnabled()) {
-                log.debug("_isJAXBRemoveIllegalChars returns " + value + " per jaxws MessageContext property " + 
-                        Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
-            }
-            return value;
-        }
-        
         // If not found, delegate to the Axis2 MessageContext
         if (mc.getAxisMessageContext() != null) {
             return _isJAXBRemoveIllegalChars(mc.getAxisMessageContext());
@@ -396,9 +386,9 @@ public class ContextUtils {
             return false;
         }
         
-        // First examine the property on the axis2 MessageContext hierarchy
-        Boolean property = (Boolean) mc.getProperty(
-                Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+        // First examine the local property on the axis2 MessageContext 
+        Boolean property = (Boolean) mc.getLocalProperty(
+                Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS, false);
         if (property != null) {
             value = property.booleanValue();
             if (log.isDebugEnabled()) {
@@ -410,14 +400,20 @@ public class ContextUtils {
         
         
         // Now look at the configuration parameter
-        Parameter p = mc.getParameter(Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
-        if (p != null) {
-            value = JavaUtils.isTrue(p.getValue());
-            if (log.isDebugEnabled()) {
-                log.debug("isJAXBRemoveIllegalChars returns " + value + " per inspection of Configuration property " + 
-                        Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+        ConfigurationContext cc = mc.getConfigurationContext();
+        if (cc != null) {
+            AxisConfiguration baseConfig = cc.getAxisConfiguration();
+            if (baseConfig  != null) {
+                Parameter p = baseConfig.getParameter(Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+                if (p != null) {
+                    value = JavaUtils.isTrue(p.getValue());
+                    if (log.isDebugEnabled()) {
+                        log.debug("isJAXBRemoveIllegalChars returns " + value + " per inspection of Configuration property " + 
+                                Constants.JAXWS_JAXB_WRITE_REMOVE_ILLEGAL_CHARS);
+                    }
+                    return value;
+                }
             }
-            return value;
         }
         
         if (log.isDebugEnabled()) {

@@ -1437,6 +1437,9 @@ public class JAXBUtils {
         // The maps are freed up when a LOAD FACTOR is hit
         private static int MAX_LIST_FACTOR = 50;
         
+        // Limit the adjustSize calls
+        private int count = 0;
+        
         /**
          * @param key
          * @return removed item from pool or null.
@@ -1509,6 +1512,13 @@ public class JAXBUtils {
          * a large footprint.
          */
         private void adjustSize() {
+            
+            // Don't check each time, map.size() can be expensive
+            count++;
+            if (count < 10) {
+                return;
+            }
+            count = 0;
             Map<K,List<V>> map = softMap.get();
             if (map != null && map.size() > MAX_LOAD_FACTOR) {
                 // Remove every other Entry in the map.
