@@ -75,6 +75,21 @@ public class HandlerInvokerUtils {
              * context and message are transformed.
              */
             HandlerChainProcessor.convertToFaultMessage(mepMessageCtx, re, proto);
+            
+            // Set the Caused By Exception on the MessageContext so that it can be obtained in
+            // the JAXWSMessageReceiver
+            if (log.isDebugEnabled()) {
+                log.debug("Runtime Exception detected.  Setting causedByException field to " + re);
+            }
+            
+            if (mepMessageCtx.getRequestMessageContext() != null) {
+                mepMessageCtx.getRequestMessageContext().setCausedByException(new AxisFault(re.getMessage(), re));
+            }
+            if (mepMessageCtx.getResponseMessageContext() != null) {
+                mepMessageCtx.getResponseMessageContext().setCausedByException(new AxisFault(re.getMessage(), re));
+            }
+            
+            
             // done invoking inbound handlers, be sure to set the access lock flag on the context to true
             mepMessageCtx.setApplicationAccessLocked(true);
             return false;

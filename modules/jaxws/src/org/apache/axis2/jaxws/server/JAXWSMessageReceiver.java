@@ -194,11 +194,22 @@ public class JAXWSMessageReceiver implements MessageReceiver {
 
                         //Rather than create a new AxisFault, we should use the AxisFault that was
                         //created at the causedBy
-                        if (responseMsgCtx.getCausedByException() != null)
+                        if (responseMsgCtx.getCausedByException() != null) {
                             faultToReturn = responseMsgCtx.getCausedByException();
-                        else {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Setting causedByException from response MessageContext");
+                            }
+                        } else if (requestMsgCtx.getCausedByException() != null) {
+                            faultToReturn = requestMsgCtx.getCausedByException();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Setting causedByException from request MessageContext..which indicates an exception occured in the inbound handler processing");
+                            }
+                        } else {
                             faultToReturn = new AxisFault("An error was detected during JAXWS processing",
                                     axisResponseMsgCtx);
+                            if (log.isDebugEnabled()) {
+                                log.debug("No causedByException detected");
+                            }
                         }
                     } else {
                     //This assumes that we are on the ultimate execution thread
