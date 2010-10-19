@@ -63,6 +63,7 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolH
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerFault_Exception;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersProtocolHandler2;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 public class AddNumbersHandlerTests extends AbstractTestCase {
@@ -236,6 +237,8 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         
     }
     
+    
+    
     /**
      * Client app sends MAXVALUE, MAXVALUE as params to add.
      * No client-side handlers are configured for this scenario.  
@@ -279,6 +282,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         if (t == null) {
             fail("Expected AddNumbersHandlerFault_Exception to be thrown");
         }
+        
         if (t instanceof SOAPFaultException) {
             expectedException = (SOAPFaultException) t;
         } else {
@@ -312,7 +316,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             + "AddNumbersProtocolHandler CLOSE\n"
             + "AddNumbersProtocolHandler PRE_DESTROY\n";
         
-        assertEquals(expected_calls, log);
+        assertTrue("Expected : " + expected_calls + " but received " + log, expected_calls.equals(log));
         
         // The outbound service handler adds the stack trace to the 
         // message.  Make sure the stack trace contains the AddNumbersHandlerPortTypeImpl
@@ -328,6 +332,66 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
 
         TestLogger.logger.debug("----------------------------------");
         
+    }
+    
+    /**
+     * Client app sends MAXVALUE, MAXVALUE as params to add.
+     * No client-side handlers are configured for this scenario.  
+     * The endpoint method (addNumbersHandler) will detect the possible overflow and
+     * throw an unchecked exception, NullPointerException.
+     * 
+     * The server-side AddNumbersProtocolHandler will
+     * access the thrown exception using the "jaxws.webmethod.exception"
+     * property and add the stack trace string to fault string.
+     * 
+     * The client should receive a SOAPFaultException that has a stack
+     * trace as part of the message.
+     * This test verifies the following:
+     * 
+     * 1)  Proper exception/fault processing when handlers are installed.
+     * 2)  Access to the special "jaxws.webmethod.exception"
+     * 3)  Proper exception call flow when an unchecked exception is thrown.
+     */
+    public void testAddNumbersHandler_WithHandlerException() throws Exception {
+
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+
+        AddNumbersHandlerService service = new AddNumbersHandlerService();
+        AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+
+        BindingProvider p = (BindingProvider)proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        SOAPFaultException expectedException = null;
+        Throwable t = null;
+        try {
+            // Trigger protocol 2 to throw an exception
+            AddNumbersProtocolHandler2.throwException = true;
+            proxy.addNumbersHandler(-1000, Integer.MIN_VALUE);
+            
+        } catch (Throwable e) {
+            // An exception is expected
+            t = e;
+            
+        }  finally {
+            AddNumbersProtocolHandler2.throwException = false;
+        }
+        
+        // Make sure the proper exception is thrown
+        if (t == null) {
+            fail("Expected AddNumbersHandlerFault_Exception to be thrown");
+        }
+        
+        if (t instanceof SOAPFaultException) {
+            expectedException = (SOAPFaultException) t;
+            String fault = ((SOAPFaultException)t).getFault().toString();
+            assertTrue("Expected SOAPFaultException to be thrown with AddNumbersProtocolHandler2 exception " + fault,
+                    fault.contains("AddNumbersProtocolHandler2"));
+        } else {
+            fail("Expected SOAPFaultException to be thrown, " +
+                        "but the exception is: " + t);
+        }
+       
     }
     
     public void testAddNumbersHandlerDispatch() {

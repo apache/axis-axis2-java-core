@@ -25,9 +25,13 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.apache.axis2.jaxws.utility.JavaUtils;
+
 public class AddNumbersProtocolHandler2 implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
     HandlerTracker tracker = new HandlerTracker(AddNumbersProtocolHandler2.class.getSimpleName());
+    
+    public static boolean throwException = false;
     
     public void close(MessageContext messagecontext) {
         tracker.close();
@@ -47,6 +51,11 @@ public class AddNumbersProtocolHandler2 implements javax.xml.ws.handler.soap.SOA
     public boolean handleMessage(SOAPMessageContext messagecontext) {
         Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         tracker.handleMessage(outbound);
+        
+        if (!outbound && throwException) {
+            RuntimeException e = new NullPointerException();
+            throw e;
+        }
         return true;
     }
 
