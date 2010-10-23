@@ -206,7 +206,10 @@ public class AxisEngine {
             }
         }
         catch (AxisFault e) {
-            log.error(e.getMessage(), e);
+            // log the fault only if it is not an application level fault.
+            if (e.getFaultType() != Constants.APPLICATION_FAULT) {
+                log.error(e.getMessage(), e);
+            }
             msgContext.setFailureReason(e);
             flowComplete(msgContext);
             throw e;
