@@ -823,7 +823,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             fail("Should have got an exception, but we didn't.");
         } catch(Exception e) {
             e.printStackTrace();
-            assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
+            assertTrue("Exception should be SOAPFaultException. Found " +e.getClass() + " "+ e.getMessage(), e instanceof SOAPFaultException);
             assertEquals("I don't like the value 99", ((SOAPFaultException)e).getMessage());
             
             String log = readLogFile();

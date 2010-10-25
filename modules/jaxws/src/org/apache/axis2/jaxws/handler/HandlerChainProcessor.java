@@ -19,9 +19,11 @@
 
 package org.apache.axis2.jaxws.handler;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.handler.factory.HandlerPostInvokerFactory;
 import org.apache.axis2.jaxws.handler.factory.HandlerPreInvokerFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -30,6 +32,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
@@ -278,30 +281,75 @@ public class HandlerChainProcessor {
         // were invoked prior to completion or exception throwing
         if (expectResponse) {
             if (result == FAILED) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Handler returned false...Start running the handlers in reverse");
+                }
+                // One of that handlers returned false, therefore the handler processing
+                // is stoped and the transport outbound will be avoided.
+                // This may be due to an exception or it may be due the customer intentionally
+                // preventing a message from flowing outbound.
+                
                 // we should only use callGenericHandlers_avoidRecursion in this case
                 // the message context is now an outbound message context,
                 // and should be marked as such so the SOAPHeadersAdapter will
                 // "install" with the correct property key.
-                mepCtx.getMessageContext().setOutbound(newDirection == Direction.OUT);
-                SOAPHeadersAdapter.install(mepCtx.getMessageContext());                
+                
+                // Get the MessageContext and switch its direction
+                MessageContext jaxwsMC = mepCtx.getMessageContext();
+                jaxwsMC.setOutbound(newDirection == Direction.OUT);
+                SOAPHeadersAdapter.install(jaxwsMC);                
                 callGenericHandlers_avoidRecursion(newStart, newEnd, newDirection);
+                
+                // Now we need to place the Message (which is the one edited by the handler)
+                // onto the Axis2 MC.  This is necessary because the Axis2 response MC
+                // will be created from this MC and must have the correct message.
+                this.placeMessageOnAxis2MessageContext(jaxwsMC);
+                
+                // Now close the handlers
                 callCloseHandlers(newStart_inclusive, newEnd, newDirection);
+                if (log.isDebugEnabled()) {
+                    log.debug("Handler returned false...End running the handlers in reverse");
+                }
             } else if (result == PROTOCOL_EXCEPTION) {
                 try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Handler threw ProtocolException...Start running the handlers in reverse");
+                    }
                     // the message context is now an outbound message context,
                     // and should be marked as such so the SOAPHeadersAdapter will
                     // "install" with the correct property key.
-                    mepCtx.getMessageContext().setOutbound(newDirection == Direction.OUT);
-                    SOAPHeadersAdapter.install(mepCtx.getMessageContext());
+                    
+                    // Get the MessageContext and switch its direction
+                    MessageContext jaxwsMC = mepCtx.getMessageContext();
+                    jaxwsMC.setOutbound(newDirection == Direction.OUT);
+                    SOAPHeadersAdapter.install(jaxwsMC);
+                    
+                    // Call the handlerFault methods on the handlers and also close the handlers
                     callGenericHandleFault(newStart, newEnd, newDirection);
+                    
+                    // Now we need to place the Message (which is the one edited by the handler)
+                    // onto the Axis2 MC.  This is necessary because the Axis2 response MC
+                    // will be created from this MC and must have the correct message.
+                    this.placeMessageOnAxis2MessageContext(jaxwsMC);
+                    
+                    // Now close the handlers
                     callCloseHandlers(newStart_inclusive, newEnd, newDirection);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Handler threw ProtocolException...End running the handlers in reverse");
+                    }
                 } catch (RuntimeException re) {
                     callCloseHandlers(newStart_inclusive, newEnd, newDirection);
                     throw re;
                 }
             } else if (result == OTHER_EXCEPTION) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Handler threw unanticipated Exception...Start handler closure");
+                }
                 callCloseHandlers(newStart_inclusive, newEnd, newDirection);
                 // savedException initialized in HandlerChainProcessor.handleMessage
+                if (log.isDebugEnabled()) {
+                    log.debug("Handler threw unanticipated Exception...End handler closure");
+                }
                 throw savedException;
             }
         } else { // everything was successful OR finished processing handlers
@@ -354,6 +402,42 @@ public class HandlerChainProcessor {
         return true;
     }
 
+    /**
+     * Called during reversal and exception processing to place the 
+     * current Message (edited by the Handlers) onto the MessageContext
+     * @param jaxwsMC
+     */
+    private void placeMessageOnAxis2MessageContext(MessageContext jaxwsMC) {
+        if (log.isDebugEnabled()) {
+            log.debug("start placeMessageOnAxis2MessageContext");
+        }
+        try {
+            org.apache.axis2.context.MessageContext mc = jaxwsMC.getAxisMessageContext();
+            if (mc != null) {
+                Message message = jaxwsMC.getMessage();
+                if (message != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Place the (perhaps new or edited) Message on the MessageContext");
+                    }
+                    MessageUtils.putMessageOnMessageContext(message, mc);
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("There is no Message.  Message is not copied to the Axis2 MessageContext.");
+                    }
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Axis2 MessageContext is not available.  Message is not copied");
+                }
+            }
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        } 
+        if (log.isDebugEnabled()) {
+            log.debug("end placeMessageOnAxis2MessageContext");
+        }
+    }
+    
     /*
       * callGenericHandlers_avoidRecursion should ONLY be called from one place.
       * TODO:  We cannot necessarily assume no false returns and no exceptions will be
@@ -437,7 +521,7 @@ public class HandlerChainProcessor {
                 currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                                 (direction != Direction.OUT));
             if (ProtocolException.class.isAssignableFrom(re.getClass())) {
-                convertToFaultMessage(mepCtx, re, proto);
+                convertToFaultMessage(mepCtx, re, proto, true);
                 // just re-initialize the current handler message context since
                 // that will pick up the now-changed message
                 return PROTOCOL_EXCEPTION;
@@ -526,7 +610,9 @@ public class HandlerChainProcessor {
                 callGenericHandleFault(handlers.size() - 1, 0, direction);
             }
         } catch (RuntimeException re) {
-            // TODO: log it
+            if (log.isDebugEnabled()) {
+                log.debug("An exception occurred during handleFault chain processing", re);
+            }
             throw re;
         } finally {
             // we can close all the Handlers in reverse order
@@ -583,20 +669,43 @@ public class HandlerChainProcessor {
         }
     }
 
-
     public static void convertToFaultMessage(MEPContext mepCtx, Exception e, Protocol protocol) {
+        convertToFaultMessage(mepCtx, e, protocol, false);
+    }
+    
+    /**
+     * Converts the Exception into an XML Fault Message that is stored on the MEPContext.
+     * Note that if the forceConversion flag is true, this conversion will always occur.
+     * If the checkMsg flag is true, this conversion only occurs if the Message is not already
+     * a Fault (per 9,3,2.1 of the JAX-WS specification)
+     * 
+     * @param mepCtx  MEPContext
+     * @param e Exception
+     * @param protocol Protocol
+     * @param forceConversion  If true, the Exception is always converted to a Message
+     */
+    public static void convertToFaultMessage(MEPContext mepCtx, 
+            Exception e, 
+            Protocol protocol, 
+            boolean checkMsg) {
 
         // need to check if message is already a fault message or not,
         // probably by way of a flag (isFault) in the MessageContext or Message
         if (log.isDebugEnabled()) {
-            log.debug("Creating a fault Message object for the exception: " + e.getClass().getName());
+            log.debug("start convertToFaultMessge with exception: " + e.getClass().getName());
         }
            
         try {
-            /* TODO TODO TODO
-             * There has GOT to be a better way to do this.
-             */
-            if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
+            // According to the 9.3.2.1, The message is converted into a fault only if it is not already a Fault
+            Message messageFromHandler = mepCtx.getMessageContext().getMessage();
+            if (messageFromHandler != null && messageFromHandler.isFault()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("The Message is already a SOAPFault.  The exception is not converted into a Message");
+                }
+            } else if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Converting Exception into a Message");
+                }
                 String protocolNS = (protocol == Protocol.soap11) ?
                         SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE :
                         SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE;
@@ -609,19 +718,24 @@ public class HandlerChainProcessor {
                 SOAPBody body = message.getSOAPBody();
                 SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
 
-                // TODO something is wrong here.  The message should be a response message, not
-                // a request message.  I don't see how to change that.  (see the debugger...)
-                // TODO probably also need to turn on message.WRITE_XML_DECLARATION
                 MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
                 Message msg = msgFactory.createFrom(message);
                 mepCtx.setMessage(msg);
 
             } else {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("cFaultMsgErr"));
+                WebServiceException wse = ExceptionFactory.makeWebServiceException(Messages.getMessage("cFaultMsgErr"));
+                if (log.isDebugEnabled()) {
+                    log.debug("end convertToFaultMessge due to error ", wse);
+                }
+                throw wse;
             }
 
         } catch (Exception ex) {
-            throw ExceptionFactory.makeWebServiceException(ex);
+            WebServiceException wse =ExceptionFactory.makeWebServiceException(ex);
+            if (log.isDebugEnabled()) {
+                log.debug("end convertToFaultMessge due to error ", wse);
+            }
+            throw wse;
         }
 
     }
