@@ -693,11 +693,15 @@ public class HandlerChainProcessor {
         // probably by way of a flag (isFault) in the MessageContext or Message
         if (log.isDebugEnabled()) {
             log.debug("start convertToFaultMessge with exception: " + e.getClass().getName());
+            log.debug(" checkMsg is : " + checkMsg);
         }
            
         try {
             // According to the 9.3.2.1, The message is converted into a fault only if it is not already a Fault
-            Message messageFromHandler = mepCtx.getMessageContext().getMessage();
+            Message messageFromHandler = null; 
+            if (checkMsg) {
+                messageFromHandler = mepCtx.getMessageContext().getMessage();
+            } 
             if (messageFromHandler != null && messageFromHandler.isFault()) {
                 if (log.isDebugEnabled()) {
                     log.debug("The Message is already a SOAPFault.  The exception is not converted into a Message");
