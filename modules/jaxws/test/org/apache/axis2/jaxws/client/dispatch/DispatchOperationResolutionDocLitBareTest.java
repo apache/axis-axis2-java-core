@@ -44,6 +44,23 @@ public class DispatchOperationResolutionDocLitBareTest extends InterceptableClie
         "<ns1:echoStringInput xmlns:ns1=\"http://org/apache/axis2/jaxws/samples/echo/\">" + 
         "The Bare Necessities" + 
         "</ns1:echoStringInput>";
+    
+    /**
+     * A Doc/Lit/Bare message could have an empty body if the operation has no arguments.
+     */
+    private static final String echoBodyContent_EmptyBody_MESSAGE = 
+        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body>"
+        + "</soapenv:Body></soapenv:Envelope>";
+    
+    
+    /**
+     * A Doc/Lit/Bare message may not have an element in the Body.
+     */
+    private static final String echoBodyContent_NoLocalPart_MESSAGE = 
+        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body>"
+        + "NoLocalPart"
+        + "</soapenv:Body></soapenv:Envelope>";
+
 
     public void testOperationResolution() {
         Service service = Service.create(wsdlDocumentLocation, serviceQName);
@@ -62,7 +79,37 @@ public class DispatchOperationResolutionDocLitBareTest extends InterceptableClie
         assertSame("Wrong operation description returned", expectedOperationDescription, opDesc);
         
     }
-    
+
+    public void testOperationResolution_EmptySoapBody() {
+        Service service = Service.create(wsdlDocumentLocation, serviceQName);
+        Dispatch<String> dispatch = service.createDispatch(portQName, String.class, Service.Mode.MESSAGE);
+        assertNotNull(dispatch);
+        
+        String result = dispatch.invoke(echoBodyContent_EmptyBody_MESSAGE);
+        TestClientInvocationController testController = getInvocationController();
+        InvocationContext ic = testController.getInvocationContext();
+        MessageContext requestMC = ic.getRequestMessageContext();
+        
+        // Because there is no soap body to process, the runtime won't be able to determine the operation
+        OperationDescription opDesc = requestMC.getOperationDescription();
+        assertNull("OpDesc from request MC should be null", opDesc);
+    }
+
+    public void testOperationResolution_NoSoapBodyElement() {
+        Service service = Service.create(wsdlDocumentLocation, serviceQName);
+        Dispatch<String> dispatch = service.createDispatch(portQName, String.class, Service.Mode.MESSAGE);
+        assertNotNull(dispatch);
+        
+        String result = dispatch.invoke(echoBodyContent_NoLocalPart_MESSAGE);
+        TestClientInvocationController testController = getInvocationController();
+        InvocationContext ic = testController.getInvocationContext();
+        MessageContext requestMC = ic.getRequestMessageContext();
+        
+        // Because there is no soap body to process, the runtime won't be able to determine the operation
+        OperationDescription opDesc = requestMC.getOperationDescription();
+        assertNull("OpDesc from request MC should be null", opDesc);
+    }
+
     //*********************************************************************************************
     // Utility methods
     //*********************************************************************************************

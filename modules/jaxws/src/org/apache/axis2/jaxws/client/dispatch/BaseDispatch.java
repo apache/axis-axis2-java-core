@@ -286,35 +286,38 @@ public abstract class BaseDispatch<T> extends BindingProvider
                                                                             QName bodyElementQName) {
         OperationDescription operationDesc = null;
         
-        // This logic mimics the code in SOAPMessageBodyBasedOperationDispatcher.findOperation.  We will look for
-        // the AxisOperation corresponding to the body element name.  Note that we are searching for the AxisOperation instead
-        // of searching through the OperationDescriptions so that we can use the getOperationByMessageElementQName
-        // for the Doc/Lit/Bare case.  Once we have the AxisOperation, we'll use that to find the Operation Description.
-        AxisService axisService = endpointInterfaceDesc.getEndpointDescription().getAxisService();
-        AxisOperation axisOperation = null;
-
-        // Doc/Lit/Wrapped and RPC, the operation name is the first body element qname
-        axisOperation = axisService.getOperation(new QName(bodyElementQName.getLocalPart()));
-        
-        if (axisOperation == null) {
-            // Doc/Lit/Bare, the first body element qname is the element name contained in the wsdl:message part
-            axisOperation = axisService.getOperationByMessageElementQName(bodyElementQName);
-        }
-        
-        if (axisOperation == null) {
-            // Not sure why we wouldn't have found the operation above using just the localPart rather than the full QName used here,
-            // but this is what SOAPMessageBodyBasedOperationDispatcher.findOperation does.
-            axisOperation = axisService.getOperation(bodyElementQName);
-        }
-
-        // If we found an axis operation, then find the operation description that corresponds to it
-        if (axisOperation != null) {
-            OperationDescription allOpDescs[] = endpointInterfaceDesc.getDispatchableOperations();
-            for (OperationDescription checkOpDesc : allOpDescs ) {
-                AxisOperation checkAxisOperation = checkOpDesc.getAxisOperation();
-                if (checkAxisOperation == axisOperation) {
-                    operationDesc = checkOpDesc;
-                    break;
+        // If there's no bodyElementQName for us to work with, there's nothing more we can do.
+        if (bodyElementQName != null) {
+            // This logic mimics the code in SOAPMessageBodyBasedOperationDispatcher.findOperation.  We will look for
+            // the AxisOperation corresponding to the body element name.  Note that we are searching for the AxisOperation instead
+            // of searching through the OperationDescriptions so that we can use the getOperationByMessageElementQName
+            // for the Doc/Lit/Bare case.  Once we have the AxisOperation, we'll use that to find the Operation Description.
+            AxisService axisService = endpointInterfaceDesc.getEndpointDescription().getAxisService();
+            AxisOperation axisOperation = null;
+    
+            // Doc/Lit/Wrapped and RPC, the operation name is the first body element qname
+            axisOperation = axisService.getOperation(new QName(bodyElementQName.getLocalPart()));
+            
+            if (axisOperation == null) {
+                // Doc/Lit/Bare, the first body element qname is the element name contained in the wsdl:message part
+                axisOperation = axisService.getOperationByMessageElementQName(bodyElementQName);
+            }
+            
+            if (axisOperation == null) {
+                // Not sure why we wouldn't have found the operation above using just the localPart rather than the full QName used here,
+                // but this is what SOAPMessageBodyBasedOperationDispatcher.findOperation does.
+                axisOperation = axisService.getOperation(bodyElementQName);
+            }
+    
+            // If we found an axis operation, then find the operation description that corresponds to it
+            if (axisOperation != null) {
+                OperationDescription allOpDescs[] = endpointInterfaceDesc.getDispatchableOperations();
+                for (OperationDescription checkOpDesc : allOpDescs ) {
+                    AxisOperation checkAxisOperation = checkOpDesc.getAxisOperation();
+                    if (checkAxisOperation == axisOperation) {
+                        operationDesc = checkOpDesc;
+                        break;
+                    }
                 }
             }
         }
@@ -401,9 +404,17 @@ public abstract class BaseDispatch<T> extends BindingProvider
         try {
             SOAPBody soapBody = soapMessage.getSOAPBody();
             Node firstElement = soapBody.getFirstChild();
-            String ns = firstElement.getNamespaceURI();
-            String lp= firstElement.getLocalName();
-            bodyElementQName = new QName(ns, lp);
+            // A Doc/Lit/Bare message may not have a firsElement.  The soap:Body element may be empty if there 
+            // are no arguments to the operation.
+            if (firstElement != null) {
+                String ns = firstElement.getNamespaceURI();
+                String lp= firstElement.getLocalName();
+                // A Doc/Lit/Bare message may not have a localPart on the element.  That can happen if the first element
+                // is the argument value and there is no wrapper element surrounding it.
+                if (lp != null) {
+                    bodyElementQName = new QName(ns, lp);
+                }
+            }
         } catch (SOAPException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Unabled to get the first body element from the outbound dispatch message", e);
