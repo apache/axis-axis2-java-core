@@ -39,111 +39,39 @@
     <dependencies>
         <dependency>
             <groupId>org.eclipse.core</groupId>
-            <artifactId>org.eclipse.core.jobs</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.core</groupId>
-                    <artifactId>org.eclipse.core.commands</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.core</groupId>
-                    <artifactId>org.eclipse.core.variables</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.core</groupId>
-                    <artifactId>org.eclipse.core.contenttype</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.core</groupId>
-                    <artifactId>org.eclipse.core.expressions</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.core</groupId>
-                    <artifactId>org.eclipse.core.filesystem</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.update</groupId>
-                    <artifactId>org.eclipse.update.ui</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.update</groupId>
-                    <artifactId>org.eclipse.update.configurator</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.update</groupId>
-                    <artifactId>org.eclipse.update.core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.help</groupId>
-                    <artifactId>org.eclipse.help</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.ant</groupId>
-                    <artifactId>org.eclipse.ant.core</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>jobs</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.core</groupId>
-            <artifactId>org.eclipse.core.resources</artifactId>
+            <artifactId>resources</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.core</groupId>
-            <artifactId>org.eclipse.core.runtime</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.core</groupId>
-                    <artifactId>org.eclipse.core.runtime.compatibility</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.core</groupId>
-                    <artifactId>org.eclipse.core.runtime.compatibility.auth</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>runtime</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.equinox</groupId>
-            <artifactId>org.eclipse.equinox.common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.equinox</groupId>
-                    <artifactId>org.eclipse.equinox.registry</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.equinox</groupId>
-                    <artifactId>org.eclipse.equinox.preferences</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jface</groupId>
-            <artifactId>org.eclipse.jface</artifactId>
+            <groupId>org.eclipse</groupId>
+            <artifactId>jface</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.osgi</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
+            <groupId>org.eclipse</groupId>
+            <artifactId>osgi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.swt</groupId>
-            <artifactId>org.eclipse.swt</artifactId>
+            <groupId>org.eclipse</groupId>
+            <artifactId>swt</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.swt</groupId>
-            <artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
+            <groupId>org.eclipse.swt.win32.win32</groupId>
+            <artifactId>x86</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.ui</groupId>
-            <artifactId>org.eclipse.ui.ide</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.ui</groupId>
-                    <artifactId>org.eclipse.ui.forms</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.ui</groupId>
-                    <artifactId>org.eclipse.ui.views</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>ide</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -257,7 +185,7 @@
                     <manifestLocation>META-INF</manifestLocation>
                     <instructions>
                         <!-- Embed all dependencies, except those which are provided by the Eclipse runtime -->
-                        <Embed-Dependency>*;scope=compile|runtime;artifactId=!org.eclipse.*|commons-logging|wstx-asl|geronimo-activation_1.1_spec|geronimo-javamail_1.4_spec|geronimo-stax-api_1.0_spec|ant*</Embed-Dependency>
+                        <Embed-Dependency>*;scope=compile|runtime;groupId=!org.eclipse.*;artifactId=!commons-logging|wstx-asl|geronimo-activation_1.1_spec|geronimo-javamail_1.4_spec|geronimo-stax-api_1.0_spec|ant*</Embed-Dependency>
                         <Embed-Directory>lib</Embed-Directory>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!-- Exclude imports that are actually not used -->
