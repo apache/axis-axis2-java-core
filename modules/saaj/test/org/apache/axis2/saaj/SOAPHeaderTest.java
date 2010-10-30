@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -36,13 +36,17 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class SOAPHeaderTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SOAPHeaderTest extends Assert {
     private MessageFactory mf = null;
     private SOAPMessage msg = null;
     private SOAPPart sp = null;
@@ -51,10 +55,7 @@ public class SOAPHeaderTest extends TestCase {
     private SOAPHeaderElement she1 = null;
     private SOAPHeaderElement she2 = null;
 
-    public SOAPHeaderTest(String name) {
-        super(name);
-    }
-
+    @Validated @Test
     public void testAddHeaderElements() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance().createMessage();
@@ -110,6 +111,7 @@ public class SOAPHeaderTest extends TestCase {
         assertEquals(3, numOfHeaderElements);
     }
 
+    @Validated @Test
     public void testHeaders() {
         try {
             // Create message factory and SOAP factory
@@ -186,13 +188,15 @@ public class SOAPHeaderTest extends TestCase {
         }
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         msg = MessageFactory.newInstance().createMessage();
         sp = msg.getSOAPPart();
         envelope = sp.getEnvelope();
         hdr = envelope.getHeader();
     }
 
+    @Validated @Test
     public void testExamineHeader() {
         SOAPHeaderElement she = null;
 
@@ -223,6 +227,7 @@ public class SOAPHeaderTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testAddNotUnderstoodHeaderElement() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance(
@@ -245,6 +250,7 @@ public class SOAPHeaderTest extends TestCase {
     }
 
 
+    @Validated @Test
     public void testAddUpgradeHeaderElement() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance(
@@ -270,6 +276,7 @@ public class SOAPHeaderTest extends TestCase {
         assertTrue(localName.equals("Upgrade"));
     }
 
+    @Validated @Test
     public void testExamineHeaderElements() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance(
@@ -295,7 +302,7 @@ public class SOAPHeaderTest extends TestCase {
         assertEquals(0, count);
     }
 
-
+    @Validated @Test
     public void testExamineHeaderElements2() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance().createMessage();
@@ -352,6 +359,7 @@ public class SOAPHeaderTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testQNamesOnHeader() {
         SOAPHeaderElement headerElement = null;
         try {
@@ -367,6 +375,7 @@ public class SOAPHeaderTest extends TestCase {
         }
     }
     
+    @Validated @Test
     public void testAppendChild() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();

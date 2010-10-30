@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -32,6 +32,10 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,17 +44,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-public class AttachmentSerializationTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class AttachmentSerializationTest extends Assert {
 
     public static final String MIME_MULTIPART_RELATED = "multipart/related";
     public static final String MIME_APPLICATION_DIME = "application/dime";
     public static final String NS_PREFIX = "jaxmtst";
     public static final String NS_URI = "http://www.jcommerce.net/soap/jaxm/TestJaxm";
 
-    public AttachmentSerializationTest(String name) {
-        super(name);
-    }
-
+    @Validated @Test
     public void testAttachments() throws Exception {
         try {
             ByteArrayOutputStream bais = new ByteArrayOutputStream();
@@ -97,6 +99,8 @@ public class AttachmentSerializationTest extends TestCase {
         AttachmentPart ap2 = msg.createAttachmentPart(dh);
         ap2.setContentType("image/jpg");
         msg.addAttachmentPart(ap2);
+
+        msg.saveChanges(); // This is only required with Sun's SAAJ implementation
 
         MimeHeaders headers = msg.getMimeHeaders();
         assertTrue(headers != null);

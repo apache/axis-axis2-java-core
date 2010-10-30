@@ -19,7 +19,11 @@
 
 package org.apache.axis2.saaj;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -37,13 +41,10 @@ import javax.xml.soap.Text;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class TextTest extends TestCase {
-
-    public TextTest(String name) {
-        super(name);
-    }
-
+@RunWith(SAAJTestRunner.class)
+public class TextTest extends Assert {
     //Test SAAJ addTextNode performance
+    @Validated @Test
     public void testAddTextNode() throws Exception {
         SOAPFactory soapFactory = SOAPFactory.newInstance();
         MessageFactory factory = MessageFactory.newInstance();
@@ -150,6 +151,7 @@ public class TextTest extends TestCase {
         //System.out.flush();
     }
 
+    @Validated @Test
     public void testComment() throws SOAPException, IOException {
 
         String xmlString = "<?xml version='1.0' encoding='utf-8'?> " +

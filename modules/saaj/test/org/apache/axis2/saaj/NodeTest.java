@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
@@ -29,12 +29,18 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.util.Iterator;
 
 /**
  * 
  */
-public class NodeTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class NodeTest extends Assert {
     private SOAPMessage msg = null;
     private SOAPPart sp = null;
     private SOAPBody body = null;
@@ -42,7 +48,8 @@ public class NodeTest extends TestCase {
     private SOAPHeader header = null;
     private SOAPHeaderElement headerEle = null;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         msg = MessageFactory.newInstance().createMessage();
         sp = msg.getSOAPPart();
         envelope = sp.getEnvelope();
@@ -52,6 +59,7 @@ public class NodeTest extends TestCase {
         headerEle.setActor("actor-URI");
     }
 
+    @Validated @Test
     public void testDetachNode() {
         try {
             headerEle.detachNode();
@@ -62,6 +70,7 @@ public class NodeTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testParentElement() {
         try {
             headerEle.detachNode();
@@ -72,6 +81,7 @@ public class NodeTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testSetParentElement1() {
         try {
             headerEle.detachNode();
@@ -86,6 +96,8 @@ public class NodeTest extends TestCase {
         }
     }
 
+    // TODO: test fails with Sun's SAAJ implementation
+    @Test
     public void testSetParentElement2() {
         try {
             try {
@@ -99,6 +111,7 @@ public class NodeTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testSetValue() {
         try {
             headerEle.addTextNode("foo-bar");

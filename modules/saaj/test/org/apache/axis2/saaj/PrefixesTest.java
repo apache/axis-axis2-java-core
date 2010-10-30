@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -31,16 +31,17 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
-public class PrefixesTest extends TestCase {
-
-    public PrefixesTest(String name) {
-        super(name);
-    }
-
+@RunWith(SAAJTestRunner.class)
+public class PrefixesTest extends Assert {
+    @Validated @Test
     public void testAddingPrefixesForChildElements() throws Exception {
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage msg = factory.createMessage();
@@ -64,6 +65,7 @@ public class PrefixesTest extends TestCase {
         assertTrue(xml.indexOf("http://www.apache.org") != -1);
     }
 
+    @Validated @Test
     public void testAttribute() throws Exception {
         String soappacket =
                 "<soapenv:Envelope xmlns:soapenv =\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
@@ -106,6 +108,7 @@ public class PrefixesTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testAttrPrifix() {
         try {
             MessageFactory fac = MessageFactory.newInstance();

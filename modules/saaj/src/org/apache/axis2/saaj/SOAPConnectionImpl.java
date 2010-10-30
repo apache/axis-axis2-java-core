@@ -20,11 +20,12 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.ConfigurableDataHandler;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
+import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -38,12 +39,14 @@ import org.apache.axis2.engine.Phase;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.saaj.util.UnderstandAllHeadersHandler;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
@@ -121,36 +124,53 @@ public class SOAPConnectionImpl extends SOAPConnection {
         opClient.setOptions(options);
 
         MessageContext requestMsgCtx = new MessageContext();
-        org.apache.axiom.soap.SOAPEnvelope envelope =
-                SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement());
+        org.apache.axiom.soap.SOAPEnvelope envelope;
         if (isMTOM(request)) {
-            Map<String,DataHandler> attachmentMap = new HashMap<String,DataHandler>();
-            for (Iterator it = request.getAttachments(); it.hasNext(); ) {
-                AttachmentPart attachment = (AttachmentPart)it.next();
-                String contentId = attachment.getContentId();
-                if (contentId != null) {
-                    DataHandler dh = attachment.getDataHandler();
-                    if (dh == null) {
-                        throw new SOAPException("Attachment with NULL DataHandler");
-                    }
-                    attachmentMap.put(contentId, dh);
-                }
-            }
-            insertAttachmentNodes(attachmentMap, envelope);
+            envelope = SAAJUtil.toOMSOAPEnvelope(request);
             options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        } else if (request.countAttachments() != 0) { // SOAPMessage with attachments
-            Attachments attachments = requestMsgCtx.getAttachmentMap();
-            for (Iterator it = request.getAttachments(); it.hasNext(); ) {
-                AttachmentPart attachment = (AttachmentPart)it.next();
-                String contentId = attachment.getContentId();
-                // Axiom currently doesn't support attachments without Content-ID
-                // (see WSCOMMONS-418); generate one if necessary.
-                if (contentId == null) {
-                    contentId = IDGenerator.generateID();
+        } else {
+            envelope = SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement());
+            if (request.countAttachments() != 0) { // SOAPMessage with attachments
+                Attachments attachments = requestMsgCtx.getAttachmentMap();
+                for (Iterator it = request.getAttachments(); it.hasNext(); ) {
+                    AttachmentPart attachment = (AttachmentPart)it.next();
+                    String contentId = attachment.getContentId();
+                    // Axiom currently doesn't support attachments without Content-ID
+                    // (see WSCOMMONS-418); generate one if necessary.
+                    if (contentId == null) {
+                        contentId = IDGenerator.generateID();
+                    }
+                    DataHandler handler = attachment.getDataHandler();
+                    // make sure that AttachmentPart content-type overrides DataHandler content-type
+                    if (!SAAJUtil.compareContentTypes(attachment.getContentType(), handler.getContentType())) {
+                        ConfigurableDataHandler configuredHandler = new ConfigurableDataHandler(handler.getDataSource());
+                        configuredHandler.setContentType(attachment.getContentType());
+                        handler = configuredHandler;
+                    }
+                    attachments.addDataHandler(contentId, handler);
                 }
-                attachments.addDataHandler(contentId, attachment.getDataHandler());
+                options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
             }
-            options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
+        }
+        
+        Map<String,String> httpHeaders = null;
+        for (Iterator it = request.getMimeHeaders().getAllHeaders(); it.hasNext(); ) {
+            MimeHeader header = (MimeHeader)it.next();
+            String name = header.getName().toLowerCase();
+            if (name.equals("soapaction")) {
+                requestMsgCtx.setSoapAction(header.getValue());
+            } else if (name.equals("content-type")) {
+                // Don't set the Content-Type explicitly since it will be computed by the
+                // message builder.
+            } else {
+                if (httpHeaders == null) {
+                    httpHeaders = new HashMap<String,String>();
+                }
+                httpHeaders.put(header.getName(), header.getValue());
+            }
+        }
+        if (httpHeaders != null) {
+            requestMsgCtx.setProperty(HTTPConstants.HTTP_HEADERS, httpHeaders);
         }
         
         MessageContext responseMsgCtx;
@@ -320,11 +340,13 @@ public class SOAPConnectionImpl extends SOAPConnection {
                         final DataHandler datahandler = (DataHandler)omText.getDataHandler();
                         AttachmentPart attachment = saajSOAPMsg.createAttachmentPart(datahandler);
                         final String id = IDGenerator.generateID();
-                        attachment.setContentId(id);
+                        attachment.setContentId("<" + id + ">");
                         attachment.setContentType(datahandler.getContentType());
                         saajSOAPMsg.addAttachmentPart(attachment);
 
-                        saajEle.addAttribute(
+                        SOAPElement xopInclude = saajEle.addChildElement(MTOMConstants.XOP_INCLUDE,
+                                "xop", MTOMConstants.XOP_NAMESPACE_URI);
+                        xopInclude.addAttribute(
                                 saajSOAPMsg.getSOAPPart().getEnvelope().createName("href"),
                                 "cid:" + id);
                     } else {
@@ -353,61 +375,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
                 toSAAJElement(saajChildEle, omChildNode, saajSOAPMsg);
             }
         }
-    }
-
-    /**
-     * Inserts the attachments in the proper places
-     *
-     * @param attachments
-     * @param omEnvelope
-     * @throws SOAPException
-     */
-    private void insertAttachmentNodes(Map<String,DataHandler> attachments,
-                                       OMElement omEnvelope)
-            throws SOAPException {
-
-        Iterator childIter = omEnvelope.getChildElements();
-        while (childIter.hasNext()) {
-            OMElement child = (OMElement)childIter.next();
-            final OMAttribute hrefAttr = child.getAttribute(new QName("href"));
-            String contentID = getContentID(hrefAttr);
-
-            if (contentID != null) {//This is an omEnvelope referencing an attachment
-                child.build();
-                DataHandler dh = attachments.get(contentID.trim());
-                //update the key status as accessed
-                OMText text = new OMTextImpl(dh, true,
-                                             omEnvelope.getOMFactory());
-                child.removeAttribute(hrefAttr);
-                child.addChild(text);
-            } else {
-                //possibly there can be references in the children of this omEnvelope
-                //so recurse through.
-                insertAttachmentNodes(attachments, child);
-            }
-        }
-    }
-
-    /**
-     * This method checks the value of attribute and if it is a valid CID then returns the contentID
-     * (with cid: prefix stripped off) or else returns null. A null return value can be assumed that
-     * this attribute is not an attachment referencing attribute
-     *
-     * @return the ContentID
-     */
-    private String getContentID(OMAttribute attr) {
-        String contentId;
-        if (attr != null) {
-            contentId = attr.getAttributeValue();
-        } else {
-            return null;
-        }
-
-        if (contentId.startsWith("cid:")) {
-            contentId = contentId.substring(4);
-            return contentId;
-        }
-        return null;
     }
 
     /** overrided SOAPConnection's get() method */
@@ -475,7 +442,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
                     httpInputStream = httpCon.getInputStream();
                 }
 
-                soapMessage = new SOAPMessageImpl(httpInputStream, mimeHeaders);
+                soapMessage = new SOAPMessageImpl(httpInputStream, mimeHeaders, false);
                 httpInputStream.close();
                 httpCon.disconnect();
 

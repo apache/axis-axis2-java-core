@@ -29,7 +29,6 @@ import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -53,6 +52,8 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.w3c.dom.UserDataHandler;
 
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
@@ -95,11 +96,26 @@ public class SOAPPartImpl extends SOAPPart {
         envelope.setSOAPPartParent(this);
     }
 
-    public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
-                        InputStream inputStream, javax.xml.soap.MimeHeaders mimeHeaders
-    ) throws SOAPException {
-        String contentType = "";
-        String fullContentTypeStr = "";
+    /**
+     * Construct a SOAP part from the given input stream.
+     * The content type (as provided by the MIME headers) must be SOAP 1.1, SOAP 1.2
+     * or XOP (MTOM). MIME packages (multipart/related) are not supported and should be
+     * parsed using {@link SOAPMessageImpl#SOAPMessageImpl(InputStream, MimeHeaders).
+     * <p>
+     * If the content type is XOP, xop:Include elements will only be replaced if
+     * the <code>attachments</code> parameter is not null.
+     *
+     * @see MessageFactoryImpl#setProcessMTOM(boolean)
+     * 
+     * @param parentSoapMsg the parent SOAP message
+     * @param inputStream the input stream with the content of the SOAP part
+     * @param mimeHeaders the MIME headers
+     * @param attachments the set of attachments to be used to substitute xop:Include elements
+     * @throws SOAPException
+     */
+    public SOAPPartImpl(SOAPMessageImpl parentSoapMsg, InputStream inputStream,
+                        MimeHeaders mimeHeaders, Attachments attachments) throws SOAPException {
+        ContentType contentType = null;
         if (mimeHeaders == null) {
             //TODO : read string from constants
             this.mimeHeaders = new MimeHeaders();
@@ -108,93 +124,78 @@ public class SOAPPartImpl extends SOAPPart {
         } else {
             String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             if (contentTypes != null && contentTypes.length > 0) {
-                fullContentTypeStr = contentTypes[0];
-                contentType = SAAJUtil.normalizeContentType(fullContentTypeStr);
+                try {
+                    contentType = new ContentType(contentTypes[0]);
+                } catch (ParseException ex) {
+                    throw new SOAPException("Invalid content type '" + contentTypes[0] + "'");
+                }
             }
             this.mimeHeaders = SAAJUtil.copyMimeHeaders(mimeHeaders);
         }
 
         soapMessage = parentSoapMsg;
 
-        String knownEncoding = (String) soapMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-        XMLStreamReader xmlReader = null;
-      
-        
-        StAXSOAPModelBuilder builder = null;
-
-        if (contentType.indexOf("multipart/related") == 0) {
-            //This contains attachements
-            try {
-                Attachments attachments =
-                        new Attachments(inputStream, fullContentTypeStr, false, "", "");
-
-                String soapEnvelopeNamespaceURI =
-                        BuilderUtil.getEnvelopeNamespace(fullContentTypeStr);
-
-                String charSetEncoding =
-                        BuilderUtil.getCharSetEncoding(attachments.getSOAPPartContentType());
-
-                XMLStreamReader streamReader =
-                        StAXUtils.createXMLStreamReader(BuilderUtil.getReader(
-                                attachments.getSOAPPartInputStream(), charSetEncoding));
-
-                SOAPFactory factory;
-                if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapEnvelopeNamespaceURI)) {
-                    factory = new SOAP11Factory();
-                } else {
-                    factory = new SOAP12Factory();
-                }
-                if (attachments.getAttachmentSpecType().equals(
-                        MTOMConstants.MTOM_TYPE)) {
-                    //Creates the MTOM specific MTOMStAXSOAPModelBuilder
-                    builder = new MTOMStAXSOAPModelBuilder(streamReader,
-                                                           factory,
-                                                           attachments,
-                                                           soapEnvelopeNamespaceURI);
-                } else if (attachments.getAttachmentSpecType().equals(
-                        MTOMConstants.SWA_TYPE)) {
-                    builder = new StAXSOAPModelBuilder(streamReader,
-                                                       factory,
-                                                       soapEnvelopeNamespaceURI);
-                } else if (attachments.getAttachmentSpecType().equals(
-                        MTOMConstants.SWA_TYPE_12)) {
-                    builder = new StAXSOAPModelBuilder(streamReader,
-                                                       factory,
-                                                       soapEnvelopeNamespaceURI);
-                }
-
-            } catch (Exception e) {
-                throw new SOAPException(e);
-            }
+        String charset;
+        boolean isMTOM;
+        String soapEnvelopeNamespaceURI;
+        SOAPFactory soapFactory;
+        if (contentType == null) {
+            charset = null;
+            isMTOM = false;
+            soapFactory = new SOAP11Factory();
+            soapEnvelopeNamespaceURI = null;
         } else {
-            try {
-                XMLStreamReader streamReader = null;
-                
-                if(knownEncoding != null){
-                	streamReader = StAXUtils.createXMLStreamReader(inputStream, knownEncoding);
-                }else{
-                	streamReader = StAXUtils.createXMLStreamReader(inputStream);                	
-                }
-
-                if (HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(contentType)) {
-                    builder = new StAXSOAPModelBuilder(streamReader,
-                                                       new SOAP11Factory(),
-                                                       SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-
-                } else if (HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML.equals(contentType)) {
-                    builder = new StAXSOAPModelBuilder(streamReader,
-                                                       new SOAP12Factory(),
-                                                       SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-
+            String baseType = contentType.getBaseType().toLowerCase();
+            String soapContentType;
+            if (baseType.equals(MTOMConstants.MTOM_TYPE)) {
+                isMTOM = true;
+                String typeParam = contentType.getParameter("type");
+                if (typeParam == null) {
+                    throw new SOAPException("Missing 'type' parameter in XOP content type");
                 } else {
-                    builder = new StAXSOAPModelBuilder(streamReader,
-                                                       new SOAP11Factory(),
-                                                       null);
+                    soapContentType = typeParam.toLowerCase();
                 }
-            } catch (XMLStreamException e) {
-                throw new SOAPException(e);
+            } else {
+                isMTOM = false;
+                soapContentType = baseType;
             }
+            
+            if (soapContentType.equals(HTTPConstants.MEDIA_TYPE_TEXT_XML)) {
+                soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                soapFactory = new SOAP11Factory();
+            } else if (soapContentType.equals(HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML)) {
+                soapEnvelopeNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                soapFactory = new SOAP12Factory();
+            } else {
+                throw new SOAPException("Unrecognized content type '" + soapContentType + "'");
+            }
+            
+            charset = contentType.getParameter("charset");
         }
+        
+        XMLStreamReader streamReader;
+        try {
+            if (charset != null) {
+            	streamReader = StAXUtils.createXMLStreamReader(inputStream, charset);
+            } else {
+            	streamReader = StAXUtils.createXMLStreamReader(inputStream);                	
+            }
+        } catch (XMLStreamException e) {
+            throw new SOAPException(e);
+        }
+
+        StAXSOAPModelBuilder builder;
+        if (isMTOM && attachments != null) {
+            builder = new MTOMStAXSOAPModelBuilder(streamReader,
+                                                   soapFactory,
+                                                   attachments,
+                                                   soapEnvelopeNamespaceURI);
+        } else {
+            builder = new StAXSOAPModelBuilder(streamReader,
+                                               soapFactory,
+                                               soapEnvelopeNamespaceURI);
+        }
+        
         try {
             org.apache.axiom.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
             envelope = new SOAPEnvelopeImpl(
@@ -205,11 +206,6 @@ public class SOAPPartImpl extends SOAPPart {
         } catch (Exception e) {
             throw new SOAPException(e);
         }
-    }
-
-    public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
-                        InputStream inputStream) throws SOAPException {
-        this(parentSoapMsg, inputStream, null);
     }
 
     /**

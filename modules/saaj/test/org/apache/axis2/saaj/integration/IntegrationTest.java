@@ -19,10 +19,7 @@
 
 package org.apache.axis2.saaj.integration;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.Assert;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -30,7 +27,18 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
+import org.apache.axis2.saaj.SAAJTestRunner;
+import org.apache.axis2.saaj.TestConstants;
+import org.apache.axis2.saaj.Validated;
 import org.apache.axis2.util.Utils;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -56,9 +64,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
-public class IntegrationTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class IntegrationTest extends Assert {
 
     static int port;
     public static final QName SERVICE_NAME = new QName("Echo");
@@ -67,9 +77,7 @@ public class IntegrationTest extends TestCase {
     public static final String SAAJ_REPO =
             System.getProperty("basedir", ".") + "/" + "target/test-resources/saaj-repo";
 
-    public IntegrationTest(String name) {
-        super(name);
-    }
+    private String lastSoapAction; // Stores the last SOAP action received by the server
 
     protected static String getAddress() {
         return "http://127.0.0.1:" +
@@ -77,28 +85,28 @@ public class IntegrationTest extends TestCase {
                 "/axis2/services/Echo";
     }
     
-    public static Test suite() {
-        return new TestSetup(new TestSuite(IntegrationTest.class)) {
-            public void setUp() throws Exception {
-                port = UtilServer.start(SAAJ_REPO);
-                AxisConfiguration axisCfg =
-                        UtilServer.getConfigurationContext().getAxisConfiguration();
-                axisCfg.addParameter(new Parameter("enableMTOM", "optional"));
-                axisCfg.addParameter(new Parameter("enableSwA", "optional"));
-            }
-
-            public void tearDown() throws Exception {
-                UtilServer.stop();
-            }
-        };
+    @BeforeClass
+    public static void initUtilServer() throws Exception {
+        port = UtilServer.start(SAAJ_REPO);
+        AxisConfiguration axisCfg =
+                UtilServer.getConfigurationContext().getAxisConfiguration();
+        axisCfg.addParameter(new Parameter("enableMTOM", "optional"));
+        axisCfg.addParameter(new Parameter("enableSwA", "optional"));
     }
 
-    protected void setUp() throws Exception {
+    @AfterClass
+    public static void shutDownUtilServer() throws Exception {
+        UtilServer.stop();
+    }
+
+    @Before
+    public void setUp() throws Exception {
         MessageReceiver mr = new AbstractInOutMessageReceiver() {
             @Override
             public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
                     throws AxisFault {
                 
+                lastSoapAction = inMessage.getSoapAction();
                 outMessage.setEnvelope(inMessage.getEnvelope());
                 Attachments inAttachments = inMessage.getAttachmentMap();
                 Attachments outAttachments = outMessage.getAttachmentMap();
@@ -116,65 +124,52 @@ public class IntegrationTest extends TestCase {
                 Utils.createSimpleService(SERVICE_NAME, mr, null, OPERATION_NAME));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         UtilServer.unDeployService(SERVICE_NAME);
         UtilServer.unDeployClientService();
     }
 
+    @Validated @Test
+    public void testSendReceiveMessageWithEmptyNSPrefix() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
 
-    public void testSendReceiveMessageWithEmptyNSPrefix() {
-        try {
-            MessageFactory mf = MessageFactory.newInstance();
-            SOAPMessage request = mf.createMessage();
+        SOAPPart sPart = request.getSOAPPart();
+        SOAPEnvelope env = sPart.getEnvelope();
+        SOAPBody body = env.getBody();
 
-            SOAPPart sPart = request.getSOAPPart();
-            SOAPEnvelope env = sPart.getEnvelope();
-            SOAPBody body = env.getBody();
+        //Namespace prefix is empty
+        body.addBodyElement(new QName("http://fakeNamespace2.org","echo"))
+        							.addTextNode("This is some text");
 
-            //Namespace prefix is empty
-            body.addBodyElement(new QName("http://fakeNamespace2.org","echo"))
-            							.addTextNode("This is some text");
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(request, getAddress());
+        assertFalse(response.getAttachments().hasNext());
+        assertEquals(0, response.countAttachments());
 
-            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = sCon.call(request, getAddress());
-            assertFalse(response.getAttachments().hasNext());
-            assertEquals(0, response.countAttachments());
-
-            String requestStr = printSOAPMessage(request);
-            String responseStr = printSOAPMessage(response);
-            assertTrue(responseStr.indexOf("echo") > -1);
-            sCon.close();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-            fail("Unexpected Exception while running test: " + e);
-        } catch (IOException e) {
-            fail("Unexpected Exception while running test: " + e);
-        }
+        String requestStr = printSOAPMessage(request);
+        String responseStr = printSOAPMessage(response);
+        assertTrue(responseStr.indexOf("echo") > -1);
+        sCon.close();
     }
     
-    
-    public void testSendReceiveSimpleSOAPMessage() {
-        try {
-            MessageFactory mf = MessageFactory.newInstance();
-            SOAPMessage request = mf.createMessage();
+    @Validated @Test
+    public void testSendReceiveSimpleSOAPMessage() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
 
-            createSimpleSOAPPart(request);
+        createSimpleSOAPPart(request);
 
-            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = sCon.call(request, getAddress());
-            assertFalse(response.getAttachments().hasNext());
-            assertEquals(0, response.countAttachments());
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(request, getAddress());
+        assertFalse(response.getAttachments().hasNext());
+        assertEquals(0, response.countAttachments());
 
-            String requestStr = printSOAPMessage(request);
-            String responseStr = printSOAPMessage(response);
-            assertTrue(responseStr.indexOf("echo") != -1);
-            sCon.close();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-            fail("Unexpected Exception while running test: " + e);
-        } catch (IOException e) {
-            fail("Unexpected Exception while running test: " + e);
-        }
+        String requestStr = printSOAPMessage(request);
+        String responseStr = printSOAPMessage(response);
+        assertTrue(responseStr.indexOf("echo") != -1);
+        sCon.close();
     }
 
     // TODO: it is not clear how this method can give predictable results,
@@ -189,6 +184,7 @@ public class IntegrationTest extends TestCase {
         return responseStr;
     }
 
+    @Validated @Test
     public void testSendReceiveMessageWithAttachment() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage request = mf.createMessage();
@@ -245,61 +241,6 @@ public class IntegrationTest extends TestCase {
 
         sCon.close();
 
-    }
-
-    public void testSendReceiveNonRefAttachment() throws Exception {
-        MessageFactory mf = MessageFactory.newInstance();
-        SOAPMessage request = mf.createMessage();
-
-        //create the SOAPPart
-        createSimpleSOAPPart(request);
-
-        //Attach a text/plain object with the SOAP request
-        String sampleMessage = "Sample Message: Hello World!";
-        AttachmentPart textAttach = request.createAttachmentPart(sampleMessage, "text/plain");
-        request.addAttachmentPart(textAttach);
-
-        //Attach a java.awt.Image object to the SOAP request
-        String jpgfilename =
-                System.getProperty("basedir", ".") + "/" + "target/test-resources/axis2.jpg";
-        File myfile = new File(jpgfilename);
-        FileDataSource fds = new FileDataSource(myfile);
-        DataHandler imageDH = new DataHandler(fds);
-        AttachmentPart jpegAttach = request.createAttachmentPart(imageDH);
-        jpegAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
-        jpegAttach.setContentType("image/jpg");
-        request.addAttachmentPart(jpegAttach);
-
-
-        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-        SOAPMessage response = sCon.call(request, getAddress());
-
-        assertEquals(2, response.countAttachments());
-
-        Iterator attachIter = response.getAttachments();
-
-        while (attachIter.hasNext()) {
-            AttachmentPart attachment = (AttachmentPart)attachIter.next();
-            final Object content = attachment.getDataHandler().getContent();
-            if (content instanceof String) {
-                assertEquals(sampleMessage, (String)content);
-            } else if (content instanceof ByteArrayInputStream) {
-                ByteArrayInputStream bais = (ByteArrayInputStream)content;
-                byte[] b = new byte[15000];
-                final int lengthRead = bais.read(b);
-                FileOutputStream fos =
-                        new FileOutputStream(new File(System.getProperty("basedir", ".") + "/" +
-                                "target/target/test-resources/axis2.jpg"));
-                fos.write(b, 0, lengthRead);
-                fos.flush();
-                fos.close();
-
-                assertTrue(attachment.getContentType().equals("image/jpeg")
-                        || attachment.getContentType().equals("text/plain"));
-            }
-        }
-
-        sCon.close();
     }
 
     private void createSOAPPart(SOAPMessage message) throws SOAPException {
@@ -370,33 +311,69 @@ public class IntegrationTest extends TestCase {
         ele2.addTextNode("This is another text");
     }
     
-    
-    public void testSendReceive_ISO88591_EncodedSOAPMessage() {
-        try{
-        	MimeHeaders mimeHeaders = new MimeHeaders();
-            mimeHeaders.addHeader("Content-Type", "text/xml; charset=iso-8859-1");
-            
-            FileInputStream fileInputStream = new FileInputStream(System.getProperty("basedir", ".") +
-                    "/test-resources" + File.separator + "soap-part-iso-8859-1.xml");
-            SOAPMessage requestMessage = MessageFactory.newInstance().createMessage(mimeHeaders,fileInputStream);
-            
+    @Validated @Test
+    public void testSendReceive_ISO88591_EncodedSOAPMessage() throws Exception {
+    	MimeHeaders mimeHeaders = new MimeHeaders();
+        mimeHeaders.addHeader("Content-Type", "text/xml; charset=iso-8859-1");
+        
+        FileInputStream fileInputStream = new FileInputStream(System.getProperty("basedir", ".") +
+                "/test-resources" + File.separator + "soap-part-iso-8859-1.xml");
+        SOAPMessage requestMessage = MessageFactory.newInstance().createMessage(mimeHeaders,fileInputStream);
+        
 
-            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = sCon.call(requestMessage, getAddress());
-            assertFalse(response.getAttachments().hasNext());
-            assertEquals(0, response.countAttachments());
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(requestMessage, getAddress());
+        assertFalse(response.getAttachments().hasNext());
+        assertEquals(0, response.countAttachments());
 
-            printSOAPMessage(requestMessage);
-            String responseStr = printSOAPMessage(response);
-            assertEquals("This is some text.Here are some special chars : \u00F6\u00C6\u00DA\u00AE\u00A4",
-                         response.getSOAPBody().getElementsByTagName("something").item(0).getTextContent());
-            assertTrue(responseStr.indexOf("echo") != -1);
-            sCon.close();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-            fail("Unexpected Exception while running test: " + e);
-        } catch (IOException e) {
-            fail("Unexpected Exception while running test: " + e);
-        }
+        printSOAPMessage(requestMessage);
+        String responseStr = printSOAPMessage(response);
+        assertEquals("This is some text.Here are some special chars : \u00F6\u00C6\u00DA\u00AE\u00A4",
+                     response.getSOAPBody().getElementsByTagName("something").item(0).getTextContent());
+        assertTrue(responseStr.indexOf("echo") != -1);
+        sCon.close();
     }    
+
+    @Validated @Test
+    public void testCallWithSOAPAction() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
+
+        String soapAction = "urn:test:echo";
+        
+        request.getSOAPPart().getEnvelope().getBody().addBodyElement(new QName("urn:test", "echo"));
+        request.getMimeHeaders().addHeader("SOAPAction", soapAction);
+
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        sCon.call(request, getAddress());
+        sCon.close();
+        
+        assertEquals(soapAction, lastSoapAction);
+    }
+    
+    @Validated @Test
+    public void testCallMTOM() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        
+        MimeHeaders headers = new MimeHeaders();
+        headers.addHeader("Content-Type", TestConstants.MTOM_TEST_MESSAGE_CONTENT_TYPE);
+        InputStream in = new FileInputStream(TestConstants.MTOM_TEST_MESSAGE_FILE);
+        SOAPMessage request = mf.createMessage(headers, in);
+        SOAPEnvelope envelope = request.getSOAPPart().getEnvelope();
+        
+        // Remove the headers since they have mustunderstand=1 
+        envelope.getHeader().removeContents();
+        // Change the name of the body content so that the request is routed to the echo service
+        ((SOAPElement)envelope.getBody().getChildElements().next()).setElementQName(new QName("echo"));
+        
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(request, getAddress());
+        sCon.close();
+        
+        SOAPPart soapPart = response.getSOAPPart();
+        SOAPElement textElement =
+                (SOAPElement)soapPart.getEnvelope().getElementsByTagName("text").item(0);
+        AttachmentPart ap = response.getAttachment((SOAPElement)textElement.getChildNodes().item(0));
+        assertNotNull(ap);
+    }
 }

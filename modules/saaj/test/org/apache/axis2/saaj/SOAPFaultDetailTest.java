@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.MessageFactory;
@@ -27,15 +27,15 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
-public class SOAPFaultDetailTest extends TestCase {
-
-    public SOAPFaultDetailTest(String name) {
-        super(name);
-    }
-
+@RunWith(SAAJTestRunner.class)
+public class SOAPFaultDetailTest extends Assert {
     private String xmlString =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                     "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
@@ -51,6 +51,8 @@ public class SOAPFaultDetailTest extends TestCase {
                     " </soapenv:Body>" +
                     "</soapenv:Envelope>";
 
+    // TODO: check why this fails with Sun's SAAJ implementation
+    @Test
     public void testDetails() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage smsg =

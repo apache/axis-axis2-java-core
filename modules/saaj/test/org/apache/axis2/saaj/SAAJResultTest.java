@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Node;
@@ -31,10 +31,15 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 /**
  * 
  */
-public class SAAJResultTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SAAJResultTest extends Assert {
     private SOAPMessage msg = null;
     private SOAPPart sp = null;
     private SOAPBody body = null;
@@ -42,7 +47,8 @@ public class SAAJResultTest extends TestCase {
     private SOAPHeader header = null;
     private SOAPHeaderElement headerEle = null;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         msg = MessageFactory.newInstance().createMessage();
         sp = msg.getSOAPPart();
         envelope = sp.getEnvelope();
@@ -60,6 +66,7 @@ public class SAAJResultTest extends TestCase {
     }
     */
 
+    @Validated @Test
     public void testGetResultSOAPMessage() throws Exception{
     	SAAJResult sr = new SAAJResult(msg);
     	Node node = sr.getResult();

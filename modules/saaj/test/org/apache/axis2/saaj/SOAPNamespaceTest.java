@@ -19,21 +19,21 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /** Ref: JIRA- Axis2-517 */
-public class SOAPNamespaceTest extends TestCase {
-
-    public SOAPNamespaceTest(String arg0) {
-        super(arg0);
-    }
-
-
+@RunWith(SAAJTestRunner.class)
+public class SOAPNamespaceTest extends Assert {
+    @Validated @Test
     public void test() {
         try {
             String xml =

@@ -19,7 +19,10 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -42,7 +45,8 @@ import javax.xml.soap.Text;
 import java.io.File;
 import java.util.Iterator;
 
-public class SOAPBodyTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SOAPBodyTest extends Assert {
 
     /**
      * Method suite
@@ -55,25 +59,17 @@ public class SOAPBodyTest extends TestCase {
     */
 
     /**
-     * Constructor TestSOAPBody
-     *
-     * @param name
-     */
-    public SOAPBodyTest(String name) {
-        super(name);
-    }
-
-    /**
      * Method testSoapBodyBUG
      *
      * @throws Exception
      */
+    @Validated @Test
     public void testSoapBody() throws Exception {
 
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();
         SOAPPart soapPart = message.getSOAPPart();
-        SOAPEnvelopeImpl env = (SOAPEnvelopeImpl)soapPart.getEnvelope();
+        SOAPEnvelope env = soapPart.getEnvelope();
         SOAPHeader header = env.getHeader();
         Name hns = env.createName("Hello",
                                   "shw",
@@ -176,6 +172,7 @@ public class SOAPBodyTest extends TestCase {
     }
 
     //TODO : fix
+    @Validated @Test
     public void testExtractContentAsDocument() {
         try {
             MessageFactory fact = MessageFactory.newInstance();
@@ -209,6 +206,7 @@ public class SOAPBodyTest extends TestCase {
     /*
      * For SOAP 1.1 message 
      */
+    @Validated @Test
     public void testAddAttribute() {
         try {
             MessageFactory fact = MessageFactory.newInstance();
@@ -227,6 +225,7 @@ public class SOAPBodyTest extends TestCase {
     /*
      * For SOAP 1.2 message 
      */
+    @Validated @Test
     public void testAddAttribute2() {
         try {
             MessageFactory fact = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -244,6 +243,7 @@ public class SOAPBodyTest extends TestCase {
     /*
     * For SOAP 1.2 message
     */
+    @Validated @Test
     public void testAddFault() {
         try {
             MessageFactory fact = MessageFactory.newInstance();
@@ -263,6 +263,7 @@ public class SOAPBodyTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testAppendChild() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();

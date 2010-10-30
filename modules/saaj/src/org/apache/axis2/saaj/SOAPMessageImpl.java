@@ -19,7 +19,9 @@
 
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MIMEOutputUtils;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -72,7 +74,7 @@ public class SOAPMessageImpl extends SOAPMessage {
         soapPart = new SOAPPartImpl(this, soapEnvelope);
     }
 
-    public SOAPMessageImpl(InputStream inputstream, javax.xml.soap.MimeHeaders mimeHeaders)
+    public SOAPMessageImpl(InputStream inputstream, MimeHeaders mimeHeaders, boolean processMTOM)
             throws SOAPException {
         String contentType = null;
         String tmpContentType = "";
@@ -83,11 +85,37 @@ public class SOAPMessageImpl extends SOAPMessage {
                 contentType = SAAJUtil.normalizeContentType(tmpContentType);
             }
         }
-        initCharsetEncodingFromContentType(tmpContentType);
-        if (contentType != null) {
-            soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders);
+        if ("multipart/related".equals(contentType)) {
+            try {
+                Attachments attachments =
+                        new Attachments(inputstream, tmpContentType, false, "", "");
+                
+                // Axiom doesn't give us access to the MIME headers of the individual
+                // parts of the SOAP message package. We need to reconstruct them from
+                // the available information.
+                MimeHeaders soapPartHeaders = new MimeHeaders();
+                soapPartHeaders.addHeader(HTTPConstants.CONTENT_TYPE,
+                        attachments.getSOAPPartContentType());
+                String soapPartContentId = attachments.getSOAPPartContentID();
+                soapPartHeaders.addHeader("Content-ID", "<" + soapPartContentId + ">");
+                
+                soapPart = new SOAPPartImpl(this, attachments.getSOAPPartInputStream(),
+                        soapPartHeaders, processMTOM ? attachments : null);
+                
+                for (String contentId : attachments.getAllContentIDs()) {
+                    if (!contentId.equals(soapPartContentId)) {
+                        AttachmentPart ap =
+                                createAttachmentPart(attachments.getDataHandler(contentId));
+                        ap.setContentId("<" + contentId + ">");
+                        attachmentParts.add(ap);
+                    }
+                }
+            } catch (OMException e) {
+                throw new SOAPException(e);
+            }
         } else {
-            soapPart = new SOAPPartImpl(this, inputstream);
+            initCharsetEncodingFromContentType(tmpContentType);
+            soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders, null);
         }
 
         this.mimeHeaders = (mimeHeaders == null) ?
