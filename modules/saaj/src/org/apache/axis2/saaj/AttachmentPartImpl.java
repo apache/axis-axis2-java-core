@@ -192,7 +192,6 @@ public class AttachmentPartImpl extends AttachmentPart {
     public void setContent(Object object, String contentType) {
         SAAJDataSource source;
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType);
-        Object contentObject;
         if (object instanceof String) {
             try {
                 String s = (String)object;
@@ -202,7 +201,6 @@ public class AttachmentPartImpl extends AttachmentPart {
                                             contentType, true);
                 extractFilename(source);
                 this.dataHandler = new DataHandler(source);
-                contentObject = object;
             } catch (java.io.IOException io) {
                 throw new java.lang.IllegalArgumentException("Illegal Argument");
             }
@@ -214,7 +212,6 @@ public class AttachmentPartImpl extends AttachmentPart {
                                             contentType, true);
                 extractFilename(source);
                 this.dataHandler = new DataHandler(source);
-                contentObject = null; // the stream has been consumed
             } catch (java.io.IOException io) {
                 throw new java.lang.IllegalArgumentException("Illegal Argument");
             }
@@ -225,20 +222,17 @@ public class AttachmentPartImpl extends AttachmentPart {
                                             contentType, true);
                 extractFilename(source);
                 this.dataHandler = new DataHandler(source);
-                contentObject = null; // the stream has been consumed
             } catch (java.io.IOException io) {
                 throw new java.lang.IllegalArgumentException("Illegal Argument");
             }
         } else if (object instanceof BufferedImage) {
             try {
                 this.dataHandler = new DataHandler(object, contentType);
-                contentObject = null; // the stream has been consumed
             } catch (Exception e) {
                 throw new java.lang.IllegalArgumentException(e.getMessage());
             }
         } else if (object instanceof byte[]) {
             try {
-                contentObject = null;
                 java.io.ByteArrayInputStream bais =
                         new java.io.ByteArrayInputStream((byte[])object);
                 source = new SAAJDataSource(bais,
@@ -247,7 +241,6 @@ public class AttachmentPartImpl extends AttachmentPart {
                 extractFilename(source);
 
                 this.dataHandler = new DataHandler(source);
-                contentObject = object;
             } catch (Exception e) {
                 throw new java.lang.IllegalArgumentException(e.getMessage());
             }

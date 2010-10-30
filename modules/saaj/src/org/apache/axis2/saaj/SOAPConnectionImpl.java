@@ -19,6 +19,7 @@
 
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
@@ -33,6 +34,7 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DispatchPhase;
+import org.apache.axis2.engine.Phase;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.saaj.util.UnderstandAllHeadersHandler;
@@ -56,12 +58,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 
@@ -74,8 +74,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
     private boolean closed = false;
 
     private ServiceClient serviceClient;
-    private HashMap unaccessedAttachments = new HashMap();
-
 
     /**
      * Sends the given message to the specified endpoint and blocks until it has returned the
@@ -122,12 +120,77 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
         opClient.setOptions(options);
 
-        if (request.countAttachments() != 0) { // SOAPMessage with attachments
-            opClient.getOptions().setProperty(Constants.Configuration.ENABLE_MTOM,
-                                              Constants.VALUE_TRUE);
-            return handleSOAPMessage(request, opClient);
-        } else { // simple SOAPMessage
-            return handleSOAPMessage(request, opClient);
+        MessageContext requestMsgCtx = new MessageContext();
+        org.apache.axiom.soap.SOAPEnvelope envelope =
+                SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement());
+        if (isMTOM(request)) {
+            Map<String,DataHandler> attachmentMap = new HashMap<String,DataHandler>();
+            for (Iterator it = request.getAttachments(); it.hasNext(); ) {
+                AttachmentPart attachment = (AttachmentPart)it.next();
+                String contentId = attachment.getContentId();
+                if (contentId != null) {
+                    DataHandler dh = attachment.getDataHandler();
+                    if (dh == null) {
+                        throw new SOAPException("Attachment with NULL DataHandler");
+                    }
+                    attachmentMap.put(contentId, dh);
+                }
+            }
+            insertAttachmentNodes(attachmentMap, envelope);
+            options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        } else if (request.countAttachments() != 0) { // SOAPMessage with attachments
+            Attachments attachments = requestMsgCtx.getAttachmentMap();
+            for (Iterator it = request.getAttachments(); it.hasNext(); ) {
+                AttachmentPart attachment = (AttachmentPart)it.next();
+                String contentId = attachment.getContentId();
+                // Axiom currently doesn't support attachments without Content-ID
+                // (see WSCOMMONS-418); generate one if necessary.
+                if (contentId == null) {
+                    contentId = IDGenerator.generateID();
+                }
+                attachments.addDataHandler(contentId, attachment.getDataHandler());
+            }
+            options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
+        }
+        
+        MessageContext responseMsgCtx;
+        try {
+            requestMsgCtx.setEnvelope(envelope);
+            opClient.addMessageContext(requestMsgCtx);
+            opClient.execute(true);
+            responseMsgCtx =
+                    opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        } catch (AxisFault ex) {
+            throw new SOAPException(ex.getMessage(), ex);
+        }
+        
+        SOAPMessage response = getSOAPMessage(responseMsgCtx.getEnvelope());
+        Attachments attachments = requestMsgCtx.getAttachmentMap();
+        for (String contentId : attachments.getAllContentIDs()) {
+            if (!contentId.equals(attachments.getSOAPPartContentID())) {
+                AttachmentPart ap = response.createAttachmentPart(
+                        attachments.getDataHandler(contentId));
+                ap.setContentId(contentId);
+                response.addAttachmentPart(ap);
+            }
+        }
+
+        try {
+            requestMsgCtx.getTransportOut().getSender().cleanup(requestMsgCtx);
+        } catch (AxisFault axisFault) {
+            // log error
+        }
+
+        return response;
+    }
+
+    private static boolean isMTOM(SOAPMessage soapMessage) {
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        String[] contentTypes = soapPart.getMimeHeader("Content-Type");
+        if (contentTypes != null && contentTypes.length > 0) {
+            return SAAJUtil.normalizeContentType(contentTypes[0]).equals("application/xop+xml");
+        } else {
+            return false;
         }
     }
 
@@ -147,10 +210,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
         }
     }
     
-    private static DispatchPhase getDispatchPhase(List phases) {
-        Iterator iter = phases.iterator();
-        while(iter.hasNext()) {
-            Object phase = iter.next();
+    private static DispatchPhase getDispatchPhase(List<Phase> phases) {
+        for (Phase phase : phases) {
             if (phase instanceof DispatchPhase) {
                 return (DispatchPhase)phase;
             }
@@ -176,29 +237,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
             throw new SOAPException("SOAPConnection Closed");
         }
         closed = true;
-    }
-
-    private SOAPMessage handleSOAPMessage(SOAPMessage request,
-                                          OperationClient opClient) throws SOAPException {
-
-        MessageContext requestMsgCtx = new MessageContext();
-        try {
-            requestMsgCtx.setEnvelope(toOMSOAPEnvelope(request));
-            opClient.addMessageContext(requestMsgCtx);
-            opClient.execute(true);
-
-            MessageContext msgCtx =
-                    opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            return getSOAPMessage(msgCtx.getEnvelope());
-        } catch (Exception e) {
-            throw new SOAPException(e.getMessage(), e);
-        } finally {
-            try {
-                requestMsgCtx.getTransportOut().getSender().cleanup(requestMsgCtx);      
-            } catch (Exception e) {
-                // ignore the error, better to log somewhere if possible.
-            }
-        }
     }
 
     /**
@@ -248,15 +286,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
         // Convert the body
         toSAAJElement(body, respOMSoapEnv.getBody(), response);
-        // if there are unrefferenced attachments, add that to response
-        if (!unaccessedAttachments.isEmpty()) {
-            Collection attachments = unaccessedAttachments.values();
-            Iterator attachementsIterator = attachments.iterator();
-            while (attachementsIterator.hasNext()) {
-                AttachmentPart attachment = (AttachmentPart)attachementsIterator.next();
-                response.addAttachmentPart(attachment);
-            }
-        }
 
         return response;
     }
@@ -327,61 +356,14 @@ public class SOAPConnectionImpl extends SOAPConnection {
     }
 
     /**
-     * Converts a SAAJ SOAPMessage to an OM SOAPEnvelope
-     *
-     * @param saajSOAPMsg
-     * @return
-     * @throws SOAPException
-     */
-    protected org.apache.axiom.soap.SOAPEnvelope toOMSOAPEnvelope(SOAPMessage saajSOAPMsg)
-            throws SOAPException {
-
-        final org.apache.axiom.soap.SOAPEnvelope omSOAPEnv =
-                SAAJUtil.toOMSOAPEnvelope(saajSOAPMsg.getSOAPPart().getDocumentElement());
-
-
-        Map attachmentMap = new HashMap();
-        final Iterator attachments = saajSOAPMsg.getAttachments();
-        while (attachments.hasNext()) {
-            final AttachmentPart attachment = (AttachmentPart)attachments.next();
-            if (attachment.getContentId() == null ||
-                    attachment.getContentId().trim().length() == 0) {
-                attachment.setContentId(IDGenerator.generateID());
-            }
-            if (attachment.getDataHandler() == null) {
-                throw new SOAPException("Attachment with NULL DataHandler");
-            }
-            attachmentMap.put(attachment.getContentId(), attachment);
-        }
-
-        //Get keys of attachments to a hashmap
-        //This hashmap will be updated when attachment is accessed atleast once.
-        //Doing this here instead of inside insertAttachmentNodes()is much simpler
-        //as insertAttachmentNodes() has recursive calls
-        Set keySet = attachmentMap.keySet();
-        Iterator keySetItr = keySet.iterator();
-        HashMap keyAccessStatus = new HashMap();
-        while (keySetItr.hasNext()) {
-            String key = (String)keySetItr.next();
-            keyAccessStatus.put(key, "not-accessed");
-        }
-
-        insertAttachmentNodes(attachmentMap, omSOAPEnv, keyAccessStatus);
-        unaccessedAttachments =
-                getUnReferencedAttachmentNodes(attachmentMap, omSOAPEnv, keyAccessStatus);
-
-        return omSOAPEnv;
-    }
-
-    /**
      * Inserts the attachments in the proper places
      *
      * @param attachments
      * @param omEnvelope
      * @throws SOAPException
      */
-    private void insertAttachmentNodes(Map attachments,
-                                       OMElement omEnvelope, HashMap keyAccessStatus)
+    private void insertAttachmentNodes(Map<String,DataHandler> attachments,
+                                       OMElement omEnvelope)
             throws SOAPException {
 
         Iterator childIter = omEnvelope.getChildElements();
@@ -392,43 +374,18 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
             if (contentID != null) {//This is an omEnvelope referencing an attachment
                 child.build();
-                AttachmentPart ap = ((AttachmentPart)attachments.get(contentID.trim()));
+                DataHandler dh = attachments.get(contentID.trim());
                 //update the key status as accessed
-                keyAccessStatus.put(contentID.trim(), "accessed");
-                OMText text = new OMTextImpl(ap.getDataHandler(), true,
+                OMText text = new OMTextImpl(dh, true,
                                              omEnvelope.getOMFactory());
                 child.removeAttribute(hrefAttr);
                 child.addChild(text);
             } else {
                 //possibly there can be references in the children of this omEnvelope
                 //so recurse through.
-                insertAttachmentNodes(attachments, child, keyAccessStatus);
+                insertAttachmentNodes(attachments, child);
             }
         }
-    }
-
-
-    private HashMap getUnReferencedAttachmentNodes(Map attachments,
-                                                   OMElement omEnvelope, HashMap keyAccessStatus)
-            throws SOAPException {
-
-        HashMap unaccessedAttachments = new HashMap();
-        //now check for unaccessed keys
-        Set keySet = keyAccessStatus.keySet();
-        Iterator keySetItr = keySet.iterator();
-        while (keySetItr.hasNext()) {
-            String key = (String)keySetItr.next();
-            String keyStatus = (String)keyAccessStatus.get(key);
-            if ("not-accessed".equals(keyStatus)) {
-                //The value for this key has not been accessed in the
-                //referencing attachment scenario.Hence it must be an
-                //unreferenced one.
-                AttachmentPart ap = ((AttachmentPart)attachments.get(key));
-                unaccessedAttachments.put(key, ap);
-                keyAccessStatus.put(key, "accessed");
-            }
-        }
-        return unaccessedAttachments;
     }
 
     /**

@@ -27,6 +27,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.activation.DataHandler;
@@ -55,30 +56,19 @@ public class SOAPMessageImpl extends SOAPMessage {
 
     private SOAPPart soapPart;
     private Collection<AttachmentPart> attachmentParts = new ArrayList<AttachmentPart>();
-    private MimeHeadersEx mimeHeaders;
+    private MimeHeaders mimeHeaders;
 
-    private Map props = new Hashtable();
+    private Map<String,Object> props = new Hashtable<String,Object>();
     private boolean saveRequired;
 
     public SOAPMessageImpl(SOAPEnvelopeImpl soapEnvelope) {
-        String contentType = null;
-
-
-        if (mimeHeaders != null) {
-            String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
-            contentType = (contentTypes != null) ? contentTypes[0] : null;
-        } else {
-            this.mimeHeaders = new MimeHeadersEx();
-            if (soapEnvelope.getOMFactory() instanceof SOAP11Factory) {
-                contentType = HTTPConstants.MEDIA_TYPE_TEXT_XML;
-                this.mimeHeaders.addHeader("content-type", contentType);
-            } else if (soapEnvelope.getOMFactory() instanceof SOAP12Factory) {
-                contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML;
-                this.mimeHeaders.addHeader("content-type", contentType);
-            }
+        this.mimeHeaders = new MimeHeaders();
+        if (soapEnvelope.getOMFactory() instanceof SOAP11Factory) {
+            this.mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_TEXT_XML);
+        } else if (soapEnvelope.getOMFactory() instanceof SOAP12Factory) {
+            this.mimeHeaders.addHeader("content-type",
+                    HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
         }
-
-        setCharsetEncoding(contentType);
         soapPart = new SOAPPartImpl(this, soapEnvelope);
     }
 
@@ -90,18 +80,10 @@ public class SOAPMessageImpl extends SOAPMessage {
             String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             if (contentTypes != null && contentTypes.length > 0) {
                 tmpContentType = contentTypes[0];
-                //tmpContentType can be like 'application/soap+xml; charset=UTF-8;'
-                //Only the first part is important
-                if (tmpContentType.indexOf(";") > -1) {
-                    contentType = tmpContentType.substring(0, tmpContentType.indexOf(";"));
-                } else {
-                    contentType = tmpContentType;
-                }
+                contentType = SAAJUtil.normalizeContentType(tmpContentType);
             }
         }
-        //Setting the whole content-type string to CharsetEncoding.
-        //Is this correct?
-        setCharsetEncoding(tmpContentType);
+        initCharsetEncodingFromContentType(tmpContentType);
         if (contentType != null) {
             soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders);
         } else {
@@ -109,8 +91,8 @@ public class SOAPMessageImpl extends SOAPMessage {
         }
 
         this.mimeHeaders = (mimeHeaders == null) ?
-                new MimeHeadersEx() :
-                new MimeHeadersEx(mimeHeaders);
+                new MimeHeaders() :
+                SAAJUtil.copyMimeHeaders(mimeHeaders);
     }
 
     /**
@@ -193,7 +175,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      *         header that matches one of the given headers
      */
     public Iterator getAttachments(javax.xml.soap.MimeHeaders headers) {
-        Collection matchingAttachmentParts = new ArrayList();
+        Collection<AttachmentPart> matchingAttachmentParts = new ArrayList<AttachmentPart>();
         Iterator iterator = getAttachments();
         {
             AttachmentPartImpl part;
@@ -439,14 +421,10 @@ public class SOAPMessageImpl extends SOAPMessage {
      * @since SAAJ 1.3
      */
     public void removeAttachments(MimeHeaders headers) {
-        Collection newAttachmentParts = new ArrayList();
-        Iterator attachmentPartsItr = attachmentParts.iterator();
-        for (Iterator iter = attachmentPartsItr; iter.hasNext();) {
-            AttachmentPart attachmentPart = (AttachmentPart)iter.next();
-
+        Collection<AttachmentPart> newAttachmentParts = new ArrayList<AttachmentPart>();
+        for (AttachmentPart attachmentPart : attachmentParts) {
             //Get all the headers
-            Iterator allMIMEHeaders = headers.getAllHeaders();
-            for (Iterator iterator = allMIMEHeaders; iterator.hasNext();) {
+            for (Iterator iterator = headers.getAllHeaders(); iterator.hasNext();) {
                 MimeHeader mimeHeader = (MimeHeader)iterator.next();
                 String[] headerValues = attachmentPart.getMimeHeader(mimeHeader.getName());
                 //if values for this header name, do not remove it
@@ -487,7 +465,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      *
      * @param contentType
      */
-    private void setCharsetEncoding(final String contentType) {
+    private void initCharsetEncodingFromContentType(final String contentType) {
         if (contentType != null) {
             int delimiterIndex = contentType.lastIndexOf("charset");
             if (delimiterIndex > 0) {

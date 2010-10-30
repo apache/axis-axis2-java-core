@@ -31,6 +31,7 @@ import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.saaj.util.IDGenerator;
+import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +53,6 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.w3c.dom.UserDataHandler;
 
-import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
@@ -73,7 +73,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 
 public class SOAPPartImpl extends SOAPPart {
@@ -83,15 +82,13 @@ public class SOAPPartImpl extends SOAPPart {
     private Document document;
     private SOAPMessage soapMessage;
     private SOAPEnvelopeImpl envelope;
-    private MimeHeadersEx mimeHeaders = new MimeHeadersEx();
-
-    private Source source;
+    private final MimeHeaders mimeHeaders;
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         SOAPEnvelopeImpl soapEnvelope) {
         //setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, IDGenerator.generateID());
         //setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/xml");
-        this.mimeHeaders = (MimeHeadersEx)parentSoapMsg.getMimeHeaders();
+        this.mimeHeaders = parentSoapMsg.getMimeHeaders();
         soapMessage = parentSoapMsg;
         envelope = soapEnvelope;
         document = soapEnvelope.getOwnerDocument();
@@ -105,41 +102,31 @@ public class SOAPPartImpl extends SOAPPart {
         String fullContentTypeStr = "";
         if (mimeHeaders == null) {
             //TODO : read string from constants
-            mimeHeaders = new MimeHeaders();
-            mimeHeaders.addHeader("Content-ID", IDGenerator.generateID());
-            mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
+            this.mimeHeaders = new MimeHeaders();
+            this.mimeHeaders.addHeader("Content-ID", IDGenerator.generateID());
+            this.mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
         } else {
             String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             if (contentTypes != null && contentTypes.length > 0) {
                 fullContentTypeStr = contentTypes[0];
-                contentType = extractFirstPart(fullContentTypeStr);
+                contentType = SAAJUtil.normalizeContentType(fullContentTypeStr);
             }
+            this.mimeHeaders = SAAJUtil.copyMimeHeaders(mimeHeaders);
         }
 
-        Iterator mimeHeaderIterator = mimeHeaders.getAllHeaders();
-        while (mimeHeaderIterator.hasNext()) {
-            MimeHeader mimeHeader = (MimeHeader)mimeHeaderIterator.next();
-            String value = mimeHeader.getValue();
-            setMimeHeader(mimeHeader.getName(), value);
-        }
         soapMessage = parentSoapMsg;
 
         String knownEncoding = (String) soapMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
         XMLStreamReader xmlReader = null;
       
         
-        InputStream modifiedInputStream = null;
         StAXSOAPModelBuilder builder = null;
-        InputStreamReader isReader = null;
 
         if (contentType.indexOf("multipart/related") == 0) {
             //This contains attachements
             try {
                 Attachments attachments =
                         new Attachments(inputStream, fullContentTypeStr, false, "", "");
-                modifiedInputStream = attachments.getSOAPPartInputStream();
-               	isReader = new InputStreamReader(modifiedInputStream);
-               
 
                 String soapEnvelopeNamespaceURI =
                         BuilderUtil.getEnvelopeNamespace(fullContentTypeStr);
@@ -180,15 +167,13 @@ public class SOAPPartImpl extends SOAPPart {
                 throw new SOAPException(e);
             }
         } else {
-            modifiedInputStream = inputStream;
             try {
-                isReader = new InputStreamReader(modifiedInputStream);
                 XMLStreamReader streamReader = null;
                 
                 if(knownEncoding != null){
-                	streamReader = StAXUtils.createXMLStreamReader(modifiedInputStream, knownEncoding);
+                	streamReader = StAXUtils.createXMLStreamReader(inputStream, knownEncoding);
                 }else{
-                	streamReader = StAXUtils.createXMLStreamReader(modifiedInputStream);                	
+                	streamReader = StAXUtils.createXMLStreamReader(inputStream);                	
                 }
 
                 if (HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(contentType)) {
@@ -201,10 +186,6 @@ public class SOAPPartImpl extends SOAPPart {
                                                        new SOAP12Factory(),
                                                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-                } else if (HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED.equals(contentType)) {
-                    builder = new StAXSOAPModelBuilder(streamReader,
-                                                       new SOAP11Factory(),
-                                                       null);
                 } else {
                     builder = new StAXSOAPModelBuilder(streamReader,
                                                        new SOAP11Factory(),
@@ -221,25 +202,10 @@ public class SOAPPartImpl extends SOAPPart {
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
             envelope.setSOAPPartParent(this);
-            javax.xml.transform.Source xmlSource =
-                    new javax.xml.transform.stream.StreamSource( isReader);
-            this.source = xmlSource;
         } catch (Exception e) {
             throw new SOAPException(e);
         }
     }
-
-    private String extractFirstPart(String fullContentTypeStr) {
-        String contentType;//tmpContentType can be like 'application/soap+xml; charset=UTF-8;'
-        //Only the first part is important
-        if (fullContentTypeStr.indexOf(";") > -1) {
-            contentType = fullContentTypeStr.substring(0, fullContentTypeStr.indexOf(";"));
-        } else {
-            contentType = fullContentTypeStr;
-        }
-        return contentType;
-    }
-
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         InputStream inputStream) throws SOAPException {
@@ -370,7 +336,6 @@ public class SOAPPartImpl extends SOAPPart {
     }
 
     public void setContent(Source source) throws SOAPException {
-        this.source = source;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -422,9 +387,7 @@ public class SOAPPartImpl extends SOAPPart {
      * @see #setContent(javax.xml.transform.Source) setContent(javax.xml.transform.Source)
      */
     public Source getContent() throws SOAPException {
-        DOMSource domSource = new DOMSource(this.document);
-        this.source = domSource;
-        return source;
+        return new DOMSource(this.document);
     }
 
     /**

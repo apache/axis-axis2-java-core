@@ -30,8 +30,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 /** Utility class for the Axis2-WSS4J Module */
 public class SAAJUtil {
@@ -130,5 +134,33 @@ public class SAAJUtil {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         return factory.newDocumentBuilder().parse(bais).getDocumentElement();
+    }
+
+    /**
+     * Create a copy of an existing {@link MimeHeaders} object.
+     * 
+     * @param headers the object to copy
+     * @return a copy of the {@link MimeHeaders} object
+     */
+    public static MimeHeaders copyMimeHeaders(MimeHeaders headers) {
+        MimeHeaders result = new MimeHeaders();
+        Iterator iterator = headers.getAllHeaders();
+        while (iterator.hasNext()) {
+            MimeHeader hdr = (MimeHeader)iterator.next();
+            result.addHeader(hdr.getName(), hdr.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Normalize a content type specification. This removes all parameters
+     * from the content type and converts it to lower case.
+     * 
+     * @param contentType the content type to normalize
+     * @return the normalized content type
+     */
+    public static String normalizeContentType(String contentType) {
+        int idx = contentType.indexOf(";");
+        return (idx == -1 ? contentType : contentType.substring(0, idx)).trim().toLowerCase();
     }
 }

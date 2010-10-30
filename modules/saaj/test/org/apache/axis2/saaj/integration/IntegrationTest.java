@@ -23,8 +23,13 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.axis2.description.AxisService;
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
@@ -76,9 +81,10 @@ public class IntegrationTest extends TestCase {
         return new TestSetup(new TestSuite(IntegrationTest.class)) {
             public void setUp() throws Exception {
                 port = UtilServer.start(SAAJ_REPO);
-                Parameter eneblemtom = new Parameter("enableMTOM", "true");
-                UtilServer.getConfigurationContext().getAxisConfiguration()
-                        .addParameter(eneblemtom);
+                AxisConfiguration axisCfg =
+                        UtilServer.getConfigurationContext().getAxisConfiguration();
+                axisCfg.addParameter(new Parameter("enableMTOM", "optional"));
+                axisCfg.addParameter(new Parameter("enableSwA", "optional"));
             }
 
             public void tearDown() throws Exception {
@@ -88,10 +94,26 @@ public class IntegrationTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        final AxisService service = Utils.createSimpleService(SERVICE_NAME,
-                                                              EchoService.class.getName(),
-                                                              OPERATION_NAME);
-        UtilServer.deployService(service);
+        MessageReceiver mr = new AbstractInOutMessageReceiver() {
+            @Override
+            public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
+                    throws AxisFault {
+                
+                outMessage.setEnvelope(inMessage.getEnvelope());
+                Attachments inAttachments = inMessage.getAttachmentMap();
+                Attachments outAttachments = outMessage.getAttachmentMap();
+                for (String contentId : inAttachments.getAllContentIDs()) {
+                    if (!contentId.equals(inAttachments.getSOAPPartContentID())) {
+                        outAttachments.addDataHandler(contentId,
+                                inAttachments.getDataHandler(contentId));
+                    }
+                }
+                outMessage.setDoingSwA(inMessage.isDoingSwA());
+                outMessage.setDoingMTOM(inMessage.isDoingMTOM());
+            }
+        };
+        UtilServer.deployService(
+                Utils.createSimpleService(SERVICE_NAME, mr, null, OPERATION_NAME));
     }
 
     protected void tearDown() throws Exception {
@@ -195,8 +217,7 @@ public class IntegrationTest extends TestCase {
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage response = sCon.call(request, getAddress());
 
-        int attachmentCount = response.countAttachments();
-        assertTrue(attachmentCount == 2);
+        assertEquals(2, response.countAttachments());
 
         Iterator attachIter = response.getAttachments();
 
@@ -253,8 +274,7 @@ public class IntegrationTest extends TestCase {
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage response = sCon.call(request, getAddress());
 
-        int attachmentCount = response.countAttachments();
-        assertTrue(attachmentCount == 2);
+        assertEquals(2, response.countAttachments());
 
         Iterator attachIter = response.getAttachments();
 

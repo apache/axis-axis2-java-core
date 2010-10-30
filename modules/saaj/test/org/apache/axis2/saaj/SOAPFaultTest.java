@@ -155,27 +155,22 @@ public class SOAPFaultTest extends TestCase {
         assertTrue(xml.indexOf("<faultactor>http://gizmos.com/order</faultactor>") != -1);
     }
 
-    public void testAddDetailsTwice() {
+    public void testAddDetailsTwice() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance();
+
+        //Create the response to the message
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+
+        body.addFault().addDetail();
         try {
-            MessageFactory fac = MessageFactory.newInstance();
-
-            //Create the response to the message
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-
-            body.addFault().addDetail();
-            try {
-                body.getFault().addDetail();
-                fail("Expected Exception did not occur");
-            } catch (SOAPException e) {
-                assertTrue(true);
-            }
-
+            body.getFault().addDetail();
+            fail("Expected Exception did not occur");
         } catch (SOAPException e) {
-            fail("Unexpected Exception Occurred : " + e);
+            assertTrue(true);
         }
     }
 
@@ -199,96 +194,84 @@ public class SOAPFaultTest extends TestCase {
         assertTrue(xml.indexOf("Hello") != -1);
     }
 
-    public void testFaults() {
-        try {
-            MessageFactory messageFactory = MessageFactory.newInstance();
-            SOAPFactory soapFactory = SOAPFactory.newInstance();
-            SOAPMessage message = messageFactory.createMessage();
-            SOAPBody body = message.getSOAPBody();
-            SOAPFault fault = body.addFault();
+    public void testFaults() throws Exception {
+        MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPFactory soapFactory = SOAPFactory.newInstance();
+        SOAPMessage message = messageFactory.createMessage();
+        SOAPBody body = message.getSOAPBody();
+        SOAPFault fault = body.addFault();
 
-            Name faultName =
-                    soapFactory.createName("Client", "",
-                                           SOAPConstants.URI_NS_SOAP_ENVELOPE);
-            fault.setFaultCode(faultName);
+        Name faultName =
+                soapFactory.createName("Client", "",
+                                       SOAPConstants.URI_NS_SOAP_ENVELOPE);
+        fault.setFaultCode(faultName);
 
-            fault.setFaultString("Message does not have necessary info");
-            fault.setFaultActor("http://gizmos.com/order");
+        fault.setFaultString("Message does not have necessary info");
+        fault.setFaultActor("http://gizmos.com/order");
 
-            Detail detail = fault.addDetail();
+        Detail detail = fault.addDetail();
 
-            Name entryName =
-                    soapFactory.createName("order", "PO",
-                                           "http://gizmos.com/orders/");
-            DetailEntry entry = detail.addDetailEntry(entryName);
-            entry.addTextNode("Quantity element does not have a value");
+        Name entryName =
+                soapFactory.createName("order", "PO",
+                                       "http://gizmos.com/orders/");
+        DetailEntry entry = detail.addDetailEntry(entryName);
+        entry.addTextNode("Quantity element does not have a value");
 
-            Name entryName2 =
-                    soapFactory.createName("confirmation", "PO",
-                                           "http://gizmos.com/confirm");
-            DetailEntry entry2 = detail.addDetailEntry(entryName2);
-            entry2.addTextNode("Incomplete address: " + "no zip code");
+        Name entryName2 =
+                soapFactory.createName("confirmation", "PO",
+                                       "http://gizmos.com/confirm");
+        DetailEntry entry2 = detail.addDetailEntry(entryName2);
+        entry2.addTextNode("Incomplete address: " + "no zip code");
 
-            message.saveChanges();
-            //message.writeTo(System.out);
+        message.saveChanges();
+        //message.writeTo(System.out);
 
-            // Now retrieve the SOAPFault object and
-            // its contents, after checking to see that
-            // there is one
-            if (body.hasFault()) {
-                SOAPFault newFault = body.getFault();
+        // Now retrieve the SOAPFault object and
+        // its contents, after checking to see that
+        // there is one
+        if (body.hasFault()) {
+            SOAPFault newFault = body.getFault();
 
-                // Get the qualified name of the fault code
-                assertNotNull(newFault.getFaultCodeAsName());
-                assertNotNull(newFault.getFaultString());
-                assertNotNull(newFault.getFaultActor());
-                Detail newDetail = newFault.getDetail();
+            // Get the qualified name of the fault code
+            assertNotNull(newFault.getFaultCodeAsName());
+            assertNotNull(newFault.getFaultString());
+            assertNotNull(newFault.getFaultActor());
+            Detail newDetail = newFault.getDetail();
 
-                if (newDetail != null) {
-                    Iterator entries = newDetail.getDetailEntries();
+            if (newDetail != null) {
+                Iterator entries = newDetail.getDetailEntries();
 
-                    while (entries.hasNext()) {
-                        DetailEntry newEntry = (DetailEntry)entries.next();
-                        String value = newEntry.getValue();
-                        assertNotNull(value);
-                    }
+                while (entries.hasNext()) {
+                    DetailEntry newEntry = (DetailEntry)entries.next();
+                    String value = newEntry.getValue();
+                    assertNotNull(value);
                 }
             }
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
         }
     }
 
-    public void testGetFaultActor() {
-        try {
-            SOAPMessage msg = MessageFactory.newInstance().createMessage();
-            SOAPFault sf = msg.getSOAPBody().addFault();
-            sf.setFaultActor("/faultActorURI");
-            sf.setFaultActor("/faultActorURI2");
-            String result = sf.getFaultActor();
+    public void testGetFaultActor() throws Exception {
+        SOAPMessage msg = MessageFactory.newInstance().createMessage();
+        SOAPFault sf = msg.getSOAPBody().addFault();
+        sf.setFaultActor("/faultActorURI");
+        sf.setFaultActor("/faultActorURI2");
+        String result = sf.getFaultActor();
 
-            if (!result.equals("/faultActorURI2")) {
-                fail("Fault Actor not properly set");
-            }
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
+        if (!result.equals("/faultActorURI2")) {
+            fail("Fault Actor not properly set");
         }
     }
 
-    public void testGetFaultString() {
-        try {
-            SOAPMessage msg = MessageFactory.newInstance().createMessage();
-            SOAPFault sf = msg.getSOAPBody().addFault();
+    public void testGetFaultString() throws Exception {
+        SOAPMessage msg = MessageFactory.newInstance().createMessage();
+        SOAPFault sf = msg.getSOAPBody().addFault();
 
-            sf.setFaultString("1st Fault String");
-            sf.setFaultString("2nd Fault String");
-            String result = sf.getFaultString();
+        sf.setFaultString("1st Fault String");
+        sf.setFaultString("2nd Fault String");
+        String result = sf.getFaultString();
 
-            if (!result.equals("2nd Fault String")) {
-                fail("Fault String not properly set");
-            }
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
+        if (!result.equals("2nd Fault String")) {
+            fail("Fault String not properly set");
         }
     }
 
@@ -373,109 +356,90 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
-    public void _testGetFaultReasonTexts() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    public void _testGetFaultReasonTexts() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
 
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            soapFault.addFaultReasonText("myReason", new Locale("en"));
-            soapFault.addFaultReasonText("de-myReason", new Locale("de"));
-            soapFault.addFaultReasonText("si-myReason", new Locale("si"));
-            soapMessage.saveChanges();
-            Iterator reasonTexts = soapFault.getFaultReasonTexts();
-            while (reasonTexts.hasNext()) {
-                String reasonText = (String)reasonTexts.next();
-                assertNotNull(reasonText);
-            }
-
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        soapFault.addFaultReasonText("myReason", new Locale("en"));
+        soapFault.addFaultReasonText("de-myReason", new Locale("de"));
+        soapFault.addFaultReasonText("si-myReason", new Locale("si"));
+        soapMessage.saveChanges();
+        Iterator reasonTexts = soapFault.getFaultReasonTexts();
+        while (reasonTexts.hasNext()) {
+            String reasonText = (String)reasonTexts.next();
+            assertNotNull(reasonText);
         }
     }
 
-    public void _testAddFaultReasonText1() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance();
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+    public void _testAddFaultReasonText1() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            soapFault.addFaultReasonText("myReason", Locale.ENGLISH);
-            soapMessage.saveChanges();
-
-        } catch (SOAPException e) {
-            fail("Unexpected Exception Occurred : " + e);
-        }
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        soapFault.addFaultReasonText("myReason", Locale.ENGLISH);
+        soapMessage.saveChanges();
     }
 
-    public void testAddFaultReasonText2() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+    public void testAddFaultReasonText2() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            soapFault.addFaultReasonText("myReason", new Locale("en"));
-            soapFault.addFaultReasonText("de-myReason", new Locale("de"));
-            soapFault.addFaultReasonText("si-myReason", new Locale("si"));
-            soapMessage.saveChanges();
-
-        } catch (SOAPException e) {
-            fail("Unexpected Exception Occurred : " + e);
-        }
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        soapFault.addFaultReasonText("myReason", new Locale("en"));
+        soapFault.addFaultReasonText("de-myReason", new Locale("de"));
+        soapFault.addFaultReasonText("si-myReason", new Locale("si"));
+        soapMessage.saveChanges();
     }
 
-    public void testAddFaultReasonText3() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+    public void testAddFaultReasonText3() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault();
-            
-            String expected = "Its my fault again";
-            boolean found = false;
-            sf.addFaultReasonText("Its my fault", Locale.ENGLISH);
-            sf.addFaultReasonText(expected, Locale.ENGLISH);
-            Iterator i = sf.getFaultReasonTexts();
-            int j = 0;
-            while (i.hasNext()) {
-                Object o = i.next();
-                if (o != null && o instanceof String) {
-                    String actual = (String)o;
-                    if (actual.equals(expected)) {
-                        if (!found) {
-                            found = true;
-                        }
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
+        
+        String expected = "Its my fault again";
+        boolean found = false;
+        sf.addFaultReasonText("Its my fault", Locale.ENGLISH);
+        sf.addFaultReasonText(expected, Locale.ENGLISH);
+        Iterator i = sf.getFaultReasonTexts();
+        int j = 0;
+        while (i.hasNext()) {
+            Object o = i.next();
+            if (o != null && o instanceof String) {
+                String actual = (String)o;
+                if (actual.equals(expected)) {
+                    if (!found) {
+                        found = true;
                     }
                 }
-                j++;
             }
-            if (j < 1) {
-                fail("No reason text was returned");
-            }
-            if (j > 1) {
-                fail("More than one reason text was returned");
-            }
-            if (!found) {
-                fail("The following Reason text was not received: '" + expected + "'");
-            }
-        } catch (SOAPException e) {
-            fail("Unexpected Exception Occurred : " + e);
+            j++;
+        }
+        if (j < 1) {
+            fail("No reason text was returned");
+        }
+        if (j > 1) {
+            fail("More than one reason text was returned");
+        }
+        if (!found) {
+            fail("The following Reason text was not received: '" + expected + "'");
         }
     }
 
@@ -528,339 +492,279 @@ public class SOAPFaultTest extends TestCase {
     }
 
 
-    public void testSetFaultRole() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    public void testSetFaultRole() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
 
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            soapFault.setFaultRole("test");
-            soapMessage.saveChanges();
-
-        } catch (SOAPException e) {
-            fail("Unexpected Exception Occurred : " + e);
-        }
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        soapFault.setFaultRole("test");
+        soapMessage.saveChanges();
     }
 
-    public void testSetFaultNode() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    public void testSetFaultNode() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
 
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            soapFault.setFaultNode("test");
-            soapMessage.saveChanges();
-
-        } catch (SOAPException e) {
-            fail("Unexpected Exception Occurred : " + e);
-        }
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        soapFault.setFaultNode("test");
+        soapMessage.saveChanges();
     }
 
-    public void _testGetFaultReasonText() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    public void _testGetFaultReasonText() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
 
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            soapFault.addFaultReasonText("myReason", new Locale("en"));
-            soapFault.addFaultReasonText("de-myReason", new Locale("de"));
-            soapFault.addFaultReasonText("si-myReason", new Locale("si"));
-            soapMessage.saveChanges();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        soapFault.addFaultReasonText("myReason", new Locale("en"));
+        soapFault.addFaultReasonText("de-myReason", new Locale("de"));
+        soapFault.addFaultReasonText("si-myReason", new Locale("si"));
+        soapMessage.saveChanges();
 
-            String faultReasonText = soapFault.getFaultReasonText(new Locale("si"));
-            assertNotNull(faultReasonText);
-            faultReasonText = soapFault.getFaultReasonText(new Locale("ja"));
-            assertNull(faultReasonText);
-            
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
-        }
+        String faultReasonText = soapFault.getFaultReasonText(new Locale("si"));
+        assertNotNull(faultReasonText);
+        faultReasonText = soapFault.getFaultReasonText(new Locale("ja"));
+        assertNull(faultReasonText);
     }
 
 
-    public void _testGetFaultCodeAsQName() {
-        try {
-            //MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            MessageFactory fac = MessageFactory.newInstance();
+    public void _testGetFaultCodeAsQName() throws Exception {
+        //MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        MessageFactory fac = MessageFactory.newInstance();
 
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            soapFault.addFaultReasonText("myReason", new Locale("en"));
-            soapFault.setFaultCode("mycode");
-            soapMessage.saveChanges();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        soapFault.addFaultReasonText("myReason", new Locale("en"));
+        soapFault.setFaultCode("mycode");
+        soapMessage.saveChanges();
 
-            QName qname = soapFault.getFaultCodeAsQName();
-            assertNotNull(qname);
-
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
-        }
+        QName qname = soapFault.getFaultCodeAsQName();
+        assertNotNull(qname);
     }
 
-    public void testHasDetail() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            //MessageFactory fac = MessageFactory.newInstance();
+    public void testHasDetail() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        //MessageFactory fac = MessageFactory.newInstance();
 
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
 
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            Detail detail = soapFault.addDetail();
-            detail.setAttribute("test", "myvalue");
-            soapMessage.saveChanges();
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
-        }
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        Detail detail = soapFault.addDetail();
+        detail.setAttribute("test", "myvalue");
+        soapMessage.saveChanges();
     }
 
-    public void testFaultReasonLocales() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            //SOAPFault sf = body.addFault();
-            
-            Locale expected1 = Locale.ENGLISH;
-            Locale expected2 = Locale.UK;
-            Locale expected3 = Locale.GERMAN;
-            boolean found1 = false;
-            boolean found2 = false;
-            boolean found3 = false;
+    public void testFaultReasonLocales() throws Exception  {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        //SOAPFault sf = body.addFault();
+        
+        Locale expected1 = Locale.ENGLISH;
+        Locale expected2 = Locale.UK;
+        Locale expected3 = Locale.GERMAN;
+        boolean found1 = false;
+        boolean found2 = false;
+        boolean found3 = false;
 
-            SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, "Its my fault1", expected1);
-            sf.addFaultReasonText("Its my fault1", expected1);
-            sf.addFaultReasonText("Its my fault2", expected2);
-            sf.addFaultReasonText("Its my fault3", expected3);
-            Iterator i = sf.getFaultReasonLocales();
+        SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, "Its my fault1", expected1);
+        sf.addFaultReasonText("Its my fault1", expected1);
+        sf.addFaultReasonText("Its my fault2", expected2);
+        sf.addFaultReasonText("Its my fault3", expected3);
+        Iterator i = sf.getFaultReasonLocales();
 
-            int localeCount = 0;
-            while (i.hasNext()) {
-                localeCount++;
-                i.next();
-            }
+        int localeCount = 0;
+        while (i.hasNext()) {
+            localeCount++;
+            i.next();
+        }
 
-            i = sf.getFaultReasonLocales();
-            int j = 0;
-            while (i.hasNext()) {
-                Object o = i.next();
-                if (o instanceof Locale) {
-                    Locale actual = (Locale)o;
-                    if (actual != null) {
-                        if (actual.equals(expected1)) {
-                            if (!found1) {
-                                found1 = true;
-                            }
-                        } else if (actual.equals(expected2)) {
-                            if (!found2) {
-                                found2 = true;
-                            }
-                        } else if (actual.equals(expected3)) {
-                            if (!found3) {
-                                found3 = true;
-                            }
+        i = sf.getFaultReasonLocales();
+        int j = 0;
+        while (i.hasNext()) {
+            Object o = i.next();
+            if (o instanceof Locale) {
+                Locale actual = (Locale)o;
+                if (actual != null) {
+                    if (actual.equals(expected1)) {
+                        if (!found1) {
+                            found1 = true;
+                        }
+                    } else if (actual.equals(expected2)) {
+                        if (!found2) {
+                            found2 = true;
+                        }
+                    } else if (actual.equals(expected3)) {
+                        if (!found3) {
+                            found3 = true;
                         }
                     }
                 }
-                j++;
             }
-            if (j < 1) {
-                fail("No reason text was returned");
-            }
-            if (j > 3) {
-                fail("More than 3 Locales were returned");
-            }
-            if (!found1) {
-                fail("The following Locale was not received: '" + expected1 + "'");
-            }
-            if (!found2) {
-                fail("The following Locale was not received: '" + expected2 + "'");
-            }
-            if (!found3) {
-                fail("The following Locale was not received: '" + expected3 + "'");
-            }
-        } catch (Exception e) {
-            fail("Exception: " + e);
+            j++;
+        }
+        if (j < 1) {
+            fail("No reason text was returned");
+        }
+        if (j > 3) {
+            fail("More than 3 Locales were returned");
+        }
+        if (!found1) {
+            fail("The following Locale was not received: '" + expected1 + "'");
+        }
+        if (!found2) {
+            fail("The following Locale was not received: '" + expected2 + "'");
+        }
+        if (!found3) {
+            fail("The following Locale was not received: '" + expected3 + "'");
         }
     }
 
-    public void testFaultStringLocale() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            //MessageFactory fac = MessageFactory.newInstance();
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault();
+    public void testFaultStringLocale() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        //MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
 
-            //Setting fault string with no Locale
-            sf.setFaultString("this is the fault string");
-            Locale result = sf.getFaultStringLocale();
-            assertNotNull(result);
-        } catch (Exception e) {
-            fail("Exception: " + e);
-        }
+        //Setting fault string with no Locale
+        sf.setFaultString("this is the fault string");
+        Locale result = sf.getFaultStringLocale();
+        assertNotNull(result);
     }
 
 
-    public void testFaultStringLocale2() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            //MessageFactory fac = MessageFactory.newInstance();
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault();
+    public void testFaultStringLocale2() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        //MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
 
-            sf.setFaultString("this is the fault string");
-            Locale result = sf.getFaultStringLocale();
-            assertNotNull(result);
-            assertTrue(result.equals(Locale.getDefault()));
-        }
-        catch (Exception e) {
-            fail("Exception: " + e);
-        }
+        sf.setFaultString("this is the fault string");
+        Locale result = sf.getFaultStringLocale();
+        assertNotNull(result);
+        assertTrue(result.equals(Locale.getDefault()));
     }
 
-    public void testSetFaultStringLocale() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            //MessageFactory fac = MessageFactory.newInstance();
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault();
+    public void testSetFaultStringLocale() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        //MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
 
-            Locale expected = Locale.ENGLISH;
-            sf.setFaultString("this is the fault string", expected);
-            Locale result = sf.getFaultStringLocale();
-            assertNotNull(result);
-            assertTrue(result.equals(expected));
-        } catch (Exception e) {
-            fail("Exception: " + e);
-        }
+        Locale expected = Locale.ENGLISH;
+        sf.setFaultString("this is the fault string", expected);
+        Locale result = sf.getFaultStringLocale();
+        assertNotNull(result);
+        assertTrue(result.equals(expected));
     }
 
 
-    public void testFaultCodeWithPrefix1() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance();
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault();
+    public void testFaultCodeWithPrefix1() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
 
-            String prefix = "wso2";
-            sf.setFaultCode(prefix + ":Server");
-            String result = sf.getFaultCode();
+        String prefix = "wso2";
+        sf.setFaultCode(prefix + ":Server");
+        String result = sf.getFaultCode();
 
-            assertNotNull(result);
-            assertEquals(prefix + ":Server", result);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        assertNotNull(result);
+        assertEquals(prefix + ":Server", result);
     }
 
-    public void testFaultCodeWithPrefix2() {
-        try {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault();
+    public void testFaultCodeWithPrefix2() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
 
-            String prefix = "wso2";
-            sf.setFaultCode(prefix + ":Server");
-            String result = sf.getFaultCode();
+        String prefix = "wso2";
+        sf.setFaultCode(prefix + ":Server");
+        String result = sf.getFaultCode();
 
-            assertNotNull(result);
-            assertEquals(prefix + ":Server", result);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        assertNotNull(result);
+        assertEquals(prefix + ":Server", result);
     }
 
-    public void testSetGetFaultCodeAsName1() {
-        try {
-            SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
-            SOAPFault sf = fac.createFault();
+    public void testSetGetFaultCodeAsName1() throws Exception {
+        SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        SOAPFault sf = fac.createFault();
 
-            Name name = fac.createName("myfault", "flt", "http://example.com");
-            sf.setFaultCode(name);
-            
-            Name name2 = sf.getFaultCodeAsName();            
-            assertNotNull(name2);
-            assertEquals(name.getLocalName(), name2.getLocalName());
-            assertEquals(name.getPrefix(), name2.getPrefix());
-            assertEquals(name.getURI(), name2.getURI());
-            
-            QName name3 = sf.getFaultCodeAsQName();            
-            assertNotNull(name3);
-            assertEquals(name.getLocalName(), name3.getLocalPart());
-            assertEquals(name.getPrefix(), name3.getPrefix());
-            assertEquals(name.getURI(), name3.getNamespaceURI());
-            
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        Name name = fac.createName("myfault", "flt", "http://example.com");
+        sf.setFaultCode(name);
+        
+        Name name2 = sf.getFaultCodeAsName();            
+        assertNotNull(name2);
+        assertEquals(name.getLocalName(), name2.getLocalName());
+        assertEquals(name.getPrefix(), name2.getPrefix());
+        assertEquals(name.getURI(), name2.getURI());
+        
+        QName name3 = sf.getFaultCodeAsQName();            
+        assertNotNull(name3);
+        assertEquals(name.getLocalName(), name3.getLocalPart());
+        assertEquals(name.getPrefix(), name3.getPrefix());
+        assertEquals(name.getURI(), name3.getNamespaceURI());
     }
 
 
-    public void testSetGetFaultCodeAsName2() {
-        try {
-            QName qname = SOAPConstants.SOAP_SENDER_FAULT;
-            SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            Name name = fac.createName(qname.getLocalPart(),
-                                       qname.getPrefix(), qname.getNamespaceURI());
-            SOAPFault sf = fac.createFault();
-            sf.setFaultCode(name);
-            
-            Name name2 = sf.getFaultCodeAsName();            
-            assertNotNull(name2);
-            assertEquals(name.getLocalName(), name2.getLocalName());
-            assertEquals(name.getPrefix(), name2.getPrefix());
-            assertEquals(name.getURI(), name2.getURI());
-            
-            QName name3 = sf.getFaultCodeAsQName();            
-            assertNotNull(name3);
-            assertEquals(name.getLocalName(), name3.getLocalPart());
-            assertEquals(name.getPrefix(), name3.getPrefix());
-            assertEquals(name.getURI(), name3.getNamespaceURI());
-                      
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
+    public void testSetGetFaultCodeAsName2() throws Exception {
+        QName qname = SOAPConstants.SOAP_SENDER_FAULT;
+        SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        Name name = fac.createName(qname.getLocalPart(),
+                                   qname.getPrefix(), qname.getNamespaceURI());
+        SOAPFault sf = fac.createFault();
+        sf.setFaultCode(name);
+        
+        Name name2 = sf.getFaultCodeAsName();            
+        assertNotNull(name2);
+        assertEquals(name.getLocalName(), name2.getLocalName());
+        assertEquals(name.getPrefix(), name2.getPrefix());
+        assertEquals(name.getURI(), name2.getURI());
+        
+        QName name3 = sf.getFaultCodeAsQName();            
+        assertNotNull(name3);
+        assertEquals(name.getLocalName(), name3.getLocalPart());
+        assertEquals(name.getPrefix(), name3.getPrefix());
+        assertEquals(name.getURI(), name3.getNamespaceURI());
     }
 
 
@@ -885,54 +789,42 @@ public class SOAPFaultTest extends TestCase {
     }
 
 
-    public void testSetGetFaultCodeAsQName2() {
-        try {
-            QName name = SOAPConstants.SOAP_SENDER_FAULT;
-            SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            SOAPFault sf = fac.createFault();
-            sf.setFaultCode(name);
-            
-            QName name2 = sf.getFaultCodeAsQName();
-            assertNotNull(name2);
-            assertEquals(name.getLocalPart(), name2.getLocalPart());
-            assertEquals(name.getPrefix(), name2.getPrefix());
-            assertEquals(name.getNamespaceURI(), name2.getNamespaceURI());
-            
-            Name name3 = sf.getFaultCodeAsName();
-            assertNotNull(name3);
-            assertEquals(name.getLocalPart(), name3.getLocalName());
-            assertEquals(name.getPrefix(), name3.getPrefix());
-            assertEquals(name.getNamespaceURI(), name3.getURI());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    public void testSetGetFaultCodeAsQName2() throws Exception {
+        QName name = SOAPConstants.SOAP_SENDER_FAULT;
+        SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPFault sf = fac.createFault();
+        sf.setFaultCode(name);
+        
+        QName name2 = sf.getFaultCodeAsQName();
+        assertNotNull(name2);
+        assertEquals(name.getLocalPart(), name2.getLocalPart());
+        assertEquals(name.getPrefix(), name2.getPrefix());
+        assertEquals(name.getNamespaceURI(), name2.getNamespaceURI());
+        
+        Name name3 = sf.getFaultCodeAsName();
+        assertNotNull(name3);
+        assertEquals(name.getLocalPart(), name3.getLocalName());
+        assertEquals(name.getPrefix(), name3.getPrefix());
+        assertEquals(name.getNamespaceURI(), name3.getURI());
     }
 
-    public void testFault12Defaults() {
-        try {
-            MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            SOAPMessage message = messageFactory.createMessage();
-            SOAPBody body = message.getSOAPBody();
-            SOAPFault fault = body.addFault();
-            assertNotNull(fault.getFaultCodeAsQName());
-            assertNotNull(fault.getFaultString());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    public void testFault12Defaults() throws Exception {
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage message = messageFactory.createMessage();
+        SOAPBody body = message.getSOAPBody();
+        SOAPFault fault = body.addFault();
+        assertNotNull(fault.getFaultCodeAsQName());
+        assertNotNull(fault.getFaultString());
     }
 
-    public void testFault11Defaults() {
-        try {
-            MessageFactory messageFactory = MessageFactory.newInstance();
-            SOAPMessage message = messageFactory.createMessage();
-            SOAPBody body = message.getSOAPBody();
-            SOAPFault fault = body.addFault();
+    public void testFault11Defaults() throws Exception {
+        MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPMessage message = messageFactory.createMessage();
+        SOAPBody body = message.getSOAPBody();
+        SOAPFault fault = body.addFault();
 
-            assertNotNull(fault.getFaultCodeAsQName());
-            assertNotNull(fault.getFaultString());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        assertNotNull(fault.getFaultCodeAsQName());
+        assertNotNull(fault.getFaultString());
     }
 
 
