@@ -31,6 +31,7 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
@@ -780,5 +781,15 @@ public class SOAPElementTest extends Assert {
         soapBody.removeChild(child);
         
         assertFalse(soapBody.getChildElements().hasNext());
+    }
+    
+    @Validated @Test
+    public void testAddRemoveTextNode() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage msg = mf.createMessage();
+        SOAPBody body = msg.getSOAPBody();
+        SOAPBodyElement bodyChild = body.addBodyElement(new QName("TestChild"));
+        bodyChild.addTextNode("aaaaa");
+        bodyChild.removeChild(bodyChild.getFirstChild());
     }
 }

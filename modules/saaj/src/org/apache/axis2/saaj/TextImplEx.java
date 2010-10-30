@@ -44,6 +44,12 @@ public class TextImplEx extends NodeImplEx implements Text {
         this.parentElement = parent;
     }
 
+    public TextImplEx(TextImpl textNode, SOAPElement parent) {
+        super(((SOAPElementImpl)parent).getOMFactory());
+        this.textNode = textNode;
+        this.parentElement = parent;
+    }
+
     public TextImplEx(String data, SOAPElement parent,
                       org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
         super(((SOAPElementImpl)parent).getOMFactory());
@@ -53,6 +59,10 @@ public class TextImplEx extends NodeImplEx implements Text {
         this.nextSibling = nextSibling;
     }
 
+    TextImpl getTextNode() {
+        return textNode;
+    }
+    
     public void setNextSibling(org.w3c.dom.Node nextSibling) {
         this.nextSibling = nextSibling;
     }

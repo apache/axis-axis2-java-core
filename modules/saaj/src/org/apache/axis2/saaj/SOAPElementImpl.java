@@ -237,7 +237,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         //TODO: May need to address the situation where the prev sibling of the textnode itself is a textnode
         Text textNode = getOwnerDocument().createTextNode(text);
         NodeImpl node = ((NodeImpl)element.appendChild(textNode));
-        TextImplEx saajTextNode = new TextImplEx(text, this);
+        TextImplEx saajTextNode = new TextImplEx((TextImpl)textNode, this);
         node.setUserData(SAAJ_NODE, saajTextNode, null);
         return this;
     }
@@ -867,7 +867,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         if (oldChild instanceof SOAPElementImpl) {
             oldChild = ((SOAPElementImpl)oldChild).getElement();
         } else if (oldChild instanceof TextImplEx) {
-            // TODO: handle text nodes somehow
+            oldChild = ((TextImplEx)oldChild).getTextNode();
         }
         return element.removeChild(oldChild);
     }
