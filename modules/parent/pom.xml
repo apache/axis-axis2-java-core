@@ -417,33 +417,11 @@
 
     </contributors>
     <repositories>
-        <!--
-          Checking repositores takes lots of time.
-          Repositories which should NOT be put in here.
-
-           http://people.apache.org/repo/m2-snapshot-repository/
-               Exists in the org.apache.apache parent pom
-
-           http://repo1.maven.org/maven2/ aka 'Central'
-               Exists in the maven 'Super POM' which all poms extend
-
-           http://people.apache.org/repo/m2-ibiblio-rsync-repository/
-               Everything in here should be in 'Central'
-
-          Checksum policy when not specified always defaults to 'warn'
-          which is what we want.
-       -->
-        <repository>
-            <id>java.net</id>
-            <url>http://download.java.net/maven/2/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
+        <!-- Before adding ANYTHING in here, please start a discussion on the dev list.
+             Ideally the Axis2 build should only use Maven central (which is available
+             by default) and nothing else. We had troubles with other repositories in
+             the past. Therefore configuring additional repositories here should be
+             considered very carefully. -->
     </repositories>
     <pluginRepositories>
         <pluginRepository>
