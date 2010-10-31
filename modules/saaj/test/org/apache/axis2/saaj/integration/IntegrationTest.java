@@ -38,6 +38,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
@@ -76,6 +77,9 @@ public class IntegrationTest extends Assert {
             System.getProperty("basedir", ".") + "/" + "target/test-classes/saaj-repo";
 
     private String lastSoapAction; // Stores the last SOAP action received by the server
+    
+    // Set this to true to let the Echo service trigger a SOAPFault
+    private boolean triggerFault;
 
     protected static String getAddress() {
         return "http://127.0.0.1:" +
@@ -105,17 +109,21 @@ public class IntegrationTest extends Assert {
                     throws AxisFault {
                 
                 lastSoapAction = inMessage.getSoapAction();
-                outMessage.setEnvelope(inMessage.getEnvelope());
-                Attachments inAttachments = inMessage.getAttachmentMap();
-                Attachments outAttachments = outMessage.getAttachmentMap();
-                for (String contentId : inAttachments.getAllContentIDs()) {
-                    if (!contentId.equals(inAttachments.getSOAPPartContentID())) {
-                        outAttachments.addDataHandler(contentId,
-                                inAttachments.getDataHandler(contentId));
+                if (triggerFault) {
+                    throw new AxisFault("Triggered SOAP fault as requested");
+                } else {
+                    outMessage.setEnvelope(inMessage.getEnvelope());
+                    Attachments inAttachments = inMessage.getAttachmentMap();
+                    Attachments outAttachments = outMessage.getAttachmentMap();
+                    for (String contentId : inAttachments.getAllContentIDs()) {
+                        if (!contentId.equals(inAttachments.getSOAPPartContentID())) {
+                            outAttachments.addDataHandler(contentId,
+                                    inAttachments.getDataHandler(contentId));
+                        }
                     }
+                    outMessage.setDoingSwA(inMessage.isDoingSwA());
+                    outMessage.setDoingMTOM(inMessage.isDoingMTOM());
                 }
-                outMessage.setDoingSwA(inMessage.isDoingSwA());
-                outMessage.setDoingMTOM(inMessage.isDoingMTOM());
             }
         };
         UtilServer.deployService(
@@ -369,5 +377,41 @@ public class IntegrationTest extends Assert {
                 (SOAPElement)soapPart.getEnvelope().getElementsByTagName("text").item(0);
         AttachmentPart ap = response.getAttachment((SOAPElement)textElement.getChildNodes().item(0));
         assertNotNull(ap);
+    }
+    
+    /**
+     * Checks that {@link org.apache.axis2.saaj.SOAPConnectionImpl} correctly performs transport
+     * cleanup. If there is a problem with transport cleanup, then this test will fail with an error
+     * caused by a timeout waiting for an available connection. This is a regression test for
+     * AXIS2-4752.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testConnectionCleanup() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
+        SOAPBodyElement bodyElement = request.getSOAPBody().addBodyElement(new QName("urn:test", "echo"));
+        for (int i=0; i<1000; i++) {
+            bodyElement.addChildElement(new QName("test")).addTextNode("some text");
+        }
+        SOAPConnection conn = SOAPConnectionFactory.newInstance().createConnection();
+        for (int i=0; i<100; i++) {
+            // Let the Echo service trigger a SOAP fault on every second call. This allows us to check
+            // that the connection cleanup is done correctly also if the response is a SOAP fault.
+            triggerFault = i % 2 == 0;
+            if (triggerFault) {
+                try {
+                    conn.call(request, getAddress());
+                    fail("Expected SOAPException");
+                } catch (SOAPException ex) {
+                    // Expected
+                }
+            } else {
+                SOAPMessage response = conn.call(request, getAddress());
+                assertEquals(1000, ((Element)response.getSOAPBody().getFirstChild()).getChildNodes().getLength());
+            }
+        }
+        conn.close();
     }
 }

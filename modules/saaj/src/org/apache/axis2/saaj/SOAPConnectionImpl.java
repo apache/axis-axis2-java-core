@@ -79,7 +79,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
     private boolean closed = false;
 
     private final ConfigurationContext configurationContext;
-    private ServiceClient serviceClient;
 
     SOAPConnectionImpl() throws SOAPException {
         // Create a new ConfigurationContext that will be used by all ServiceClient instances.
@@ -134,6 +133,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
         options.setTo(new EndpointReference(url.toString()));
 
         // initialize the Sender
+        ServiceClient serviceClient;
         OperationClient opClient;
         try {
             serviceClient = new ServiceClient(configurationContext, null);
@@ -197,35 +197,38 @@ public class SOAPConnectionImpl extends SOAPConnection {
             requestMsgCtx.setProperty(HTTPConstants.HTTP_HEADERS, httpHeaders);
         }
         
-        MessageContext responseMsgCtx;
         try {
-            requestMsgCtx.setEnvelope(envelope);
-            opClient.addMessageContext(requestMsgCtx);
-            opClient.execute(true);
-            responseMsgCtx =
-                    opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        } catch (AxisFault ex) {
-            throw new SOAPException(ex.getMessage(), ex);
-        }
-        
-        SOAPMessage response = getSOAPMessage(responseMsgCtx.getEnvelope());
-        Attachments attachments = requestMsgCtx.getAttachmentMap();
-        for (String contentId : attachments.getAllContentIDs()) {
-            if (!contentId.equals(attachments.getSOAPPartContentID())) {
-                AttachmentPart ap = response.createAttachmentPart(
-                        attachments.getDataHandler(contentId));
-                ap.setContentId(contentId);
-                response.addAttachmentPart(ap);
+            MessageContext responseMsgCtx;
+            try {
+                requestMsgCtx.setEnvelope(envelope);
+                opClient.addMessageContext(requestMsgCtx);
+                opClient.execute(true);
+                responseMsgCtx =
+                        opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            } catch (AxisFault ex) {
+                throw new SOAPException(ex.getMessage(), ex);
+            }
+            
+            SOAPMessage response = getSOAPMessage(responseMsgCtx.getEnvelope());
+            Attachments attachments = requestMsgCtx.getAttachmentMap();
+            for (String contentId : attachments.getAllContentIDs()) {
+                if (!contentId.equals(attachments.getSOAPPartContentID())) {
+                    AttachmentPart ap = response.createAttachmentPart(
+                            attachments.getDataHandler(contentId));
+                    ap.setContentId(contentId);
+                    response.addAttachmentPart(ap);
+                }
+            }
+            
+            return response;
+        } finally {
+            try {
+                serviceClient.cleanupTransport();
+                serviceClient.cleanup();
+            } catch (AxisFault ex) {
+                throw new SOAPException(ex);
             }
         }
-
-        try {
-            requestMsgCtx.getTransportOut().getSender().cleanup(requestMsgCtx);
-        } catch (AxisFault axisFault) {
-            // log error
-        }
-
-        return response;
     }
 
     private static boolean isMTOM(SOAPMessage soapMessage) {
@@ -270,15 +273,13 @@ public class SOAPConnectionImpl extends SOAPConnection {
      *                                      already closed
      */
     public void close() throws SOAPException {
-        if (serviceClient != null) {
-            try {
-                serviceClient.cleanup();
-            } catch (AxisFault axisFault) {
-                throw new SOAPException(axisFault.getMessage());
-            }
-        }
         if (closed) {
             throw new SOAPException("SOAPConnection Closed");
+        }
+        try {
+            configurationContext.terminate();
+        } catch (AxisFault axisFault) {
+            throw new SOAPException(axisFault.getMessage());
         }
         closed = true;
     }
