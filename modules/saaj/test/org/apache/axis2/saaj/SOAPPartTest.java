@@ -62,8 +62,7 @@ public class SOAPPartTest extends Assert {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document document = builder.parse(new File(System.getProperty("basedir", ".") +
-                "/test-resources" + File.separator + "soap-part.xml"));
+        Document document = builder.parse(TestUtils.getTestFileURI("soap-part.xml"));
         DOMSource domSource = new DOMSource(document);
 
         SOAPMessage message = MessageFactory.newInstance().createMessage();

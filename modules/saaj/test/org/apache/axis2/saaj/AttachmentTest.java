@@ -44,8 +44,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -154,8 +152,7 @@ public class AttachmentTest extends Assert {
     @Validated @Test
     public void testClearContent() throws Exception {
         try {
-            InputStream in1 = new FileInputStream(new File(System.getProperty("basedir", ".") +
-                    "/test-resources" + File.separator + "attach.xml"));
+            InputStream in1 = TestUtils.getTestFile("attach.xml");
 
             MessageFactory factory = MessageFactory.newInstance();
             SOAPMessage message = factory.createMessage();
@@ -235,8 +232,7 @@ public class AttachmentTest extends Assert {
             MessageFactory factory = MessageFactory.newInstance();
             SOAPMessage msg = factory.createMessage();
             AttachmentPart ap = msg.createAttachmentPart();
-            Image image = ImageIO.read(new File(System.getProperty("basedir", ".") +
-                    "/test-resources" + File.separator + "attach.gif"));
+            Image image = ImageIO.read(TestUtils.getTestFileURL("attach.gif"));
             ap = msg.createAttachmentPart(image, "image/gif");
 
             //Getting Content should return an Image object

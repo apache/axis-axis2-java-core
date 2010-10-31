@@ -65,7 +65,7 @@ public class SOAPMessageTest extends Assert {
 //    public static final QName OPERATION_NAME = new QName("echo");
 //
 //    public static final String SAAJ_REPO =
-//            System.getProperty("basedir", ".") + "/" + "target/test-resources/saaj-repo";
+//            System.getProperty("basedir", ".") + "/" + "target/test-classes/saaj-repo";
 //
 //    public SOAPMessageTest(String name) {
 //        super(name);
@@ -142,18 +142,15 @@ public class SOAPMessageTest extends Assert {
             SOAPFault sf = body.addFault();
 
 
-            InputStream in1 = new FileInputStream(new File(System.getProperty("basedir", ".") +
-                    "/target/test-resources" + File.separator + "attach.xml"));
+            InputStream in1 = TestUtils.getTestFile("attach.xml");
             ap1 = msg.createAttachmentPart(in1, "text/xml");
             msg.addAttachmentPart(ap1);
 
-            InputStream in2 = new FileInputStream(new File(System.getProperty("basedir", ".") +
-                    "/target/test-resources" + File.separator + "axis2.xml"));
+            InputStream in2 = TestUtils.getTestFile("axis2.xml");
             ap2 = msg.createAttachmentPart(in2, "text/xml");
             msg.addAttachmentPart(ap2);
 
-            InputStream in3 = new FileInputStream(new File(System.getProperty("basedir", ".") +
-                    "/target/test-resources" + File.separator + "axis2.xml"));
+            InputStream in3 = TestUtils.getTestFile("axis2.xml");
             ap3 = msg.createAttachmentPart(in3, "text/plain");
             msg.addAttachmentPart(ap3);
 
@@ -203,9 +200,7 @@ public class SOAPMessageTest extends Assert {
 
             AttachmentPart ap;
 
-            InputStream inputStream = new FileInputStream(new File(System
-                    .getProperty("basedir", ".") + "/test-resources" + File.separator +
-                    "attach.xml"));
+            InputStream inputStream = TestUtils.getTestFile("attach.xml");
             ap = msg.createAttachmentPart(inputStream, "text/xml");
             DataHandler dh =
                     new DataHandler(new SAAJDataSource(inputStream, 1000, "text/xml", true));

@@ -99,24 +99,6 @@
         <testResources>
             <testResource>
                 <directory>test-resources</directory>
-                <includes>
-                    <include>axis2.xml</include>
-                </includes>
-                <targetPath>../test-resources/saaj-repo</targetPath>
-            </testResource>
-            <testResource>
-                <targetPath>../test-resources</targetPath>
-                <directory>test-resources</directory>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <targetPath>../test-resources</targetPath>
-                <directory>test-resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                </includes>
             </testResource>
         </testResources>
         <plugins>

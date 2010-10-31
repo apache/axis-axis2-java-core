@@ -19,9 +19,14 @@
 
 package org.apache.axis2.saaj;
 
-public class TestConstants {
-    public static final String MTOM_TEST_MESSAGE_FILE =
-            System.getProperty("basedir", ".") + "/test-resources/message.bin";
+import java.io.InputStream;
+import java.net.URL;
+
+import javax.activation.DataSource;
+import javax.activation.URLDataSource;
+
+public class TestUtils {
+    public static final String MTOM_TEST_MESSAGE_FILE = "message.bin";
     public static final String MTOM_TEST_MESSAGE_CONTENT_TYPE =
             "multipart/related; " +
             "boundary=\"MIMEBoundaryurn:uuid:F02ECC18873CFB73E211412748909307\"; " +
@@ -31,5 +36,21 @@ public class TestConstants {
             "charset=UTF-8;" +
             "action=\"mtomSample\"";
     
-    private TestConstants() {}
+    private TestUtils() {}
+    
+    public static InputStream getTestFile(String name) {
+        return TestUtils.class.getClassLoader().getResourceAsStream(name);
+    }
+    
+    public static DataSource getTestFileAsDataSource(String name) {
+        return new URLDataSource(TestUtils.class.getClassLoader().getResource(name));
+    }
+    
+    public static URL getTestFileURL(String name) {
+        return TestUtils.class.getClassLoader().getResource(name);
+    }
+    
+    public static String getTestFileURI(String name) {
+        return TestUtils.class.getClassLoader().getResource(name).toExternalForm();
+    }
 }
