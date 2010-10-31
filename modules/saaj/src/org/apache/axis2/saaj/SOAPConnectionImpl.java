@@ -32,6 +32,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DispatchPhase;
@@ -76,8 +78,30 @@ public class SOAPConnectionImpl extends SOAPConnection {
     /** Attribute which keeps track of whether this connection has been closed */
     private boolean closed = false;
 
-    private ServiceClient serviceClient;
+    private final ConfigurationContext configurationContext;
 
+    SOAPConnectionImpl() throws SOAPException {
+        // Create a new ConfigurationContext that will be used by all ServiceClient instances.
+        // There are two reasons why this is necessary:
+        //  * Starting with r921685, if no ConfigurationContext is supplied to the ServiceClient,
+        //    it will create a new one (unless it can locate one using MessageContext.getCurrentMessageContext(),
+        //    but this is not the most common use case for SOAPConnection). This means that
+        //    SOAPConnection#call would create a new ConfigurationContext every time, and this is
+        //    too expensive.
+        //  * We need to disable mustUnderstand processing. However, we can't do that on an AxisConfiguration
+        //    that is shared with other components, because this would lead to unpredictable results.
+        // Note that we could also use a single ServiceClient instance, but then the SOAPConnection
+        // implementation would no longer be thread safe. Although thread safety is not explicitly required
+        // by the SAAJ specs, it appears that the SOAPConnection in Sun's reference implementation is
+        // thread safe.
+        try {
+            configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+            disableMustUnderstandProcessing(configurationContext.getAxisConfiguration());            
+        } catch (AxisFault ex) {
+            throw new SOAPException(ex);
+        }
+    }
+    
     /**
      * Sends the given message to the specified endpoint and blocks until it has returned the
      * response.
@@ -109,10 +133,10 @@ public class SOAPConnectionImpl extends SOAPConnection {
         options.setTo(new EndpointReference(url.toString()));
 
         // initialize the Sender
+        ServiceClient serviceClient;
         OperationClient opClient;
         try {
-            serviceClient = new ServiceClient();   
-            disableMustUnderstandProcessing(serviceClient.getAxisConfiguration());            
+            serviceClient = new ServiceClient(configurationContext, null);
             opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         } catch (AxisFault e) {
             throw new SOAPException(e);
@@ -173,35 +197,38 @@ public class SOAPConnectionImpl extends SOAPConnection {
             requestMsgCtx.setProperty(HTTPConstants.HTTP_HEADERS, httpHeaders);
         }
         
-        MessageContext responseMsgCtx;
         try {
-            requestMsgCtx.setEnvelope(envelope);
-            opClient.addMessageContext(requestMsgCtx);
-            opClient.execute(true);
-            responseMsgCtx =
-                    opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        } catch (AxisFault ex) {
-            throw new SOAPException(ex.getMessage(), ex);
-        }
-        
-        SOAPMessage response = getSOAPMessage(responseMsgCtx.getEnvelope());
-        Attachments attachments = requestMsgCtx.getAttachmentMap();
-        for (String contentId : attachments.getAllContentIDs()) {
-            if (!contentId.equals(attachments.getSOAPPartContentID())) {
-                AttachmentPart ap = response.createAttachmentPart(
-                        attachments.getDataHandler(contentId));
-                ap.setContentId(contentId);
-                response.addAttachmentPart(ap);
+            MessageContext responseMsgCtx;
+            try {
+                requestMsgCtx.setEnvelope(envelope);
+                opClient.addMessageContext(requestMsgCtx);
+                opClient.execute(true);
+                responseMsgCtx =
+                        opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            } catch (AxisFault ex) {
+                throw new SOAPException(ex.getMessage(), ex);
+            }
+            
+            SOAPMessage response = getSOAPMessage(responseMsgCtx.getEnvelope());
+            Attachments attachments = requestMsgCtx.getAttachmentMap();
+            for (String contentId : attachments.getAllContentIDs()) {
+                if (!contentId.equals(attachments.getSOAPPartContentID())) {
+                    AttachmentPart ap = response.createAttachmentPart(
+                            attachments.getDataHandler(contentId));
+                    ap.setContentId(contentId);
+                    response.addAttachmentPart(ap);
+                }
+            }
+            
+            return response;
+        } finally {
+            try {
+                serviceClient.cleanupTransport();
+                serviceClient.cleanup();
+            } catch (AxisFault ex) {
+                throw new SOAPException(ex);
             }
         }
-
-        try {
-            requestMsgCtx.getTransportOut().getSender().cleanup(requestMsgCtx);
-        } catch (AxisFault axisFault) {
-            // log error
-        }
-
-        return response;
     }
 
     private static boolean isMTOM(SOAPMessage soapMessage) {
@@ -220,11 +247,11 @@ public class SOAPConnectionImpl extends SOAPConnection {
      */
     private void disableMustUnderstandProcessing(AxisConfiguration config) {
         DispatchPhase phase;
-        phase = getDispatchPhase(serviceClient.getAxisConfiguration().getInFlowPhases());
+        phase = getDispatchPhase(config.getInFlowPhases());
         if (phase != null) {
             phase.addHandler(new UnderstandAllHeadersHandler());
         }
-        phase = getDispatchPhase(serviceClient.getAxisConfiguration().getInFaultFlowPhases());
+        phase = getDispatchPhase(config.getInFaultFlowPhases());
         if (phase != null) {
             phase.addHandler(new UnderstandAllHeadersHandler());
         }
@@ -246,15 +273,13 @@ public class SOAPConnectionImpl extends SOAPConnection {
      *                                      already closed
      */
     public void close() throws SOAPException {
-        if (serviceClient != null) {
-            try {
-                serviceClient.cleanup();
-            } catch (AxisFault axisFault) {
-                throw new SOAPException(axisFault.getMessage());
-            }
-        }
         if (closed) {
             throw new SOAPException("SOAPConnection Closed");
+        }
+        try {
+            configurationContext.terminate();
+        } catch (AxisFault axisFault) {
+            throw new SOAPException(axisFault.getMessage());
         }
         closed = true;
     }
