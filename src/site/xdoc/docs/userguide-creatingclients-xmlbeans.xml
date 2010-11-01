@@ -234,8 +234,7 @@ calling each of these operations.</p>
 .)</p>
 <p><b>The short story:</b></p>
 <ol>
-<li><a href=
-"http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">Download</a>
+<li><a href="../download.cgi#std-bin">Download</a>
 and unpack the Apache Axis2 Standard Distribution, if you have not
 done so already.</li>
 <li>Create the client classes with the following command:<br />
@@ -253,11 +252,9 @@ build/lib to the CLASSPATH and type: <code>java
 org.apache.axis2.axis2userguide.Client</code></li>
 </ol>
 <p><b>The long story:</b></p>
-<p><a href=
-"http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">Download</a>
+<p><a href="../download.cgi#std-bin">Download</a>
 and unpack the Apache Axis2 Standard Distribution, if you have not
-done so already. The <a href=
-"http://ws.apache.org/axis2/download/1_1/download.cgi#war">WAR
+done so already. The <a href="../download.cgi#war">WAR
 distribution</a> does not include the necessary utilities for
 generating code, such as WSDL2Java.</p>
 <p>The XMLBeans method of generating clients, unlike ADB, creates

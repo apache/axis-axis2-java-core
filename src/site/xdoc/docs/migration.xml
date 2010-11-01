@@ -33,9 +33,8 @@ the Axis2 series. We'll begin by listing the improvements in Axis2
 in comparison with Axis1. This will be followed by guidelines for
 migration to the new version.</p>
 <p><i>Send your feedback or questions to: <a href=
-"mailto:axis-user@ws.apache.org?subject=[Axis2]">axis-user@ws.apache.org</a></i>.
-(Subscription details are available on the <a href=
-"http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.)
+"mailto:java-user@axis.apache.org?subject=[Axis2]">java-user@axis.apache.org</a></i>.
+(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.)
 Kindly prefix subject with [Axis2].</p>
 <h2>Content</h2>
 <ul>

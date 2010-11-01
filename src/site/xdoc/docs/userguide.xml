@@ -40,8 +40,7 @@ For experienced users of Apache Axis2, we recommend the <a href=
 <h1>Introducing Axis2</h1>
 <p>This section introduces Axis2 and its structure, including an
 explanation of various directories/files included in the latest
-Axis2 <a href=
-"http://ws.apache.org/axis2/download.cgi">download</a>.</p>
+Axis2 <a href="../download.cgi">download</a>.</p>
 <h2>Content</h2>
 <ul>
 <li><a href="userguide.html#intro"><strong>Introducing

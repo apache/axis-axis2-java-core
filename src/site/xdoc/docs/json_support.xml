@@ -76,11 +76,11 @@ json string"}}}</font></p>
 <p>If we use the namespace mapping as http://foo.com -&gt; foo</p>
 <p><font size="2">{"foo.root":{"data":"my json string"}}</font></p>
 <p>JSON support is a new feature in <a href=
-"http://ws.apache.org/axis2/">Apache Axis2/Java</a>. It will become
+"../index.html">Apache Axis2/Java</a>. It will become
 a crucial improvement in the future with applications like
 JavaScript Web services.</p>
 <h2>Why JSON Support for Axis2?</h2>
-<p><a href="http://ws.apache.org/axis2/">Apache Axis2</a> is a Web
+<p><a href="../index.html">Apache Axis2</a> is a Web
 services stack that delivers incoming messages into target
 applications. In most cases, these messages are SOAP messages. In
 addition, it is also possible to send REST messages through Axis2.

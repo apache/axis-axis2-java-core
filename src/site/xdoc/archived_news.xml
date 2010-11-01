@@ -56,9 +56,7 @@ released, up to the current version.</p>
 
 <a id="1.2" name="1.2"></a>
 <h2>13rd August 2007 - Apache Axis2/Java Version 1.3 Released!</h2>
-<p>[<a href=
-"http://ws.apache.org/axis2/download/1_3/download.cgi">Download
-1.3</a>]</p>
+<p>[<a href="download.cgi#1_3">Download 1.3</a>]</p>
 <p>Apache Axis2 Version 1.3 comes with performance improvements and
 a number bug fixes over the 1.2 release. Check out the complete list of
 features below.</p>
@@ -115,8 +113,7 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 </ul>
 <h2><a name="Tools_included_in this_Release">Tools Included in This
 Release</a></h2>
-<p>[<a href="http://ws.apache.org/axis2/tools/index.html" target=
-"_blank">Download Tool Plug-ins</a>]</p>
+<p>[<a href="tools/index.html" target="_blank">Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href="tools/1_2/eclipse/wsdl2java-plugin.html"
@@ -150,9 +147,7 @@ WS-Addressing.)
 
 <a id="1.2" name="1.2"></a>
 <h2>27th April 2007 - Apache Axis2/Java Version 1.2 Released!</h2>
-<p>[<a href=
-"http://ws.apache.org/axis2/download/1_2/download.cgi">Download
-1.2</a>]</p>
+<p>[<a href="download.cgi#1_2">Download 1.2</a>]</p>
 <h3>Programming Model</h3>
 <ul>
 <li>Improved, XML-centric client API including full WSDL and policy
@@ -206,8 +201,7 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 <li>JaxBRI (Experimental)</li>
 </ul>
 <h2>Tools Included in this Release</h2>
-<p>[<a href="http://ws.apache.org/axis2/tools/index.html">Download
-Tool Plug-ins</a>]</p>
+<p>[<a href="tools/index.html">Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
@@ -251,9 +245,7 @@ therefore the AxisService is serialized to produce ?wsdl2.</li>
 <a id="1_1_1" name="1_1_1"></a>
 <h2>09th January 2007- Apache Axis2/Java Version 1.1.1
 Released!</h2>
-<p>[<a href=
-"http://ws.apache.org/axis2/download/1_1_1/download.cgi">Download
-1.1.1</a>]</p>
+<p>[<a href="download.cgi#1_1_1">Download 1.1.1</a>]</p>
 <p>Apache Axis2 Version 1.1.1 comes with performance improvements
 and bug fixes over the 1.1 release. Check out the complete list of
 features below.</p>
@@ -297,8 +289,7 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 <li>JaxMe</li>
 </ul>
 <h2>Tools Included in This Release</h2>
-<p>[<a href="http://ws.apache.org/axis2/tools/index.html">Download
-Tool Plug-ins</a>]</p>
+<p>[<a href="tools/index.html">Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
@@ -344,9 +335,7 @@ used</li>
 <a id="1_1" name="1_1"></a>
 <h2>13th November 2006 - Apache Axis2/Java Version 1.1
 Released!</h2>
-<p>[<a href=
-"http://ws.apache.org/axis2/download/1_1/download.cgi">Download
-1.1</a>]</p>
+<p>[<a href="download.cgi#1_1">Download 1.1</a>]</p>
 <p>Apache Axis2 Version 1.1 comes with better Axis2 Databinding
 Framework (ADB) support, <a href=
 "http://www.w3.org/TR/SOAP-attachments">attachments API</a>,
@@ -392,8 +381,7 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 <li>JaxMe</li>
 </ul>
 <h2>Tools Included in This Release</h2>
-<p>[<a href="http://ws.apache.org/axis2/tools/index.html">Download
-Tool Plug-ins</a>]</p>
+<p>[<a href="tools/index.html">Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
@@ -445,8 +433,7 @@ generation)</li>
 </ul>
 <a id="1_0" name="1_0"></a>
 <h2>04 May 2006 - Apache Axis2 Version 1.0 Released!</h2>
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download
-1.0</a>]</p>
+<p>[<a href="download.cgi#1_0">Download 1.0</a>]</p>
 <p>Apache Axis2 is a complete re-design and re-write of the widely
 used Apache Axis SOAP stack, built on the lessons learnt from
 Apache Axis.</p>
@@ -463,23 +450,19 @@ currently available or under development include:</p>
 <ul>
 <li><a href=
 "http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsrm">WS-ReliableMessaging</a>
-- Supported by <a href=
-"http://ws.apache.org/sandesha/sandesha2/">Apache
-Sandesha2</a></li>
+- Supported by <a href="http://axis.apache.org/axis2/java/sandesha/">Apache Sandesha2</a></li>
 <li><a href=
 "http://www-128.ibm.com/developerworks/library/specification/ws-tx/#coor">
 WS-Coordination</a> and <a href=
 "http://www-128.ibm.com/developerworks/library/specification/ws-tx/#atom">
 WS-AtomicTransaction</a> - Supported by <a href=
-"http://ws.apache.org/kandula/">Apache Kandula2</a></li>
+"http://axis.apache.org/axis2/java/kandula/">Apache Kandula2</a></li>
 <li><a href=
 "http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss">WS-Security</a>
-- Supported by <a href=
-"http://ws.apache.org/axis2/modules/index.html">Apache
-Rampart</a></li>
+- Supported by <a href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a></li>
 <li><a href=
 "http://www.w3.org/Submission/ws-addressing/">WS-Addressing</a> -
-<a href="http://ws.apache.org/axis2/modules/index.html">Module</a>
+<a href="modules/index.html">Module</a>
 included as part of Axis2 core</li>
 </ul>
 <p>Apache Axis2 is built on <a href=
@@ -528,8 +511,7 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 <li>JaxMe</li>
 </ul>
 <h2><a>Tools Included in This Release</a></h2>
-<p><a href="http://ws.apache.org/axis2/tools/index.html">[Download
-plug-ins]</a></p>
+<p><a href="tools/index.html">[Download plug-ins]</a></p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
@@ -579,7 +561,7 @@ generation)</li>
 </ul>
 <a id="0_95" name="0_95"></a>
 <h2>23 March 2006 - Apache Axis2 Version 0.95 Released!</h2>
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download
+<p>[<a href="download.cgi#0_95">Download
 0.95</a>]</p>
 <p>This release includes the following features:</p>
 <h3 id="head-215f3945a40558f9ad055ed5b6601e8f93706558">Axis2
@@ -679,8 +661,7 @@ services such as JSR 109 support</li>
 </ol>
 <a id="0_94" name="0_94"></a>
 <h2>11 January 2006 - Apache Axis2 Version 0.94 Released!</h2>
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download
-0.94</a>]</p>
+<p>[<a href="download.cgi#0_94">Download 0.94</a>]</p>
 <p>This release includes the following features:</p>
 <h3 id="head-215f3945a40558f9ad055ed5b6601e8f93706558">The Complete
 List of Features</h3>
@@ -763,8 +744,7 @@ services such as JSR 109 support</li>
 </ol>
 <a id="0_93" name="0_93"></a>
 <h2>02 December 2005 - Apache Axis2 Version 0.93 Released!</h2>
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download
-0.93</a>]</p>
+<p>[<a href="download.cgi#0_93">Download 0.93</a>]</p>
 <p>Axis2 is becoming more and more stable. This 0.93 release
 contains the following additional features:</p>
 <ul>
@@ -799,8 +779,7 @@ be completed before the 1.0 release include: SOAP 1.1 and 1.2
 validation, our own data binding implementation, and WSDL
 generation. <a id="0_92" name="0_92"></a>
 <h2>26 September 2005 - Apache Axis2 Version 0.92 Released!</h2>
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download
-0.92</a>]</p>
+<p>[<a href="download.cgi#0_92">Download 0.92</a>]</p>
 <p>This 0.92 release contains the following additional
 features:</p>
 <ul>
@@ -823,8 +802,7 @@ validation, our own data binding implementation, and WSDL
 generation.</p>
 <a id="0_91" name="0_91"></a>
 <h2>12 August 2005 - Apache Axis2 Version 0.91 Released!</h2>
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download
-0.91</a>]</p>
+<p>[<a href="download.cgi#0_91">Download 0.91</a>]</p>
 <p>This 0.91 release is a glimpse of the 1.0 that should be coming
 soon. This 0.91 release contains the following additional
 features:</p>
@@ -839,8 +817,7 @@ handling</li>
 </ul>
 <a id="0_90" name="0_90"></a>
 <h2>02 July 2005 - Apache Axis2 Version 0.9 Released!</h2>
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download
-0.9</a>]</p>
+<p>[<a href="download.cgi#0_9">Download 0.9</a>]</p>
 <p>Axis2 is taking shape. This 0.9 release is a glimpse of the 1.0
 that should be coming soon. This 0.9 release contains the following
 additional features:</p>

@@ -53,7 +53,7 @@ to run the WSDL2Code and WSDL2Java appropriately.</td>
 					<td>1.4</td>
 					<td/>
 					<td>This tool is bundled with the Axis2 Standard Binary
-Distribution found <a href="http://ws.apache.org/axis2/download.cgi">here</a>
+Distribution found <a href="../download.cgi#std-bin">here</a>
 					</td>
 				</tr>
 				<tr>

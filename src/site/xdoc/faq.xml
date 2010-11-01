@@ -35,14 +35,12 @@ just what the doctor ordered.</p>
 to:</p>
 <ul>
 <li>Developers : <a href=
-"mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></li>
+"mailto:java-dev@axis.apache.org">java-dev@axis.apache.org</a></li>
 <li>Users : <a href=
-"mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></li>
+"mailto:java-user@axis.apache.org">java-user@axis.apache.org</a></li>
 </ul>
-<p>Prefix subject with [Axis2]. <a href=
-"http://ws.apache.org/axis2/mail-lists.html">Subscribe</a> to our
-mailing lists.<a href=
-"http://ws.apache.org/axis2/mail-lists.html"></a></p>
+<p>Prefix subject with [Axis2]. <a href="mail-lists.html">Subscribe</a> to our
+mailing lists.</p>
 <h2>Content of Questions and Answers</h2>
 <ul>
 <li>General

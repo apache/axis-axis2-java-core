@@ -47,11 +47,8 @@ upgrades Axiom to version 1.2.9.</p>
 <h3>October 23, 2009 - Apache Axis2/Java Version 1.5.1 Released!</h3>
 <p>The 1.5.1 version fixes some <a href="http://issues.apache.org/jira/browse/AXIS2">bugs</a>, including most notably a connection starvation issue that would cause a large number of sockets stuck in CLOSE_WAIT or TIME_WAIT.</p>
 <p><b>PLEASE NOTE:</b> As of Axis2 1.5, we now <i>require</i> JDK 1.5 or above.  JDKs 1.4 or previous are no longer supported.</p>
-<p>[ <a href=
-"http://ws.apache.org/axis2/download.cgi"><strong>Download</strong></a>
-] | [ <a href="1_5_1/contents.html"><strong>Documents Home</strong></a>
-]</p>
-<p>Please see the <a href="http://ws.apache.org/axis/ref.html">Axis
+<p>[ <a href="download.cgi#1_5_1"><strong>Download</strong></a> ]</p>
+<p>Please see the <a href="refLib.html">Axis
 Reference Library</a> for a list of technical resources that should
 prove useful on this project.</p>
 <h3><em>Why Apache Axis2:</em></h3>
@@ -73,24 +70,24 @@ simultaneously.</p>
 XML-oriented than the older version. It is carefully designed to
 support the easy addition of plug-in "modules" that extend their
 functionality for features such as security and reliability. The
-<a href="http://ws.apache.org/axis2/modules/index.html">Modules</a>
+<a href="modules/index.html">Modules</a>
 currently available or under development include:</p>
 <ul>
 <li><a href=
 "http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsrm"
 target="_blank">WS-ReliableMessaging</a> - Supported by <a href=
-"http://ws.apache.org/sandesha/sandesha2/">Apache
+"http://axis.apache.org/axis2/java/sandesha/">Apache
 Sandesha2</a></li>
 <li><a href=
 "http://www-128.ibm.com/developerworks/library/specification/ws-tx/#coor"
 target="_blank">WS-Coordination</a> and <a href=
 "http://www-128.ibm.com/developerworks/library/specification/ws-tx/#atom"
 target="_blank">WS-AtomicTransaction</a> - Supported by <a href=
-"http://ws.apache.org/kandula/">Apache Kandula2</a></li>
+"http://axis.apache.org/axis2/java/kandula/">Apache Kandula2</a></li>
 <li><a href=
 "http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss"
 target="_blank">WS-Security</a> - Supported by <a href=
-"http://ws.apache.org/axis2/modules/rampart/1_2/security-module.html">
+"http://axis.apache.org/axis2/java/rampart/">
 Apache Rampart</a></li>
 <li><a href="http://www.w3.org/Submission/ws-addressing/" target=
 "_blank">WS-Addressing</a> -Module included as part of Axis2
@@ -179,9 +176,9 @@ Axis2.</p>
 <p style="margin-bottom: 0in"><strong>Add-ons</strong> - Several
 Web services specifications have been incorporated including
 <a href="http://ws.apache.org/wss4j/" target="_blank">WSS4J</a> for
-security (Apache Rampart), <a href="http://ws.apache.org/sandesha/"
+security (Apache Rampart), <a href="http://axis.apache.org/axis2/java/sandesha/"
 target="_blank">Sandesha</a> for reliable messaging, <a href=
-"http://ws.apache.org/kandula/" target="_blank">Kandula</a> which
+"http://axis.apache.org/axis2/java/kandula/" target="_blank">Kandula</a> which
 is an encapsulation of WS-Coordination, WS-AtomicTransaction and
 WS-BusinessActivity.</p>
 </li>
@@ -202,7 +199,7 @@ and lend us a hand! The Axis developer community welcomes your
 participation.</p>
 <p>Let us know what you think! Send your feedback on Axis2 to
 "<a href=
-"mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a>". Make
+"mailto:java-user@axis.apache.org">java-user@axis.apache.org</a>". Make
 sure to prefix the subject of the mail with [Axis2].</p>
 <h2>Features of Axis2 Latest Version</h2>
 <p>Apache Axis2 Version 1.4 comes with performance improvements and
@@ -259,7 +256,7 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 </ul>
 <h2><a name="Tools_included_in this_Release">Tools Included in This
 Release</a></h2>
-<p>[<a href="http://ws.apache.org/axis2/tools/index.html" target=
+<p>[<a href="tools/index.html" target=
 "_blank">Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>

@@ -52,9 +52,8 @@ could use some new features or fixes, please get involved and lend us a hand!
 The Axis developer community welcomes your participation.</p>
 
 <p>Let us know what you think! Send your feedback to "<a
-href="mailto:axis-user@ws.apache.org?subject=[Axis2]">axis-user@ws.apache.org</a>".
-(Subscription details are available on the <a
-href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.) Kindly
+href="mailto:java-user@axis.apache.org?subject=[Axis2]">java-user@axis.apache.org</a>".
+(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.) Kindly
 prefix the subject of the mail with [Axis2].</p>
 
 <h2>Getting Started</h2>
@@ -476,8 +475,7 @@ information.</p>
 <h3>Security</h3>
 
 <p>Axis2 provides Security support using <a
-href="http://ws.apache.org/axis2/modules/rampart/1_0/security-module.html">Apache
-Rampart</a>. Please refer to <a
+href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>. Please refer to <a
 href="../modules/wss4j/1_0/security-module.html" target="_blank">Securing
 SOAP Messages with Apache Rampart</a> for more information.</p>
 
