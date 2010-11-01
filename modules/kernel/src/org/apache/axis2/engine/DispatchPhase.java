@@ -57,6 +57,19 @@ public class DispatchPhase extends Phase {
     public DispatchPhase(String phaseName) {
         super(phaseName);
     }
+    
+    
+    private Boolean getDisableAck(MessageContext msgContext) throws AxisFault {
+    
+       // We should send an early ack to the transport whever possible, but some modules need
+       // to use the backchannel, so we need to check if they have disabled this code.
+       Boolean disableAck = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_RESPONSE_ACK);
+       if(disableAck == null) {
+          disableAck = (Boolean) (msgContext.getAxisService() != null ? msgContext.getAxisService().getParameterValue(Constants.Configuration.DISABLE_RESPONSE_ACK) : null);
+       }    
+       
+       return disableAck;
+    }
 
     public void checkPostConditions(MessageContext msgContext) throws AxisFault {
         EndpointReference toEPR = msgContext.getTo();
@@ -118,33 +131,39 @@ public class DispatchPhase extends Phase {
 
         // We should send an early ack to the transport whever possible, but some modules need
         // to use the backchannel, so we need to check if they have disabled this code.
-        Boolean disableAck = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_RESPONSE_ACK);
-        if(disableAck == null) {
-            disableAck = (Boolean) (msgContext.getAxisService() != null ? 
-                    msgContext.getAxisService().getParameterValue(Constants.Configuration.DISABLE_RESPONSE_ACK) : null);
-        }
-        
-        if(disableAck == null || disableAck.booleanValue() == false) {
-        	String mepString = msgContext.getAxisOperation().getMessageExchangePattern();
-        	if (isOneway(mepString)) {
-	            Object requestResponseTransport =
-	                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
-	            if (requestResponseTransport != null) {
-	                ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(msgContext);
-	            }
-	        } else if (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_OUT)
-	                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_OUT)
-	                || mepString.equals(WSDL2Constants.MEP_URI_IN_OUT)) { // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
-	            // then we don't need to keep the transport waiting.
-	            Object requestResponseTransport =
-	                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
-	            if (requestResponseTransport != null) {
-	                if (AddressingHelper.isReplyRedirected(msgContext)
-	                        && AddressingHelper.isFaultRedirected(msgContext)) {
-	                    ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(msgContext);
-	                }
-	            }
-	        }        
+        String mepString = msgContext.getAxisOperation().getMessageExchangePattern();
+
+        if (isOneway(mepString)) {
+            Object requestResponseTransport = msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+            if (requestResponseTransport != null) {
+
+                Boolean disableAck = getDisableAck(msgContext);                    
+                if (disableAck == null || disableAck.booleanValue() == false) {
+                    ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(msgContext);
+                }
+            }
+        } else if (AddressingHelper.isReplyRedirected(msgContext) && AddressingHelper.isFaultRedirected(msgContext)) {
+
+
+            if (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_OUT)
+                    || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_OUT)
+                    || mepString.equals(WSDL2Constants.MEP_URI_IN_OUT)) { 
+                // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
+                // then we don't need to keep the transport waiting.
+
+                Object requestResponseTransport = msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+                if (requestResponseTransport != null) {
+
+                    // We should send an early ack to the transport whever possible, but some modules need
+                    // to use the backchannel, so we need to check if they have disabled this code.
+                    Boolean disableAck = getDisableAck(msgContext);
+
+                    if (disableAck == null || disableAck.booleanValue() == false) {
+                        ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(msgContext);
+                    }
+                    
+                }
+            }        
         }
         
 
@@ -244,47 +263,49 @@ public class DispatchPhase extends Phase {
      */
     private void validateBindings(MessageContext msgctx) throws AxisFault {
         
-        AxisService service = msgctx.getAxisService();
-        
-        boolean disableREST = false;
-        Parameter disableRESTParameter = service
-                        .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
-        if (disableRESTParameter != null
-                        && JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
-                disableREST = true;
-        }
-        
-        boolean disableSOAP11 = false;
-        Parameter disableSOAP11Parameter = service
-                        .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP11);
-        if (disableSOAP11Parameter != null
-                        && JavaUtils.isTrueExplicitly(disableSOAP11Parameter.getValue())) {
-                disableSOAP11 = true;
-        }
-
-        boolean disableSOAP12 = false;
-        Parameter disableSOAP12Parameter = service
-                        .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
-        if (disableSOAP12Parameter != null
-                        && JavaUtils
-                                        .isTrueExplicitly(disableSOAP12Parameter.getValue())) {
-                disableSOAP12 = true;
-        }
-        
+        AxisService service = msgctx.getAxisService();        
+   
         if (msgctx.isDoingREST()) {
+            
+            boolean disableREST = false;
+            Parameter disableRESTParameter = service
+                            .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
+            if (disableRESTParameter != null
+                            && JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+                    disableREST = true;
+            }         
+            
             if (disableREST) {
                 throw new AxisFault(Messages.getMessage("bindingDisabled","Http"));
             }
         } else if (msgctx.isSOAP11()) {
+
+            boolean disableSOAP11 = false;
+            Parameter disableSOAP11Parameter = service
+                            .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP11);
+            if (disableSOAP11Parameter != null
+                            && JavaUtils.isTrueExplicitly(disableSOAP11Parameter.getValue())) {
+                    disableSOAP11 = true;
+            }         
+         
             if (disableSOAP11) {
                 throw new AxisFault(Messages.getMessage("bindingDisabled","SOAP11"));
             }
         } else {
+         
+            boolean disableSOAP12 = false;
+            Parameter disableSOAP12Parameter = service
+                            .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
+            if (disableSOAP12Parameter != null
+                            && JavaUtils
+                                            .isTrueExplicitly(disableSOAP12Parameter.getValue())) {
+                    disableSOAP12 = true;
+            }         
+         
             if(disableSOAP12) {
                 throw new AxisFault(Messages.getMessage("bindingDisabled","SOAP12"));  
             }
         }
-        
     }
 
     private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {
