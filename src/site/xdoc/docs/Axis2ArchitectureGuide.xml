@@ -457,7 +457,7 @@ message is directed to. Dispatchers always run on the
 dispatchers dispatch to a particular operation depending on various
 conditions like WS-Addressing information, URI information, SOAP
 action information, etc. ( See more information on <a href=
-"http://www.wso2.net/tutorials/axis2/java/2006/06/18/operation-service-message-is-destined-to">
+"http://wso2.org/library/176">
 Dispatching</a>)</li>
 </ol>
 <ul>
@@ -619,7 +619,7 @@ the following information.</p>
 <a name="modulearchive" id="modulearchive"></a>
 <h3>Module Archive</h3>
 <p>Module archive must have a META-INF/<a href=
-"resources/schemas/module.xsd">module.xml</a> file and dependent
+"../schemas/module.xsd">module.xml</a> file and dependent
 classes. The <em>module.xml</em> file has Module parameters and the
 Operations defined in the module.</p>
 <p>When the system starts up, Axis2 prompts the deployment model to

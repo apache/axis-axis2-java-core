@@ -37,12 +37,6 @@ supported by the other data binding techniques. On the downside,
 JiBX requires more setup than the other data binding techniques -
 in particular, you need to come up with a set of data classes and a
 binding definition in order to work with JiBX in Axis2.</p>
-<p>JiBX support for Axis2 and Web services in general is continuing
-to evolve. This page covers the basics of using JiBX with Axis2 as
-of the current release. Check the <a href=
-"http://www.sosnoski.com/jibx-wiki/space/axis2-jibx">JiBX Axis2
-Wiki page</a> for updated information about using JiBX with
-Axis2.</p>
 <h2>Content</h2>
 <ul>
 <li><a href="#intro">Introduction</a></li>
@@ -206,11 +200,7 @@ classes and corresponding JiBX binding definitions from an input
 schema, and also for generating binding+schema generation from
 existing code. These features will be integrated into the Axis2
 JiBX support when they are available. Check the <a href=
-"http://www.jibx.org">JiBX project site</a> for updates on JiBX,
-and the <a href=
-"http://www.sosnoski.com/jibx-wiki/space/axis2-jibx">JiBX Axis2
-Wiki page</a> for updated information about using JiBX with
-Axis2.</p>
+"http://www.jibx.org">JiBX project site</a> for updates on JiBX.</p>
 <h2>References</h2>
 <p><a href=
 "http://jibx.sourceforge.net/tutorial/binding-tutorial.html">JiBX:

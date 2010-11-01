@@ -144,7 +144,7 @@ parameters are converted into XML and put into the SOAP body.</p>
 <source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
 </source>
 <p>The result can be shown in the browser as follows:</p>
-<img src="/images/userguide/http-get-ws.jpg"/>
+<img src="images/userguide/http-get-ws.jpg"/>
 
 <p>For example, the following request,</p>
 <source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>

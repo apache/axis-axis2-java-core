@@ -385,23 +385,23 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
-"tools/1_1/eclipse/wsdl2java-plugin.html">eclipse
+"tools/eclipse/wsdl2java-plugin.html">eclipse
 plug-in</a><a>/</a> <a href=
-"tools/1_1/CodegenToolReference.html">Command line
+"tools/CodegenToolReference.html">Command line
 version</a><a>/</a><a href=
-"tools/1_1/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
+"tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
 IDEA plug-in</a><a>/</a><a href=
-"tools/1_1/maven-plugins/maven-wsdl2code-plugin.html">Maven2
+"tools/maven-plugins/maven-wsdl2code-plugin.html">Maven2
 WSDL2Code Plug-in</a></li>
 <li>Service Archive Wizard- <a href=
-"tools/1_1/eclipse/servicearchiver-plugin.html">eclipse
+"tools/eclipse/servicearchiver-plugin.html">eclipse
 plug-in</a>/ <a href=
-"tools/1_1/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
+"tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
 IntelliJ IDEA plug-in</a>/ <a href=
-"tools/1_1/maven-plugins/maven-aar-plugin.html">Maven2 AAR
+"tools/maven-plugins/maven-aar-plugin.html">Maven2 AAR
 Plug-in</a></li>
 <li>Java2WSDL- <a href=
-"tools/1_1/maven-plugins/maven-java2wsdl-plugin.html">Maven2
+"tools/maven-plugins/maven-java2wsdl-plugin.html">Maven2
 Java2WSDL Plug-in</a></li>
 </ol>
 <h2>Extension Modules</h2>
@@ -479,7 +479,7 @@ support</li>
 <li>Archived service deployment model</li>
 <li>Archived module deployment model supporting controlled
 extensibility with versioning support</li>
-<li><a href="1_1/installationguide.html#hot_deployment">Hot
+<li><a href="docs/installationguide.html#hot_deployment">Hot
 deployment</a></li>
 <li>WS-Policy driven code generation extensions</li>
 <li>Flexible service lifecyle model</li>
@@ -515,16 +515,16 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
-"../tools/1_0/eclipse/wsdl2java-plugin.html">eclipse
+"../tools/eclipse/wsdl2java-plugin.html">eclipse
 plug-in</a><a>/</a> <a href=
-"../tools/1_0/CodegenToolReference.html">Command line
+"../tools/CodegenToolReference.html">Command line
 version</a><a>/</a><a href=
-"../tools/1_0/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
+"../tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
 IDEA plug-in</a></li>
 <li>Service Archive Wizard- <a href=
-"../tools/1_0/eclipse/servicearchiver-plugin.html">eclipse
+"../tools/eclipse/servicearchiver-plugin.html">eclipse
 plug-in</a>/ <a href=
-"../tools/1_0/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
+"../tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
 IntelliJ IDEA plug-in</a></li>
 </ol>
 <h2>Extension Modules</h2>

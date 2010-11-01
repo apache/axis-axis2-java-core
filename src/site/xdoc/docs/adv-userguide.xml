@@ -474,10 +474,8 @@ information.</p>
 
 <h3>Security</h3>
 
-<p>Axis2 provides Security support using <a
-href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>. Please refer to <a
-href="../modules/wss4j/1_0/security-module.html" target="_blank">Securing
-SOAP Messages with Apache Rampart</a> for more information.</p>
+<p>WS-Security support for Axis2 is provided by <a
+href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>.</p>
 
 <h3>REST Web Service</h3>
 

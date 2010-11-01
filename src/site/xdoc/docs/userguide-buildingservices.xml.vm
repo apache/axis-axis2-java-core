@@ -376,8 +376,7 @@ Distribution</b></h3>
 <p>Finally, deploy the service by copying the SampleService
 directory to the webapps/axis2/WEB-INF/services directory on the
 servlet engine. You can check to make sure that it's been properly
-deployed by checking <a href=
-"http://%3Chost%3E:%3Cport%3E/axis2/services/listServices">http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices</a>.</p>
+deployed by checking http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices.</p>
 <a name="deployrun" id="deployrun"></a>
 <h2>Deploying and Running an Axis2 Service Created from WSDL</h2>
 <p>If you have a WSDL file, you can easily create and deploy a
@@ -593,8 +592,7 @@ use the administration tools. See the <a href=
 "webadminguide.html">Web Administrator's Guide</a> for more
 information.)</p>
 <p>To verify that the service has been properly deployed, check the
-list of services at <a href=
-"http://%3Chost%3E:%3Cport%3E/axis2/services/listServices">http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices</a>.</p>
+list of services at http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices.</p>
 <p><img alt="Checking the list of services" src=
 "images/fig06.jpg" /></p>
 <p>Now you should be able to access the service using any of the

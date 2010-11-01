@@ -25,8 +25,6 @@
 "HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
 <meta http-equiv="content-type" content="" />
 <title>POJO Web Services using Axis2</title>
-<link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
-media="all" />
 </head>
 <body lang="en" xml:lang="en">
 <h1>POJO Web Services using Apache Axis2</h1>
@@ -639,8 +637,7 @@ other goodies provided by the Spring framework.</p>
 "http://ws.apache.org/axis2/1_0/Axis2ArchitectureGuide.html">http://ws.apache.org/axis2/1_0/Axis2ArchitectureGuide.html</a></p>
 <p>Introduction to Apache Axis2-<a href=
 "http://www.redhat.com/magazine/021jul06/features/apache_axis2/">http://www.redhat.com/magazine/021jul06/features/apache_axis2/</a></p>
-<p>Working With Apache Axis2-<a href=
-"http://www.wso2.net/articles/axis2/java/2006/09/13/working-with-axis2">http://www.wso2.net/articles/axis2/java/2006/09/13/working-with-axis2</a></p>
+<p><a href="http://wso2.org/library/259">Working With Apache Axis2</a></p>
 <p>Apache Tomcat-<a href=
 "http://tomcat.apache.org/">http://tomcat.apache.org</a></p>
 <p>Spring Framework-<a href=

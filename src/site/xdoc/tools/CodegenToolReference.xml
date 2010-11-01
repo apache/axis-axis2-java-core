@@ -63,7 +63,7 @@ majority) there is another WSDL2Java class. One can choose to run
 the main classes directly or use one of the scripts to run the
 WSDL2Code and WSDL2Java appropriately. (the scripts are found in
 the bin directory of the <a href=
-"../../download/1_1/download.html#std-bin">Standard Binary
+"../download.cgi#std-bin">Standard Binary
 Distribution</a>)</p>
 <a name="cmdline" id="cmdline"></a>
 <h2>Command Line Version</h2>
