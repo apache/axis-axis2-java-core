@@ -80,7 +80,7 @@
             <item name="Project Team" href="team-list.html" />
             <item name="Issue Tracking" href="issue-tracking.html" />
             <item name="Source Code"
-                  href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/?root=Apache-SVN" />
+                  href="http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/" />
             <item name="Acknowledgements" href="thanks.html" />
             <item name="License"
                   href="http://www.apache.org/licenses/LICENSE-2.0.html" />

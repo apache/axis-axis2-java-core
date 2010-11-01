@@ -260,23 +260,23 @@ Release</a></h2>
 "_blank">Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
-<li>WSDL2WS- <a href="tools/1_2/eclipse/wsdl2java-plugin.html"
+<li>WSDL2WS- <a href="tools/eclipse/wsdl2java-plugin.html"
 target="_blank">eclipse plug-in</a><a>/</a> <a href=
-"tools/1_2/CodegenToolReference.html" target="_blank">Command line
+"tools/CodegenToolReference.html" target="_blank">Command line
 version</a><a>/</a><a href=
-"tools/1_2/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
+"tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
 target="_blank">IntelliJ IDEA plug-in</a><a>/</a><a href=
-"tools/1_2/maven-plugins/maven-wsdl2code-plugin.html" target=
+"tools/maven-plugins/maven-wsdl2code-plugin.html" target=
 "_blank">Maven2 WSDL2Code Plug-in</a></li>
 <li>Service Archive Wizard- <a href=
-"tools/1_2/eclipse/servicearchiver-plugin.html" target=
+"tools/eclipse/servicearchiver-plugin.html" target=
 "_blank">eclipse plug-in</a>/ <a href=
-"tools/1_2/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
+"tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
 target="_blank">IntelliJ IDEA plug-in</a>/ <a href=
-"tools/1_2/maven-plugins/maven-aar-plugin.html" target=
+"tools/maven-plugins/maven-aar-plugin.html" target=
 "_blank">Maven2 AAR Plug-in</a></li>
 <li>Java2WSDL- <a href=
-"tools/1_2/maven-plugins/maven-java2wsdl-plugin.html" target=
+"tools/maven-plugins/maven-java2wsdl-plugin.html" target=
 "_blank">Maven2 Java2WSDL Plug-in</a></li>
 </ol>
 <h2>Extension Modules</h2>

@@ -712,10 +712,7 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 <p>For more information on using JiBX with Axis2, see the <a href=
 "jibx/jibx-codegen-integration.html">JiBX code generation
-integration</a> details. You can also check the <a href=
-"http://www.sosnoski.com/jibx-wiki/space/axis2-jibx">JiBX Axis2
-Wiki page</a> for updated information about using JiBX with
-Axis2.</p>
+integration</a> details.</p>
 <a name="clients" id="clients"></a>
 <h2>Creating Clients</h2>
 <p>In this section, we'll look at four ways to create clients based
@@ -1100,7 +1097,5 @@ create Web services using a variety of different technologies.</p>
 <p><a href="Axis2ArchitectureGuide.html">Axis2 Architecture</a></p>
 <p>Introduction to Apache Axis2-<a href=
 "http://www.redhat.com/magazine/021jul06/features/apache_axis2/">http://www.redhat.com/magazine/021jul06/features/apache_axis2/</a></p>
-<p>Working With Apache Axis2-<a href=
-"http://www.wso2.net/articles/axis2/java/2006/09/13/working-with-axis2">http://www.wso2.net/articles/axis2/java/2006/09/13/working-with-axis2</a></p>
 </body>
 </html>

@@ -64,7 +64,7 @@ PGP</a></td>
 <td></td>
 </tr>
 <tr>
-<td><a href="../1_3/soapmonitor-module.html">SOAP Monitor</a></td>
+<td><a href="../docs/soapmonitor-module.html">SOAP Monitor</a></td>
 <td>SOAP Monitor utility provides a way for Web services developers
 to monitor the SOAP messages being sent/received without requiring
 any special configuration or restarting of the server</td>

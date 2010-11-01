@@ -133,9 +133,9 @@ WS-Security</a>, <a href=
 "http://xml.coverpages.org/ws-reliablemessaging20030313.pdf">WS-ReliableMessaging</a>,
 <a href="http://www.w3.org/2002/ws/addr/">WS-Addressing</a>,
 <a href=
-"http://dev2dev.bea.com/pub/a/2004/03/ws-coordination.html">WS-Coordination</a>,
+"http://docs.oasis-open.org/ws-tx/wscoor/2006/06">WS-Coordination</a>,
 and <a href=
-"ftp://www6.software.ibm.com/software/developer/library/WS-AtomicTransaction.pdf">
+"http://docs.oasis-open.org/ws-tx/wsat/2006/06">
 WS-Atomic Transaction</a> recommendations</li>
 <li>Use Axis2's modular structure to easily add support for new
 recommendations as they emerge</li>
