@@ -40,8 +40,7 @@ For experienced users of Apache Axis2, we recommend the <a href=
 <h1>Introducing Axis2</h1>
 <p>This section introduces Axis2 and its structure, including an
 explanation of various directories/files included in the latest
-Axis2 <a href=
-"http://ws.apache.org/axis2/download.cgi">download</a>.</p>
+Axis2 <a href="../download.cgi">download</a>.</p>
 <h2>Content</h2>
 <ul>
 <li><a href="userguide.html#intro"><strong>Introducing
@@ -134,9 +133,9 @@ WS-Security</a>, <a href=
 "http://xml.coverpages.org/ws-reliablemessaging20030313.pdf">WS-ReliableMessaging</a>,
 <a href="http://www.w3.org/2002/ws/addr/">WS-Addressing</a>,
 <a href=
-"http://dev2dev.bea.com/pub/a/2004/03/ws-coordination.html">WS-Coordination</a>,
+"http://docs.oasis-open.org/ws-tx/wscoor/2006/06">WS-Coordination</a>,
 and <a href=
-"ftp://www6.software.ibm.com/software/developer/library/WS-AtomicTransaction.pdf">
+"http://docs.oasis-open.org/ws-tx/wsat/2006/06">
 WS-Atomic Transaction</a> recommendations</li>
 <li>Use Axis2's modular structure to easily add support for new
 recommendations as they emerge</li>
@@ -154,7 +153,7 @@ something like this:</p>
 <p>The sending application creates the original SOAP message, an
 XML message that consists of headers and a body. (For more
 information on SOAP, see "<a href=
-"userguide-introtoservices.html/">Introduction to Services</a>".)
+"userguide-introtoservices.html">Introduction to Services</a>".)
 If the system requires the use of WS* recommendations such as
 WS-Addressing or WS-Security, the message may undergo additional
 processing before it leaves the sender. Once the message is ready,
@@ -351,7 +350,7 @@ README.txt
 release-notes.html
 </pre>
 <p>The javadocs directory includes all the standard <a href=
-"../../javadocs/index.html">API documentation</a> for the Axis2
+"../api/index.html">API documentation</a> for the Axis2
 API, with other documentation (like this document) in the xdocs
 directory.</p>
 <a name="clients" id="clients"></a>

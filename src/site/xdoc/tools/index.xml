@@ -42,7 +42,7 @@ supported by Axis2.</p>
 				</tr>
 				<tr>
 					<td>
-						<a href="../tools/1_4/CodegenToolReference.html">Code Generator
+						<a href="CodegenToolReference.html">Code Generator
 Tool- Command Line &amp; Ant Task</a>
 					</td>
 					<td>Tool consists of a command line version and an Ant Task. It is
@@ -53,12 +53,12 @@ to run the WSDL2Code and WSDL2Java appropriately.</td>
 					<td>1.4</td>
 					<td/>
 					<td>This tool is bundled with the Axis2 Standard Binary
-Distribution found <a href="http://ws.apache.org/axis2/download.cgi">here</a>
+Distribution found <a href="../download.cgi#std-bin">here</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<a href="../tools/1_4/eclipse/servicearchiver-plugin.html">Service Archive
+						<a href="eclipse/servicearchiver-plugin.html">Service Archive
 Wizard - Eclipse Plug-in</a>
 					</td>
 					<td>As part of the Axis2 tool set, the service archive generator is
@@ -79,7 +79,7 @@ PGP</a>
 				</tr>
 				<tr>
 					<td>
-						<a href="../tools/1_4/eclipse/wsdl2java-plugin.html">Code
+						<a href="eclipse/wsdl2java-plugin.html">Code
 Generator Wizard - Eclipse Plug-in</a>
 					</td>
 					<td>Axis2 code generator comes built-in with an <a href="http://www.eclipse.org/">eclipse</a> plug-in. This can be used to
@@ -99,7 +99,7 @@ PGP</a>
 				</tr>
 				<tr>
 					<td>
-						<a href="../tools/1_4/idea/Idea_plug-in_userguide.html">Code
+						<a href="idea/Idea_plug-in_userguide.html">Code
 Generator Wizard - IntelliJ IDEA Plug-in</a>
 					</td>
 					<td>Using this tool one can create service archives that can be
@@ -136,7 +136,7 @@ PGP</a>
 				</tr>
 				<tr>
 					<td>
-						<a href="../tools/1_4/maven-plugins/maven-aar-plugin.html">Maven2 AAR
+						<a href="maven-plugins/maven-aar-plugin.html">Maven2 AAR
 Plug-in</a>
 					</td>
 					<td>This plugin generates an Axis2 service file (AAR file).</td>
@@ -171,7 +171,7 @@ PGP</a>
 				</tr>
 				<tr>
 					<td>
-						<a href="../tools/1_4/maven-plugins/maven-java2wsdl-plugin.html">Maven2
+						<a href="maven-plugins/maven-java2wsdl-plugin.html">Maven2
 Java2WSDL Plug-in</a>
 					</td>
 					<td>
@@ -192,7 +192,7 @@ PGP</a>
 				</tr>
 				<tr>
 					<td>
-						<a href="../tools/1_4/maven-plugins/maven-wsdl2code-plugin.html">Maven2
+						<a href="maven-plugins/maven-wsdl2code-plugin.html">Maven2
 WSDL2Code Plug-in</a>
 					</td>
 					<td>

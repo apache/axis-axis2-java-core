@@ -34,8 +34,7 @@ an Ant Task. This document will list the command line references
 and Ant task references. Also in detail, this document shows how to
 build file using custom Ant task and invoking the Code Generator
 from Ant.</p>
-<p>This tool is bundled with the <a href=
-"http://ws.apache.org/axis2/download.cgi">Axis2 Binary
+<p>This tool is bundled with the <a href="../download.cgi#std-bin">Axis2 Binary
 Distribution</a>.</p>
 <h2>Content</h2>
 <ul>
@@ -64,7 +63,7 @@ majority) there is another WSDL2Java class. One can choose to run
 the main classes directly or use one of the scripts to run the
 WSDL2Code and WSDL2Java appropriately. (the scripts are found in
 the bin directory of the <a href=
-"../../download/1_1/download.html#std-bin">Standard Binary
+"../download.cgi#std-bin">Standard Binary
 Distribution</a>)</p>
 <a name="cmdline" id="cmdline"></a>
 <h2>Command Line Version</h2>

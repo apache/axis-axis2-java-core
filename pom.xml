@@ -270,7 +270,7 @@
             <id>chathura</id>
             <email>chathura AT opensource.lk</email>
             <organization>Indiana University, USA</organization>
-            <url>www.apache.org/~chathura</url>
+            <url>http://www.apache.org/~chathura</url>
         </developer>
         <developer>
             <name>David Illsley</name>
@@ -505,7 +505,7 @@
                     <version>2.7</version>
                     <configuration>
                         <reportOutputDirectory>${project.reporting.outputDirectory}/api</reportOutputDirectory>
-                        <additionalJOption>-J-Xmx128m</additionalJOption>
+                        <additionalJOption>-J-Xmx256m</additionalJOption>
                         <links>
                             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                             <link>http://java.sun.com/javaee/5/docs/api/</link>

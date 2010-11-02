@@ -19,6 +19,13 @@
   -->
 
 <project name="Apache Axis2">
+    <!-- Explicitly set the skin to avoid the issue described in MNG-3139,
+         which may occur sporadically -->
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-default-skin</artifactId>
+        <version>1.0</version>
+    </skin>
     <bannerLeft>
         <name>Apache Axis2</name>
         <src>http://www.apache.org/images/asf_logo_wide.png</src>
@@ -73,7 +80,7 @@
             <item name="Project Team" href="team-list.html" />
             <item name="Issue Tracking" href="issue-tracking.html" />
             <item name="Source Code"
-                  href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/?root=Apache-SVN" />
+                  href="http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/" />
             <item name="Acknowledgements" href="thanks.html" />
             <item name="License"
                   href="http://www.apache.org/licenses/LICENSE-2.0.html" />

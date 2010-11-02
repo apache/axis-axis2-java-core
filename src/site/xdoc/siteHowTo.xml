@@ -37,10 +37,10 @@ the documentation. Make sure you don't forget to add MAVEN_HOME/bin
 directory in the path.</p>
 <h2>Checking out Axis 2.0</h2>
 <p>Checkout the <a href=
-"http://svn.apache.org/repos/asf/webservices/axis2/trunk/java">latest
+"http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk">latest
 source</a> using your favorite SVN client. If you are a committer,
 get a <a href=
-"https://svn.apache.org/repos/asf/webservices/axis2/trunk/java">commiter
+"https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk">commiter
 check out.</a></p>
 <h2>Building the Site</h2>
 <p>cd to modules/documentation and type <i>mvn install</i> The built

@@ -113,10 +113,8 @@ and make sure all the Axis2 libraries are on the CLASSPATH.</li>
 <p><b>The Long Story:</b></p>
 <p>Start by installing a suitable container, such as <a href=
 "http://tomcat.apache.org/">Apache Tomcat</a>. Any J2EE server will
-do. To install Apache Axis2 on the server, download the Axis2 WAR
-distribution from <a href=
-"http://ws.apache.org/axis2/download.cgi">http://ws.apache.org/axis2/download.cgi</a>
-and place the axis2.war file in the server's webapps directory. The
+do. To install Apache Axis2 on the server, <a href="../download.cgi">download</a> the Axis2 WAR
+distribution and place the axis2.war file in the server's webapps directory. The
 server will then expand the distribution into its proper structure,
 as seen in the <a href="userguide.html#hierarchy">earlier
 section</a>.</p>

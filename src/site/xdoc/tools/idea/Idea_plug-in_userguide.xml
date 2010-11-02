@@ -54,8 +54,7 @@ Generation</a></li>
 service archives which can be deployed in Axis2, and generate java
 classes files from WSDL files. The following section describes the
 installation procedure followed by the usage of the plug-in.</p>
-<p><b>Note:</b> This plug-in is made up with <a href=
-"http://apidoc.org/docset/16">IDEA Open API</a> which will be
+<p><b>Note:</b> This plug-in is made up with IDEA Open API which will be
 compatible with idea version since build 4121. The plugin also be
 compatible with all the builds after build number 4121 and also the
 java version should be 1.4 or higher. The provided screen shots may

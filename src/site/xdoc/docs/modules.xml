@@ -35,9 +35,8 @@ Guide</a> for more details about modules in Axis2). Let's create a
 custom module and deploy it to MyService, which we created
 earlier.</p>
 <p>Send your feedback or questions to: <a href=
-"mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a>.
-( Subscription details are available on the <a href=
-"http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.)
+"mailto:java-dev@axis.apache.org?subject=[Axis2]">java-dev@axis.apache.org</a>.
+( Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.)
 Kindly prefix subject with [Axis2].</p>
 <h2>Content List</h2>
 <ul>

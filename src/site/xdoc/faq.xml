@@ -35,14 +35,12 @@ just what the doctor ordered.</p>
 to:</p>
 <ul>
 <li>Developers : <a href=
-"mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></li>
+"mailto:java-dev@axis.apache.org">java-dev@axis.apache.org</a></li>
 <li>Users : <a href=
-"mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></li>
+"mailto:java-user@axis.apache.org">java-user@axis.apache.org</a></li>
 </ul>
-<p>Prefix subject with [Axis2]. <a href=
-"http://ws.apache.org/axis2/mail-lists.html">Subscribe</a> to our
-mailing lists.<a href=
-"http://ws.apache.org/axis2/mail-lists.html"></a></p>
+<p>Prefix subject with [Axis2]. <a href="mail-lists.html">Subscribe</a> to our
+mailing lists.</p>
 <h2>Content of Questions and Answers</h2>
 <ul>
 <li>General
@@ -91,7 +89,7 @@ Axis2. What should I do?</strong><br />
 you are using a released version of Axis2, then there is a
 possibility that your problem has already being fixed in the latest
 code. <a href=
-"http://ws.zones.apache.org/dist/axis2/nightly/">Download Axis2
+"http://repository.apache.org/snapshots/org/apache/axis2/">Download Axis2
 nightly builds</a> and test again.</p>
 <p>If the problem still persists, then try to search for your
 question in our <a href=
@@ -171,7 +169,7 @@ implementation class, then the scenario is as follows</p>
 <li><a name="c1" id="c1"></a><strong>I want to do Request-Response
 Messaging, Where should I look?</strong><br />
 <p>Look at the <a href=
-"https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java"
+"https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/kernel/src/org/apache/axis2/client/ServiceClient.java"
 target="_blank">ServiceClient</a> class, for more information
 please read the <a href="docs/adv-userguide.html"
 target="_blank">User's Guide</a></p>
@@ -180,7 +178,7 @@ target="_blank">User's Guide</a></p>
 Messaging, Where should I look?</strong><br />
 <p>From Axis2 0.94 onwards, both request-response and one way
 messaging will be handled by <a href=
-"https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java"
+"https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/kernel/src/org/apache/axis2/client/ServiceClient.java"
 target="_blank">ServiceClient</a>.</p>
 </li>
 <li><strong>When I try to do a non blocking call with</strong>

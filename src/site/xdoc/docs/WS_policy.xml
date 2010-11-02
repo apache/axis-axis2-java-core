@@ -34,9 +34,8 @@
 <p>This document gives you an introduction to the role of Web
 services policy in Apache Axis2.</p>
 <p>Send your feedback to: <a href=
-"mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a>.
-(Subscription details are available on the <a href=
-"http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.)
+"mailto:java-dev@axis.apache.org?subject=[Axis2]">java-dev@axis.apache.org</a>.
+(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.)
 Kindly prefix every email subject with [Axis2].</p>
 <h2>Content</h2>
 <ul>
@@ -179,7 +178,7 @@ you send us in this regard. Keep on contributing!</p>
 <a href="http://ws.apache.org/commons/neethi/index.html" target=
 "_blank">Home Page</a></li>
 <li>Sanka Samaranayake, March 2006. <a href=
-"http://www.wso2.net/articles/neethi/java/2006/01/24/ws-policy"
+"http://wso2.org/library/23"
 target="_blank">Web services Policy - Why, What &amp; How</a></li>
 <li><a href=
 "http://svn.apache.org/viewcvs.cgi/webservices/commons/trunk/modules/neethi/"

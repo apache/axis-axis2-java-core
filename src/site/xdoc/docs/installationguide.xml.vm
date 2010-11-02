@@ -25,8 +25,6 @@
 "HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
 <meta http-equiv="content-type" content="" />
 <title>Axis2 Installation Guide</title>
-<link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
-media="all" />
 </head>
 <body lang="en" xml:lang="en">
 <h1 align="center">Apache Axis2 Installation Guide</h1>
@@ -35,9 +33,9 @@ packages, system prerequisites and setting up environment variables
 and tools followed by detailed instructions on installation
 methods.</p>
 <p><i>Send your feedback to: <a href=
-"mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a></i>
+"mailto:java-dev@axis.apache.org?subject=[Axis2]">java-dev@axis.apache.org</a></i>
 mailing list. (Subscription details are available on <a href=
-"http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.)
+"../mail-lists.html">Axis2 site</a>.)
 Kindly prefix every email subject with [Axis2].</p>
 <h2>Contents</h2>
 <ul>
@@ -83,7 +81,7 @@ Distribution.</p>
 <p><a href="../download.cgi">
 Download</a> distribution packages of the Apache Axis2
 ${axis2_version} version (latest).</p>
-<p><a href="http://ws.apache.org/axis2/download.cgi">Download</a>
+<p><a href="../download.cgi">Download</a>
 distribution packages of all versions of Apache Axis2.</p>
 <p>The distribution packages provided are as follows:</p>
 <a name="std-bin" id="std-bin"></a>

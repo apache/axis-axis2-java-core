@@ -96,17 +96,13 @@ running an Axis2 service created from WSDL</a></li>
 Study</strong></a></li>
 </ul>-->
 <h2>Resources</h2>
-<p>Axis2 Architecture-<a href="Axis2ArchitectureGuide.html">http://ws.apache.org/axis2/docs/Axis2ArchitectureGuide.html</a></p>
-<p>XML processing with AXIOM-<a href=
-"http://ws.apache.org/commons/axiom/OMTutorial.html">http://ws.apache.org/commons/axiom/OMTutorial.html</a></p>
-<p>RESTful Web Services-<a href="rest-ws.html">http://ws.apache.org/axis2/docs/rest-ws.html</a></p>
-<p>HTTP Transports-<a href="http-transport.html">http://ws.apache.org/axis2/docs/http-transport.html</a></p>
-<p>MTOM with Axis2-<a href="mtom-guide.html">http://ws.apache.org/axis2/docs/mtom-guide.html</a></p>
-<p>Securing SOAP Messages with Apache Rampart- <a href=
-"../modules/rampart/security-module.html">http://ws.apache.org/axis2/modules/rampart/security-module.html</a></p>
-<p>SOAPMonitor-<a href=
-"soapmonitor-module.html">http://ws.apache.org/axis2/docs/soapmonitor-module.html</a></p>
-<p>Apache Axis2 Advance User's Guide- <a href=
-"adv-userguide.html">http://ws.apache.org/axis2/docs/adv-userguide.html</a></p>
+<p><a href="Axis2ArchitectureGuide.html">Axis2 Architecture</a></p>
+<p><a href="http://ws.apache.org/commons/axiom/OMTutorial.html">XML processing with AXIOM</a></p>
+<p><a href="rest-ws.html">RESTful Web Services</a></p>
+<p><a href="http-transport.html">HTTP Transports</a></p>
+<p><a href="mtom-guide.html">MTOM with Axis2</a></p>
+<p><a href="../modules/rampart/security-module.html">Securing SOAP Messages with Apache Rampart</a></p>
+<p><a href="soapmonitor-module.html">SOAPMonitor</a></p>
+<p><a href="adv-userguide.html">Apache Axis2 Advance User's Guide</a></p>
 </body>
 </html>

@@ -41,8 +41,7 @@ etc. is by far the most important role. It's your feedback that
 allows the technology to evolve.</p>
 <ul>
 <li><a href="mail-lists.html">Join Mailing Lists</a></li>
-<li><a href="http://ws.apache.org/axis2/download.cgi" target=
-"_blank">Download Binary Builds</a></li>
+<li><a href="download.cgi" target="_blank">Download Binary Builds</a></li>
 <li><a href="http://issues.apache.org/jira/browse/AXIS2">Report
 bugs/Request additional features</a></li>
 </ul>
@@ -55,7 +54,7 @@ steps (in addition to the ones above) to get you started:</p>
 href="release-process.html">release process</a></li>
 <li>Review the <a href="refLib.html">reference library</a></li>
 <li><a href=
-"http://svn.apache.org/viewvc/webservices/axis2/">
+"http://svn.apache.org/viewvc/axis/axis2/java/core/">
 View the Source Code</a></li>
 <li><a href="svn.html">Access SVN Repository</a></li>
 </ul>
