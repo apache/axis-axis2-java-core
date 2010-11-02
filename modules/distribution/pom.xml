@@ -130,6 +130,13 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
+            <artifactId>mex</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>impl</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-corba</artifactId>
             <version>${project.version}</version>
         </dependency>
