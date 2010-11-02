@@ -1,0 +1,146 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="generator" content=
+"HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
+<meta http-equiv="content-type" content="" />
+<title>:: Axis2 Modules ::</title>
+</head>
+<body lang="en" xml:lang="en">
+<h1>Apache Axis2 Modules</h1>
+<p>Axis2 architecture is flexible enough to extend its
+functionalities using modules. This page is maintained to keep
+track of the relevant modules that are developed on top of
+Axis2.</p>
+<table width="675" border="1" align="center" cellpadding="1">
+<tbody>
+<tr>
+<th width="68" scope="col">Name</th>
+<th width="147" scope="col">Description</th>
+<th width="52" scope="col">Version</th>
+<th width="80" scope="col">Compatible Axis2 version</th>
+<th width="97" scope="col">Downloads</th>
+<th width="191" scope="col">Comments</th>
+</tr>
+<tr>
+<td><a href="addressing/index.html">Addressing</a></td>
+<td>This is an implementation of WS-Addressing submission version
+(2004-08) and WS-Addressing 2005-08 versions.</td>
+<td>1.4</td>
+<td>1.4</td>
+<td><a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/addressing/1_4/addressing-1.4.mar"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/addressing/1_4/addressing-1.4.mar">
+mar</a> <a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/addressing/1_4/addressing-1.4.mar.md5"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/addressing/1_4/addressing-1.4.mar.md5">
+MD5</a> <a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/addressing/1_4/addressing-1.4.mar.asc"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/addressing/1_4/addressing-1.4.mar.asc">
+PGP</a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../1_3/soapmonitor-module.html">SOAP Monitor</a></td>
+<td>SOAP Monitor utility provides a way for Web services developers
+to monitor the SOAP messages being sent/received without requiring
+any special configuration or restarting of the server</td>
+<td>1.4</td>
+<td>1.4</td>
+<td><a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/soapmonitor/1_4/soapmonitor-1.4.mar"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/soapmonitor/1_4/soapmonitor-1.4.mar">
+zip</a> <a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/soapmonitor/1_4/soapmonitor-1.4.mar.md5"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/soapmonitor/1_4/soapmonitor-1.4.mar.md5">
+MD5</a> <a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/soapmonitor/1_4/soapmonitor-1.4.mar.asc"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/axis2/modules/soapmonitor/1_4/soapmonitor-1.4.mar.asc">
+PGP</a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href=
+"http://ws.apache.org/sandesha/sandesha2/index.html">Sandesha2</a></td>
+<td>An implementation of WS-RM specification February 2005</td>
+<td>1.3</td>
+<td>1.3</td>
+<td><a href=
+"http://apache.hoxt.com/ws/sandesha2/1_3/sandesha2-1.3-bin.zip"
+title=
+"http://apache.hoxt.com/ws/sandesha2/1_3/sandesha2-1.3-bin.zip">zip</a>
+<a href=
+"http://www.apache.org/dist/ws/sandesha2/1_3/sandesha2-1.3-bin.zip.md5"
+title=
+"http://www.apache.org/dist/ws/sandesha2/1_3/sandesha2-1.3-bin.zip.md5">
+MD5</a> <a href=
+"http://www.apache.org/dist/ws/sandesha2/1_3/sandesha2-1.3-bin.zip.asc"
+title=
+"http://www.apache.org/dist/ws/sandesha2/1_3/sandesha2-1.3-bin.zip.asc">
+PGP</a></td>
+<td>Click <a href=
+"http://people.apache.org/repo/m1-snapshot-repository/org.apache.sandesha2/">
+here</a> to get the Sandesha2 nightly builds compatible with the
+latest Axis2 SNAPSHOT.</td>
+</tr>
+<tr>
+<td><a href="http://ws.apache.org/rampart/">Rampart</a></td>
+<td>The WS-Security and WS-SecureConversation implementation for
+axis2. Now with a new configuration model based on
+WS-SecurityPolicy</td>
+<td>1.3</td>
+<td>1.3</td>
+<td><a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/rampart/1_3/rampart-1.3.zip"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/rampart/1_3/rampart-1.1.zip">
+Distro zip</a> <a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/rampart/1_3/rampart-1.3.zip.md5"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/rampart/1_3/rampart-1.3.zip.md5">
+MD5</a> <a href=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/rampart/1_3/rampart-1.3.zip.asc"
+title=
+"http://www.apache.org/dyn/mirrors/mirrors.cgi/ws/rampart/1_3/rampart-1.3.zip.asc">
+PGP</a></td>
+<td>Please follow the instructions in the README.txt available in
+the rampart-1.3.zip file to copy the required libraries to the main
+"lib" dir of Axis2.
+<p><strong>Note</strong>: In Axis2 v1.3 to run Rampart v1.3
+samples, change the addressing mar value to adressing-1.3.mar as
+given below; <code>&lt;property name="addressing.mar"
+value="addressing-1.3.mar"/&gt;</code> in
+..\rampart-1.3\samples\basic\build.xml</p>
+</td>
+</tr>
+</tbody>
+</table>
+<br />
+</body>
+</html>

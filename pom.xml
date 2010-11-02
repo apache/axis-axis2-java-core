@@ -104,6 +104,52 @@
             <build>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>1.0-beta-1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <!-- We need Maven 2.1 because the prepare-package phase
+                                             doesn't exist in Maven 2.0 -->
+                                        <requireMavenVersion>
+                                            <version>2.1.0</version>
+                                        </requireMavenVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <!-- Configure an additional execution. The configuration
+                             is the same as the one specified together with the execution
+                             in the pre-site phase.  -->
+                        <executions>
+                            <execution>
+                                <id>distribution-javadoc</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>site</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
                             <execution>
@@ -117,6 +163,18 @@
                                         <goal>single</goal>
                                     </goals>
                                     <skipAssembly>true</skipAssembly>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>package-other-distributions</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/doc.xml</descriptor>
+                                    </descriptors>
                                 </configuration>
                             </execution>
                         </executions>
@@ -432,6 +490,8 @@
         </snapshotRepository>
     </distributionManagement>
     <build>
+        <!-- Note: the pluginManagement in axis2-parent doesn't apply here; we
+             need to define our own! -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -439,6 +499,23 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>1.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.7</version>
+                    <configuration>
+                        <reportOutputDirectory>${project.reporting.outputDirectory}/api</reportOutputDirectory>
+                        <additionalJOption>-J-Xmx128m</additionalJOption>
+                        <links>
+                            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                            <link>http://java.sun.com/javaee/5/docs/api/</link>
+                            <link>http://jaxen.codehaus.org/apidocs/</link>
+                        </links>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2-beta-5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -481,11 +558,9 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <!-- Note: the pluginManagement in axis2-parent doesn't apply here; thus
-                     we need to specify the version if we want a predictable build! -->
-                <version>2.2-beta-5</version>
                 <executions>
                     <execution>
+                        <id>package-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -498,6 +573,31 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>site-javadoc</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <!-- These features are disabled since they cause "mvn site" to hang -->
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
