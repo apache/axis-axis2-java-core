@@ -75,7 +75,8 @@
 				<exclude name="**servlet**" />
 				<exclude name="ant*.jar" />
 				<exclude name="axis2-adb-codegen*.jar"/>
-				<exclude name="axis2-codegen*.jar"/>
+				<!-- codegen is required for Rampart because of AXIS2-4265 -->
+				<!-- exclude name="axis2-codegen*.jar"/ -->
 				<exclude name="jibx-bind*.jar"/>
 			</lib>
 			<webinf dir="${temp}/WEB-INF" />
