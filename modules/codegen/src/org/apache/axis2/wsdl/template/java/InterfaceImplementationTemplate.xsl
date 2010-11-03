@@ -71,7 +71,7 @@
                 counter = 0;
             }
             counter = counter + 1; 
-            return java.lang.Long.toString(System.currentTimeMillis()) + "_" + counter;
+            return java.lang.Long.toString(java.lang.System.currentTimeMillis()) + "_" + counter;
         }
 
     
