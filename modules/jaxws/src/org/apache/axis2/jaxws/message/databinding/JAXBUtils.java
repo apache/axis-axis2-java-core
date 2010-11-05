@@ -294,24 +294,12 @@ public class JAXBUtils {
                     
                     int numPackages = validContextPackages.size();
                     
-                    ClassLoader tryCl = cl;
                     contextValue = createJAXBContextValue(validContextPackages, 
-                            cl, 
+                            clKey, 
                             forceArrays, 
                             properties, 
                             classRefs);
-
-                    // If we don't get all the classes, try the cached classloader 
-                    if (cacheKey != null && numPackages != validContextPackages.size()) {
-                        tryCl = cacheKey;
-                        validContextPackages = new TreeSet<String>(contextPackages);
-                        classRefs = pruneDirectives(validContextPackages);
-                        contextValue = createJAXBContextValue(validContextPackages, 
-                                cacheKey, 
-                                forceArrays, 
-                                properties, 
-                                classRefs);
-                    }
+                    
                     synchronized (jaxbMap) {
                         // Add the context value with the original package set
                         ConcurrentHashMap<ClassLoader, JAXBContextValue> map1 = null;
@@ -575,45 +563,63 @@ public class JAXBUtils {
 
         // The code above may have removed some packages from the list. 
         // Retry our lookup with the updated list
-        String key = contextPackages.toString();
-        ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
-        SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> softRef = jaxbMap.get(key);
-        if (softRef != null) {
-            innerMap = softRef.get();
-        }
-        
-        if (innerMap != null) {
-            contextValue = innerMap.get(cl);
-            if (forceArrays &&
-                    contextValue != null && 
-                    contextValue.constructionType != JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS) {
-                if(log.isDebugEnabled()) {
-                    log.debug("Found a JAXBContextValue with constructionType=" + 
-                            contextValue.constructionType + "  but the caller requested a JAXBContext " +
-                    " that includes arrays.  A new JAXBContext will be built");
+        if (contextConstruction) {
+            if (log.isDebugEnabled()) {
+                log.debug("Recheck Cache Start: Some packages have been removed from the list.  Rechecking cache.");
+            }
+            String key = contextPackages.toString();
+            ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
+            SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> softRef = jaxbMap.get(key);
+            if (softRef != null) {
+                innerMap = softRef.get();
+            }
+
+            if (innerMap != null) {
+                contextValue = innerMap.get(cl);
+                if (forceArrays &&
+                        contextValue != null && 
+                        contextValue.constructionType != JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Found a JAXBContextValue with constructionType=" + 
+                                contextValue.constructionType + "  but the caller requested a JAXBContext " +
+                        " that includes arrays.  A new JAXBContext will be built");
+                    }
+                    contextValue = null;
+                } 
+
+                if (contextValue != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Successfully found JAXBContext with updated context list:" +
+                                contextValue.jaxbContext.toString());
+                    }
+                    return contextValue;
                 }
-                contextValue = null;
-            } 
-            
-            if (contextValue != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Successfully found JAXBContext with updated context list:" +
-                            contextValue.jaxbContext.toString());
-                }
-                return contextValue;
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Recheck Cache End: Did not find a JAXBContext.  Will build a new JAXBContext.");
             }
         }
 
         // CONTEXT construction
         if (contextConstruction) {
+            if (log.isDebugEnabled()) {
+                log.debug("Try building a JAXBContext using the packages only.");
+            }
             JAXBContext context = createJAXBContextUsingContextPath(contextPackages, cl, classRefs);
             if (context != null) {
                 contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CONTEXT_PATH);
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Building a JAXBContext with packages only success=" + (contextValue != null));
             }
         }
 
         // CLASS construction
         if (contextValue == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Try building a JAXBContext using a list of classes.");
+                log.debug("Start finding classes");
+            }
             it = contextPackages.iterator();
             List<Class> fullList = new ArrayList<Class>();
             while (it.hasNext()) {
@@ -623,6 +629,9 @@ public class JAXBUtils {
             //Lets add all common array classes
             addCommonArrayClasses(fullList);
             Class[] classArray = fullList.toArray(new Class[0]);
+            if (log.isDebugEnabled()) {
+                log.debug("End finding classes");
+            }
             JAXBContext context = JAXBContext_newInstance(classArray, cl, properties, classRefs);
             if (context != null) {
                 if (forceArrays) {
@@ -854,12 +863,11 @@ public class JAXBUtils {
             if (cls != null) {
                 return true;
             }
+        } catch (Throwable e) {
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
             //does not extend Exception. So we will absorb any Throwable exception here.
-        } catch (Throwable e) {
             if (log.isDebugEnabled()) {
                 log.debug("ObjectFactory Class Not Found " + e);
-                log.trace("...caused by " + e.getCause() + " " + JavaUtils.stackToString(e));
             }
         }
 
@@ -867,13 +875,12 @@ public class JAXBUtils {
             Class cls = forName(p + ".package-info", false, cl);
             if (cls != null) {
                 return true;
-            }
+            }  
+        } catch (Throwable e) {
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
             //does not extend Exception. So we will absorb any Throwable exception here.
-        } catch (Throwable e) {
             if (log.isDebugEnabled()) {
                 log.debug("package-info Class Not Found " + e);
-                log.trace("...caused by " + e.getCause() + " " + JavaUtils.stackToString(e));
             }
         }
 
