@@ -522,7 +522,17 @@ class OperationDescriptionImpl
         
                 AxisMessage faultMessage = new AxisMessage();
                 String faultName = faultDesc.getName();
+                
+                if (faultName == null || faultName.equals("")) {
+                    faultName = faultDesc.getExceptionClassName();
+                    // Remove package name to get just class name
+                    faultName = faultName.substring((faultName.lastIndexOf('.'))+1);
+                }
+                
                 faultMessage.setName(faultName);
+                if (log.isDebugEnabled()) {
+                    log.debug("Set faultName = "+faultName+" for faultMessage = "+faultMessage+" and faultDesc = "+faultDesc);
+                }
                 
                 String faultAction = 
                         WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
@@ -530,10 +540,6 @@ class OperationDescriptionImpl
                                         operationName, 
                                         faultMessage.getName());
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Default faultAction = "+faultAction);
-                }
-                
                 if (log.isDebugEnabled()) {
                     log.debug("Default faultAction = "+faultAction);
                 }
@@ -572,18 +578,9 @@ class OperationDescriptionImpl
                             log.debug("faultAction value = "+faultActionString);
                         }
 
-                        if (faultActionString == null || faultActionString.equals("")) {
-                            faultActionString = 
-                                WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
-                                        portTypeName, 
-                                        operationName, 
-                                        className.substring((className.lastIndexOf('.'))+1));
-
-                            if (log.isDebugEnabled()) {
-                                log.debug("New faultAction value = "+faultActionString);
-                            }
+                        if (faultActionString != null && !faultActionString.equals("")) {
+                            newAxisOperation.addFaultAction(className, faultActionString);
                         }
-                        newAxisOperation.addFaultAction(className, faultActionString);
                     }
                 }
             }
