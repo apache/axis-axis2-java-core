@@ -525,14 +525,15 @@ public class TransportUtils {
            }
 
        	Attachments attachments = msgContext.getAttachmentMap();
-       	LifecycleManager lcm = (LifecycleManager)msgContext.getRootContext().getAxisConfiguration().getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);
+
            if (attachments != null) {
                // Get the list of Content IDs for the attachments...but does not try to pull the stream for new attachments.
                // (Pulling the stream for new attachments will probably fail...the stream is probably closed)
                List keys = attachments.getContentIDList();
-               if (keys != null) {
+               if (keys != null && keys.size() > 0) {
                	String key = null;
                	File file = null;
+               	   LifecycleManager lcm = (LifecycleManager)msgContext.getRootContext().getAxisConfiguration().getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);               		
                	DataSource dataSource = null;
                    for (int i = 0; i < keys.size(); i++) {
                        try {

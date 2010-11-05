@@ -55,14 +55,15 @@ public class SOAPMessageFormatter implements MessageFormatter {
         }
         OMElement element = msgCtxt.getEnvelope();
         
-        int optimizedThreshold = Utils.getMtomThreshold(msgCtxt);       
-        if(optimizedThreshold > 0){
-        	if(log.isDebugEnabled()){
-        		log.debug("Setting MTOM optimized Threshold Value on OMOutputFormat");
-        	}
-        	format.setOptimizedThreshold(optimizedThreshold);
-        }	        
-
+        if (msgCtxt.isDoingMTOM()) {        	
+            int optimizedThreshold = Utils.getMtomThreshold(msgCtxt);       
+            if(optimizedThreshold > 0){
+            	if(log.isDebugEnabled()){
+            		log.debug("Setting MTOM optimized Threshold Value on OMOutputFormat");
+            	}
+            	format.setOptimizedThreshold(optimizedThreshold);
+            }        	
+        }
         try {
             if (!(format.isOptimized()) && format.isDoingSWA()) {
                 // Write the SOAPBody to an output stream
