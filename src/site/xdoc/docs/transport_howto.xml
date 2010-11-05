@@ -85,7 +85,7 @@ need a configuration context. The following code fragment will do this. This
 should ideally be only done once for the lifetime of the Transport
 receiver.</p>
 
-<p></p><source>
+<p></p>
 <pre>try {
         //Create a factory 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
@@ -95,14 +95,13 @@ axis2xmllocation);
 } catch (Exception e) {
         log.info(e.getMessage());
 }</pre>
-</source>
 <p>Now we need some kind of a Listener to listen to the requests that come
 in. You need to implement this according to the transport that you are trying
 to build. After a message is received at the Receiver, you can use the
 following code to process the request and then forward the message context to
 the engine using the engine.receive(msgContext) method. (The following code
 is extracted from the MailListener as an example)</p>
-<source><pre>AxisEngine engine = new AxisEngine(configurationContext);
+<pre>AxisEngine engine = new AxisEngine(configurationContext);
 MessageContext msgContext = null;
 
 // create and initialize a message context
@@ -159,17 +158,15 @@ try {
                 log.error(e);
         }
 }</pre>
-</source>
 <p>Now that we have the coding in place, we need to let Axis2 know about our
 new transport receiver. We do this by adding an entry into the axis2.xml
 file. If you need to pass any properties for the transport to operate, it can
 also be done through the axis2.xml file.</p>
-<source><pre>   &lt;transportReceiver name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_LISTNER_CLASS"&gt;
+<pre>   &lt;transportReceiver name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_LISTNER_CLASS"&gt;
         &lt;parameter name="PROPERTY_NAME"&gt;PROPERTY_VALUE&lt;/parameter&gt;
         &lt;parameter name="PROPERTY_NAME_2"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
   &lt;/transportReceiver&gt;
   </pre>
-</source>
 <p>By using a code fragment like
 <code>Utils.getParameterValue(transportOut.getParameter(MailSrvConstants.SMTP_USER))</code>
 we can extract the parameters that we inserted into the axis2.xml file.</p>
@@ -185,7 +182,7 @@ org.apache.Axis2.transport.AbstractTransportSender class.</p>
 
 <p>The following bit of code from the abstract transport sender will call the
 Transport Sender that you wrote.</p>
-<source><pre>// If an EPR is present then the message is going on a different channel.
+<pre>// If an EPR is present then the message is going on a different channel.
 if (epr != null) {
         out = openTheConnection(epr, msgContext);
         OutputStream newOut = startSendWithToAddress(msgContext, out);
@@ -205,7 +202,6 @@ if (epr != null) {
                         "Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No way to send response.");
         }
 }</pre>
-</source>
 <p>Therefore, depending on whether your transport is using the same channel
 to send the response or using a different channel, you will need to implement
 a sub-set of the methods from the abstract class.</p>
@@ -213,12 +209,11 @@ a sub-set of the methods from the abstract class.</p>
 <p>After implementing the necessary methods, you can let Axis2 know about
 your new transport sender by adding an entry to the axis2.xml file, like you
 did for the TransportReceiver.</p>
-<source><pre>  &lt;transportSender name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_SENDER_CLASS"&gt;
+<pre>  &lt;transportSender name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_SENDER_CLASS"&gt;
         &lt;parameter name="PROPERTY_NAME"&gt;PROPERTY_VALUE&lt;/parameter&gt;
         &lt;parameter name="PROPERTY_NAME_2"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
   &lt;/transportSender&gt;
   </pre>
-</source>
 <p>Have a look at
 org.apache.Axis2.transport.http.CommonsHTTPTransportSender which is used to
 send HTTP responses.</p>

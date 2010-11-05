@@ -140,15 +140,15 @@ directory has three operations: echoString, echoStringArray, echoStruct. To
 see how the others will look when they are filled up, see <a
 href="src/Axis2SampleDocLitServiceCode.html">Code Listing For
 Axis2SampleDocLitService Service</a></p>
-<source><pre>public org.apache.axis2.userguide.xsd.EchoStringReturnDocument 
+<pre>public org.apache.axis2.userguide.xsd.EchoStringReturnDocument 
     echoString(org.apache.axis2.userguide.xsd.EchoStringParamDocument param4) throws Exception {
     //Use the factory to create the output document.
     org.apache.axis2.userguide.xsd.EchoStringReturnDocument retDoc = 
            org.apache.axis2.userguide.xsd.EchoStringReturnDocument.Factory.newInstance();
     //send the string back.
     retDoc.setEchoStringReturn(param4.getEchoStringParam());
-   return retDoc;<br/></pre>
-</source><a name="Step4_Create_archive"></a>
+   return retDoc;</pre>
+<a name="Step4_Create_archive"></a>
 
 <h3>Step 3: Create Archive File</h3>
 
@@ -219,9 +219,8 @@ generation</strong> approach presented below.</p>
 <p>Let's see how we could generate java code (Stub) to handle the client side
 Web Service invocation for you. This can be done by running the WSDL2Java
 tool using the following arguments</p>
-<source><pre>wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans 
+<pre>wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans 
      -o ../samples/src -p org.apache.axis2.userguide</pre>
-</source>
 <p>This will generate client side stubs and xmlbeans types for your types.
 The Stub class that you need to use will be of the form
 <strong>&lt;service-name&gt;Stub</strong>. In our example, it will be called
@@ -243,7 +242,7 @@ strategies.</p>
 <code>Axis2SampleDocLitService</code> that we have already deployed. The code
 is extremely simple to understand and the explanations are in the form of
 comments.</p>
-<source><pre>     try {
+<pre>     try {
                org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub 
                   = new org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,
                     "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
@@ -258,7 +257,6 @@ comments.</p>
                } catch (java.rmi.RemoteException e) {
                   e.printStackTrace();
               }</pre>
-</source>
 <p>First argument of <code>Axis2SampleDocLitPortTypeStub</code> should be the
 Axis2 repository for the client. Here we use null to make the stub use
 default configurations. However, you can make Axis2 use your own repository
@@ -274,7 +272,7 @@ innovation. For each method in the Service, there will be a method
 <strong>start&lt;method-name&gt;</strong>. These methods accept a callback
 object, which would be called when the response is received. Sample code that
 does an asynchronous interaction is given below.</p>
-<source><pre>try {
+<pre>try {
          org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub
            = new org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,
              "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
@@ -293,7 +291,6 @@ does an asynchronous interaction is given below.</p>
         } catch (java.rmi.RemoteException e) {
           e.printStackTrace();
        }</pre>
-</source>
 <p>Even though the above code does a non-blocking invocation at the client
 API, the transport connection may still operate in a blocking fashion. For
 example, a single HTTP connection can be used to create a Web Service request
@@ -303,9 +300,8 @@ transport connections are used for the request and the response, please add
 the following code segment after creating the stub. It will force Axis2 to
 use two transport connections for the request and the response while the
 client uses a Callback to process the response.</p>
-<source><pre>stub._getServiceClient().engageModule(new QName("addressing"));
+<pre>stub._getServiceClient().engageModule(new QName("addressing"));
 stub._getServiceClient().getOptions().setUseSeparateListener(true);</pre>
-</source>
 <p>Once those options are set, Axis2 client does the following:</p>
 <ol>
   <li>Starts a new Transport Listener(Server) at the client side.</li>
@@ -321,7 +317,7 @@ stub._getServiceClient().getOptions().setUseSeparateListener(true);</pre>
 
 <p>You can also use your own repository with an Axis2 Client.  The code below shows how
 to do this.</p>
-<source><pre>String axis2Repo = ...
+<pre>String axis2Repo = ...
 String axis2xml = ...
 ConfigurationContext configContext =
 ConfigurationContextFactory.createConfigurationContextFromFileSystem(axis2Repo, axis2xml);
@@ -329,7 +325,6 @@ Service1Stub stub1 = new Service1Stub(configContext,...);
 //invoke Service1
 Service2Stub stub2 = new Service2Stub(configContext,...);
 //invoke Service2</pre>
-</source>
 <p>Note by creating the <code>ConfigurationContext</code> outside and passing
 it to the stubs, you could make number of stubs to use same repository, thus
 saving the configuration loading overhead from each request.</p>
@@ -399,7 +394,7 @@ the semantics of scope, and how to engage modules in those scopes.</p>
         can be only engaged as global</td>
       <td>By adding a &lt;module ref="addressing"/&gt; to the Axis2 xml file
         or calling
-        <pre>stub._getServiceClient().engageModule(moduleName)</pre>
+        <code>stub._getServiceClient().engageModule(moduleName)</code>
         at client side</td>
     </tr>
     <tr>
@@ -446,7 +441,7 @@ and client sides.</p>
   <li>To <strong>engage</strong> the addressing module, you should either add
     &lt;module ref="addressing"/&gt; to the axis2.xml file at the client side
     or call
-    <pre>stub._getServiceClient().engageModule(moduleName)</pre>
+    <code>stub._getServiceClient().engageModule(moduleName)</code>
   </li>
 </ol>
 <a name="advanced"></a>

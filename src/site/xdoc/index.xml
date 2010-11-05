@@ -16,17 +16,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta name="generator" content=
-"HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
-<meta http-equiv="content-type" content="" />
-<title>Apache Axis2/Java - Next Generation Web Services</title>
-</head>
-<body lang="en" xml:lang="en">
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Apache Axis2/Java - Next Generation Web Services</title>
+    </properties>
+    <body>
 <h1>Welcome to Apache Axis2/Java</h1>
 <p>Axis2 is a Web Services / SOAP / WSDL engine, the successor to the
 widely used <a href=
@@ -301,4 +297,4 @@ Web services related news on the Apache News Blog Online</a></li>
 Online</a></li>
 </ul>
 </body>
-</html>
+</document>

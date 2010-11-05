@@ -93,7 +93,7 @@ usage of the above. It uses the "echo" operation of the
 <code>userguide.example1.MyService </code>of the
 AXIS2_HOME/samples/userguide/src/userguide/example1.</p>
 
-<p>The class source will be as follows:</p><source>
+<p>The class source will be as follows:</p>
 <pre>public class RESTClient {
 
     private static String toEpr = "http://localhost:8080/axis2/services/MyService";
@@ -133,7 +133,7 @@ AXIS2_HOME/samples/userguide/src/userguide/example1.</p>
         return method;
     }
 }</pre>
-</source><a name="rest_with_get"></a>
+<a name="rest_with_get"></a>
 
 <h2>Access a REST Web Service via HTTP GET</h2>
 
@@ -141,15 +141,14 @@ AXIS2_HOME/samples/userguide/src/userguide/example1.</p>
 via HTTP GET. For example, the following URL requests the Version Service via
 HTTP GET. However, the Web service arriving via GET assumes REST. Other
 parameters are converted into XML and put into the SOAP body.</p>
-<source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
-</source>
+<pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
 <p>The result can be shown in the browser as follows:</p>
 <img src="images/userguide/http-get-ws.jpg"/>
 
 <p>For example, the following request,</p>
-<source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
-</source>will be converted into the following SOAP message for processing by
-Axis2.<source>
+<pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
+will be converted into the following SOAP message for processing by
+Axis2.
 <pre> 
    &lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
       &lt;soapenv:Body&gt;   
@@ -157,7 +156,7 @@ Axis2.<source>
       &lt;/soapenv:Body&gt;
    &lt;/soapenv:Envelope&gt;
     </pre>
-</source>
+
 <h2>Resources</h2>
 
 <p>How I Explained REST to My Wife, By Ryan Tomayko- <a

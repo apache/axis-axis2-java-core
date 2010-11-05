@@ -53,8 +53,7 @@ for security reasons.</p>
 
 <p>The SOAP Monitor can be engaged by inserting the following in the
 axis2.xml file.</p>
-<source><pre>   &lt;module ref="soapmonitor"/&gt;</pre>
-</source>
+<pre>   &lt;module ref="soapmonitor"/&gt;</pre>
 <p>In the axis2.xml file, define your phase orders for the 'soapmonitorPhase'
 referenced in the module.xml of soapmonitor.mars. Below is an example which
 should NOT be copied exactly, since the default phases change occasionally.

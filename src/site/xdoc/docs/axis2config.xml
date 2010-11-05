@@ -73,20 +73,17 @@ element) will be transformed into properties in AxisConfiguration. Therefore,
 the top level parameters in the configuration document can be accessed via
 AxisConfiguration in the running system. The correct way of defining a
 parameter is shown below:</p>
-<source><pre> 
-  &lt;parameter name="name of the parameter" &gt;parameter value &lt;/parameter&gt;</pre>
-</source><a name="Receiver"></a>
+<pre>&lt;parameter name="name of the parameter" &gt;parameter value &lt;/parameter&gt;</pre>
+<a name="Receiver"></a>
 
 <h3>Transport Receiver</h3>
 
 <p>Depending on the underlying transport on which Axis2 is going to run, you
 need to have different transport receivers. The way you add them to the
-system is as follows:</p> <source>
-<pre>
-&lt;transportReceiver name="http" class="org.apache.axis2.transport.http.SimpleHTTPServer"&gt;
-        &lt;parameter name="port" &gt;6060&lt;/parameter&gt;
- &lt;/transportReceiver&gt; 
- </pre>
+system is as follows:</p>
+<pre>&lt;transportReceiver name="http" class="org.apache.axis2.transport.http.SimpleHTTPServer"&gt;
+    &lt;parameter name="port" &gt;6060&lt;/parameter&gt;
+&lt;/transportReceiver&gt;</pre>
 </source>The above elements show how to define transport receivers in
 axis2.xml. Here the "name" attribute of the &lt;transportReceiver/&gt; element identifies the
 type of the transport receiver. It can be HTTP, TCP, SMTP, CommonsHTTP, etc.
@@ -135,7 +132,7 @@ you want to add a handler that should go into that phase, you can directly do
 that by adding a handler element into it. In addition to that, there is no
 hard coding work for the handler chain anywhere in Axis2 (at any Axis*). So
 all those configurations are also done in the phase order element. The
-complete configurations will look as follows: </p><source>
+complete configurations will look as follows: </p>
 <pre>&lt;phaseOrder type="InFlow"&gt;
         &lt;!--   Global phases    --&gt;
          &lt;phase name="Transport"&gt;
@@ -215,7 +212,6 @@ complete configurations will look as follows: </p><source>
         &lt;phase name="PolicyDetermination"/&gt;
         &lt;phase name="MessageOut"/&gt;
     &lt;/phaseOrder&gt;</pre>
-</source>
 <p><strong>type:</strong> the attribute represents the type of the flow. It
 can only be one of the following:</p>
 <ul>
@@ -228,9 +224,8 @@ can only be one of the following:</p>
 <p>In addition to that, the only child element that is allowed inside
 "phaseOrder" is the "phase" element which represents the available phases in
 the execution chain. The method of specifying phases inside "phaseOrder" is
-as follows:</p><source>
-<pre> &lt;phase name="Transport"/&gt;</pre>
-</source>
+as follows:</p>
+<pre>&lt;phase name="Transport"/&gt;</pre>
 <p><strong>name:</strong> Name of the phase. <br/>
 </p>
 
@@ -264,9 +259,8 @@ phaseOrder:</p>
 <h3>Module References</h3>
 
 <p>If you want to engage a module, system wide, you can do it by adding a top
-level module element in axis2.xml. It should look as follows:</p><source>
-<pre>&lt;module ref="addressing"/&gt;  </pre>
-</source>
+level module element in axis2.xml. It should look as follows:</p>
+<pre>&lt;module ref="addressing"/&gt;</pre>
 <p><strong>ref:</strong> the module name which is going to be engaged, system
 wide.</p>
 <a name="Listeners"></a>
@@ -287,11 +281,10 @@ informed of the following events:</p>
 
 <p>Registering Observers is very useful for additional features such as RSS
 feed generation, which will provide service information to subscribers. The
-correct way of registering observers should as follows:</p><source>
+correct way of registering observers should as follows:</p>
 <pre>&lt;listener class="org.apache.axis2.ObserverIMPL"&gt;
     &lt;parameter name="RSS_URL" &gt;http://127.0.0.1/rss&lt;/parameter&gt;
-  &lt;/listener&gt;</pre>
-</source>
+&lt;/listener&gt;</pre>
 <p><strong>class:</strong> Represents an Implementation class of observer,
 and it should be noted that the Implementation class should implement
 AxisObserver interface, and the class has to be available in the classpath.
@@ -306,11 +299,11 @@ AxisObserver interface, and the class has to be available in the classpath.
 service archive file needs to have a services.xml in order to be a valid
 service and it should be available in the META-INF directory of the archive
 file. A very simple services.xml is shown below:</font></p>
-<source><pre>&lt;service name="name of the service" scope="name of the scope" class="full qualifide name the service lifecycle class"   targetNamespace="target namespase for the service"&gt;
+<pre>&lt;service name="name of the service" scope="name of the scope" class="full qualifide name the service lifecycle class"   targetNamespace="target namespase for the service"&gt;
     &lt;Description&gt; The description of the service  &lt;/Description&gt;  
 
     &lt;transports&gt; 
-       &lt;transport&gt;HTTP&lt;/transport&gt;
+        &lt;transport&gt;HTTP&lt;/transport&gt;
     &lt;/transports&gt;
     
     &lt;schema schemaNamespace="schema namespace"/&gt; 
@@ -320,15 +313,14 @@ file. A very simple services.xml is shown below:</font></p>
                              class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/&gt;
     &lt;/messageReceivers&gt;
      
-     &lt;parameter name="ServiceClass" locked="xsd:false"&gt;org.apache.axis2.sample.echo.EchoImpl&lt;/parameter&gt;
+    &lt;parameter name="ServiceClass" locked="xsd:false"&gt;org.apache.axis2.sample.echo.EchoImpl&lt;/parameter&gt;
     
     &lt;operation name="echoString" mep="operation MEP"&gt; 
         &lt;actionMapping&gt;Mapping to action&lt;/actionMapping&gt;
         &lt;module ref=" a module name "/&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
-  &lt;/service&gt;</pre>
-</source>
+&lt;/service&gt;</pre>
 <p><strong>name</strong>: The service name will be the name of the archive
 file if the .aar file contains only one service, or else the name of the
 service will be the name given by the name attribute.</p>
@@ -370,12 +362,11 @@ methods in that service will be exposed. If the user wants to override it, he
 has to add the "operation" tag and override it. In a non-Java scenario or if
 you do not have a service class, then all the operations the user wants to
 expose by the service has to be indicated in the services.xml. It is
-specified as follows:</p>  <source>
+specified as follows:</p>
 <pre>    &lt;operation name="echoString"&gt;
         &lt;module ref=" a module name "/&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;</pre>
-</source>
 <p>The only compulsory attribute here is "name", which represents the
 operation name that is going to be exposed. Any operation can contain module
 references as well as any number of parameters. The most interesting thing is
@@ -395,7 +386,7 @@ module archive file needs to have a module.xml in order to be a valid module,
 and it should be available in the META-INF directory of the archive file. <br/>
 </p>
 
-<p>A very simple module.xml is shown below:</p> <source>
+<p>A very simple module.xml is shown below:</p>
 <pre>&lt;module class="org.apache.module.Module1Impl"&gt;
     &lt;InFlow&gt;
         .
@@ -421,7 +412,6 @@ and it should be available in the META-INF directory of the archive file. <br/>
         &lt;parameter name="para1" locked="xsd:true"&gt;10&lt;/parameter&gt;
     &lt;/operation&gt;
 &lt;/module&gt;</pre>
-</source>
 <p><strong>class:</strong> (Optional attribute) Indicates the module
 implementation class. A module may or may not contain a module implementation
 class since the module can also be a collection of handlers. If a module
@@ -451,11 +441,10 @@ module.xml. The method of specifying the operation is the same as operation
 in services.xml.</p>
 
 <p><b>handler:</b> The Handler element consists of compulsory and optional
-attributes. The method of defining a handler will look as follows:</p> <source>
+attributes. The method of defining a handler will look as follows:</p>
 <pre>&lt;handler name="handler1" class="handlerClass "&gt;
             &lt;order phase="userphase1" /&gt;
- &lt;/handler&gt;</pre>
-</source>
+&lt;/handler&gt;</pre>
 <p><b><i>Compulsory Attributes</i></b> <br/>
 <b>name:</b> Name of the handler.<br/>
 <b>class:</b> Handler implementation class.<br/>

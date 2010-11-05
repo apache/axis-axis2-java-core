@@ -330,7 +330,7 @@ element at runtime using an MTOM attribute extension xmime:contentType.
 Furthermore, you can identify what type of data might be expected in the
 element using the xmime:expectedContentType. Putting it all together, our
 example element becomes:</p>
-<source><pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' &gt;
+<pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' &gt;
         &lt;complexType&gt;
           &lt;simpleContent&gt;
             &lt;extension base="base64Binary" &gt;
@@ -340,18 +340,17 @@ example element becomes:</p>
           &lt;/simpleContent&gt;
         &lt;/complexType&gt;
       &lt;/element&gt;</pre>
-</source>
 <p>You can also use the xmime:base64Binary type to express the above
 mentioned data much clearly.</p>
-<source><pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' type="xmime:base64Binary"/&gt;</pre>
-</source><a name="251"></a>
+<pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' type="xmime:base64Binary"/&gt;</pre>
+<a name="251"></a>
 
 <h3>MTOM Databinding Using ADB</h3>
 
 <p>Let's define a full, validated doc/lit style WSDL that uses the xmime
 schema, has a service that receives a file, and saves it in the server using
 the given path.</p>
-<source><pre>&lt;wsdl:definitions xmlns:tns="http://ws.apache.org/axis2/mtomsample/"
+<pre>&lt;wsdl:definitions xmlns:tns="http://ws.apache.org/axis2/mtomsample/"
         xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
         xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
         xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
@@ -437,7 +436,6 @@ the given path.</p>
                 &lt;/wsdl:port&gt;
         &lt;/wsdl:service&gt;
 &lt;/wsdl:definitions&gt;</pre>
-</source>
 <p>The important point here is we import http://www.w3.org/2005/05/xmlmime
 and define the element 'binaryData' that utilizes MTOM.</p>
 
@@ -447,7 +445,7 @@ information. Here, we define an Ant task that chooses ADB (Axis2 Data
 Binding) as the databinding implementation. The name we list for the WSDL
 above is MTOMSample.wsdl, and we define our package name for our generated
 source files to 'sample.mtom.service' . Our Ant task for this example is:</p>
-<source><pre>        
+<pre>        
 &lt;target name="generate.service"&gt;
                  &lt;java classname="org.apache.axis2.wsdl.WSDL2Java"&gt;
                         &lt;arg value="-uri" /&gt;
@@ -462,11 +460,10 @@ source files to 'sample.mtom.service' . Our Ant task for this example is:</p>
                         &lt;classpath refid="class.path" /&gt;
                 &lt;/java&gt;
           &lt;/target&gt;</pre>
-</source>
 <p>Now we are ready to code. Let's edit
 output/src/sample/mtom/service/MTOMSampleSkeleton.java and fill in the
 business logic. Here is an example:</p>
-<source><pre>        public org.apache.ws.axis2.mtomsample.AttachmentResponse attachment(
+<pre>        public org.apache.ws.axis2.mtomsample.AttachmentResponse attachment(
                         org.apache.ws.axis2.mtomsample.AttachmentRequest param0) throws Exception
         {
                 AttachmentType attachmentRequest = param0.getAttachmentRequest();
@@ -483,11 +480,10 @@ business logic. Here is an example:</p>
                 response.setAttachmentResponse("File saved succesfully.");
                 return response;
         }</pre>
-</source>
 <p>The code above receives a file and writes it to the disk using the given
 file name. It returns a message once it is successful. Now let's define the
 client:</p>
-<source><pre>        public static void transferFile(File file, String destination)
+<pre>        public static void transferFile(File file, String destination)
                         throws RemoteException {
                 MTOMSampleStub serviceStub = new MTOMSampleStub();
 
@@ -517,7 +513,6 @@ client:</p>
                 AttachmentResponse response = serviceStub.attachment(attachmentRequest);
                 System.out.println(response.getAttachmentResponse());
         }</pre>
-</source>
 <p>The last step is to create an AAR with our Skeleton and the services.xml
 and then deploy the service. You can find the completed sample in the Axis2
 standard binary distribution under the samples/mtom directory</p>
@@ -544,7 +539,7 @@ support Content Location based referencing of MIME parts.</p>
   <li><strong>Sample service which accesses a received SwA type
     attachment</strong></li>
 </ul>
-<source><pre>public class SwA {
+<pre>public class SwA {
     public SwA() {
     }
     
@@ -565,7 +560,7 @@ support Content Location based referencing of MIME parts.</p>
         ...........
     }
 }</pre>
-</source><a name="32"></a>
+<a name="32"></a>
 
 <h3>Sending SwA Type Attachments</h3>
 
@@ -575,13 +570,11 @@ enable MTOM and SwA together. In such a situation, MTOM will get priority
 over SwA.</p>
 
 <p>This can be set using the axis2.xml as follows.</p>
-<source><pre>  
+<pre>  
         &lt;parameter name="enableSwA"&gt;true&lt;/parameter&gt;</pre>
-</source>
 <p>"enableSwA" can also be set using the client side Options as follows</p>
-<source><pre>  
+<pre>  
         options.setProperty(Constants.Configuration.ENABLE_SwA, Constants.VALUE_TRUE);</pre>
-</source>
 <p>Users are expected to use the attachment API provided in the
 MessageContext to specify the binary attachments needed to be attached to the
 outgoing message as SwA type attachments. Client side SwA capability can be
@@ -591,7 +584,7 @@ access the MessageContext.</p>
   <li><strong>Sample client which sends a message with SwA type
     attachments</strong></li>
 </ul>
-<source><pre>   public void uploadFileUsingSwA(String fileName) throws Exception {
+<pre>   public void uploadFileUsingSwA(String fileName) throws Exception {
 
         Options options = new Options();
         options.setTo(targetEPR);
@@ -613,7 +606,7 @@ access the MessageContext.</p>
         mepClient.addMessageContext(mc);
         mepClient.execute(true);
     }</pre>
-</source><a name="33"></a>
+<a name="33"></a>
 
 <h3>MTOM Backward Compatibility with SwA</h3>
 
@@ -629,7 +622,7 @@ SwA message.</p>
 <ul>
   <li><strong>A sample SwA message from Axis 1.x</strong></li>
 </ul>
-<source><pre>Content-Type: multipart/related; type="text/xml"; 
+<pre>Content-Type: multipart/related; type="text/xml"; 
           start="&lt;9D645C8EBB837CE54ABD027A3659535D&gt;";
                 boundary="----=_Part_0_1977511.1123163571138"
 
@@ -652,10 +645,10 @@ Content-Id: &lt;3936AE19FBED55AE4620B81C73BDD76E&gt;
 
 <em>Binary Data.....</em>
 ------=_Part_0_1977511.1123163571138--</pre>
-</source><ul>
+<ul>
   <li><strong>Corresponding MTOM message from Axis2</strong></li>
 </ul>
-<source><pre>Content-Type: multipart/related; boundary=MIMEBoundary4A7AE55984E7438034;
+<pre>Content-Type: multipart/related; boundary=MIMEBoundary4A7AE55984E7438034;
                          type="application/xop+xml"; start="&lt;0.09BC7F4BE2E4D3EF1B@apache.org&gt;";
                          start-info="text/xml; charset=utf-8"
 
@@ -680,7 +673,7 @@ content-id: &lt;1.A91D6D2E3D7AC4D580@apache.org&gt;
 
 <em>Binary Data.....</em>
 --MIMEBoundary4A7AE55984E7438034--</pre>
-</source><a name="4"></a>
+<a name="4"></a>
 
 <h2>Advanced Topics</h2>
 <a name="41"></a>
@@ -704,7 +697,7 @@ directory</strong> from time to time.</p>
 
 <p>The following parameters need to be set in Axis2.xml in order to enable
 file caching.</p>
-<source><pre>&lt;axisconfig name="AxisJava2.0"&gt;
+<pre>&lt;axisconfig name="AxisJava2.0"&gt;
 
     &lt;!-- ================================================= --&gt;
     &lt;!-- Parameters --&gt;
@@ -716,11 +709,10 @@ file caching.</p>
     .........
     .........
 &lt;/axisconfig&gt;</pre>
-</source>
 <p>Enabling file caching for client side receiving can be done for the by
 setting the Options as follows.</p>
-<source><pre>options.setProperty(Constants.Configuration.CACHE_ATTACHMENTS,Constants.VALUE_TRUE);
+<pre>options.setProperty(Constants.Configuration.CACHE_ATTACHMENTS,Constants.VALUE_TRUE);
 options.setProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR,<em>TempDir</em>);
 options.setProperty(Constants.Configuration.FILE_SIZE_THRESHOLD, <em>"4000"</em>);</pre>
-</source></body>
+</body>
 </html>

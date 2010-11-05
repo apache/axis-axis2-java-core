@@ -330,21 +330,19 @@ public class TestClient {
 axis2-spring-*.jar are under WEB-INF/lib. In such a case, the classes shown
 in this tutorial need to be placed in a JAR under WEB-INF/lib. In this
 example the JAR layout is:</p>
-<source><pre>./mySpring.jar
+<pre>./mySpring.jar
 ./META-INF
 ./META-INF/MANIFEST.MF
 ./spring
 ./spring/MyBean.class
 ./spring/MyBeanImpl.class
 ./spring/SpringAwareService.class</pre>
-</source>
 <p>Since all the user classes are in mySpring.jar in this example, the AAR
 merely contains the services.xml file:</p>
-<source><pre>./springExample.aar
+<pre>./springExample.aar
 ./META-INF
 ./META-INF/MANIFEST.MF
 ./META-INF/services.xml</pre>
-</source>
 <p>To run this example, make sure you have the axis2-spring*.jar that comes
 from the axis2-std-*-bin distro in the server side WEB-INF/lib, as well as
 the appropriate Spring jar - most will use the full spring.jar, but the
@@ -374,7 +372,7 @@ will <strong>not</strong> work otherwise.</p>
 <ul>
   <li><strong><a name="261"></a>The Spring inside an AAR layout</strong></li>
 </ul>
-<source><pre>./springExample.aar
+<pre>./springExample.aar
 ./META-INF
 ./META-INF/MANIFEST.MF
 ./META-INF/services.xml
@@ -387,7 +385,6 @@ will <strong>not</strong> work otherwise.</p>
 ./spring/MyBeanImpl.class
 ./spring/SpringAwareService.class
 ./spring/SpringInit.class </pre>
-</source>
 <p>As explained in the <a href="#24">Without a ServletContext</a> section,
 the 'Spring inside an AAR' config needs to hook Axis2 and Spring together via
 a Spring bean. Place the following in your Spring config file:</p>
@@ -402,7 +399,7 @@ a Spring bean. Place the following in your Spring config file:</p>
 <p>One way to initialize Spring inside the AAR is to use the
 org.apache.axis2.engine.ServiceLifeCycle interface. Here we give an
 example:</p>
-<source><pre>package spring;
+<pre>package spring;
 
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.context.ConfigurationContext;
@@ -439,12 +436,11 @@ public class SpringInit implements ServiceLifeCycle {
     public void shutDown(ConfigurationContext ctxIgnore, AxisService ignore) {
     }
 }</pre>
-</source>
 <p>Here's the services.xml that now includes SpringInit and the
 SpringAwareService shown above. There is also the composite parameter which
 is needed when loading Spring in the AAR - see the <a href="#263">Known
 issues running Spring inside the AAR</a> area.</p>
-<source><pre>&lt;serviceGroup&gt;
+<pre>&lt;serviceGroup&gt;
   &lt;!-- Invoke SpringInit on server startup and shutdown --&gt;
   &lt;service name="SpringAwareService" class="spring.SpringInit"&gt;
     &lt;description&gt;
@@ -459,7 +455,7 @@ issues running Spring inside the AAR</a> area.</p>
     &lt;/operation&gt;
   &lt;/service&gt;
 &lt;/serviceGroup&gt;</pre>
-</source><ul>
+<ul>
   <li><strong><a name="263"></a>Known issues running Spring inside the
     AAR</strong></li>
 </ul>
@@ -491,11 +487,11 @@ files in a specific directory under WEB-INF/classes - and then use
 for your jar / class locations. Use the wildcards in the following example to list your mapping 
 locations as shown:  </p>
 
-<source><pre>&lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
+<pre>&lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
                 &lt;property name="mappingLocations"&gt;
                    &lt;value&gt;classpath*:**/MyEntity.hbm.xml&lt;/value&gt;
                 &lt;/property&gt;
                 ...
 &lt;/bean&gt; </pre>
-</source></body>
+</body>
 </html>

@@ -50,11 +50,13 @@
     font-style: italic
 }
 
+/*
 .code {
     font-family: Courier New;
     font-size: 10pt;
     color: #800000
 }
+*/
 
 /*
 -----------------------------------------------------------------------
@@ -78,10 +80,17 @@ body {
     width: 980px;
 }
 
+#breadcrumbs {
+    font-size: 0.8em;
+    background-color: transparent;
+    border-top: 2px solid #6895c2;
+    border-bottom: 2px solid #6895c2;
+}
+
 #leftColumn {
     border: none;
     background-color: transparent;
-    margin: 0;
+    margin: 1em 0 0 0;
 }
 
 #navcolumn {
@@ -113,9 +122,14 @@ body {
     color: #333333;
 }
 
-#contentBox p {
-    line-height: 1.5em;
+#contentBox p, #contentBox td, #contentBox li {
+    font-family: "Trebuchet MS", Verdana, sans-serif;
+	line-height: 1.5em;
     font-size: 0.94em;
+}
+
+#contentBox p, #contentBox li {
+    text-align: justify;
 }
 
 a:link {
@@ -132,20 +146,16 @@ a.externalLink, a.externalLink:link, a.externalLink:visited, a.externalLink:acti
     padding: 0;
 }
 
-ul, ol {
-    font-size: 11px;
-    text-align: left;
-    list-style-position: outside;
-    display: block;
-    white-space: normal;
+table.bodyTable th {
+    background-color: #6f8aa5;
 }
 
-table td {
-    font-size: 11px;
-    padding: 0px;
-    spacing: 0px;
-    text-align: left;
-    vertical-align: top;
+table.bodyTable tr.a {
+    background-color: #d1dce7;
+}
+
+table.bodyTable tr.b {
+    background-color: #eceef1;
 }
 
 h1 {
@@ -173,7 +183,12 @@ h3 {
 }
 
 h4 {
-    font-size: 13px;
+    color: #333333;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: transparent;
+    border: none;
+    padding: 0;
 }
 
 th {
@@ -197,10 +212,19 @@ table {
     background-position: left top;
 }
 
-pre {
+pre, div.source {
     border: 1px dotted;
     background-color: #e2ecf6;
     padding: 0.8em;
+    margin: 0;
     overflow: auto;
     font-size: 0.9em;
+}
+
+/* Xdoc generates <div class="source"><pre>...</pre></div> for <source> elements.
+   Because we already apply styles to every <pre>, we need to suppress styles here. */
+div.source pre {
+    border: none;
+    background-color: transparent;
+    padding: none;
 }
