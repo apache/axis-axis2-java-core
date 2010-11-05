@@ -44,13 +44,9 @@ public class BOMOutputStreamFilter extends FilterOutputStream {
         super(out);
         if (encoding == null || encoding.equalsIgnoreCase("UTF-8")) {
             bomLength = 0;
-        } else if (encoding.equalsIgnoreCase("UTF-16") || 
-                   encoding.equalsIgnoreCase("UTF-16LE") || 
-                   encoding.equalsIgnoreCase("UTF-16BE")) {
+        } else if (encoding.equalsIgnoreCase("UTF-16")) {
+            // UTF-16LE and UTF-16BE shouldn't have a BOM
             bomLength = 2;  // FF FE or FE FF
-        } else if (encoding.equalsIgnoreCase("UTF-32")) {
-            // Currently not valid for SOAP...adding for completeness
-            bomLength = 4;  // 00 00 FE FF or FF FE 00 00 
         } else {
             
             bomLength = 0;
@@ -71,12 +67,11 @@ public class BOMOutputStreamFilter extends FilterOutputStream {
         if (count >= bomLength) {
             out.write(b);
         } else {
-            if (b == 0 ||  // 0x00
-                b == -1 || // 0xFF
+            if (b == -1 || // 0xFF
                 b == -2) { // 0xFE
                 // skip...this is a BOM character
                 if (log.isDebugEnabled()) {
-                    log.debug("Skipping BOM character " + b);
+                    log.debug("Skipping BOM character " + b + " at position " + count);
                 }
             } else {
                 out.write(b);
