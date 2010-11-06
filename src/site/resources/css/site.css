@@ -87,6 +87,14 @@ body {
     border-bottom: 2px solid #6895c2;
 }
 
+.xleft, #bannerLeft img {
+    text-shadow: none;
+}
+
+.xright, #bannerRight {
+    text-shadow: none;
+}
+
 #leftColumn {
     border: none;
     background-color: transparent;
