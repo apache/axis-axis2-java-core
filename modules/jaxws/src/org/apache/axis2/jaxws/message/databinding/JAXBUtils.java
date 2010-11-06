@@ -988,13 +988,27 @@ public class JAXBUtils {
      * @throws ClassNotFoundException if error occurs getting package
      */
     private static List<Class> getAllClassesFromPackage(String pkg, ClassLoader cl) {
+        if (log.isDebugEnabled()) {
+            log.debug("Start: getAllClassesFromPackage for " + pkg);
+        }
         if (pkg == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("End: getAllClassesFromPackage (package is null)");
+            }
             return new ArrayList<Class>();
         }
         
         // See if this is a special package that has a set of known classes.
         List<Class> knownClasses = specialMap.get(pkg);
         if (knownClasses != null) {
+            if (log.isDebugEnabled()) {
+                try {
+                    log.debug("End: getAllClassesFromPackage (package is special) returning: " + knownClasses);
+                } catch(Throwable t) {
+                    // In case classes cannot be toString'd
+                    log.debug("End: getAllClassesFromPackage (package is special)");
+                }
+            }
             return knownClasses;
         }
 
@@ -1004,8 +1018,11 @@ public class JAXBUtils {
 
         ArrayList<Class> classes = new ArrayList<Class>();
 
+        if (log.isDebugEnabled()) {
+            log.debug("Start: Obtain packages from similar directory");
+        }
         try {
-            // This will load classes from directory
+            //
             List<Class> classesFromDir = getClassesFromDirectory(pkg, cl);
             checkClasses(classesFromDir, pkg);
             classes.addAll(classesFromDir);
@@ -1014,25 +1031,42 @@ public class JAXBUtils {
                 log.debug("getClassesFromDirectory failed to get Classes");
             }
         }
+        if (log.isDebugEnabled()) {
+            log.debug("End: Obtain packages from similar directory");
+            log.debug("Start: Obtain packages from ClassFinder plugin");
+        }
         try {
-            //If Clases not found in directory then look for jar that has these classes
-            if (classes.size() <= 0) {
-                //This will load classes from jar file.
-                ClassFinderFactory cff =
-                        (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
-                ClassFinder cf = cff.getClassFinder();
-                
-                List<Class> classesFromJar = cf.getClassesFromJarFile(pkg, cl);
-                
-                checkClasses(classesFromJar, pkg);
-                classes.addAll(classesFromJar);
-            }
+            //This will load classes from jar file.
+            ClassFinderFactory cff =
+                (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
+            ClassFinder cf = cff.getClassFinder();
+
+            List<Class> classesFromJar = cf.getClassesFromJarFile(pkg, cl);
+
+            checkClasses(classesFromJar, pkg);
+            classes.addAll(classesFromJar);
+
         } catch (ClassNotFoundException e) {
             if (log.isDebugEnabled()) {
                 log.debug("getClassesFromJarFile failed to get Classes");
             }
         }
+        if (log.isDebugEnabled()) {
+            log.debug("End: Obtain packages from ClassFinder plugin");
+        }
 
+        if (log.isDebugEnabled()) {
+            log.debug("End: Obtain packages from ClassFinder plugin");
+        }
+        if (log.isDebugEnabled()) {
+            
+            try {
+                log.debug("End: getAllClassesFromPackage for " + pkg + "with classes " + classes);
+            } catch (Throwable e) {
+                // In case classes cannot be toString'd
+                log.debug("End: getAllClassesFromPackage for " + pkg );
+            }
+        }
         return classes;
     }
     
