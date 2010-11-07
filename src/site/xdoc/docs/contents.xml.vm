@@ -119,9 +119,8 @@ application, which provides run-time configuration of Axis2.</li>
 Configuration Guide</a> - Provides extra configuration information
 required for application servers to run Axis2 to its fullest
 potential</li>
-<li><a href=
-"http://ws.apache.org/commons/axiom/OMTutorial.html">AXIOM
-Tutorial</a>-An introduction to Axis2's Object Model</li>
+<li><a href="http://ws.apache.org/axiom/userguide/userguide.html">Axiom User Guide</a> -
+An introduction to Axis2's Object Model</li>
 <li><a href="rest-ws.html">REST Support</a>-Introduction on
 Representational State Transfer</li>
 <li><a href="Axis2-rpc-support.html">Axis2 RPC Support</a> - This

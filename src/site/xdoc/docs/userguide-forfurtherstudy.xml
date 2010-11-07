@@ -97,11 +97,11 @@ Study</strong></a></li>
 </ul>-->
 <h2>Resources</h2>
 <p><a href="Axis2ArchitectureGuide.html">Axis2 Architecture</a></p>
-<p><a href="http://ws.apache.org/commons/axiom/OMTutorial.html">XML processing with AXIOM</a></p>
+<p><a href="http://ws.apache.org/axiom/userguide/userguide.html">Axiom User Guide</a></p>
 <p><a href="rest-ws.html">RESTful Web Services</a></p>
 <p><a href="http-transport.html">HTTP Transports</a></p>
 <p><a href="mtom-guide.html">MTOM with Axis2</a></p>
-<p><a href="../modules/rampart/security-module.html">Securing SOAP Messages with Apache Rampart</a></p>
+<p><a href="http://axis.apache.org/axis2/java/rampart/">Securing SOAP Messages with Apache Rampart</a></p>
 <p><a href="soapmonitor-module.html">SOAPMonitor</a></p>
 <p><a href="adv-userguide.html">Apache Axis2 Advance User's Guide</a></p>
 </body>

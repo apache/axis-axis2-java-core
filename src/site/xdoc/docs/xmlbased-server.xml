@@ -67,8 +67,8 @@ XML model by its external behavior, but considering the deep down
 implementation OM is very much different to others. OMElement is
 the basic representation of the XML infoset element in OM.For more
 details on OMElement see the <a href=
-"http://ws.apache.org/commons/axiom/OMTutorial.html">OM
-Tutorial</a>.</i></p>
+"http://ws.apache.org/axiom/userguide/userguide.html">Axiom
+User Guide</a>.</i></p>
 <pre>
 public class MyService{
     public void ping(OMElement element){

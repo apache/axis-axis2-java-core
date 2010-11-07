@@ -31,7 +31,7 @@ Plug-in</title>
 <h1>Service Archive Generator Wizard Guide for Eclipse Plug-in</h1>
 <p>This document will guide you through the installation and usage
 of the archive generator Eclipse plug-in.</p>
-<p><a href="http://ws.apache.org/axis2/tools/index.html" target=
+<p><a href="../tools/index.html" target=
 "_blank">[Download Plugin Tool]</a></p>
 <h2>Content</h2>
 <ul>
@@ -48,7 +48,7 @@ services to the Axis2.</p>
 <a name="installation" id="installation"></a>
 <h2>Installation</h2>
 <p>One can easily <a href=
-"http://ws.apache.org/axis2/tools/index.html">download</a> the
+"../tools/index.html">download</a> the
 plugin</p>
 <p>If one needs to build the plug-in from source, Maven2 and Ant
 builds arevailabe. Please refer the readme.txt located at

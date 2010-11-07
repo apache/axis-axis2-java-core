@@ -29,16 +29,15 @@
     <bannerLeft>
         <name>Apache Axis2</name>
         <src>http://www.apache.org/images/asf_logo_wide.png</src>
-        <href>http://ws.apache.org/axis2/</href>
+        <href>http://www.apache.org/</href>
     </bannerLeft>
     <bannerRight>
-        <src>http://ws.apache.org/axis2/images/axis.jpg</src>
+        <src>http://axis.apache.org/axis2/java/core/images/axis.jpg</src>
+        <href>http://axis.apache.org/axis2/java/core/</href>
     </bannerRight>
     <body>
         <links>
             <item name="Axis2/Java" href="index.html" />
-            <item name="Axis2/C" href="http://ws.apache.org/axis2/c" />
-            <item name="Apache WS" href="http://ws.apache.org" />
             <item name="Apache    " href="http://www.apache.org" />
         </links>
 
