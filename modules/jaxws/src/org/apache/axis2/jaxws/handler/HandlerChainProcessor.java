@@ -837,6 +837,12 @@ public class HandlerChainProcessor {
         saaj_called = false;
         soap_headers_adapter_called = false;
         
+        // If the handler changed the SOAPPart or Attachments, then we need
+        // that the Message gets updated
+        if (currentMC instanceof SoapMessageContext){
+            ((SoapMessageContext)currentMC).checkAndUpdate();
+        }
+        
         if (savedEx != null) {
             throw savedEx;
         }
@@ -859,6 +865,12 @@ public class HandlerChainProcessor {
         currentMC.put(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER, false);
         saaj_called = false;
         soap_headers_adapter_called = false;
+        
+        // If the handler changed the SOAPPart or Attachments, then we need
+        // that the Message gets updated
+        if (currentMC instanceof SoapMessageContext){
+            ((SoapMessageContext)currentMC).checkAndUpdate();
+        }
         
         if (savedEx != null) {
             throw savedEx;

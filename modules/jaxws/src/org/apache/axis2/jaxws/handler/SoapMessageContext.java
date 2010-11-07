@@ -30,13 +30,17 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,9 +57,16 @@ public class SoapMessageContext extends BaseMessageContext implements
         javax.xml.ws.handler.soap.SOAPMessageContext {
     private static final Log log = LogFactory.getLog(SoapMessageContext.class);
     
-    // cache the message object after transformation --- see getMessage and setMessage methods
+    // Cache the message object and SOAPMessage after transformation 
     Message cachedMessage = null;
     SOAPMessage cachedSoapMessage = null;
+    
+    // Cache information about the SOAPMessage so that we can tell if it has changed
+    SOAPPart cachedSoapPart = null;
+    SOAPEnvelope cachedSoapEnvelope = null;
+    List<AttachmentPart> cachedAttachmentParts = new ArrayList<AttachmentPart>();
+    
+    
     
     public SoapMessageContext(MessageContext messageCtx) {
         super(messageCtx);
@@ -137,8 +148,141 @@ public class SoapMessageContext extends BaseMessageContext implements
         if (msg != cachedMessage) {
             cachedMessage = msg;
             cachedSoapMessage = msg.getAsSOAPMessage();
+            cacheSOAPMessageInfo(cachedSoapMessage);
         } 
         return cachedSoapMessage;
+    }
+    
+    /**
+     * Check the current (cached) SOAPMessage and make sure
+     * its internals are consistent with when it was created.
+     * If not, the Message is recreated.
+     */
+    public void checkAndUpdate()  {
+        if (log.isDebugEnabled()) {
+            log.debug("Start:checkAndUpdate");
+        }
+        if (cachedSoapMessage != null) {
+            
+            boolean match = checkSOAPMessageInfo(cachedSoapMessage);
+            
+            if (!match) {
+                if (log.isDebugEnabled()) {
+                    log.debug("checkAndUpdate detected a mismatch..");
+                }
+                setMessage(cachedSoapMessage);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("End:checkAndUpdate");
+        }
+    }
+    
+    /**
+     * Updates information about the SOAPMessage so that
+     * we can determine later if it has changed
+     * @param sm SOAPMessage
+     */
+    private void cacheSOAPMessageInfo(SOAPMessage sm) {
+        cachedSoapPart = null;
+        cachedSoapEnvelope = null;
+        cachedAttachmentParts.clear();
+        try {
+            cachedSoapPart = sm.getSOAPPart();
+            if (cachedSoapPart != null) {
+                cachedSoapEnvelope = cachedSoapPart.getEnvelope();
+            }
+            if (sm.countAttachments() > 0) {
+                Iterator it = sm.getAttachments();
+                while (it != null && it.hasNext()) {
+                    AttachmentPart ap = (AttachmentPart) it.next();
+                    cachedAttachmentParts.add(ap);
+                }
+            }
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Ignoring ", t);
+            }
+        }
+    }
+    
+    /**
+     * Checks the information in SOAPMessage sm against 
+     * the information previously cached.  If an exception occurs
+     * @param sm SOAPMessage
+     * @return true if match , (exceptions are interpeted as false)
+     */
+    private boolean checkSOAPMessageInfo(SOAPMessage sm) {
+        if (log.isDebugEnabled()) {
+            log.debug("checkSOAPMessageInfo with " + JavaUtils.getObjectIdentity(sm));
+        }
+        // Check SOAPPart and SOAPEnvelope identity
+        SOAPPart currentSoapPart = null;
+        SOAPEnvelope currentSoapEnvelope = null;
+        
+        try {
+            currentSoapPart = sm.getSOAPPart();
+            if (currentSoapPart != null) {
+                currentSoapEnvelope = cachedSoapPart.getEnvelope();
+            }
+            // Check object identity
+            if (cachedSoapPart != currentSoapPart) {
+                if (log.isDebugEnabled()) {
+                    log.debug("checkSOAPMessageInfo returns false due to: mismatched SOAPParts");
+                }
+                return false;
+            }
+            if (cachedSoapEnvelope != currentSoapEnvelope) {
+                if (log.isDebugEnabled()) {
+                    log.debug("checkSOAPMessageInfo returns false due to: mismatched SOAPEnvelopes");
+                }
+                return false;
+            }
+        } catch(Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("checkSOAPMessageInfo returns false due to: ", t);
+            }
+        }
+        
+        // Check AttachmentParts
+        try {
+            int currentNumAttachmentParts = sm.countAttachments();
+            if (currentNumAttachmentParts != cachedAttachmentParts.size()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("checkSOAPMessageInfo returns false due to: " +
+                            "current number of AttachmentParts is " + currentNumAttachmentParts + 
+                            " versus cached number is " + cachedAttachmentParts.size());
+                }
+                return false;
+            }
+            if (currentNumAttachmentParts > 0) {
+                if (log.isDebugEnabled()) {
+                    log.debug("checkSOAPMessageInfo detected " + currentNumAttachmentParts + "AttachmentParts");
+                }
+                Iterator cachedIT = cachedAttachmentParts.iterator();
+                Iterator currentIT = sm.getAttachments();
+                while (currentIT.hasNext() && cachedIT.hasNext()) {
+                    AttachmentPart currentAP = (AttachmentPart) currentIT.next();
+                    AttachmentPart cachedAP  = (AttachmentPart) cachedIT.next();
+                    if (currentAP != cachedAP) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("checkSOAPMessageInfo returns false due to: " +
+                                    "current AttachmentParts is " + JavaUtils.getObjectIdentity(currentAP) + 
+                                    " and cached is " + JavaUtils.getObjectIdentity(cachedAP));
+                        }
+                        return false;
+                    }     
+                }
+            }
+        } catch(Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("checkSOAPMessageInfo returns false due to: ", t);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("checkSOAPMessageInfo returns true");
+        }
+        return true;
     }
 
     public Set<String> getRoles() {
@@ -167,16 +311,22 @@ public class SoapMessageContext extends BaseMessageContext implements
         return roles;
     }
 
-    public void setMessage(SOAPMessage soapmessage) {
-        // TODO I don't like this at all.
+    public void setMessage(SOAPMessage soapMessage) {
+        if(log.isDebugEnabled()){
+            log.debug("setMessage new=" + JavaUtils.getObjectIdentity(soapMessage) + 
+                    " existing=" + JavaUtils.getObjectIdentity(cachedSoapMessage));
+        }
         try {
             Message msg =
-                    ((MessageFactory) FactoryRegistry.getFactory(MessageFactory.class)).createFrom(soapmessage);
+                    ((MessageFactory) FactoryRegistry.getFactory(MessageFactory.class)).createFrom(soapMessage);
             messageCtx.getMEPContext().setMessage(msg);
             cachedMessage = msg;
-            cachedSoapMessage = soapmessage;
+            cachedSoapMessage = soapMessage;
+            cacheSOAPMessageInfo(cachedSoapMessage);
         } catch (XMLStreamException e) {
-            // TODO log it, and throw something?
+            if(log.isDebugEnabled()){
+                log.debug("Ignoring exception " + e);
+            }
         }
     }
     

@@ -38,6 +38,7 @@ import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.LogicalHandler;
@@ -325,8 +326,9 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
             // There is no EndpointDescription that matches the portInfo specified so 
             // return the empty list of handlers since there are no ports that match
             if (log.isDebugEnabled()) {
+                QName qName = (portinfo == null) ? null : portinfo.getPortName();
                 log.debug("The PortInfo object did not match any ports; returning an empty list of handlers." 
-                        + "  PortInfo QName: " + portinfo.getPortName());
+                        + "  PortInfo QName: " + qName);
             }
             return handlers;
         }

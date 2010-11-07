@@ -841,6 +841,53 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
 
+    public void testAddNumbersClientHandlerWithFalse() throws Exception {
+        AddNumbersClientLogicalHandler2 clh = new AddNumbersClientLogicalHandler2();
+        AddNumbersClientProtocolHandler  cph = new AddNumbersClientProtocolHandler();
+        cph.setPivot(true);
+        try{
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+                    axisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null) {
+                handlers = new ArrayList<Handler>();
+            }
+            handlers.add(clh);
+            handlers.add(cph);
+            
+            p.getBinding().setHandlerChain(handlers);
+
+            int total = proxy.addNumbersHandler(99,10);
+            
+            // Note that a return of 0 indicates that the new message that was added to
+            // in the client protocol handler was lost during handler processing.
+            assertTrue("Expected a pivot and -99 to be returned. But it was "+ total, total == -99);
+        } catch(Exception e) {
+           throw e;
+        } finally {
+            cph.setPivot(false);
+        }
+        
+        String log = readLogFile();
+        String expected_calls = 
+              "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+            + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+            + "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersClientProtocolHandler CLOSE\n"
+            + "AddNumbersClientLogicalHandler2 CLOSE\n";
+        assertEquals(expected_calls, log);
+            
+        TestLogger.logger.debug("----------------------------------");
+    }
     /**
      * test results should be the same as testAddNumbersClientHandler, except that
      * AddNumbersClientLogicalHandler2 doubles the first param on outbound.  Async, of course.
