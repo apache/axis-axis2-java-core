@@ -149,7 +149,19 @@ public class SOAP12DispatchTest extends AbstractTestCase {
     /**
      * Test sending a SOAP 1.2 request in PAYLOAD mode using SOAP/JMS
      */
-    public void testSOAP12JMSDispatchPayloadMode() throws Exception {
+    /*
+     * This test was shown to be invalid by the changes made under Jira AXIS2-4855.  Basically, this test was passing 
+     * based on a bug in modules/jaxws/src/org/apache/axis2/jaxws/message/Protocol.java creating the protocol table.  
+     * There is only one JMS namespace defined by the JMS spec, and it is used for both SOAP11 and SOAP12.  Therefore, 
+     * when the SOAP12 protocol was registered after the SOAP11 protocol, it overwrote the previous value (since the namespace
+     * is used as the key).  
+     * 
+     * For a WSDL-based client or service, the SOAP version is determined by the SOAP namespace used on the
+     * binding.  For a WSDL-less client or service, there is no JMS spec-defined way to determine the difference.  For now
+     * JAX-WS will default to SOAP11, and SOAP12 is not registered as a protocol for the JMS namespace.  See AXIS2-4855
+     * for more information.
+     */
+    public void _testSOAP12JMSDispatchPayloadMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
 		service.addPort(QNAME_PORT, MDQConstants.SOAP12JMS_BINDING, URL_ENDPOINT);

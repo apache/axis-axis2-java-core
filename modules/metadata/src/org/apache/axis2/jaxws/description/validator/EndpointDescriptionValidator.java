@@ -138,7 +138,9 @@ public class EndpointDescriptionValidator extends Validator {
         // Validate that the WSDL value is valid
         else if (!SOAPBinding.SOAP11HTTP_BINDING.equals(wsdlBindingType)
                 && !SOAPBinding.SOAP12HTTP_BINDING.equals(wsdlBindingType)
-                && !javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(wsdlBindingType)) {
+                && !javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(wsdlBindingType)
+                && !MDQConstants.SOAP11JMS_BINDING.equals(wsdlBindingType)
+                && !MDQConstants.SOAP12JMS_BINDING.equals(wsdlBindingType)) {
             addValidationFailure(this, "Invalid wsdl binding value specified: " 
                                  + DescriptionUtils.mapBindingTypeAnnotationToWsdl(wsdlBindingType));
             isBindingValid = false;
@@ -154,6 +156,12 @@ public class EndpointDescriptionValidator extends Validator {
             isBindingValid = true;
         } else if (wsdlBindingType.equals(HTTPBinding.HTTP_BINDING)
                  && bindingType.equals(HTTPBinding.HTTP_BINDING)) {
+            isBindingValid = true;
+        }
+        else if (wsdlBindingType.equals(MDQConstants.SOAP11JMS_BINDING)&& bindingType.startsWith(MDQConstants.SOAP11JMS_BINDING)) {
+            isBindingValid = true;
+        }
+        else if (wsdlBindingType.equals(MDQConstants.SOAP12JMS_BINDING)&& bindingType.startsWith(MDQConstants.SOAP12JMS_BINDING)) {
             isBindingValid = true;
         }
         // The HTTP binding is not valid on a Java Bean SEI-based endpoint; only on a Provider based one.

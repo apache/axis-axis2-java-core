@@ -61,8 +61,12 @@ public enum Protocol {
         protocolMappings.put(SOAPBinding.SOAP12HTTP_BINDING, Protocol.soap12);
         protocolMappings.put(SOAPBinding.SOAP12HTTP_MTOM_BINDING, Protocol.soap12);
         protocolMappings.put(HTTPBinding.HTTP_BINDING, Protocol.rest);
-        protocolMappings.put(MDQConstants.SOAP12JMS_BINDING, Protocol.soap12);
-        protocolMappings.put(MDQConstants.SOAP12JMS_MTOM_BINDING, Protocol.soap12);
+        // There is only one binding value declared by the spec; there is no differentiation
+        // between SOAP11 and SOAP12, unlike HTTP.  This may be an issue in the spec.  However,
+        // for now, since the values are the same, we can only register one protocol, so we 
+        // use SOAP11 (above).  See Jira AXIS2-4855 for more information.
+//        protocolMappings.put(MDQConstants.SOAP12JMS_BINDING, Protocol.soap12);
+//        protocolMappings.put(MDQConstants.SOAP12JMS_MTOM_BINDING, Protocol.soap12);
         
         // Add each of the URLs with a "/" at the end for flexibility
         Map<String, Protocol> updates = new HashMap<String, Protocol>();

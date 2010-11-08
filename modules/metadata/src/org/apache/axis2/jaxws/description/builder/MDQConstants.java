@@ -80,13 +80,16 @@ public class MDQConstants {
      */
     public static final String SERVICE_REF_NAME = "org.apache.axis2.jaxws.description.builder.SERVICE_REF_NAME";
     
-    //Represent SOAP/JMS Bindings
-    //REVIEW: SOAP-JMS may be using the same NS for SOAP11 and SOAP12, 
-    //  if so we could remove some duplicate values below
-    public static final String SOAP11JMS_BINDING = "http://www.example.org/2006/06/soap/bindings/JMS/";
-    public static final String SOAP12JMS_BINDING = "http://www.example.org/2006/06/soap/bindings/JMS/";
-    public static final String SOAP11JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
-    public static final String SOAP12JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
+    // Represent SOAP/JMS Bindings
+    // Note that currently there is only a single namespace defined for the SOAP JMS binding in the JMS spec; there is no
+    // differentiation between JMS SOAP11 or SOAP12.  For a WSDL-based client or service, the SOAP level is
+    // determine by the SOAP namespace used on the binding.  For a WSDL-less client or service, there is currently
+    // no way to identify SOAP11 vs SOAP12, so we will default to SOAP11.  See modules/jaxws/src/org/apache/axis2/jaxws/message/Protocol.java
+    // and Jira AXIS2-4855 for more information.
+    public static final String SOAP11JMS_BINDING = "http://www.w3.org/2010/soapjms/";
+    public static final String SOAP12JMS_BINDING = SOAP11JMS_BINDING;
+    public static final String SOAP11JMS_MTOM_BINDING = "http://www.w3.org/2010/soapjms/?mtom=true";
+    public static final String SOAP12JMS_MTOM_BINDING = SOAP11JMS_MTOM_BINDING;
     public static final String SOAP_HTTP_BINDING ="SOAP_HTTP_BINDING";
     
     public static final String USE_LEGACY_WEB_METHOD_RULES_SUN = "com.sun.xml.ws.model.RuntimeModeler.legacyWebMethod";
