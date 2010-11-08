@@ -88,9 +88,13 @@ Axis2. What should I do?</strong><br />
 <p>First make sure you go through the user guide and this FAQ. If
 you are using a released version of Axis2, then there is a
 possibility that your problem has already being fixed in the latest
-code. <a href=
-"http://repository.apache.org/snapshots/org/apache/axis2/">Download Axis2
-nightly builds</a> and test again.</p>
+code. Download Axis2 nightly builds and test again. You can download
+the complete snapshot distributions from our
+<a href="https://hudson.apache.org/hudson/job/Axis2/lastStableBuild/org.apache.axis2$distribution">Hudson
+continuous integration server</a> and individual JARs from our
+<a href="http://repository.apache.org/snapshots/org/apache/axis2/">snapshot repository</a>. The
+snapshot repository is also the best choice if you are using Maven to build your project.
+</p>
 <p>If the problem still persists, then try to search for your
 question in our <a href=
 "http://marc.theaimsgroup.com/?l=axis-dev&amp;r=1&amp;w=2">developer</a>
