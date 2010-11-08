@@ -475,10 +475,10 @@ Framework (ADB), execute the following steps.</p>
 following in the Axis2_HOME/samples/quickstartadb directory:</p>
 <pre>
 (Windows)
-%AXIS2_HOME%\bin\WSDL2Java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.service.adb -d adb -s -ss -sd -ssi -o build\service
+%AXIS2_HOME%\bin\wsdl2java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.service.adb -d adb -s -ss -sd -ssi -o build\service
 
 (Linux)
-$AXIS2_HOME/bin/WSDL2Java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.service.adb -d adb -s -ss -sd -ssi -o build/service
+$AXIS2_HOME/bin/wsdl2java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.service.adb -d adb -s -ss -sd -ssi -o build/service
 
 </pre>
 <p>Else, simply type ant generate.service in the
@@ -560,7 +560,7 @@ steps.</p>
 following in the Axis2_HOME/samples/quickstartxmlbeans
 directory.</p>
 <pre>
-%AXIS2_HOME%\bin\WSDL2Java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.service.xmlbeans -d xmlbeans -s -ss -sd -ssi -o build\service
+%AXIS2_HOME%\bin\wsdl2java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.service.xmlbeans -d xmlbeans -s -ss -sd -ssi -o build\service
 </pre>
 <p>Else simply type ant generate.service in the
 Axis2_HOME/samples/quickstartxmlbeans directory.</p>
@@ -839,7 +839,7 @@ following steps.</p>
 <p>Generate the client databings by typing the following in the
 Axis2_HOME/samples/quickstartadb directory:</p>
 <pre>
-%AXIS2_HOME%\bin\WSDL2Java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.clients -d adb -s -o build\client
+%AXIS2_HOME%\bin\wsdl2java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.clients -d adb -s -o build\client
 </pre>
 <p>Else, simply type ant generate.client in the
 Axis2_HOME/samples/quickstartadb directory.</p>
@@ -924,7 +924,7 @@ following steps.</p>
 <p>Generate the databings by typing the following in the
 xmlbeansClient directory.</p>
 <pre>
-%AXIS2_HOME%\bin\WSDL2Java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.service.xmlbeans -d xmlbeans -s -o build\client
+%AXIS2_HOME%\bin\wsdl2java -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.service.xmlbeans -d xmlbeans -s -o build\client
 </pre>
 <p>Else, simply type ant generate.client in the
 Axis2_HOME/samples/quickstartxmlbeans directory.</p>
