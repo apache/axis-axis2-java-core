@@ -30,7 +30,7 @@
 <h1>Maven2 AAR Plug-in Guide</h1>
 <h2>Introduction</h2>
 <p>This plugin generates an Axis 2 service file (AAR file).</p>
-<p><a href="http://ws.apache.org/axis2/tools/index.html" target=
+<p><a href="../tools/index.html" target=
 "_blank">[Download Plugin Tool]</a></p>
 <h2>Goals</h2>
 <p>The AAR plugin allows the packaging of an Axis 2 service aar in

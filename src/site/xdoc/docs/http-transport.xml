@@ -129,7 +129,7 @@ following lines in axis2.xml.</p>
 <pre> &lt;parameter name="CONNECTION_TIMEOUT"&gt;some_integer_value&lt;/parameter&gt;</pre>
 <br/>
 
-For runtime configuration, it can be set as follows within the client stub:<source>
+For runtime configuration, it can be set as follows within the client stub:
 <pre>
 ...
 Options options = new Options();
@@ -141,7 +141,7 @@ options.setTimeOutInMilliSeconds(timeOutInMilliSeconds);
 ...
 </pre>
 
-</source><a name="version_config"></a>
+<a name="version_config"></a>
 
 <h2>HTTP Version Configuration</h2>
 
@@ -203,7 +203,6 @@ HttpTransportProperties.ProxyProperties object. Within your client stub,
 create an instance of this object, configure proxy values for it,
 and then set it to the MessageContext's property bag via options.setProperty().
 For example:</p>
-<source>
 <pre>
 ...
 Options options = new Options();
@@ -216,7 +215,6 @@ proxyProperties.setProxyPort(...);
 options.setProperty(HttpConstants.PROXY, proxyProperties);
 ...
 </pre>
-</source>
 <p>The above code will override the deployment proxy configuration settings.</p>
 <a name="preemptive_auth"></a>
 
@@ -269,7 +267,6 @@ the state of the server to be authenticated with. Once filled, it has to be
 set to the Options's property bag with the key as HTTPConstants.AUTHENTICATE.
 The following code snippet shows how to configure the transport
 framework to use Basic Authentication:</p>
-<source>
 <pre>
 ...
 Options options = new Options();
@@ -283,7 +280,6 @@ auth.setPassword("password");
 options.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, auth);
 ...
 </pre>
-</source>
 <a name="reusing_httpclient_object"></a>
 <h2>Reusing the httpclient object</h2>
 
@@ -294,9 +290,7 @@ handshake may not be of negligible cost. To reuse the same httpclient
 object, you can set the relevant property in the Stub:
 </p>
 
-    <source>
         <pre>options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, "true");</pre>
-    </source>
 
     <a name="setting_cached_httpclient_object"></a>
 <h2>Setting the cached httpclient object</h2>
@@ -308,14 +302,12 @@ set the cached httpclient object when your application starts up
 (before any actual axis request). You can set the relevant property in
 the Stub:
 
-    <source>
     <pre>
 MultiThreadedHttpConnectionManager conmgr = new MultiThreadedHttpConnectionManager();
 conmgr.getParams().setDefaultMaxConnectionsPerHost(10);
 HttpClient client = new HttpClient(conmgr);
 configurationContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, client);
 </pre>
-    </source>
 
     <a name="setting_cached_httpstate_object"></a>
 <h2>Setting the cached httpstate object</h2>
@@ -342,12 +334,10 @@ and cookies. This is really complicated scenario, but is absolutely possible one
 
 Sample configuration:
 
-    <source>
     <pre>
 HttpState myHttpState = new HttpState();
 options.setProperty(WSClientConstants.CACHED_HTTP_STATE, myHttpState);
 </pre>
-    </source>
     
 Doing so the HttpState is attached to the client. Respectively this is automatically propagated to all MessageContext objects used by the client. 
 Underneath this just instructs Axis2 that the CACHED_HTTP_STATE set should be passed as a parameter when HttpClient#executeMethod is invoked. 

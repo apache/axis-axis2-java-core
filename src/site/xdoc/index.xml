@@ -16,17 +16,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta name="generator" content=
-"HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
-<meta http-equiv="content-type" content="" />
-<title>Apache Axis2/Java - Next Generation Web Services</title>
-</head>
-<body lang="en" xml:lang="en">
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Apache Axis2/Java - Next Generation Web Services</title>
+    </properties>
+    <body>
 <h1>Welcome to Apache Axis2/Java</h1>
 <p>Axis2 is a Web Services / SOAP / WSDL engine, the successor to the
 widely used <a href=
@@ -36,7 +32,7 @@ of the Apache Axis2 Web services engine - Apache Axis2/Java and
 Apache Axis2/C</p>
 <p>While you will find all the information on Apache Axis2/Java
 here, you can visit the <a href=
-"http://ws.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
+"http://axis.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
 Web site for Axis2/C implementation information.</p>
 <h3>September 6, 2010 - Apache Axis2/Java Version 1.5.2 Released!</h3>
 <p>1.5.2 is a maintenance release to fix the security issue described in
@@ -94,7 +90,7 @@ Apache Rampart</a></li>
 core</li>
 </ul>
 <p>Apache Axis2 is built on <a href=
-"http://ws.apache.org/commons/axiom/index.html">Apache AXIOM</a>, a
+"http://ws.apache.org/axiom/">Apache AXIOM</a>, a
 new high performant, pull-based XML object model.</p>
 <p>Axis2 comes with many new features, enhancements and industry
 specification implementations. The key features offered are as
@@ -301,4 +297,4 @@ Web services related news on the Apache News Blog Online</a></li>
 Online</a></li>
 </ul>
 </body>
-</html>
+</document>

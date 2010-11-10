@@ -31,7 +31,7 @@
 <h2>Introduction</h2>
 <p>This plugin takes as input a Java class and generates a WSDL,
 which describes a Web service for invoking the classes methods.</p>
-<p><a href="http://ws.apache.org/axis2/tools/index.html" target=
+<p><a href="../tools/index.html" target=
 "_blank">[Download Plugin Tool]</a></p>
 <h2>Goals</h2>
 <p>The Java2WSDL plugin offers a single goal:</p>

@@ -24,6 +24,7 @@
         <title>HTTP servlet transport</title>
     </properties>
     <body>
+        <h1>HTTP servlet transport</h1>
         <section name="Introduction">
             <p>
                 The servlet transport processes HTTP requests received through the servlet

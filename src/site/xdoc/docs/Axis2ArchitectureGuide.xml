@@ -198,7 +198,7 @@ of this is the single most important factor that decides the
 performance. It makes sense to delegate this task to a separate
 sub-project under the Web services project, allowing that
 sub-project (<a href=
-"http://ws.apache.org/commons/axiom/index.html">AXIOM</a> or AXis
+"http://ws.apache.org/axiom/">AXIOM</a> or AXis
 Object Model) to provide a simple API for SOAP and XML info-set. It
 hides the complexities of efficient XML processing within its
 implementation.</p>
@@ -396,7 +396,7 @@ particular message.</p>
 <h2>XML Processing Model</h2>
 <p>As mentioned above, the XML processing model of Axis2 has become
 a separate sub-project, called <a href=
-"http://ws.apache.org/commons/axiom/index.html">Apache Axiom</a>,
+"http://ws.apache.org/axiom/">Apache Axiom</a>,
 in the Apache Web services project. Please refer to the <a href=
 "OMTutorial.html">OM Tutorial</a> for more information.</p>
 <a name="bmSOAPPM" id="bmSOAPPM"></a>

@@ -33,7 +33,7 @@
 <h1>Axis2 Plug-in Guide for IntelliJ IDEA</h1>
 <p>This document explains the installation and usage of Axis2
 plug-in for IntelliJ IDEA.</p>
-<p><a href="http://ws.apache.org/axis2/tools/index.html">[Download
+<p><a href="../tools/index.html">[Download
 Plug-in]</a></p>
 <h2>Content</h2>
 <ul>
@@ -63,7 +63,7 @@ functionality has not been changed.</p>
 <a name="installation" id="installation"></a>
 <h2>Installation</h2>
 <p>First <a href=
-"http://ws.apache.org/axis2/tools/index.html">download</a> the
+"../tools/index.html">download</a> the
 plug-in which is a zipped file, and extract it into plugins
 directory which is located in the directory where IDEA is
 installed. If a previous version of the plug-in resides in this

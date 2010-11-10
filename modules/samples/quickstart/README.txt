@@ -8,7 +8,7 @@ source code kindly see this 'Axis2 Quick Start Guide' document.
 Introduction
 ============
 In this sample, we are deploying a POJO after writing a services.xml and
-creating an aar. We also test the gePrice and update methods using a browser.
+creating an aar. We also test the getPrice and update methods using a browser.
 
 Pre-Requisites
 ==============

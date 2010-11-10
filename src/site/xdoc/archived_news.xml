@@ -466,7 +466,7 @@ WS-AtomicTransaction</a> - Supported by <a href=
 included as part of Axis2 core</li>
 </ul>
 <p>Apache Axis2 is built on <a href=
-"http://ws.apache.org/commons/axiom/index.html">Apache Axiom</a>, a
+"http://ws.apache.org/axiom/">Apache Axiom</a>, a
 new high performant, pull-based XML object model that was released
 on 02 May 2006.</p>
 <h2>Features</h2>
@@ -515,16 +515,16 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href=
-"../tools/eclipse/wsdl2java-plugin.html">eclipse
+"tools/eclipse/wsdl2java-plugin.html">eclipse
 plug-in</a><a>/</a> <a href=
-"../tools/CodegenToolReference.html">Command line
+"tools/CodegenToolReference.html">Command line
 version</a><a>/</a><a href=
-"../tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
+"tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation">IntelliJ
 IDEA plug-in</a></li>
 <li>Service Archive Wizard- <a href=
-"../tools/eclipse/servicearchiver-plugin.html">eclipse
+"tools/eclipse/servicearchiver-plugin.html">eclipse
 plug-in</a>/ <a href=
-"../tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
+"tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive">
 IntelliJ IDEA plug-in</a></li>
 </ol>
 <h2>Extension Modules</h2>

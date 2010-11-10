@@ -50,11 +50,13 @@
     font-style: italic
 }
 
+/*
 .code {
     font-family: Courier New;
     font-size: 10pt;
     color: #800000
 }
+*/
 
 /*
 -----------------------------------------------------------------------
@@ -62,73 +64,139 @@ Generic element styles
 ----------------------------------------------------------------------- */
 body {
     color: #111;
-    font: 11px / 1.5 verdana, arial;
-    margin: 10;
+    font-family: "Trebuchet MS", Verdana, sans-serif;
+    font-size: 1em;
     padding: 5;
     border-width: 0;
     outline-width: 0;
     list-style-position: outside;
     display: block;
+
+    margin: 0 auto; /* center, not in IE5 */
+    height: auto !important; /* real browsers */
+    height: 100%; /* IE6: treaded as min-height*/
+
+    min-height: 100%; /* real browsers */
+    width: 980px;
 }
 
-p {
+#breadcrumbs {
+    font-size: 0.8em;
+    background-color: transparent;
+    border-top: 2px solid #6895c2;
+    border-bottom: 2px solid #6895c2;
 }
 
-a, a:link {
+.xleft, #bannerLeft img {
+    text-shadow: none;
+}
+
+.xright, #bannerRight {
+    text-shadow: none;
+}
+
+#leftColumn {
+    border: none;
+    background-color: transparent;
+    margin: 1em 0 0 0;
+}
+
+#navcolumn {
+    padding: 0;
+}
+
+#navcolumn h5 {
+    background-color: #e8f4ff;
+    border-left: solid 1px #ff2700;
+    border-bottom: none;
+    font-size: 0.9em;
+    padding: 5px;
+    color: #333333;
+    font-weight: normal;
+}
+
+#navcolumn li {
+    font-size: 0.9em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+#bodyColumn {
+    margin-left: 190px;
+    margin-right: 0;
+}
+
+#contentBox {
+    color: #333333;
+}
+
+#contentBox p, #contentBox td, #contentBox li {
+    font-family: "Trebuchet MS", Verdana, sans-serif;
+	line-height: 1.5em;
+    font-size: 0.94em;
+}
+
+#contentBox p, #contentBox li {
+    text-align: justify;
+}
+
+a:link {
     color: #039;
-    font-size: 11px;
 }
 
 a:hover {
     color: #03c;
-    font-size: 11px;
     text-decoration: none;
 }
 
-a:visited {
-    font-size: 11px; /* color: #969; */
-/* No need to discolour visited links as this is a system */
+a.externalLink, a.externalLink:link, a.externalLink:visited, a.externalLink:active, a.externalLink:hover {
+    background: none;
+    padding: 0;
 }
 
-ul, ol {
-    font-size: 11px;
-    text-align: left;
-    list-style-position: outside;
-    display: block;
-    white-space: normal;
+table.bodyTable th {
+    background-color: #6f8aa5;
 }
 
-table td {
-    font-size: 11px;
-    padding: 0px;
-    spacing: 0px;
-    text-align: left;
-    vertical-align: top;
+table.bodyTable tr.a {
+    background-color: #d1dce7;
+}
+
+table.bodyTable tr.b {
+    background-color: #eceef1;
 }
 
 h1 {
-    color: #000;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #dcdcdc;
-    padding-left: 10px;
+    color: #4f4f4f;
+    font-size: 2.5em;
+    font-weight: normal;
 }
 
 h2 {
-    font-size: 15px;
-    padding-left: 10px;
-    border-bottom: 1px solid #a9a9a9;
-    border-left-color: black;
+    color: #646b71;
+    font-size: 1.7em;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-weight: normal;
 }
 
 h3 {
-    font-size: 14px;
-    padding-left: 10px;
-    border-bottom: 1px solid #d3d3d3;
+    color: #7d858d;
+	font-weight: bold;
+    font-size: 1.2em;
+    background-color: transparent;
+    border: none;
+    padding: 0;
 }
 
 h4 {
-    font-size: 13px;
+    color: #333333;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: transparent;
+    border: none;
+    padding: 0;
 }
 
 th {
@@ -150,4 +218,21 @@ table {
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-position: left top;
+}
+
+pre, div.source {
+    border: 1px dotted;
+    background-color: #e2ecf6;
+    padding: 0.8em;
+    margin: 0;
+    overflow: auto;
+    font-size: 0.9em;
+}
+
+/* Xdoc generates <div class="source"><pre>...</pre></div> for <source> elements.
+   Because we already apply styles to every <pre>, we need to suppress styles here. */
+div.source pre {
+    border: none;
+    background-color: transparent;
+    padding: none;
 }

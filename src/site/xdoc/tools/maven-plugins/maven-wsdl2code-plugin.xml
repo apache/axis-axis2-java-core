@@ -32,7 +32,7 @@
 <p>This plugin takes as input a WSDL and generates client and
 server stubs for calling or implementing a Web service matching the
 WSDL.</p>
-<p><a href="http://ws.apache.org/axis2/tools/index.html" target=
+<p><a href="../tools/index.html" target=
 "_blank">[Download Plugin Tool]</a></p>
 <h2>Goals</h2>
 <p>The WSDl2Code offers a single goal:</p>
