@@ -177,6 +177,20 @@
                                     </descriptors>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>prepare-dists</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/dists.xml</descriptor>
+                                    </descriptors>
+                                    <!-- We can only prepare the distributions if they have been signed -->
+                                    <skipAssembly>${gpg.skip}</skipAssembly>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
@@ -515,7 +529,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2-beta-5</version>
+                    <version>2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
