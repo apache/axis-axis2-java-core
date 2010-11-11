@@ -46,7 +46,7 @@ POM</a> (Project Object Model):</p>
   &lt;build&gt;
     &lt;plugins&gt;
       &lt;plugin&gt;
-        &lt;groupId&gt;org.apache.axis2.maven2&lt;/groupId&gt;
+        &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
         &lt;artifactId&gt;axis2-java2wsdl-maven-plugin&lt;/artifactId&gt;
         &lt;configuration&gt;
           &lt;className&gt;com.foo.myservice.MyHandler&lt;/className&gt;
