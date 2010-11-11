@@ -20,31 +20,28 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>Apache Axis2 1.5.2 Release Notes</title>
+  <title>Apache Axis2 1.5.3 Release Notes</title>
 </head>
 
 <body lang="en">
-<h1>Apache Axis2 1.5.2 Release Notes</h1>
+<h1>Apache Axis2 1.5.3 Release Notes</h1>
 
 <h2>About this version</h2>
 
-<p>1.5.2 is a maintenance release to fix the security issue described in
-<a href="http://svn.apache.org/repos/asf/axis/axis2/java/core/security/CVE-2010-1632.pdf">CVE-2010-1632</a>
-as well as an XSS vulnerability in the admin console and some other minor issues. It also
-upgrades Axiom to version 1.2.9.</p>
-
-<h2>Changes since 1.5.1</h2>
-
+<p>1.5.3 is a maintenance release that contains the following improvements:</p>
 <ul>
-  	<li>[AXIS2-3290] surefire is still run even if maven.test.skip is true</li>
-    <li>[AXIS2-4113] Unable to sign axis2 jar 1.4/1.4.1: ZipException</li>
-    <li>[AXIS2-4371] Unable to compile class for JSP: axis2-web/viewphases.jsp</li>
-    <li>[AXIS2-4450] CVE-2010-1632: Message builders for SOAP and XML should not attempt to load DTDs</li>
-    <li>[AXIS2-4751] Cookie value is always kept whatever SESSION_MAINTAIN_PROPERTY value is configured</li>
-    <li>[AXIS2-4752] Timeout due to connection pool is starved in latest 1.5.2-SNAPSHOT code.</li>
-    <li>[AXIS2-4768] Mtom optimization doesn't work when using simple bean</li>
-    <li>[AXIS2-4787] Hardcoded Bundle-Versions in adb, jaxws, kernel, metadata and saaj modules</li>
-    <li>[AXIS2-4788] axis2-jibx has conflicting bcel dependencies</li>
+<li>Improved support for SSL when using the servlet transport: Axis2 can now be configured
+so that generated WSDLs contain https endpoints (<a href="https://issues.apache.org/jira/browse/AXIS2-4465">AXIS2-4465</a>).</li>
+<li>Improved compatibility with Rampart (<a href="https://issues.apache.org/jira/browse/AXIS2-3213">AXIS2-3213</a>
+and <a href="https://issues.apache.org/jira/browse/AXIS2-4870">AXIS2-4870</a>) and Sandesha2 (potential HTTP connection pool starvation).</li>
+<li>Axiom has been upgraded to 1.2.10. This version contains performance improvements relevant for Rampart.</li>
+<li>Application (business) faults are no longer logged at level ERROR (<a href="https://issues.apache.org/jira/browse/AXIS2-4280">AXIS2-4280</a>).</li>
+<li>Improved conformance to the SAAJ specifications. The 1.5.3 release contains a set of fixes and improvements for the SAAJ
+implementation developed on the trunk and not included in previous releases from the 1.5 branch.</li>
+<li>Axis2 now relies exclusively on dependencies available from the Maven central repository, and no other Maven
+repositories are required. This in particular fixes a build problem that appeared after the 1.5.2 release.</li>
+<li>The Eclipse and IntelliJ IDEA plugins are again available for <a href="http://axis.apache.org/axis2/java/core/tools/index.html">download</a> via the Axis2 Web site
+(previous 1.5.x versions could only be downloaded from the Maven repository).</li>
 </ul>
 
 <h2>About Axis2</h2>
@@ -74,6 +71,6 @@ and all feedback at:</p>
 <p>Thank you for your interest in Apache Axis2!</p>
 
 <p><i>The Axis2 Development Team<br>
-<a href="http://axis.apache.org/">http://axis.apache.org/</a></i></p>
+<a href="http://axis.apache.org/axis2/java/core/">http://axis.apache.org/axis2/java/core/</a></i></p>
 </body>
 </html>
