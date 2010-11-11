@@ -145,7 +145,7 @@
                 <ol>
                     <li>Update the release date in <tt>release-notes.html</tt>, <tt>src/site/xdoc/index.xml</tt> and
                     <tt>src/site/xdoc/download.xml</tt>. Since it is not possible to predict the exact date when the
-                    release is officially announced, this should be date when the date when the release tag is created.</li>
+                    release is officially announced, this should be the date when the release tag is created.</li>
                     <li>Temporarily disable the Hudson build(s) for Axis2, in order to avoid accidental deployment of the release
                     candidate to the local repository of a Hudson executor if the release process fails somewhere in the middle and/or
                     a Hudson build starts at the wrong moment.</li>
