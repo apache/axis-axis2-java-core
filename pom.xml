@@ -178,7 +178,9 @@
                             </execution>
                             <execution>
                                 <id>prepare-dists</id>
-                                <phase>package</phase>
+                                <!-- Must be done in the install phase after the checksum and signature for
+                                     the docs distribution has been generated. -->
+                                <phase>install</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
@@ -191,6 +193,12 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <configuration>
+                            <createChecksum>true</createChecksum>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

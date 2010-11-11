@@ -72,7 +72,7 @@ Distribution
   essential jars are missing. At such a situation the documentation of the 
   particular servlet container should be consulted to find the problem. 
   
-  Read http://ws.apache.org/axis2/1_5/installationguide.html#servlet_container
+  Read http://axis.apache.org/axis2/java/core/docs/installationguide.html#servlet_container
   for more information.
   
    
@@ -117,7 +117,7 @@ Distribution
         Eg: WSDL2Java.sh -uri ../wsdl/Axis2Sample.wsdl
         
    A more detailed reference about this script can be found
-   http://ws.apache.org/axis2/1_5/reference.html.
+   http://axis.apache.org/axis2/java/core/docs/reference.html.
    
    
    * java2wsdl.{bat|sh} 	
@@ -127,11 +127,11 @@ Distribution
         Eg: Java2WSDL.sh -cn ../samples/test/searchTool.Search
         
    A more detailed reference about this script can be found in
-   http://ws.apache.org/axis2/1_5/reference.html
+   http://axis.apache.org/axis2/java/core/docs/reference.html
 
 Complete Installation Guide
 ===========================
 A complete Installation Guide on Apache Axis2 is available at
-http://ws.apache.org/axis2/1_5/installationguide.html
+http://axis.apache.org/axis2/java/core/docs/installationguide.html
    
    

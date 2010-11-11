@@ -89,6 +89,7 @@
             </subsection>
         </section>
         <section name="Performing a release">
+            <p><strong>Note:</strong> performing the release requires at least Maven 2.1.0. The recommended version is 2.2.1.</p>
             <subsection name="Preparation">
                 <ol>
                     <li>Check the consistency between the metadata in <tt>pom.xml</tt> and <tt>modules/parent/pom.xml</tt>.

@@ -1,7 +1,7 @@
 ======================================================
 Apache Axis2 ${project.version} build (${buildTimestamp})
 
-http://ws.apache.org/axis2
+http://axis.apache.org/axis2/java/core/
 ------------------------------------------------------
 
 Welcome to Axis2!
