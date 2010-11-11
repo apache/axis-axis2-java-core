@@ -18,6 +18,7 @@
   ~ under the License.
   -->
 <assembly>
+    <id>jar</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>jar</format>
@@ -41,7 +42,6 @@
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
-                <useStrictFiltering>true</useStrictFiltering>
                 <unpack>true</unpack>
                 <unpackOptions>
                     <excludes>
@@ -59,7 +59,6 @@
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
-                <useStrictFiltering>true</useStrictFiltering>
                 <attachmentClassifier>classpath-module</attachmentClassifier>
                 <unpack>true</unpack>
                 <unpackOptions>

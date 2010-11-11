@@ -18,7 +18,7 @@
   -->
 
 <assembly>
-    <id>axis2-eclipse-service-plugin</id>
+    <id>dist</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>zip</format>

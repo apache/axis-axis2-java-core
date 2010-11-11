@@ -194,6 +194,7 @@
                                 <configuration>
                                     <descriptors>
                                         <descriptor>src/main/assembly/doc.xml</descriptor>
+                                        <descriptor>src/main/assembly/dists.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -545,7 +546,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2-beta-5</version>
+                    <version>2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
