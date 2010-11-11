@@ -20,7 +20,7 @@
 Apache Axis2 ${project.version} build (${buildTimestamp})
 Binary Release
 
-http://ws.apache.org/axis2
+http://axis.apache.org/axis2/java/core/
 ------------------------------------------------------
 
 This is the Standard Binary Release of Axis2.
@@ -42,4 +42,4 @@ The conf directory contains the axis2.xml file which allows to configure Axis2.
 
 (Please note that this release does not include the other WS-* implementation modules, like
 WS-Security, that are being developed within Axis2. Those can be downloaded from
-http://ws.apache.org/axis2/modules/)
+http://axis.apache.org/axis2/java/core/modules/)

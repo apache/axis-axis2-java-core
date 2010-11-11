@@ -63,6 +63,16 @@
             <source>${settings.localRepository}/org/apache/axis2/distribution/${project.version}/distribution-${project.version}-war.zip.asc</source>
             <destName>axis2-${project.version}-war.zip.asc</destName>
         </file>
+        <!-- Documents distribution -->
+        <file>
+            <source>${settings.localRepository}/org/apache/axis2/axis2/${project.version}/axis2-${project.version}-docs.zip</source>
+        </file>
+        <file>
+            <source>${settings.localRepository}/org/apache/axis2/axis2/${project.version}/axis2-${project.version}-docs.zip.md5</source>
+        </file>
+        <file>
+            <source>${settings.localRepository}/org/apache/axis2/axis2/${project.version}/axis2-${project.version}-docs.zip.asc</source>
+        </file>
         <!-- Eclipse codegen plugin -->
         <file>
             <source>${settings.localRepository}/org/apache/axis2/axis2.eclipse.codegen.plugin/${project.version}/axis2.eclipse.codegen.plugin-${project.version}-dist.zip</source>

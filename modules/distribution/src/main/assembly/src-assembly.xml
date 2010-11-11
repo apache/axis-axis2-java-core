@@ -30,6 +30,17 @@
         <fileSet>
             <directory>../..</directory>
             <outputDirectory></outputDirectory>
+            <includes>
+                <include>NOTICE.txt</include>
+                <include>LICENSE.txt</include>
+                <include>README.txt</include>
+                <include>release-notes.html</include>
+            </includes>
+            <filtered>true</filtered>
+        </fileSet>
+        <fileSet>
+            <directory>../..</directory>
+            <outputDirectory></outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <includes>
                 <include>pom.xml</include>
@@ -37,10 +48,6 @@
                 <include>modules/**</include>
                 <include>legal/**</include>
                 <include>release-docs/**</include>
-                <include>NOTICE.txt</include>
-                <include>LICENSE.txt</include>
-                <include>README.txt</include>
-                <include>release-notes.html</include>
                 <include>src/**</include>
             </includes>
 

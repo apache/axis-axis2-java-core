@@ -20,7 +20,7 @@
 Apache Axis2 ${project.version} build (${buildTimestamp})
 Documentation Release
 
-http://ws.apache.org/axis2
+http://axis.apache.org/axis2/java/core/
 ------------------------------------------------------
 
 This release contains
