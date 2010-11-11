@@ -17,7 +17,7 @@
  * under the License.
  */
 ======================================================
-Apache Axis2 @axisVersion@ build (@TODAY@)
+Apache Axis2 ${project.version} build (${buildTimestamp})
 Documentation Release
 
 http://axis.apache.org/axis2/java/core/
