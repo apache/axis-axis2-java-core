@@ -194,8 +194,21 @@
                                 <configuration>
                                     <descriptors>
                                         <descriptor>src/main/assembly/doc.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>prepare-dists</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
                                         <descriptor>src/main/assembly/dists.xml</descriptor>
                                     </descriptors>
+                                    <!-- We can only prepare the distributions if they have been signed -->
+                                    <skipAssembly>${gpg.skip}</skipAssembly>
                                 </configuration>
                             </execution>
                         </executions>
