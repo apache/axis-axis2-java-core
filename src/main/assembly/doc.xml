@@ -39,6 +39,7 @@
                 <include>README.txt</include>
                 <include>release-notes.html</include>
             </includes>
+            <filtered>true</filtered>
         </fileSet>
         <fileSet>
             <directory>release-docs/readme-files</directory>
