@@ -183,13 +183,13 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
 
     public String getDocumentation() {
         if (documentation != null) {
-            if (documentation.getType() == OMNode.TEXT_NODE) {
+            if (documentation instanceof OMText) {
                 return ((OMText)documentation).getText();
-            } else {
+            } else if (documentation instanceof OMElement) {
                 StringWriter writer = new StringWriter();
                 documentation.build();
                 try {
-                    documentation.serialize(writer);
+                    ((OMElement)documentation).serialize(writer);
                 } catch (XMLStreamException e) {
                     log.error(e);
                 }
