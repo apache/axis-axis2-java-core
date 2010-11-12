@@ -395,7 +395,8 @@ public class AxisService extends AxisDescription {
 		this.name = name;
 	}
 
-	public void addMessageReceiver(String mepURI,
+	@SuppressWarnings("deprecation")
+    public void addMessageReceiver(String mepURI,
 			MessageReceiver messageReceiver) {
 		if (WSDL2Constants.MEP_URI_IN_ONLY.equals(mepURI)
 				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY
@@ -510,7 +511,7 @@ public class AxisService extends AxisDescription {
 	}
 
 	public MessageReceiver getMessageReceiver(String mepURL) {
-		return (MessageReceiver) messageReceivers.get(mepURL);
+		return messageReceivers.get(mepURL);
 	}
 
 	/**

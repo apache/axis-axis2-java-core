@@ -443,6 +443,7 @@ public class Utils {
      * Further, in the first lookup, it will cache the looked
      * up value so that the subsequent method calls are extremely efficient.
      */
+    @SuppressWarnings("deprecation")
     public static int getAxisSpecifMEPConstant(String messageExchangePattern) {
 
 

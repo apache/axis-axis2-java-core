@@ -77,6 +77,7 @@ public class AxisOperationFactory implements WSDLConstants {
     }
 
     //FIXME add in the latest MEP URIs AND needs to double check on about the mep we had in 2004
+    @SuppressWarnings("deprecation")
     public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
         if (WSDL2Constants.MEP_URI_IN_ONLY.equals(mepURI) ||

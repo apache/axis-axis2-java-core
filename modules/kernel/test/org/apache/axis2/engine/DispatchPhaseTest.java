@@ -29,6 +29,7 @@ public class DispatchPhaseTest extends TestCase {
     /**
      * Verify capability of isOneway method in DispatchPhase.
      */
+    @SuppressWarnings("deprecation")
     public void testIsOneway() {
         String mep = WSDL2Constants.MEP_URI_IN_ONLY;
         DispatchPhase phase = new DispatchPhase();

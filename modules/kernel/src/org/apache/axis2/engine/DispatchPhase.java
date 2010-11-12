@@ -376,6 +376,7 @@ public class DispatchPhase extends Phase {
      * This method will determine if the MEP indicated by 'mepString' specifies
      * a oneway MEP.
      */
+    @SuppressWarnings("deprecation")
     boolean isOneway(String mepString) {
         return (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)
                 || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)
