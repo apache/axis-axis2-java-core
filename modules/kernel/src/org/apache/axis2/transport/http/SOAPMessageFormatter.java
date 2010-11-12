@@ -22,7 +22,7 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MIMEOutputUtils;
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -228,7 +228,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 innerBoundary = (String) innerBoundaryProperty;
             } else {
                 innerBoundary = "innerBoundary"
-                        + UUIDGenerator.getUUID().replace(':', '_');
+                        + UIDGenerator.generateMimeBoundary();
             }
             Object partCIDProperty = msgCtxt
                     .getProperty(Constants.Configuration.MM7_PART_CID);
@@ -236,7 +236,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 partCID = (String) partCIDProperty;
             } else {
                 partCID = "innerCID"
-                        + UUIDGenerator.getUUID().replace(':', '_');
+                        + UIDGenerator.generateContentId();
             }
             MIMEOutputUtils.writeMM7Message(bufferedSOAPBody, outputStream,
                                             msgCtxt.getAttachmentMap(), format, partCID,

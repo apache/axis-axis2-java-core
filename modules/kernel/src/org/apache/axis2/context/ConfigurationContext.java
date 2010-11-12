@@ -20,7 +20,7 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.clustering.ClusteringAgent;
@@ -268,7 +268,7 @@ public class ConfigurationContext extends AbstractContext {
                     serviceGroupContext = createServiceGroupContext(axisServiceGroup);
                     serviceContext = serviceGroupContext.getServiceContext(axisService);
                     // set the serviceGroupContextID
-                    serviceGroupContextId = UUIDGenerator.getUUID();
+                    serviceGroupContextId = UIDGenerator.generateURNString();
                     serviceGroupContext.setId(serviceGroupContextId);
                     messageContext.setServiceGroupContextId(serviceGroupContextId);
                     addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);

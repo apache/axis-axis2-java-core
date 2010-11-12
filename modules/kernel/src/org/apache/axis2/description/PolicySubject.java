@@ -19,7 +19,7 @@
 
 package org.apache.axis2.description;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
@@ -42,7 +42,7 @@ public class PolicySubject {
 		if (key == null) {
 			key = policy.getId();
 			if (key == null) {
-				key = UUIDGenerator.getUUID();
+				key = UIDGenerator.generateUID();
 				policy.setId(key);
 			}
 		}

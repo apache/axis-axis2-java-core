@@ -19,7 +19,7 @@
 
 package org.apache.axis2.description;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.util.AxisPolicyLocator;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.neethi.Policy;
@@ -118,7 +118,7 @@ public class PolicyInclude {
         wrapperElements.clear();
 
         if (policy.getName() == null && policy.getId() == null) {
-            policy.setId(UUIDGenerator.getUUID());
+            policy.setId(UIDGenerator.generateUID());
         }
 
         Wrapper wrapper = new Wrapper(PolicyInclude.ANON_POLICY, policy);
@@ -353,7 +353,7 @@ public class PolicyInclude {
         String key;
 
         if ((key = policy.getName()) == null && (key = policy.getId()) == null) {
-            policy.setId(UUIDGenerator.getUUID());
+            policy.setId(UIDGenerator.generateUID());
         }
 
         key = (policy.getName() != null) ? policy.getName() : policy.getId();

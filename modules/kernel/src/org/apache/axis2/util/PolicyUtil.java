@@ -35,7 +35,7 @@ import javax.xml.transform.Transformer;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
@@ -90,7 +90,7 @@ public class PolicyUtil {
 		if (key == null) {
 			key = policy.getId();
 			if (key == null) {
-				key = UUIDGenerator.getUUID();
+				key = UIDGenerator.generateUID();
 				policy.setId(key);
 			}
 			policyReference.setURI("#" + key);

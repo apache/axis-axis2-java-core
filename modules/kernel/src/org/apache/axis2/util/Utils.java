@@ -20,10 +20,10 @@
 
 package org.apache.axis2.util;
 
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.ServiceObjectSupplier;
@@ -193,7 +193,7 @@ public class Utils {
     private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService,
                                                                            ConfigurationContext configurationContext)
             throws AxisFault {
-        String serviceGroupContextId = UUIDGenerator.getUUID();
+        String serviceGroupContextId = UIDGenerator.generateURNString();
         ServiceGroupContext serviceGroupContext =
                 configurationContext.createServiceGroupContext(axisService.getAxisServiceGroup());
 
