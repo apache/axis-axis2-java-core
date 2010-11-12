@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.3</version>
+        <version>1.5.4-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-transport-http</artifactId>
@@ -32,9 +32,9 @@
     <description>This inclues all the available transports in Axis2</description>
     <packaging>bundle</packaging>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.3/modules/transport/http</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.3/modules/transport/http</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.3/modules/transport/http</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/transport/http</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/transport/http</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/transport/http</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
