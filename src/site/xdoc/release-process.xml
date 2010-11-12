@@ -152,17 +152,18 @@
                     <li>Start the release process using the following command:
                     <pre>mvn release:prepare -Peverything</pre>
                     When asked for a tag name, use the following format: <tt>vX.Y.Z</tt>. The <tt>everything</tt> profile
-                    makes sure that the version numbers of all Maven modules are incremented properly.</li>
-                    <li>Perform the release using the following command:
-                    <pre>mvn release:perform</pre>
-                    This command may fail for users in locations that use the EU Subversion server. If this happens,
+                    makes sure that the version numbers of all Maven modules are incremented properly.
+                    The execution of the <tt>release:prepare</tt> goal may fail for users in
+                    locations that use the EU Subversion server. If this happens,
                     wait for a minute (so that the EU server can catch up with its master) and simply rerun the command.
                     It will continue where the error occurred.</li>
+                    <li>Perform the release using the following command:
+                    <pre>mvn release:perform</pre></li>
                     <li>Login to Nexus and close the staging repository. For more details about this step, see
                     <a href="https://docs.sonatype.org/display/Repository/Closing+a+Staging+Repository">here</a>.</li>
                     <li>Deploy the distributions to your <tt>public_html</tt> area on <tt>people.apache.org</tt>.
                     The <tt>release:perform</tt> goal should have produced all the necessary files in the
-                    <tt>target/axis2-&lt;version&gt;-dists</tt> folder. Please preserve the directory structure and
+                    <tt>target/checkout/target/axis2-&lt;version&gt;-dists</tt> folder. Please preserve the directory structure and
                     file names because they exactly match the requirements for deployment to <tt>www.apache.org</tt>
                     (see below).</li>
                     <li>Generate and deploy the Maven site to your <tt>public_html</tt> area on <tt>people.apache.org</tt>
