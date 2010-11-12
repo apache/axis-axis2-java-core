@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.3-SNAPSHOT</version>
+        <version>1.5.3</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-transport-local</artifactId>
@@ -32,9 +32,9 @@
     <description>This inclues all the available transports in Axis2</description>
     <packaging>bundle</packaging>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/transport/local</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/transport/local</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/transport/local</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.3/modules/transport/local</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.3/modules/transport/local</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.3/modules/transport/local</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
