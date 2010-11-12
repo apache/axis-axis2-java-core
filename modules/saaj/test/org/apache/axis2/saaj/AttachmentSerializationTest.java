@@ -53,14 +53,9 @@ public class AttachmentSerializationTest extends Assert {
 
     @Validated @Test
     public void testAttachments() throws Exception {
-        try {
-            ByteArrayOutputStream bais = new ByteArrayOutputStream();
-            int count = saveMsgWithAttachments(bais);
-            assertEquals(count, 2);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Unexpected Exception : " + e);
-        }
+        ByteArrayOutputStream bais = new ByteArrayOutputStream();
+        int count = saveMsgWithAttachments(bais);
+        assertEquals(count, 2);
     }
 
     public int saveMsgWithAttachments(OutputStream os) throws Exception {
