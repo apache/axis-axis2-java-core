@@ -27,7 +27,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * This is a utility class to make it easier/cleaner for user programming
@@ -99,10 +98,10 @@ public class ThreadContextMigratorUtil {
 
         if (param != null) {
             List migratorList = (List) param.getValue();
-            ListIterator threadContextMigrators = migratorList.listIterator();
-            while (threadContextMigrators.hasNext()) {
-                ((ThreadContextMigrator) threadContextMigrators.next())
-                        .migrateContextToThread(msgContext);
+            int size = migratorList.size();
+            for (int i=0; i<size;i++) {
+                ((ThreadContextMigrator) migratorList.get(i))
+                .migrateContextToThread(msgContext);
             }
         }
     }
@@ -128,9 +127,9 @@ public class ThreadContextMigratorUtil {
 
         if (param != null) {
             List migratorList = (List) param.getValue();
-            ListIterator threadContextMigrators = migratorList.listIterator();
-            while (threadContextMigrators.hasNext()) {
-                ((ThreadContextMigrator) threadContextMigrators.next()).cleanupThread(msgContext);
+            int size = migratorList.size();
+            for (int i=0; i<size;i++) {
+                ((ThreadContextMigrator) migratorList.get(i)).cleanupThread(msgContext);
             }
         }
     }
@@ -158,9 +157,9 @@ public class ThreadContextMigratorUtil {
 
         if (param != null) {
             List migratorList = (List) param.getValue();
-            ListIterator threadContextMigrators = migratorList.listIterator();
-            while (threadContextMigrators.hasNext()) {
-                ((ThreadContextMigrator) threadContextMigrators.next())
+            int size = migratorList.size();
+            for (int i=0; i<size;i++) {
+                ((ThreadContextMigrator) migratorList.get(i))
                         .migrateThreadToContext(msgContext);
             }
         }
@@ -187,9 +186,9 @@ public class ThreadContextMigratorUtil {
 
         if (param != null) {
             List migratorList = (List) param.getValue();
-            ListIterator threadContextMigrators = migratorList.listIterator();
-            while (threadContextMigrators.hasNext()) {
-                ((ThreadContextMigrator) threadContextMigrators.next()).cleanupContext(msgContext);
+            int size = migratorList.size();
+            for (int i=0; i<size;i++) {
+                ((ThreadContextMigrator) migratorList.get(i)).cleanupContext(msgContext);
             }
         }
   }
