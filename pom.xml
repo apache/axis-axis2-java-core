@@ -531,6 +531,12 @@
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
+    <properties>
+        <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
+             we can't use the project.version variable directly because of the dot. See
+             http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
+        <axis2_version>${project.version}</axis2_version>
+    </properties>
     <build>
         <!-- Note: the pluginManagement in axis2-parent doesn't apply here; we
              need to define our own! -->
