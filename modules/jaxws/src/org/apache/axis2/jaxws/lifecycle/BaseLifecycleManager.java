@@ -49,9 +49,31 @@ public abstract class BaseLifecycleManager {
         }
     }
 
-    protected void invokePostConstruct(Method method) throws LifecycleException {
+    protected void invokePostConstruct(final Method method) throws LifecycleException {
         if (log.isDebugEnabled()) {
             log.debug("Invoking Method with @PostConstruct annotation");
+        }
+        /*
+         * As per JSR-250 pre destroy and post construct can be
+         * public, protected, private or default encapsulation.
+         * I will check and make sure the methods are accessible
+         * before we invoke them.
+         * 
+         */
+        
+        try {
+            AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws InvocationTargetException, IllegalAccessException {
+                            if(!method.isAccessible()){
+                                method.setAccessible(true);
+                            }
+                            return null;
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            throw new LifecycleException(e.getException());
         }
         invokeMethod(method, null);
         if (log.isDebugEnabled()) {
