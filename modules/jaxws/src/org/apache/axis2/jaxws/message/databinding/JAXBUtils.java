@@ -961,7 +961,7 @@ public class JAXBUtils {
                 classRef = classRef.substring(0, index);
             }
             
-            if (classRef.length() > 0 ||
+            if (classRef.length() == 0 ||
                 classRef.endsWith(".ObjectFactory") ||
                 classRef.startsWith("java.util.") ||
                 classRef.startsWith("java.lang.")) {
