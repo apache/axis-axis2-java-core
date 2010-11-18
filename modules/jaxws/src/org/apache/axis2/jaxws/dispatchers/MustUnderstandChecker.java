@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.dispatchers;
 
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
@@ -34,6 +35,22 @@ import org.apache.commons.logging.LogFactory;
 public class MustUnderstandChecker extends org.apache.axis2.handlers.AbstractHandler {
     private static final Log log = LogFactory.getLog(MustUnderstandChecker.class);
 
+    public boolean invoke_stage1(MessageContext msgContext) throws AxisFault {
+        if (msgContext == null) {
+            return false;
+        }
+        
+        SOAPEnvelope envelope = msgContext.getEnvelope();
+        if (envelope.getHeader() == null) {
+            return false;
+        }  
+        return true;
+    }
+    
+    public InvocationResponse invoke_stage2(MessageContext msgContext) throws AxisFault {
+        return invoke(msgContext);
+    }
+    
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // Get the list of headers for the roles we're acting in, then mark any we understand
         // as processed.

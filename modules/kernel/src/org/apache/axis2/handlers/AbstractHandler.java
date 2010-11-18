@@ -20,10 +20,12 @@
 
 package org.apache.axis2.handlers;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.Handler.InvocationResponse;
 
 /**
  * Class AbstractHandler
@@ -99,5 +101,35 @@ public abstract class AbstractHandler implements Handler {
     }
 
     public void flowComplete(MessageContext msgContext) {
+    }
+    
+    /**
+     * Alternative to calling invoke()
+     * The handler developer can place code in stage1 that 
+     * will do quick checking to make sure that the handler is
+     * enabled and useful for this message.
+     * Some handler developers may wish to split the invoke into
+     * two stages if the handler is often disabled.
+     * @param msgContext
+     * @return true if stage2 processing is needed; 
+     *   false if stage2 processing is not needed and flow should continue to the next handler
+     */
+    public boolean invoke_stage1(MessageContext msgContext) throws AxisFault {
+        // The default behavior is to continue to stage2
+        return true;
+    }
+    
+    /**
+     * Alternative to calling invoke()
+     * The handler developer can place code in stage2 that 
+     * will do the actual processing.
+     * Some handler developers may wish to split the invoke into
+     * two stages if the handler is often disabled.
+     * @param msgContext
+     * @return InvocationResponse
+     */
+    public InvocationResponse invoke_stage2(MessageContext msgContext) throws AxisFault {
+        // The default behavior is to call the existing invoke method
+        return invoke(msgContext);
     }
 }

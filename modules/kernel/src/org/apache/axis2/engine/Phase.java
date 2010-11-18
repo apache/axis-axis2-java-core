@@ -25,6 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
@@ -294,8 +295,6 @@ public class Phase implements Handler {
                     "\"");
         }
 
-        InvocationResponse pi = InvocationResponse.CONTINUE;
-
         int currentIndex = msgctx.getCurrentPhaseIndex();
 
         if (currentIndex == 0) {
@@ -308,21 +307,17 @@ public class Phase implements Handler {
 
         int handlersSize = handlers.size();
         
-        while (currentIndex < handlersSize) {
-            Handler handler = (Handler) handlers.get(currentIndex);
+        for (int i= currentIndex; i < handlersSize; i++) {
+            Handler handler = (Handler) handlers.get(i);
 
-            if (isDebugEnabled) {
-                log.debug(msgctx.getLogIDString() + " Invoking Handler '" + handler.getName() +
-                        "' in Phase '" + phaseName + "'");
-            }
-            pi = handler.invoke(msgctx);
-
+            InvocationResponse pi = invokeHandler(handler, msgctx);
+           
             if (!pi.equals(InvocationResponse.CONTINUE)) {
                 return pi;
             }
-
-            currentIndex++;
-            msgctx.setCurrentPhaseIndex(currentIndex);
+            
+            // Set phase index to the next handler
+            msgctx.setCurrentPhaseIndex(i+1);
         }
 
         if (isDebugEnabled) {
@@ -332,7 +327,28 @@ public class Phase implements Handler {
 
         msgctx.setCurrentPhaseIndex(0);
         checkPostConditions(msgctx);
-        return pi;
+        return InvocationResponse.CONTINUE;
+    }
+    
+    private InvocationResponse invokeHandler(Handler handler, MessageContext msgctx) throws AxisFault  {
+        if (isDebugEnabled) {
+            log.debug(msgctx.getLogIDString() + " Invoking Handler '" + handler.getName() +
+                    "' in Phase '" + phaseName + "'");
+        }
+        if (handler instanceof AbstractHandler) {
+            // Call this as a two stage handler.
+            boolean needStage2 = ((AbstractHandler)handler).invoke_stage1(msgctx);
+
+            if (needStage2) {
+                return ((AbstractHandler)handler).invoke_stage2(msgctx);
+            } else {
+                return InvocationResponse.CONTINUE;
+            } 
+           
+            
+        } else {
+            return handler.invoke(msgctx);
+        }
     }
 
     public void flowComplete(MessageContext msgContext) {

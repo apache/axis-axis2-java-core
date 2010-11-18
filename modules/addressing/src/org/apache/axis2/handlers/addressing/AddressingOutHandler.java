@@ -64,6 +64,14 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
     private static final String MODULE_NAME = "addressing";
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        
+        if (invoke_stage1(msgContext)) {
+            return invoke_stage2(msgContext);
+        } else {
+            return InvocationResponse.CONTINUE;
+        }
+    }
+    public boolean invoke_stage1(MessageContext msgContext) throws AxisFault {
         Parameter param = null;
         boolean disableAddressing = false;
         
@@ -85,8 +93,13 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 log.trace(msgContext.getLogIDString() +
                         " Addressing is disabled. Not adding WS-Addressing headers.");
             }
-            return InvocationResponse.CONTINUE;
+            return false;
         }
+        return true;
+    }
+    
+    public InvocationResponse invoke_stage2(MessageContext msgContext) throws AxisFault {
+        
 
         // Determine the addressin namespace in effect.
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
@@ -99,7 +112,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
         // Determine whether to include optional addressing headers in the output.
         // Get default value from module.xml or axis2.xml files
-        param = msgContext.getModuleParameter(
+        Parameter param = msgContext.getModuleParameter(
                 INCLUDE_OPTIONAL_HEADERS, MODULE_NAME, handlerDesc);
         boolean includeOptionalHeaders =
             msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS,

@@ -22,6 +22,7 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
@@ -36,6 +37,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
@@ -71,16 +73,18 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     }
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        
+        if (invoke_stage1(msgContext)) {
+            return invoke_stage2(msgContext);
+        } else {
+            return InvocationResponse.CONTINUE;
+        }
+    }
+    public boolean invoke_stage1(MessageContext msgContext) throws AxisFault {
         //Set the defaults on the message context.
         msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
         msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
 
-
-        // if there are not headers put a flag to disable addressing temporary
-        SOAPHeader header = msgContext.getEnvelope().getHeader();
-        if (header == null) {
-            return InvocationResponse.CONTINUE;
-        }
         //Determine if we want to ignore addressing headers. This parameter must
         //be retrieved from the message context because it's value can vary on a
         //per service basis.
@@ -91,10 +95,19 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 log.debug(
                         "The AddressingInHandler has been disabled. No further processing will take place.");
             }
-            return InvocationResponse.CONTINUE;         
+            return false;         
         }
 
-
+        // if there are not headers put a flag to disable addressing temporary
+        SOAPHeader header = msgContext.getEnvelope().getHeader();
+        if (header == null) {
+            return false;
+        }
+        return true;
+    }
+    
+    public InvocationResponse invoke_stage2(MessageContext msgContext) throws AxisFault {
+        SOAPHeader header = msgContext.getEnvelope().getHeader();
         if(configuration == null){
         	AxisConfiguration conf = msgContext.getConfigurationContext().getAxisConfiguration();
         	rolePlayer = (RolePlayer)conf.getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
