@@ -20,17 +20,24 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mortbay.http.HttpContext;
+import org.mortbay.http.HttpException;
+import org.mortbay.http.HttpHandler;
+import org.mortbay.http.HttpRequest;
+import org.mortbay.http.HttpResponse;
+import org.mortbay.http.SocketListener;
+import org.mortbay.http.handler.AbstractHttpHandler;
+import org.mortbay.jetty.Server;
 
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.io.IOException;
@@ -103,47 +110,38 @@ public class SOAPConnectionTest extends Assert {
 
 
     @Validated @Test
-    public void testGet() {
-    	if(isNetworkedResourceAvailable("http://java.sun.com/index.html")){
-            try {
-                SOAPConnectionFactory sf = new SOAPConnectionFactoryImpl();
-                SOAPConnection con = sf.createConnection();
-                //Create a valid non webservice endpoint for invoking HTTP-GET
-                URL urlEndpoint = new URL("http", "java.sun.com", 80, "/index.html");
-                //invoking HTTP-GET with a valid non webservice endpoint should throw a SOAPException
-                SOAPMessage reply = con.get(urlEndpoint);
-            } catch (Exception e) {
-                assertTrue(e instanceof SOAPException);
-            }
-    	}else{
-    		//If resource is not available online, do a mock test
-    		assertTrue(true);
-    	}
-    }
-    
-    
-    private boolean isNetworkedResourceAvailable(String url) {
-        HttpClient client = new HttpClient();
-        GetMethod method = new GetMethod(url);
-        client.getHttpConnectionManager().getParams().setConnectionTimeout(1000);
-        method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                                        new DefaultHttpMethodRetryHandler(1, false));
+    public void testGet() throws Exception {
+        Server server = new Server();
+        SocketListener listener = new SocketListener();
+        server.addListener(listener);
+        HttpContext context = new HttpContext(server, "/*");
+        HttpHandler handler = new AbstractHttpHandler() {
+            public void handle(String pathInContext, String pathParams,
+                    HttpRequest request, HttpResponse response) throws HttpException, IOException {
 
+                try {
+                    SOAPMessage message = MessageFactory.newInstance().createMessage();
+                    SOAPBody body = message.getSOAPBody();
+                    body.addChildElement("root");
+                    response.setContentType(SOAPConstants.SOAP_1_1_CONTENT_TYPE);
+                    message.writeTo(response.getOutputStream());
+                    request.setHandled(true);
+                } catch (SOAPException ex) {
+                    throw new RuntimeException("Failed to generate SOAP message", ex);
+                }
+            }
+        };
+        context.addHandler(handler);
+        server.start();
         try {
-            int statusCode = client.executeMethod(method);
-            if (statusCode != HttpStatus.SC_OK) {
-                return false;
-            }
-
-        } catch (HttpException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            SOAPConnectionFactory sf = new SOAPConnectionFactoryImpl();
+            SOAPConnection con = sf.createConnection();
+            URL urlEndpoint = new URL("http", "localhost", listener.getPort(), "/test");
+            SOAPMessage reply = con.get(urlEndpoint);
+            SOAPElement bodyElement = (SOAPElement)reply.getSOAPBody().getChildElements().next();
+            assertEquals("root", bodyElement.getLocalName());
         } finally {
-            method.releaseConnection();
+            server.stop();
         }
-        return true;
-    }     
+    }
 }
