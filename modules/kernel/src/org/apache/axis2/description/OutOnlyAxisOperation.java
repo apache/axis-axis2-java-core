@@ -41,14 +41,15 @@ import java.util.HashMap;
 
 public class OutOnlyAxisOperation extends AxisOperation {
 
+    protected static final String OUT_MESSAGE_KEY = 
+      WSDLConstants.WSDL_MESSAGE_OUT_MESSAGE;
+    
     private AxisMessage inFaultMessage;
 
     // just to keep the inflow , there won't be any usage
     private ArrayList inPhases;
 
     private AxisMessage outFaultMessage;
-
-    private AxisMessage outMessage;
 
     public OutOnlyAxisOperation() {
         super();
@@ -67,7 +68,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
 
     public void addMessage(AxisMessage message, String label) {
         if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
-            outMessage = message;
+            addChild(OUT_MESSAGE_KEY, message);
         } else {
             throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -99,7 +100,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
     }
 
     private void createMessage() {
-        outMessage = new AxisMessage();
+        AxisMessage outMessage = new AxisMessage();
         outMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
         outMessage.setParent(this);
         inFaultMessage = new AxisMessage();
@@ -107,11 +108,16 @@ public class OutOnlyAxisOperation extends AxisOperation {
         outFaultMessage = new AxisMessage();
         outFaultMessage.setParent(this);
         inPhases = new ArrayList();
+        addChild(OUT_MESSAGE_KEY, outMessage);
+    }
+    
+    private AxisMessage getOutMessage() {
+        return (AxisMessage)getChild(OUT_MESSAGE_KEY);
     }
 
     public AxisMessage getMessage(String label) {
         if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
-            return outMessage;
+          return getOutMessage();
         } else {
             throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -126,7 +132,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
     }
 
     public ArrayList getPhasesOutFlow() {
-        return outMessage.getMessageFlow();
+        return getOutMessage().getMessageFlow();
     }
 
     public ArrayList getRemainingPhasesInFlow() {
@@ -142,7 +148,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
     }
 
     public void setPhasesOutFlow(ArrayList list) {
-        outMessage.setMessageFlow(list);
+        getOutMessage().setMessageFlow(list);
     }
 
     public void setRemainingPhasesInFlow(ArrayList list) {
