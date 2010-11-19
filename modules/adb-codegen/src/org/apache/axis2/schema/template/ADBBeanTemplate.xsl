@@ -6036,7 +6036,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
  * by the Apache Axis2 version: #axisVersion# #today#
  */
 
+        <xsl:if test="string-length(normalize-space(@package)) > 0">
             package <xsl:value-of select="@package"/>;
+        </xsl:if>
             /**
             *  <xsl:value-of select="$name"/> class
             */
