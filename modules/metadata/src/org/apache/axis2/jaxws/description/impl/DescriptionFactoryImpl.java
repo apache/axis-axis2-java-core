@@ -513,18 +513,22 @@ public class DescriptionFactoryImpl {
                     log.debug("ServiceDescription not in use; will be removed from cache");
                 }
                 svcDescRemoved = true;
-                Set<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntrySet = 
-                    cache.entrySet();
-                Iterator<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntryIterator =
-                    cacheEntrySet.iterator();
-                while (cacheEntryIterator.hasNext()) {
-                    Map.Entry<DescriptionKey, ServiceDescription> entry = 
-                        cacheEntryIterator.next();
-                    ServiceDescription entrySvcDescValue = entry.getValue();
-                    if (svcDesc == entrySvcDescValue) {
-                        cacheEntryIterator.remove();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Removed service description from cache");
+                // Even if we use a Hashtable, we need to synchronize here to avoid
+                // ConcurrentModificationException when iterating over the entries.
+                synchronized (cache) {
+                    Set<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntrySet = 
+                        cache.entrySet();
+                    Iterator<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntryIterator =
+                        cacheEntrySet.iterator();
+                    while (cacheEntryIterator.hasNext()) {
+                        Map.Entry<DescriptionKey, ServiceDescription> entry = 
+                            cacheEntryIterator.next();
+                        ServiceDescription entrySvcDescValue = entry.getValue();
+                        if (svcDesc == entrySvcDescValue) {
+                            cacheEntryIterator.remove();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Removed service description from cache");
+                            }
                         }
                     }
                 }
