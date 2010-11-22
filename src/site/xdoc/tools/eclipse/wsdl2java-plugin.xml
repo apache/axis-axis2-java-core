@@ -52,7 +52,7 @@ given below.</p>
 <a name="installation" id="installation"></a>
 <h2>Installation</h2>
 <p>One can easily <a href=
-"../tools/index.html">download</a> the
+"../index.html">download</a> the
 plugin</p>
 <p>If one needs to build the plug-in from source, Maven2 and Ant
 builds arevailabe. Please refer the readme.txt located at
