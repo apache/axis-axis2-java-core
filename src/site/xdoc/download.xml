@@ -44,7 +44,7 @@
                         distribution will contain addressing.mar and soapmonitor.mar. But
                         the other modules that are being developed within Axis2 will not be
                         included here, and need to be <a href=
-                        "../../modules/index.html">downloaded</a> separately.</td>
+                        "modules/index.html">downloaded</a> separately.</td>
                     </tr>
                     <tr>
                         <td><strong>Source Distribution</strong></td>
