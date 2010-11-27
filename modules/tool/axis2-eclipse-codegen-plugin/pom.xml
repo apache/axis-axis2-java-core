@@ -235,7 +235,6 @@
                             <descriptors>
                                 <descriptor>${pom.basedir}/eclipse-codegen-plugin-assembly.xml</descriptor>
                             </descriptors>
-                            <finalName>dist</finalName>
                         </configuration>
                     </execution>
                 </executions>

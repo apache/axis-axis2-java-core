@@ -295,7 +295,7 @@ could be the <em>Achilles heel</em> for the system, however, as
 searches are expensive, especially for parameters that turn out not
 to exist. Yet in the final analysis, the Axis Team believes that
 this flexibility serves developers better overall.</p>
-<table width="955" border="1" cellpadding="2" cellspacing="3">
+<table width="955">
 <col width="112" />
 <col width="371" />
 <col width="103" />

@@ -32,8 +32,7 @@
 <p>This plugin takes as input a WSDL and generates client and
 server stubs for calling or implementing a Web service matching the
 WSDL.</p>
-<p><a href="../index.html" target=
-"_blank">[Download Plugin Tool]</a></p>
+<p><a href="../index.html">[Download Plugin Tool]</a></p>
 <h2>Goals</h2>
 <p>The WSDl2Code offers a single goal:</p>
 <ul>
@@ -94,7 +93,7 @@ For example, the parameter "generateServerSide" may be set using
 the property "axis2.wsdl2code.generateServerSide". If the parameter
 isn't set via property or in the POM, then a default value
 applies.</p>
-<table border="2">
+<table>
 <tbody>
 <tr align="center">
 <td><strong>Parameter Name</strong></td>

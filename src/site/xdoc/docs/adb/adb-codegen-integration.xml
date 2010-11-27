@@ -49,9 +49,9 @@ codegen-config.properties file.</p>
 <p>The extension sets the options for the code generator via the
 CompilerOptions, depending on the user's settings. The following
 table summarizes the use of options. Please refer to the <a href=
-"adb-howto.html" target="_blank">ADB-How to document</a> for the
+"adb-howto.html">ADB-How to document</a> for the
 different generation modes and their descriptions.</p>
-<table border="1">
+<table>
 <tbody>
 <tr>
 <td><strong>User parameters</strong></td>
@@ -73,7 +73,7 @@ different generation modes and their descriptions.</p>
 </table>
 <p>The following parameters (prefixed with -E) can be used to
 override these settings manually:</p>
-<table border="1">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter Name</strong></td>

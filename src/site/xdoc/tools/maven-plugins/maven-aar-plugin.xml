@@ -30,8 +30,7 @@
 <h1>Maven2 AAR Plug-in Guide</h1>
 <h2>Introduction</h2>
 <p>This plugin generates an Axis 2 service file (AAR file).</p>
-<p><a href="../index.html" target=
-"_blank">[Download Plugin Tool]</a></p>
+<p><a href="../index.html">[Download Plugin Tool]</a></p>
 <h2>Goals</h2>
 <p>The AAR plugin allows the packaging of an Axis 2 service aar in
 3 different modes:</p>
@@ -48,7 +47,7 @@ mvn axis2-aar:exploded
 <h2>Configuration</h2>
 <p>All AAR plugin goals takes the following configuration
 parameters as input:</p>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter Name</strong></td>
@@ -94,7 +93,7 @@ processing is required</td>
 </table>
 <h3>The aar Goal</h3>
 <p>The aar goal allows the following additional parameters:</p>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter Name</strong></td>
@@ -164,7 +163,7 @@ src/aar/files shall be added to the AAR file. HTML files will go
 into META-INF/docs, all other files to META-INF/etc.</p>
 <p>A file set is configured through the following configuration
 parameters:</p>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter Name</strong></td>

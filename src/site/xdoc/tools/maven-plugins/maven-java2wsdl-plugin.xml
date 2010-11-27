@@ -31,8 +31,7 @@
 <h2>Introduction</h2>
 <p>This plugin takes as input a Java class and generates a WSDL,
 which describes a Web service for invoking the classes methods.</p>
-<p><a href="../index.html" target=
-"_blank">[Download Plugin Tool]</a></p>
+<p><a href="../index.html">[Download Plugin Tool]</a></p>
 <h2>Goals</h2>
 <p>The Java2WSDL plugin offers a single goal:</p>
 <ul>
@@ -82,7 +81,7 @@ parameters can be set from the command line by using properties.
 For example, the parameter "className" may be set using the
 property "axis2.java2wsdl.className". If the parameter isn't set
 via property or in the POM, then a default value applies.</p>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter name</strong></td>

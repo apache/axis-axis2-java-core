@@ -72,7 +72,7 @@ href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
 
 <p>Please deploy axis2.war in your servlet container and ensure that it works
-fine. The <a href="installationguide.html" target="_blank">Installation
+fine. The <a href="installationguide.html">Installation
 Guide</a> gives you step-by-step instructions on just how to build axis2.war
 and deploy it in your servlet container.</p>
 <a name="ws_codegen"></a><a name="Web_Services_Using_Axis2"></a>
@@ -190,7 +190,7 @@ the servlet container. <strong>Please Note that the services directory is
 available only after axis2.war has been exploded by Tomcat. However, the easiest
 way to do it is to start Tomcat after axis2.war is copied to the webapps
 directory</strong> (if you have not already started it). Check the "Services"
-link on the <a href="http://localhost:8080/axis2/" target="_blank">Home page
+link on the <a href="http://localhost:8080/axis2/">Home page
 of Axis2 Web Application</a> (http://localhost:8080/axis2) and see whether
 the Axis2SampleDocLitService is displayed under the deployed services.</p>
 
@@ -202,7 +202,7 @@ Configuration Guide</a> for details.</p>
 
 <p>Note: Axis2 provides an easy way to deploy Web Services using the "Upload
 Service" tool in the Axis2 Web Application's Administration module. (See the
-<a href="webadminguide.html" target="_blank">Web Administration Guide</a> for
+<a href="webadminguide.html">Web Administration Guide</a> for
 more information)</p>
 <a name="client"></a>
 
@@ -381,7 +381,7 @@ respective scope. Please refer to <a href="Axis2ArchitectureGuide.html">Axis2
 architecture guide</a> for detailed explanation. The following table explains
 the semantics of scope, and how to engage modules in those scopes.</p>
 
-<table border="1">
+<table>
   <tbody>
     <tr>
       <th>Scope</th>
@@ -456,7 +456,7 @@ own transports, and deploy them by adding new transportReceiver or
 transportSender tags to axis2.xml. To learn how to configure and use
 different transports, please refer to the following documents.</p>
 <ol>
-  <li><a href="http-transport.html" target="_blank">HTTP Transports</a></li>
+  <li><a href="http-transport.html">HTTP Transports</a></li>
   <li><a href="http://ws.apache.org/commons/transport/">WS-Commons Transport project</a></li>
 </ol>
 
@@ -464,7 +464,7 @@ different transports, please refer to the following documents.</p>
 
 <p>Axis2 provides attachment support using <a
 href="http://www.w3.org/TR/soap12-mtom/">MTOM</a>. Please refer to <a
-href="mtom-guide.html" target="_blank">MTOM with Axis2</a> for more
+href="mtom-guide.html">MTOM with Axis2</a> for more
 information.</p>
 
 <h3>Security</h3>
@@ -474,7 +474,7 @@ href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>.</p>
 
 <h3>REST Web Service</h3>
 
-<p>Please refer to <a href="rest-ws.html" target="_blank">RESTful Web
+<p>Please refer to <a href="rest-ws.html">RESTful Web
 Services</a> for more information.</p>
 
 <h3>Pluggable Data Binding</h3>
@@ -486,9 +486,9 @@ to the following documents for more information.</p>
 
 <h4>Axis2 Data Binding(ADB)</h4>
 <ol>
-  <li><a href="adb/adb-howto.html" target="_blank">Axis2 Databinding
+  <li><a href="adb/adb-howto.html">Axis2 Databinding
     Framework</a></li>
-  <li><a href="adb/adb-codegen-integration.html" target="_blank">ADB
+  <li><a href="adb/adb-codegen-integration.html">ADB
     Integration With Axis2</a></li>
   <li><a href="adb/adb-advanced.html">Advanced Axis2 Databinding Framework
     Features</a></li>
@@ -500,9 +500,9 @@ to the following documents for more information.</p>
 
 <h3>Other Topics</h3>
 <ol>
-  <li><a href="spring.html" target="_blank">Axis2 Integration With The Spring
+  <li><a href="spring.html">Axis2 Integration With The Spring
     Framework</a></li>
-  <li><a href="WS_policy.html" target="_blank">Web Services Policy Support In
+  <li><a href="WS_policy.html">Web Services Policy Support In
     Axis2</a></li>
   <li><a href="axis2config.html#Global_Configuration">Axis2 Configuration
     Guide</a></li>

@@ -73,8 +73,7 @@ tool, this section will be of value.</p>
 <h3>Option Reference</h3>
 <p>Usage WSDL2Code &lt;option_reference&gt;</p>
 <p><b>E.g. :- WSDL2Code -uri &lt;Location of WSDL&gt;</b></p>
-<table border="1" cellpadding="0" cellspacing="0" style=
-"border-collapse: collapse" width="100%" id="AutoNumber1">
+<table>
 <tbody>
 <tr>
 <td width="20%"><strong>Short Option</strong></td>
@@ -307,8 +306,7 @@ task is implemented by the org.apache.axis2.tool.ant.AntCodegenTask
 class. Following are the ant task attributes.</p>
 <a name="antref" id="antref"></a>
 <h3>Ant Task Reference</h3>
-<table border="1" cellpadding="0" cellspacing="0" style=
-"border-collapse: collapse" width="100%" id="AutoNumber2">
+<table>
 <tbody>
 <tr>
 <td>wsdlfilename</td>

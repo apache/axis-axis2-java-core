@@ -174,16 +174,16 @@ implementation class, then the scenario is as follows</p>
 Messaging, Where should I look?</strong><br />
 <p>Look at the <a href=
 "https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/kernel/src/org/apache/axis2/client/ServiceClient.java"
-target="_blank">ServiceClient</a> class, for more information
+>ServiceClient</a> class, for more information
 please read the <a href="docs/adv-userguide.html"
-target="_blank">User's Guide</a></p>
+>User's Guide</a></p>
 </li>
 <li><a name="c2" id="c2"></a><strong>I want to do One Way
 Messaging, Where should I look?</strong><br />
 <p>From Axis2 0.94 onwards, both request-response and one way
 messaging will be handled by <a href=
 "https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/kernel/src/org/apache/axis2/client/ServiceClient.java"
-target="_blank">ServiceClient</a>.</p>
+>ServiceClient</a>.</p>
 </li>
 <li><strong>When I try to do a non blocking call with</strong>
 useSeparateListener=true
