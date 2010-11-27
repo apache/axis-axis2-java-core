@@ -412,7 +412,7 @@ unpacked it.</p>
 <p>Now you are ready to generate the actual service. To keep things
 neat, create a new directory and change to it. The WSDL file is the
 same one referenced in <a href=
-"userguide-creatingclients#generating.xhtml">Generating Clients</a>
+"userguide-creatingclients.html#generating.xhtml">Generating Clients</a>
 and includes four operations: NoParameters, TwoWayOneParameterEcho,
 MultipleParametersAddItem, and DoInOnly. To generate the service,
 use the WSDL2Java utility, as in Code Listing 14.</p>
