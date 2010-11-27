@@ -212,7 +212,6 @@
                             <descriptors>
                                 <descriptor>${pom.basedir}/eclipse-service-plugin-assembly.xml</descriptor>
                             </descriptors>
-                            <finalName>dist</finalName>
                         </configuration>
                     </execution>
                 </executions>
