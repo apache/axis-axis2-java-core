@@ -113,7 +113,7 @@ binary distribution is available in the <a href=
 Download</a> Source Distribution</p>
 <a name="requirements" id="requirements"></a>
 <h2>System Requirements</h2>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td>Java Development Kit (JDK)</td>
@@ -212,7 +212,7 @@ in a servlet container.</p>
 <h3>4. Getting Familiar with the Convenient Axis2 Scripts</h3>
 <p>It is advised to add the AXIS2_HOME/bin to the PATH, so that
 you'll be able to run the following scripts from anywhere.</p>
-<table border="1">
+<table>
 <tbody>
 <tr>
 <td><b>Script Name</b></td>

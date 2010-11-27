@@ -206,7 +206,7 @@ applies regardless of the mode. Switching these modes can be done
 by passing the correct options via the CompilerOptions object. The
 following table lists the options and the effects of using
 them.</p>
-<table border="1" summary="Options and descriptions">
+<table summary="Options and descriptions">
 <tbody>
 <tr>
 <td><strong>Field Name in Options</strong></td>

@@ -48,7 +48,7 @@ mvn axis2-aar:exploded
 <h2>Configuration</h2>
 <p>All AAR plugin goals takes the following configuration
 parameters as input:</p>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter Name</strong></td>
@@ -94,7 +94,7 @@ processing is required</td>
 </table>
 <h3>The aar Goal</h3>
 <p>The aar goal allows the following additional parameters:</p>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter Name</strong></td>
@@ -164,7 +164,7 @@ src/aar/files shall be added to the AAR file. HTML files will go
 into META-INF/docs, all other files to META-INF/etc.</p>
 <p>A file set is configured through the following configuration
 parameters:</p>
-<table border="2">
+<table>
 <tbody>
 <tr>
 <td><strong>Parameter Name</strong></td>

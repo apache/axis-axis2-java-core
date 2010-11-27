@@ -37,7 +37,7 @@
             guide on how to use Maven with our project.
         </p>
         <h2 align="left">Commands</h2>
-        <table border="1" align="center">
+        <table>
             <tbody>
                 <tr>
                     <th scope="col">
@@ -151,7 +151,7 @@
             builds
             axis2-aar-maven-plugin and axis2-mar-maven-plugin before it runs the main build.
         </p>
-        <table border="1" align="center">
+        <table>
             <tbody>
                 <tr>
                     <th scope="col">

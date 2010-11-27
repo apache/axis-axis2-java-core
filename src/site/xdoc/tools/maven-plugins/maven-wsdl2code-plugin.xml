@@ -94,7 +94,7 @@ For example, the parameter "generateServerSide" may be set using
 the property "axis2.wsdl2code.generateServerSide". If the parameter
 isn't set via property or in the POM, then a default value
 applies.</p>
-<table border="2">
+<table>
 <tbody>
 <tr align="center">
 <td><strong>Parameter Name</strong></td>

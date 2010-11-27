@@ -381,7 +381,7 @@ respective scope. Please refer to <a href="Axis2ArchitectureGuide.html">Axis2
 architecture guide</a> for detailed explanation. The following table explains
 the semantics of scope, and how to engage modules in those scopes.</p>
 
-<table border="1">
+<table>
   <tbody>
     <tr>
       <th>Scope</th>

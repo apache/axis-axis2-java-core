@@ -28,7 +28,7 @@
 		<p>Axis2 is bundled with a set of tools in order to make users'
 life easier. This page is maintained to keep track of the tools
 supported by Axis2.</p>
-		<table border="2">
+		<table>
 			<tbody>
 				<tr>
 					<th scope="col">Name</th>

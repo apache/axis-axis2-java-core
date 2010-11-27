@@ -212,7 +212,7 @@ Start the Axis2 server. The EPR of the new Calculator web service will be <tt>ht
 The service definition file (eg. calculator.xml) supports the following parameters.
 <br />
 
-<table border="1">
+<table>
 <tr>
 <th>Parameter Name</th>
 <th>Description</th>
