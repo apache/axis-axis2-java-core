@@ -37,20 +37,10 @@
             services to the Axis2.</p>
         </section>
         <section name="Installation">
-            <p>One can easily <a href=
-            "../index.html">download</a> the
-            plugin</p>
-            <p>If one needs to build the plug-in from source, Maven2 and Ant
-            builds arevailabe. Please refer the readme.txt located at
-            module/tools on Axis2 source.</p>
-            <p>Once you've obtained the plug-in just unzip the content of the
-            plug-in archive to the Eclipse plug-in directory (if it is the
-            zipped-binary version) or copy the necessary folders to the Eclipse
-            plug-in directory and restart Eclipse.</p>
-            <p><strong>NOTE</strong> : This plug-in works on Eclipse version
-            3.1 and upwards, also the java version should be 1.4 or higher. The
-            provided screen shots may slightly differ with what the user would
-            actually see but the functionality has not been changed.</p>
+            <p>
+                Installation instructions for the plugin can be found
+                <a href="plugin-installation.html">here</a>.
+            </p>
         </section>
         <section name="Operation">
             <p>If the plug-in is properly installed you should see a new wizard
