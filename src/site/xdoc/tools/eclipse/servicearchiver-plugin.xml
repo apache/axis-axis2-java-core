@@ -27,8 +27,7 @@
         <h1>Service Archive Generator Wizard Guide for Eclipse Plug-in</h1>
         <p>This document will guide you through the installation and usage
         of the archive generator Eclipse plug-in.</p>
-        <p><a href="../index.html" target=
-        "_blank">[Download Plugin Tool]</a></p>
+        <p><a href="../index.html">[Download Plugin Tool]</a></p>
         <macro name="toc"/>
         <section name="Introduction">
             <p>As part of the Axis2 tool set, the service archive generator is
@@ -160,11 +159,9 @@
         </section>
         <section name="Appendix">
             <ul>
-            <li>Eclipse reference - <a href="http://www.eclipse.org/" target=
-            "_blank">http://www.eclipse.org/</a></li>
+            <li>Eclipse reference - <a href="http://www.eclipse.org/">http://www.eclipse.org/</a></li>
             <li>Custom Ant Tasks - <a href=
-            "http://ant.apache.org/manual/develop.html" target=
-            "_blank">http://ant.apache.org/manual/develop.html</a></li>
+            "http://ant.apache.org/manual/develop.html">http://ant.apache.org/manual/develop.html</a></li>
             </ul>
         </section>
     </body>

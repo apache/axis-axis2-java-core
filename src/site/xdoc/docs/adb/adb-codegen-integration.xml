@@ -49,7 +49,7 @@ codegen-config.properties file.</p>
 <p>The extension sets the options for the code generator via the
 CompilerOptions, depending on the user's settings. The following
 table summarizes the use of options. Please refer to the <a href=
-"adb-howto.html" target="_blank">ADB-How to document</a> for the
+"adb-howto.html">ADB-How to document</a> for the
 different generation modes and their descriptions.</p>
 <table>
 <tbody>

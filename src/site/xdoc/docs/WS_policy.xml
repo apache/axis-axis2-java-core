@@ -175,17 +175,13 @@ you send us in this regard. Keep on contributing!</p>
 <h2>Resources</h2>
 <ul>
 <li>Apache Neethi (WS Policy Implementation) official site-
-<a href="http://ws.apache.org/commons/neethi/index.html" target=
-"_blank">Home Page</a></li>
+<a href="http://ws.apache.org/commons/neethi/index.html">Home Page</a></li>
 <li>Sanka Samaranayake, March 2006. <a href=
-"http://wso2.org/library/23"
-target="_blank">Web services Policy - Why, What &amp; How</a></li>
+"http://wso2.org/library/23">Web services Policy - Why, What &amp; How</a></li>
 <li><a href=
-"http://svn.apache.org/viewcvs.cgi/webservices/commons/trunk/modules/neethi/"
-target="_blank">WS-commons/policy SVN</a></li>
+"http://svn.apache.org/viewcvs.cgi/webservices/commons/trunk/modules/neethi/">WS-commons/policy SVN</a></li>
 <li><a href=
-"http://specs.xmlsoap.org/ws/2004/09/policy/ws-policy.pdf" target=
-"_blank">Web Services Policy Framework (WS-Policy)</a></li>
+"http://specs.xmlsoap.org/ws/2004/09/policy/ws-policy.pdf">Web Services Policy Framework (WS-Policy)</a></li>
 </ul>
 </body>
 </html>

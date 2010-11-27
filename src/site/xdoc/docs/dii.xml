@@ -263,7 +263,7 @@ API invocation.</p>
 <p>The simplest solution is to use separate transport connections (either
 One-Way or Two-Way) for the request and response. The next problem that needs
 to be solved, however, is subsequently correlating each request with its response.
-<a href="http://www.w3.org/2002/ws/addr/" target="_blank">WS-Addressing</a>
+<a href="http://www.w3.org/2002/ws/addr/">WS-Addressing</a>
 provides a neat solution to this using &lt;wsa:MessageID&gt; and
 &lt;wsa:RelatesTo&gt; headers. Axis2 provides support for an addressing based
 correlation mechanism and a complying Client API to invoke Web services with

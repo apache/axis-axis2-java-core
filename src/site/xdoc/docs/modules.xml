@@ -30,7 +30,7 @@
 <a name="Modules" id="Modules"></a>
 <h1>Writing Your Own Axis2 Module</h1>
 <p>Axis2 provides extended support for modules (See the <a href=
-"Axis2ArchitectureGuide.html" target="_blank">Architecture
+"Axis2ArchitectureGuide.html">Architecture
 Guide</a> for more details about modules in Axis2). Let's create a
 custom module and deploy it to MyService, which we created
 earlier.</p>
@@ -122,8 +122,8 @@ can keep these methods blank in our implementation class.</p>
 <h4>Step2 : LogHandler</h4>
 <p>A module in Axis2 can contain, one or more handlers that perform
 various SOAP header processing at different phases. (See the
-<a href="Axis2ArchitectureGuide.html#incomingsoap" target=
-"_blank">Architecture Guide</a> for more information on phases). To
+<a href="Axis2ArchitectureGuide.html#incomingsoap"
+>Architecture Guide</a> for more information on phases). To
 write a handler one should implement <a href=
 "http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/engine/Handler.java?rev=357187&amp;view=log">
 org.apache.axis2.engine.Handler</a>. But for convenience, <a href=
@@ -226,8 +226,8 @@ handler runs.</p>
 &lt;/handler&gt;
 </pre>
 <p>To learn more about Phase rules, check out the article <a href=
-"http://www.developer.com/java/web/article.php/3529321" target=
-"_blank">Axis2 Execution Framework</a></p>
+"http://www.developer.com/java/web/article.php/3529321"
+>Axis2 Execution Framework</a></p>
 <a name="Step_4:_Modify_the_&quot;axis2_xml&quot;"></a>
 <h4>Step 4: Modify the "axis2.xml"</h4>
 <p>In this handler, the "loggingPhase", is defined by the module

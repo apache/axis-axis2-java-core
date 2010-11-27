@@ -88,22 +88,22 @@ currently available or under development include:</p>
 <ul>
 <li><a href=
 "http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsrm"
-target="_blank">WS-ReliableMessaging</a> - Supported by <a href=
+>WS-ReliableMessaging</a> - Supported by <a href=
 "http://axis.apache.org/axis2/java/sandesha/">Apache
 Sandesha2</a></li>
 <li><a href=
 "http://www-128.ibm.com/developerworks/library/specification/ws-tx/#coor"
-target="_blank">WS-Coordination</a> and <a href=
+>WS-Coordination</a> and <a href=
 "http://www-128.ibm.com/developerworks/library/specification/ws-tx/#atom"
-target="_blank">WS-AtomicTransaction</a> - Supported by <a href=
+>WS-AtomicTransaction</a> - Supported by <a href=
 "http://axis.apache.org/axis2/java/kandula/">Apache Kandula2</a></li>
 <li><a href=
 "http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss"
-target="_blank">WS-Security</a> - Supported by <a href=
+>WS-Security</a> - Supported by <a href=
 "http://axis.apache.org/axis2/java/rampart/">
 Apache Rampart</a></li>
-<li><a href="http://www.w3.org/Submission/ws-addressing/" target=
-"_blank">WS-Addressing</a> -Module included as part of Axis2
+<li><a href="http://www.w3.org/Submission/ws-addressing/"
+>WS-Addressing</a> -Module included as part of Axis2
 core</li>
 </ul>
 <p>Apache Axis2 is built on <a href=
@@ -188,10 +188,10 @@ Axis2.</p>
 <li>
 <p style="margin-bottom: 0in"><strong>Add-ons</strong> - Several
 Web services specifications have been incorporated including
-<a href="http://ws.apache.org/wss4j/" target="_blank">WSS4J</a> for
+<a href="http://ws.apache.org/wss4j/">WSS4J</a> for
 security (Apache Rampart), <a href="http://axis.apache.org/axis2/java/sandesha/"
-target="_blank">Sandesha</a> for reliable messaging, <a href=
-"http://axis.apache.org/axis2/java/kandula/" target="_blank">Kandula</a> which
+>Sandesha</a> for reliable messaging, <a href=
+"http://axis.apache.org/axis2/java/kandula/">Kandula</a> which
 is an encapsulation of WS-Coordination, WS-AtomicTransaction and
 WS-BusinessActivity.</p>
 </li>
@@ -269,28 +269,28 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 </ul>
 <h2><a name="Tools_included_in this_Release">Tools Included in This
 Release</a></h2>
-<p>[<a href="tools/index.html" target=
-"_blank">Download Tool Plug-ins</a>]</p>
+<p>[<a href="tools/index.html"
+>Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href="tools/eclipse/wsdl2java-plugin.html"
-target="_blank">eclipse plug-in</a><a>/</a> <a href=
-"tools/CodegenToolReference.html" target="_blank">Command line
+>eclipse plug-in</a><a>/</a> <a href=
+"tools/CodegenToolReference.html">Command line
 version</a><a>/</a><a href=
 "tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
-target="_blank">IntelliJ IDEA plug-in</a><a>/</a><a href=
-"tools/maven-plugins/maven-wsdl2code-plugin.html" target=
-"_blank">Maven2 WSDL2Code Plug-in</a></li>
+>IntelliJ IDEA plug-in</a><a>/</a><a href=
+"tools/maven-plugins/maven-wsdl2code-plugin.html"
+>Maven2 WSDL2Code Plug-in</a></li>
 <li>Service Archive Wizard- <a href=
-"tools/eclipse/servicearchiver-plugin.html" target=
-"_blank">eclipse plug-in</a>/ <a href=
+"tools/eclipse/servicearchiver-plugin.html"
+>eclipse plug-in</a>/ <a href=
 "tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
-target="_blank">IntelliJ IDEA plug-in</a>/ <a href=
-"tools/maven-plugins/maven-aar-plugin.html" target=
-"_blank">Maven2 AAR Plug-in</a></li>
+>IntelliJ IDEA plug-in</a>/ <a href=
+"tools/maven-plugins/maven-aar-plugin.html"
+>Maven2 AAR Plug-in</a></li>
 <li>Java2WSDL- <a href=
-"tools/maven-plugins/maven-java2wsdl-plugin.html" target=
-"_blank">Maven2 Java2WSDL Plug-in</a></li>
+"tools/maven-plugins/maven-java2wsdl-plugin.html"
+>Maven2 Java2WSDL Plug-in</a></li>
 </ol>
 <h2>Extension Modules</h2>
 <ul>
@@ -303,8 +303,8 @@ WS-Addressing.)
 <h2>Known Issues and Limitations</h2>
 <h2>Archived News</h2>
 <p>For information on previous Axis2 releases running up to the
-current release see the <a href="archived_news.html" target=
-"_blank">'Axis2 Archived News'</a> page.</p>
+current release see the <a href="archived_news.html"
+>'Axis2 Archived News'</a> page.</p>
 For other news items from Apache Software Foundation see:
 <ul>
 <li><a href=

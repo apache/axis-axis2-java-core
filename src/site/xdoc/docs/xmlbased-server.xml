@@ -182,7 +182,7 @@ deployed now.</p>
 "services" directory in "/webapps/axis2/WEB-INF" of your servlet
 container. Start the servlet container (if you have not already
 started), click the link "Services" on the <a href=
-"http://localhost:8080/axis2/" target="_blank">Home Page of Axis2
+"http://localhost:8080/axis2/">Home Page of Axis2
 Web Application</a> (http://localhost:8080/axis2) and see whether
 MyService is deployed properly. If you can see the following
 output, then you have successfully deployed MyService on Apache
@@ -192,7 +192,7 @@ name="Graphic2" align="bottom" border="0" id="Graphic2" /></p>
 <p>Note: Apache Axis2 provides an easy way to deploy Web services
 using the "Upload Service" tool on the Axis2 Web Application's
 Administration module. Please refer to the <a href=
-"webadminguide.html" target="_blank">Web Administration Guide</a>
+"webadminguide.html">Web Administration Guide</a>
 for more information.</p>
 </body>
 </html>

@@ -113,27 +113,27 @@ Optimized Packaging (XOP) and SOAP with Attachments</li>
 </ul>
 <h2><a name="Tools_included_in this_Release">Tools Included in This
 Release</a></h2>
-<p>[<a href="tools/index.html" target="_blank">Download Tool Plug-ins</a>]</p>
+<p>[<a href="tools/index.html">Download Tool Plug-ins</a>]</p>
 <ol type="1">
 <li>Axis2 Web Application (Web App)</li>
 <li>WSDL2WS- <a href="tools/eclipse/wsdl2java-plugin.html"
-target="_blank">eclipse plug-in</a><a>/</a> <a href=
-"tools/CodegenToolReference.html" target="_blank">Command line
+>eclipse plug-in</a><a>/</a> <a href=
+"tools/CodegenToolReference.html">Command line
 version</a><a>/</a><a href=
 "tools/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
-target="_blank">IntelliJ IDEA plug-in</a><a>/</a><a href=
-"tools/maven-plugins/maven-wsdl2code-plugin.html" target=
-"_blank">Maven2 WSDL2Code Plug-in</a></li>
+>IntelliJ IDEA plug-in</a><a>/</a><a href=
+"tools/maven-plugins/maven-wsdl2code-plugin.html"
+>Maven2 WSDL2Code Plug-in</a></li>
 <li>Service Archive Wizard- <a href=
-"tools/eclipse/servicearchiver-plugin.html" target=
-"_blank">eclipse plug-in</a>/ <a href=
+"tools/eclipse/servicearchiver-plugin.html"
+>eclipse plug-in</a>/ <a href=
 "tools/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
-target="_blank">IntelliJ IDEA plug-in</a>/ <a href=
-"tools/maven-plugins/maven-aar-plugin.html" target=
-"_blank">Maven2 AAR Plug-in</a></li>
+>IntelliJ IDEA plug-in</a>/ <a href=
+"tools/maven-plugins/maven-aar-plugin.html"
+>Maven2 AAR Plug-in</a></li>
 <li>Java2WSDL- <a href=
-"tools/maven-plugins/maven-java2wsdl-plugin.html" target=
-"_blank">Maven2 Java2WSDL Plug-in</a></li>
+"tools/maven-plugins/maven-java2wsdl-plugin.html"
+>Maven2 Java2WSDL Plug-in</a></li>
 </ol>
 <h2>Extension Modules</h2>
 <ul>

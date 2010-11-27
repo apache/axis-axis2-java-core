@@ -313,7 +313,7 @@ Guide</a>.</p>
 <p>The Axis2 Web application also provides an interface to upload
 services. Once a service archive file is created according to the
 service specification as described in the <a name=
-"adv-userguide.html" target="_blank" id=
+"adv-userguide.html" id=
 "adv-userguide.html">Advanced User's Guide</a>, that .aar file can
 be uploaded using the upload page.</p>
 <p align="center"><strong><img src="images/clip_image010.jpg" alt=
@@ -342,7 +342,7 @@ the deployment fault error messages.</p>
 "" /></strong></p>
 <p>Axis2 Administration is all about configuring Axis2 at the run
 time and the configuration will be transient. More descriptions are
-available in the <a href="webadminguide.html" target="_blank">Axis2
+available in the <a href="webadminguide.html">Axis2
 Web Administration Guide</a></p>
 </div>
 <a name="advanced" id="advanced"></a>
@@ -357,21 +357,20 @@ distribution</a>) can be built using Maven commands.
 <p>Required jar files do not come with the distribution and they
 will also have to be built by running the maven command. Before we
 go any further, it is necessary to install <a href=
-"http://maven.apache.org/" target="_blank">Maven2</a> and
+"http://maven.apache.org/">Maven2</a> and
 set up its environment, as explained below.</p>
 <a name="env-src" id="env-src"></a>
 <h3>Setting Up the Environment and Tools</h3>
 <a name="maven" id="maven"></a>
 <h4>Maven</h4>
 <p>The Axis2 build is based on <a href=
-"http://maven.apache.org/" target="_blank">Maven2</a> .
+"http://maven.apache.org/">Maven2</a> .
 Hence the only prerequisite to build Axis2 from the source
 distribution is to have Maven installed. Extensive instruction
 guides are available at the Maven site. This guide however contains
 the easiest path for quick environment setting. Advanced users who
 wish to know more about Maven can visit <a href=
-"http://maven.apache.org/users/index.html" target=
-"_blank">this site.</a></p>
+"http://maven.apache.org/users/index.html">this site.</a></p>
 <ul>
 <li>MS Windows</li>
 </ul>
