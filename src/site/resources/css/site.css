@@ -220,6 +220,31 @@ table {
     background-position: left top;
 }
 
+dl {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+dt {
+    color: #333333;
+    font-weight: bolder;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+}
+
+dd {
+    border-left: 1px dotted black;
+    margin-left: 1em;
+    padding-left: 1em;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: black;
+}
+
 pre, div.source {
     border: 1px dotted;
     background-color: #e2ecf6;
