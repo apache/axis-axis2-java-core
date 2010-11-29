@@ -188,8 +188,11 @@
                         <Embed-Dependency>*;scope=compile|runtime;groupId=!org.eclipse.*;artifactId=!commons-logging|wstx-asl|geronimo-activation_1.1_spec|geronimo-javamail_1.4_spec|geronimo-stax-api_1.0_spec|ant*</Embed-Dependency>
                         <Embed-Directory>lib</Embed-Directory>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <!-- Exclude imports that are actually not used -->
-                        <Import-Package>!org.dom4j*,!nu.xom,!org.jdom*,!javax.portlet,!com.sun.*,!sun.*,!org.apache.xmlbeans.*,!org.xmlpull.*,!org.apache.commons.io*,*</Import-Package>
+                        <!-- Exclude imports that are actually not used. Also import org.w3c.dom explicitly. This is necessary
+                             because the xmlbeans JAR contains a couple of classes from that package and therefore the bundle
+                             plugin believes that the entire package is provided by that JAR. This results in a LinkageError
+                             when Xerces is used. See AXIS2-4901. -->
+                        <Import-Package>!org.dom4j*,!nu.xom,!org.jdom*,!javax.portlet,!com.sun.*,!sun.*,!org.apache.xmlbeans.*,!org.xmlpull.*,!org.apache.commons.io*,*,org.w3c.dom</Import-Package>
                         <Export-Package />
                         <Bundle-Name>Axis2 Codegen Wizard Plug-in</Bundle-Name>
                         <Bundle-Activator>org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin</Bundle-Activator>
