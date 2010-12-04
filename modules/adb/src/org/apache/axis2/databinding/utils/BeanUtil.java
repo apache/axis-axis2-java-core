@@ -21,8 +21,6 @@ package org.apache.axis2.databinding.utils;
 
 
 import org.apache.axiom.om.*;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -886,7 +884,7 @@ public class BeanUtil {
                 new ADBXMLStreamReaderImpl(opName, objects.toArray(), null, typeTable, qualifed);
 
         StreamWrapper parser = new StreamWrapper(xr);
-        StAXOMBuilder stAXOMBuilder =
+        OMXMLParserWrapper stAXOMBuilder =
                 OMXMLBuilderFactory.createStAXOMBuilder(
                         OMAbstractFactory.getSOAP11Factory(), parser);
         return stAXOMBuilder.getDocumentElement();

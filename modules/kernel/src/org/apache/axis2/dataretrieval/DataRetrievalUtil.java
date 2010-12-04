@@ -19,17 +19,13 @@
 
 package org.apache.axis2.dataretrieval;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 
 public class DataRetrievalUtil {
@@ -80,11 +76,7 @@ public class DataRetrievalUtil {
             throws XMLStreamException, OMException{
         OMElement element = null;
 
-        XMLStreamReader xmlReader = StAXUtils
-                .createXMLStreamReader(servicexmlStream);
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        element = staxOMBuilder.getDocumentElement();
+        element = OMXMLBuilderFactory.createOMBuilder(servicexmlStream).getDocumentElement();
         element.build();
         return element;
     }

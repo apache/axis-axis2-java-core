@@ -19,9 +19,8 @@
 
 package org.apache.axis2.description;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axis2.context.externalize.ExternalizeConstants;
 import org.apache.axis2.context.externalize.SafeObjectInputStream;
 import org.apache.axis2.context.externalize.SafeObjectOutputStream;
@@ -29,9 +28,6 @@ import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -376,14 +372,7 @@ public class Parameter implements Externalizable, SafeSerializable {
         // convert to an OMElement
         if (tmp != null) {
             try {
-                ByteArrayInputStream bais = new ByteArrayInputStream(tmp.getBytes());
-
-                XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-
-                // TODO: the StAXOMBuilder is an impl class - is there a better mechanism rather than an impl class ?
-                StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), parser);
-
-                OMElement docElement = builder.getDocumentElement();
+                OMElement docElement = AXIOMUtil.stringToOM(tmp);
 
                 if (docElement != null) {
                     parameterElement = docElement;

@@ -23,8 +23,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -97,7 +97,7 @@ public class RPCUtil {
                 }
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
                         returnWrapper, typeTable, qualified, false);
-                StAXOMBuilder stAXOMBuilder =
+                OMXMLParserWrapper stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
                 OMElement documentElement = stAXOMBuilder.getDocumentElement();
@@ -133,7 +133,7 @@ public class RPCUtil {
             QName returnWrapper = new QName(ns.getNamespaceURI(), partName, ns.getPrefix());
             XMLStreamReader xr = BeanUtil.getPullParser(resObject,
                     returnWrapper, typeTable, qualified, true);
-            StAXOMBuilder stAXOMBuilder =
+            OMXMLParserWrapper stAXOMBuilder =
                     OMXMLBuilderFactory.createStAXOMBuilder(
                             OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
             OMElement documentElement = stAXOMBuilder.getDocumentElement();
@@ -344,7 +344,7 @@ public class RPCUtil {
         }
         XMLStreamReader xr = new NullXMLStreamReader(resName);
         StreamWrapper parser = new StreamWrapper(xr);
-        StAXOMBuilder stAXOMBuilder =
+        OMXMLParserWrapper stAXOMBuilder =
                 OMXMLBuilderFactory.createStAXOMBuilder(
                         OMAbstractFactory.getSOAP11Factory(), parser);
         envelope.getBody().addChild(stAXOMBuilder.getDocumentElement());
@@ -372,7 +372,7 @@ public class RPCUtil {
             }
             XMLStreamReader xr = new NullXMLStreamReader(resName);
             StreamWrapper parser = new StreamWrapper(xr);
-            StAXOMBuilder stAXOMBuilder =
+            OMXMLParserWrapper stAXOMBuilder =
                     OMXMLBuilderFactory.createStAXOMBuilder(
                             OMAbstractFactory.getSOAP11Factory(), parser);
             ns = fac.createOMNamespace(service.getSchemaTargetNamespace(),

@@ -24,7 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPFactory;
@@ -37,7 +37,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -154,8 +153,7 @@ public class EndpointReferenceHelper {
      */
     public static EndpointReference fromString(String eprString) throws AxisFault {
         try {
-            return fromOM(new StAXOMBuilder(
-                    new ByteArrayInputStream(eprString.getBytes())).getDocumentElement());
+            return fromOM(AXIOMUtil.stringToOM(eprString));
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         }

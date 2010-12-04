@@ -22,15 +22,12 @@ package org.apache.axis2.databinding.utils;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
 
@@ -102,10 +99,7 @@ public class MultirefHelperTest extends TestCase {
     private void testProcessHrefAttributes(String bodyElement){
 
         try {
-            XMLStreamReader xmlReader =
-                    StAXUtils.createXMLStreamReader(new ByteArrayInputStream(bodyElement.getBytes()));
-            StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(xmlReader);
-            OMElement generatedElement = stAXOMBuilder.getDocumentElement();
+            OMElement generatedElement = AXIOMUtil.stringToOM(bodyElement);
             SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
             SOAPEnvelope soapEnvelope =  soapFactory.getDefaultEnvelope();
             OMElement omElement = null;

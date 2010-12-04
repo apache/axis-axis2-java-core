@@ -21,11 +21,9 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.utils.IOUtils;
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axiom.om.util.Base64;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axiom.util.stax.XMLStreamWriterUtils;
 import org.apache.axis2.databinding.ADBBean;
@@ -70,7 +68,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -471,10 +468,7 @@ public class ConverterUtil {
 
     public static OMElement convertToAnyType(String s) {
         try {
-            XMLStreamReader r = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(s.getBytes()));
-            StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), r);
-            return builder.getDocumentElement();
+            return AXIOMUtil.stringToOM(s);
         } catch (XMLStreamException e) {
             return null;
         }

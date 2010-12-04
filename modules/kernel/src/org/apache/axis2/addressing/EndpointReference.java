@@ -26,8 +26,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.externalize.ExternalizeConstants;
@@ -760,9 +759,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         XMLStreamReader xmlReader = null;
 
         try {
-            xmlReader = StAXUtils.createXMLStreamReader(bais);
-            StAXOMBuilder builder = new StAXOMBuilder(xmlReader);
-            OMElement om = builder.getDocumentElement();
+            OMElement om = OMXMLBuilderFactory.createOMBuilder(bais).getDocumentElement();
 
             // expand the OM so we can close the stream reader
             om.build();
