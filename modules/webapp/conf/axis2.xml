@@ -183,19 +183,13 @@
     <!-- Transport Ins -->
     <!-- ================================================= -->
 
-    <!-- when axis2 is deployed in an servlet container, it uses servlet containers
-     http transport. But here we congirue a dummy transport to show the
-     ports in the generated wsdl file. Users need to set the same port numbers
-     they have used in servlet container for http and https here as well. -->
+    <!-- The default configuration assumes that AxisServlet only receives requests
+         through HTTP. To allow HTTPS as well, configure a second AxisServletListener
+         with name="https" and specify the port parameter on both receivers.
+         For more information, please have a look at the servlet transport documentation:
+         http://axis.apache.org/axis2/java/core/docs/servlet-transport.html -->
     <transportReceiver name="http"
-                       class="org.apache.axis2.transport.http.AxisServletListener">
-        <parameter name="port">8080</parameter>
-    </transportReceiver>
-
-    <transportReceiver name="https"
-                       class="org.apache.axis2.transport.http.AxisServletListener">
-        <parameter name="port">8443</parameter>
-    </transportReceiver>
+                       class="org.apache.axis2.transport.http.AxisServletListener"/>
 
     <!--Uncomment if you want to have TCP transport support-->
     <!--transportReceiver name="tcp"
