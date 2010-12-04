@@ -23,6 +23,7 @@ package org.apache.axis2.transport;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.CachedFileDataSource;
 import org.apache.axiom.attachments.lifecycle.LifecycleManager;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
@@ -32,7 +33,6 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
@@ -154,7 +154,7 @@ public class TransportUtils {
         } else {
             // If it is not a SOAPEnvelope we wrap that with a fake
             // SOAPEnvelope.
-            SOAPFactory soapFactory = new SOAP11Factory();
+            SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
             envelope = soapFactory.getDefaultEnvelope();
             if (documentElement != null) {
                 envelope.getBody().addChild(documentElement);

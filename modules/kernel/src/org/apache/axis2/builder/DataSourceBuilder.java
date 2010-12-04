@@ -35,8 +35,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
@@ -47,8 +45,8 @@ public class DataSourceBuilder implements Builder {
             throws AxisFault {
         msgContext.setDoingREST(true);
         
-        OMNamespace ns = new OMNamespaceImpl("", "");
         OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMNamespace ns = factory.createOMNamespace("", "");
         byte[] bytes;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
@@ -59,7 +57,7 @@ public class DataSourceBuilder implements Builder {
             throw AxisFault.makeFault(e);
         }
         ByteArrayDataSourceEx ds = new ByteArrayDataSourceEx(bytes, contentType);
-        return new OMSourcedElementImpl("dummy", ns, factory, ds);
+        return factory.createOMElement(ds, "dummy", ns);
     }
 
     public class ByteArrayDataSourceEx extends javax.mail.util.ByteArrayDataSource implements OMDataSource {

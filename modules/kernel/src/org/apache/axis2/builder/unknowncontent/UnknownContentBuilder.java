@@ -26,7 +26,6 @@ import javax.activation.DataHandler;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
@@ -47,9 +46,7 @@ public class UnknownContentBuilder implements Builder {
 			OMFactory factory = OMAbstractFactory.getOMFactory();
 			messageContext.setDoingSwA(false);
 			messageContext.setDoingMTOM(false);
-			return new OMSourcedElementImpl(
-					UnknownContentOMDataSource.unknownContentQName, factory,
-					unknownContentDataSource);
+			return factory.createOMElement(unknownContentDataSource, UnknownContentOMDataSource.unknownContentQName);
 		}
 		InputStreamDataSource inStreamDataSource = new InputStreamDataSource(
 				inputStream);
@@ -58,8 +55,6 @@ public class UnknownContentBuilder implements Builder {
 		UnknownContentOMDataSource unknownContentDataSource = new UnknownContentOMDataSource(
 				dataHandler);
 		OMFactory factory = OMAbstractFactory.getOMFactory();
-		return new OMSourcedElementImpl(
-				UnknownContentOMDataSource.unknownContentQName, factory,
-				unknownContentDataSource);
+		return factory.createOMElement(unknownContentDataSource, UnknownContentOMDataSource.unknownContentQName);
 	}
 }
