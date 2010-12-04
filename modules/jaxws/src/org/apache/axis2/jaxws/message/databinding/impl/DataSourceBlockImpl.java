@@ -27,8 +27,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.datasource.SourceDataSource;
@@ -110,9 +108,9 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
     }
 
     public OMElement getOMElement() throws XMLStreamException, WebServiceException {
-        OMNamespace ns = new OMNamespaceImpl("", "");
         OMFactory factory = OMAbstractFactory.getOMFactory();
-        return new OMSourcedElementImpl("dummy", ns, factory, this);
+        OMNamespace ns = factory.createOMNamespace("", "");
+        return factory.createOMElement(this, "dummy", ns);
     }
 
     @Override

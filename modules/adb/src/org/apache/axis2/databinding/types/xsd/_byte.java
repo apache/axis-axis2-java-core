@@ -119,8 +119,7 @@ import javax.xml.stream.XMLStreamWriter;
         
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBDataSource(this,parentQName);
-               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-               parentQName,factory,dataSource);
+               return factory.createOMElement(dataSource, parentQName);
             
        }
 

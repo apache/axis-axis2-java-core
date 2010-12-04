@@ -20,6 +20,7 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
@@ -28,8 +29,6 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPProcessingException;
-import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -73,7 +72,7 @@ public class HTTPTransportUtils {
                 Utils.parseRequestURLForServiceAndOperation(requestUrl,
                                                             configCtx.getServiceContextPath());
         if (values == null) {
-            return new SOAP11Factory().getDefaultEnvelope();
+            return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         }
 
         if ((values[1] != null) && (values[0] != null)) {
@@ -83,7 +82,7 @@ public class HTTPTransportUtils {
                 throw new AxisFault("service not found: " + srvice);
             }
             String operation = values[1];
-            SOAPFactory soapFactory = new SOAP11Factory();
+            SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
             SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
             OMNamespace omNs = soapFactory.createOMNamespace(service.getSchemaTargetNamespace(),
                                                              service.getSchemaTargetNamespacePrefix());
@@ -185,7 +184,7 @@ public class HTTPTransportUtils {
             throw AxisFault.makeFault(e);
         } finally {
             if ((msgContext.getEnvelope() == null) && soapVersion != VERSION_SOAP11) {
-                msgContext.setEnvelope(new SOAP12Factory().getDefaultEnvelope());
+                msgContext.setEnvelope(OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope());
             }
         }
     }

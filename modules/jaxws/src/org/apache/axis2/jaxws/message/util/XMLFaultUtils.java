@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.message.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
@@ -510,8 +510,8 @@ public class XMLFaultUtils {
                 for (int i = 0; i < blocks.length; i++) {
                     // A Block implements OMDataSource.  So create OMSourcedElements
                     // for each of the Blocks.
-                    OMSourcedElementImpl element =
-                            new OMSourcedElementImpl(blocks[i].getQName(), factory, blocks[i]);
+                    OMSourcedElement element =
+                            factory.createOMElement(blocks[i], blocks[i].getQName());
                     detail.addChild(element);
                 }
             }

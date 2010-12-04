@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.OMContainerEx;
-import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -626,9 +625,9 @@ class XMLSpineImpl implements XMLSpine {
             if (setComplete) {
                 
                 // Get the root of the document
-                OMElementImpl root = (OMElementImpl) om;
-                while(root.getParent() instanceof OMElementImpl) {
-                    root = (OMElementImpl) root.getParent();
+                OMElement root = om;
+                while(root.getParent() instanceof OMElement) {
+                    root = (OMElement) root.getParent();
                 }
                 
                 try {   

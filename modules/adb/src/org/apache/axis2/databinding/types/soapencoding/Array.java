@@ -29,7 +29,6 @@ package org.apache.axis2.databinding.types.soapencoding;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBDataSource;
 import org.apache.axis2.databinding.ADBException;
@@ -248,7 +247,7 @@ public class Array implements ADBBean {
 
 
         OMDataSource dataSource = new ADBDataSource(this, parentQName);
-        return new OMSourcedElementImpl(parentQName, factory, dataSource);
+        return factory.createOMElement(dataSource,parentQName);
 
     }
 
