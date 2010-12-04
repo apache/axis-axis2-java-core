@@ -616,16 +616,16 @@
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBDataSource(this,parentQName);
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-               parentQName,factory,dataSource);
+                       parentQName,factory,dataSource);
             </xsl:when>
             <xsl:otherwise>
-                org.apache.axiom.om.OMDataSource dataSource =
+               org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME);
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-               MY_QNAME,factory,dataSource);
+                       MY_QNAME,factory,dataSource);
             </xsl:otherwise>
-       </xsl:choose>
-       }
+        </xsl:choose>
+        }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
                                        javax.xml.stream.XMLStreamWriter xmlWriter)
