@@ -615,14 +615,12 @@
             <xsl:when test="@type">
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBDataSource(this,parentQName);
-               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-                       parentQName,factory,dataSource);
+               return factory.createOMElement(dataSource,parentQName);
             </xsl:when>
             <xsl:otherwise>
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME);
-               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-                       MY_QNAME,factory,dataSource);
+               return factory.createOMElement(dataSource,MY_QNAME);
             </xsl:otherwise>
         </xsl:choose>
         }
@@ -2146,7 +2144,7 @@
                 <xsl:value-of select="$name"/> object = null;
                 // initialize a hash map to keep values
                 java.util.Map attributeMap = new java.util.HashMap();
-                java.util.List extraAttributeList = new java.util.ArrayList();
+                java.util.List extraAttributeList = new java.util.ArrayList&lt;org.apache.axiom.om.OMAttribute>();
             </xsl:if>
 
             int event;
@@ -2367,13 +2365,13 @@
                             if (!handledAttributes.contains(reader.getAttributeLocalName(i))) {
                                 // this is an anyAttribute and we create
                                 // an OMAttribute for this
-                                org.apache.axiom.om.impl.llom.OMAttributeImpl attr =
-                                    new org.apache.axiom.om.impl.llom.OMAttributeImpl(
+                                org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
+                                org.apache.axiom.om.OMAttribute attr =
+                                    factory.createOMAttribute(
                                             reader.getAttributeLocalName(i),
-                                            new org.apache.axiom.om.impl.dom.NamespaceImpl(
+                                            factory.createOMNamespace(
                                                 reader.getAttributeNamespace(i), reader.getAttributePrefix(i)),
-                                            reader.getAttributeValue(i),
-                                            org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                                            reader.getAttributeValue(i));
 
                                 // and add it to the extra attributes
                                 <xsl:choose>
@@ -3025,8 +3023,8 @@
 
                                             <!-- Handle anyAttributes here -->
                                             <xsl:if test="$propertyName = 'extraAttributes'">
-                                                for(java.util.Iterator iter = extraAttributeList.iterator();iter.hasNext();){
-                                                    object.addExtraAttributes((org.apache.axiom.om.impl.llom.OMAttributeImpl)iter.next());
+                                                for(org.apache.axiom.om.OMAttribute att : extraAttributeList){
+                                                    object.addExtraAttributes(att);
                                                 }
                                             </xsl:if>
 

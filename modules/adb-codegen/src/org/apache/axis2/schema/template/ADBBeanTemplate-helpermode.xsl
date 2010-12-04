@@ -535,14 +535,12 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             <xsl:when test="@type">
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,this);
-               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-                       parentQName,factory,dataSource);
+               return factory.createOMElement(dataSource,parentQName);
             </xsl:when>
             <xsl:otherwise>
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBHelperDataSource(bean,<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,this);
-               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-                       <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,factory,dataSource);
+               return factory.createOMElement(dataSource,<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME);
             </xsl:otherwise>
         </xsl:choose>
         }
@@ -1479,13 +1477,13 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             if (!handledAttributes.contains(reader.getAttributeLocalName(i))) {
                                 // this is an anyAttribute and we create
                                 // an OMAttribute for this
-                                org.apache.axiom.om.impl.llom.OMAttributeImpl attr =
-                                    new org.apache.axiom.om.impl.llom.OMAttributeImpl(
+                                org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
+                                org.apache.axiom.om.OMAttribute attr =
+                                    factory.createOMAttribute(
                                             reader.getAttributeLocalName(i),
-                                            new org.apache.axiom.om.impl.dom.NamespaceImpl(
+                                            factory.createOMNamespace(
                                                 reader.getAttributeNamespace(i), reader.getAttributePrefix(i)),
-                                            reader.getAttributeValue(i),
-                                            org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                                            reader.getAttributeValue(i));
 
                                 // and add it to the extra attributes
                                 object.addExtraAttributes(attr);
