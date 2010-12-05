@@ -188,36 +188,39 @@ public class TempFileManager {
 
         // Find all the files that do not have a lock by
         // checking if the lock file exists.
-        for (File tmpFile : tmpFiles) {
-            // Create a file to represent the lock and test.
-            File lockFile = new File(tmpFile.getParent(), tmpFile.getName() + ".lck");
-            if (!lockFile.exists()) {
-                // Delete the contents of the directory since
-                // it is no longer locked.
-                Logger.getLogger("default").log(Level.FINE,
-                                                "TempFileManager::deleting old temp directory " +
-                                                tmpFile);
+        if (tmpFiles != null) {
+            for (File tmpFile : tmpFiles) {
+                // Create a file to represent the lock and test.
+                File lockFile = new File(tmpFile.getParent(), tmpFile.getName() + ".lck");
+                if (!lockFile.exists()) {
+                    // Delete the contents of the directory since
+                    // it is no longer locked.
+                    Logger.getLogger("default").log(Level.FINE,
+                            "TempFileManager::deleting old temp directory " +
+                                    tmpFile);
 
-                try {
-                    recursiveDelete(tmpFile);
-                }
-                catch (IOException ex) {
-                    // You log at a fine level since not being able to delete
-                    // the temp directory should not stop the application
-                    // from performing correctly. However, if the application
-                    // generates a lot of temp files, this could become
-                    // a disk space problem and the level should be raised.
-                    Logger.getLogger("default").log(Level.INFO,
-                                                    "TempFileManager::unable to delete " +
-                                                    tmpFile.getAbsolutePath());
+                    try {
+                        recursiveDelete(tmpFile);
+                    }
+                    catch (IOException ex) {
+                        // You log at a fine level since not being able to delete
+                        // the temp directory should not stop the application
+                        // from performing correctly. However, if the application
+                        // generates a lot of temp files, this could become
+                        // a disk space problem and the level should be raised.
+                        Logger.getLogger("default").log(Level.INFO,
+                                "TempFileManager::unable to delete " +
+                                        tmpFile.getAbsolutePath());
 
-                    // Print the exception.
-                    ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-                    ex.printStackTrace(new PrintStream(ostream));
+                        // Print the exception.
+                        ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+                        ex.printStackTrace(new PrintStream(ostream));
 
-                    Logger.getLogger("default").log(Level.FINE, ostream.toString());
+                        Logger.getLogger("default").log(Level.FINE, ostream.toString());
+                    }
                 }
             }
         }
+
     }
 }
