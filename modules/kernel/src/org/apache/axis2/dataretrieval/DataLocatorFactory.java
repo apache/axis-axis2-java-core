@@ -25,10 +25,6 @@ package org.apache.axis2.dataretrieval;
  */
 
 public class DataLocatorFactory {
-    private static org.apache.axis2.dataretrieval.WSDLDataLocator wsdlDataLocator = null;
-    private static org.apache.axis2.dataretrieval.PolicyDataLocator policyDataLocator = null;
-    private static org.apache.axis2.dataretrieval.SchemaDataLocator schemaDataLocator = null;
-
     /*
     * Return instance of default Data Locator for the dialect.
     */
@@ -38,37 +34,14 @@ public class DataLocatorFactory {
 
     public static AxisDataLocator createDataLocator(String dialect,
                                                     ServiceData[] serviceDataArray) {
-        AxisDataLocator dataLocator;
-
         if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_WSDL)) {
-            dataLocator = getWsdlDataLocator(serviceDataArray);
+            return new WSDLDataLocator(serviceDataArray);
         } else if (dialect.trim().equals(DRConstants.SPEC.DIALECT_TYPE_POLICY)) {
-            if (policyDataLocator == null) {
-                dataLocator = new PolicyDataLocator(serviceDataArray);
-            } else {
-                dataLocator = policyDataLocator;
-            }
+            return new PolicyDataLocator(serviceDataArray);
         } else if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_SCHEMA)) {
-            if (schemaDataLocator == null) {
-                dataLocator = new SchemaDataLocator(serviceDataArray);
-            } else {
-                dataLocator = schemaDataLocator;
-            }
+            return new SchemaDataLocator(serviceDataArray);
         } else {
-            dataLocator = null;
+            return null;
         }
-        return dataLocator;
     }
-
-    protected static AxisDataLocator getWsdlDataLocator(ServiceData[] serviceDataArray) {
-
-        if (wsdlDataLocator == null) {
-            wsdlDataLocator = new org.apache.axis2.dataretrieval.WSDLDataLocator(serviceDataArray);
-        } else {
-            wsdlDataLocator.setServiceData(serviceDataArray);
-        }
-        return wsdlDataLocator;
-    }
-
-
 }
