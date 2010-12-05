@@ -244,6 +244,9 @@ AXIS2_HOME/repository/services directory. Next, go to the
 "Transport Ins" section of the AXIS2_HOME/conf/axis2.xml and
 configure the transport receivers (simpleHttpServer in port 8080 is
 listed by default). Then invoke this script.</p>
+<p>The server can be started in debug mode by adding the <tt>-xdebug</tt>
+option to the command line. A remote debugger can then be attached by
+connecting to port 8000.</p>
 </td>
 </tr>
 <tr>

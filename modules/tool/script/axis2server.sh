@@ -32,5 +32,30 @@
 # Get the context and from that find the location of setenv.sh
 . `dirname $0`/setenv.sh
 
-java -classpath "$AXIS2_CLASSPATH" org.apache.axis2.transport.SimpleAxis2Server \
--repo "$AXIS2_HOME"/repository -conf "$AXIS2_HOME"/conf/axis2.xml $*
+while [ $# -ge 1 ]; do
+
+if [ "$1" = "-xdebug" ]; then
+    XDEBUG="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000"
+    shift
+
+elif [ "$1" = "-h" ]; then
+    echo "Usage: axis2server.sh"
+    echo "commands:"
+    echo "  -xdebug            Start Axis2 Server under JPDA debugger"
+    echo "  -h                 help"
+    shift
+    exit 0
+
+  else
+    echo "Error: unknown command:$1"
+    echo "For help: axis2server.sh -h"
+    shift
+    exit 1
+  fi
+
+done
+
+
+
+java $XDEBUG -classpath "$AXIS2_CLASSPATH" org.apache.axis2.transport.SimpleAxis2Server \
+	-repo "$AXIS2_HOME"/repository -conf "$AXIS2_HOME"/conf/axis2.xml $*
