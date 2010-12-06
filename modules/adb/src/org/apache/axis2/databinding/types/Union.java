@@ -25,11 +25,13 @@ import org.apache.axis2.databinding.utils.ConverterUtil;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 
 /** this class is the super class of all the union simple types */
-public abstract class Union {
+public abstract class Union implements Serializable {
     // object to store values
     protected Object localObject;
 
