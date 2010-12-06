@@ -2247,8 +2247,8 @@
                 </xsl:if>
 
                 <xsl:if test="$list">
-                    java.lang.String content = reader.getElementText();
-                    object = <xsl:value-of select="$name"/>.Factory.fromString(reader,content);
+                    java.lang.String listContent = reader.getElementText();
+                    object = <xsl:value-of select="$name"/>.Factory.fromString(reader,listContent);
                 </xsl:if>
 
                 <!-- populate attributes here!!!. The attributes are part of an element, not part of a type -->
