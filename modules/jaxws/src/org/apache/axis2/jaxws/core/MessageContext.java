@@ -179,6 +179,17 @@ public class MessageContext {
         axisMsgCtx.setProperty(key, value);
         return retval;
     }
+    
+    /**
+     * Like getProperty, but does not return prior value.
+     * This method should be used in scenarios where
+     * the prior value is not needed.
+     * @param key String
+     * @param value Object
+     */
+    public void setPropertyNoReturn(String key, Object value) {
+        axisMsgCtx.setProperty(key, value);
+    }
 
     public EndpointDescription getEndpointDescription() {
         return endpointDesc;

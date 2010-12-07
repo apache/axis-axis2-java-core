@@ -107,7 +107,7 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
             // Copy the existing Map contents to this new adapter
             sha.putAll((Map<QName, List<String>>) map);
         }
-        mc.setProperty(property, sha);
+        mc.setPropertyNoReturn(property, sha);
     }
 
     /**

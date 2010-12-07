@@ -106,7 +106,7 @@ public class TransportHeadersAdapter implements Map {
             // Copy the existing Map contents to this new adapter
             tha.putAll((Map) map);
         }
-        mc.setProperty(propertyName, tha);
+        mc.setPropertyNoReturn(propertyName, tha);
         
         // If this is a response, then also set the property for the response code
         if (!isRequest) {

@@ -108,7 +108,7 @@ public class AttachmentsAdapter implements Map<String, DataHandler> {
             // Copy the existing Map contents to this new adapter
             aa.putAll((Map<String, DataHandler>) map);
         }
-        mc.setProperty(propertyName, aa);
+        mc.setPropertyNoReturn(propertyName, aa);
     }
 
     

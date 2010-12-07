@@ -489,13 +489,14 @@ public class TransportUtils {
     	   try {
     		   // If this is the request MessageContext we should find it directly by the getProperty()
                // method
-               if (messageContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)
-            		   != null) {
-                   return (RequestResponseTransport) messageContext.getProperty(
-                		   RequestResponseTransport.TRANSPORT_CONTROL);
+    	       RequestResponseTransport transportControl = (RequestResponseTransport)
+    	           messageContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+    	       
+               if (transportControl != null) {
+                   return transportControl;
                }
-                // If this is the response MessageContext we need to look for the request MessageContext
-        		else if (messageContext.getOperationContext() != null
+               // If this is the response MessageContext we need to look for the request MessageContext
+        	   else if (messageContext.getOperationContext() != null
         				&& messageContext.getOperationContext()
                       		.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE) != null) {
         						return (RequestResponseTransport) messageContext.
