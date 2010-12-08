@@ -103,7 +103,119 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
         return jaxbObjects;
 
     }
+    
+    /**
+     * Short cut if there is one Object in the JAXB Object
+     * 
+     * @param jaxbObject that represents the type
+     * @param childName  xml child names as String
+     * @param pd        PropertyDescriptor 
+     * @return child Object value
+     */
+    public Object unWrap(Object jaxbObject,
+                         String childName,
+                         PropertyDescriptorPlus pd) throws JAXBWrapperException {
 
+
+        if (jaxbObject == null) {
+            throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr1"));
+        }
+        if (childName == null) {
+            throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr2"));
+        }
+
+        // Get the object that will have the property descriptors (i.e. the object representing the complexType)
+        Object jaxbComplexTypeObj = jaxbObject;
+
+        if (log.isDebugEnabled()) {
+            log.debug("Invoking unWrap() method with jaxb object:" +
+                    jaxbComplexTypeObj.getClass().getName());
+            log.debug("The input child xmlnames are: " + childName);
+        }
+
+        // Get the child object from the jaxb bean
+        Object retValue = null;
+        if (pd == null) {
+            throw new JAXBWrapperException(
+                    Messages.getMessage("JAXBWrapperErr6", 
+                            jaxbComplexTypeObj.getClass().getName(), 
+                            childName));
+        }
+        try {
+            retValue = pd.get(jaxbComplexTypeObj);
+        } catch (Throwable e) {
+            if (log.isDebugEnabled()) {
+                log.debug("An exception " + e.getClass() +
+                        "occurred while trying to call get() on " + pd);
+                log.debug("The corresponding xml child name is: " + childName);
+            }
+            throw new JAXBWrapperException(e);
+        }
+        return retValue;
+    }
+
+    /**
+     * wrap Creates a jaxb object that is initialized with one child object.
+     * <p/>
+     * Note that the jaxbClass must be the class the represents the complexType. (It should never be
+     * JAXBElement)
+     *
+     * @param jaxbClass
+     * @param childName     xml child name as String or null if no child
+     * @param childObject   component type object
+     * @param declaredClass declared class
+     * @param pd            PropertyDescriptor for this jaxbObject
+     */
+    public Object wrap(Class jaxbClass,
+                       String childName,
+                       Object childObject,
+                       Class declaredClass,
+                       PropertyDescriptorPlus pd) throws JAXBWrapperException {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Invoking unwrap() method to create jaxb object:" + jaxbClass.getName());
+            log.debug("The input child xmlname is: " + childName);
+        }
+
+        // The jaxb object always has a default constructor.  Create the object
+        Object jaxbObject = null;
+        try {
+            jaxbObject = jaxbClass.newInstance();
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("An exception " + t.getClass() +
+                        "occurred while trying to create jaxbobject  " + jaxbClass.getName());
+            }
+            throw new JAXBWrapperException(t);
+        }
+        
+        
+        if (childName != null) {
+            // Now set the child object onto the jaxb object
+            if (pd == null) {
+                throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr6", 
+                        jaxbClass.getName(), 
+                        childName));
+            }
+            try {
+                pd.set(jaxbObject, childObject, declaredClass);
+            } catch (Throwable t) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("An exception " + t.getClass() +
+                            "occurred while trying to call set() on  " + pd);
+                    log.debug("The corresponding xml child name is: " + childName);
+                    String name = (childObject == null) ? "<null>" : childObject.getClass().getName();
+                    log.debug("The corresponding value object is: " + name);
+                }
+                throw new JAXBWrapperException(t);
+            }
+        }
+
+        // Return the jaxb object 
+        return jaxbObject;
+    }
+    
     /**
      * wrap Creates a jaxb object that is initialized with the child objects.
      * <p/>

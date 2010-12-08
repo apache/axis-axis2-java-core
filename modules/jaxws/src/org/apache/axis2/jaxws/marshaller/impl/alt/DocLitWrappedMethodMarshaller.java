@@ -135,8 +135,6 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 wrapperObject = ((JAXBElement)wrapperObject).getValue();
             }
 
-            // Use the wrapper tool to get the child objects.
-            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
 
             // Get the list of names for the output parameters
             List<String> names = new ArrayList<String>();
@@ -150,56 +148,82 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 }
             }
 
-            // The return name is added as the last name
-            if (isChildReturn && !isNoReturn) {
-                names.add(operationDesc.getResultPartName());
-            }
+            if (pdList.size() == 0) {
+                // No OUT or INOUT parameters
+                // Use return only shortcut
+                if (isNoReturn) {
+                    returnValue = null;
+                } else if (isChildReturn) {
+                    String returnName = operationDesc.getResultPartName();
+                    // Use the wrapper tool to get the child objects.
+                    JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+                    Object object = wrapperTool.unWrap(wrapperObject, 
+                            returnName,
+                            marshalDesc.getPropertyDescriptorMap(
+                                    wrapperObject.getClass()).get(returnName));
 
-            // Get the child objects
-            Object[] objects = wrapperTool.unWrap(wrapperObject, names,
-                                                  marshalDesc.getPropertyDescriptorMap(
-                                                          wrapperObject.getClass()));
-
-            // Now create a list of paramValues so that we can populate the signature
-            List<PDElement> pvList = new ArrayList<PDElement>();
-            for (int i = 0; i < pdList.size(); i++) {
-                ParameterDescription pd = pdList.get(i);
-                Object value = objects[i];
-                // The object in the PDElement must be an element
-                Element element = null;
-                QName qName = new QName(pd.getTargetNamespace(), pd.getPartName());
-                if (!marshalDesc.getAnnotationDesc(pd.getParameterActualType()).hasXmlRootElement())
-                {
-                    element = new Element(value, qName,
-                                          pd.getParameterActualType());
-
+                    returnValue = object;
                 } else {
-                    element = new Element(value, qName);
-                }
-                pvList.add(new PDElement(pd, element, null));
-            }
-
-            // Populate the response Holders in the signature
-            MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);
-
-            // Now get the return value
-            if (isNoReturn) {
-                returnValue = null;
-            } else if (isChildReturn) {
-                returnValue = objects[objects.length - 1];
-                // returnValue may be incompatible with JAX-WS signature
-                if (ConvertUtils.isConvertable(returnValue, returnType)) {
-                    returnValue = ConvertUtils.convert(returnValue, returnType);
-                } else {
-                    String objectClass =
-                            (returnValue == null) ? "null" : returnValue.getClass().getName();
-                    throw ExceptionFactory.makeWebServiceException(
-                            Messages.getMessage("convertProblem", objectClass,
-                                                returnType.getName()));
+                    returnValue = wrapperObject;
                 }
             } else {
-                returnValue = wrapperObject;
+                // There are one or more OUT or INOUT parameters
+                // The return name is added as the last name
+                if (isChildReturn && !isNoReturn) {
+                    names.add(operationDesc.getResultPartName());
+                }
+
+                // Use the wrapper tool to get the child objects.
+                JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+                
+                // Get the child objects
+                Object[] objects = wrapperTool.unWrap(wrapperObject, names,
+                        marshalDesc.getPropertyDescriptorMap(
+                                wrapperObject.getClass()));
+
+                // Now create a list of paramValues so that we can populate the signature
+                List<PDElement> pvList = new ArrayList<PDElement>();
+                for (int i = 0; i < pdList.size(); i++) {
+                    ParameterDescription pd = pdList.get(i);
+                    Object value = objects[i];
+                    // The object in the PDElement must be an element
+                    Element element = null;
+                    QName qName = new QName(pd.getTargetNamespace(), pd.getPartName());
+                    if (!marshalDesc.getAnnotationDesc(pd.getParameterActualType()).hasXmlRootElement())
+                    {
+                        element = new Element(value, qName,
+                                pd.getParameterActualType());
+
+                    } else {
+                        element = new Element(value, qName);
+                    }
+                    pvList.add(new PDElement(pd, element, null));
+                }
+
+                // Populate the response Holders in the signature
+                MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);
+                
+                // Now get the return value
+                if (isNoReturn) {
+                    returnValue = null;
+                } else if (isChildReturn) {
+                    returnValue = objects[objects.length - 1];
+                    // returnValue may be incompatible with JAX-WS signature
+                    if (ConvertUtils.isConvertable(returnValue, returnType)) {
+                        returnValue = ConvertUtils.convert(returnValue, returnType);
+                    } else {
+                        String objectClass =
+                                (returnValue == null) ? "null" : returnValue.getClass().getName();
+                        throw ExceptionFactory.makeWebServiceException(
+                                Messages.getMessage("convertProblem", objectClass,
+                                                    returnType.getName()));
+                    }
+                } else {
+                    returnValue = wrapperObject;
+                }
             }
+
+            
 
             return returnValue;
         } catch (Exception e) {
@@ -366,41 +390,68 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                                                         signatureArgs,
                                                         false,  // output
                                                         true, false);
-
-            // Now we want to create a single JAXB element that contains the 
-            // ParameterValues.  We will use the wrapper tool to do this.
-            // Create the inputs to the wrapper tool
-            ArrayList<String> nameList = new ArrayList<String>();
-            Map<String, Object> objectList = new HashMap<String, Object>();
-            Map<String, Class>  declaredClassMap = new HashMap<String, Class>();
-
-            for (PDElement pde : pdeList) {
-                String name = pde.getParam().getParameterName();
-                
-                // The object list contains type rendered objects
-                Object value = pde.getElement().getTypeValue();
-                Class dclClass = pde.getParam().getParameterActualType();
-                
-                nameList.add(name);
-                objectList.put(name, value);
-                declaredClassMap.put(name, dclClass);
-            }
-
-            // Add the return object to the nameList and objectList
-            Class returnType = operationDesc.getResultActualType();
-            if (returnType != void.class) {
-                String name = operationDesc.getResultName();
-                nameList.add(name);
-                objectList.put(name, returnObject);
-                declaredClassMap.put(name, returnType);
-            }
-
-            // Now create the single JAXB element
+            
             String wrapperName = marshalDesc.getResponseWrapperClassName(operationDesc);
             Class cls = loadClass(wrapperName, endpointDesc);
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap,
-                                             marshalDesc.getPropertyDescriptorMap(cls));
+            Object object = null;
+            
+            // Add the return object to the nameList and objectList
+            Class returnType = operationDesc.getResultActualType();
+            
+            // Now we want to create a single JAXB element that contains the 
+            // ParameterValues.  We will use the wrapper tool to do this.
+            // Create the inputs to the wrapper tool
+            if (pdeList.size() == 0) {
+                if (returnType == void.class) {
+                    // Use the short-cut for void return
+                    object = wrapperTool.wrap(cls, 
+                            (String) null, 
+                            null, 
+                            null, 
+                            null);
+                } else {
+                    // Use the short-cut for a single return
+                    String childName = operationDesc.getResultName();
+                    object = wrapperTool.wrap(cls, 
+                            childName, 
+                            returnObject, 
+                            returnType,
+                            marshalDesc.getPropertyDescriptorMap(cls).get(childName));
+                }
+            } else {           
+
+                // Now we want to create a single JAXB element that contains the 
+                // ParameterValues.  We will use the wrapper tool to do this.
+                // Create the inputs to the wrapper tool
+                ArrayList<String> nameList = new ArrayList<String>();
+                Map<String, Object> objectList = new HashMap<String, Object>();
+                Map<String, Class>  declaredClassMap = new HashMap<String, Class>();
+
+                for (PDElement pde : pdeList) {
+                    String name = pde.getParam().getParameterName();
+
+                    // The object list contains type rendered objects
+                    Object value = pde.getElement().getTypeValue();
+                    Class dclClass = pde.getParam().getParameterActualType();
+
+                    nameList.add(name);
+                    objectList.put(name, value);
+                    declaredClassMap.put(name, dclClass);
+                }
+
+                // Add the return type
+                if (returnType != void.class) {
+                    String name = operationDesc.getResultName();
+                    nameList.add(name);
+                    objectList.put(name, returnObject);
+                    declaredClassMap.put(name, returnType);
+                }
+
+                
+                object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap,
+                        marshalDesc.getPropertyDescriptorMap(cls));
+            }
 
             QName wrapperQName = new QName(operationDesc.getResponseWrapperTargetNamespace(),
                                            operationDesc.getResponseWrapperLocalName());
@@ -478,31 +529,51 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                                                                          true,   // input
                                                                          true, false);
 
+            String wrapperName = marshalDesc.getRequestWrapperClassName(operationDesc);
+            Class cls = loadClass(wrapperName, endpointDesc);
+            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+            Object object = null;
+            
             // Now we want to create a single JAXB element that contains the 
             // ParameterValues.  We will use the wrapper tool to do this.
             // Create the inputs to the wrapper tool
-            ArrayList<String> nameList = new ArrayList<String>();
-            Map<String, Object> objectList = new HashMap<String, Object>();
-            Map<String, Class> declaredClassMap = new HashMap<String, Class>();
+            if (pvList.size() ==  0) {
+                // Use the short-cut for 0 children
+                object = wrapperTool.wrap(cls, 
+                        (String) null, 
+                        null, 
+                        null, 
+                        null);
+            } else if (pvList.size() == 1) {
+                // Use the short-cut for 1 child
+                PDElement pde = pvList.get(0);
+                String childName = pde.getParam().getParameterName();
+                object = wrapperTool.wrap(cls, 
+                        childName, 
+                        pde.getElement().getTypeValue(), 
+                        pde.getParam().getParameterActualType(),
+                        marshalDesc.getPropertyDescriptorMap(cls).get(childName));
 
-            for (PDElement pv : pvList) {
-                String name = pv.getParam().getParameterName();
+            } else {           
+                ArrayList<String> nameList = new ArrayList<String>();
+                Map<String, Object> objectList = new HashMap<String, Object>();
+                Map<String, Class> declaredClassMap = new HashMap<String, Class>();
 
-                // The object list contains type rendered objects
-                Object value = pv.getElement().getTypeValue();
-                Class dclClass = pv.getParam().getParameterActualType();
-                nameList.add(name);
-                objectList.put(name, value);
-                declaredClassMap.put(name, dclClass);
+                for (PDElement pv : pvList) {
+                    String name = pv.getParam().getParameterName();
+
+                    // The object list contains type rendered objects
+                    Object value = pv.getElement().getTypeValue();
+                    Class dclClass = pv.getParam().getParameterActualType();
+                    nameList.add(name);
+                    objectList.put(name, value);
+                    declaredClassMap.put(name, dclClass);
+                }
+
+                
+                object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap, 
+                        marshalDesc.getPropertyDescriptorMap(cls));
             }
-
-            // Now create the single JAXB element 
-            String wrapperName = marshalDesc.getRequestWrapperClassName(operationDesc);
-            Class cls = loadClass(wrapperName, endpointDesc);
-            
-            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap, 
-                                             marshalDesc.getPropertyDescriptorMap(cls));
 
             QName wrapperQName = new QName(operationDesc.getRequestWrapperTargetNamespace(),
                                            operationDesc.getRequestWrapperLocalName());

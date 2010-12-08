@@ -53,6 +53,17 @@ public interface JAXBWrapperTool {
     public Object[] unWrap(Object jaxbObject,
                            List<String> childNames) throws JAXBWrapperException;
 
+    /**
+     * Short cut if there is only one Object in the JAXB Object
+     * 
+     * @param jaxbObject that represents the type
+     * @param childName  xml child names as String
+     * @param pd        PropertyDescriptor 
+     * @return child Object value
+     */
+    public Object unWrap(Object jaxbObject,
+                         String childName,
+                         PropertyDescriptorPlus pd) throws JAXBWrapperException;
 
     /**
      * wrap Creates a jaxb object that is initialized with the child objects.
@@ -89,5 +100,23 @@ public interface JAXBWrapperTool {
                        Map<String, Object> childObjects) throws JAXBWrapperException;
 
 
+    /**
+     * Short Cut for JAXB objects with one child
+     * wrap Creates a jaxb object that is initialized with one child object.
+     * <p/>
+     * Note that the jaxbClass must be the class the represents the complexType. (It should never be
+     * JAXBElement)
+     *
+     * @param jaxbClass
+     * @param childName     xml child name as String or null if no child
+     * @param childObject   component type object
+     * @param declaredClass declared class
+     * @param pd            PropertyDescriptor for this jaxbObject
+     */
+    public Object wrap(Class jaxbClass,
+                       String childName,
+                       Object childObject,
+                       Class declaredClass,
+                       PropertyDescriptorPlus pd) throws JAXBWrapperException;
 }
 
