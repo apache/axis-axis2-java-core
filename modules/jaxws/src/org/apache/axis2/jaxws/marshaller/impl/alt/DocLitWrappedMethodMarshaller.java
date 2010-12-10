@@ -161,8 +161,18 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                             returnName,
                             marshalDesc.getPropertyDescriptorMap(
                                     wrapperObject.getClass()).get(returnName));
-
                     returnValue = object;
+                    // returnValue may be incompatible with JAX-WS signature
+                    if (ConvertUtils.isConvertable(returnValue, returnType)) {
+                        returnValue = ConvertUtils.convert(returnValue, returnType);
+                    } else {
+                        String objectClass =
+                                (returnValue == null) ? "null" : returnValue.getClass().getName();
+                        throw ExceptionFactory.makeWebServiceException(
+                                Messages.getMessage("convertProblem", objectClass,
+                                                    returnType.getName()));
+                    }
+                    
                 } else {
                     returnValue = wrapperObject;
                 }
