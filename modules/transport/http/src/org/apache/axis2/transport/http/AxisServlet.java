@@ -139,10 +139,12 @@ public class AxisServlet extends HttpServlet {
                 // adding ServletContext into msgContext;
                 String url = request.getRequestURL().toString();
                 
+                OutputStream bufferedOut = new BufferedOutputStream(out);
+                
                 InvocationResponse pi = HTTPTransportUtils.
                         processHTTPPostRequest(msgContext,
                                 new BufferedInputStream(request.getInputStream()),
-                                new BufferedOutputStream(out),
+                                bufferedOut,
                                 contentType,
                                 request.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                                 url);
@@ -168,6 +170,10 @@ public class AxisServlet extends HttpServlet {
                 						RequestResponseTransportStatus.SIGNALLED)) {
                     response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 }
+                
+                // Make sure that no data remains in the BufferedOutputStream even if the message
+                // formatter doesn't call flush
+                bufferedOut.flush();
 
             } catch (AxisFault e) {
                 setResponseState(msgContext, response);
