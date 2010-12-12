@@ -20,13 +20,11 @@
 package org.apache.axis2.util;
 
 import com.ibm.wsdl.Constants;
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.util.Base64;
-import org.apache.axiom.om.util.StAXUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -47,7 +45,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -534,12 +531,9 @@ public class XMLUtils {
         xformer.transform(source, result);
 
         ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
-        XMLStreamReader reader = StAXUtils
-                .createXMLStreamReader(is);
 
-        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(is);
         builder.setCache(true);
-        builder.releaseParserOnClose(true);
 
         OMElement omElement = builder.getDocumentElement();
         if (buildAll) {
@@ -593,12 +587,8 @@ public class XMLUtils {
      *
      */
     public static OMNode toOM(InputStream inputStream, boolean buildAll) throws XMLStreamException {
-        XMLStreamReader xmlReader = StAXUtils
-                .createXMLStreamReader(inputStream);
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        StAXOMBuilder builder = new StAXOMBuilder(fac, xmlReader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(inputStream);
         builder.setCache(true);
-        builder.releaseParserOnClose(true);
         OMNode omNode = builder.getDocumentElement();
         
         if (buildAll) {
@@ -632,12 +622,8 @@ public class XMLUtils {
      * @throws XMLStreamException
      */
     public static OMNode toOM(Reader reader, boolean buildAll) throws XMLStreamException {
-        XMLStreamReader xmlReader = StAXUtils
-                .createXMLStreamReader(reader);
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        StAXOMBuilder builder = new StAXOMBuilder(fac, xmlReader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(reader);
         builder.setCache(true);
-        builder.releaseParserOnClose(true);
         OMNode omNode = builder.getDocumentElement();
         
         if (buildAll) {
