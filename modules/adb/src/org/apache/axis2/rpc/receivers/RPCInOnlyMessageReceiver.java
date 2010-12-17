@@ -54,6 +54,9 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
+                if (methods[i].isBridge()) {
+                    continue;
+                }
                 if (methods[i].getName().equals(methodName)) {
                     method = methods[i];
                     break;

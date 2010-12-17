@@ -93,6 +93,9 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                 Method[] methods = ImplClass.getMethods();
 
                 for (Method method1 : methods) {
+                    if (method1.isBridge()) {
+                        continue;
+                    }
                     if (method1.getName().equals(methodName)) {
                         method = method1;
                         op.addParameter("myMethod", method);

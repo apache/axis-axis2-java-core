@@ -279,6 +279,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         XmlSchemaSequence sequence = null;
 
         for (Method jMethod : declaredMethods) {
+            if (jMethod.isBridge()) {
+                continue;
+            }
             WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jMethod);
             if (methodAnnon != null) {
                 if (methodAnnon.isExclude()) {

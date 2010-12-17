@@ -72,6 +72,9 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
         XmlSchemaSequence sequence;
 
         for (Method jMethod : declaredMethods) {
+            if (jMethod.isBridge()) {
+                continue;
+            }
             WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jMethod);
             if (methodAnnon != null) {
                 if (methodAnnon.isExclude()) {

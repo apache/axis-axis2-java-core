@@ -43,6 +43,9 @@ public class MethodTable {
         Method [] methods = cls.getMethods();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
+            if (method.isBridge()) {
+                continue;
+            }
             nameToMethodMap.put(method.getName(), method);
         }
     }
