@@ -26,6 +26,11 @@ import org.apache.http.params.HttpParams;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.RejectedExecutionException;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.impl.DefaultHttpResponseFactory;
+import org.apache.http.protocol.BasicHttpContext;
 
 public class DefaultConnectionListener implements IOProcessor {
 
@@ -82,9 +87,14 @@ public class DefaultConnectionListener implements IOProcessor {
                                 socket.getRemoteSocketAddress());
                     }
                     AxisHttpConnection conn = new AxisHttpConnectionImpl(socket, this.params);
-                    this.connmanager.process(conn);
+                    try {
+                        this.connmanager.process(conn);
+                    } catch (RejectedExecutionException e) {
+                        conn.sendResponse(new DefaultHttpResponseFactory().newHttpResponse(
+                                HttpVersion.HTTP_1_0, HttpStatus.SC_SERVICE_UNAVAILABLE, new BasicHttpContext(null)));
+                    }
                 } catch(java.io.InterruptedIOException ie) {
-                    break; 
+                    break;
                 } catch (Throwable ex) {
                     if (Thread.interrupted()) {
                         break;
