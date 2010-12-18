@@ -539,9 +539,6 @@ public abstract class AbstractHTTPSender {
                                  HttpMethod method) throws IOException {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
 
-        if (!msgContext.getOptions().isUseSeparateListener())
-            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-
         // set the custom headers, if available
         addCustomHeaders(method, msgContext);
 

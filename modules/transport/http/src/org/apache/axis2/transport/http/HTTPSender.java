@@ -266,6 +266,8 @@ public class HTTPSender extends AbstractHTTPSender {
         int statusCode = method.getStatusCode();
         log.trace("Handling response - " + statusCode);
         if (statusCode == HttpStatus.SC_OK) {
+            // Save the HttpMethod so that we can release the connection when cleaning up
+            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
             processResponse(method, msgContext);
         } else if (statusCode == HttpStatus.SC_ACCEPTED) {
         	/* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
@@ -276,6 +278,8 @@ public class HTTPSender extends AbstractHTTPSender {
         	method.releaseConnection();
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
                 statusCode == HttpStatus.SC_BAD_REQUEST) {
+            // Save the HttpMethod so that we can release the connection when cleaning up
+            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
             Header contenttypeHeader =
                     method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
             String value = null;
