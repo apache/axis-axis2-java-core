@@ -91,56 +91,54 @@ public abstract class BaseAxisDataLocator {
      */
     protected Data[] outputInlineForm(MessageContext msgContext,
                                       ServiceData[] serviceData) throws DataRetrievalException {
-        OMElement metaElement = null;
-        ArrayList result = new ArrayList();
-        if (serviceData != null) {
-            int size = serviceData.length;
-            for (int i = 0; i < size; i++) {
-                metaElement = serviceData[i].getFileContent(msgContext
-                        .getAxisService().getClassLoader());
-                if (metaElement != null) {
-                    result.add(new Data(metaElement, serviceData[i].getIdentifier()));
-                }
-
+    	assert(msgContext != null);
+    	if (serviceData == null || serviceData.length == 0) {
+    		return new Data[0];
+    	}
+    	
+        final ArrayList<Data> result = new ArrayList<Data>();
+        for(final ServiceData sd: serviceData) {
+        	final OMElement metaElement 
+        		= sd.getFileContent(msgContext.getAxisService().getClassLoader());
+            if (metaElement != null) {
+            	result.add(new Data(metaElement, sd.getIdentifier()));
             }
-
-
         }
-        return (Data[]) result.toArray(new Data[0]);
-
+        return (Data[]) result.toArray(new Data[result.size()]);
     }
 
 
     protected Data[] outputLocationForm(ServiceData[] serviceData)
             throws DataRetrievalException {
-
-        ArrayList result = new ArrayList();
-        if (serviceData != null) {
-            for (int i = 0; i < serviceData.length; i++) {
-
-                String urlValue = serviceData[i].getURL();
-                if (urlValue != null) {
-                    result.add(new Data(urlValue, serviceData[i].getIdentifier()));
-                }
+    	if(serviceData == null || serviceData.length == 0) {
+    		return new Data[0];
+    	}
+    	
+        final ArrayList<Data> result = new ArrayList<Data>();
+        for (final ServiceData sd: serviceData) {
+        	final String urlValue = sd.getURL();
+        	if (urlValue != null) {
+        		result.add(new Data(urlValue, sd.getIdentifier()));
             }
         }
-        return (Data[]) result.toArray(new Data[0]);
+        return result.toArray(new Data[result.size()]);
     }
+    
 
     protected Data[] outputReferenceForm(MessageContext msgContext,
                                          ServiceData[] serviceData) throws DataRetrievalException {
-        OMElement epr = null;
-        ArrayList result = new ArrayList();
-        if (serviceData != null) {
-            for (int i = 0; i < serviceData.length; i++) {
-
-                epr = serviceData[i].getEndpointReference();
-                if (epr != null) {
-                    result.add(new Data((epr), serviceData[i].getIdentifier()));
-                }
+        if(serviceData == null || serviceData.length == 0) {
+        	return new Data[0];
+        }
+        
+        final ArrayList<Data> result = new ArrayList<Data>();
+        for (final ServiceData sd: serviceData) {
+        	final OMElement epr = sd.getEndpointReference();
+        	if (epr != null) {
+        		result.add(new Data(epr, sd.getIdentifier()));
             }
         }
-        return (Data[]) result.toArray(new Data[0]);
+        return result.toArray(new Data[result.size()]);
     }
 
 
