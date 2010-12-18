@@ -290,22 +290,23 @@ container. Most servlet containers will automatically install the
 WAR file. (Some servlet containers may require a restart in order
 to capture the new web application. Refer to your servlet container
 documentation for more information.)
-<p align="center"><strong><img src="images/clip_image006.jpg" alt=
-"" /></strong></p>
 </li>
 <li>Once the WAR is successfully installed, test it by pointing the
 web browser to the <strong>http://&lt;host
 :port&gt;/axis2.</strong> It should produce the following page
-which is the <strong>Axis2 Web Application Home Page</strong>.</li>
+which is the <strong>Axis2 Web Application Home Page</strong>.
+<img src="images/clip_image006.jpg" alt= "" />
+</li>
 <li>Use the link "Validate" to ensure that everything is running
 correctly. If the validation fails then the WAR has failed to
 install properly or some essential jars are missing. In such a
 situation, refer to the documentation of the particular servlet
 container to find the problem. The following page shows a
 successful validation. Note the statement that indicates the core
-Axis2 libraries are present.</li>
+Axis2 libraries are present.
+<img src="images/happyaxis.jpg" />
+</li>
 </ol>
-<p align="center"><img src="images/happyaxis.jpg" /></p>
 <a name="upload" id="upload"></a>
 <p><strong>Note:</strong> For any Application server specific
 installation information please refer to the <a href=
