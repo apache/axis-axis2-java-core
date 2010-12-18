@@ -33,9 +33,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.InputStream;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 public abstract class WSDLToAxisServiceBuilder {
 
@@ -302,5 +304,15 @@ public abstract class WSDLToAxisServiceBuilder {
     
     public void useAxisConfiguration(AxisConfiguration axisConfig) {
         this.axisConfig = axisConfig;
+    }
+    
+    protected Map createHttpLocationTable() {
+       // Set a comparator so the httpLocations are stored in decending order
+       Map httpLocationTable = new TreeMap(new Comparator(){
+          public int compare(Object o1, Object o2) {
+             return (-1 * ((Comparable)o1).compareTo(o2));
+          }
+       });
+       return httpLocationTable;
     }
 }

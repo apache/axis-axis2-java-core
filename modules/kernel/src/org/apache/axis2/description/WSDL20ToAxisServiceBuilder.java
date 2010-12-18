@@ -756,13 +756,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void processHTTPBindingExtention(Binding binding, AxisBinding axisBinding, Interface serviceInterface)
             throws AxisFault {
 
-
-        // Set a comparator so tha httpLocations are stored in decending order
-        Map httpLocationTable = new TreeMap(new Comparator(){
-            public int compare(Object o1, Object o2) {
-                return (-1 * ((Comparable)o1).compareTo(o2));
-            }
-        });
+        Map httpLocationTable = createHttpLocationTable();
         // Capture all the binding specific properties
 
         HTTPBindingExtensionsImpl httpBindingExtensions;

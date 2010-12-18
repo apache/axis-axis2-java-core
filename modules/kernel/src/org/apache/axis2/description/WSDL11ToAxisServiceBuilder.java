@@ -107,7 +107,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.Vector;
 
 public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
@@ -634,7 +633,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         AxisBindingOperation axisBindingOperation;
         BindingOperation wsdl4jBindingOperation;
 
-        Map httpLocationMap = new TreeMap();
+        Map httpLocationMap = createHttpLocationTable();
         String httpLocation = null;
 
         for (Iterator iterator = wsdl4jBidingOperations.iterator(); iterator.hasNext();) {
