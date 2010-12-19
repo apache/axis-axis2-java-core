@@ -23,11 +23,11 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-  <Project rdf:about="http://ws.apache.org/axis2">
+  <Project rdf:about="http://axis.apache.org/axis2/java/core">
     <created>2007-06-08</created>
     <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
     <name>Apache Axis2</name>
-    <homepage rdf:resource="http://ws.apache.org/axis2" />
+    <homepage rdf:resource="http://axis.apache.org/axis2/java/core" />
     <asfext:pmc rdf:resource="http://axis.apache.org" />
     <shortdesc>Apache Axis2 is a service hosting and consumption framework that makes it easy to use SOAP and Web Services</shortdesc>
     <description>Apache Axis2 is a toolkit for creating and using Web Services, including SOAP, MTOM, XML/HTTP and advanced WS-* standards such as WSRM and WSSecurity.
@@ -36,8 +36,8 @@
     Axis2 runs either standalone or hosted in Tomcat or other servlet containers. 
     </description>
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/AXIS2" />
-    <mailing-list rdf:resource="http://ws.apache.org/axis2/mail-lists.html" />
-    <download-page rdf:resource="http://ws.apache.org/axis2/download.cgi" />
+    <mailing-list rdf:resource="http://axis.apache.org/axis2/java/core/mail-lists.html" />
+    <download-page rdf:resource="http://axis.apache.org/axis2/java/core/download.cgi" />
     <programming-language>Java</programming-language>
     <programming-language>C</programming-language>
     <category rdf:resource="http://projects.apache.org/category/xml" />
@@ -65,8 +65,8 @@
     </repository>
     <maintainer>
       <foaf:Person>
-        <foaf:name>Paul Fremantle</foaf:name>
-          <foaf:mbox rdf:resource="mailto:pzf@apache.org"/>
+        <foaf:name>Axis2 Development Team</foaf:name>
+        <foaf:mbox rdf:resource="mailto:java-dev@axis.apache.org?subject=[Axis2]"/>
       </foaf:Person>
     </maintainer>
     <asfext:implements><asfext:Standard>
