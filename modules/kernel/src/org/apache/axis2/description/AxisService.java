@@ -1257,7 +1257,7 @@ public class AxisService extends AxisDescription {
 		ArrayList<XmlSchema> schemas = getSchema();
 
 		// a name is present - try to pump the requested schema
-        if (!"".equals(xsd)) {
+        if ((xsd != null) && (!"".equals(xsd))) {
             XmlSchema schema = (XmlSchema) schemaMappingtable.get(xsd);
             if (schema == null) {
                 int dotIndex = xsd.indexOf('.');
@@ -1639,8 +1639,9 @@ public class AxisService extends AxisDescription {
      */
     public int printWSDL2(OutputStream out, String requestIP, String wsdl) 
         throws IOException, AxisFault {    
-        // a name is present - try to pump the requested wsdl file
-        if (!"".equals(wsdl)) {
+        // if the wsdl2 parameter is not empty or null in the requested URL, get the wsdl  from the META-INF and serve.
+        //else construct the wsdl out of axis service and serve.
+        if ((wsdl != null ) && (!"".equals(wsdl))) {
             // make sure we are only serving .wsdl files and ignore requests with
             // ".." in the name.
             if (wsdl.endsWith(".wsdl") && wsdl.indexOf("..") == -1) {
