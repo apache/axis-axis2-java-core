@@ -404,6 +404,8 @@
     <!-- Simple parameter values (those with serializers) can be handled by
       direct conversion to elements. Complex parameter values need to use data
       sources. This code handles both types. -->
+            // create message context
+            final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
             try {
                 int _opIndex = <xsl:apply-templates mode="get-index" select="/class/method[@name=$method-name]"></xsl:apply-templates>;
                 javax.xml.namespace.QName opname = _operations[_opIndex].getName();
@@ -431,8 +433,7 @@
                 // add SOAP headers
                 _serviceClient.addHeadersToEnvelope(env);
                 
-                // create message context with that envelope
-                org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+                // set that envelope on the message context
                 _messageContext.setEnvelope(env);
     
                 // add the message context to the operation client
@@ -467,6 +468,8 @@
                 // should never happen, but just in case
                 throw new RuntimeException("Unexpected exception type: " +
                     outex.getClass().getName(), outex);
+            } finally {
+                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
             }
         }
     </xsl:if>
@@ -487,6 +490,12 @@
                             }
                         } catch (Exception e) {
                             onError(e);
+                        } finally {
+                            try {
+                                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                            } catch (org.apache.axis2.AxisFault axisFault) {
+                                onError(axisFault);
+                            }   
                         }
                     }
 
