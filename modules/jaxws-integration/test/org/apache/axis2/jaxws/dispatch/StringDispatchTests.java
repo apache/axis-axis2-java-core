@@ -29,6 +29,9 @@ import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
+
+import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -431,7 +434,16 @@ public class StringDispatchTests extends AbstractTestCase {
 	}
     
     
-    public void testSyncPayloadMode_badHostName() {
+    public void testSyncPayloadMode_badHostName() throws Exception {
+        String host = new URL(DispatchTestConstants.BADURL).getHost();
+        try {
+            InetAddress addr = InetAddress.getByName(host);
+            System.out.println(host + " resolves to " + addr.getHostAddress() + "; skipping test case");
+            return;
+        } catch (UnknownHostException ex) {
+            // This is what we expect
+        }
+        
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
