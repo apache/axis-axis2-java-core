@@ -526,7 +526,9 @@ public class Utils {
                 // If its a REST response the content is not a SOAP envelop and hence we will
                 // Have use the soap body as the exception
                 if (messageContext.isDoingREST() && soapBody.getFirstElement() != null) {
-                    return new AxisFault(soapBody.getFirstElement().toString());
+                	AxisFault fault = new AxisFault(soapBody.getFirstElement().toString());
+                	fault.setDetail(soapBody.getFirstElement());
+                	return fault;
                 }
 
                 // if axis2 receives an rest type fault for an soap message then message context
@@ -535,7 +537,9 @@ public class Utils {
                 if ((messageContext.getProperty(Constants.Configuration.MESSAGE_TYPE) != null) &&
                         messageContext.getProperty(Constants.Configuration.MESSAGE_TYPE).equals(HTTPConstants.MEDIA_TYPE_APPLICATION_XML)){
                      if (soapBody.getFirstElement() != null){
-                         return new AxisFault(soapBody.getFirstElement().toString());
+                    	 AxisFault fault = new AxisFault(soapBody.getFirstElement().toString());
+                     	 fault.setDetail(soapBody.getFirstElement());
+                     	 return fault;
                      } else {
                          return new AxisFault("application/xml type error received.");
                      }
