@@ -194,7 +194,7 @@ public class ListingAgent extends AbstractAgent {
                     String wsdlName = req.getParameter("wsdl");
 
                     if (wsdlName != null && wsdlName.length()>0) {
-                        axisService.printUserWSDL(out, wsdlName);
+                        axisService.printUserWSDL(out, wsdlName, ip);
                         out.flush();
                         out.close();
                     } else {
