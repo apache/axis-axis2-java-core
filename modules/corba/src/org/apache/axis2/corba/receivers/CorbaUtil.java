@@ -128,6 +128,7 @@ public class CorbaUtil implements CorbaConstants {
                 char[] buf = new char[1000];
                 fileReader.read(buf);
                 obj = orb.string_to_object((new String(buf)).trim());
+                fileReader.close();
             } else if (iorString!=null) {
                 obj = orb.string_to_object(((String) iorString.getValue()).trim());
             } else {
