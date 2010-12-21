@@ -20,9 +20,12 @@
 
 package org.apache.axis2.deployment.scheduler;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.RepositoryListener;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import java.util.TimerTask;
 
@@ -33,14 +36,16 @@ public class SchedulerTask implements Runnable {
     int state = 0;
     TimerTask timerTask;
     private RepositoryListener wsListener;
-    private ConfigurationContext configCtx;
+    private AxisConfiguration axisConfig;
+    private static final Parameter DEPLOYMENT_TASK_STATUS_PARAM =
+            new Parameter(DeploymentEngine.DEPLOYMENT_TASK_RUNNING, Boolean.FALSE);
 
     /**
      * Creates a new scheduler task.
      */
-    public SchedulerTask(RepositoryListener listener, ConfigurationContext configCtx) {
+    public SchedulerTask(RepositoryListener listener, AxisConfiguration axisConfig) {
         this.wsListener = listener;
-        this.configCtx = configCtx;
+        this.axisConfig = axisConfig;
     }
 
     /**
@@ -72,13 +77,23 @@ public class SchedulerTask implements Runnable {
      * The action to be performed by this scheduler task.
      */
     public void run() {
-        synchronized (configCtx) {
+        synchronized (axisConfig) {
+            Parameter param =
+                    axisConfig.getParameter(DeploymentEngine.DEPLOYMENT_TASK_RUNNING);
+            if (param == null) {
+                try {
+                    axisConfig.addParameter(DEPLOYMENT_TASK_STATUS_PARAM);
+                } catch (AxisFault e) {
+                    // this is thrown only if the parameter is locked. Since we are sure that this
+                    // param will not be locked, we will ignore this
+                }
+            }
+
             try {
-                configCtx.setNonReplicableProperty(DeploymentEngine.DEPLOYMENT_TASK_RUNNING,
-                                                   Boolean.TRUE);
+                DEPLOYMENT_TASK_STATUS_PARAM.setValue(Boolean.TRUE);
                 checkRepository();
             } finally {
-                configCtx.removePropertyNonReplicable(DeploymentEngine.DEPLOYMENT_TASK_RUNNING);
+                DEPLOYMENT_TASK_STATUS_PARAM.setValue(Boolean.FALSE);
             }
         }
     }

@@ -876,7 +876,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     protected void startSearch(RepositoryListener listener) {
         scheduler = new Scheduler();
 
-        schedulerTask = new SchedulerTask(listener, configContext);
+        schedulerTask = new SchedulerTask(listener, axisConfig);
         scheduler.schedule(schedulerTask, new DeploymentIterator());
     }
 
@@ -887,9 +887,14 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * @return true - if the deployment task is running, false - otherwise
      */
     public boolean isDeploymentTaskRunning() {
-        Boolean deploymentTaskRunning =
-                (Boolean)configContext.getProperty(DeploymentEngine.DEPLOYMENT_TASK_RUNNING);
-        return deploymentTaskRunning != null && deploymentTaskRunning;
+        synchronized (axisConfig) {
+            Parameter deploymentTaskRunningParam =
+                    axisConfig.getParameter(DeploymentEngine.DEPLOYMENT_TASK_RUNNING);
+            if (deploymentTaskRunningParam != null) {
+                return (Boolean) deploymentTaskRunningParam.getValue();
+            }
+            return false;
+        }
     }
 
     public synchronized void unDeploy() {
