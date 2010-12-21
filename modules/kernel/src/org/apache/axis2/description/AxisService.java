@@ -2350,8 +2350,9 @@ public class AxisService extends AxisDescription {
 		AxisService axisService = serviceBuilder.populateService();
 		AxisEndpoint axisEndpoint = (AxisEndpoint) axisService.getEndpoints()
 				.get(axisService.getEndpointName());
-		options.setTo(new EndpointReference(axisEndpoint.getEndpointURL()));
+
 		if (axisEndpoint != null) {
+            options.setTo(new EndpointReference(axisEndpoint.getEndpointURL()));
 			options.setSoapVersionURI((String) axisEndpoint.getBinding()
 					.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION));
 		}
