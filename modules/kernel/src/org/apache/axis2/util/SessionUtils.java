@@ -28,9 +28,10 @@ import java.util.Iterator;
 public class SessionUtils {
 
     /**
-     * Walk through the list of services and use the minimum of the scopes as the scope for the whole service group
+     * Walk through the list of services and use the maximum of the scopes as the scope
+     * for the whole service group
      *
-     * @param axisServiceGroup
+     * @param axisServiceGroup the service group
      * @return scope for the service group
      */
     public static String calculateMaxScopeForServiceGroup(AxisServiceGroup axisServiceGroup) {
@@ -49,8 +50,8 @@ public class SessionUtils {
     /**
      * convert scope into a numerical value
      *
-     * @param scope
-     * @return integer
+     * @param scope scope as a string
+     * @return integer the scope as a number
      */
     private static int getScopeIntValue(String scope) {
         if (Constants.SCOPE_REQUEST.equals(scope)) {
@@ -69,8 +70,8 @@ public class SessionUtils {
     /**
      * Get the actual scope string given the numerical value
      *
-     * @param scope
-     * @return string
+     * @param scope scope as a number
+     * @return string scope as a string
      */
     private static String getScopeString(int scope) {
         switch (scope) {
