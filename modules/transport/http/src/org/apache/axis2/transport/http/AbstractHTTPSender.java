@@ -55,16 +55,13 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.protocol.HTTP;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
@@ -599,11 +596,67 @@ public abstract class AbstractHTTPSender {
             }
         }
 
+        // we have to consider the TRANSPORT_HEADERS map as well
+        Map transportHeaders = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+        if (transportHeaders != null) {
+            removeUnwantedHeaders(msgContext);
+
+            Set headerEntries = transportHeaders.entrySet();
+
+            for (Object headerEntry : headerEntries) {
+                if (headerEntry instanceof Map.Entry) {
+                    Header[] headers = method.getRequestHeaders();
+
+                    boolean headerAdded = false;
+                    for (Header header : headers) {
+                        if (header.getName() != null &&                                 
+                                header.getName().equals(((Map.Entry) headerEntry).getKey())) {
+                            headerAdded = true;
+                            break;
+                        }
+                    }
+
+                    if (!headerAdded) {
+                        method.addRequestHeader(((Map.Entry) headerEntry).getKey().toString(),
+                                ((Map.Entry) headerEntry).getValue().toString());
+                    }
+                }
+            }
+        }
+
         if (!isCustomUserAgentSet) {
             String userAgentString = getUserAgent(msgContext);
             method.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, userAgentString);
         }
 
+    }
+
+
+    /**
+     * Remove unwanted headers from the transport headers map of outgoing request. These are headers which
+     * should be dictated by the transport and not the user. We remove these as these may get
+     * copied from the request messages
+     *
+     * @param msgContext the Axis2 Message context from which these headers should be removed
+     */
+    private void removeUnwantedHeaders(MessageContext msgContext) {
+        Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+
+        if (headers == null || headers.isEmpty()) {
+            return;
+        }
+
+        Iterator iter = headers.keySet().iterator();
+        while (iter.hasNext()) {
+            String headerName = (String) iter.next();
+            if (HTTP.CONN_DIRECTIVE.equalsIgnoreCase(headerName) ||
+                HTTP.TRANSFER_ENCODING.equalsIgnoreCase(headerName) ||
+                HTTP.DATE_HEADER.equalsIgnoreCase(headerName) ||
+                HTTP.CONTENT_TYPE.equalsIgnoreCase(headerName) ||
+                HTTP.CONTENT_LEN.equalsIgnoreCase(headerName)) {
+                iter.remove();
+            }
+        }
     }
 
     private String getUserAgent(MessageContext messageContext) {
