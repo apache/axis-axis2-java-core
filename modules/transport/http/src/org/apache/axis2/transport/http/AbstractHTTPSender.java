@@ -62,6 +62,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
@@ -522,49 +524,64 @@ public abstract class AbstractHTTPSender {
     protected HttpClient getHttpClient(MessageContext msgContext) {
         ConfigurationContext configContext = msgContext.getConfigurationContext();
 
-        HttpClient httpClient = (HttpClient) msgContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+        HttpClient httpClient = (HttpClient) msgContext.getProperty(
+                HTTPConstants.CACHED_HTTP_CLIENT);
+
         if (httpClient == null) {
             httpClient = (HttpClient) configContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
         }
+
         if (httpClient != null) {
             return httpClient;
         }
 
-        HttpConnectionManager connManager =
-            (HttpConnectionManager) msgContext.getProperty(
-                 HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
-        if (connManager == null) {
-            connManager =
-                (HttpConnectionManager) msgContext.getProperty(
-                     HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
-        }
-        if (connManager == null) {
-            // reuse HttpConnectionManager
-            synchronized (configContext) {
-                connManager = (HttpConnectionManager) configContext.getProperty(
-                                   HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
-                if (connManager == null) {
-                    log.trace("Making new ConnectionManager");
-                    connManager = new MultiThreadedHttpConnectionManager();
-                    configContext.setProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, 
-                                              connManager);
+        synchronized (this) {
+            httpClient = (HttpClient) msgContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+
+            if (httpClient == null) {
+                httpClient = (HttpClient) configContext.getProperty(
+                        HTTPConstants.CACHED_HTTP_CLIENT);
+            }
+
+            if (httpClient != null) {
+                return httpClient;
+            }
+
+            HttpConnectionManager connManager =
+                    (HttpConnectionManager) msgContext.getProperty(
+                            HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
+            if (connManager == null) {
+                connManager =
+                        (HttpConnectionManager) msgContext.getProperty(
+                                HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
+            }
+            if (connManager == null) {
+                // reuse HttpConnectionManager
+                synchronized (configContext) {
+                    connManager = (HttpConnectionManager) configContext.getProperty(
+                            HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
+                    if (connManager == null) {
+                        log.trace("Making new ConnectionManager");
+                        connManager = new MultiThreadedHttpConnectionManager();
+                        configContext.setProperty(
+                                HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, connManager);
+                    }
                 }
             }
+            /*
+             * Create a new instance of HttpClient since the way
+             * it is used here it's not fully thread-safe.
+             */
+            httpClient = new HttpClient(connManager);
+
+            // Set the default timeout in case we have a connection pool starvation to 30sec
+            httpClient.getParams().setConnectionManagerTimeout(30000);
+
+            // Get the timeout values set in the runtime
+            initializeTimeouts(msgContext, httpClient);
+
+            return httpClient;
         }
-
-        /*
-         * Create a new instance of HttpClient since the way
-         * it is used here it's not fully thread-safe.
-         */
-        httpClient = new HttpClient(connManager);
-
-        // Set the default timeout in case we have a connection pool starvation to 30sec
-        httpClient.getParams().setConnectionManagerTimeout(30000);
-
-        // Get the timeout values set in the runtime
-        initializeTimeouts(msgContext, httpClient);
-
-        return httpClient;
     }
 
     protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url,
