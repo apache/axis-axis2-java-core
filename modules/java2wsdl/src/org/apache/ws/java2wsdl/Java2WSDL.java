@@ -19,10 +19,14 @@
 
 package org.apache.ws.java2wsdl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOptionParser;
 import org.apache.ws.java2wsdl.utils.Java2WSDLOptionsValidator;
 
 public class Java2WSDL {
+	private static Log log = LogFactory.getLog(Java2WSDL.class);
+	
     public static void main(String[] args) throws Exception {
         Java2WSDLCommandLineOptionParser commandLineOptionParser = new Java2WSDLCommandLineOptionParser(
                 args);
@@ -30,6 +34,7 @@ public class Java2WSDL {
         validateCommandLineOptions(commandLineOptionParser);
         Java2WSDLCodegenEngine engine = new Java2WSDLCodegenEngine(commandLineOptionParser.getAllOptions());
         engine.generate();
+        log.info("WSDL created at "+ engine.getOutputFile());
     }
 
     public static void printUsage() {

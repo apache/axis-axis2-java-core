@@ -37,6 +37,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
     private Java2WSDLBuilder java2WsdlBuilder;
     public static final String WSDL_FILENAME_SUFFIX = ".wsdl";
     public static final String COMMA = ",";
+    private File outputFile;
 
     public Java2WSDLCodegenEngine(Map<String,Java2WSDLCommandLineOption> optionsMap) throws Exception {
         //create a new  Java2WSDLBuilder and populate it
@@ -82,7 +83,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         }
     
         //first create a file in the given location
-        File outputFile = new File(outputFolder, outputFileName);
+        outputFile = new File(outputFolder, outputFileName);
         FileOutputStream out;
         try {
             if (!outputFile.exists()) {
@@ -289,4 +290,9 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         }
         return pkg2nsMap;
     }
+
+	public File getOutputFile() {
+    	return outputFile;
+    }
+    
 }
