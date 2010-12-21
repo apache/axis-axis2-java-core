@@ -315,9 +315,9 @@ public class Utils {
             if (queryIndex > 0) {
                 operationName = operationName.substring(0, queryIndex);
             }
-            //remove last '/'
-            if (operationName.endsWith("/")) {
-                operationName = operationName.substring(0, operationName.length() - 1);
+            //take the part upto / as the operation name
+            if (operationName.indexOf("/") != -1) {
+                operationName = operationName.substring(0, operationName.indexOf("/"));
             }
         }
         return operationName;
