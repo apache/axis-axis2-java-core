@@ -1068,8 +1068,12 @@ public class AxisService extends AxisDescription {
 	 * @throws AxisFault
 	 * @throws WSDLException
 	 */
-	private void printDefinitionObject(Definition definition, OutputStream out,
+	private synchronized void printDefinitionObject(Definition definition, OutputStream out,
 			String requestIP) throws AxisFault, WSDLException {
+        // Synchronized this method to fix the NullPointer exception occurred when load is high.
+        // This error happens because wsdl4j is not thread safe and we are using same WSDL Definition for printing the
+        // WSDL.
+        // Please refer AXIS2-4511,AXIS2-4517,AXIS2-3276.
 		if (isModifyUserWSDLPortAddress()) {
 			setPortAddress(definition, requestIP);
 		}
