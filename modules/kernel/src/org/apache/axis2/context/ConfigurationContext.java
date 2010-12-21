@@ -251,18 +251,7 @@ public class ConfigurationContext extends AbstractContext {
                     serviceGroupContext =
                             getServiceGroupContextFromSoapSessionTable(serviceGroupContextId,
                                                                        messageContext);
-                    if (serviceGroupContext == null) {
 
-                        // TODO: Adding this code so that requests to services deployed in soapsession scope will work
-                        // TODO: However, soapsession functionality is still broken
-                        serviceGroupContext =
-                                new ServiceGroupContext(this,
-                                                        axisService.getAxisServiceGroup());
-                        serviceGroupContext.setId(serviceGroupContextId);
-                        addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);
-//                        throw new AxisFault("Unable to find corresponding context" +
-//                                            " for the serviceGroupId: " + serviceGroupContextId);
-                    }
                 } else {
                     AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
                     serviceGroupContext = createServiceGroupContext(axisServiceGroup);
