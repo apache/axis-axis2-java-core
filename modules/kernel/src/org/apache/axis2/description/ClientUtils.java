@@ -41,7 +41,7 @@ public class ClientUtils {
 
     private static final Log log = LogFactory.getLog(ClientUtils.class);
 
-    public static synchronized TransportOutDescription inferOutTransport(AxisConfiguration ac,
+    public static TransportOutDescription inferOutTransport(AxisConfiguration ac,
                                                                          EndpointReference epr,
                                                                          MessageContext msgctx)
             throws AxisFault {
@@ -83,7 +83,7 @@ public class ClientUtils {
         }
     }
 
-    public static synchronized TransportInDescription inferInTransport(AxisConfiguration ac,
+    public static TransportInDescription inferInTransport(AxisConfiguration ac,
                                                                        Options options,
                                                                        MessageContext msgCtxt)
             throws AxisFault {
