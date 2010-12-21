@@ -34,9 +34,10 @@ import java.util.Arrays;
 public class MemberListCommand extends ControlCommand {
 
     private static final Log log = LogFactory.getLog(MemberListCommand.class);
+    private static final long serialVersionUID = 5687720124889269491L;
 
     private Member[] members;
-    private MembershipManager membershipManager;
+    private transient MembershipManager membershipManager;
 
     public void setMembershipManager(MembershipManager membershipManager) {
         this.membershipManager = membershipManager;

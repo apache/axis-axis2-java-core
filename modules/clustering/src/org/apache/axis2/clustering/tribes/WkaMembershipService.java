@@ -38,10 +38,16 @@ public class WkaMembershipService implements MembershipService {
      */
     protected Properties properties = new Properties();
 
+    /**
+     * This payload contains some membership information, such as some member specific properties
+     * e.g. HTTP/S ports
+     */
     protected byte[] payload;
 
+    /**
+     * The domain name of this cluster
+     */
     protected byte[] domain;
-    private MembershipListener membershipListener;
 
     public WkaMembershipService(MembershipManager membershipManager) {
         this.membershipManager = membershipManager;
@@ -129,11 +135,11 @@ public class WkaMembershipService implements MembershipService {
     }
 
     public void setMembershipListener(MembershipListener membershipListener) {
-        this.membershipListener = membershipListener;
+        // Nothing to do
     }
 
     public void removeMembershipListener() {
-        this.membershipListener = null;
+        // Nothing to do
     }
 
     public void setPayload(byte[] payload) {

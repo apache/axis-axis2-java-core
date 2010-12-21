@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * Message intereceptor for handling at-most-once message processing semantics
  */
-public class AtMostOnceInterceptor extends ChannelInterceptorBase {          
+public final class AtMostOnceInterceptor extends ChannelInterceptorBase {
 
     private static Log log = LogFactory.getLog(AtMostOnceInterceptor.class);
     private static final Map<MessageId, Long> receivedMessages =

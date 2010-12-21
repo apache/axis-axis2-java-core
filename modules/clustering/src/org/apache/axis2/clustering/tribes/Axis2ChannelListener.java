@@ -31,6 +31,7 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.catalina.tribes.ByteMessage;
+import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcMessage;
@@ -43,17 +44,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
-    private static final Log log = LogFactory.getLog(ChannelListener.class);
+/**
+ * This is the Tribes channel listener which is used for listening on the channels, receiving
+ * messages & accepting messages.
+ */
+public class Axis2ChannelListener implements ChannelListener {
+    private static final Log log = LogFactory.getLog(Axis2ChannelListener.class);
 
     private DefaultStateManager stateManager;
     private DefaultNodeManager nodeManager;
 
     private ConfigurationContext configurationContext;
 
-    public ChannelListener(ConfigurationContext configurationContext,
-                           DefaultNodeManager nodeManager,
-                           DefaultStateManager stateManager) {
+    public Axis2ChannelListener(ConfigurationContext configurationContext,
+                                DefaultNodeManager nodeManager,
+                                DefaultStateManager stateManager) {
         this.nodeManager = nodeManager;
         this.stateManager = stateManager;
         this.configurationContext = configurationContext;

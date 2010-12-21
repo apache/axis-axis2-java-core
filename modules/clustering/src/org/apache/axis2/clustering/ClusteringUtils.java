@@ -37,6 +37,8 @@ import java.util.Random;
  */
 public class ClusteringUtils {
 
+    private static final Random RANDOM = new Random();
+
     /**
      * Load a ServiceGroup having name <code>serviceGroupName</code>
      *
@@ -55,14 +57,23 @@ public class ClusteringUtils {
         String axis2Repo = System.getProperty(Constants.AXIS2_REPO);
         if (isURL(axis2Repo)) {
             DataHandler dh = new DataHandler(new URL(axis2Repo + "services/" + serviceGroupName));
-            String tempDir =
+            String tempDirName =
                     tempDirectory + File.separator +
-                    (System.currentTimeMillis() + new Random().nextDouble());
-            new File(tempDir).mkdirs();
-            serviceArchive = new File(tempDir + File.separator + serviceGroupName);
-            FileOutputStream out = new FileOutputStream(serviceArchive);
-            dh.writeTo(out);
-            out.close();
+                    (System.currentTimeMillis() + RANDOM.nextDouble());
+            if(!new File(tempDirName).mkdirs()) {
+                 throw new Exception("Could not create temp dir " + tempDirName);
+            }
+            serviceArchive = new File(tempDirName + File.separator + serviceGroupName);
+            FileOutputStream out = null;
+            try {
+                out = new FileOutputStream(serviceArchive);
+                dh.writeTo(out);
+                out.close();
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+            }
         } else {
             serviceArchive = new File(axis2Repo + File.separator + "services" +
                                       File.separator + serviceGroupName);

@@ -30,8 +30,9 @@ import java.util.Arrays;
  */
 public class MemberJoinedCommand extends ControlCommand {
 
+    private static final long serialVersionUID = -6596472883950279349L;
     private Member member;
-    private MembershipManager membershipManager;
+    private transient MembershipManager membershipManager;
 
     public void setMembershipManager(MembershipManager membershipManager) {
         this.membershipManager = membershipManager;

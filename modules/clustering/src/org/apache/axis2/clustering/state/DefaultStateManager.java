@@ -35,9 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is the defaut StateManager of the Apache Tribes based clustering implementation
+ */
 public class DefaultStateManager implements StateManager {
-
-    private ConfigurationContext configContext;
 
     private final Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 
@@ -91,7 +92,7 @@ public class DefaultStateManager implements StateManager {
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
-        this.configContext = configurationContext;
+        // Nothing to do here
     }
 
     public void setReplicationExcludePatterns(String contextType, List patterns) {

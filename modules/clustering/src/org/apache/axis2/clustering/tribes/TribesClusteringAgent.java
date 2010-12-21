@@ -61,6 +61,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +85,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
     private ManagedChannel channel;
     private RpcChannel rpcInitChannel;
     private ConfigurationContext configurationContext;
-    private ChannelListener channelListener;
+    private Axis2ChannelListener axis2ChannelListener;
     private ChannelSender channelSender;
     private MembershipManager primaryMembershipManager;
     private RpcInitializationRequestHandler rpcInitRequestHandler;
@@ -152,9 +153,9 @@ public class TribesClusteringAgent implements ClusteringAgent {
 
         channel = new GroupChannel();
         channelSender = new ChannelSender(channel, primaryMembershipManager, synchronizeAllMembers());
-        channelListener =
-                new ChannelListener(configurationContext, configurationManager, contextManager);
-        channel.addChannelListener(channelListener);
+        axis2ChannelListener =
+                new Axis2ChannelListener(configurationContext, configurationManager, contextManager);
+        channel.addChannelListener(axis2ChannelListener);
 
         byte[] domain = getClusterDomain();
         log.info("Cluster domain: " + new String(domain));
@@ -206,7 +207,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
         // If context replication is enabled, get the latest state from a neighbour
         if (contextManager != null) {
             contextManager.setSender(channelSender);
-            channelListener.setStateManager(contextManager);
+            axis2ChannelListener.setStateManager(contextManager);
             initializeSystem(new GetStateCommand());
             ClusteringContextListener contextListener = new ClusteringContextListener(channelSender);
             configurationContext.addContextListener(contextListener);
@@ -565,7 +566,15 @@ public class TribesClusteringAgent implements ClusteringAgent {
                                 "or boolean parameter");
             }
 
-        } catch (Exception e) {
+        } catch (InvocationTargetException e) {
+            handleException("Error invoking setter method named : " + mName +
+                            "() that takes a single String, int, long, float, double " +
+                            "or boolean parameter", e);
+        } catch (NoSuchMethodException e) {
+            handleException("Error invoking setter method named : " + mName +
+                            "() that takes a single String, int, long, float, double " +
+                            "or boolean parameter", e);
+        } catch (IllegalAccessException e) {
             handleException("Error invoking setter method named : " + mName +
                             "() that takes a single String, int, long, float, double " +
                             "or boolean parameter", e);
@@ -701,7 +710,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
         if (channel != null) {
             try {
                 channel.removeChannelListener(rpcInitChannel);
-                channel.removeChannelListener(channelListener);
+                channel.removeChannelListener(axis2ChannelListener);
                 channel.stop(Channel.DEFAULT);
             } catch (ChannelException e) {
 
@@ -720,8 +729,8 @@ public class TribesClusteringAgent implements ClusteringAgent {
         if (rpcInitRequestHandler != null) {
             rpcInitRequestHandler.setConfigurationContext(configurationContext);
         }
-        if (channelListener != null) {
-            channelListener.setConfigurationContext(configurationContext);
+        if (axis2ChannelListener != null) {
+            axis2ChannelListener.setConfigurationContext(configurationContext);
         }
         if (configurationManager != null) {
             configurationManager.setConfigurationContext(configurationContext);

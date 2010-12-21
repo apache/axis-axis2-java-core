@@ -20,7 +20,7 @@ import org.apache.axis2.clustering.management.GroupManagementCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 /**
- *
+ * This command is sent when a node in the cluster needs to be shutdown
  */
 public class ShutdownMemberCommand extends GroupManagementCommand {
     public void execute(ConfigurationContext configContext) throws ClusteringFault{
