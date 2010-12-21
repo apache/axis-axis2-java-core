@@ -480,6 +480,41 @@ public abstract class AbstractHTTPSender {
         }
     }
 
+    /**
+     * This is used to get the dynamically set time out values from the
+     * message context. If the values are not available or invalid then
+     * the default values or the values set by the configuration will be used
+     *
+     * @param msgContext the active MessageContext
+     * @param httpMethod method
+     */
+    protected void setTimeouts(MessageContext msgContext, HttpMethod httpMethod) {
+        // If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
+        // override the static config
+        Integer tempSoTimeoutProperty =
+                (Integer) msgContext.getProperty(HTTPConstants.SO_TIMEOUT);
+        Integer tempConnTimeoutProperty =
+                (Integer) msgContext
+                        .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
+
+        if (tempConnTimeoutProperty != null) {
+            // timeout for initial connection
+            httpMethod.getParams().setParameter("http.connection.timeout",
+                    tempConnTimeoutProperty);
+        }
+
+        if (tempSoTimeoutProperty != null) {
+            // SO_TIMEOUT -- timeout for blocking reads
+            httpMethod.getParams().setSoTimeout(tempSoTimeoutProperty);
+        } else {
+            // set timeout in client
+            if (timeout > 0) {
+                httpMethod.getParams().setSoTimeout((int) timeout);
+            }
+        }
+    }
+
     public void setFormat(OMOutputFormat format) {
         this.format = format;
     }
@@ -560,7 +595,10 @@ public abstract class AbstractHTTPSender {
         if (cookiePolicy != null) {
             method.getParams().setCookiePolicy(cookiePolicy);   
         }
-        HttpState httpState = (HttpState)msgContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);        
+        HttpState httpState = (HttpState)msgContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);
+
+        setTimeouts(msgContext, method);
+
         httpClient.executeMethod(config, method, httpState);
     }
 
