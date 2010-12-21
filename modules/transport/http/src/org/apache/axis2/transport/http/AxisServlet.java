@@ -478,19 +478,21 @@ public class AxisServlet extends HttpServlet {
                         "must be configured with a port number. WSDL generation will be " +
                         "unreliable.");
             }
-            
-            ListenerManager listenerManager = new ListenerManager();
-            listenerManager.init(configContext);
-            listenerManager.start();
-            agent = new ListingAgent(configContext);
 
+            initTransport();
             initParams();
-
         } catch (Exception e) {
             throw new ServletException(e);
         }
     }
-    
+
+    protected void initTransport() {
+        ListenerManager listenerManager = new ListenerManager();
+        listenerManager.init(configContext);
+        listenerManager.start();
+        agent = new ListingAgent(configContext);
+    }
+
     private AxisServletListener getAxisServletListener(String name) {
         TransportInDescription desc = axisConfiguration.getTransportIn(name);
         if (desc == null) {
@@ -550,9 +552,7 @@ public class AxisServlet extends HttpServlet {
      */
     @Override
     public void init() throws ServletException {
-        if (this.servletConfig != null
-                &&
-                !initCalled) {
+        if (this.servletConfig != null && !initCalled) {
             init(this.servletConfig);
         }
     }
