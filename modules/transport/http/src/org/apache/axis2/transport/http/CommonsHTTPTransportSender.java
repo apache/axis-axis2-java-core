@@ -58,8 +58,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
      * {@link #init(ConfigurationContext, TransportOutDescription)}.
      */
     private TransportOutDescription transportOut;
-    
-    int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     private static final Log log = LogFactory
             .getLog(CommonsHTTPTransportSender.class);
@@ -77,7 +75,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
      */
     private boolean defaultChunked = false;
 
-    int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
+    private int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
+
+    private int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
     public void cleanup(MessageContext msgContext) throws AxisFault {
         HttpMethod httpMethod = (HttpMethod) msgContext.getProperty(HTTPConstants.HTTP_METHOD);
@@ -168,18 +168,21 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 format.setMimeBoundary((String) mimeBoundaryProperty);
             }
 
-             // set the timeout properteies
-
+             // set the timeout properties
             Parameter soTimeoutParam = transportOut.getParameter(HTTPConstants.SO_TIMEOUT);
             Parameter connTimeoutParam = transportOut.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
 
-            // set the property valuse only if they are not set by the user explicitly
-            if ((soTimeoutParam != null) && (msgContext.getProperty(HTTPConstants.SO_TIMEOUT) == null)) {
-                msgContext.setProperty(HTTPConstants.SO_TIMEOUT, new Integer((String)soTimeoutParam.getValue()));
+            // set the property values only if they are not set by the user explicitly
+            if ((soTimeoutParam != null) &&
+                    (msgContext.getProperty(HTTPConstants.SO_TIMEOUT) == null)) {
+                msgContext.setProperty(HTTPConstants.SO_TIMEOUT,
+                        new Integer((String) soTimeoutParam.getValue()));
             }
 
-            if ((connTimeoutParam != null) && (msgContext.getProperty(HTTPConstants.CONNECTION_TIMEOUT) == null)) {
-                msgContext.setProperty(HTTPConstants.CONNECTION_TIMEOUT, new Integer((String)connTimeoutParam.getValue()));
+            if ((connTimeoutParam != null) &&
+                    (msgContext.getProperty(HTTPConstants.CONNECTION_TIMEOUT) == null)) {
+                msgContext.setProperty(HTTPConstants.CONNECTION_TIMEOUT, 
+                        new Integer((String) connTimeoutParam.getValue()));
             }
 
             //if a parameter has set been set, we will omit the SOAP action for SOAP 1.2
@@ -192,7 +195,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
                 if (parameterValue != null && JavaUtils.isTrueExplicitly(parameterValue)) {
                     //Check whether user has already overridden this.
-                    Object propertyValue = msgContext.getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+                    Object propertyValue = msgContext.getProperty(
+                            Constants.Configuration.DISABLE_SOAP_ACTION);
+
                     if (propertyValue == null || !JavaUtils.isFalseExplicitly(propertyValue)) {
                         msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
                                 Boolean.TRUE);
