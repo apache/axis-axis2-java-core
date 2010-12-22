@@ -153,7 +153,7 @@ public class RepositoryListener implements DeploymentConstants {
             }
         } catch (Exception e) {
             // Oh well, log the problem
-            log.debug(e);
+            log.error("Error occurred while loading modules from classpath", e);
         }
 
         String classPath = getLocation();
