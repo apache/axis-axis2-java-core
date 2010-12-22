@@ -129,7 +129,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                     QName qname = (QName) complexTypeMap.get(key);
                     if(qname !=null){
                         String prefix =qname.getPrefix();
-                        if(prefix ==null && "".equals(prefix)){
+                        if(prefix == null || "".equals(prefix)){
                             prefix = OMSerializerUtil.getNextNSPrefix();
                         }
                         qname = new QName(qname.getNamespaceURI(),qname.getLocalPart(),prefix);
