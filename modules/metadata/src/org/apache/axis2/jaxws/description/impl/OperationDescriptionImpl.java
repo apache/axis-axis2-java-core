@@ -81,6 +81,7 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -158,7 +159,7 @@ class OperationDescriptionImpl
     public static final String WebMethod_Action_DEFAULT = "";
     private String webMethodAction;
     // Default value per JSR-181 MR sec 4.2, pg 17
-    public static final Boolean WebMethod_Exclude_DEFAULT = new Boolean(false);
+    public static final Boolean WebMethod_Exclude_DEFAULT = Boolean.FALSE;
     private Boolean webMethodExclude;
 
     // ANNOTATION: @WebParam
@@ -175,7 +176,7 @@ class OperationDescriptionImpl
     public static final String WebResult_TargetNamespace_DEFAULT = "";
     private String webResultTargetNamespace;
     // Default value per JSR-181 MR sec 4.5, pg 24
-    public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
+    public static final Boolean WebResult_Header_DEFAULT = Boolean.FALSE;
     private Boolean webResultHeader;
     
     //  Web Result Attachment Description information
@@ -228,6 +229,7 @@ class OperationDescriptionImpl
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         axisOperation = operation;
         if(this.axisOperation != null) {
+            this.operationQName = axisOperation.getName();
             try {
                 this.axisOperation.addParameter(new Parameter(OperationDescription.AXIS_OPERATION_PARAMETER,
                                                          this));  
@@ -236,7 +238,6 @@ class OperationDescriptionImpl
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("operationDescriptionErr1"));
             }
         }
-        this.operationQName = axisOperation.getName();
         buildAttachmentInformation();
     }
 
@@ -762,9 +763,6 @@ class OperationDescriptionImpl
             }
 
         } else {
-            ParameterDescriptionComposite pdc = null;
-            Iterator<ParameterDescriptionComposite> iter =
-                    methodComposite.getParameterDescriptionCompositeList().iterator();
 
             for (int i = 0; i < methodComposite.getParameterDescriptionCompositeList().size(); i++)
             {
@@ -1005,7 +1003,7 @@ class OperationDescriptionImpl
             // Unlike the elements with a String value, if the annotation is present, exclude will always 
             // return a usable value since it will default to FALSE if the element is not present.
             if (getAnnoWebMethod() != null) {
-                webMethodExclude = new Boolean(getAnnoWebMethod().exclude());
+                webMethodExclude = Boolean.valueOf(getAnnoWebMethod().exclude());
             } else {
                 webMethodExclude = WebMethod_Exclude_DEFAULT;
             }
@@ -1529,7 +1527,7 @@ class OperationDescriptionImpl
             if (getAnnoWebResult() != null) {
                 // Unlike the elements with a String value, if the annotation is present, exclude will always 
                 // return a usable value since it will default to FALSE if the element is not present.
-                webResultHeader = new Boolean(getAnnoWebResult().header());
+                webResultHeader = Boolean.valueOf(getAnnoWebResult().header());
             } else {
                 webResultHeader = WebResult_Header_DEFAULT;
             }
@@ -1671,7 +1669,7 @@ class OperationDescriptionImpl
         }
         
         if (log.isDebugEnabled()) {
-            log.debug("getFaultActions: " + faultActions);
+            log.debug("getFaultActions: " + Arrays.toString(faultActions));
         }
         
         return faultActions;
@@ -1707,10 +1705,10 @@ class OperationDescriptionImpl
         if (onewayIsOneway == null) {
             if (getAnnoOneway() != null) {
                 // The presence of the annotation indicates the method is oneway
-                onewayIsOneway = new Boolean(true);
+                onewayIsOneway = Boolean.TRUE;
             } else {
                 // If the annotation is not present, the default is this is NOT a One Way method
-                onewayIsOneway = new Boolean(false);
+                onewayIsOneway = Boolean.FALSE;
             }
         }
         return onewayIsOneway.booleanValue();
@@ -2079,7 +2077,7 @@ class OperationDescriptionImpl
             return partAttachmentMap.get(partName);
         }
         if (log.isDebugEnabled()) {
-            log.debug("Did not find result AttachmentDescription for partName: " + partName);
+            log.debug("Did not find result AttachmentDescription for partName");
         }
         return null;
     }
@@ -2255,7 +2253,7 @@ class OperationDescriptionImpl
             string.append(newline);
             string.append("Java method name: " + getJavaMethodName());
             string.append(newline);
-            string.append("Java paramaters: " + getJavaParameters());
+            string.append("Java paramaters: " + Arrays.toString(getJavaParameters()));
             string.append(newline);
             string.append("Service Implementation method: " + getMethodFromServiceImpl());
             string.append(newline);

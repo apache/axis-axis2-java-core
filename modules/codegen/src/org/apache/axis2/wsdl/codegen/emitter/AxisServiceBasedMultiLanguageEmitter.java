@@ -113,17 +113,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
     protected static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
 
-    protected static Map mepToClassMap;
-    protected static Map mepToSuffixMap;
+    protected static final Map mepToClassMap;
+    protected static final Map mepToSuffixMap;
 
     protected AxisBinding axisBinding;
     protected AxisEndpoint axisEndpoint;
 
     protected int uniqueFaultNameCounter = 0;
+
     /**
      * Field constructorMap
      */
-    protected static HashMap constructorMap = new HashMap(50);
+    protected static final HashMap constructorMap = new HashMap(50);
 
     //~--- static initializers ------------------------------------------------
 
@@ -2635,11 +2636,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             outputDir = new File(outputDir, dir2);
         }
 
-        if (!outputDir.exists()) {//$NON-SEC-3
-            outputDir.mkdirs();//$NON-SEC-2
+        if (!outputDir.exists() && !outputDir.mkdirs()){
+            log.warn("Cannot create output directory " + outputDir.getAbsolutePath());
         }
-
-
         return outputDir;
     }
 
@@ -3218,30 +3217,26 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param operation
      * @return Returns Element.
      */
-    protected Element   getOutputParamElement(Document doc, AxisOperation operation) {
+    protected Element getOutputParamElement(Document doc, AxisOperation operation) {
         Element paramElement = doc.createElement("param");
         AxisMessage outputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-        String typeMappingStr;
-        String parameterName;
-
-        if (outputMessage != null) {
-            parameterName = this.mapper.getParameterName(outputMessage.getElementQName());
-            String typeMapping = this.mapper.getTypeMappingName(outputMessage.getElementQName());
-            typeMappingStr = (typeMapping == null)
-                    ? ""
-                    : typeMapping;
-        } else {
-            parameterName = "";
-            typeMappingStr = "";
+        if (outputMessage == null) {
+            return null;
         }
+        String parameterName;
+        String typeMappingStr;
+        parameterName = this.mapper.getParameterName(outputMessage.getElementQName());
+        String typeMapping = this.mapper.getTypeMappingName(outputMessage.getElementQName());
+        typeMappingStr = (typeMapping == null) ? "" : typeMapping;
+
 
         addAttribute(doc, "name", parameterName, paramElement);
         addAttribute(doc, "type", typeMappingStr, paramElement);
 
         //adds the short type
         addShortType(paramElement,
-                (outputMessage.getElementQName() == null) ? null :
-                        outputMessage.getElementQName().getLocalPart());
+                     (outputMessage.getElementQName() == null) ? null :
+                     outputMessage.getElementQName().getLocalPart());
 
         // add an extra attribute to say whether the type mapping is the default
         if (mapper.getDefaultMappingName().equals(typeMappingStr)) {
@@ -3256,7 +3251,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //if the unwrapping or backWordCompatibility flag is on then we have to
         //put the element complex type if it exits
         if (this.codeGenConfiguration.isBackwordCompatibilityMode() ||
-                !this.codeGenConfiguration.isParametersWrapped()) {
+            !this.codeGenConfiguration.isParametersWrapped()) {
             if (outputMessage.getParameter(Constants.COMPLEX_TYPE) != null) {
                 Parameter parameter = outputMessage.getParameter(Constants.COMPLEX_TYPE);
                 addAttribute(doc, "complextype", (String) parameter.getValue(), paramElement);
@@ -3291,22 +3286,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // in out put params we only intersted if there is only one parameter
             // otherwise we can not unwrap it.
             // this logic handles at the template level
-             QName qName = null;
+            QName qName;
             for (Iterator iter = partsList.iterator(); iter.hasNext();) {
                 qName = (QName) iter.next();
-                paramElement.appendChild(generateParamComponent(doc,
-                        this.mapper.getParameterName(qName),
-                        this.mapper.getTypeMappingName(
-                                qName),
-                        operation.getName(),
-                        qName,
-                        qName.getLocalPart(),
-                        (this.mapper.getTypeMappingStatus(
-                                qName) != null),
-                        Constants.ARRAY_TYPE.equals(
-                                this.mapper.getTypeMappingStatus(
-                                        qName)))
-                );
+                paramElement.
+                        appendChild(generateParamComponent(doc,
+                                                           this.mapper.getParameterName(qName),
+                                                           this.mapper.getTypeMappingName(qName),
+                                                           operation.getName(),
+                                                           qName,
+                                                           qName.getLocalPart(),
+                                                           (this.mapper.getTypeMappingStatus(qName) != null),
+                                                           Constants.ARRAY_TYPE.equals(this.mapper.getTypeMappingStatus(qName)))
+                        );
             }
 
         }

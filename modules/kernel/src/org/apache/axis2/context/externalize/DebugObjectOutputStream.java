@@ -30,132 +30,187 @@ import java.io.ObjectStreamConstants;
  * DebugObjectOutputStream delegates to an ObjectOutput object.
  * Each method logs in/out trace information
  */
-public class DebugObjectOutputStream implements ObjectStreamConstants, ObjectOutput
-        {
+public class DebugObjectOutputStream implements ObjectStreamConstants, ObjectOutput {
     private static final Log log = LogFactory.getLog(DebugObjectOutputStream.class);
     private static final boolean isDebug = log.isDebugEnabled();
     ObjectOutput out;
-    
+
     DebugObjectOutputStream(ObjectOutput out) throws IOException {
         super();
-        trace("--START DebugOutputStream--");
+        if (log.isDebugEnabled()) {
+            log.debug("--START DebugOutputStream--");
+        }
         this.out = out;
     }
 
     public void close() throws IOException {
-        trace("--CLOSE DebugOutputStream--");
+        if (log.isDebugEnabled()) {
+            log.debug("--CLOSE DebugOutputStream--");
+        }
         out.close();
     }
 
     public void flush() throws IOException {
-        trace ("start flush()");
+        if (log.isDebugEnabled()) {
+            log.debug("start flush()");
+        }
         out.flush();
-        trace ("end flush()");
+        if (log.isDebugEnabled()) {
+            log.debug("end flush()");
+        }
     }
 
     public void write(byte[] b, int off, int len) throws IOException {
-        trace ("start write(b, off, len) off=" + off + " len=" + len);
+        if (log.isDebugEnabled()) {
+            log.debug("start write(b, off, len) off=" + off + " len=" + len);
+        }
         if (len > 4) {
-            trace (" first four bytes = '" + 
-                   b[off] + "' '" + 
-                   b[off+1] + "' '" +
-                   b[off+2] + "' '" +
-                   b[off+3] + "'");
+            if (log.isDebugEnabled()) {
+                log.debug(" first four bytes = '" +
+                          b[off] + "' '" +
+                          b[off + 1] + "' '" +
+                          b[off + 2] + "' '" +
+                          b[off + 3] + "'");
+            }
         }
         out.write(b, off, len);
-        trace ("end write(b, off, len)");
+        if (log.isDebugEnabled()) {
+            log.debug("end write(b, off, len)");
+        }
     }
 
     public void write(byte[] b) throws IOException {
-        trace ("start write(byte) byte=" + b);
+        if (log.isDebugEnabled()) {
+            log.debug("start write byte[]");
+        }
         out.write(b);
-        trace ("end write(b)");
+        if (log.isDebugEnabled()) {
+            log.debug("end write(b)");
+        }
     }
 
     public void write(int b) throws IOException {
-        trace ("start write(int) int=" + b);
+        if (log.isDebugEnabled()) {
+            log.debug("start write(int) int=" + b);
+        }
         out.write(b);
-        trace ("end write(int)");
+        if (log.isDebugEnabled()) {
+            log.debug("end write(int)");
+        }
     }
 
     public void writeBoolean(boolean v) throws IOException {
-        trace ("start writeBoolean(v) v=" + v);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeBoolean(v) v=" + v);
+        }
         out.writeBoolean(v);
-        trace ("end writeBoolean(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeBoolean(v)");
+        }
     }
 
     public void writeByte(int v) throws IOException {
-        trace ("start writeByte(v) v=" + v);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeByte(v) v=" + v);
+        }
         out.writeByte(v);
-        trace ("end writeByte(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeByte(v)");
+        }
     }
 
     public void writeBytes(String s) throws IOException {
-        trace ("start writeBytes(s) s=" + s);
+        log.debug("start writeBytes(s) s=" + s);
         out.writeBytes(s);
-        trace ("end writeBytes(s)");
+        log.debug("end writeBytes(s)");
     }
 
     public void writeChar(int v) throws IOException {
-        trace ("start writeChar(v) v=" + v);
+        log.debug("start writeChar(v) v=" + v);
         out.writeChar(v);
-        trace ("end writeChar(v)");
+        log.debug("end writeChar(v)");
     }
 
     public void writeChars(String s) throws IOException {
-        trace ("start writeChars(s) s=" + s);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeChars(s) s=" + s);
+        }
         out.writeChars(s);
-        trace ("end writeChars(s)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeChars(s)");
+        }
     }
 
     public void writeDouble(double v) throws IOException {
-        trace ("start writeDouble(v) v=" + v);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeDouble(v) v=" + v);
+        }
         out.writeDouble(v);
-        trace ("end writeDouble(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeDouble(v)");
+        }
     }
 
     public void writeFloat(float v) throws IOException {
-        trace ("start writeFloat(v) v=" + v);
-        out.writeFloat(v); 
-        trace ("end writeFloat(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("start writeFloat(v) v=" + v);
+        }
+        out.writeFloat(v);
+        if (log.isDebugEnabled()) {
+            log.debug("end writeFloat(v)");
+        }
     }
 
     public void writeInt(int v) throws IOException {
-        trace ("start writeInt(v) v=" + v);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeInt(v) v=" + v);
+        }
         out.writeInt(v);
-        trace ("end writeInt(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeInt(v)");
+        }
     }
 
     public void writeLong(long v) throws IOException {
-        trace ("start writeLong(v) v=" + v);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeLong(v) v=" + v);
+        }
         out.writeLong(v);
-        trace ("end writeLong(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeLong(v)");
+        }
     }
 
     public void writeObject(Object obj) throws IOException {
-        trace ("start writeObject(v) v=" + valueName(obj));
+        if (log.isDebugEnabled()) {
+            log.debug("start writeObject(v) v=" + valueName(obj));
+        }
         out.writeObject(obj);
-        trace ("end writeObject(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeObject(v)");
+        }
     }
 
     public void writeShort(int v) throws IOException {
-        trace ("start writeShort(v) v=" + v);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeShort(v) v=" + v);
+        }
         out.writeShort(v);
-        trace ("end writeShort(v)");
+        if (log.isDebugEnabled()) {
+            log.debug("end writeShort(v)");
+        }
     }
 
     public void writeUTF(String str) throws IOException {
-        trace ("start writeUTF(v) v=" + str);
+        if (log.isDebugEnabled()) {
+            log.debug("start writeUTF(v) v=" + str);
+        }
         out.writeUTF(str);
-        trace ("end writeUTF(v)");
-    }
-    
-    public void trace(String str) {
-        if (isDebug) {
-            log.debug(str);
+        if (log.isDebugEnabled()) {
+            log.debug("end writeUTF(v)");
         }
     }
-    
+
     private String valueName(Object obj) {
         if (obj == null) {
             return "null";

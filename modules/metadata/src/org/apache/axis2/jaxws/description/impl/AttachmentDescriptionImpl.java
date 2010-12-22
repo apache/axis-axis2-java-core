@@ -23,6 +23,8 @@ import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Arrays;
+
 public class AttachmentDescriptionImpl implements
         org.apache.axis2.jaxws.description.AttachmentDescription {
 
@@ -63,7 +65,7 @@ public class AttachmentDescriptionImpl implements
         string.append("  Attachment Type: " + getAttachmentType());
         //
         string.append(newline);
-        string.append("  Mime Types: " + getMimeTypes());
+        string.append("  Mime Types: " + Arrays.toString(getMimeTypes()));
         return string.toString();
     }
 

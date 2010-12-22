@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description.builder;
 import javax.xml.ws.Action;
 import javax.xml.ws.FaultAction;
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 
 public class ActionAnnot implements Action {
     
@@ -80,7 +81,7 @@ public class ActionAnnot implements Action {
         StringBuffer sb = new StringBuffer();
         String newLine = "\n";
         sb.append(newLine);
-        sb.append("@Action.fault= " + fault);
+        sb.append("@Action.fault= " + Arrays.toString(fault));
         sb.append(newLine);
         sb.append("@Action.input= " + input);
         sb.append(newLine);

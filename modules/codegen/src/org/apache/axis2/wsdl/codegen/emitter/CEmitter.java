@@ -596,7 +596,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     opsFound = true;
                     List soapHeaderInputParameterList = new ArrayList();
                     List soapHeaderOutputParameterList = new ArrayList();
-                    List soapHeaderFaultParameterList = new ArrayList();
                     methodElement = doc.createElement("method");
                     String localPart = axisOperation.getName().getLocalPart();
                     String opCName = makeCClassName(localPart);
@@ -765,27 +764,19 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         String typeMappingStr;
         AxisMessage message;
 
-        if (messageType.equals(WSDLConstants.MESSAGE_LABEL_IN_VALUE))
+        if (messageType.equals(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) {
             message = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        else
+        } else {
             message = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-
-        QName typeMapping = message.getElementQName();
+        }
 
         String paramType = this.mapper.getTypeMappingName(message.getElementQName());
         if (doc == null || paramType == null || param == null) {
             return;
         }
 
-        if (message != null) {
-            String type = this.mapper.getTypeMappingName(message.getElementQName());
-            typeMappingStr = (type == null)
-                    ? ""
-                    : type;
-        } else {
-            typeMappingStr = "";
-        }
-
+        String type = this.mapper.getTypeMappingName(message.getElementQName());
+        typeMappingStr = (type == null) ? "" : type;
         addAttribute(doc, "caps-type", paramType.toUpperCase(), param);
 
         if (!paramType.equals("") && !paramType.equals("void") &&
@@ -833,8 +824,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             }
         }
 
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
+        if (!outputDir.exists() && !outputDir.mkdirs()){
+            log.warn("Could not create output directory " + outputDir.getAbsolutePath());
         }
 
         return outputDir;

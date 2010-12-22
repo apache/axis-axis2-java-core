@@ -367,7 +367,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     }
 
     public SOAPHeaderElement addUpgradeHeaderElement(String s) throws SOAPException {
-        if (s == null && s.trim().length() > 0) {
+        if (s == null || s.trim().length() == 0) {
             return null;
         }
         ArrayList supportedEnvelops = new ArrayList();

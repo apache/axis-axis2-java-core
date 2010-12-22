@@ -286,7 +286,7 @@ public class URIResolverImpl implements URIResolver {
     }
 
     private String constructPath(URL baseURL, URI resolvedURI) {
-        String importLocation = null;
+        String importLocation;
         URL url = null;
         try {
             // Allow for http or https
