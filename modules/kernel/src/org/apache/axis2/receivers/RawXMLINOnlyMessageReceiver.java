@@ -45,7 +45,7 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
 
     private Method findOperation(AxisOperation op, Class implClass) {
         Method method = (Method)(op.getParameterValue("myMethod"));
-        if (method != null) return method;
+        if (method != null && method.getDeclaringClass() == implClass) return method;
 
         String methodName = op.getName().getLocalPart();
         try {

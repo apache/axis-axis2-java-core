@@ -77,10 +77,15 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
 
-            Class ImplClass = obj.getClass();
+            Class implClass = obj.getClass();
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
             method = (Method)(op.getParameterValue("myMethod"));
+            // If the declaring class has changed, then the cached method is invalid, so we need to
+            // reload it. This is to fix AXIS2-3947.
+            if (method != null && method.getDeclaringClass() != implClass) {
+                method = null;
+            }
             AxisService service = inMessage.getAxisService();
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
@@ -90,7 +95,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
 
             if (method == null) {
                 String methodName = op.getName().getLocalPart();
-                Method[] methods = ImplClass.getMethods();
+                Method[] methods = implClass.getMethods();
 
                 for (Method method1 : methods) {
                     if (method1.isBridge()) {
@@ -104,7 +109,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                 }
                 if (method == null) {
                     throw new AxisFault("No such method '" + methodName +
-                            "' in class " + ImplClass.getName());
+                            "' in class " + implClass.getName());
                 }
             }
             Object resObject = null;

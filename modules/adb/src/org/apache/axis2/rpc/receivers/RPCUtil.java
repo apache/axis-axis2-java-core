@@ -161,14 +161,14 @@ public class RPCUtil {
 
     public static Object invokeServiceClass(AxisMessage inAxisMessage,
                                             Method method,
-                                            Object implClass,
+                                            Object implObject,
                                             String messageNameSpace,
                                             OMElement methodElement,
                                             MessageContext inMessage) throws AxisFault,
             IllegalAccessException, InvocationTargetException {
         if (inAxisMessage.getElementQName() == null) {
             // method accept empty SOAPbody
-            return method.invoke(implClass);
+            return method.invoke(implObject);
         } else {
             QName elementQName = inAxisMessage.getElementQName();
             messageNameSpace = elementQName.getNamespaceURI();
@@ -186,7 +186,7 @@ public class RPCUtil {
                 }
             } else if (namespace != null) {
                 throw new AxisFault(
-                        "namespace mismatch. Axis Oepration expects non-namespace " +
+                        "namespace mismatch. Axis Operation expects non-namespace " +
                                 "qualified element. But received a namespace qualified element");
             }
             Object[] objectArray;
@@ -202,7 +202,7 @@ public class RPCUtil {
                 objectArray = RPCUtil.processRequest((OMElement) methodElement.getParent(),
                         method, inMessage.getAxisService().getObjectSupplier());
             }
-            return method.invoke(implClass, objectArray);
+            return method.invoke(implObject, objectArray);
 
         }
     }
