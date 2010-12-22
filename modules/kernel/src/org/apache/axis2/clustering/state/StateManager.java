@@ -36,11 +36,11 @@ import java.util.Map;
  * </p>
  * <p>
  * It is not mandatory to have a StateManager in a node. If we are not interested in
- * <a href="http://afkham.org/2008/05/definition-of-high-availability.html">
+ * <a href="http://blog.afkham.org/2008/05/definition-of-high-availability.html">
  * High Availability</a>, we may disable context replication by commenting out the "contextManager"
  * section in the axis2.xml cluster configuration section. In such a scenatio, the cluster will be
  * used only for the purpose of
- * <a href="http://afkham.org/2008/05/definition-of-scalability.html">Scalability</a>
+ * <a href="http://blog.afkham.org/2008/05/definition-of-scalability.html">Scalability</a>
  * </p>
  * <p>
  * The implementation of this interface is set by the

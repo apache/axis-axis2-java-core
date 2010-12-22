@@ -41,7 +41,7 @@ import org.apache.axis2.description.ParameterInclude;
  * </p>
  * <p>
  * It is not mandatory to have a NodeManager in a node. In which case the cluster may be
- * used only for <a href="http://afkham.org/2008/05/definition-of-high-availability.html">
+ * used only for <a href="http://blog.afkham.org/2008/05/definition-of-high-availability.html">
  * High Availability</a> through context replication. However, it is difficult to imagine that
  * a cluster will be deployed in production with only context replication but without cluster
  * configuration management.

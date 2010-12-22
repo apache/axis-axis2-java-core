@@ -42,7 +42,7 @@ import java.util.Set;
  * This interface is also responsible for
  * properly instantiating a {@link org.apache.axis2.clustering.state.StateManager} &
  * {@link org.apache.axis2.clustering.management.NodeManager}. In the case of
- * a static <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">
+ * a static <a href="http://blog.afkham.org/2008/05/group-membership-management-schemes.html">
  * membership scheme</a>,
  * this members are read from the axis2.xml file and added to the ClusteringAgent.
  * </p>
@@ -141,7 +141,7 @@ public interface ClusteringAgent extends ParameterInclude {
 
     /**
      * Set the static members of the cluster. This is used only with
-     * <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">
+     * <a href="http://blog.afkham.org/2008/05/group-membership-management-schemes.html">
      * static group membership </a>
      *
      * @param members Members to be added
@@ -150,7 +150,7 @@ public interface ClusteringAgent extends ParameterInclude {
 
     /**
      * Get the list of members in a
-     * <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">
+     * <a href="http://blog.afkham.org/2008/05/group-membership-management-schemes.html">
      * static group
      * </a>
      *
