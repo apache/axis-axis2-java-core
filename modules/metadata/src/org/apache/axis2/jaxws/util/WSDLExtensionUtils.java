@@ -43,6 +43,7 @@ import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
 import org.apache.axis2.jaxws.common.config.WSDLValidatorElement.State;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 /**
@@ -182,12 +183,12 @@ public class WSDLExtensionUtils {
     
     public static void processExtensions(EndpointDescription endpointDescription){
         if(endpointDescription == null){
-            throw ExceptionFactory.makeWebServiceException("RespectBindingConfiguratorErr1");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RespectBindingConfiguratorErr1"));
         }
 
         EndpointDescriptionWSDL edw = (EndpointDescriptionWSDL) endpointDescription;
         if(endpointDescription == null){
-            throw ExceptionFactory.makeWebServiceException("RespectBindingConfiguratorErr2");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RespectBindingConfiguratorErr2"));
         }
         javax.wsdl.Binding wsdlBinding = edw.getWSDLBinding();
         Set<WSDLValidatorElement> set = endpointDescription.getRequiredBindings();

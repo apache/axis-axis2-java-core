@@ -87,7 +87,7 @@ public class SoapMessageContext extends BaseMessageContext implements
             if(log.isDebugEnabled()){
                 log.debug("Invalid JAXBContext, JAXBContext cannot be null");
             }
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SOAPMessageContextErr2"));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("soapMessageContextErr2"));
         }
 
         // The header information is returned as a list of jaxb objects

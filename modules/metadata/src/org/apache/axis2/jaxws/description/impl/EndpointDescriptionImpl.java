@@ -616,7 +616,7 @@ public class EndpointDescriptionImpl
             try {
                 axisService.addParameter(parameter);
             } catch (AxisFault e) {
-            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr5"),e);
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr5", EndpointDescription.AXIS_SERVICE_PARAMETER), e);
             }
         }
     }
