@@ -262,6 +262,12 @@ public class Utils {
         if (path == null) {
             return null;
         }
+        
+        //with this chances that substring matching a different place in the URL is reduced
+        if(!servicePath.endsWith("/")){
+        	servicePath = servicePath+"/";
+        }
+        
         int index = path.lastIndexOf(servicePath);
         String serviceOpPart = null;
 
@@ -269,8 +275,8 @@ public class Utils {
             int serviceStart = index + servicePath.length();
 
             //get the string after services path
-            if (path.length() > serviceStart + 1) {
-                serviceOpPart = path.substring(serviceStart + 1);
+            if (path.length() > serviceStart) {
+                serviceOpPart = path.substring(serviceStart);
 
                 //remove everything after ?
                 int queryIndex = serviceOpPart.indexOf('?');
