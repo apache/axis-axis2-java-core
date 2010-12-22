@@ -431,15 +431,13 @@ public class AxisServlet extends HttpServlet {
                 }
             }
         }
-
-
         AxisEngine.sendFault(faultContext);
     }
 
     /**
      * Main init method
      *
-     * @param config
+     * @param config The ServletConfig
      * @throws ServletException
      */
     @Override
@@ -458,39 +456,53 @@ public class AxisServlet extends HttpServlet {
                 config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
             }
             axisConfiguration = configContext.getAxisConfiguration();
-
-            httpListener = getAxisServletListener(Constants.TRANSPORT_HTTP);
-            httpsListener = getAxisServletListener(Constants.TRANSPORT_HTTPS);
-            
-            if (httpListener == null && httpsListener == null) {
-                log.warn("No transportReceiver for " + AxisServletListener.class.getName() +
-                        " found. An instance for HTTP will be configured automatically. " +
-                        "Please update your axis2.xml file!");
-                httpListener = new AxisServletListener();
-                TransportInDescription transportInDescription = new TransportInDescription(
-                        Constants.TRANSPORT_HTTP);
-                transportInDescription.setReceiver(httpListener);
-                axisConfiguration.addTransportIn(transportInDescription);
-            } else if (httpListener != null && httpsListener != null
-                    && httpListener.getPort() == -1 && httpsListener.getPort() == -1) {
-                log.warn("If more than one transportReceiver for " +
-                        AxisServletListener.class.getName() + " exists, then all instances " +
-                        "must be configured with a port number. WSDL generation will be " +
-                        "unreliable.");
-            }
-
-            initTransport();
+            initTransports();
+            initGetRequestProcessors(config);
             initParams();
         } catch (Exception e) {
             throw new ServletException(e);
         }
     }
 
-    protected void initTransport() {
+    /**
+     * Initialize HTTP GET request processors
+     *
+     * @param config The ServletConfig of this Servlet
+     */
+    protected void initGetRequestProcessors(ServletConfig config) {
+        // The ListingAgent is an HTTP GET request processor
+        agent = new ListingAgent(configContext);
+    }
+
+    /**
+     * Initialize HTTP transports
+     *
+     * @throws AxisFault If an error occurs while initializing transports
+     */
+    protected void initTransports() throws AxisFault {
+        httpListener = getAxisServletListener(Constants.TRANSPORT_HTTP);
+        httpsListener = getAxisServletListener(Constants.TRANSPORT_HTTPS);
+
+        if (httpListener == null && httpsListener == null) {
+            log.warn("No transportReceiver for " + AxisServletListener.class.getName() +
+                     " found. An instance for HTTP will be configured automatically. " +
+                     "Please update your axis2.xml file!");
+            httpListener = new AxisServletListener();
+            TransportInDescription transportInDescription = new TransportInDescription(
+                    Constants.TRANSPORT_HTTP);
+            transportInDescription.setReceiver(httpListener);
+            axisConfiguration.addTransportIn(transportInDescription);
+        } else if (httpListener != null && httpsListener != null
+                   && httpListener.getPort() == -1 && httpsListener.getPort() == -1) {
+            log.warn("If more than one transportReceiver for " +
+                     AxisServletListener.class.getName() + " exists, then all instances " +
+                     "must be configured with a port number. WSDL generation will be " +
+                     "unreliable.");
+        }
+
         ListenerManager listenerManager = new ListenerManager();
         listenerManager.init(configContext);
         listenerManager.start();
-        agent = new ListingAgent(configContext);
     }
 
     private AxisServletListener getAxisServletListener(String name) {
