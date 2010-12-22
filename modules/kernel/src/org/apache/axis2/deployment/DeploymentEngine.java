@@ -1124,6 +1124,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             in = fileListUrl.openStream();
         } catch (IOException e) {
+        	log.info(e.getMessage() + " -  as per axis2.repository.url, the URL is "+fileListUrl+" that will be used relative to "+new File(".").getAbsolutePath());
             return fileList;
         }
         BufferedReader input = null;
