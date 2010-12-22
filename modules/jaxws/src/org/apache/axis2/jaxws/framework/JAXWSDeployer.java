@@ -104,6 +104,10 @@ public class JAXWSDeployer extends AbstractDeployer {
                         axisConfig.isChildFirstClassLoading());
                 Thread.currentThread().setContextClassLoader(classLoader);
                 deployClasses("JAXWS-Builtin", file.toURL(), Thread.currentThread().getContextClassLoader(), classList);
+            } catch (NoClassDefFoundError e) {
+                if (log.isDebugEnabled()) {
+                    log.debug(Messages.getMessage("deployingexception", e.getMessage()), e);
+                }
             } catch (Exception e) {
                 log.info(Messages.getMessage("deployingexception", e.getMessage()), e);
             } finally {
