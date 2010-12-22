@@ -83,7 +83,7 @@ public class ClientUtils {
         }
     }
 
-    public static TransportInDescription inferInTransport(AxisConfiguration ac,
+    public synchronized static TransportInDescription inferInTransport(AxisConfiguration ac,
                                                                        Options options,
                                                                        MessageContext msgCtxt)
             throws AxisFault {
