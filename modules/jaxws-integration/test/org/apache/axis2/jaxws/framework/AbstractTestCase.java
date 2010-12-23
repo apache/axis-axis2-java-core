@@ -19,10 +19,17 @@
 
 package org.apache.axis2.jaxws.framework;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
+import org.apache.axis2.testutils.RuntimeIgnoreException;
 import org.apache.log4j.BasicConfigurator;
 
 public class AbstractTestCase extends TestCase {
@@ -68,5 +75,31 @@ public class AbstractTestCase extends TestCase {
                 stopServer.testStopServer();
             }
         };
+    }
+    
+    /**
+     * Check that the given URL refers to an unknown host. More precisely, this method checks that
+     * the DNS resolver will not be able to resolve the host name. If the expectation is not met,
+     * the method throws a {@link RuntimeIgnoreException} so that the test will be skipped. Note
+     * that this will only work if the test is configured with the appropriate test runner.
+     * <p>
+     * Some systems may be configured with a search domain that has a wildcard entry. On these
+     * systems it is virtually impossible to have a host name that will trigger a host not found
+     * error. This is a problem for tests that contain assertions for {@link UnknownHostException}.
+     * This method can be used to skip these tests dynamically on this kind of systems.
+     * 
+     * @param url
+     * @throws MalformedURLException
+     */
+    protected static void checkUnknownHostURL(String url) throws MalformedURLException {
+        String host = new URL(url).getHost();
+        InetAddress addr;
+        try {
+            addr = InetAddress.getByName(host);
+        } catch (UnknownHostException ex) {
+            // This is what we expect
+            return;
+        }
+        throw new RuntimeIgnoreException(host + " resolves to " + addr.getHostAddress() + "; skipping test case");
     }
 }

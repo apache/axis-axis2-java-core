@@ -25,12 +25,15 @@ package org.apache.axis2.jaxws.sample;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
+import org.apache.axis2.testutils.AllTestsWithRuntimeIgnore;
+import org.junit.runner.RunWith;
 import org.test.faults.FaultyWebServiceResponse;
 
 import javax.xml.ws.AsyncHandler;
@@ -42,6 +45,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+@RunWith(AllTestsWithRuntimeIgnore.class)
 public class FaultyWebServiceTests extends AbstractTestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/FaultyWebServiceService.FaultyWebServicePortTypeImplPort";
 
@@ -107,16 +111,17 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
     }
 
-    public void testFaultyWebService_badEndpoint(){
+    public void testFaultyWebService_badEndpoint() throws Exception {
+        String host = "this.is.a.bad.endpoint.terrible.in.fact";
+        String badEndpoint = "http://" + host;
+
+        checkUnknownHostURL(badEndpoint);
 
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
         
-        String host = "this.is.a.bad.endpoint.terrible.in.fact";
-        String badEndpoint = "http://" + host;
-
         WebServiceException exception = null;
 
         try{
@@ -173,9 +178,11 @@ public class FaultyWebServiceTests extends AbstractTestCase {
     // we get an exception as indicated in JAXWS 6.4.2.
 
 
-    public void testFaultyWebService_badEndpoint_oneWay() {
+    public void testFaultyWebService_badEndpoint_oneWay() throws Exception {
         String host = "this.is.a.bad.endpoint.terrible.in.fact";
         String badEndpoint = "http://" + host;
+        
+        checkUnknownHostURL(badEndpoint);
         
         DocLitWrapService service = new DocLitWrapService();
         DocLitWrap proxy = service.getDocLitWrapPort();
