@@ -181,6 +181,21 @@ public class BeanUtil {
 
                 Class<?> ptype = property.getPropertyType();
                 Method readMethod = property.getReadMethod();
+                if (readMethod == null) {
+                    Class propertyType = property.getPropertyType();
+                    if (propertyType == java.lang.Boolean.class) {
+                        Method writeMethod = property.getWriteMethod();
+                        if (writeMethod != null) {
+                            String tmpWriteMethodName = writeMethod.getName();
+                            PropertyDescriptor tmpPropDesc =
+                                    new PropertyDescriptor(property.getName(),
+                                            beanObject.getClass(),
+                                            "is" + tmpWriteMethodName.substring(3),
+                                            tmpWriteMethodName);
+                            readMethod = tmpPropDesc.getReadMethod();
+                        }
+                    }
+                }
                 Object value;
                 if (readMethod != null) {
                     readMethod.setAccessible(true);
