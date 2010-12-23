@@ -88,7 +88,6 @@ body {
     background-position: left top;
     background-repeat: repeat-x;
     border-bottom: solid 1px #d4d4d4;
-    height: 28px;
     font-size: 0.8em;
     background-color: transparent;
     border: 1px solid #6895c2;
@@ -97,13 +96,19 @@ body {
 #banner{
     margin-top:10px;
 }
-.xleft, #bannerLeft img {
-    text-shadow: none;
-    margin-top:10px;
+
+#bannerLeft img {
+    margin-top: 10px;
 }
 
-.xright, #bannerRight {
+.xleft {
     text-shadow: none;
+    margin: 0.4em;
+}
+
+.xright {
+    text-shadow: none;
+    margin: 0.4em;
 }
 
 #leftColumn {
