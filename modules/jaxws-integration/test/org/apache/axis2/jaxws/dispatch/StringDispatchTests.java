@@ -23,16 +23,20 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.AllTestsWithRuntimeIgnore;
+import org.junit.runner.RunWith;
 
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
+
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+@RunWith(AllTestsWithRuntimeIgnore.class)
 public class StringDispatchTests extends AbstractTestCase {
 
     
@@ -431,7 +435,9 @@ public class StringDispatchTests extends AbstractTestCase {
 	}
     
     
-    public void testSyncPayloadMode_badHostName() {
+    public void testSyncPayloadMode_badHostName() throws Exception {
+        checkUnknownHostURL(DispatchTestConstants.BADURL);
+        
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -469,6 +475,8 @@ public class StringDispatchTests extends AbstractTestCase {
     }
     
     public void testAsyncCallbackMessageMode_badHostName() throws Exception {
+        checkUnknownHostURL(DispatchTestConstants.BADURL);
+        
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -537,6 +545,8 @@ public class StringDispatchTests extends AbstractTestCase {
     }
     
     public void testAsyncPollingPayloadMode_badHostName() throws Exception {
+        checkUnknownHostURL(DispatchTestConstants.BADURL);
+        
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         

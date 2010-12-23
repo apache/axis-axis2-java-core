@@ -58,6 +58,7 @@
         <module>modules/soapmonitor/servlet</module>
         <module>modules/soapmonitor/module</module>
         <module>modules/spring</module>
+        <module>modules/testutils</module>
         <module>modules/tool/axis2-aar-maven-plugin</module>
         <module>modules/tool/axis2-ant-plugin</module>
         <module>modules/tool/axis2-eclipse-codegen-plugin</module>

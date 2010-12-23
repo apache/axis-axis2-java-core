@@ -44,12 +44,15 @@ import org.apache.axis2.jaxws.sample.asyncdoclit.client.AsyncService;
 import org.apache.axis2.jaxws.sample.asyncdoclit.client.ThrowExceptionFault;
 import org.apache.axis2.jaxws.sample.asyncdoclit.common.CallbackHandler;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
+import org.apache.axis2.testutils.AllTestsWithRuntimeIgnore;
+import org.junit.runner.RunWith;
 import org.test.asyncdoclit.ExceptionTypeEnum;
 import org.test.asyncdoclit.ThrowExceptionResponse;
 
 /**
  * Test for varios async exceptions whern AsyncMEP is enabled
  */
+@RunWith(AllTestsWithRuntimeIgnore.class)
 public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
 
     private static final String DOCLITWR_ASYNC_ENDPOINT = "http://localhost:6060/axis2/services/AsyncService2.DocLitWrappedPortImplPort";
@@ -124,6 +127,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               EE/WSE/UnknownHostException
      */
     public void testAsyncPolling_asyncMEP_UnknwonHost() throws Exception {
+        checkUnknownHostURL(HOST_NOT_FOUND_ENDPOINT);
 
         AsyncPort port = getPort();
 
@@ -246,6 +250,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               EE/WSE/UnknownHostException
      */
     public void testAsyncCallback_asyncMEP_UnknownHost() throws Exception {
+        checkUnknownHostURL(HOST_NOT_FOUND_ENDPOINT);
 
         AsyncPort port = getPort();
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
