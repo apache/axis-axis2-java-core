@@ -73,7 +73,7 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
     public InputSource getImportInputSource(String parentLocation, String importLocation) {
         lastImportLocation = URI.create(parentLocation).resolve(importLocation);
 
-        if (isAbsolute(importLocation)) {
+        if (isAbsolute(lastImportLocation.toString())) {
             return super.resolveEntity(
                     null, importLocation, parentLocation);
         } else {

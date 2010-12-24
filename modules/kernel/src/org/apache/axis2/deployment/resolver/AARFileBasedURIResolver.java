@@ -52,8 +52,12 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
             String targetNamespace,
             String schemaLocation,
             String baseUri) {
-        //no issue with
-        if (isAbsolute(schemaLocation)) {
+        //no issue with abloslute schemas 
+        // this schema can be in a relative location for another base scheama. so first
+        // try to see the proper location
+
+         lastImportLocation = URI.create(baseUri).resolve(schemaLocation);
+        if (isAbsolute(lastImportLocation.toString())) {
             return super.resolveEntity(
                     targetNamespace, schemaLocation, baseUri);
         } else {
@@ -63,7 +67,6 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
                         "Unsupported schema location " + schemaLocation);
             }
 
-            lastImportLocation = URI.create(baseUri).resolve(schemaLocation);
             ZipInputStream zin = null;
             try {
                 zin = new ZipInputStream(new FileInputStream(aarFile));
@@ -106,4 +109,5 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
         log.info("AARFileBasedURIResolver: Unable to resolve" + lastImportLocation);
         return null;
     }
+    
 }
