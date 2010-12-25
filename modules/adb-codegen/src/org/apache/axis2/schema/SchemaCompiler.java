@@ -348,6 +348,13 @@ public class SchemaCompiler {
         //add the schema to the loaded schema list
         if (!loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
             loadedSchemaMap.put(schema.getTargetNamespace(), schema);
+            // when the target name space is not given schema.getTargetNamesapce returns null.
+            // but when importing import namesapce location is given as "".
+            // this causese a problem in finding reference elements. see AXIS2-3029
+            // kept the null entry as well to safe gaurd any thing which acess using null
+            if (schema.getTargetNamespace() == null){
+                loadedSchemaMap.put("", schema);
+            }
         }
 
         // If we have/are loading a schema with a specific targetnamespace from a certain URI,
