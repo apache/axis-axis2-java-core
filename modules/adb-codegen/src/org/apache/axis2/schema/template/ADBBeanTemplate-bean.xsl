@@ -2087,7 +2087,9 @@
                            </xsl:otherwise>
                        </xsl:choose>
 
-                    if (enumeration==null) throw new java.lang.IllegalArgumentException();
+                    if ((enumeration == null) &amp;&amp; !((value == null) || (value.equals("")))) {
+                        throw new java.lang.IllegalArgumentException();
+                    }
                     return enumeration;
                 }
                 public static <xsl:value-of select="$name"/> fromString(java.lang.String value,java.lang.String namespaceURI)
