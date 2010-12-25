@@ -781,6 +781,29 @@ public class SchemaCompiler {
                         javaClassName);
                 xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                         javaClassName);
+            } else if (referencedElement.getSchemaTypeName() != null){
+                QName schemaTypeName = referencedElement.getSchemaTypeName();
+                XmlSchema newResolvedSchema = getParentSchema(resolvedSchema, schemaTypeName, COMPONENT_TYPE);
+                XmlSchemaType xmlSchemaType = newResolvedSchema.getTypeByName(schemaTypeName);
+                if (xmlSchemaType != null) {
+                    if (!this.processedElementRefMap.containsKey(referencedElement.getQName())) {
+                        // we know this is a named complex type
+                        processSchema(referencedElement, xmlSchemaType, newResolvedSchema, false);
+                        // if this is an anonomous complex type we have to set this
+                        this.processedElementRefMap.put(referencedElement.getQName(),
+                                this.processedTypemap.get(schemaTypeName));
+
+                    }
+
+                    String javaClassName = this.processedTypemap.get(referencedElement.getSchemaTypeName());
+                    referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                            javaClassName);
+                    xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                            javaClassName);
+                } else {
+                    throw new SchemaCompilationException(" Can not find the schema type with name " + schemaTypeName);
+                }
+
             }
 
             // schema type name is present but not the schema type object
