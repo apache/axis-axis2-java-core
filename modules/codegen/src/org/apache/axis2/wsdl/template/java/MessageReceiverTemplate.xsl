@@ -245,7 +245,8 @@
 
                                 <xsl:choose>
                                     <xsl:when test="string-length(normalize-space($returntype)) &gt; 0">
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>, false, new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                    "<xsl:value-of select="$name"/>"));
                                     </xsl:when>
                                     <xsl:otherwise>
                                         envelope = getSOAPFactory(msgContext).getDefaultEnvelope();
