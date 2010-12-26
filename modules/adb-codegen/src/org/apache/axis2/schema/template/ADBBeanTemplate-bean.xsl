@@ -301,6 +301,11 @@
                            *   in the serialized XML
                            */
                            protected boolean <xsl:value-of select="$settingTracker"/> = false ;
+
+                           public boolean is<xsl:value-of select="$javaName"/>Specified(){
+                               return <xsl:value-of select="$settingTracker"/>;
+                           }
+
                            </xsl:if>
 
                            /**
