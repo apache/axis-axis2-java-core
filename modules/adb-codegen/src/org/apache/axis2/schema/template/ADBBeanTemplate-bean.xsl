@@ -1302,13 +1302,13 @@
                     <xsl:otherwise>
                         <xsl:if test="not(property/@simple)">
                             java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
-                            java.lang.String localName = "<xsl:value-of select="$propertyName"/>";
+                            java.lang.String _localName = "<xsl:value-of select="$propertyName"/>";
                         </xsl:if>
                         <xsl:if test="property/@simple">
                             java.lang.String namespace = parentQName.getNamespaceURI();
-                            java.lang.String localName = parentQName.getLocalPart();
+                            java.lang.String _localName = parentQName.getLocalPart();
                         </xsl:if>
-                            writeStartElement(null, namespace, localName, xmlWriter);
+                            writeStartElement(null, namespace, _localName, xmlWriter);
 
                             // add the type details if this is used in a simple type
                                if (serializeType){
