@@ -281,8 +281,8 @@
                                 public int hashCode() { return toString().hashCode();}
                                 public java.lang.String toString() {
                                 <xsl:choose>
-                                    <xsl:when test="@primitive">
-                                        return <xsl:value-of select="$varName"/> + "";
+                                    <xsl:when test="(@primitive) or ($shortTypeName = 'DateTime') or ($shortTypeName = 'Date') or ($shortTypeName = 'Time')">
+                                        return org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>);
                                     </xsl:when>
                                     <xsl:otherwise>
                                         return <xsl:value-of select="$varName"/>.toString();
@@ -530,8 +530,8 @@
 
                             public java.lang.String toString(){
                                 <xsl:choose>
-                                    <xsl:when test="@primitive">
-                                        return <xsl:value-of select="$varName"/> + "";
+                                    <xsl:when test="(@primitive) or ($shortTypeName = 'DateTime') or ($shortTypeName = 'Date') or ($shortTypeName = 'Time')">
+                                        return org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>);
                                     </xsl:when>
                                     <xsl:otherwise>
                                         return <xsl:value-of select="$varName"/>.toString();
