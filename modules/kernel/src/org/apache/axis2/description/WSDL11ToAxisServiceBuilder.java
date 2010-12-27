@@ -852,7 +852,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         Message wsdl4jFaultMessge = wsdl4jFault.getMessage();
 
                         AxisMessage faultMessage = findFaultMessage(
-                                wsdl4jFaultMessge.getQName().getLocalPart(),
+                                wsdl4jFault.getName(),
                                 axisOperation.getFaultMessages());
 
                         AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
@@ -1526,7 +1526,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Message faultMessage = fault.getMessage();
             if (null != faultMessage) {
                 axisFaultMessage
-                        .setName(faultMessage.getQName().getLocalPart());
+                        .setName(fault.getName());
 
                 copyExtensibleElements(faultMessage.getExtensibilityElements(),
                                        dif, axisFaultMessage, PORT_TYPE_OPERATION_FAULT);
