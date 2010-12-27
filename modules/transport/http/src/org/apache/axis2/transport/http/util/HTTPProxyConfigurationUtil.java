@@ -17,37 +17,28 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http;
+package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HttpTransportProperties;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
 import java.util.StringTokenizer;
 
-
 /**
- * The purpose of this class is to configure the proxy auth regardles of the protocol.
- * Proxy will be set only for HTTP connection
+ * Contains utility functions used when configuring HTTP Proxy for HTTP Sender.
  */
-
-public class ProxyConfiguration {
-
-    protected String proxyHost;
-    protected String nonProxyHosts;
-    protected int proxyPort = -1; //If port is not set, default is set to -1
-    protected String proxyUser;
-    protected String proxyPassword;
+public class HTTPProxyConfigurationUtil {
+    private static Log log = LogFactory.getLog(HTTPProxyConfigurationUtil.class);
 
     protected static final String HTTP_PROXY_HOST = "http.proxyHost";
     protected static final String HTTP_PROXY_PORT = "http.proxyPort";
@@ -59,167 +50,196 @@ public class ProxyConfiguration {
     protected static final String PROXY_USER_ELEMENT = "ProxyUser";
     protected static final String PROXY_PASSWORD_ELEMENT = "ProxyPassword";
 
-    public void configure(MessageContext messageContext,
-                          HttpClient httpClient,
-                          HostConfiguration config) throws AxisFault {
 
-        //        <parameter name="Proxy">
-        //              <Configuration>
-        //                     <ProxyHost>example.org</ProxyHost>
-        //                     <ProxyPort>5678</ProxyPort>
-        //                     <ProxyUser>EXAMPLE\saminda</ProxyUser>
-        //                     <ProxyPassword>ppp</ProxyPassword>
-        //              </Configuration>
-        //        </parameter>
-        Credentials proxyCred = null;
+    protected static final String PROXY_CONFIGURATION_NOT_FOUND =
+            "HTTP Proxy is enabled, but proxy configuration element is missing in axis2.xml";
+    protected static final String PROXY_HOST_ELEMENT_NOT_FOUND =
+            "HTTP Proxy is enabled, but proxy host element is missing in axis2.xml";
+    protected static final String PROXY_PORT_ELEMENT_NOT_FOUND =
+            "HTTP Proxy is enabled, but proxy port element is missing in axis2.xml";
+    protected static final String PROXY_HOST_ELEMENT_WITH_EMPTY_VALUE =
+            "HTTP Proxy is enabled, but proxy host value is empty.";
+    protected static final String PROXY_PORT_ELEMENT_WITH_EMPTY_VALUE =
+            "HTTP Proxy is enabled, but proxy port value is empty.";
+
+    /**
+     * Configure HTTP Proxy settings of commons-httpclient HostConfiguration. Proxy settings can be get from
+     * axis2.xml, Java proxy settings or can be override through property in message context.
+     * <p/>
+     * HTTP Proxy setting element format:
+     * <parameter name="Proxy">
+     * <Configuration>
+     * <ProxyHost>example.org</ProxyHost>
+     * <ProxyPort>3128</ProxyPort>
+     * <ProxyUser>EXAMPLE/John</ProxyUser>
+     * <ProxyPassword>password</ProxyPassword>
+     * <Configuration>
+     * <parameter>
+     *
+     * @param messageContext in message context for
+     * @param httpClient     commons-httpclient instance
+     * @param config         commons-httpclient HostConfiguration
+     * @throws AxisFault if Proxy settings are invalid
+     */
+    public static void configure(MessageContext messageContext,
+                                 HttpClient httpClient,
+                                 HostConfiguration config) throws AxisFault {
+
+        Credentials proxyCredentials = null;
+        String proxyHost = null;
+        String nonProxyHosts = null;
+        Integer proxyPort = -1;
+        String proxyUser = null;
+        String proxyPassword = null;
 
         //Getting configuration values from Axis2.xml
-        Parameter param = messageContext.getConfigurationContext().getAxisConfiguration()
+        Parameter proxySettingsFromAxisConfig = messageContext.getConfigurationContext().getAxisConfiguration()
                 .getParameter(ATTR_PROXY);
-
-        if (param != null) {
-            OMElement configurationEle = param.getParameterElement().getFirstElement();
-            if (configurationEle == null) {
-                throw new AxisFault(
-                        ProxyConfiguration.class.getName() + " Configuration element is missing");
-            }
-
-            OMElement proxyHostEle =
-                    configurationEle.getFirstChildWithName(new QName(PROXY_HOST_ELEMENT));
-            OMElement proxyPortEle =
-                    configurationEle.getFirstChildWithName(new QName(PROXY_PORT_ELEMENT));
-            OMElement proxyUserEle =
-                    configurationEle.getFirstChildWithName(new QName(PROXY_USER_ELEMENT));
-            OMElement proxyPasswordEle =
-                    configurationEle.getFirstChildWithName(new QName(PROXY_PASSWORD_ELEMENT));
-
-            if (proxyHostEle == null) {
-                throw new AxisFault(
-                        ProxyConfiguration.class.getName() + " ProxyHost element is missing");
-            }
-            String text = proxyHostEle.getText();
-            if (text == null) {
-                throw new AxisFault(
-                        ProxyConfiguration.class.getName() + " ProxyHost's value is missing");
-            }
-
-            this.setProxyHost(text);
-
-            if (proxyPortEle != null) {
-                this.setProxyPort(Integer.parseInt(proxyPortEle.getText()));
-            }
-
-            if (proxyUserEle != null) {
-                this.setProxyUser(proxyUserEle.getText());
-            }
-
-            if (proxyPasswordEle != null) {
-                this.setProxyPassword(proxyPasswordEle.getText());
-            }
-
-            if (this.getProxyUser() == null && this.getProxyUser() == null) {
-                proxyCred = new UsernamePasswordCredentials("", "");
-            } else {
-                proxyCred =
-                        new UsernamePasswordCredentials(this.getProxyUser(),
-                                                        this.getProxyPassword());
-            }
-
-            // if the username is in the form "DOMAIN\\user"
-            // then use NTCredentials instead.
-            if (this.getProxyUser() != null) {
-                int domainIndex = this.getProxyUser().indexOf("\\");
-                if (domainIndex > 0) {
-                    String domain = this.getProxyUser().substring(0, domainIndex);
-                    if (this.getProxyUser().length() > domainIndex + 1) {
-                        String user = this.getProxyUser().substring(domainIndex + 1);
-                        proxyCred = new NTCredentials(user,
-                                                      this.getProxyPassword(),
-                                                      this.getProxyHost(),
-                                                      domain);
+        if (proxySettingsFromAxisConfig != null) {
+            OMElement proxyConfiguration = getProxyConfigurationElement(proxySettingsFromAxisConfig);
+            proxyHost = getProxyHost(proxyConfiguration);
+            proxyPort = getProxyPort(proxyConfiguration);
+            proxyUser = getProxyUser(proxyConfiguration);
+            proxyPassword = getProxyPassword(proxyConfiguration);
+            if(proxyUser != null){
+                if(proxyPassword == null){
+                    proxyPassword = "";
+                }
+                int proxyUserDomainIndex = proxyUser.indexOf("\\");
+                if( proxyUserDomainIndex > 0){
+                    String domain = proxyUser.substring(0, proxyUserDomainIndex);
+                    if(proxyUser.length() > proxyUserDomainIndex + 1) {
+                        String user = proxyUser.substring(proxyUserDomainIndex + 1);
+                        proxyCredentials = new NTCredentials(user, proxyPassword, proxyHost, domain);
                     }
                 }
+                proxyCredentials = new UsernamePasswordCredentials(proxyUser, proxyPassword);
             }
+
         }
 
-        // Overide the property setting in runtime.
+        // If there is runtime proxy settings, these settings will override settings from axis2.xml
         HttpTransportProperties.ProxyProperties proxyProperties =
-                (HttpTransportProperties.ProxyProperties) messageContext
-                        .getProperty(HTTPConstants.PROXY);
-
-        if (proxyProperties != null) {
-            String host = proxyProperties.getProxyHostName();
-            if (host == null || host.length() == 0) {
-                throw new AxisFault(ProxyConfiguration.class.getName() +
-                                    " Proxy host is not available. Host is a MUST parameter");
-
+                (HttpTransportProperties.ProxyProperties) messageContext.getProperty(HTTPConstants.PROXY);
+        if(proxyProperties != null) {
+            String proxyHostProp = proxyProperties.getProxyHostName();
+            if(proxyHostProp == null || proxyHostProp.length() <= 0) {
+                throw new AxisFault("HTTP Proxy host is not available. Host is a MUST parameter");
             } else {
-                this.setProxyHost(host);
+                proxyHost = proxyHostProp;
             }
+            proxyPort = proxyProperties.getProxyPort();
 
-
-            this.setProxyPort(proxyProperties.getProxyPort());
-
-            //Setting credentials
-
+            // Overriding credentials
             String userName = proxyProperties.getUserName();
             String password = proxyProperties.getPassWord();
             String domain = proxyProperties.getDomain();
 
-            if (userName == null && password == null) {
-                proxyCred = new UsernamePasswordCredentials("", "");
-            } else {
-                proxyCred = new UsernamePasswordCredentials(userName, password);
-            }
-
-            if (userName != null && password != null && domain != null) {
-                proxyCred = new NTCredentials(userName, password, host, domain);
+            if(userName != null && password != null && domain != null){
+                proxyCredentials = new NTCredentials(userName, password, proxyHost, domain);
+            } else if(userName != null && domain == null){
+                proxyCredentials = new UsernamePasswordCredentials(userName, password);
             }
 
         }
 
-        //Using Java Networking Properties
-
+        // Overriding proxy settings if proxy is available from JVM settings
         String host = System.getProperty(HTTP_PROXY_HOST);
-        if (host != null) {
-            this.setProxyHost(host);
-            proxyCred = new UsernamePasswordCredentials("","");
+        if(host != null) {
+            proxyHost = host;
         }
 
         String port = System.getProperty(HTTP_PROXY_PORT);
-
-        if (port != null) {
-            this.setProxyPort(Integer.parseInt(port));
+        if(port != null) {
+            proxyPort = Integer.parseInt(port);
         }
 
-        if (proxyCred == null) {
-            throw new AxisFault(ProxyConfiguration.class.getName() +
-                                    " Minimum proxy credentials are not set");
+        if(proxyCredentials != null) {
+            httpClient.getParams().setAuthenticationPreemptive(true);
+            HttpState cachedHttpState = (HttpState)messageContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);
+            if(cachedHttpState != null){
+                httpClient.setState(cachedHttpState);
+            }
+            httpClient.getState().setProxyCredentials(AuthScope.ANY, proxyCredentials);
         }
-        
-        httpClient.getParams().setAuthenticationPreemptive(true);
-        HttpState tmpHttpState = httpClient.getState();
-        HttpState httpState = (HttpState)messageContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);
-        if (httpState != null) {
-            tmpHttpState = httpState;
-        }        
-        tmpHttpState.setProxyCredentials(AuthScope.ANY, proxyCred);
-        config.setProxy(this.getProxyHost(), this.getProxyPort());
+        config.setProxy(proxyHost, proxyPort);
+    }
+
+    private static OMElement getProxyConfigurationElement(Parameter proxySettingsFromAxisConfig) throws AxisFault {
+        OMElement proxyConfigurationElement = proxySettingsFromAxisConfig.getParameterElement().getFirstElement();
+        if (proxyConfigurationElement == null) {
+            log.error(PROXY_CONFIGURATION_NOT_FOUND);
+            throw new AxisFault(PROXY_CONFIGURATION_NOT_FOUND);
+        }
+        return proxyConfigurationElement;
+    }
+
+    private static String getProxyHost(OMElement proxyConfiguration) throws AxisFault {
+        OMElement proxyHostElement = proxyConfiguration.getFirstChildWithName(new QName(PROXY_HOST_ELEMENT));
+        if (proxyHostElement == null) {
+            log.error(PROXY_HOST_ELEMENT_NOT_FOUND);
+            throw new AxisFault(PROXY_HOST_ELEMENT_NOT_FOUND);
+        }
+        String proxyHost = proxyHostElement.getText();
+        if (proxyHost == null) {
+            log.error(PROXY_HOST_ELEMENT_WITH_EMPTY_VALUE);
+            throw new AxisFault(PROXY_HOST_ELEMENT_WITH_EMPTY_VALUE);
+        }
+        return proxyHost;
+    }
+
+    private static Integer getProxyPort(OMElement proxyConfiguration) throws AxisFault {
+        OMElement proxyPortElement = proxyConfiguration.getFirstChildWithName(new QName(PROXY_PORT_ELEMENT));
+        if (proxyPortElement == null) {
+            log.error(PROXY_PORT_ELEMENT_NOT_FOUND);
+            throw new AxisFault(PROXY_PORT_ELEMENT_NOT_FOUND);
+        }
+        String proxyPort = proxyPortElement.getText();
+        if (proxyPort == null) {
+            log.error(PROXY_PORT_ELEMENT_WITH_EMPTY_VALUE);
+            throw new AxisFault(PROXY_PORT_ELEMENT_WITH_EMPTY_VALUE);
+        }
+        return Integer.parseInt(proxyPort);
+    }
+
+    private static String getProxyUser(OMElement proxyConfiguration) {
+        OMElement proxyUserElement = proxyConfiguration.getFirstChildWithName(new QName(PROXY_USER_ELEMENT));
+        if (proxyUserElement == null) {
+            return null;
+        }
+        String proxyUser = proxyUserElement.getText();
+        if (proxyUser == null) {
+            log.warn("Empty user name element in HTTP Proxy settings.");
+            return null;
+        }
+
+        return proxyUser;
+    }
+
+    private static String getProxyPassword(OMElement proxyConfiguration) {
+        OMElement proxyPasswordElement = proxyConfiguration.getFirstChildWithName(new QName(PROXY_PASSWORD_ELEMENT));
+        if (proxyPasswordElement == null) {
+            return null;
+        }
+        String proxyUser = proxyPasswordElement.getText();
+        if (proxyUser == null) {
+            log.warn("Empty user name element in HTTP Proxy settings.");
+            return null;
+        }
+
+        return proxyUser;
     }
 
     /**
-     * Check first if the proxy is configured or active.
-     * If yes this will return true. This is not a deep check
+     * Check whether http proxy is configured or active.
+     * This is not a deep check.
      *
-     * @param messageContext
-     * @return boolean
+     * @param messageContext in message context
+     * @param targetURL      URL of the edpoint which we are sending the request
+     * @return true if proxy is enabled, false otherwise
      */
-
-    public static boolean isProxyEnabled(MessageContext messageContext, URL targetURL)
-            throws AxisFault {
-
-        boolean state = false;
-
+    public static boolean isProxyEnabled(MessageContext messageContext, URL targetURL) {
+        boolean proxyEnabled = false;
 
         Parameter param = messageContext.getConfigurationContext().getAxisConfiguration()
                 .getParameter(ATTR_PROXY);
@@ -231,13 +251,12 @@ public class ProxyConfiguration {
         String sp = System.getProperty(HTTP_PROXY_HOST);
 
         if (param != null || obj != null || sp != null) {
-            state = true;
+            proxyEnabled = true;
         }
 
         boolean isNonProxyHost = validateNonProxyHosts(targetURL.getHost());
 
-        return state && !isNonProxyHost;
-
+        return proxyEnabled && !isNonProxyHost;
     }
 
     /**
@@ -247,26 +266,25 @@ public class ProxyConfiguration {
      * The value of the http.nonProxyHosts property can be a list of hosts,
      * each separated by a |; it can also take a regular expression for matches;
      * for example: *.sfbay.sun.com would match any fully qualified hostname in the sfbay domain.
-     *
+     * <p/>
      * For more information refer to : http://java.sun.com/features/2002/11/hilevel_network.html
-     *
+     * <p/>
      * false : validation fail : User can use the proxy
      * true : validation pass ; User can't use the proxy
      *
      * @return boolean
      */
-    public static boolean validateNonProxyHosts(String host) {
+    private static boolean validateNonProxyHosts(String host) {
         //From system property http.nonProxyHosts
         String nonProxyHosts = System.getProperty(HTTP_NON_PROXY_HOSTS);
         return isHostInNonProxyList(host, nonProxyHosts);
     }
-    
+
     /**
      * Check if the specified host is in the list of non proxy hosts.
      *
-     * @param host host name
+     * @param host          host name
      * @param nonProxyHosts string containing the list of non proxy hosts
-     *
      * @return true/false
      */
     public static boolean isHostInNonProxyList(String host, String nonProxyHosts) {
@@ -294,16 +312,15 @@ public class ProxyConfiguration {
      * characters:
      * '*' which means zero or more characters,
      *
-     * @param pattern the (non-null) pattern to match against
-     * @param str     the (non-null) string that must be matched against the
-     *                pattern
+     * @param pattern         the (non-null) pattern to match against
+     * @param str             the (non-null) string that must be matched against the
+     *                        pattern
      * @param isCaseSensitive
-     *
      * @return <code>true</code> when the string matches against the pattern,
      *         <code>false</code> otherwise.
      */
-    protected static boolean match(String pattern, String str,
-                                   boolean isCaseSensitive) {
+    private static boolean match(String pattern, String str,
+                                 boolean isCaseSensitive) {
 
         char[] patArr = pattern.toCharArray();
         char[] strArr = str.toCharArray();
@@ -451,79 +468,5 @@ public class ProxyConfiguration {
         }
         return true;
     }
-    
-    /**
-     * Retrun proxy host
-     *
-     * @return String
-     */
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * set proxy host
-     *
-     * @param proxyHost
-     */
-
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    /**
-     * retrun proxy port
-     *
-     * @return String
-     */
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * set proxy port
-     *
-     * @param proxyPort
-     */
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    /**
-     * return proxy user. Proxy user can be user/domain or user
-     *
-     * @return String
-     */
-    public String getProxyUser() {
-        return proxyUser;
-    }
-
-    /**
-     * get proxy user
-     *
-     * @param proxyUser
-     */
-    public void setProxyUser(String proxyUser) {
-        this.proxyUser = proxyUser;
-    }
-
-    /**
-     * set password
-     *
-     * @return String
-     */
-    public String getProxyPassword() {
-        return proxyPassword;
-    }
-
-    /**
-     * get password
-     *
-     * @param proxyPassword
-     */
-    public void setProxyPassword(String proxyPassword) {
-        this.proxyPassword = proxyPassword;
-    }
-
 
 }

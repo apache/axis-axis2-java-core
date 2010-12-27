@@ -31,6 +31,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.util.HTTPProxyConfigurationUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Credentials;
@@ -286,10 +287,11 @@ public abstract class AbstractHTTPSender {
         }
         // proxy configuration
 
-        if (ProxyConfiguration.isProxyEnabled(msgCtx,targetURL)) {
-            log.debug("ProxyConfiguration");
-            ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
-            proxyConfiguration.configure(msgCtx,client,config);
+        if (HTTPProxyConfigurationUtil.isProxyEnabled(msgCtx, targetURL)) {
+            if(log.isDebugEnabled()){
+                log.debug("Configuring HTTP proxy.");
+            }
+            HTTPProxyConfigurationUtil.configure(msgCtx, client, config);
         }
 
         return config;
