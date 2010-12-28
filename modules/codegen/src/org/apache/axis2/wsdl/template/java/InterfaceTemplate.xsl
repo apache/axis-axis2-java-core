@@ -113,6 +113,8 @@
                         <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
 
                         <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                        <xsl:variable name="inputParamCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                 
                         <xsl:choose>
                             <xsl:when test="$inputcount=1">
                                 <!-- Even when the parameters are 1 we have to see whether we have the
@@ -131,7 +133,8 @@
                             <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
                         </xsl:choose>
 
-                        <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+                        <xsl:if test="($inputcount=1 and input/param[not(@location='body') and @type!='']) and
+                                not($isUnwrapParameters and $inputParamCount=0)">,</xsl:if>
                         <xsl:for-each select="input/param[not(@location='body') and @type!='']">
                     <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                         </xsl:for-each>)
@@ -202,11 +205,15 @@
          */
         public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
          <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+         <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
+         <xsl:variable name="inputParamCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+
          <xsl:choose>
+
                 <xsl:when test="$inputcount=1">
                     <!-- Even when the parameters are 1 we have to see whether we have the
                   wrapped parameters -->
-                    <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
+
                     <xsl:choose>
                         <xsl:when test="$isUnwrapParameters">
                            <xsl:for-each select="input/param[@location='body' and @type!='']/param">
@@ -221,7 +228,8 @@
                 <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
             </xsl:choose>
 
-           <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+           <xsl:if test="($inputcount=1 and input/param[not(@location='body') and @type!='']) and
+                                not($isUnwrapParameters and $inputParamCount=0)">,</xsl:if>
             <xsl:for-each select="input/param[not(@location='body') and @type!='']">
                 <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
             </xsl:for-each>
