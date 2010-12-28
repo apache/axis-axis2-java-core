@@ -63,7 +63,8 @@ public class ServiceDeployer implements Deployer {
         try {
             deploymentFileData.setClassLoader(isDirectory,
                                               axisConfig.getServiceClassLoader(),
-                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                    axisConfig.isChildFirstClassLoading());
             HashMap wsdlservice = archiveReader.processWSDLs(deploymentFileData);
             if (wsdlservice != null && wsdlservice.size() > 0) {
                 Iterator services = wsdlservice.values().iterator();

@@ -102,7 +102,8 @@ public class JAXWSDeployer implements Deployer {
                         axisConfig.getSystemClassLoader(),
                         true,
                         (File) axisConfig.
-                                getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                                getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                        axisConfig.isChildFirstClassLoading());
                 Thread.currentThread().setContextClassLoader(classLoader);
                 deployClasses("JAXWS-Builtin", file.toURL(), Thread.currentThread().getContextClassLoader(), classList);
             } catch (Exception e) {
@@ -151,7 +152,8 @@ public class JAXWSDeployer implements Deployer {
                         axisConfig.getSystemClassLoader(),
                         true,
                         (File) axisConfig.
-                                getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                                getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                        axisConfig.isChildFirstClassLoading());
                 Thread.currentThread().setContextClassLoader(classLoader);
 
                 ArrayList classList = getListOfClasses(deploymentFileData);

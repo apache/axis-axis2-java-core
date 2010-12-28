@@ -302,7 +302,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                     new URL[]{moduleurl},
                                     axisConfig.getModuleClassLoader(),
                                     true,
-                                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                                    axisConfig.isChildFirstClassLoading());
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -354,7 +355,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     new URL[]{servicesURL},
                     axisConfig.getServiceClassLoader(),
                     true,
-                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                    axisConfig.isChildFirstClassLoading());
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
@@ -857,19 +859,20 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      */
     protected void setClassLoaders(String axis2repoURI) throws DeploymentException {
         ClassLoader sysClassLoader =
-                Utils.getClassLoader(Thread.currentThread().getContextClassLoader(), axis2repoURI);
+                Utils.getClassLoader(Thread.currentThread().getContextClassLoader(), axis2repoURI, false);
 
         axisConfig.setSystemClassLoader(sysClassLoader);
         if (servicesDir.exists()) {
             axisConfig.setServiceClassLoader(
-                    Utils.getClassLoader(axisConfig.getSystemClassLoader(), servicesDir));
+                    Utils.getClassLoader(axisConfig.getSystemClassLoader(), servicesDir, axisConfig.isChildFirstClassLoading()));
         } else {
             axisConfig.setServiceClassLoader(axisConfig.getSystemClassLoader());
         }
 
         if (modulesDir.exists()) {
             axisConfig.setModuleClassLoader(Utils.getClassLoader(axisConfig.getSystemClassLoader(),
-                                                                 modulesDir));
+                                                                 modulesDir,
+                                                                 axisConfig.isChildFirstClassLoading()));
         } else {
             axisConfig.setModuleClassLoader(axisConfig.getSystemClassLoader());
         }
@@ -1020,7 +1023,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             axismodule = new AxisModule();
             ArchiveReader archiveReader = new ArchiveReader();
 
-            currentDeploymentFile.setClassLoader(false, config.getModuleClassLoader(), null);
+            currentDeploymentFile.setClassLoader(false, config.getModuleClassLoader(), null,
+                    config.isChildFirstClassLoading());
             axismodule.setModuleClassLoader(currentDeploymentFile.getClassLoader());
             archiveReader.readModuleArchive(currentDeploymentFile, axismodule,
                                             false, config);
@@ -1123,7 +1127,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             throws AxisFault {
         try {
             DeploymentFileData currentDeploymentFile = new DeploymentFileData(serviceFile, null);
-            DeploymentClassLoader classLoader = Utils.createClassLoader(serviceFile);
+            DeploymentClassLoader classLoader = Utils.createClassLoader(serviceFile,
+                    configCtx.getAxisConfiguration().isChildFirstClassLoading());
             currentDeploymentFile.setClassLoader(classLoader);
             AxisServiceGroup serviceGroup = new AxisServiceGroup();
             serviceGroup.setServiceGroupClassLoader(classLoader);

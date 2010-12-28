@@ -53,7 +53,8 @@ public class TransportDeployer implements Deployer {
         try {
             deploymentFileData.setClassLoader(isDirectory,
                     axisConfig.getModuleClassLoader(),
-                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                    axisConfig.isChildFirstClassLoading());
 
             ClassLoader loader = deploymentFileData.getClassLoader();
             Thread.currentThread().setContextClassLoader(loader);

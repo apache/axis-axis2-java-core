@@ -25,9 +25,11 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,9 +64,11 @@ public class ModuleDeployer implements Deployer {
         StringWriter errorWriter = new StringWriter();
         boolean isDirectory = deploymentFileData.getFile().isDirectory();
         try {
+
             deploymentFileData.setClassLoader(isDirectory,
                                               axisConfig.getModuleClassLoader(),
-                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                    this.axisConfig.isChildFirstClassLoading());
             AxisModule metaData = new AxisModule();
             metaData.setModuleClassLoader(deploymentFileData.getClassLoader());
             metaData.setParent(axisConfig);
