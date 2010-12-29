@@ -80,6 +80,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      */
     public static final String  DEPLOYMENT_TASK_RUNNING = "deployment.task.running";
 
+    private static final String MODULE_DEPLOYER = "moduleDeployer";
+
     //to keep the web resource location if any
     protected static String webLocationString = null;
     protected Scheduler scheduler;
@@ -1185,7 +1187,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     public static AxisModule buildModule(File modulearchive,
                                          AxisConfiguration config)
             throws DeploymentException {
-        final String MODULE_DEPLOYER = "moduleDeployer";
         AxisModule axismodule;
         ModuleDeployer deployer = (ModuleDeployer) config.getParameterValue(MODULE_DEPLOYER);
         try {
