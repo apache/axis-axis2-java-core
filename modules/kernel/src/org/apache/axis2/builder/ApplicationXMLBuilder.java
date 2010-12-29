@@ -21,7 +21,6 @@ package org.apache.axis2.builder;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPBody;
@@ -65,8 +64,7 @@ public class ApplicationXMLBuilder implements Builder {
                             BuilderUtil.getPOXBuilder(pushbackInputStream,
                                     (String) messageContext.getProperty(
                                             Constants.Configuration.CHARACTER_SET_ENCODING));
-                    OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
-                    documentElement.setParent(null);
+                    OMElement documentElement = builder.getDocumentElement(true);
                     SOAPBody body = soapEnvelope.getBody();
                     body.addChild(documentElement);
                 }

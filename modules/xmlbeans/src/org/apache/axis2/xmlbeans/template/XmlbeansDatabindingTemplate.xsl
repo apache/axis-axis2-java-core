@@ -47,9 +47,8 @@
                      if (optimizeContent) {
                         org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
                         (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
-                        org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
+                        org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement(true);
                         optimizeContent(documentElement,qNameArray);
-                        ((org.apache.axiom.om.impl.OMNodeEx)documentElement).setParent(null);
                         return documentElement;
                      } else {
                         return toOM(param);

@@ -93,8 +93,7 @@
                                        = new org.apache.axiom.om.impl.builder.StAXOMBuilder
                             (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
                                new org.apache.axis2.util.StreamWrapper(param.getPullParser(server.EchoString.MY_QNAME)));
-                            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
-                            ((org.apache.axiom.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
+                            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement(true);
                             return documentElement;
                         }else{
                            
