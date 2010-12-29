@@ -27,7 +27,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.Constants;
-import org.apache.axis2.JAXRS.JAXRSModel;
+import org.apache.axis2.jaxrs.JAXRSModel;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentConstants;

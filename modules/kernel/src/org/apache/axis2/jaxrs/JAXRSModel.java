@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.JAXRS;
+package org.apache.axis2.jaxrs;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

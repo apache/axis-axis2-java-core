@@ -106,6 +106,7 @@
                             javax.wsdl.extensions.*,
                             javax.wsdl.factory,
                             javax.wsdl.xml,
+                            javax.net.*,
                             javax.xml.parsers;resolution:=optional,
                             javax.xml.stream;resolution:=optional;version="1.0",
                             javax.xml.transform;resolution:=optional,

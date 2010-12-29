@@ -20,8 +20,8 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.JAXRS.JAXRSUtils;
-import org.apache.axis2.JAXRS.JAXRSModel;
+import org.apache.axis2.jaxrs.JAXRSUtils;
+import org.apache.axis2.jaxrs.JAXRSModel;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.Utils;
