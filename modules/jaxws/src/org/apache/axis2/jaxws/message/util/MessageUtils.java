@@ -19,14 +19,11 @@
 
 package org.apache.axis2.jaxws.message.util;
 
-import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -44,7 +41,6 @@ import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
-import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.JavaUtils;
@@ -53,7 +49,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
@@ -64,8 +59,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 /** Miscellaneous Utilities that may be useful inside and outside the Message subcomponent. */
@@ -177,10 +170,6 @@ public class MessageUtils {
             if (soapEnv.hasFault()) {
                 soapEnv.toString();
             }
-
-            if (false) {
-                makeXOPIncludeNodes(msgContext, message);
-            }
         }
         return message;
     }
@@ -236,101 +225,7 @@ public class MessageUtils {
         if (message.isMTOMEnabled()) {
             // Enable MTOM on the Axis2 MessageContext
             msgContext.setProperty(Configuration.ENABLE_MTOM, "true");
-            if (false) {
-                makeBinaryNodes(message);
-            }
         }
-    }
-    
-    /**
-     * Used to expand the tree and create binary nodes
-     * @param msg
-     * @deprecated
-     */
-    private static void makeBinaryNodes(Message msg) {
-        if (log.isDebugEnabled()) {
-            log.debug("MTOM is enabled on the JAX-WS Message...look for XOP Includes");
-        }
-        // If we have MTOM attachments, we need to replace the <xop:include>
-        // elements with OMText binary nodes.
-        
-        // First find all of the <xop:include> elements
-        SOAPEnvelope envelope = (SOAPEnvelope) msg.getAsOMElement();
-        ArrayList<OMElement> xops = AttachmentUtils.findXopElements(envelope);
-        
-        if (xops != null && xops.size() > 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("Found XOP:Include Elements");
-            }
-            
-            QName href = new QName("","href");
-            Iterator<OMElement> itr = xops.iterator();
-            
-            
-            while (itr.hasNext()) {
-                OMElement xop = itr.next();
-                String cid = xop.getAttributeValue(href);
-                
-                // Find and remove the Attachment from the JAX-WS Message
-                // (It is removed so that it is not considered a SWA Attachment ...see below)
-                DataHandler dh = msg.removeDataHandler(cid);
-                if (log.isDebugEnabled()) {
-                    log.debug("Create Binary OMNode for attachment:" + cid);
-                }
-                
-                // Convert the <xop:include> OMElement into an OMText
-                // binary node and replace it in the tree.                    
-                OMText binaryNode = AttachmentUtils.makeBinaryOMNode(xop, dh);
-                xop.insertSiblingAfter(binaryNode);
-                xop.detach();
-            }
-        }
-    }
-    
-    /**
-     * Expand the tree and create XOP nodes
-     * @param msg
-     * @deprecated
-     */
-    private static void makeXOPIncludeNodes(MessageContext msgContext, Message message) {
-        // This destroys performance by forcing a double pass through the message.
-        //If attachments are found on the MessageContext, then that means
-        //the inbound message has more than just the normal XML payload
-        Attachments as = (Attachments) msgContext.getProperty(MTOMConstants.ATTACHMENTS); 
-        if (as != null) { 
-            if (log.isDebugEnabled()) {
-                log.debug("Found Axis MTOM Attachments");
-            }
-            
-            //Walk the tree and find all of the optimized binary nodes.
-            ArrayList<OMText> binaryNodes = AttachmentUtils.findBinaryNodes((SOAPEnvelope) message.getAsOMElement());
-            if (binaryNodes != null  && binaryNodes.size() > 0) {
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("Found " + binaryNodes.size() +"MTOM Binary Nodes");
-                }
-                
-                
-                //Replace each of the nodes with it's corresponding <xop:include>
-                //element, so JAXB can process it correctly.
-                Iterator<OMText> itr = binaryNodes.iterator();
-                while (itr.hasNext()) {
-                    OMText node = itr.next();
-                    OMElement xop = AttachmentUtils.makeXopElement(node);
-                    node.getParent().addChild(xop);
-                    node.detach();
-                    
-                    //We have to add the individual attachments in their raw
-                    //binary form, so we can access them later.
-                    if (log.isDebugEnabled()) {
-                        log.debug("Create MTOM Message Attachment for " + node.getContentID());
-                    }
-                    message.addDataHandler(
-                            (DataHandler) node.getDataHandler(), 
-                            node.getContentID());
-                }
-            }
-        } 
     }
     
     /**
