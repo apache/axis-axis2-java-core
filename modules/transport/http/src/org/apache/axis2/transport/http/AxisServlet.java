@@ -159,9 +159,7 @@ public class AxisServlet extends HttpServlet {
                             .getProperty(RequestResponseTransport.TRANSPORT_CONTROL))
                             .awaitResponse();
                 }
-                response.setContentType("text/xml; charset="
-                        + msgContext
-                        .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+
                 // if data has not been sent back and this is not a signal response
                 if (!TransportUtils.isResponseWritten(msgContext)  
                 		&& (((RequestResponseTransport) 
