@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TypeTable {
     
@@ -36,10 +37,16 @@ public class TypeTable {
 
     private HashMap complexTypeMap;
 
+    /**
+     * this map is used to keep the class names with the Qnames.
+     */
+    private Map<QName, String> qNameToClassMap;
+
     public TypeTable() {
         //complex type table is resetted every time this is
         //instantiated
         complexTypeMap = new HashMap();
+        this.qNameToClassMap = new HashMap();
     }
 
     /* statically populate the simple type map  - this is not likely to
@@ -186,6 +193,14 @@ public class TypeTable {
 
     public QName getComplexSchemaType(String name) {
         return (QName) complexTypeMap.get(name);
+    }
+
+    public String getClassNameForQName(QName qname) {
+        return this.qNameToClassMap.get(qname);
+    }
+
+    public void addClassNameForQName(QName qname, String className) {
+        this.qNameToClassMap.put(qname, className);
     }
 
     /**

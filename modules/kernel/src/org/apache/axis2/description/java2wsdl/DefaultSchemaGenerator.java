@@ -168,7 +168,22 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             if ((generateWrappedArrayTypes != null) && JavaUtils.isTrue(generateWrappedArrayTypes.getValue())){
                isGenerateWrappedArrayTypes = true;
             }
+
+            Parameter extraClassesParam = service.getParameter("extraClass");
+            if (extraClassesParam != null){
+                String extraClassesString = (String) extraClassesParam.getValue();
+                String[] extraClassesArray = extraClassesString.split(",");
+                if (this.extraClasses == null){
+                    this.extraClasses = new ArrayList<String>();
+                }
+
+                for (String extraClass : extraClassesArray){
+                    this.extraClasses.add(extraClass);
+                }
+            }
         }
+
+
 
 
     }
@@ -568,6 +583,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             typeTable.addComplexSchema(name, eltOuter.getQName());
             // adding this type's package to the table, to support inheritance.
             typeTable.addComplexSchema(getQualifiedName(javaType.getPackage()), eltOuter.getQName());
+
+            typeTable.addClassNameForQName(eltOuter.getQName(), name);
 
             BeanExcludeInfo beanExcludeInfo = null;
             if (service.getExcludeInfo() != null) {
