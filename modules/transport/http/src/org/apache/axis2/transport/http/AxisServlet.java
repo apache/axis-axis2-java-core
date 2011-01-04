@@ -158,9 +158,7 @@ public class AxisServlet extends HttpServlet {
                             .getProperty(RequestResponseTransport.TRANSPORT_CONTROL))
                             .awaitResponse();
                 }
-                response.setContentType("text/xml; charset="
-                        + msgContext
-                        .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+
                 // if data has not been sent back and this is not a signal response
                 if (!TransportUtils.isResponseWritten(msgContext)  
                 		&& (((RequestResponseTransport) 
@@ -169,6 +167,12 @@ public class AxisServlet extends HttpServlet {
                 						getStatus() != RequestResponseTransport.
                 						RequestResponseTransportStatus.SIGNALLED)) {
                     response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                    // only set contentType in this scenario, not if response already set
+                    log.debug("Response not written. Setting response contentType to text/xml; " +
+                            "charset=" +msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+                    response.setContentType("text/xml; charset="
+                            + msgContext
+                            .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
                 }
                 
                 // Make sure that no data remains in the BufferedOutputStream even if the message
