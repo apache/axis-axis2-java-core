@@ -20,6 +20,7 @@
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -42,6 +43,10 @@ import java.io.File;
 
 public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 
+	private static final String EMPTY_STRING = "";
+
+	private static final int ECLIPSE_PROJECT_NAME_SEGMENT_INDEX = 0;
+
 	private Text outputFolderTextBox;
 
 	private Text outputFileNameTextBox;
@@ -52,39 +57,46 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 
 	private boolean workspaceSaveOption = false;
 
-	/**
-	 * @param pageName
-	 */
 	public JavaWSDLOutputLocationPage() {
 		super("page6");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#
+	 * initializeDefaultSettings()
 	 */
 	protected void initializeDefaultSettings() {
-		settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION, "");
+		settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION, EMPTY_STRING);
 		settings.put(JAVA_OUTPUT_WSDL_NAME, "services.wsdl");
 		settings.put(PREF_JAVA_OUTPUT_FILESYATEM, true);
 		settings.put(PREF_JAVA_OUTPUT_WORKSPACE, false);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#getPageType()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#getPageType()
 	 */
 	public int getPageType() {
 		return JAVA_2_WSDL_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
-		//layout.verticalSpacing = 9;
+		// layout.verticalSpacing = 9;
 		container.setLayout(layout);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -137,7 +149,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		outputFolderTextBox = new Text(container, SWT.BORDER);
 		outputFolderTextBox.setLayoutData(gd);
-		outputFolderTextBox.setText("");
+		outputFolderTextBox.setText(EMPTY_STRING);
 		outputFolderTextBox.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				handleFolderTextChange();
@@ -195,7 +207,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 	private void handleFolderTextChange() {
 		String outputFolder = outputFolderTextBox.getText();
 		settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION, outputFolder);
-		if ("".equals(outputFolder.trim())) {
+		if (EMPTY_STRING.equals(outputFolder.trim())) {
 			updateStatus("Input a proper location for the output");
 		} else {
 			updateStatus(null);
@@ -205,11 +217,12 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 	private void handleFileNameTextChange() {
 		String outFileName = outputFileNameTextBox.getText();
 		settings.put(JAVA_OUTPUT_WSDL_NAME, outFileName);
-		if ("".equals(outFileName.trim())) {
+		if (EMPTY_STRING.equals(outFileName.trim())) {
 			updateStatus("Input a file name");
 		} else if (outFileName.matches("\\W")) {
 			updateStatus("Input a valid file name");
-		} else if (!(outFileName.endsWith(".wsdl") || outFileName.endsWith(".xml")) ) {
+		} else if (!(outFileName.endsWith(".wsdl") || outFileName
+				.endsWith(".xml"))) {
 			updateStatus("Input a valid file name , Example : services.wsdl or services.xml");
 		} else {
 			updateStatus(null);
@@ -218,11 +231,11 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 
 	private void handleBrowse() {
 
-		//    	boolean location = locationSelectCheckBox.getSelection();
+		// boolean location = locationSelectCheckBox.getSelection();
 		boolean location = false;
-		if(settings.getBoolean(PREF_JAVA_OUTPUT_FILESYATEM)){
+		if (settings.getBoolean(PREF_JAVA_OUTPUT_FILESYATEM)) {
 			location = false;
-		}else if(settings.getBoolean(PREF_JAVA_OUTPUT_WORKSPACE)){
+		} else if (settings.getBoolean(PREF_JAVA_OUTPUT_WORKSPACE)) {
 			location = true;
 		}
 		if (workspaceSaveOption) {
@@ -238,16 +251,39 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 			ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-					getShell(), root, false, CodegenWizardPlugin
+					getShell(), root, false,
+					CodegenWizardPlugin
 							.getResourceString("page3.containerbox.title"));
 			if (dialog.open() == ContainerSelectionDialog.OK) {
 				Object[] result = dialog.getResult();
 				if (result.length == 1) {
 					Path path = ((Path) result[0]);
-					// append to the workspace path
 					if (root.exists(path)) {
-						outputFolderTextBox.setText(root.getLocation().append(
-								path).toFile().getAbsolutePath());
+						// Fixing issue AXIS2-4008 by retrieving the project
+						// path instead of appending it to the workspace root.
+						IProject project = null;
+						String otherSegments = EMPTY_STRING;
+						
+						if (path.segmentCount() > 1) {
+							// User has selected a folder inside a project
+							project = root.getProject(path.segment(ECLIPSE_PROJECT_NAME_SEGMENT_INDEX));
+							
+							for (int i = ECLIPSE_PROJECT_NAME_SEGMENT_INDEX + 1; i < path.segments().length; i++) {
+								otherSegments += File.separator	+ path.segment(i);
+							}
+						} else {
+							project = root.getProject(path.toOSString());
+						}
+						
+						if (project != null) {
+							outputFolderTextBox.setText(project.getLocation()
+									.toOSString() + otherSegments);
+						} else {
+							// append to the workspace path if the project is
+							// null
+							outputFolderTextBox.setText(root.getLocation()
+									.append(path).toFile().getAbsolutePath());
+						}
 					}
 				}
 			}

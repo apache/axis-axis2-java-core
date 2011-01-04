@@ -21,6 +21,7 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -42,6 +43,10 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import java.io.File;
 
 public class OutputPage extends AbstractWizardPage {
+	
+	private static final String EMPTY_STRING = "";
+
+	private static final int ECLIPSE_PROJECT_NAME_SEGMENT_INDEX = 0;
 
 	private Text outputLocation;
 	
@@ -621,10 +626,31 @@ public class OutputPage extends AbstractWizardPage {
 				Object[] result = dialog.getResult();
 				if (result.length == 1) {
 					Path path = ((Path) result[0]);
-					// append to the workspace path
 					if (root.exists(path)) {
-						outputLocation.setText(root.getLocation().append(path)
-								.toFile().getAbsolutePath());
+						//Fixing issue AXIS2-4008 by retrieving the project path instead of appending it to the workspace root.
+						IProject project = null;
+						String otherSegments = EMPTY_STRING;
+						
+						if (path.segmentCount() > 1) {
+							// User has selected a folder inside a project
+							project = root.getProject(path.segment(ECLIPSE_PROJECT_NAME_SEGMENT_INDEX));
+							
+							for (int i = ECLIPSE_PROJECT_NAME_SEGMENT_INDEX + 1; i < path.segments().length; i++) {
+								otherSegments += File.separator	+ path.segment(i);
+							}
+						} else {
+							project = root.getProject(path.toOSString());
+						}
+						
+						if (project != null) {
+							outputLocation.setText(project.getLocation()
+									.toOSString() + otherSegments);
+						} else {
+							// append to the workspace path if the project is
+							// null
+							outputLocation.setText(root.getLocation()
+									.append(path).toFile().getAbsolutePath());
+						}
 					}
 				}
 			}
