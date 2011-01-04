@@ -559,8 +559,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         			QName qname = new QName(addressingNamespace, name, WSA_DEFAULT_PREFIX);
         			Iterator iterator = header.getChildrenWithName(qname);
         			while (iterator.hasNext()) {
-        				OMElement addressingHeader = (OMElement)iterator.next();
-        				addressingHeader.detach();
+        				iterator.next();
+        				iterator.remove();
         			}
         		}
         	} else {
