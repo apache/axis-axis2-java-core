@@ -23,6 +23,7 @@ package org.apache.axis2;
 /**
  * Class Constants
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public class Constants extends org.apache.axis2.namespace.Constants {
 
     /**
@@ -76,14 +77,16 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
 
     /**
-     * To chenge the conetext path from axis2/service to something else
+     * To change the context path from axis2/service to something else
      */
     public static final String PARAM_CONTEXT_ROOT = "contextRoot";
     /**
-     * To chenage the service path to somthing else
+     * To change the service path to something else
      */
     public static final String PARAM_SERVICE_PATH = "servicePath";
-    //Parameter name for transport session managemntt
+    /**
+     * Parameter name for transport session management
+     */
     public static final String MANAGE_TRANSPORT_SESSION = "manageTransportSession";
 
     public static final String HTTP_RESPONSE_STATE = "axis2.http.response.state";
@@ -288,7 +291,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String JAXWS_OUTBOUND_SOAP_HEADERS  = "jaxws.binding.soap.headers.outbound";
     public static final String JAXWS_INBOUND_SOAP_HEADERS = "jaxws.binding.soap.headers.inbound";
     
-    // If the JAXWS WebMethod throws an exception on the server, the exception is
+    // If the JAX-WS WebMethod throws an exception on the server, the exception is
     // stored on the server outbound MessageContext.  This is the key to access that Throwable object.
     public static final String JAXWS_WEBMETHOD_EXCEPTION = 
         "jaxws.outbound.response.webmethod.exception";
@@ -301,7 +304,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String MODULE_VERSION ="version";
 
     /**
-     * Following constant are used for JTA transaction supporyt in Axis2
+     * Following constant are used for JTA transaction support in Axis2
      */
     public static final String USER_TRANSACTION = "UserTransaction";
     public static final String TRANSACTION_MANAGER = "TransactionManager";
@@ -427,12 +430,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         /**
          * If this is set to a Boolean 'true' value, then RequestResponseTransport instances will
          * not be signalled by the Dispatch phase. This is useful for modules that add wish to
-         * send extra messages in the backchannel.
+         * send extra messages in the back-channel.
          */
         public static final String DISABLE_RESPONSE_ACK = "DisableResponseAck";
 
         /**
-         * This constant is used to add an deployment life cycle listner to Axis2
+         * This constant is used to add an deployment life cycle listener to Axis2
          */
 
         public static final String DEPLOYMENT_LIFE_CYCLE_LISTENER = "deploymentLifeCycleListener";
