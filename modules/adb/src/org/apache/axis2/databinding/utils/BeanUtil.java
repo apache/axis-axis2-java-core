@@ -41,13 +41,7 @@ import java.util.TreeMap;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -333,12 +327,38 @@ public class BeanUtil {
             // to support polymorphism in POJO approach.
             // Retrieve the type name of the instance from the 'type' attribute
             // and retrieve the class.
-            String instanceTypeName = beanElement.getAttributeValue(new QName("type"));
-            if ((instanceTypeName != null) && (!beanClass.isArray())) {
-                try {
-                    beanClass = Loader.loadClass(beanClass.getClassLoader(), instanceTypeName);
-                } catch (ClassNotFoundException ce) {
-                    throw AxisFault.makeFault(ce);
+            
+            String instanceTypeName = beanElement.getAttributeValue(new QName(Constants.XSI_NAMESPACE, "type"));
+            if (instanceTypeName != null) {
+                MessageContext messageContext = MessageContext.getCurrentMessageContext();
+                // we can have this support only at the server side. we need to find the axisservice
+                // to get the type table.
+                if (messageContext != null) {
+                    AxisService axisService = messageContext.getAxisService();
+                    QName typeQName = null;
+                    if (instanceTypeName.indexOf(":") > -1) {
+                        String prefix = instanceTypeName.substring(0, instanceTypeName.indexOf(":"));
+                        for (Iterator namespaceIter = beanElement.getAllDeclaredNamespaces(); namespaceIter.hasNext();) {
+                            OMNamespace omNamespace = (OMNamespace) namespaceIter.next();
+                            if (omNamespace.getPrefix().equals(prefix)) {
+                                typeQName = new QName(omNamespace.getNamespaceURI(), instanceTypeName.substring(instanceTypeName.indexOf(":") + 1));
+                            }
+                        }
+                    } else {
+                        typeQName = new QName(instanceTypeName);
+                    }
+
+                    TypeTable typeTable = axisService.getTypeTable();
+                    String className = typeTable.getClassNameForQName(typeQName);
+                    if (className != null) {
+                        try {
+                            beanClass = Loader.loadClass(beanClass.getClassLoader(), className);
+                        } catch (ClassNotFoundException ce) {
+                            throw AxisFault.makeFault(ce);
+                        }
+                    } else {
+                        throw new AxisFault("Unknow type " + typeQName);
+                    }
                 }
             }
 
