@@ -335,19 +335,7 @@ public class BeanUtil {
                 // to get the type table.
                 if (messageContext != null) {
                     AxisService axisService = messageContext.getAxisService();
-                    QName typeQName = null;
-                    if (instanceTypeName.indexOf(":") > -1) {
-                        String prefix = instanceTypeName.substring(0, instanceTypeName.indexOf(":"));
-                        for (Iterator namespaceIter = beanElement.getAllDeclaredNamespaces(); namespaceIter.hasNext();) {
-                            OMNamespace omNamespace = (OMNamespace) namespaceIter.next();
-                            if (omNamespace.getPrefix().equals(prefix)) {
-                                typeQName = new QName(omNamespace.getNamespaceURI(), instanceTypeName.substring(instanceTypeName.indexOf(":") + 1));
-                            }
-                        }
-                    } else {
-                        typeQName = new QName(instanceTypeName);
-                    }
-
+                    QName typeQName = beanElement.resolveQName(instanceTypeName);
                     TypeTable typeTable = axisService.getTypeTable();
                     String className = typeTable.getClassNameForQName(typeQName);
                     if (className != null) {
