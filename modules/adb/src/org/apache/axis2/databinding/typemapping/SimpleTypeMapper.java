@@ -31,6 +31,8 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class SimpleTypeMapper {
 
@@ -45,6 +47,7 @@ public class SimpleTypeMapper {
     private static final String W_FLOAT = "java.lang.Float";
     private static final String W_CALENDAR = "java.util.Calendar";
     private static final String W_DATE = "java.util.Date";
+    private static final String W_URI = URI.class.getName();
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -141,8 +144,13 @@ public class SimpleTypeMapper {
         }
         else if(name.equals(YEAR_MONTH)) {
         	return new org.apache.axis2.databinding.types.YearMonth(text);
-        }
-        else {
+        } else if(name.equals(W_URI)) {
+            try {
+                return new URI(text);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(" Invalid URI " + text, e);
+            }
+        } else {
             return null;
         }
     }
@@ -253,7 +261,12 @@ public class SimpleTypeMapper {
             return true;
         } else if (objClassName.equals(W_DATE)) {
             return true;
-        } /*
+        } else if (objClassName.equals(W_URI)) {
+            return true;
+        }
+
+
+        /*
          * consider BigDecimal, BigInteger, Day, Duration, Month
          * MonthDay, Time, Year, YearMonth as simple type
          */
@@ -301,6 +314,8 @@ public class SimpleTypeMapper {
                 }
             }
             return zulu.format(obj);
+        } else if (obj instanceof URI){
+            return obj.toString();
         }
         return obj.toString();
     }
