@@ -1490,7 +1490,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (null != message) {
 
                     outMessage.setName(message.getQName().getLocalPart());
-                    copyExtensionAttributes(wsdl4jInputMessage.getExtensionAttributes(),
+                    copyExtensionAttributes(wsdl4jOutputMessage.getExtensionAttributes(),
                                            outMessage, PORT_TYPE_OPERATION_INPUT);
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
