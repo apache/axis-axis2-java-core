@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
-                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
-                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd"
-                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                  xmlns:ax21="http://generics.axis2.apache.org/xsd" xmlns:ns="http://generics.axis2.apache.org"
-                  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  targetNamespace="http://generics.axis2.apache.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://generics.axis2.apache.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax21="http://generics.axis2.apache.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://generics.axis2.apache.org">
     <wsdl:types>
-        <xs:schema xmlns:ax22="http://generics.axis2.apache.org/xsd" attributeFormDefault="qualified"
-                   elementFormDefault="qualified" targetNamespace="http://generics.axis2.apache.org">
+        <xs:schema xmlns:ax22="http://generics.axis2.apache.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://generics.axis2.apache.org">
             <xs:import namespace="http://generics.axis2.apache.org/xsd"/>
             <xs:element name="processStringList">
                 <xs:complexType>
@@ -39,16 +32,20 @@
             <xs:element name="processPersonList">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="persons" nillable="true"
-                                    type="ax22:Person"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="persons" nillable="true" type="ax21:Person"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="processPersonListResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax22:Person"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:Person"/>
                     </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getStringList">
+                <xs:complexType>
+                    <xs:sequence/>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getStringListResponse">
@@ -59,8 +56,7 @@
                 </xs:complexType>
             </xs:element>
         </xs:schema>
-        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified"
-                   targetNamespace="http://generics.axis2.apache.org/xsd">
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://generics.axis2.apache.org/xsd">
             <xs:complexType name="Person">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="age" type="xs:int"/>
@@ -78,15 +74,17 @@
     <wsdl:message name="processStringListResponse">
         <wsdl:part name="parameters" element="ns:processStringListResponse"/>
     </wsdl:message>
-    <wsdl:message name="getStringListRequest"/>
-    <wsdl:message name="getStringListResponse">
-        <wsdl:part name="parameters" element="ns:getStringListResponse"/>
-    </wsdl:message>
     <wsdl:message name="processPersonListRequest">
         <wsdl:part name="parameters" element="ns:processPersonList"/>
     </wsdl:message>
     <wsdl:message name="processPersonListResponse">
         <wsdl:part name="parameters" element="ns:processPersonListResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getStringListRequest">
+        <wsdl:part name="parameters" element="ns:getStringList"/>
+    </wsdl:message>
+    <wsdl:message name="getStringListResponse">
+        <wsdl:part name="parameters" element="ns:getStringListResponse"/>
     </wsdl:message>
     <wsdl:portType name="GenericServicePortType">
         <wsdl:operation name="processStringArray">
@@ -96,13 +94,13 @@
             <wsdl:input message="ns:processStringListRequest" wsaw:Action="urn:processStringList"/>
             <wsdl:output message="ns:processStringListResponse" wsaw:Action="urn:processStringListResponse"/>
         </wsdl:operation>
-        <wsdl:operation name="getStringList">
-            <wsdl:input message="ns:getStringListRequest" wsaw:Action="urn:getStringList"/>
-            <wsdl:output message="ns:getStringListResponse" wsaw:Action="urn:getStringListResponse"/>
-        </wsdl:operation>
         <wsdl:operation name="processPersonList">
             <wsdl:input message="ns:processPersonListRequest" wsaw:Action="urn:processPersonList"/>
             <wsdl:output message="ns:processPersonListResponse" wsaw:Action="urn:processPersonListResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getStringList">
+            <wsdl:input message="ns:getStringListRequest" wsaw:Action="urn:getStringList"/>
+            <wsdl:output message="ns:getStringListResponse" wsaw:Action="urn:getStringListResponse"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="GenericServiceSoap11Binding" type="ns:GenericServicePortType">
@@ -122,8 +120,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStringList">
-            <soap:operation soapAction="urn:getStringList" style="document"/>
+        <wsdl:operation name="processPersonList">
+            <soap:operation soapAction="urn:processPersonList" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -131,8 +129,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="processPersonList">
-            <soap:operation soapAction="urn:processPersonList" style="document"/>
+        <wsdl:operation name="getStringList">
+            <soap:operation soapAction="urn:getStringList" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -158,8 +156,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStringList">
-            <soap12:operation soapAction="urn:getStringList" style="document"/>
+        <wsdl:operation name="processPersonList">
+            <soap12:operation soapAction="urn:processPersonList" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -167,8 +165,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="processPersonList">
-            <soap12:operation soapAction="urn:processPersonList" style="document"/>
+        <wsdl:operation name="getStringList">
+            <soap12:operation soapAction="urn:getStringList" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -194,8 +192,8 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getStringList">
-            <http:operation location="getStringList"/>
+        <wsdl:operation name="processPersonList">
+            <http:operation location="processPersonList"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -203,8 +201,8 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="processPersonList">
-            <http:operation location="processPersonList"/>
+        <wsdl:operation name="getStringList">
+            <http:operation location="getStringList"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
