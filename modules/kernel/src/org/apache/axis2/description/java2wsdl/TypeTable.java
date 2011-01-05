@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.net.URI;
 
 public class TypeTable {
     
@@ -126,11 +127,10 @@ public class TypeTable {
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "gYear", "xs"));
         simpleTypetoxsd.put("org.apache.axis2.databinding.types.YearMonth",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "gYearMonth", "xs"));       
+        simpleTypetoxsd.put("java.lang.Object",ANY_TYPE);
 
-        simpleTypetoxsd.put("java.lang.Object",
-                ANY_TYPE);
+        simpleTypetoxsd.put(URI.class.getName(), new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyURI", "xs"));
 
-        // Any types
         simpleTypetoxsd.put(OMElement.class.getName(),
                 ANY_TYPE);
         simpleTypetoxsd.put(ArrayList.class.getName(),

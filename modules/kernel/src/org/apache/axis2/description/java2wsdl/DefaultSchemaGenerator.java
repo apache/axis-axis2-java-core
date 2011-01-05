@@ -352,14 +352,18 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 parameterNames = methodTable.getParameterNames(methodName);
                 // put the parameter names to use it for parsing
                 service.addParameter(methodName, parameterNames);
-                sequence = new XmlSchemaSequence();
-
-                methodSchemaType = createSchemaTypeForMethodPart(methodName);
-                methodSchemaType.setParticle(sequence);
-                inMessage.setElementQName(typeTable.getQNamefortheType(methodName));
-                service.addMessageElementQNameToOperationMapping(methodSchemaType.getQName(),
-                        axisOperation);
             }
+
+            // we need to add the method opration wrapper part even to
+            // empty parameter operations 
+            sequence = new XmlSchemaSequence();
+            methodSchemaType = createSchemaTypeForMethodPart(methodName);
+            methodSchemaType.setParticle(sequence);
+            inMessage.setElementQName(typeTable.getQNamefortheType(methodName));
+            service.addMessageElementQNameToOperationMapping(methodSchemaType.getQName(),
+                    axisOperation);
+
+
             Annotation[][] parameterAnnotation = jMethod.getParameterAnnotations();
 
             Type[] genericParameterTypes = jMethod.getGenericParameterTypes();
