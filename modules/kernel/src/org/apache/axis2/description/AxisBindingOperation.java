@@ -233,7 +233,7 @@ public class AxisBindingOperation extends AxisDescription {
 		
 		// Add the input element
 		AxisBindingMessage inMessage = (AxisBindingMessage) this
-				.getChild(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+				.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 		if (inMessage != null) {
 			bindingOpElement.addChild(inMessage.toWSDL20(wsdl, tns, wsoap,
 					whttp, namespaceMap));
@@ -241,7 +241,7 @@ public class AxisBindingOperation extends AxisDescription {
 
 		// Add the output element
 		AxisBindingMessage outMessage = (AxisBindingMessage) this
-				.getChild(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+				.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 		if (outMessage != null) {
 			bindingOpElement.addChild(outMessage.toWSDL20(wsdl, tns, wsoap,
 					whttp, namespaceMap));
