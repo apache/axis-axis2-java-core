@@ -235,11 +235,15 @@ public class MessageContext extends AbstractContext
     public int FLOW = IN_FLOW;
 
     /**
-     * To invoke fireAndforget method we have to hand over transport sending logic to a thread
-     * other wise user has to wait till it get transport response (in the case of HTTP its HTTP
-     * 202)
+      * To invoke fireAndforget method we have to hand over transport sending logic to a thread
+      * other wise user has to wait till it get transport response (in the case of HTTP its HTTP
+      * 202)
+      * 202). This was eariler named TRANSPORT_NON_BLOCKING, but that name is wrong as transport non blocking is NIO,
+      * which has nothing to do with this property. See https://issues.apache.org/jira/browse/AXIS2-4196. 
+      * Renaming this to CLIENT_API_NON_BLOCKING instead.  
+      * 
      */
-    public static final String TRANSPORT_NON_BLOCKING = "transportNonBlocking";
+    public static final String CLIENT_API_NON_BLOCKING = "ClientApiNonBlocking";
 
     /**
      * This property allows someone (e.g. RM) to disable an async callback from

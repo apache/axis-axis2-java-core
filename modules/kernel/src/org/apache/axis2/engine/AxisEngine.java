@@ -46,9 +46,12 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()
@@ -433,10 +436,7 @@ public class AxisEngine {
                 // This boolean property only used in client side fireAndForget invocation
                 //It will set a property into message context and if some one has set the
                 //property then transport sender will invoke in a diffrent thread
-                Object isTransportNonBlocking = msgContext.getProperty(
-                        MessageContext.TRANSPORT_NON_BLOCKING);
-                if (isTransportNonBlocking != null &&
-                        ((Boolean) isTransportNonBlocking).booleanValue()) {
+                if (Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
                     msgContext.getConfigurationContext().getThreadPool().execute(
                             new TransportNonBlockingInvocationWorker(msgContext, sender));
                 } else {

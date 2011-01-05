@@ -56,7 +56,7 @@ public class MessageContextChangeTest extends TestCase {
             new FieldDescription("java.lang.String", "TRANSPORT_SUCCEED"),
             new FieldDescription("java.lang.String", "DEFAULT_CHAR_SET_ENCODING"),
             new FieldDescription("int", "FLOW"),
-            new FieldDescription("java.lang.String", "TRANSPORT_NON_BLOCKING"),
+            new FieldDescription("java.lang.String", "CLIENT_API_NON_BLOCKING"),
             new FieldDescription("java.lang.String", "DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR"),
             new FieldDescription("boolean", "processingFault"),
             new FieldDescription("boolean", "paused"),

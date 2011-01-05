@@ -298,12 +298,11 @@ public class HTTPSender extends AbstractHTTPSender {
 
                 processResponse(method, msgContext);
             }
-            Object isTransportNonBlocking = msgContext.getProperty(
-                    MessageContext.TRANSPORT_NON_BLOCKING);
-            if (isTransportNonBlocking != null && (Boolean)isTransportNonBlocking) {
-                throw new AxisFault(Messages.getMessage("transportError",
-                        String.valueOf(statusCode),
-                        method.getStatusText()));
+            
+            if (org.apache.axis2.util.Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
+            	 throw new AxisFault(Messages.getMessage("transportError",
+                         String.valueOf(statusCode),
+                         method.getStatusText()));
             }
         } else {
             throw new AxisFault(Messages.getMessage("transportError",

@@ -307,7 +307,7 @@ class OutInAxisOperationClient extends OperationClient {
         }
 
         //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
-        mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
+        mc.setProperty(MessageContext.CLIENT_API_NON_BLOCKING, Boolean.TRUE);
         mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
         AxisEngine.send(mc);
 		if (internalCallback != null) {
