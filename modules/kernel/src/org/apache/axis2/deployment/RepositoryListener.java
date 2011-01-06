@@ -353,15 +353,6 @@ public class RepositoryListener implements DeploymentConstants {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
                         addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
                                         WSInfo.TYPE_SERVICE);
-                    } else {
-                        String ext = DeploymentFileData.getFileExtension(file.getName());
-                        Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
-                        // If we found a deployer for this type of file, use it.  Otherwise
-                        // ignore the file.
-                        if (deployer != null) {
-                            deployer.setDirectory(deploymentEngine.getServicesDir().getName());
-                            addFileToDeploy(file, deployer, WSInfo.TYPE_SERVICE);
-                        }
                     }
                 }
             }

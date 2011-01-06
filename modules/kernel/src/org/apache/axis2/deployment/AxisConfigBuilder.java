@@ -386,7 +386,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     }
     
     private void processDeployers(Iterator deployerItr) {
-        HashMap extensionToDeployerMappingMap = new HashMap();
         Map<String, Map<String, Deployer>> deployers = new HashMap<String, Map<String, Deployer>>();
         while (deployerItr.hasNext()) {
             OMElement element = (OMElement) deployerItr.next();
@@ -429,10 +428,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 deployers.put(directory, extensionMap);
             }
             extensionMap.put(extension, deployer);
-            extensionToDeployerMappingMap.put(extension, deployer);
         }
         if (deploymentEngine != null) {
-            deploymentEngine.setExtensionToDeployerMappingMap(extensionToDeployerMappingMap);
             deploymentEngine.setDeployers(deployers);
         }
     }

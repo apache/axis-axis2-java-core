@@ -134,10 +134,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     //To deploy modules (both mar and expanded)
     protected ModuleDeployer moduleDeployer;
 
-    //to keep map of which deployer can process which file extension ,
-    // for example ServiceDeployer will process .aar file
-    private HashMap extensionToDeployerMappingMap = new HashMap();
-
     private Map<String, Map<String, Deployer>> deployerMap = new HashMap<String, Map<String, Deployer>>();
 
     private Lock lock = new ReentrantLock();
@@ -1343,10 +1339,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         return repositoryDir;
     }
 
-    public void setExtensionToDeployerMappingMap(HashMap extensionToDeployerMappingMap) {
-        this.extensionToDeployerMappingMap = extensionToDeployerMappingMap;
-    }
-
     public void setDeployers(Map<String, Map<String, Deployer>> deployerMap) {
         this.deployerMap = deployerMap;
     }
@@ -1371,10 +1363,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     public Deployer getDeployer(String directory, String extension) {
         Map<String, Deployer> extensionMap = deployerMap.get(directory);
         return (extensionMap != null) ? extensionMap.get(extension) : null;
-    }
-
-    public Deployer getDeployerForExtension(String extension) {
-        return (Deployer) extensionToDeployerMappingMap.get(extension);
     }
 
     /**
@@ -1450,7 +1438,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 deployerMap.put(directory, extensionMap);
             }
             extensionMap.put(extension, deployer);
-            extensionToDeployerMappingMap.put(extension, deployer);
         } finally {
             lock.unlock();
         }
@@ -1491,10 +1478,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 if (log.isDebugEnabled()) {
                     log.debug("Deployer " + deployer.getClass().getName() + " is removed");
                 }
-            }
-
-            if (extensionToDeployerMappingMap.containsKey(extension)) {
-                extensionToDeployerMappingMap.remove(extension);
             }
         } finally {
             lock.unlock();

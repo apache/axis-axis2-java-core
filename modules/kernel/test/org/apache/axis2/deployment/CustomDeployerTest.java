@@ -37,8 +37,7 @@ public class CustomDeployerTest extends TestCase {
         assertTrue("Init was not called", CustomDeployer.initCalled);
         assertEquals("Wrong directory", "widgets", CustomDeployer.directory);
         assertEquals("Wrong extension", "svc", CustomDeployer.extension);
-        assertEquals("Wrong number of deployed items", 2, CustomDeployer.deployedItems);
-        assertTrue("George wasn't found", CustomDeployer.georgeDeployed);
+        assertEquals("Wrong number of deployed items", 1, CustomDeployer.deployedItems);
         assertTrue("Mary wasn't found", CustomDeployer.maryDeployed);
 
         assertEquals("Parameter not set correctly",
