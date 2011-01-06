@@ -430,6 +430,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 			throw new DeploymentException(axisFault);
 		}
 
+        startupServiceLifecycle();
 		return service;
 	}
 
@@ -507,14 +508,13 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 	private void loadServiceLifeCycleClass(String className)
 			throws DeploymentException {
-		if (className != null) {
-			try {
-				ClassLoader loader = service.getClassLoader();
-				Class serviceLifeCycleClassImpl = Loader.loadClass(loader,
+        if (className != null) {
+            try {
+                ClassLoader loader = service.getClassLoader();
+                Class serviceLifeCycleClassImpl = Loader.loadClass(loader,
 						className);
-				ServiceLifeCycle serviceLifeCycle = (ServiceLifeCycle) serviceLifeCycleClassImpl
-						.newInstance();
-				serviceLifeCycle.startUp(configCtx, service);
+                ServiceLifeCycle serviceLifeCycle =
+                        (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance();
 				service.setServiceLifeCycle(serviceLifeCycle);
 			} catch (Exception e) {
 				throw new DeploymentException(e.getMessage(), e);
@@ -915,8 +915,10 @@ public class ServiceBuilder extends DescriptionBuilder {
 		}
 	}
 	
-	private void processPolicyAttachments(OMElement serviceElement, AxisService service) throws DeploymentException {
-		Iterator attachmentElements = serviceElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_ATTACHMENT));
+	private void processPolicyAttachments(OMElement serviceElement,
+                                          AxisService service) throws DeploymentException {
+		Iterator attachmentElements =
+                serviceElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_ATTACHMENT));
 		try {
 			Utils.processPolicyAttachments(attachmentElements, service);
 		} catch (Exception e) {
@@ -924,4 +926,9 @@ public class ServiceBuilder extends DescriptionBuilder {
 		}
 	}
 
+    private void startupServiceLifecycle() {
+        if (service.getServiceLifeCycle() != null) {
+            service.getServiceLifeCycle().startUp(configCtx, service);
+        }
+    }
 }
