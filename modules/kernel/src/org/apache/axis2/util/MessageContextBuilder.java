@@ -1,4 +1,5 @@
-/*Licensed to the Apache Software Foundation (ASF) under one
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership. The ASF licenses this file
@@ -14,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */ 
+ */
 
 package org.apache.axis2.util;
 
@@ -354,21 +355,6 @@ public class MessageContextBuilder {
         // now add HTTP Headers
         faultContext.setProperty(HTTPConstants.HTTP_HEADERS,
                                  processingContext.getProperty(HTTPConstants.HTTP_HEADERS));
-				
-        // Set wsa:Action for fault message
-        // Use specified value if available
-		AxisOperation axisOperation = processingContext.getAxisOperation();
-		if ((axisOperation != null) && (axisOperation.getOutputAction() != null)) {
-			faultContext.setWSAAction(axisOperation.getOutputAction());
-		} else {
-			// If not, simply copy the request value. Almost always invalid.
-			faultContext.setWSAAction(processingContext.getWSAAction());
-		}
-				
-		if (axisOperation != null && !(axisOperation instanceof InOnlyAxisOperation)){
-					                              faultContext.setAxisMessage(axisOperation
-                                                   .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
-	     }
 
         //setting the out bound binding message
         AxisBindingMessage inboundAxisBindingMessage
