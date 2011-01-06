@@ -100,7 +100,7 @@
 
         <fileSet>
             <directory>../../modules/kernel/conf</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory>conf</outputDirectory>
             <includes>
                 <include>log4j.properties</include>
                 <include>commons-logging.properties</include>

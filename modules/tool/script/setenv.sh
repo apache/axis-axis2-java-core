@@ -89,7 +89,7 @@ for f in "$AXIS2_HOME"/lib/*.jar
 do
   AXIS2_CLASSPATH="$AXIS2_CLASSPATH":$f
 done
-AXIS2_CLASSPATH="$AXIS2_HOME":"$JAVA_HOME/lib/tools.jar":"$AXIS2_CLASSPATH":"$CLASSPATH"
+AXIS2_CLASSPATH="$AXIS2_HOME":"$AXIS2_HOME/conf":"$JAVA_HOME/lib/tools.jar":"$AXIS2_CLASSPATH":"$CLASSPATH"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
