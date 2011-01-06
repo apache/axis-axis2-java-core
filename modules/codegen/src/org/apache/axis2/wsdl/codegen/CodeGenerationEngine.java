@@ -48,6 +48,8 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +88,21 @@ public class CodeGenerationEngine {
                     (CommandLineOption)allOptions.
                             get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
             wsdlUri = option.getOptionValue();
+
+            // the redirected urls gives problems in code generation some times with jaxbri
+            // eg. https://www.paypal.com/wsdl/PayPalSvc.wsdl
+            // if there is a redirect url better to find it and use.
+            if (wsdlUri.startsWith("http")) {
+                URL url = new URL(wsdlUri);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setInstanceFollowRedirects(false);
+                connection.getResponseCode();
+                String newLocation = connection.getHeaderField("Location");
+                if (newLocation != null){
+                    wsdlUri = newLocation;
+                }
+            }
+
             configuration = new CodeGenConfiguration(allOptions);
 
 
