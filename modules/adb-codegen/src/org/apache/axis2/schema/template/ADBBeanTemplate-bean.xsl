@@ -3101,7 +3101,7 @@
                             <xsl:if test="$ordered and $min!=0 and not($particleClassType)">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getName());
                                 }
                             </xsl:if>
                             <xsl:if test="$particleClassType and ($choice or ($min=0)) and not($shortTypeName='OMElement')">
@@ -3117,7 +3117,7 @@
                             <xsl:if test="not($particleClass)">
                                 if (reader.isStartElement())
                                 // A start element we are not expecting indicates a trailing invalid property
-                                throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getName());
                             </xsl:if>
                         </xsl:if>
 
@@ -3126,7 +3126,7 @@
                           <xsl:if test="not(property/enumFacet) and not($choice or $hasParticleType)">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
-                                        throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                        throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getName());
                              }
                           </xsl:if>
                              } else {
