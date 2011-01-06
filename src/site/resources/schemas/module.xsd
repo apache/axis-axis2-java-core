@@ -24,14 +24,14 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="Description" minOccurs="0"/>
-				<xs:element name="inflow" minOccurs="0">
+				<xs:element name="InFlow" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="handler"  type="handlerType"  minOccurs="0" maxOccurs="unbounded"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="outflow" minOccurs="0">
+				<xs:element name="OutFlow" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="handler"  type="handlerType" minOccurs="0" maxOccurs="unbounded"/>
@@ -40,14 +40,14 @@
 				</xs:element>
 				<xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element ref="operation" minOccurs="0"/>
-				<xs:element name="Outfaultflow" minOccurs="0">
+				<xs:element name="OutFaultFlow" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element  name="handler"  type="handlerType" minOccurs="0" maxOccurs="unbounded"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="INfaultflow" minOccurs="0">
+				<xs:element name="InFaultFlow" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element  name="handler"  type="handlerType"  minOccurs="0" maxOccurs="unbounded"/>

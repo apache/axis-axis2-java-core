@@ -65,7 +65,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="description" type="xs:string" minOccurs="0"/>
+				<xs:element name="Description" type="xs:string" minOccurs="0"/>
 				<xs:element name="parameter" type="parameterType" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="operation" type="operationType" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="module" minOccurs="0" maxOccurs="unbounded">
