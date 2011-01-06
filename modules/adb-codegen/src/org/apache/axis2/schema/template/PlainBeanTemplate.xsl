@@ -35,6 +35,7 @@
         /**
         *  <xsl:value-of select="$name"/> wrapped bean classes
         */
+        @SuppressWarnings({"unchecked","unused"})
         public class <xsl:value-of select="$name"/>{
 
         <xsl:apply-templates/>

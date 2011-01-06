@@ -58,6 +58,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
@@ -262,12 +263,12 @@ public class Utils {
         if (path == null) {
             return null;
         }
-        
+
         //with this chances that substring matching a different place in the URL is reduced
         if(!servicePath.endsWith("/")){
         	servicePath = servicePath+"/";
         }
-        
+
         int index = path.lastIndexOf(servicePath);
         String serviceOpPart = null;
 
@@ -375,7 +376,7 @@ public class Utils {
     public static String getModuleName(String moduleName, String moduleVersion) {
         if (moduleVersion != null && moduleVersion.length() != 0) {
             moduleName = moduleName + "-" + moduleVersion;
-        } 
+        }
         return moduleName;
     }
 
@@ -557,7 +558,7 @@ public class Utils {
         }
         return result;
     }
-    
+
     /**
      * This method will provide the logic needed to retrieve an Object's classloader
      * in a Java 2 Security compliant manner.
@@ -574,16 +575,16 @@ public class Utils {
             });
         }
     }
-    
+
     public static int getMtomThreshold(MessageContext msgCtxt){
-    	Integer value = null;         
-        if(!msgCtxt.isServerSide()){                
-	        value = (Integer)msgCtxt.getProperty(Constants.Configuration.MTOM_THRESHOLD);	        
+    	Integer value = null;
+        if(!msgCtxt.isServerSide()){
+	        value = (Integer)msgCtxt.getProperty(Constants.Configuration.MTOM_THRESHOLD);
         }else{
         	Parameter param = msgCtxt.getParameter(Constants.Configuration.MTOM_THRESHOLD);
         	if(param!=null){
-        		value = (Integer)param.getValue();       		        		
-        	}        	        	
+        		value = (Integer)param.getValue();
+        	}
         }
         int threshold = (value!=null)?value.intValue():0;
         if(log.isDebugEnabled()){
@@ -641,12 +642,12 @@ public class Utils {
         }
         return getIpAddress();
     }
-    
+
     /**
      * First check whether the hostname parameter is there in AxisConfiguration (axis2.xml) ,
      * if it is there then this will return that as the host name , o.w will return the IP address.
      * @param axisConfiguration
-     * @return hostname 
+     * @return hostname
      */
     public static String getHostname(AxisConfiguration axisConfiguration) {
         if(axisConfiguration!=null){
@@ -657,7 +658,7 @@ public class Utils {
                     return hostAddress;
                 }
             }
-        }      
+        }
         return null;
     }
 
@@ -667,7 +668,7 @@ public class Utils {
 
     /**
      * Get the scheme part from a URI (or URL).
-     * 
+     *
      * @param uri the URI
      * @return the scheme of the URI
      */
@@ -680,7 +681,7 @@ public class Utils {
         text = text.replaceAll("<", "&lt;");
         return text;
     }
-    
+
     /**
      * Create a service object for a given service. The method first looks for
      * the {@link Constants#SERVICE_OBJECT_SUPPLIER} service parameter and if
@@ -688,7 +689,7 @@ public class Utils {
      * service object. If the parameter is not present, it will create an
      * instance of the class specified by the {@link Constants#SERVICE_CLASS}
      * parameter.
-     * 
+     *
      * @param service
      *            the service
      * @return The service object or <code>null</code> if neither the
@@ -726,7 +727,7 @@ public class Utils {
                     // interface was only introduced by r439555. We still support the old way, but
                     // issue a warning inviting the user to provide a proper ServiceObjectSupplier
                     // implementation.
-                    
+
                     // Find static getServiceObject() method, call it if there
                     final Method method = org.apache.axis2.java.security.AccessController.doPrivileged(
                             new PrivilegedExceptionAction<Method>() {
@@ -753,6 +754,12 @@ public class Utils {
                     final Class<?> serviceClass = Loader.loadClass(
                             classLoader,
                             ((String) serviceClassParam.getValue()).trim());
+                    String className = ((String) serviceClassParam.getValue()).trim();
+                    Class serviceObjectMaker = Loader.loadClass(classLoader, className);
+                    if (serviceObjectMaker.getModifiers() != Modifier.PUBLIC) {
+                        throw new AxisFault("Service class " + className +
+                                            " must have public as access Modifier");
+                    }
                     return org.apache.axis2.java.security.AccessController.doPrivileged(
                             new PrivilegedExceptionAction<Object>() {
                                 public Object run() throws InstantiationException, IllegalAccessException {
@@ -768,13 +775,13 @@ public class Utils {
             throw AxisFault.makeFault(e);
         }
     }
-    
+
     /**
      * Get the service class for a given service. This method will first check
      * the {@link Constants#SERVICE_CLASS} service parameter and if that
      * parameter is not present, inspect the instance returned by the service
      * object supplier specified by {@link Constants#SERVICE_OBJECT_SUPPLIER}.
-     * 
+     *
      * @param service
      *            the service
      * @return The service class or <code>null</code> if neither the
@@ -799,21 +806,21 @@ public class Utils {
             return serviceObject == null ? null : serviceObject.getClass();
         }
     }
-    
+
     /**
-     * this is to make is backward compatible. Get rid of this at the next major release. 
+     * this is to make is backward compatible. Get rid of this at the next major release.
      * @param messageContext
      * @return
      */
-    
+
     public static boolean isClientThreadNonBlockingPropertySet(MessageContext messageContext){
     	Object val =  messageContext.getProperty(
-                MessageContext.CLIENT_API_NON_BLOCKING); 
+                MessageContext.CLIENT_API_NON_BLOCKING);
     	if(val != null && ((Boolean)val).booleanValue()){
-    		return true; 
+    		return true;
     	}else{
     		//put the string inline as this is to be removed
-    		val =  messageContext.getProperty("transportNonBlocking"); 
+    		val =  messageContext.getProperty("transportNonBlocking");
     		return val != null && ((Boolean)val).booleanValue();
     	}
     }

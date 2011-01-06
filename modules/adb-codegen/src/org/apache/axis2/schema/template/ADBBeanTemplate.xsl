@@ -37,6 +37,7 @@
         /**
         *  <xsl:value-of select="$name"/> wrapped bean classes
         */
+        @SuppressWarnings({"unchecked","unused"})
         public class <xsl:value-of select="$name"/>{
 
         <xsl:apply-templates/>
@@ -80,6 +81,7 @@
             /**
             *  <xsl:value-of select="$name"/> class
             */
+            @SuppressWarnings({"unchecked","unused"})
         </xsl:if>
         public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/>{
 
