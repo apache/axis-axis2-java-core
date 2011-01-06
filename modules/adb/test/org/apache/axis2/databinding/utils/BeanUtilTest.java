@@ -20,6 +20,9 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.om.*;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -49,7 +52,7 @@ public class BeanUtilTest extends TestCase {
     
     private ObjectSupplier objectSupplier;
 
-    private OMFactory omFactory;
+    private SOAPFactory omFactory;
     private OMElement omElement;
     private OMNamespace xsiNamespace;
     
@@ -57,11 +60,21 @@ public class BeanUtilTest extends TestCase {
     protected void setUp() throws Exception {
         objectSupplier = new DefaultObjectSupplier();
         
-        omFactory = OMAbstractFactory.getOMFactory();
+        omFactory = OMAbstractFactory.getSOAP12Factory();
         xsiNamespace = omFactory.createOMNamespace(Constants.XSI_NAMESPACE, "xsi");
         omElement = omFactory.createOMElement(new QName("hello"));
+
+        MessageContext msgContext = new MessageContext();
+        msgContext.setEnvelope(omFactory.createSOAPEnvelope());
+
+        MessageContext.setCurrentMessageContext(msgContext);
     }
-    
+
+    @Override
+    protected void tearDown() throws Exception {
+        MessageContext.setCurrentMessageContext(null);
+    }
+
     public void testProcessObjectAsSimpleType() throws Exception {
         omElement.setText("World");
         
@@ -146,5 +159,31 @@ public class BeanUtilTest extends TestCase {
         OMText text = (OMText)element.getFirstElement().getFirstOMChild();
         assertTrue(text.isOptimized());
         assertSame(dh, text.getDataHandler());
+    }
+
+    public void testProcessObjectWithWrongType() throws Exception {
+        omElement.setLocalName("Queensland");
+        omElement.setText("Brisbane");
+
+        try {
+            BeanUtil.processObject(omElement, int.class, new MultirefHelper(omElement), true, objectSupplier, null);
+        } catch (AxisFault e) {
+            assertEquals(org.apache.axis2.Constants.FAULT_SOAP12_SENDER, e.getFaultCode());
+            assertTrue(e.getMessage().contains("Queensland"));
+            assertTrue(e.getMessage().contains("Brisbane"));
+        }
+    }
+
+    public void testDeserializeWithWrongType() throws Exception {
+        omElement.setLocalName("Queensland");
+        omElement.setText("Brisbane");
+
+        try {
+            BeanUtil.deserialize(int.class, omElement, objectSupplier, "Queensland");
+        } catch (AxisFault e) {
+            assertEquals(org.apache.axis2.Constants.FAULT_SOAP12_SENDER, e.getFaultCode());
+            assertTrue(e.getMessage().contains("Queensland"));
+            assertTrue(e.getMessage().contains("Brisbane"));
+        }
     }
 }

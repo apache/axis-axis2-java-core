@@ -335,17 +335,19 @@ public class BeanUtil {
                 // to get the type table.
                 if (messageContext != null) {
                     AxisService axisService = messageContext.getAxisService();
-                    QName typeQName = beanElement.resolveQName(instanceTypeName);
-                    TypeTable typeTable = axisService.getTypeTable();
-                    String className = typeTable.getClassNameForQName(typeQName);
-                    if (className != null) {
-                        try {
-                            beanClass = Loader.loadClass(beanClass.getClassLoader(), className);
-                        } catch (ClassNotFoundException ce) {
-                            throw AxisFault.makeFault(ce);
+                    if (axisService != null) {
+                        QName typeQName = beanElement.resolveQName(instanceTypeName);
+                        TypeTable typeTable = axisService.getTypeTable();
+                        String className = typeTable.getClassNameForQName(typeQName);
+                        if (className != null) {
+                            try {
+                                beanClass = Loader.loadClass(beanClass.getClassLoader(), className);
+                            } catch (ClassNotFoundException ce) {
+                                throw AxisFault.makeFault(ce);
+                            }
+                        } else {
+                            throw new AxisFault("Unknow type " + typeQName);
                         }
-                    } else {
-                        throw new AxisFault("Unknow type " + typeQName);
                     }
                 }
             }
@@ -391,7 +393,7 @@ public class BeanUtil {
                 }
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
-                    return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
+                    return getSimpleTypeObjectChecked(beanClass, beanElement);
                 } else if ("java.lang.Object".equals(beanClass.getName())) {
                     return beanElement.getFirstOMChild();
                 }
@@ -808,7 +810,7 @@ public class BeanUtil {
                         String value = omElement.getText();
                         return Base64.decode(value);
                     } else {
-                        return SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
+                        return getSimpleTypeObjectChecked(classType, omElement);
                     }
                 } else if (SimpleTypeMapper.isCollection(classType)) {
                     if (generictype != null && (generictype instanceof ParameterizedType)) {
@@ -962,6 +964,21 @@ public class BeanUtil {
             return packagez.getName();
         } else {
             return "";
+        }
+    }
+
+    private static Object getSimpleTypeObjectChecked(Class classType,
+                                                     OMElement omElement) throws AxisFault {
+        try {
+            return SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
+        } catch (NumberFormatException e) {
+            MessageContext msgContext = MessageContext.getCurrentMessageContext();
+            QName faultCode = msgContext != null ?
+                              msgContext.getEnvelope().getVersion().getSenderFaultCode() :
+                              null;
+
+            throw new AxisFault("Invalid value \"" + omElement.getText() + "\" for element " +
+                                omElement.getLocalName(), faultCode, e);
         }
     }
 
