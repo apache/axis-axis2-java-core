@@ -314,7 +314,7 @@ public class RepositoryListener implements DeploymentConstants {
     }
 
     /**
-     * Searches a given folder for jar files and adds them to a list in the WSInfolist class.
+     * Searches a given folder for aar files and adds them to a list in the WSInfolist class.
      * If sub folders found, those are also searched for services.
      * Ex : repository/services/foo/1.0.0/echo.aar
      *      repository/services/foo/1.0.1/echo.aar
@@ -330,11 +330,6 @@ public class RepositoryListener implements DeploymentConstants {
         File[] files = root.listFiles();
 
         if (files != null && files.length > 0) {
-            /**
-             * This undeployableDir flag is used to check whether this folder (root) doesn't contain
-             * any deployable artifacts.
-             */
-            boolean undeployableDir = true;
             for (File file : files) {
                 if (isSourceControlDir(file)) {
                     continue;
@@ -353,13 +348,11 @@ public class RepositoryListener implements DeploymentConstants {
                         } else {
                             findServicesInDirectory(file);
                         }
-                        undeployableDir = false;
                     }
                 } else {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
                         addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
                                         WSInfo.TYPE_SERVICE);
-                        undeployableDir = false;
                     } else {
                         String ext = DeploymentFileData.getFileExtension(file.getName());
                         Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
@@ -368,14 +361,9 @@ public class RepositoryListener implements DeploymentConstants {
                         if (deployer != null) {
                             deployer.setDirectory(deploymentEngine.getServicesDir().getName());
                             addFileToDeploy(file, deployer, WSInfo.TYPE_SERVICE);
-                            undeployableDir = false;
                         }
                     }
                 }
-            }
-            if (!servicesDir && undeployableDir) {
-                log.error(Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND,
-                        root.getName()));
             }
         }
     }
