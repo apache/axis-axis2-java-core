@@ -1668,32 +1668,38 @@ public class MessageContext extends AbstractContext
         if (DEBUG_ENABLED) {
             checkActivateWarning("isEngaged");
         }
-        boolean enegage;
+        boolean isEngaged;
         if (configurationContext != null) {
             AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
             AxisModule module = axisConfig.getModule(moduleName);
             if (module == null) {
                 return false;
             }
-            enegage = axisConfig.isEngaged(module);
-            if (enegage) {
+            isEngaged = axisConfig.isEngaged(module);
+            if (isEngaged) {
                 return true;
             }
             if (axisServiceGroup != null) {
-                enegage = axisServiceGroup.isEngaged(module);
-                if (enegage) {
+                isEngaged = axisServiceGroup.isEngaged(module);
+                if (isEngaged) {
                     return true;
                 }
             }
             if (axisService != null) {
-                enegage = axisService.isEngaged(module);
-                if (enegage) {
+                isEngaged = axisService.isEngaged(module);
+                if (isEngaged) {
                     return true;
                 }
             }
             if (axisOperation != null) {
-                enegage = axisOperation.isEngaged(module);
-                if (enegage) {
+                isEngaged = axisOperation.isEngaged(module);
+                if (isEngaged) {
+                    return true;
+                }
+            }
+            if (axisMessage != null) {
+                isEngaged = axisMessage.isEngaged(module);
+                if (isEngaged) {
                     return true;
                 }
             }
@@ -2234,7 +2240,7 @@ public class MessageContext extends AbstractContext
      * able to find matching objects when the message
      * context is re-constituted.
      *
-     * @param out The stream to write the object contents to
+     * @param o The stream to write the object contents to
      * @throws IOException
      */
     public void writeExternal(ObjectOutput o) throws IOException {
@@ -2824,7 +2830,7 @@ public class MessageContext extends AbstractContext
      * as it was written.  Some data will need to be validated when
      * resurrected.
      *
-     * @param in The stream to read the object contents from
+     * @param inObject The stream to read the object contents from
      * @throws IOException
      * @throws ClassNotFoundException
      */
