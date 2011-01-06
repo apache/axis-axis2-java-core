@@ -105,8 +105,10 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
 
             in.close();
             out.close();
-            in = new ByteArrayInputStream(response.toByteArray());
-            msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
+            if (response.size() > 0) {
+                in = new ByteArrayInputStream(response.toByteArray());
+                msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
+            }
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
