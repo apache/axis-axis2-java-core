@@ -456,7 +456,11 @@ class OutInAxisOperationClient extends OperationClient {
                         if (callback != null) {
                             callback.onError(fault);
                         } else if (axisCallback != null) {
-                            axisCallback.onError(fault);
+                            if (options.isExceptionToBeThrownOnSOAPFault()) {
+                                axisCallback.onError(fault);
+                            } else {
+                                axisCallback.onFault(response);
+                            }
                         }
 
                     } else {

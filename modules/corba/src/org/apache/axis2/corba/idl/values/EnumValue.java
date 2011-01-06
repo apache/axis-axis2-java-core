@@ -54,6 +54,12 @@ public class EnumValue extends AbstractValue {
         outputStream.write_long(index);
     }
 
+    @Override
+    public int hashCode() {
+        return getValueAsString().hashCode();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o instanceof EnumValue) {
             if (getValueAsString().equals(((EnumValue) o).getValueAsString())) {
