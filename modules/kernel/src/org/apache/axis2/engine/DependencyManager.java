@@ -83,8 +83,7 @@ public class DependencyManager {
         // We can not call classToLoad.getDeclaredMethed() , since there
         //  can be insatnce where mutiple services extends using one class
         // just for init and other reflection methods
-        Method method =
-                null;
+        Method method =  null;
         try {
             method = classToLoad.getMethod(SERVICE_INIT_METHOD, new Class[]{ServiceContext.class});
         } catch (Exception e) {
@@ -96,11 +95,14 @@ public class DependencyManager {
             try {
                 method.invoke(obj, new Object[]{serviceContext});
             } catch (IllegalAccessException e) {
-                log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
+                log.error("Exception trying to call " + SERVICE_INIT_METHOD, e);
+                throw new AxisFault("Can not access the method ", e);
             } catch (IllegalArgumentException e) {
-                log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
+                log.error("Exception trying to call " + SERVICE_INIT_METHOD, e);
+                throw new AxisFault(" Incorrect arguments ", e);
             } catch (InvocationTargetException e) {
-                log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
+                log.error("Exception trying to call " + SERVICE_INIT_METHOD, e);
+                throw new AxisFault(" problem in invocation the method ", e);
             }
         }
     }
