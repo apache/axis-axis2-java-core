@@ -166,7 +166,14 @@ public class RPCUtil {
                                             OMElement methodElement,
                                             MessageContext inMessage) throws AxisFault,
             IllegalAccessException, InvocationTargetException {
-        if (inAxisMessage.getElementQName() == null) {
+        
+        //POJO was not WS-I complient since it does generate an empty soap message for in comming
+        //soap envelope when no input parameters are set. But now we have fixed this to include the
+        // the operation name wrapper.
+        // this causes problems with the clients generated with the earlier wsdls. in order to
+        // keep the back word compatibility we need to add this check.
+
+        if ((inAxisMessage.getElementQName() == null) || (methodElement == null)) {
             // method accept empty SOAPbody
             return method.invoke(implObject);
         } else {
