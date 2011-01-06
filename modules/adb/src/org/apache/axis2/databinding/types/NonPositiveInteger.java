@@ -82,11 +82,15 @@ public class NonPositiveInteger extends BigInteger {
      *
      * @return BigIntegerRep
      * @throws java.io.ObjectStreamException
+     * @deprecated As per https://issues.apache.org/jira/browse/AXIS2-3848
      */
     public Object writeReplace() throws ObjectStreamException {
         return new BigIntegerRep(toByteArray());
     }
 
+    /**
+     * @deprecated As per https://issues.apache.org/jira/browse/AXIS2-3848
+     */
     protected static class BigIntegerRep implements java.io.Serializable {
         private static final long serialVersionUID = -3601357690365698517L;
         private byte[] array;
