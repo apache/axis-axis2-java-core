@@ -152,8 +152,6 @@
                         <exclude>**/*Abstract*.java</exclude>
                         <exclude>**/UtilsParseRequestTest.java</exclude> <!-- Was excluded by **/*Util*.java and currently fails -->
                         <exclude>**/URLTemplatingUtilTest.java</exclude> <!-- Was excluded by **/*Util*.java -->
-                        <exclude>**/*MessageContextChangeTest.java</exclude>
-                        <exclude>**/MessageContextChangeTest.java</exclude> <!-- Removed because of problem on Java5. Needs reinstated -->
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>
