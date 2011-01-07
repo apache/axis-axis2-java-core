@@ -35,38 +35,38 @@ public class UtilsParseRequestTest extends AbstractTestCase {
         //fail("here");
     }
 
-//    public void testService() throws Exception {
-//        assertParsesTo("http://localhost:8081/services/System",
-//                       "System");
-//    }
+    public void testService() throws Exception {
+        assertParsesTo("http://localhost:8081/axis2/services/System",
+                       "System");
+    }
 
     public void testServiceCalledServices() throws Exception {
-        assertParsesTo("http://localhost:8081/services/services",
+        assertParsesTo("http://localhost:8081/axis2/services/services",
                        "services");
     }
 
     public void testServiceWithQuery() throws Exception {
-        assertParsesTo("http://localhost:8081/services/System?system=ecb2f",
+        assertParsesTo("http://localhost:8081/axis2/services/System?system=ecb2f",
                        "System");
     }
 
     public void testServiceWithDoubleQuery() throws Exception {
-        assertParsesTo("http://localhost:8081/services/System?system=ecb2f?job=3",
+        assertParsesTo("http://localhost:8081/axis2/services/System?system=ecb2f?job=3",
                        "System");
     }
 
     public void testOperation() throws Exception {
-        assertParsesTo("http://localhost:8081/services/System/operation",
+        assertParsesTo("http://localhost:8081/axis2/services/System/operation",
                        "System", "operation");
     }
 
     public void testOperationWithQuery() throws Exception {
-        assertParsesTo("http://localhost:8081/services/System/operation?system=ecb2f",
+        assertParsesTo("http://localhost:8081/axis2/services/System/operation?system=ecb2f",
                        "System", "operation");
     }
 
     public void testOperationServiceCalledServices() throws Exception {
-        assertParsesTo("http://localhost:8081/services/services/operation",
+        assertParsesTo("http://localhost:8081/axis2/services/services/operation",
                        "services", "operation");
     }
 

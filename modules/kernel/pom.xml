@@ -150,8 +150,8 @@
                 <configuration>
                     <excludes>
                         <exclude>**/*Abstract*.java</exclude>
-                        <exclude>**/UtilsParseRequestTest.java</exclude> <!-- Was excluded by **/*Util*.java and currently fails -->
-                        <exclude>**/URLTemplatingUtilTest.java</exclude> <!-- Was excluded by **/*Util*.java -->
+                        <!--<exclude>**/UtilsParseRequestTest.java</exclude> &lt;!&ndash; Was excluded by **/*Util*.java and currently fails &ndash;&gt;-->
+                        <exclude>**/URLTemplatingUtilTest.java</exclude>
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>
