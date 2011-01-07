@@ -1652,6 +1652,7 @@ public class SchemaCompiler {
                 String patternString = pattern.getValue().toString();
                 // replace backword slashes
                 patternString = patternString.replaceAll("\\\\", "\\\\\\\\");
+                patternString = patternString.replaceAll("\"","\\\\\"");
                 if ((metaInfHolder.getPatternFacet() != null) &&
                         (metaInfHolder.getPatternFacet().trim().length() > 0)){
                     // i.e there is a pattern faceset
