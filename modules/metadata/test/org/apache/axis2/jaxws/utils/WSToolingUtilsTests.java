@@ -24,16 +24,51 @@ import junit.framework.TestCase;
 
 
 public class WSToolingUtilsTests extends TestCase {
+    /**
+     * Any string containing a version of 2.1.6 or later should return true.
+     */
     public void testisValidVersion(){
+        
+        // Should pass version check
         String wsGenVersion = "JAX-WS RI 2.2-b05-";
         assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
         wsGenVersion = "2.1.6";
         assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.1.6.4";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        
+        // Shouldn't pass version check
         wsGenVersion = "2.1.0";
+        assertFalse(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.1";
         assertFalse(WSToolingUtils.isValidVersion(wsGenVersion));
         wsGenVersion = "2.0.6";
         assertFalse(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.0";
+        assertFalse(WSToolingUtils.isValidVersion(wsGenVersion));
         wsGenVersion = "1.1.6";
         assertFalse(WSToolingUtils.isValidVersion(wsGenVersion));        
+        wsGenVersion = "2.0-11";
+        assertFalse(WSToolingUtils.isValidVersion(wsGenVersion));
+
+        // Should pass version check
+        wsGenVersion = "2.7";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.10";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.1.60";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.2.1";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "3";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "3.2";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.2.1.7";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "2.2-11";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
+        wsGenVersion = "10.2";
+        assertTrue(WSToolingUtils.isValidVersion(wsGenVersion));
     }
 }

@@ -141,6 +141,13 @@ public class WSToolingUtils {
         return cl;
     }
 
+    /**
+     * Answer if the input version number is 2.1.6 or later.  Version 2.1.6 is the Sun RI version that changed
+     * the WebMethod annotation semantics.
+     * 
+     * @param wsGenVersion A version number separated by "."  Up to the first 3 values will be checked.
+     * @return true if the version number is 2.1.6 or later, false otherwise.
+     */
     public static boolean isValidVersion(String wsGenVersion) {
         if(log.isDebugEnabled()){
             log.debug("Start isValidVersion(String)");
@@ -162,66 +169,98 @@ public class WSToolingUtils {
          * we return false if version is less that 2.1.6.
          * possible input version strings could be "JAX-WS RI 2.2-b05-", "2.1.6" "2.1.0" etc.
          */
-        // Beginning of reuseable code
-        final int VERSION_FIELD_1 = 2;
-        final int VERSION_FIELD_2 = 1;
-        final int VERSION_FIELD_3 = 6;
+        
+        // Minimum version required is 2.1.6
+        final int minimumVersionRequired[] = {2, 1, 6};
 
         String version = wsGenVersion.trim();
         
         StringTokenizer st = new StringTokenizer(version, ".");
-        if(st.countTokens()<=0){
+        if(st.countTokens() <= 0){
             if(log.isDebugEnabled()){
                 log.debug("No Tokens to validate the tooling version, Input version String is invalid.");
             }
             return false;
         }
-        for(int tokenCnt = 1;st.hasMoreTokens();tokenCnt++){
+        
+        // Check up to as many version values as we have values in the minimum required version
+        boolean lastCheckEqual = false;
+        int tokenCnt = 0;
+
+        for( ; tokenCnt < minimumVersionRequired.length && st.hasMoreTokens(); tokenCnt++) {
             String token = st.nextToken();
             if(token == null){
                 return false;
             }
-            int versionNumber = getDigit(token);
-            if (tokenCnt==1 && versionNumber < VERSION_FIELD_1) {
+            int versionNumber = getIntegerValue(token);
+            int minimumVersionNumber = minimumVersionRequired[tokenCnt];
+            
+            if (versionNumber < minimumVersionNumber) {
+                // The version number is too low, so it is invalid
                 if(log.isDebugEnabled()){
-                    log.debug("Validation failed of tokenCnt="+tokenCnt);
-                    log.debug("Input VersionNumber ="+versionNumber);
+                    log.debug("Validation failed on tokenCnt = " + tokenCnt);
+                    log.debug("Input VersionNumber =" + versionNumber);
+                    log.debug("Minimum Version Number required = " + minimumVersionNumber);
                 }
                 return false;
-            } 
-            if(tokenCnt == 2 && versionNumber < VERSION_FIELD_2 ){  
+            } else if (versionNumber > minimumVersionNumber) {
+                // The version number is higher than required, so it passes validation.
                 if(log.isDebugEnabled()){
-                    log.debug("Validation failed of tokenCnt="+tokenCnt);
-                    log.debug("Input VersionNumber ="+versionNumber);
+                    log.debug("Validation passed on tokenCnt = " + tokenCnt);
+                    log.debug("Input VersionNumber = " + versionNumber);
+                    log.debug("Minimum Version Number required = " + minimumVersionNumber);
                 }
-                return false;
-            } 
-            if (tokenCnt==3 && versionNumber < VERSION_FIELD_3) {
+                return true;
+            } else {
+                // The version number sub-value matches exactly, so we need to check the next sub-value.s
                 if(log.isDebugEnabled()){
-                    log.debug("Validation failed of tokenCnt="+tokenCnt);
-                    log.debug("Input VersionNumber ="+versionNumber);
+                    log.debug("Validation unresolved on tokenCnt = " + tokenCnt);
+                    log.debug("Input VersionNumber = " + versionNumber);
+                    log.debug("Minimum Version Number required = " + minimumVersionNumber);
                 }
-                return false;
-            } 
+                lastCheckEqual = true;
+                continue;
+            }
         }
         if(log.isDebugEnabled()){
             log.debug("Exit isValidVersion(String)");
         }
-
+        // If the version numbers we checked so far were equal to the minimum version BUT it was shorter
+        // in length, then return false.  For example if the input is "2.1", that is actually "2.1.0"
+        // which would be less than "2.1.6".
+        if (lastCheckEqual && tokenCnt < minimumVersionRequired.length) {
+            return false;
+        } 
         return true;
     }
+    
     /**
-     * look for first digit in the version token.
-     * @param s - version token.
-     * @return a digit or -1 if not digit found in the token.
+     * Parse the input string and return an integer value based on it.  It will look for the first numeric value
+     * in the string then use all digits up to the next non-numeric value or end of the string as the basis for
+     * the value.  For example "JAX-WS RI 27" will return the value 27.
+     * @param s - String containing the integer to be returned.
+     * @return a value or -1 if not integer value was found in the token.
      */
-    private static int getDigit(String s){
-        for(int i=0;i<s.length();i++){
+    private static int getIntegerValue(String s){
+        int returnValue = -1;
+
+        // Build up a buffer containing any digits up to the first non-numeric character.
+        StringBuffer valueString = new StringBuffer();
+        for(int i = 0; i < s.length(); i++){
             char ch = s.charAt(i);
             if(Character.isDigit(ch)){
-                return Character.getNumericValue(ch);
+                valueString.append(Character.getNumericValue(ch));
+            } else if (valueString.length() > 0){
+                // We've found some numbers then encountered the first non-numeric value, so
+                // exit the loop and use those numbers as the value
+                break;
             }
         }
-        return -1;
+        
+        // If there were any numeric values found in the string, convert them to the integer return value
+        if (valueString.length() > 0) {
+            returnValue = Integer.valueOf(valueString.toString());
+        }
+        return returnValue;
     }
 }
