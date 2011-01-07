@@ -29,6 +29,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -185,7 +186,15 @@ public class ServiceDeployer extends AbstractDeployer {
                 fileName = serviceHierarchy + fileName;
             }
             AxisServiceGroup serviceGroup = axisConfig.removeServiceGroup(fileName);
+            //Fixed - https://issues.apache.org/jira/browse/AXIS2-4610
             if (serviceGroup != null) {
+                for (Iterator services = serviceGroup.getServices(); services.hasNext();) {
+                AxisService axisService = (AxisService) services.next();
+                ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+                if (serviceLifeCycle != null) {
+                    serviceLifeCycle.shutDown(configCtx, axisService);
+                }
+            }
                 configCtx.removeServiceGroupContext(serviceGroup);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                         fileName));
