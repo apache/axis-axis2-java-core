@@ -52,6 +52,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -517,6 +518,10 @@ public class AxisServlet extends HttpServlet {
         } catch (Exception e) {
             log.info(e.getMessage());
         }
+        // AXIS2-4898: MultiThreadedHttpConnectionManager starts a thread that is not stopped by the
+        // shutdown of the connection manager. If we want to avoid a resource leak, we need to call
+        // shutdownAll here.
+        MultiThreadedHttpConnectionManager.shutdownAll();
     }
 
     /**
