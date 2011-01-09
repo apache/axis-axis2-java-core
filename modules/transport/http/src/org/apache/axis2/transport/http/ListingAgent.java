@@ -27,8 +27,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.util.OnDemandLogger;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyRegistry;
 
@@ -48,7 +47,7 @@ import java.util.List;
 
 public class ListingAgent extends AbstractAgent {
 
-    private static final Log log = LogFactory.getLog(ListingAgent.class);
+    private static final OnDemandLogger log = new OnDemandLogger(ListingAgent.class);
 
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
             "listServices.jsp";

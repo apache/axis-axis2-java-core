@@ -30,8 +30,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.util.OnDemandLogger;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +38,7 @@ import java.util.List;
 
 public class ListenerManager {
 
-    private static final Log log = LogFactory.getLog(ListenerManager.class);
+    private static final OnDemandLogger log = new OnDemandLogger(ListenerManager.class);
 
     public static ConfigurationContext defaultConfigurationContext;
     protected ListenerManagerShutdownThread shutdownHookThread = null;

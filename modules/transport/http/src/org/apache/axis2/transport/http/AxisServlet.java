@@ -50,8 +50,7 @@ import org.apache.axis2.transport.http.util.QueryStringParser;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.util.OnDemandLogger;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 
 import javax.servlet.ServletConfig;
@@ -88,7 +87,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class AxisServlet extends HttpServlet {
 
-    private static final Log log = LogFactory.getLog(AxisServlet.class);
+    static final OnDemandLogger log = new OnDemandLogger(AxisServlet.class);
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
     

@@ -30,16 +30,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.context.Replicator;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.OnDemandLogger;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This is the top most level of the Context hierarchy and is a bag of properties.
  */
 public abstract class AbstractContext {
 
-    private static final Log log = LogFactory.getLog(AbstractContext.class);
+    private static final OnDemandLogger log = new OnDemandLogger(AbstractContext.class);
     
     private static final int DEFAULT_MAP_SIZE = 64;
     private static boolean DEBUG_ENABLED = log.isTraceEnabled();

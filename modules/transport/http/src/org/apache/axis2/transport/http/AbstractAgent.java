@@ -21,8 +21,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.util.OnDemandLogger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +41,7 @@ public class AbstractAgent {
     protected static final String DEFAULT_INDEX_JSP = "index.jsp";
 
     private static final String METHOD_PREFIX = "process";
-    private static final Log log = LogFactory.getLog(AbstractAgent.class);
+    private static final OnDemandLogger log = new OnDemandLogger(AbstractAgent.class);
 
     protected transient Map operationCache = new HashMap();
     protected transient ConfigurationContext configContext;
