@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.io.BufferedReader;
 
 /**
  * JSONDataSource keeps the JSON String inside and consumes it when needed. This is to be kept in
@@ -169,12 +170,13 @@ public abstract class AbstractJSONDataSource implements OMDataSource {
             return jsonString;
         } else {
             try {
-                char temp = (char)jsonReader.read();
-                // use a buffer to support long json strings better..
-                StringBuilder sb = new StringBuilder(100);
-                while ((int)temp != 65535) {
-                    sb.append(temp);
-                    temp = (char)jsonReader.read();
+                BufferedReader br = new BufferedReader(jsonReader);
+                StringBuilder sb = new StringBuilder(512);
+                char[] tempBuf = new char[512];
+                int readLen;
+
+                while((readLen = br.read(tempBuf)) != -1) {
+                    sb.append(tempBuf, 0, readLen);
                 }
                 jsonString = sb.toString();
             } catch (IOException e) {
