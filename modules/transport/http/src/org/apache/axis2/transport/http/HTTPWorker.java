@@ -24,6 +24,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportUtils;
@@ -32,6 +33,7 @@ import org.apache.axis2.transport.http.server.AxisHttpResponse;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.Worker;
 import org.apache.axis2.transport.http.util.RESTUtil;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;
@@ -118,9 +120,14 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    response.setStatus(HttpStatus.SC_OK);
-                    response.setContentType("text/xml");
-                    service.printWSDL2(response.getOutputStream(), getHost(request));
+                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
+                    if (canExposeServiceMetadata) {
+                        response.setStatus(HttpStatus.SC_OK);
+                        response.setContentType("text/xml");
+                        service.printWSDL2(response.getOutputStream(), getHost(request));
+                    } else {
+                        response.setStatus(HttpStatus.SC_FORBIDDEN);
+                    }
                     return;
                 }
             }
@@ -135,9 +142,14 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    response.setStatus(HttpStatus.SC_OK);
-                    response.setContentType("text/xml");
-                    service.printWSDL(response.getOutputStream(), getHost(request));
+                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
+                    if (canExposeServiceMetadata) {
+                        response.setStatus(HttpStatus.SC_OK);
+                        response.setContentType("text/xml");
+                        service.printWSDL(response.getOutputStream(), getHost(request));
+                    } else {
+                        response.setStatus(HttpStatus.SC_FORBIDDEN);
+                    }
                     return;
                 }
             }
@@ -146,9 +158,14 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    response.setStatus(HttpStatus.SC_OK);
-                    response.setContentType("text/xml");
-                    service.printSchema(response.getOutputStream());
+                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
+                    if (canExposeServiceMetadata) {
+                        response.setStatus(HttpStatus.SC_OK);
+                        response.setContentType("text/xml");
+                        service.printSchema(response.getOutputStream());
+                    } else {
+                        response.setStatus(HttpStatus.SC_FORBIDDEN);
+                    }
                     return;
                 }
             }
@@ -163,6 +180,11 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
+                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
+                    if (!canExposeServiceMetadata) {
+                        response.setStatus(HttpStatus.SC_FORBIDDEN);
+                        return;
+                    }
                     //run the population logic just to be sure
                     service.populateSchemaMappings();
                     //write out the correct schema
@@ -330,6 +352,22 @@ public class HTTPWorker implements Worker {
             // The response may be ack'd, mark the status as accepted.
             response.setStatus(HttpStatus.SC_ACCEPTED);
         }
+    }
+
+    /**
+     * Checks whether exposing the WSDL & WSDL elements such as schema & policy have been allowed
+     *
+     * @param service  The AxisService which needs to be verified
+     * @throws IOException If exposing WSDL & WSDL elements has been restricted.
+     * @return true - if service metadata can be exposed, false - otherwise
+     */
+    private boolean canExposeServiceMetadata(AxisService service) throws IOException {
+        Parameter exposeServiceMetadata = service.getParameter("exposeServiceMetadata");
+        if (exposeServiceMetadata != null &&
+            JavaUtils.isFalseExplicitly(exposeServiceMetadata.getValue())) {
+            return false;
+        }
+        return true;
     }
 
     private boolean processInternalWSDL(String uri, ConfigurationContext configurationContext, 

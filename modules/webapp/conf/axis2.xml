@@ -26,13 +26,23 @@
     <parameter name="enableMTOM">false</parameter>
     <parameter name="enableSwA">false</parameter>
 
-
-    <parameter name="EnableChildFirstClassLoading">false</parameter>
-
     <!--Uncomment if you want to enable file caching for attachments -->
     <!--parameter name="cacheAttachments">true</parameter>
     <parameter name="attachmentDIR"></parameter>
     <parameter name="sizeThreshold">4000</parameter-->
+
+    <parameter name="EnableChildFirstClassLoading">false</parameter>
+
+     <!--
+       The exposeServiceMetadata parameter decides whether the metadata (WSDL, schema, policy) of
+       the services deployed on Axis2 should be visible when ?wsdl, ?wsdl2, ?xsd, ?policy requests
+       are received.
+       This parameter can be defined in the axi2.xml file, in which case this will be applicable
+       globally, or in the services.xml files, in which case, it will be applicable to the
+       Service groups and/or services, depending on the level at which the parameter is declared.
+       This value of this parameter defaults to true.
+    -->
+    <parameter name="exposeServiceMetadata">true</parameter>
 
     <!--Uncomment if you want to plugin your own attachments lifecycle implementation -->
     <!--<attachmentsLifecycleManager class="org.apache.axiom.attachments.lifecycle.impl.LifecycleManagerImpl"/>-->

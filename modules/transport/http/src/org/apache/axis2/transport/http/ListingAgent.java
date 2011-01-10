@@ -28,6 +28,7 @@ import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.IOUtils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.OnDemandLogger;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyRegistry;
@@ -176,137 +177,191 @@ public class ListingAgent extends AbstractAgent {
             if (serviceObj != null) {
                 AxisService axisService = (AxisService) serviceObj;
                 if (wsdl2 >= 0) {
-                    res.setContentType("text/xml");
-                    String ip = extractHost(url);
-                    String wsdlName = req.getParameter("wsdl2");
-                    
-                    int ret = axisService.printWSDL2(res.getOutputStream(), ip, wsdlName);
-                    if (ret == 0) {
-                        res.sendRedirect("");
-                    } else if (ret == -1) {
-                        res.sendError(HttpServletResponse.SC_NOT_FOUND);
-                    }
+                    handleWSDL2Request(req, res, url, axisService);
                     return;
                 } else if (wsdl >= 0) {
-                    OutputStream out = res.getOutputStream();
-                    res.setContentType("text/xml");
-                    String ip = extractHost(url);
-                    String wsdlName = req.getParameter("wsdl");
-
-                    if (wsdlName != null && wsdlName.length()>0) {
-                        axisService.printUserWSDL(out, wsdlName, ip);
-                    } else {
-                        axisService.printWSDL(out, ip);
-                    }
+                    handleWSDLRequest(req, res, url, axisService);
                     return;
                 } else if (xsd >= 0) {
-                    res.setContentType("text/xml");
-                    int ret = axisService.printXSD(res.getOutputStream(), req.getParameter("xsd"));
-                    if (ret == 0) {
-                        //multiple schemas are present and the user specified
-                        //no name - in this case we cannot possibly pump a schema
-                        //so redirect to the service root
-                        res.sendRedirect("");
-                    } else if (ret == -1) {
-                        res.sendError(HttpServletResponse.SC_NOT_FOUND);
-                    }
+                    handleXSDRequest(req, res, axisService);
                     return;
                 } else if (policy >= 0) {
-
-                    ExternalPolicySerializer serializer = new ExternalPolicySerializer();
-                    serializer.setAssertionsToFilter(configContext
-                            .getAxisConfiguration().getLocalPolicyAssertions());
-
-                    // check whether Id is set
-                    String idParam = req.getParameter("id");
-
-                    if (idParam != null) {
-                        // Id is set
-
-                        Policy targetPolicy = findPolicy(idParam, axisService);
-
-                        if (targetPolicy != null) {
-                            XMLStreamWriter writer;
-
-                            try {
-                                OutputStream out = res.getOutputStream();
-                                writer = XMLOutputFactory.newInstance()
-                                        .createXMLStreamWriter(out);
-
-                                res.setContentType("application/wspolicy+xml");
-                                targetPolicy.serialize(writer);
-                                writer.flush();
-
-                            } catch (XMLStreamException e) {
-                                throw new ServletException(
-                                        "Error occured when serializing the Policy",
-                                        e);
-
-                            } catch (FactoryConfigurationError e) {
-                                throw new ServletException(
-                                        "Error occured when serializing the Policy",
-                                        e);
-                            }
-
-                        } else {
-
-                            OutputStream out = res.getOutputStream();
-                            res.setContentType("text/html");
-                            String outStr = "<b>No policy found for id="
-                                            + idParam + "</b>";
-                            out.write(outStr.getBytes());
-                        }
-
-                    } else {
-
-                        PolicyInclude policyInclude = axisService.getPolicyInclude();
-                        Policy effecPolicy = policyInclude.getEffectivePolicy();
-
-                        if (effecPolicy != null) {
-                            XMLStreamWriter writer;
-
-                            try {
-                                OutputStream out = res.getOutputStream();
-                                writer = XMLOutputFactory.newInstance()
-                                        .createXMLStreamWriter(out);
-
-                                res.setContentType("application/wspolicy+xml");
-                                effecPolicy.serialize(writer);
-                                writer.flush();
-
-                            } catch (XMLStreamException e) {
-                                throw new ServletException(
-                                        "Error occured when serializing the Policy",
-                                        e);
-
-                            } catch (FactoryConfigurationError e) {
-                                throw new ServletException(
-                                        "Error occured when serializing the Policy",
-                                        e);
-                            }
-                        } else {
-
-                            OutputStream out = res.getOutputStream();
-                            res.setContentType("text/html");
-                            String outStr = "<b>No effective policy for "
-                                            + serviceName + " service</b>";
-                            out.write(outStr.getBytes());
-                        }
-                    }
-
+                    handlePolicyRequest(req, res, serviceName, axisService);
                     return;
                 } else {
-                    req.getSession().setAttribute(Constants.SINGLE_SERVICE,
-                            serviceObj);
+                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
                 }
             } else {
                 req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
-                    
                 res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
             }
         }
 
         renderView(LIST_SINGLE_SERVICE_JSP_NAME, req, res);
+    }
+
+    private void handlePolicyRequest(HttpServletRequest req,
+                                     HttpServletResponse res,
+                                     String serviceName,
+                                     AxisService axisService) throws IOException, ServletException {
+        if (!canExposeServiceMetadata(axisService)){
+            res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        ExternalPolicySerializer serializer = new ExternalPolicySerializer();
+        serializer.setAssertionsToFilter(configContext
+                .getAxisConfiguration().getLocalPolicyAssertions());
+
+        // check whether Id is set
+        String idParam = req.getParameter("id");
+
+        if (idParam != null) {
+            // Id is set
+
+            Policy targetPolicy = findPolicy(idParam, axisService);
+
+            if (targetPolicy != null) {
+                XMLStreamWriter writer;
+
+                try {
+                    OutputStream out = res.getOutputStream();
+                    writer = XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(out);
+
+                    res.setContentType("application/wspolicy+xml");
+                    targetPolicy.serialize(writer);
+                    writer.flush();
+
+                } catch (XMLStreamException e) {
+                    throw new ServletException(
+                            "Error occured when serializing the Policy",
+                            e);
+
+                } catch (FactoryConfigurationError e) {
+                    throw new ServletException(
+                            "Error occured when serializing the Policy",
+                            e);
+                }
+
+            } else {
+
+                OutputStream out = res.getOutputStream();
+                res.setContentType("text/html");
+                String outStr = "<b>No policy found for id="
+                                + idParam + "</b>";
+                out.write(outStr.getBytes());
+            }
+
+        } else {
+
+            PolicyInclude policyInclude = axisService.getPolicyInclude();
+            Policy effecPolicy = policyInclude.getEffectivePolicy();
+
+            if (effecPolicy != null) {
+                XMLStreamWriter writer;
+
+                try {
+                    OutputStream out = res.getOutputStream();
+                    writer = XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(out);
+
+                    res.setContentType("application/wspolicy+xml");
+                    effecPolicy.serialize(writer);
+                    writer.flush();
+
+                } catch (XMLStreamException e) {
+                    throw new ServletException(
+                            "Error occured when serializing the Policy",
+                            e);
+
+                } catch (FactoryConfigurationError e) {
+                    throw new ServletException(
+                            "Error occured when serializing the Policy",
+                            e);
+                }
+            } else {
+
+                OutputStream out = res.getOutputStream();
+                res.setContentType("text/html");
+                String outStr = "<b>No effective policy for "
+                                + serviceName + " service</b>";
+                out.write(outStr.getBytes());
+            }
+        }
+    }
+
+    private void handleXSDRequest(HttpServletRequest req, HttpServletResponse res,
+                                  AxisService axisService) throws IOException {
+        if (!canExposeServiceMetadata(axisService)){
+            res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        res.setContentType("text/xml");
+        int ret = axisService.printXSD(res.getOutputStream(), req.getParameter("xsd"));
+        if (ret == 0) {
+            //multiple schemas are present and the user specified
+            //no name - in this case we cannot possibly pump a schema
+            //so redirect to the service root
+            res.sendRedirect("");
+        } else if (ret == -1) {
+            res.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    private void handleWSDLRequest(HttpServletRequest req,
+                                   HttpServletResponse res,
+                                   String url,
+                                   AxisService axisService) throws IOException {
+        if (!canExposeServiceMetadata(axisService)){
+            res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        OutputStream out = res.getOutputStream();
+        res.setContentType("text/xml");
+        String ip = extractHost(url);
+        String wsdlName = req.getParameter("wsdl");
+
+        if (wsdlName != null && wsdlName.length()>0) {
+            axisService.printUserWSDL(out, wsdlName, ip);
+        } else {
+            axisService.printWSDL(out, ip);
+        }
+    }
+
+    private void handleWSDL2Request(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    String url,
+                                    AxisService axisService) throws IOException {
+        if (!canExposeServiceMetadata(axisService)){
+            res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        res.setContentType("text/xml");
+        String ip = extractHost(url);
+        String wsdlName = req.getParameter("wsdl2");
+
+        int ret = axisService.printWSDL2(res.getOutputStream(), ip, wsdlName);
+        if (ret == 0) {
+            res.sendRedirect("");
+        } else if (ret == -1) {
+            res.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    /**
+     * Checks whether exposing the WSDL & WSDL elements such as schema & policy have been allowed
+     *
+     * @param service  The AxisService which needs to be verified
+     * @throws IOException If exposing WSDL & WSDL elements has been restricted.
+     * @return true - if service metadata can be exposed, false - otherwise
+     */
+    private boolean canExposeServiceMetadata(AxisService service) {
+        Parameter exposeServiceMetadata = service.getParameter("exposeServiceMetadata");
+        if(exposeServiceMetadata != null &&
+           JavaUtils.isFalseExplicitly(exposeServiceMetadata.getValue())) {
+           return false;
+        }
+        return true;
     }
 
     protected void processListServices(HttpServletRequest req,
