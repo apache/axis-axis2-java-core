@@ -54,6 +54,10 @@
             <param-name>SOAPMonitorPort</param-name>
             <param-value>5001</param-value>
         </init-param>
+        <init-param>
+            <param-name>SOAPMonitorHostName</param-name>
+            <param-value>localhost</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet -->
     
