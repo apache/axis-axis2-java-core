@@ -1282,8 +1282,8 @@ public class ConverterUtil {
      * @param value
      * @return 0 if equal , + value if greater than , - value if less than
      */
-    public static int compare(BigInteger binBigInteger, String value) {
-        return binBigInteger.intValue() - Integer.parseInt(value);
+    public static long compare(BigInteger binBigInteger, String value) {
+        return binBigInteger.longValue() - Long.parseLong(value);
     }
 
     /**
