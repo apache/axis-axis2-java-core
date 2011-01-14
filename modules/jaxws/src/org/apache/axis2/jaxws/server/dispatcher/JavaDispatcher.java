@@ -300,11 +300,23 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                                                  MessageContext response) {
          AxisOperation operation = request.getOperationDescription().getAxisOperation();
          if (operation != null) {
-             exception = ClassUtils.getRootCause(exception);        
-             String action = operation.getFaultAction(exception.getClass().getName());
-             
-             if (action != null)
+             exception = ClassUtils.getRootCause(exception);
+             String className = exception.getClass().getName();
+             String action = operation.getFaultAction(className);
+             if (action == null) {
+                 className = className.substring((className.lastIndexOf('.'))+1);
+                 action = operation.getFaultAction(className);
+             }
+             if (log.isDebugEnabled()) {
+                 for(String faultActionName : operation.getFaultActionNames())
+                     log.debug("Fault action map entry: key = "  + faultActionName + ", value = " + operation.getFaultAction(faultActionName));
+             }
+             if (action != null) {
+                 if (log.isDebugEnabled()) {
+                     log.debug("Setting fault action " + action + " for Exception: "+className);
+                 }
                  response.getAxisMessageContext().setWSAAction(action);
+             }
          }
     }
     

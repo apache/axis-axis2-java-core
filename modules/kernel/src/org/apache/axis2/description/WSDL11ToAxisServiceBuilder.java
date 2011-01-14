@@ -1545,6 +1545,37 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (action != null) {
                 axisOperation.addFaultAction(fault.getName(), action);
             }
+            
+            // Also add mapping from Exception name to fault action
+            String faultMessageName = axisFaultMessage.getName();
+            if (null != faultMessageName) {
+                char firstChar = faultMessageName.charAt(0);
+                String upperChar = String.valueOf(firstChar).toUpperCase();
+                String nameWithoutFirstChar = faultMessageName.substring(1);
+                String exceptionClassName = upperChar.concat(nameWithoutFirstChar);
+                if (log.isDebugEnabled()) {
+                    log.debug("Searching for fault action using faultMessageName = "+faultMessageName+", exceptionClassName = "+exceptionClassName);
+                }
+            
+                String faultAction = axisOperation.getFaultAction(exceptionClassName);
+                if (faultAction == null) {
+                    faultAction = WSDL11ActionHelper.getActionFromFaultElement(dif,
+                                                                          wsdl4jPortType,
+                                                                          wsdl4jOperation, fault);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Fault action didn't previously exist, getting it from WSDL: "+faultAction);
+                    }
+                }
+                if (faultAction != null) {
+                    axisOperation.addFaultAction(exceptionClassName, faultAction);
+                    axisOperation.addFaultAction(exceptionClassName+"_Exception", faultAction);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding fault action entry: "+exceptionClassName+"="+faultAction);
+                        log.debug("Adding fault action entry: "+exceptionClassName+"_Exception"+"="+faultAction);
+                    }
+                }
+            }
+            
             axisOperation.setFaultMessages(axisFaultMessage);
         }
         return axisOperation;

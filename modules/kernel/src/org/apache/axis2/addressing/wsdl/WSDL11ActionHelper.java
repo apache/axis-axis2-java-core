@@ -63,7 +63,7 @@ public class WSDL11ActionHelper {
     public static String getActionFromInputElement(Definition def, PortType wsdl4jPortType,
                                                    Operation op, Input input) {
         String result = getWSAWActionExtensionAttribute(input);
-        if (result == null) {
+        if (result == null || result.equals("")) {
             result = WSDL11DefaultActionPatternHelper
                     .generateActionFromInputElement(def, wsdl4jPortType, op, input);
         }
@@ -83,7 +83,7 @@ public class WSDL11ActionHelper {
     public static String getActionFromOutputElement(Definition def, PortType wsdl4jPortType,
                                                     Operation op, Output output) {
         String result = getWSAWActionExtensionAttribute(output);
-        if (result == null) {
+        if (result == null || result.equals("")) {
             result = WSDL11DefaultActionPatternHelper
                     .generateActionFromOutputElement(def, wsdl4jPortType, op, output);
         }
@@ -103,7 +103,7 @@ public class WSDL11ActionHelper {
     public static String getActionFromFaultElement(Definition def, PortType wsdl4jPortType,
                                                    Operation op, Fault fault) {
         String result = getWSAWActionExtensionAttribute(fault);
-        if (result == null) {
+        if (result == null || result.equals("")) {
             result = WSDL11DefaultActionPatternHelper
                     .generateActionFromFaultElement(def, wsdl4jPortType, op, fault);
         }
