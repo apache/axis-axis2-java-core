@@ -381,7 +381,6 @@ public class JavaClassToDBCConverter {
             webFaultAnnot.setFaultBean(webFault.faultBean());
             webFaultAnnot.setName(webFault.name());
             webFaultAnnot.setTargetNamespace(webFault.targetNamespace());
-            webFaultAnnot.setMessageName(webFault.messageName());
             composite.setWebFaultAnnot(webFaultAnnot);
         }
     }
