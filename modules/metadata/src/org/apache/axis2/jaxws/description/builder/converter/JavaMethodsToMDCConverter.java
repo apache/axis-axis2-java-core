@@ -199,6 +199,7 @@ public class JavaMethodsToMDCConverter {
             rwAnnot.setClassName(requestWrapper.className());
             rwAnnot.setLocalName(requestWrapper.localName());
             rwAnnot.setTargetNamespace(requestWrapper.targetNamespace());
+            rwAnnot.setPartName(requestWrapper.partName());
             mdc.setRequestWrapperAnnot(rwAnnot);
         }
     }
@@ -219,6 +220,7 @@ public class JavaMethodsToMDCConverter {
             rwAnnot.setClassName(responseWrapper.className());
             rwAnnot.setLocalName(responseWrapper.localName());
             rwAnnot.setTargetNamespace(responseWrapper.targetNamespace());
+            rwAnnot.setPartName(responseWrapper.partName());
             mdc.setResponseWrapperAnnot(rwAnnot);
         }
     }
