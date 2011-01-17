@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.description.builder.ResponseWrapperAnnot;
 import org.apache.axis2.jaxws.description.builder.WebEndpointAnnot;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.builder.WebResultAnnot;
+import sun.reflect.generics.reflectiveObjects.GenericArrayTypeImpl;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -346,8 +347,10 @@ public class JavaMethodsToMDCConverter {
             mdc.setReturnType(fullType);
         } else if (type instanceof Class) {
             mdc.setReturnType(((Class)type).getName());
-		}
-	}
+        } else if (type instanceof GenericArrayTypeImpl) {
+            mdc.setReturnType(type.getClass().getName());
+        }
+    }
     
     private void setIsListType(MethodDescriptionComposite mdc, Method method) {
         mdc.setIsListType(ConverterUtils.hasXmlListAnnotation(method.getAnnotations()));
