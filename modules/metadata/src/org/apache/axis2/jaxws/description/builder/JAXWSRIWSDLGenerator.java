@@ -39,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import javax.servlet.ServletConfig;
@@ -47,6 +48,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.ByteArrayOutputStream;
@@ -321,9 +323,18 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             schemaCollection.setBaseUri(new File(localOutputDirectory).getAbsolutePath());
 
             HashMap<String, XmlSchema> docMap = new HashMap<String, XmlSchema>();
+
+            // Doc factory to read schema files
+            DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+            fac.setNamespaceAware(true);
+
             List<File> schemaFiles = getSchemaFiles(localOutputDirectory);
             for (File schemaFile : schemaFiles) {
-                XmlSchema doc = schemaCollection.read(new InputSource(schemaFile.toURL().toString()), null);
+                // generate dom document for current schema file
+                Document parsedDoc = fac.newDocumentBuilder().parse(schemaFile.toURL().toString());
+                // read the schema through XmlSchema
+                XmlSchema doc = schemaCollection.read(parsedDoc.getDocumentElement(),
+                        "id-" + System.currentTimeMillis());
                 if (log.isDebugEnabled()) {
                     log.debug("Read in schema file: " + schemaFile.getName());
                 }
