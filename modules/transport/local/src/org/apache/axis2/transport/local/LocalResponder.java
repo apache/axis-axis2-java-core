@@ -79,9 +79,7 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
 
         try {
             if (log.isDebugEnabled()) {
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                TransportUtils.writeMessage(msgContext, os);
-                log.debug("Response - " + new String(os.toByteArray()));
+                log.debug("Response - " + msgContext.getEnvelope().toString());
             }
 
             if (epr != null) {

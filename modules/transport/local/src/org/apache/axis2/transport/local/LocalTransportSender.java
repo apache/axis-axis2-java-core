@@ -67,9 +67,7 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
         EndpointReference epr = msgContext.getTo();
 
         if (log.isDebugEnabled()) {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            TransportUtils.writeMessage(msgContext, os);
-            log.debug("Sending - " + new String(os.toByteArray()));
+            log.debug("Sending - " + msgContext.getEnvelope().toString());
         }
 
         if (epr != null) {
