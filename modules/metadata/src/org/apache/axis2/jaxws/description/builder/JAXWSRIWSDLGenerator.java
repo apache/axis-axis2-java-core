@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
@@ -334,7 +335,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                 Document parsedDoc = fac.newDocumentBuilder().parse(schemaFile.toURL().toString());
                 // read the schema through XmlSchema
                 XmlSchema doc = schemaCollection.read(parsedDoc.getDocumentElement(),
-                        "id-" + System.currentTimeMillis());
+                        UIDGenerator.generateUID());
                 if (log.isDebugEnabled()) {
                     log.debug("Read in schema file: " + schemaFile.getName());
                 }
