@@ -190,7 +190,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
         catch (Throwable t) {
             String msg =
                     "Error occurred generating WSDL file for Web service implementation class " +
-                            "{" + className + "}: {" + t + "}";
+                            "{" + className + "}";
             log.error(msg, t);
             throw new WebServiceException(msg, t);
         }
@@ -258,14 +258,14 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                 }
                 catch (WSDLException e) {
                     String msg = "Error occurred while attempting to create Definition from " +
-                            "generated WSDL file {" + wsdlFile.getName() + "}: {" + e + "}";
-                    log.error(msg);
+                            "generated WSDL file {" + wsdlFile.getName() + "}";
+                    log.error(msg, e);
                     throw new Exception(msg);
                 }
                 catch (IOException e) {
                     String msg = "Error occurred while attempting to create Definition from " +
-                            "generated WSDL file  {" + wsdlFile.getName() + "}: {" + e + "}";
-                    log.error(msg);
+                            "generated WSDL file  {" + wsdlFile.getName() + "}";
+                    log.error(msg, e);
                     throw new Exception(msg);
                 }
             }
@@ -332,9 +332,8 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             return docMap;
         }
         catch (Exception e) {
-            String msg =
-                    "Error occurred while attempting to read generated schema file {" + e + "}";
-            log.error(msg);
+            String msg = "Error occurred while attempting to read generated schema file";
+            log.error(msg, e);
             throw new Exception(msg);
         }
     }
