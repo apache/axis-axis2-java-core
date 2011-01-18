@@ -49,8 +49,10 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class HandlerChainProcessor {
 
@@ -75,7 +77,7 @@ public class HandlerChainProcessor {
 
     // Copy of the handler chain used by HandlerChainProcessor
     private List<Handler> handlers = null;
-    private static final List<Handler> EMPTY_CHAIN = new ArrayList<Handler>(); 
+    private static final List<Handler> EMPTY_CHAIN = new ArrayList<Handler>(0); 
     
     // for tracking purposes -- see trackInternalCall
     private static Handler currentHandler = null;
@@ -123,8 +125,7 @@ public class HandlerChainProcessor {
                     // Use empty chain to avoid excessive garbage collection
                     this.handlers = EMPTY_CHAIN;
                 } else {
-                    this.handlers = new ArrayList<Handler>(); 
-                    this.handlers.addAll(chain);
+                    this.handlers = new CopyOnWriteArrayList<Handler>(chain); 
                 }
             }
         } else {
