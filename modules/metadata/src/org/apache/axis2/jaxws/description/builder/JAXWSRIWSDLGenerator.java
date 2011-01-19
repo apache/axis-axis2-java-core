@@ -156,11 +156,11 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                     " WsGen classpath: " +
                     classPath);
         }
-        String localOutputDirectory = tempFile.getAbsolutePath() + className;
+        String localOutputDirectory = tempFile.getAbsolutePath() + className
+                + "_" + axisService.getName();
         if (log.isDebugEnabled()) {
             log.debug("Output directory for generated WSDL file: " + localOutputDirectory);
         }
-        boolean errorOnRead = false;
         try {
 
             if (log.isDebugEnabled()) {
