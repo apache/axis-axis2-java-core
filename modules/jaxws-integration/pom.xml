@@ -1326,7 +1326,7 @@
                         <include>**/SoapMessageProviderTests.java</include>
                         <include>**/StringProviderTests.java</include>
                         <include>**/OMProviderTests.java</include>
-                        
+                        <include>**/CustomHTTPHeaderTests.java</include>
                        
                     </includes>
                     <systemProperties>

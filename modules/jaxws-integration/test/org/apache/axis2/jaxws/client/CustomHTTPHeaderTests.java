@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.client;
 
 import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class CustomHTTPHeaderTests extends AbstractTestCase {
     public void testPort() throws Exception {        
         Map<String, List<String>> headers = new HashMap<String, List<String>>();
         headers.put("MY_HEADER_1", Collections.singletonList("hello"));
-        // headers.put("MY_HEADER_2", Arrays.asList("value1", "value2"));
+        headers.put("MY_HEADER_2", Arrays.asList("value1", "value2"));
         
         AddNumbersService service = new AddNumbersService();
         AddNumbersPortType port = service.getAddNumbersPort();

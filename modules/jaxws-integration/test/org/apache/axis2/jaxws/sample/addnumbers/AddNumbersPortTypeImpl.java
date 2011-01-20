@@ -68,18 +68,16 @@ public class AddNumbersPortTypeImpl implements AddNumbersPortType {
 	        if (!values.contains("hello")) {
 	            throw new RuntimeException("MY_HEADER_1 HTTP header does not contain expected value: " + values);
 	        }
-	        
-            /*
+
             // test MY_HEADER_2
             values = (List<String>) headers.get("MY_HEADER_2");
             if (values == null || headers.isEmpty()) {
                 throw new RuntimeException("No values for MY_HEADER_2 HTTP header");
             }
-            if (!values.contains("values1") && !values.contains("values2")) {
+            if (!values.contains("value1") && !values.contains("value2")) {
                 throw new RuntimeException("MY_HEADER_2 HTTP header does not contain expected values: " + values);
             }
-            */	        	       
-	    }	    
+	    }
 	}
 
 	/* (non-Javadoc)
