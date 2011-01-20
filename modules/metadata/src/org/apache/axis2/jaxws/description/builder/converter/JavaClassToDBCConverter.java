@@ -122,7 +122,7 @@ public class JavaClassToDBCConverter {
                     // Also try to see if the SEI has any super interfaces  
                     Class[] interfaces = seiClass.getInterfaces();
                     for (int j = 0; j < interfaces.length; j++) {
-                        buildDBC(dbcMap, interfaces[i]);                            
+                        buildDBC(dbcMap, interfaces[j]);
                     }
                 }
                 catch (ClassNotFoundException e) {
