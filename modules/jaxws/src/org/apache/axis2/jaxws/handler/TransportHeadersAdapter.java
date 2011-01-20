@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -141,8 +142,10 @@ public class TransportHeadersAdapter implements Map {
         } else if (o instanceof List) {
             return (List) o;
         } else if (o instanceof String) {
-            List l = new ArrayList();
-            l.add(o);
+            String s = (String)o;
+            String[] values = s.split(", ");
+            List<String> l = new ArrayList<String>();
+            l.addAll(Arrays.asList(values));
             return l;
         } else {
             throw ExceptionFactory.makeWebServiceException(
@@ -160,8 +163,15 @@ public class TransportHeadersAdapter implements Map {
             List l = (List) o;
             if (l.size() == 0) {
                 return null;
-            } else if (l.size() == 1) {
-                return (String) l.get(0);
+            } else {
+                String s = "";
+                for (int i = 0 ; i < l.size() ; i++) {
+                    s += l.get(i);
+                    if (i != l.size() - 1) {
+                        s += ", ";
+                    }
+                }
+                return s;
             }
         }
         throw ExceptionFactory.makeWebServiceException(
@@ -182,7 +192,6 @@ public class TransportHeadersAdapter implements Map {
     }
 
     public boolean containsValue(Object value) {
-        // TODO Should walk all of the values to do this correctly.
         String valueString = convertToString(value);
         return getDelegateMap(mc).containsValue(valueString);
     }
