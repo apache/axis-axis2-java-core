@@ -23,12 +23,12 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.util.XMLComparator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
@@ -52,7 +52,6 @@ import java.util.List;
 public class AddressingOutHandlerTest extends XMLTestCase implements AddressingConstants {
     private AddressingOutHandler outHandler;
     private MessageContext msgCtxt;
-    private TestUtil testUtil;
 
     public AddressingOutHandlerTest(String testName) {
         super(testName);
@@ -61,7 +60,6 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
     protected void setUp() throws Exception {
         super.setUp();
         outHandler = new AddressingOutHandler();
-        testUtil = new TestUtil();
 
     }
 
@@ -106,7 +104,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         outHandler.invoke(msgCtxt);
 
-        StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("eprTest.xml");
+        OMXMLParserWrapper omBuilder = TestUtil.getOMBuilder("eprTest.xml");
 
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(omBuilder.getDocumentElement().toString(), defaultEnvelope.toString());
@@ -150,7 +148,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(msgCtxt.getEnvelope().toString(),
-                testUtil.getOMBuilder("OutHandlerTest.xml")
+                TestUtil.getOMBuilder("OutHandlerTest.xml")
                         .getDocumentElement().toString());
     }
 
@@ -194,7 +192,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(msgCtxt.getEnvelope().toString(),
-                testUtil.getOMBuilder("mustUnderstandTest.xml")
+                TestUtil.getOMBuilder("mustUnderstandTest.xml")
                         .getDocumentElement().toString());
     }
 
@@ -238,7 +236,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(msgCtxt.getEnvelope().toString(),
-                testUtil.getOMBuilder("soap11roleTest.xml").getDocumentElement().toString());
+                TestUtil.getOMBuilder("soap11roleTest.xml").getDocumentElement().toString());
     }
 
     public void testSOAP12RoleSupport() throws Exception {
@@ -281,7 +279,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(msgCtxt.getEnvelope().toString(),
-                testUtil.getOMBuilder("soap12roleTest.xml")
+                TestUtil.getOMBuilder("soap12roleTest.xml")
                         .getDocumentElement().toString());
     }
 
@@ -420,7 +418,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("addressingDisabledTest.xml")
                 .getDocumentElement().toString());   
     }
@@ -446,7 +444,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("addressingEnabledTest.xml")
                 .getDocumentElement().toString());   
     }
@@ -472,7 +470,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("withOptionalHeadersTest.xml")
                 .getDocumentElement().toString());   
     }
@@ -498,7 +496,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("addressingEnabledTest.xml")
                 .getDocumentElement().toString());   
     }
@@ -529,7 +527,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("addressingDisabledTest.xml")
                 .getDocumentElement().toString());
     }
@@ -562,7 +560,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("addressingEnabledTest.xml")
                 .getDocumentElement().toString());   
     }
@@ -595,7 +593,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("withOptionalHeadersTest.xml")
                 .getDocumentElement().toString());   
     }
@@ -628,7 +626,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(), testUtil
+        assertXMLEqual(msgCtxt.getEnvelope().toString(), TestUtil
                 .getOMBuilder("addressingEnabledTest.xml")
                 .getDocumentElement().toString());   
     }

@@ -19,32 +19,32 @@
 
 package org.apache.axis2.handlers.util;
 
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.soap.SOAPEnvelope;
 
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 
 public class TestUtil {
+    private TestUtil() {}
 
     protected static final String IN_FILE_NAME = "soapmessage.xml";
-    protected StAXSOAPModelBuilder builder;
-    protected String testResourceDir = System.getProperty("basedir", ".") + "/" + "test-resources";
+    protected static String testResourceDir = System.getProperty("basedir", ".") + "/" + "test-resources";
 
 
-    public StAXSOAPModelBuilder getOMBuilder(String fileName) throws Exception {
+    public static OMXMLParserWrapper getOMBuilder(String fileName) throws Exception {
         if ("".equals(fileName) || fileName == null) {
             fileName = IN_FILE_NAME;
         }
-        XMLStreamReader parser = StAXUtils
-                .createXMLStreamReader(
-                        new FileReader(getTestResourceFile(fileName)));
-        builder = new StAXSOAPModelBuilder(parser, null);
-        return builder;
+        return OMXMLBuilderFactory.createSOAPModelBuilder(new FileInputStream(getTestResourceFile(fileName)), null);
+    }
+    
+    public static SOAPEnvelope getSOAPEnvelope(String fileName) throws Exception {
+        return (SOAPEnvelope)getOMBuilder(fileName).getDocumentElement();
     }
 
-    protected File getTestResourceFile(String relativePath) {
+    protected static File getTestResourceFile(String relativePath) {
         return new File(testResourceDir, relativePath);
     }
 }

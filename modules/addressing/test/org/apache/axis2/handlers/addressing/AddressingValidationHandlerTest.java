@@ -20,7 +20,6 @@
 package org.apache.axis2.handlers.addressing;
 
 import junit.framework.TestCase;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -44,7 +43,6 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
     AddressingValidationHandler validationHandler = new AddressingValidationHandler();
     String addressingNamespace = AddressingConstants.Final.WSA_NAMESPACE;
     String versionDirectory = "final";
-    TestUtil testUtil = new TestUtil();
 
     protected MessageContext testMessageWithOmittedHeaders(String testName) throws Exception {
         return testAddressingMessage("omitted-header-messages", testName + "Message.xml");
@@ -56,8 +54,7 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
 
         MessageContext mc = new MessageContext();
         mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
-        StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testfile);
-        mc.setEnvelope(omBuilder.getSOAPEnvelope());
+        mc.setEnvelope(TestUtil.getSOAPEnvelope(testfile));
 
         inHandler.invoke(mc);
 
@@ -161,8 +158,7 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
         response.setOperationContext(opContext);
         
         // Invoke the in handler for a response message without addressing headers
-        StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("addressingDisabledTest.xml");
-        response.setEnvelope(omBuilder.getSOAPEnvelope());
+        response.setEnvelope(TestUtil.getSOAPEnvelope("addressingDisabledTest.xml"));
         inHandler.invoke(response);
         
         // Check an exception is thrown by the validation handler because the client

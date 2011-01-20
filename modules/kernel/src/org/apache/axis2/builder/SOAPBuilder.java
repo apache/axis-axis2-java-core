@@ -20,18 +20,14 @@
 package org.apache.axis2.builder;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXParserConfiguration;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -40,7 +36,6 @@ public class SOAPBuilder implements Builder {
 
     public OMElement processDocument(InputStream inputStream, String contentType,
                                      MessageContext messageContext) throws AxisFault {
-        XMLStreamReader streamReader;
         try {
             String charSetEncoding = (String) messageContext
                     .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
@@ -55,16 +50,10 @@ public class SOAPBuilder implements Builder {
             PushbackInputStream pis = BuilderUtil.getPushbackInputStream(is);
             String actualCharSetEncoding = BuilderUtil.getCharSetEncoding(pis, charSetEncoding);
             
-            // Get the XMLStreamReader for this input stream.
-            // Note: StAXSOAPModelBuilder will trigger an exception when it encounters a DTD event.
-            //       However, with StAX implementations other than Woodstox, this may already be
-            //       too late. For these parsers, additional settings may be required. We let
-            //       the StAX dialect detector in Axiom apply the necessary configuration.
-            //       See also AXIS2-4450.
-            streamReader = StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, pis,
+            // createSOAPModelBuilder takes care of configuring the underlying parser to
+            // avoid the security issue described in CVE-2010-1632
+            OMXMLParserWrapper builder = OMXMLBuilderFactory.createSOAPModelBuilder(pis,
                     actualCharSetEncoding);
-
-            StAXBuilder builder = new StAXSOAPModelBuilder(streamReader);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
             BuilderUtil
                     .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);
@@ -72,8 +61,6 @@ public class SOAPBuilder implements Builder {
                     .getCharsetEncoding(), envelope.getNamespace().getNamespaceURI());
             return envelope;
         } catch (IOException e) {
-            throw AxisFault.makeFault(e);
-        } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         }
     }

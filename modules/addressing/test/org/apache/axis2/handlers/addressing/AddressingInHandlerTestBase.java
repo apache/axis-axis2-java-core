@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -47,7 +46,6 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
     private static Log log = LogFactory.getLog(AddressingInHandlerTestBase.class);
     AddressingInHandler inHandler;
     String addressingNamespace;
-    TestUtil testUtil = new TestUtil();
     String testFileName = "soapmessage.xml";
 
     String versionDirectory;
@@ -68,8 +66,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
     protected void basicExtractAddressingInformationFromHeaders(String testMessagePath,
                                                                 MessageContext mc)
             throws Exception {
-        StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testMessagePath);
-        SOAPEnvelope envelope = (SOAPEnvelope)omBuilder.getDocumentElement();
+        SOAPEnvelope envelope = TestUtil.getSOAPEnvelope(testMessagePath);
         mc.setEnvelope(envelope);
         inHandler.invoke(mc);
     }
