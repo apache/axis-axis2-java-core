@@ -36,7 +36,7 @@
                     <xs:element ref="module"/>
                     <xs:element ref="operation"/>
                     <xs:element ref="parameter"/>
-                    <xs:element ref="description"/>
+                    <xs:element ref="Description"/>
                     <xs:element ref="excludeOperations"/>
                     <xs:element ref="messageReceivers"/>
                     <xs:element ref="schema"/>
@@ -51,7 +51,7 @@
             <xs:attribute name="activate" type="xs:boolean" use="optional"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="description" type="xs:string"/>
+    <xs:element name="Description" type="xs:string"/>
     <xs:element name="excludeOperations">
         <xs:complexType>
             <xs:sequence>
