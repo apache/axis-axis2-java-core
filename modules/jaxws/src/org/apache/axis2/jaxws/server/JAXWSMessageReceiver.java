@@ -28,13 +28,12 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
-
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.handler.SOAPHeadersAdapter;
@@ -53,6 +52,9 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.Binding;
 import javax.xml.ws.WebServiceException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.PrivilegedAction;
 
 /**
  * The JAXWSMessageReceiver is the entry point, from the server's perspective, to the JAX-WS code.
@@ -82,7 +84,13 @@ public class JAXWSMessageReceiver implements MessageReceiver {
         //Get the name of the service impl that was stored as a parameter
         // inside of the services.xml.
         AxisService service = axisRequestMsgCtx.getAxisService();
-        
+
+        // we need to merge the deployment class loader to the TCCL. This is because, in JAX-WS
+        // services, there can be situations where we have to load classes from the deployment
+        // artifact (JAX-WS jar file) in the message flow. Ex: Handler classes in the service
+        // artifact. Adding this as a fix for AXIS2-4930.
+        mergeDeploymentCL(service);
+
         org.apache.axis2.description.Parameter svcClassParam =
                 service.getParameter(PARAM_SERVICE_CLASS);
 
@@ -251,7 +259,52 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             throw faultToReturn;
         }
     }
-    
+
+    /**
+     * Merges the deployment class loader to the TCCL. Deployment class loader is accessed through
+     * the AxisService and a new class loader is created by using URLs from deployment class loder
+     * and setting the current TCCL as the parent. Finally the new class loader is set as the TCCL.
+     *
+     * @param service - Current AxisService instance
+     */
+    private void mergeDeploymentCL(AxisService service) {
+        ClassLoader deploymentClassLoader = service.getClassLoader();
+        // get URLs from deployment class loader
+        URL[] deploymentClassLoaderUrls = ((URLClassLoader) deploymentClassLoader).getURLs();
+        // create a new class loader by setting the current TCCL as the parent
+        setContextClassLoader(new URLClassLoader(deploymentClassLoaderUrls,
+                getContextClassLoader()));
+    }
+
+    /**
+     * Get context class loader of the current thread.
+     *
+     * @return ClassLoader
+     */
+    private ClassLoader getContextClassLoader() {
+        return (ClassLoader) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return Thread.currentThread().getContextClassLoader();
+                    }
+                }
+        );
+    }
+
+    /**
+     * Set context class loader of the current thread.
+     *
+     * @param cl the context ClassLoader for the Thread
+     */
+    private void setContextClassLoader(final ClassLoader cl) {
+        AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                Thread.currentThread().setContextClassLoader(cl);
+                return null;
+            }
+        });
+    }
+
     private void sendAckBack(org.apache.axis2.context.MessageContext axisMsgCtx){
         if (log.isDebugEnabled()) {
             log.debug("sendAckBack entry");
