@@ -171,7 +171,7 @@ public abstract class FileWriter {
      * @throws Exception
      */
     public void parse(Document doc, URIResolver resolver) throws Exception {
-        if (!fileExists) {
+        if (!fileExists || this.isOverride()) {
             XSLTTemplateProcessor.parse(this.stream,
                                         doc,
                                         this.xsltStream,
