@@ -37,6 +37,7 @@ import org.apache.ws.commons.schema.XmlSchemaAttribute;
 import org.apache.ws.commons.schema.XmlSchemaAttributeGroup;
 import org.apache.ws.commons.schema.XmlSchemaAttributeGroupRef;
 import org.apache.ws.commons.schema.XmlSchemaChoice;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexContent;
 import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
 import org.apache.ws.commons.schema.XmlSchemaComplexContentRestriction;
@@ -73,6 +74,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -373,8 +375,23 @@ public class SchemaCompiler {
             while (tempIterator.hasNext()) {
                 Object o = tempIterator.next();
                 if (o instanceof XmlSchemaImport) {
-                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
-                    if (schema1 != null) compile(schema1, isPartofGroup);
+                    XmlSchemaImport schemaImport = (XmlSchemaImport)o;
+                    XmlSchema schema1 = schemaImport.getSchema();
+                    if (schema1 != null) {
+                        compile(schema1, isPartofGroup);
+                    } else if (schemaImport.getNamespace().equals(Constants.NS_URI_XML)) {
+                        // AXIS2-3229: some Web services (e.g. MS Exchange) assume that
+                        // http://www.w3.org/XML/1998/namespace is a known namespace and that
+                        // no schemaLocation is required when importing it. Load a local copy of
+                        // the schema in that case.
+                        schema1 = new XmlSchemaCollection().read(new InputSource(
+                                SchemaCompiler.class.getResource("namespace.xsd").toExternalForm()), null);
+                        schemaImport.setSchema(schema1);
+                        compile(schema1, isPartofGroup);
+                    } else if (!schemaImport.getNamespace().equals(Constants.URI_2001_SCHEMA_XSD)) {
+                        // Give the user a hint why the schema compilation fails...
+                        log.warn("No schemaLocation for import of " + schemaImport.getNamespace() + "; compilation may fail");
+                    }
                 }
                 if (o instanceof XmlSchemaInclude) {
                     XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
