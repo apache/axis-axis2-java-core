@@ -63,6 +63,9 @@ public abstract class AbstractJSONOMBuilder implements Builder {
         String prefix = "";
         OMNamespace ns = factory.createOMNamespace("", "");
 
+        //sets DoingREST to true because, security scenarios needs to handle in REST way
+        messageContext.setDoingREST(true);
+
         Reader reader;
         
         //if the input stream is null, then check whether the HTTP method is GET, if so get the
