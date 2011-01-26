@@ -659,7 +659,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // If httpLocation is not null we should extract a constant part from it and add its value and the
             // corresponding AxisOperation to a map in order to dispatch rest messages. If httpLocation is null we add
             // the operation name into this map.
-            String httpLocationString = "";
+            String httpLocationString = null;
             if (httpLocation != null) {
                 String httpLocationTemplete = httpLocation.getOriginalLocation();
                 axisBindingOperation
@@ -667,8 +667,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 httpLocationString = WSDLUtil.getConstantFromHTTPLocation(httpLocationTemplete, HTTPConstants.HEADER_POST);
 
             }
-
-            httpLocationTable.put(httpLocationString, axisOperation);
+            if (httpLocationString != null){
+                // this map is used to dispatch operation based on request URI , in the HTTPLocationBasedDispatcher
+                httpLocationTable.put(httpLocationString, axisOperation);
+            }
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING,
                                              soapBindingOperationExtensions.getHttpContentEncodingDefault());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
