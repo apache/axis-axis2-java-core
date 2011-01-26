@@ -201,8 +201,9 @@ public class Controller {
             throw new ProcessException(e);
         } finally {
             deleteDir(tempFileFolder);
-             if (isServiceCreated)
+             if (isServiceCreated){
                 serviceFile.delete();
+             }
         }
 
     }

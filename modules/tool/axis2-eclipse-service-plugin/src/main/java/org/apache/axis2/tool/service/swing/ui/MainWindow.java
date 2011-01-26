@@ -105,8 +105,9 @@ public class MainWindow extends JFrame {
                 bHeight);
         this.cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (confirmExit())
+                if (confirmExit()){
                     System.exit(0);
+                }
             }
         });
 

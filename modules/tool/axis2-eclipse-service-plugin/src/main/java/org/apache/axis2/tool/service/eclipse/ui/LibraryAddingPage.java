@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class LibraryAddingPage extends AbstractServiceWizardPage {
     
-    private Label libraryNameLabel;
     private Text libraryNameText;
     private Button browseButton;
     private Button addButton;

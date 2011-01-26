@@ -20,7 +20,7 @@
 package org.apache.axis2.tool.util;
 
 public class Constants {
-    public class UIConstants{
+    public static class UIConstants{
         public static final int LABEL_WIDTH=100;
         public static final int RADIO_BUTTON_WIDTH=200;
         public static final int TEXT_BOX_WIDTH=250;
@@ -31,7 +31,7 @@ public class Constants {
     
     }
     
-    public class ServiceConstants{
+    public static class ServiceConstants{
     	public static final String RESOURCE_FOLDER="resources";						
     	public static final String SERVICES_XSD_SCHEMA_NAME="services.xsd";				
     	public static final String XML_SCHEMA="http://www.w3.org/2001/XMLSchema";	

@@ -50,7 +50,6 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
     
     
     private boolean skipNextPage=true;
-    private boolean pageComplete;
     
     public ServiceXMLFileSelectionPage(){
         super("page2");
@@ -186,8 +185,9 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
     
  
     public void updateRecommendation(String message){
-        if (recommendationTextLable!=null)
-        recommendationTextLable.setText(message);
+		if (recommendationTextLable != null) {
+			recommendationTextLable.setText(message);
+		}
     }
     
    

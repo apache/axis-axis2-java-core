@@ -79,10 +79,11 @@ public abstract class WizardPane extends JPanel {
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.addChoosableFileFilter(new FileFilter() {
             public boolean accept(File f) {
-                if (f.getName().endsWith(extension) || f.isDirectory())
+                if (f.getName().endsWith(extension) || f.isDirectory()){
                     return true;
-                else
+                }else{
                     return false;
+                }
             }
 
             public String getDescription() {

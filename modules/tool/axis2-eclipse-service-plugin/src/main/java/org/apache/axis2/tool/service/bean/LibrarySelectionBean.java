@@ -27,10 +27,10 @@ public class LibrarySelectionBean {
     
 
     /**
-     * @return Returns the fileList.
+     * @return Returns a clone of the fileList.
      */
     public String[] getFileList() {
-        return fileList;
+        return fileList.clone();
     }
     /**
      * @param fileList The fileList to set.

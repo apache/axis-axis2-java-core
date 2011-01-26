@@ -38,9 +38,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
     
-    //  set the default to false. This step cannot be skipped
-    private boolean skipNextPage = false;
-    
     private Text wsdlTextBox;
     private Label selectionLabel;
     private Button browseButton;

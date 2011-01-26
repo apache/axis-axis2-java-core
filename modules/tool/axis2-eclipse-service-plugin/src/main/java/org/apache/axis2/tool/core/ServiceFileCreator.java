@@ -49,10 +49,6 @@ public class ServiceFileCreator {
         writeFile(getServiceModel(serviceName,implementationClassName,methodList),serviceXmlWriter,fileName);
 
         return new File(currentUserDir + File.separator + fileName);
-
-
-
-
     }
 
     private Document getServiceModel(String serviceName,String className,ArrayList methods){

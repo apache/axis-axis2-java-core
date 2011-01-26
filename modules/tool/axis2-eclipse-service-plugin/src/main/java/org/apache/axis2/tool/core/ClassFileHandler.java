@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
 import java.util.ArrayList;
+import java.security.PrivilegedAction;
 
 public class ClassFileHandler {
 
@@ -41,10 +43,15 @@ public class ClassFileHandler {
     public ArrayList getMethodNamesFromClass(String classFileName,String location) throws IOException, ClassNotFoundException{
         ArrayList returnList = new ArrayList();
         File fileEndpoint = new File(location);
-        if (!fileEndpoint.exists())
+        if (!fileEndpoint.exists()){
             throw new IOException("the location is invalid");
-        URL[] urlList = {fileEndpoint.toURL()};
-        URLClassLoader clazzLoader = new URLClassLoader(urlList);
+        }
+        final URL[] urlList = {fileEndpoint.toURL()};
+        URLClassLoader clazzLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+			public URLClassLoader run() {
+				return new URLClassLoader(urlList);
+			}
+		});
         Class clazz = clazzLoader.loadClass(classFileName);
         Method[] methods = clazz.getDeclaredMethods();
 

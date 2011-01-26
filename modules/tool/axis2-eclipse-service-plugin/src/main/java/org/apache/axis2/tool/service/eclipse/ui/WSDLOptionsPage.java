@@ -52,7 +52,7 @@ public class WSDLOptionsPage extends AbstractServiceWizardPage {
     private Button searchDeclaredMethodsCheckBox;
     private Table table;
     
-    private boolean dirty = false;
+//    private boolean dirty = false;
     
     public WSDLOptionsPage(){
         super("page6");
@@ -274,7 +274,7 @@ public class WSDLOptionsPage extends AbstractServiceWizardPage {
     }
     
     private void updateDirtyStatus(boolean status){
-        dirty = status;
+//        dirty = status;
         if (table.isVisible()){
             table.setEnabled(!status);
         }

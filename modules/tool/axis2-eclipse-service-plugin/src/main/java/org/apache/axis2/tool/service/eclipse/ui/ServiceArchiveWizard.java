@@ -47,7 +47,6 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     private ServiceArchiveOutputLocationPage serviceArchiveOutputLocationPage;
     private LibraryAddingPage libPage;
 
-    private boolean updateServiceGenerationStatus;
     private String classFileLocation;
     private String wsdlFileGenerationStatus;
     
@@ -148,8 +147,9 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         {
            protected void execute(IProgressMonitor monitor)
            throws CoreException , InvocationTargetException, InterruptedException{
-              if (monitor == null)
+              if (monitor == null){
                  monitor = new NullProgressMonitor();
+              }
 
               /*
                * "7" is the total amount of steps, see below monitor.worked(amount)
