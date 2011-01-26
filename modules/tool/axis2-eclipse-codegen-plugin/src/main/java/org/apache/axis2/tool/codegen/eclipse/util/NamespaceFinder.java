@@ -21,6 +21,7 @@ package org.apache.axis2.tool.codegen.eclipse.util;
 
 public class NamespaceFinder {
 	
+	private static final String EMPTY_STRING = "";
 	private static String NS_PREFIX = "http://";
 	private static String SCHEMA_NS_DEFAULT_PREFIX = "xsd";
 	private static String NS_DEFAULT_PREFIX = "ns";
@@ -30,12 +31,12 @@ public class NamespaceFinder {
 		//tokenize the className
 		String[] classNameParts = fullyQualifiedClassName.split("\\.");
 		//add the strings in reverse order to make the namespace
-		String nsUri = "";
+		StringBuilder builder=new StringBuilder();
 		for(int i=classNameParts.length-2;i>=0;i--){
-			nsUri = nsUri + classNameParts[i] + (i==0?"":".");
+			builder.append(classNameParts[i]).append(i==0?EMPTY_STRING:".");
 		}
 		
-		return NS_PREFIX + nsUri;	
+		return NS_PREFIX + builder.toString();	
 		
 	}
 	

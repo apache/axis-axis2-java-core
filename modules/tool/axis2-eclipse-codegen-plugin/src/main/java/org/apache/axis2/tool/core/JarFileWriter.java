@@ -41,8 +41,9 @@ public class JarFileWriter extends Jar{
         if (!outputFolder.exists()){
             outputFolder.mkdir(); //create the output path
         }else{
-            if (!outputFolder.isDirectory())
+            if (!outputFolder.isDirectory()){
                 return;
+            }
         }
 
         File targetFile = new File(outputFolder,outputFileName);

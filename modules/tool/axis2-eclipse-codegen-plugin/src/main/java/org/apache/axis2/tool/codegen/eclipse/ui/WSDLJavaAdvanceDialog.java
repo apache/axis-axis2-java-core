@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Text;
 public class WSDLJavaAdvanceDialog extends Dialog {
 
 	private Button tmpCheckBox; 
-	private Text tmpTextBox;
+//	private Text tmpTextBox;
 	private HashMap advanceOptions;
 	private boolean isEditAdvanceOptions=false;
 	private Combo wsdlVersionCombo;
@@ -40,10 +40,11 @@ public class WSDLJavaAdvanceDialog extends Dialog {
 	protected WSDLJavaAdvanceDialog(Shell shell, HashMap advanceOptions) {
 		super(shell);
 		isEditAdvanceOptions=(advanceOptions!=null);
-		if (isEditAdvanceOptions)
+		if (isEditAdvanceOptions){
 			this.advanceOptions=(HashMap) advanceOptions.clone();
-		else
+		}else{
 			this.advanceOptions=new HashMap();
+		}
 	}
 
 	private Button addCheckBox(Composite container,
@@ -53,8 +54,9 @@ public class WSDLJavaAdvanceDialog extends Dialog {
 		//tmpCheckBox = new Button(container, SWT.CHECK);
 		tmpCheckBox.setLayoutData(gd);
 		tmpCheckBox.setText(caption);
-		if (isEditAdvanceOptions)
+		if (isEditAdvanceOptions){
 			tmpCheckBox.setSelection(advanceOptions.containsKey(parameterType));
+		}
 		tmpCheckBox.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				setCheckBoxState(parameterType, tmpCheckBox.getSelection());
@@ -71,14 +73,17 @@ public class WSDLJavaAdvanceDialog extends Dialog {
 		lblCaption.setLayoutData(gd);
 		lblCaption.setText(caption);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		if (isBrowseFolder)
+		if (isBrowseFolder){
 			gd.horizontalSpan = 1;
-		else
+		}else{
 			gd.horizontalSpan = 2;
+		}
 		tmpTextBox.setLayoutData(gd);
-		if (isEditAdvanceOptions)
-			if (advanceOptions.containsKey(parameterType))
+		if (isEditAdvanceOptions){
+			if (advanceOptions.containsKey(parameterType)){
 				tmpTextBox.setText(((String[])advanceOptions.get(parameterType))[0]);
+			}
+		}
 		tmpTextBox.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setTextBoxValue(parameterType, tmpTextBox.getText());
@@ -185,8 +190,9 @@ public class WSDLJavaAdvanceDialog extends Dialog {
 		wsdlVersionCombo.setLayoutData(gd);
 		fillWSDLVersionCombo();
 		String key=CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION;
-		if ((isEditAdvanceOptions) && (advanceOptions.containsKey(key)))
+		if ((isEditAdvanceOptions) && (advanceOptions.containsKey(key))){
 			wsdlVersionCombo.select(wsdlVersionCombo.indexOf(((String[])advanceOptions.get(key))[0]));
+		}
 		
 		wsdlVersionCombo.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -243,7 +249,9 @@ public class WSDLJavaAdvanceDialog extends Dialog {
 		gd.heightHint = 80;
 		packageNameList.setLayoutData(gd);
 		packageNameList.setVisible(false);
-		if (isEditAdvanceOptions) updateExcludePackageList();
+		if (isEditAdvanceOptions){
+			updateExcludePackageList();
+		}
 		packageNameList.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				handlePackageNameListClick();
@@ -293,19 +301,22 @@ public class WSDLJavaAdvanceDialog extends Dialog {
 			String toRemove=packageNameList.getItem(selectedIndex).getText();
 			for (String s : packageList) {
 				if (!s.equalsIgnoreCase(toRemove)){
-					if (newList.equalsIgnoreCase(""))
+					if (newList.equalsIgnoreCase("")){
 						newList=s;
-					else
+					}else{
 						newList=newList+","+s;
+					}
 				}
 			}
-			if (newList.equalsIgnoreCase(""))
+			if (newList.equalsIgnoreCase("")){
 				advanceOptions.remove(type);
-			else
+			}else{
 				advanceOptions.put(type, new String[]{newList});
+			}
 			packageNameList.remove(selectedIndex);
-			if (selectedIndex>=packageNameList.getItemCount())
+			if (selectedIndex>=packageNameList.getItemCount()){
 				selectedIndex--;
+			}
 			packageNameList.select(selectedIndex);
 		}
 		packageNameList.redraw();
@@ -359,17 +370,19 @@ public class WSDLJavaAdvanceDialog extends Dialog {
 		wsdlVersionCombo.add("2.0");
 	}
 	private void setCheckBoxState(String type,boolean state){
-		if (state)
+		if (state){
 			advanceOptions.put(type, null);
-		else
+		}else{
 			advanceOptions.remove(type);
+		}
 	}
 	
 	private void setTextBoxValue(String type,String value){
-		if (value.equalsIgnoreCase(""))
+		if (value.equalsIgnoreCase("")){
 			advanceOptions.remove(type);
-		else
+		}else{
 			advanceOptions.put(type, new String[]{value});
+		}
 	}
 
 	public HashMap getAdvanceOptions(){

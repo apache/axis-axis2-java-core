@@ -23,7 +23,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
 import java.util.List;
+import java.security.PrivilegedAction;
 
 /**
  * A utility class for reading/loading classes and
@@ -45,7 +47,7 @@ public class ClassFileReader {
 		ClassLoader classLoader;
 
 		if (classPathEntries.length > 0) {
-			URL[] urls = new URL[classPathEntries.length];
+			final URL[] urls = new URL[classPathEntries.length];
 
 			try {
 				for (int i = 0; i < classPathEntries.length; i++) {
@@ -64,7 +66,11 @@ public class ClassFileReader {
 				return false;
 			}
 
-			classLoader = new URLClassLoader(urls);
+			classLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+				public URLClassLoader run() {
+					return new URLClassLoader(urls);
+				}
+			});
 
 		} else {
 			classLoader = Thread.currentThread().getContextClassLoader();

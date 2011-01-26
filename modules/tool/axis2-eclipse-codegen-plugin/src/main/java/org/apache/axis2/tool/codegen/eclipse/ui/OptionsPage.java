@@ -60,6 +60,10 @@ import java.util.Map;
  */
 public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
+	private static final String EQUALS_SIGN = "=";
+
+	private static final String EMPTY_STRING = "";
+
 	/**
 	 * Selection list for target languages
 	 */
@@ -138,8 +142,8 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 	private java.util.List serviceQNameList = null;
 	
-	private final int EDITABLECOLUMN = 1;
-	private String defaultPackageName = null;
+//	private final int EDITABLECOLUMN = 1;
+//	private String defaultPackageName = null;
 	
 	private Combo codegenOptionSelectionComboBox;
 	
@@ -339,9 +343,9 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		packageText.setLayoutData(gd);
 		String packageName;
 		String storedPackageName = settings.get(PREF_PACKAGE_NAME);
-		this.defaultPackageName = storedPackageName;
-		if (storedPackageName.equals("")) {
-			packageName = URLProcessor.makePackageName("");
+//		this.defaultPackageName = storedPackageName;
+		if (storedPackageName.equals(EMPTY_STRING)) {
+			packageName = URLProcessor.makePackageName(EMPTY_STRING);
 		} else {
 			packageName = storedPackageName;
 		}
@@ -652,8 +656,9 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
                     visible = true;
                   }
                 }
-                if (!visible)
+                if (!visible){
                   return;
+                }
                 index++;
               }
             }
@@ -750,11 +755,12 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * since the WSDLselection page may call this
 	 */
 	public void populateParamsFromWSDL() {
-		if (reader == null)
+		if (reader == null){
 			reader = new WSDLPropertyReader();
+		}
 		try {
 			String lname = getCodegenWizard().getWSDLname();
-			if (!"".equals(lname.trim())) {
+			if (!EMPTY_STRING.equals(lname.trim())) {
 				
 				reader.readWSDL(lname);
 
@@ -780,8 +786,12 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 				} else {
 					// service name list being empty means we are switching to
 					// the interface mode
-					if (serviceNameCombo!=null) serviceNameCombo.removeAll();
-					if (portNameCombo!=null) portNameCombo.removeAll();
+					if (serviceNameCombo != null) {
+						serviceNameCombo.removeAll();
+					}
+					if (portNameCombo != null) {
+						portNameCombo.removeAll();
+					}
 					// disable the combo's
 					setComboBoxEnable(false);
 					//this is not an error
@@ -1056,7 +1066,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * @return a string containing the package name to use for code generation
 	 */
 	public String getPackageName() {
-		if ("".equals(packageText.getText().trim())){
+		if (EMPTY_STRING.equals(packageText.getText().trim())){
 			//we do not allow the packaging to be empty
 			//if the user sets it to empty we set it to
 			//the default
@@ -1079,10 +1089,11 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * @return true if "Generate XML configuration file" is checked
 	 */
 	public boolean isServerXML() {
-		if (this.serverXMLCheckBoxButton.isEnabled())
+		if (this.serverXMLCheckBoxButton.isEnabled()){
 			return this.serverXMLCheckBoxButton.getSelection();
-		else
+		}else{
 			return false;
+		}
 	}
 
 	/**
@@ -1111,7 +1122,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		if (selectionIndex != -1) {
 			String text = this.portNameCombo.getItem(selectionIndex);
 
-			if (text == null || text.trim().equals("")) {
+			if (text == null || text.trim().equals(EMPTY_STRING)) {
 				return null;
 			}
 			return text;
@@ -1130,7 +1141,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		if (selectionIndex != -1) {
 			String text = this.serviceNameCombo.getItem(selectionIndex);
 
-			if (text == null || text.trim().equals("")) {
+			if (text == null || text.trim().equals(EMPTY_STRING)) {
 				return null;
 			}
 			return text;
@@ -1170,19 +1181,21 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * @return
 	 */
 	public String getNs2PkgMapping(){
-		String returnList="";
+//		String returnList=EMPTY_STRING;
+		StringBuilder builder=new StringBuilder();
 		TableItem[] items = namespace2packageTable.getItems();
 		String packageValue; 
 		for (int i=0;i<items.length;i++){
 			packageValue = items[i].getText(1);
-			if (packageValue!=null && !"".equals(packageValue)){
-				returnList = returnList +
-				             ("".equals(returnList)?"":",") +
-				             items[i].getText(0)+ "=" + packageValue;
+			if (packageValue!=null && !EMPTY_STRING.equals(packageValue)){
+//				returnList = returnList +
+//				             (EMPTY_STRING.equals(returnList)?EMPTY_STRING:",") +
+//				             items[i].getText(0)+ EQUALS_SIGN + packageValue;
+//				
+				builder.append(EMPTY_STRING.equals(builder.toString())?EMPTY_STRING:",").append(items[i].getText(0)).append(EQUALS_SIGN).append(packageValue);
 			}
-			
 		}
-		return "".equals(returnList)?null:returnList;
+		return EMPTY_STRING.equals(builder.toString())?null:builder.toString();
 	}
 	
 	
@@ -1249,7 +1262,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	// This method is add as a tempory fix for the Axis2-1368 
 	// TODO fix this permanantly.	
 	String text = this.packageText.getText();
-	if ((text == null) || (text.trim().equals(""))|| (text.endsWith(".")) || (text.startsWith("."))) {
+	if ((text == null) || (text.trim().equals(EMPTY_STRING))|| (text.endsWith(".")) || (text.startsWith("."))) {
 		updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
 				.getResourceString("page2.pachage.error.nolocation"));
 		return;
@@ -1274,9 +1287,10 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	}
 	
 	public HashMap getAdvanceOptions(){
-		if (advanceOptionsButton.getEnabled())
+		if (advanceOptionsButton.getEnabled()){
 			return advanceOptions;
-		else
+		}else{
 			return getInitialisedAdvanceOptions();
+		}
 	}
 }

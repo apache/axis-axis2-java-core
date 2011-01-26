@@ -35,9 +35,9 @@ public class FileCopier extends Copy{
     }
 
     public void copyFiles(File sourceFile,File destinationDirectory,String filter){
-        if (sourceFile.isFile())
+        if (sourceFile.isFile()){
             this.setFile(sourceFile);
-        else {
+        }else {
             FileSet fileset = new FileSet();
             fileset.setDir(sourceFile);
             if (filter!=null){

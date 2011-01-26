@@ -45,8 +45,7 @@ public class SrcCompiler extends Javac {
         this.setDestdir(destDir);
         this.setIncludes("**/*.java, *.java");
         File lib = new File(compilableSrcLocation+  File.separator + "lib");
-        File files [] = new File[lib.listFiles().length];
-        files = lib.listFiles();
+        File files [] = lib.listFiles();
 
         Path classpath = new Path(project);
         for (int count =0;count<files.length;count++){

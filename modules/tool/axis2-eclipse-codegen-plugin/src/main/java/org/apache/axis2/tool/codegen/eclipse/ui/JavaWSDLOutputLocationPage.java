@@ -262,14 +262,13 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 						// Fixing issue AXIS2-4008 by retrieving the project
 						// path instead of appending it to the workspace root.
 						IProject project = null;
-						String otherSegments = EMPTY_STRING;
+						StringBuilder builder=new StringBuilder();
 						
 						if (path.segmentCount() > 1) {
 							// User has selected a folder inside a project
 							project = root.getProject(path.segment(ECLIPSE_PROJECT_NAME_SEGMENT_INDEX));
-							
 							for (int i = ECLIPSE_PROJECT_NAME_SEGMENT_INDEX + 1; i < path.segments().length; i++) {
-								otherSegments += File.separator	+ path.segment(i);
+								builder.append(File.separator).append(path.segment(i));
 							}
 						} else {
 							project = root.getProject(path.toOSString());
@@ -277,7 +276,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 						
 						if (project != null) {
 							outputFolderTextBox.setText(project.getLocation()
-									.toOSString() + otherSegments);
+									.toOSString() + builder.toString());
 						} else {
 							// append to the workspace path if the project is
 							// null

@@ -38,6 +38,9 @@ import org.apache.axis2.tool.core.JarFileWriter;
 import org.apache.axis2.tool.core.SrcCompiler;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.eclipse.core.resources.IWorkspace;
@@ -88,6 +91,7 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
 
     private int selectedCodegenOptionType = SettingsConstants.CODEGEN_DEFAULT_TYPE;//TODO change this
     
+    private static Log logger=LogFactory.getLog(CodeGenWizard.class);
 
    
 
@@ -201,8 +205,9 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
         {
            protected void execute(IProgressMonitor monitor)
            throws CoreException, InvocationTargetException, InterruptedException{
-              if (monitor == null)
+              if (monitor == null){
                  monitor = new NullProgressMonitor();
+              }
 
               /*
                * "3" is the total amount of steps, see below monitor.worked(amount)
@@ -376,8 +381,9 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
 
         WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             protected void execute(IProgressMonitor monitor) {
-                if (monitor == null)
+                if (monitor == null){
                     monitor = new NullProgressMonitor();
+                }
 
                 /*
                  * "2" is the total amount of steps, see below
@@ -523,10 +529,7 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
     private void addLibsToProjectLib(String libDirectory, String outputLocation){
     	String newOutputLocation = outputLocation+File.separator+UIConstants.LIB;
     	//Create a lib directory; all ancestor directories must exist
-    	boolean success = (new File(newOutputLocation)).mkdir();
-        if (!success) {
-            // Directory creation failed
-        }
+    	new File(newOutputLocation).mkdir();
         try {
 			copyDirectory(new File(libDirectory),new File(newOutputLocation));
 		} catch (IOException e) {
@@ -555,17 +558,31 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
     // Copies src file to dst file.
     // If the dst file does not exist, it is created
     private void copyFile(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
-    
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
+    	InputStream in = null;
+    	OutputStream out = null;
+    	try {
+			in = new FileInputStream(src);
+			out = new FileOutputStream(dst);
+   
+			// Transfer bytes from in to out
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+			    out.write(buf, 0, len);
+			}
+			in.close();
+			out.close();
+		} catch (Exception e) {
+			logger.error("Error while copying the files",e);
+			throw new IOException();
+		}finally{
+			try {
+				in.close();
+				out.close();
+			} catch (Exception e) {
+				logger.debug("Failed to close the streams",e);
+			}
+		}
     }
     
     // Deletes all files and subdirectories under dir.

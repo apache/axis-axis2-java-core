@@ -33,6 +33,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
 public class WSDL2JavaGenerator {
@@ -147,15 +148,14 @@ public class WSDL2JavaGenerator {
        }
        
        if (advanceOptions != null) {
-			for (Iterator iterator = advanceOptions.keySet().iterator(); iterator
-					.hasNext();) {
-				String type = (String) iterator.next();
-				String[] parameters;
-				if (advanceOptions.get(type) == null)
-					parameters = new String[0];
-				else
-					parameters = (String[]) advanceOptions.get(type);
-				optionMap.put(type, new CommandLineOption(type, parameters));
+			for (Iterator iterator = advanceOptions.entrySet().iterator(); iterator.hasNext();) {
+				Entry entry=(Entry) iterator.next();
+				String key=(String) entry.getKey();
+				String[] value=(String[]) entry.getValue();
+				if (value == null) {
+					value = new String[0];
+				}
+				optionMap.put(key, new CommandLineOption(key, value));
 			}
 		}
        return optionMap;

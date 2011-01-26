@@ -100,9 +100,9 @@ public class OutputPage extends AbstractWizardPage {
 	 * Creates some initial values for the settings. 
 	 */
 	protected void initializeDefaultSettings() {
-		settings.put(PREF_OUTPUT_LOCATION, "");
-		settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, "");
-		settings.put(PREF_JAR_FILE_NAME, "");
+		settings.put(PREF_OUTPUT_LOCATION, EMPTY_STRING);
+		settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, EMPTY_STRING);
+		settings.put(PREF_JAR_FILE_NAME, EMPTY_STRING);
 		settings.put(PREF_CHECK_WORKSPACE, false);
 		settings.put(PREF_CHECK_FILE_SYSTEM, true);
 		settings.put(PREF_CHECK_AXIS_LIB_COPY, false);
@@ -175,8 +175,8 @@ public class OutputPage extends AbstractWizardPage {
 				.setText(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
 						.getResourceString("page3.output.caption"));
 		
-		settings.put(PREF_OUTPUT_LOCATION, "");
-		settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, "");
+		settings.put(PREF_OUTPUT_LOCATION, EMPTY_STRING);
+		settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, EMPTY_STRING);
 		outputLocation = new Text(container, SWT.BORDER);
 		outputLocation.setText(settings.get(PREF_OUTPUT_LOCATION));
 		outputLocation.setLayoutData(gd);
@@ -217,7 +217,7 @@ public class OutputPage extends AbstractWizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=3;
 		Label fillLabel = new Label(container, SWT.NULL);
-		fillLabel.setText("");
+		fillLabel.setText(EMPTY_STRING);
 		
 		//filling label 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -252,7 +252,7 @@ public class OutputPage extends AbstractWizardPage {
 		
 		axisHomeLocation = new Text(container, SWT.BORDER);
 		axisHomeLocation.setLayoutData(gd);
-		settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, "");
+		settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, EMPTY_STRING);
 		axisHomeLocation.setText(settings.get(PREF_AXIS_HOME_OUTPUT_LOCATION));
 		axisHomeLocation.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -283,7 +283,7 @@ public class OutputPage extends AbstractWizardPage {
 		gd.horizontalSpan = 2;
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		axisLoadLibResultsLabel = new Label(container, SWT.NULL);
-		axisLoadLibResultsLabel	.setText("");
+		axisLoadLibResultsLabel	.setText(EMPTY_STRING);
 		axisLoadLibResultsLabel.setLayoutData(gd);
 		
 		//filling label 
@@ -431,7 +431,7 @@ public class OutputPage extends AbstractWizardPage {
 	 */
 	private void handleModifyEvent() {
 		String text = this.outputLocation.getText();
-		if ((text == null) || (text.trim().equals(""))) {
+		if ((text == null) || (text.trim().equals(EMPTY_STRING))) {
 			updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
 					.getResourceString("page3.error.nolocation"));
 			return;
@@ -442,7 +442,7 @@ public class OutputPage extends AbstractWizardPage {
 	
 	private void handleAxisHomeModifyEvent() {
 		String text = this.axisHomeLocation.getText();
-		if ((text == null) || (text.trim().equals(""))) {
+		if ((text == null) || (text.trim().equals(EMPTY_STRING))) {
 			updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
 					.getResourceString("page3.error.nolocation"));
 			return;
@@ -496,9 +496,9 @@ public class OutputPage extends AbstractWizardPage {
 			settings.put(PREF_CHECK_JAR_CREATION, true);
 		}else{
 			settings.put(PREF_CHECK_JAR_CREATION, false);
-			this.jarFileNameText.setText("");
+			this.jarFileNameText.setText(EMPTY_STRING);
 		}
-		if(jarFileNameLabel.equals("")){
+		if(EMPTY_STRING.equals(jarFileNameLabel.getText())){
 			updateStatus("Please enter a valid name to the jar file");
 		}
 	}
@@ -510,11 +510,11 @@ public class OutputPage extends AbstractWizardPage {
 		this.jarCreationButton.setSelection(false);
 		this.jarCreationButton.setEnabled(false);
 		this.axisHomeLabel.setEnabled(false);
-		this.axisLoadLibResultsLabel.setText("");
+		this.axisLoadLibResultsLabel.setText(EMPTY_STRING);
 		this.axisLoadLibResultsLabel.setEnabled(false);
 		this.axisLoadLibsButton.setEnabled(false);
 		this.jarFileNameLabel.setEnabled(false);
-		this.jarFileNameText.setText("");
+		this.jarFileNameText.setText(EMPTY_STRING);
 		this.jarFileNameText.setEnabled(false);
 		settings.put(PREF_CHECK_JAR_CREATION, false);
 		jarFileCopyOption = false;
@@ -531,7 +531,7 @@ public class OutputPage extends AbstractWizardPage {
 		this.axisLoadLibsButton.setEnabled(true);
 		this.jarFileNameLabel.setEnabled(true);
 		this.jarFileNameText.setEnabled(true);
-		if (axisLoadLibResultsLabel.getText().equals("")){
+		if (axisLoadLibResultsLabel.getText().equals(EMPTY_STRING)){
 			updateStatus("Please enter a valid path to the Axis2 libs and then try to load the libraries using the check libs button");
 		}
 	     axisLoadLibResultsLabel.setText(CodegenWizardPlugin
@@ -551,11 +551,11 @@ public class OutputPage extends AbstractWizardPage {
 	}
 	
 	private void handleLoadLibsBrowse() {
-		if(axisHomeLocation.getText().equals("")){
+		if(axisHomeLocation.getText().equals(EMPTY_STRING)){
 			 axisLoadLibResultsLabel.setText(CodegenWizardPlugin
 						.getResourceString("page3.loadlib.fail.caption"));
 			 jarFileCopyOption=false;
-		     if (axisLoadLibResultsLabel.getText().equals("")){
+		     if (axisLoadLibResultsLabel.getText().equals(EMPTY_STRING)){
 					updateStatus("Please enter a valid path to the Axis2 libs and then try to load the libraries using the check libs button");
 		     }
 		}else{
@@ -571,8 +571,7 @@ public class OutputPage extends AbstractWizardPage {
 							.getResourceString("page3.loadlib.success.caption"));
 				if(axis_libs_directory.isDirectory()){
 					axis2LibsLocation=axis_std_lib_directory;
-				}
-				else if(axis_target_libs_directory.isDirectory()){
+				}else if(axis_target_libs_directory.isDirectory()){
 					axis2LibsLocation=axis_target_lib;
 				}
 				 jarFileCopyOption =true;
@@ -629,14 +628,13 @@ public class OutputPage extends AbstractWizardPage {
 					if (root.exists(path)) {
 						//Fixing issue AXIS2-4008 by retrieving the project path instead of appending it to the workspace root.
 						IProject project = null;
-						String otherSegments = EMPTY_STRING;
+						StringBuilder builder=new StringBuilder();
 						
 						if (path.segmentCount() > 1) {
 							// User has selected a folder inside a project
 							project = root.getProject(path.segment(ECLIPSE_PROJECT_NAME_SEGMENT_INDEX));
-							
 							for (int i = ECLIPSE_PROJECT_NAME_SEGMENT_INDEX + 1; i < path.segments().length; i++) {
-								otherSegments += File.separator	+ path.segment(i);
+								builder.append(File.separator).append(path.segment(i));
 							}
 						} else {
 							project = root.getProject(path.toOSString());
@@ -644,7 +642,7 @@ public class OutputPage extends AbstractWizardPage {
 						
 						if (project != null) {
 							outputLocation.setText(project.getLocation()
-									.toOSString() + otherSegments);
+									.toOSString() + builder.toString());
 						} else {
 							// append to the workspace path if the project is
 							// null
