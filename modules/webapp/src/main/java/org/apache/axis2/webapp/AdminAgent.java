@@ -599,6 +599,20 @@ public class AdminAgent extends AbstractAgent {
         renderView("disengage.jsp", req, res);
     }
 
+    public void processdeleteService(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
+        String serviceName = req.getParameter("serviceName");
+        AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
+        if (axisConfiguration.getService(serviceName) != null) {
+            axisConfiguration.removeService(serviceName);
+            req.getSession().setAttribute("status", "Service '" + serviceName + "' has been successfully removed.");
+        } else {
+            req.getSession().setAttribute("status", "Failed to delete service '" + serviceName + "'. Service doesn't exist.");
+        }
+
+        renderView("deleteService.jsp", req, res);
+    }
+
     public void processSelectService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         populateSessionInformation(req);
