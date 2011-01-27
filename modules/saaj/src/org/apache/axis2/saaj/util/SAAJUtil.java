@@ -63,7 +63,7 @@ public class SAAJUtil {
             factory = DOOMAbstractFactory.getSOAP11Factory();
         } else {
             nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = DOOMAbstractFactory.getSOAP11Factory();
+            factory = DOOMAbstractFactory.getSOAP12Factory();
         }
 
         StAXSOAPModelBuilder stAXSOAPModelBuilder =
