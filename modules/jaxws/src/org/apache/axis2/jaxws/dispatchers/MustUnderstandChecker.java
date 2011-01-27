@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.dispatchers;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.handlers.AbstractTemplatedHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,29 +33,21 @@ import org.apache.commons.logging.LogFactory;
  *  Understood headers (per JAXWS 2.0 Section 10.2) include
  *  - Headers that correspond to SEI method parameters.
  */
-public class MustUnderstandChecker extends org.apache.axis2.handlers.AbstractHandler {
-    private static final Log log = LogFactory.getLog(MustUnderstandChecker.class);
+public class MustUnderstandChecker extends AbstractTemplatedHandler {
 
-    public boolean invoke_stage1(MessageContext msgContext) throws AxisFault {
+    public boolean shouldInvoke(MessageContext msgContext) throws AxisFault {
         if (msgContext == null) {
             return false;
         }
-        
         SOAPEnvelope envelope = msgContext.getEnvelope();
-        if (envelope.getHeader() == null) {
-            return false;
-        }  
-        return true;
+        return envelope.getHeader() != null;
     }
     
-    public InvocationResponse invoke_stage2(MessageContext msgContext) throws AxisFault {
-        return invoke(msgContext);
-    }
-    
-    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse doInvoke(MessageContext msgContext) throws AxisFault {
         // Get the list of headers for the roles we're acting in, then mark any we understand
         // as processed.
         MustUnderstandUtils.markUnderstoodHeaderParameters(msgContext);
         return InvocationResponse.CONTINUE;
     }
+    
 }

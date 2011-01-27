@@ -330,25 +330,14 @@ public class Phase implements Handler {
         return InvocationResponse.CONTINUE;
     }
     
-    private InvocationResponse invokeHandler(Handler handler, MessageContext msgctx) throws AxisFault  {
+    private InvocationResponse invokeHandler(Handler handler, MessageContext msgctx)
+            throws AxisFault  {
         if (isDebugEnabled) {
             log.debug(msgctx.getLogIDString() + " Invoking Handler '" + handler.getName() +
                     "' in Phase '" + phaseName + "'");
         }
-        if (handler instanceof AbstractHandler) {
-            // Call this as a two stage handler.
-            boolean needStage2 = ((AbstractHandler)handler).invoke_stage1(msgctx);
-
-            if (needStage2) {
-                return ((AbstractHandler)handler).invoke_stage2(msgctx);
-            } else {
-                return InvocationResponse.CONTINUE;
-            } 
-           
-            
-        } else {
-            return handler.invoke(msgctx);
-        }
+        
+        return handler.invoke(msgctx);
     }
 
     public void flowComplete(MessageContext msgContext) {

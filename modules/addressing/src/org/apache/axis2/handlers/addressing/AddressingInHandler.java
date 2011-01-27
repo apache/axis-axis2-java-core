@@ -39,6 +39,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.handlers.AbstractTemplatedHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
@@ -49,7 +50,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class AddressingInHandler extends AbstractHandler implements AddressingConstants {
+public class AddressingInHandler extends AbstractTemplatedHandler implements AddressingConstants {
 
     private static final int TO_FLAG = 1, FROM_FLAG = 2, REPLYTO_FLAG = 3,
             FAULTO_FLAG = 4, MESSAGEID_FLAG = 6, ACTION_FLAG = 0;
@@ -59,7 +60,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     private boolean disableRefparamExtract = false;
     private AxisConfiguration configuration = null;
     private RolePlayer rolePlayer = null;
-    
+
     public void init(HandlerDescription handlerdesc){
     	super.init(handlerdesc);
     	// check whether to process reference parameters.
@@ -72,15 +73,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         }
     }
     
-    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        
-        if (invoke_stage1(msgContext)) {
-            return invoke_stage2(msgContext);
-        } else {
-            return InvocationResponse.CONTINUE;
-        }
-    }
-    public boolean invoke_stage1(MessageContext msgContext) throws AxisFault {
+    public boolean shouldInvoke(MessageContext msgContext) throws AxisFault {
         //Set the defaults on the message context.
         msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
         msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
@@ -100,13 +93,10 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
         // if there are not headers put a flag to disable addressing temporary
         SOAPHeader header = msgContext.getEnvelope().getHeader();
-        if (header == null) {
-            return false;
-        }
-        return true;
+        return header != null;
     }
     
-    public InvocationResponse invoke_stage2(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse doInvoke(MessageContext msgContext) throws AxisFault {
         SOAPHeader header = msgContext.getEnvelope().getHeader();
         if(configuration == null){
         	AxisConfiguration conf = msgContext.getConfigurationContext().getAxisConfiguration();

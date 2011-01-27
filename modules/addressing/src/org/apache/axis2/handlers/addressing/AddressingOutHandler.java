@@ -43,6 +43,7 @@ import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.handlers.AbstractTemplatedHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
@@ -55,23 +56,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class AddressingOutHandler extends AbstractHandler implements AddressingConstants {
+public class AddressingOutHandler extends AbstractTemplatedHandler implements AddressingConstants {
 
     private static final Log log = LogFactory.getLog(AddressingOutHandler.class);
 
     // TODO: This is required for MessageContext#getModuleParameter.
     //       Not clear why there is no way to automatically determine this!
     private static final String MODULE_NAME = "addressing";
-    
-    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        
-        if (invoke_stage1(msgContext)) {
-            return invoke_stage2(msgContext);
-        } else {
-            return InvocationResponse.CONTINUE;
-        }
-    }
-    public boolean invoke_stage1(MessageContext msgContext) throws AxisFault {
+
+
+    public boolean shouldInvoke(MessageContext msgContext) throws AxisFault {
         Parameter param = null;
         boolean disableAddressing = false;
         
@@ -84,8 +78,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
                     JavaUtils.isTrueExplicitly(Utils.getParameterValue(param)));
         } else {
-           Boolean bool = (Boolean)o;
-           disableAddressing = bool.booleanValue();
+            disableAddressing = (Boolean) o;
         }
 
         if (disableAddressing) {
@@ -98,7 +91,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         return true;
     }
     
-    public InvocationResponse invoke_stage2(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse doInvoke(MessageContext msgContext) throws AxisFault {
         
 
         // Determine the addressin namespace in effect.
