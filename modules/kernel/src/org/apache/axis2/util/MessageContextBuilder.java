@@ -22,7 +22,6 @@ package org.apache.axis2.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -68,6 +67,10 @@ public class MessageContextBuilder {
     /**
      * Creates a new 'response' message context based on a 'request' message context
      * Only deals with properties/fields that are the same for both 'normal' and fault responses.
+     *
+     * @param inMessageContext context for which the response will be created
+     * @return response message context for the given in message context
+     * @throws org.apache.axis2.AxisFault error in creating the response message context
      */
     private static MessageContext createResponseMessageContext(MessageContext inMessageContext)
             throws AxisFault {
@@ -116,6 +119,10 @@ public class MessageContextBuilder {
 
     /**
      * Creates a MessageContext for use with a non-fault response based on an request MessageContext
+     *
+     * @param inMessageContext for the out message context to be created
+     * @return created out message context from the given in message context
+     * @throws org.apache.axis2.AxisFault error in creating the out message context
      */
     public static MessageContext createOutMessageContext(MessageContext inMessageContext)
             throws AxisFault {
@@ -485,6 +492,7 @@ public class MessageContextBuilder {
         		log.debug("faultCode != null");
         	}
             fault.setCode((SOAPFaultCode) faultCode);
+            soapFaultCode = ((SOAPFaultCode) faultCode).getText();
         } else if (soapException != null) {
         	if(log.isDebugEnabled()){
         		log.debug("soapException != null");
@@ -542,6 +550,7 @@ public class MessageContextBuilder {
         	}
             if (axisFault.getFaultCodeElement() != null) {
                 fault.setCode(axisFault.getFaultCodeElement());
+                soapFaultCode = axisFault.getFaultCodeElement().getText();               
             } else {
                 QName faultCodeQName = axisFault.getFaultCode();
                 if (faultCodeQName != null) {
@@ -770,7 +779,7 @@ public class MessageContextBuilder {
                 if(log.isDebugEnabled()){
                     log.debug("stripping old prefix and adding the new one - " + prefix);
                 }
-                // Strip the orginal prefix 
+                // Strip the original prefix
                 int index = soapFaultCode.indexOf(':') + 1;
                 soapFaultCode = soapFaultCode.substring(index);
                 // Use the correct prefix for the outgoing soap envelope namespace 
@@ -782,15 +791,14 @@ public class MessageContextBuilder {
         }
         return soapFaultCode;
     }
-
-
-    
     
     /**
      * By the time the exception comes here it can be wrapped by so many levels. This will crip down
      * to the root cause and get the initial error depending on the property
      *
-     * @param e
+     * @param e exception to get the string representation
+     * @param context current message context for which the exception occurred
+     * @return generated fault reason as a string
      */
     private static String getFaultReasonFromException(Throwable e, MessageContext context) {
         Throwable throwable = e;
@@ -806,11 +814,4 @@ public class MessageContextBuilder {
         return throwable.getMessage();
     }
 
-    private static String getSenderFaultCode(OMNamespace soapNamespace) {
-        return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getNamespaceURI())
-                ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"
-                + SOAP12Constants.FAULT_CODE_SENDER
-                : SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"
-                + SOAP11Constants.FAULT_CODE_SENDER;
-    }
 }
