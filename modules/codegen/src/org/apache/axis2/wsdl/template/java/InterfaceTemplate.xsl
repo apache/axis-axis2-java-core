@@ -158,7 +158,7 @@
                 * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
             </xsl:text></xsl:for-each>
           */
-        public void start<xsl:value-of select="@firstCharCapitalizedName"/>(
+        public void start<xsl:value-of select="@name"/>(
 
             <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
             <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>

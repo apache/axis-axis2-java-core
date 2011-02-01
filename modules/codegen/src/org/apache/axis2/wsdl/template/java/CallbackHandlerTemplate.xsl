@@ -79,7 +79,7 @@
             * auto generated Axis2 call back method for <xsl:value-of select="@name"/> method
             * override this method for handling normal response from <xsl:value-of select="@name"/> operation
             */
-           public void receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(
+           public void receiveResult<xsl:value-of select="@name"/>(
                     <xsl:choose>
                         <xsl:when test="$outParamCount=1">
                              <xsl:value-of select="output/param[@location='body']/param/@type"/><xsl:text> </xsl:text>result
@@ -99,7 +99,7 @@
            * auto generated Axis2 Error handler
            * override this method for handling error response from <xsl:value-of select="@name"/> operation
            */
-            public void receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(java.lang.Exception e) {
+            public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {
             }
                 </xsl:when>
                 <xsl:otherwise>
