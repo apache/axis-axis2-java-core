@@ -2279,11 +2279,20 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = axisOperation.getName().getLocalPart();
 
         if (this.codeGenConfiguration.isUseOperationName()) {
-            addAttribute(doc, "name", JavaUtils.xmlNameToJava(localPart), methodElement);
+            String temp = JavaUtils.xmlNameToJava(localPart);
+            addAttribute(doc, "name", temp, methodElement);
+            // we need first character capitalized version at times,
+            // to preserve the CamelCase name generation
+            addAttribute(doc,"firstCharCapitalizedName",
+                    JavaUtils.capitalizeFirstChar(temp), methodElement);
         } else {
-            addAttribute(doc, "name", JavaUtils.xmlNameToJavaIdentifier(localPart), methodElement);
+            String temp =  JavaUtils.xmlNameToJavaIdentifier(localPart);
+            addAttribute(doc, "name", temp , methodElement);
+            // we need first character capitalized version at times,
+            // to preserve the CamelCase name generation
+            addAttribute(doc,"firstCharCapitalizedName",
+                    JavaUtils.capitalizeFirstChar(temp), methodElement);
         }
-
         addAttribute(doc, "originalName", localPart, methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", (String) getBindingPropertyFromOperation(

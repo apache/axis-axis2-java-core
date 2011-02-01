@@ -588,7 +588,7 @@
                     * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
                 </xsl:text></xsl:for-each>
                 */
-                public  void start<xsl:value-of select="@name"/>(
+                public  void start<xsl:value-of select="@firstCharCapitalizedName"/>(
 
                  <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
                  <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
@@ -741,42 +741,42 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 <xsl:choose>
                                     <xsl:when test="$outputtype='byte'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toByte(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toByte(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='char'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toChar(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toChar(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='double'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toDouble(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toDouble(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='float'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toFloat(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toFloat(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='int'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toInt(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toInt(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='long'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toLong(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toLong(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='short'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toShort(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toShort(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='boolean'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toBoolean(resultEnv.getBody().getFirstElement(),
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(toBoolean(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>                                    
                                     <xsl:otherwise>
                                         java.lang.Object object = fromOM(resultEnv.getBody().getFirstElement(),
                                                                          <xsl:value-of select="$outputtype"/>.class,
                                                                          getEnvelopeNamespaces(resultEnv));
-                                        callback.receiveResult<xsl:value-of select="@name"/>(<xsl:choose>
+                                        callback.receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(<xsl:choose>
                                         <xsl:when test="$outputtype=''">);</xsl:when>
                                         <xsl:when test="$outputparamcount=1">
                                             get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
@@ -793,7 +793,7 @@
                                     </xsl:otherwise>
                             </xsl:choose>
                             } catch (org.apache.axis2.AxisFault e) {
-                                callback.receiveError<xsl:value-of select="@name"/>(e);
+                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(e);
                             }
                             }
 
@@ -817,42 +817,42 @@
 													m.invoke(ex,new java.lang.Object[]{messageObject});
 													<xsl:for-each select="fault/param">
 													if (ex instanceof <xsl:value-of select="@name"/>){
-														callback.receiveError<xsl:value-of select="$method-name"/>((<xsl:value-of select="@name"/>)ex);
+														callback.receiveError<xsl:value-of select="$method-name"/>((<xsl:value-of select="@firstCharCapitalizedName"/>)ex);
 											            return;
 										            }
 										            </xsl:for-each>
 					
-										            callback.receiveError<xsl:value-of select="@name"/>(new java.rmi.RemoteException(ex.getMessage(), ex));
+										            callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(new java.rmi.RemoteException(ex.getMessage(), ex));
                                             } catch(java.lang.ClassCastException e){
                                                 // we cannot intantiate the class - throw the original Axis fault
-                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
                                             } catch (java.lang.ClassNotFoundException e) {
                                                 // we cannot intantiate the class - throw the original Axis fault
-                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
                                             } catch (java.lang.NoSuchMethodException e) {
                                                 // we cannot intantiate the class - throw the original Axis fault
-                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
                                             } catch (java.lang.reflect.InvocationTargetException e) {
                                                 // we cannot intantiate the class - throw the original Axis fault
-                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
                                             } catch (java.lang.IllegalAccessException e) {
                                                 // we cannot intantiate the class - throw the original Axis fault
-                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
                                             } catch (java.lang.InstantiationException e) {
                                                 // we cannot intantiate the class - throw the original Axis fault
-                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
                                             } catch (org.apache.axis2.AxisFault e) {
                                                 // we cannot intantiate the class - throw the original Axis fault
-                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                                callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
                                             }
 									    } else {
-										    callback.receiveError<xsl:value-of select="@name"/>(f);
+										    callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
 									    }
 									} else {
-									    callback.receiveError<xsl:value-of select="@name"/>(f);
+									    callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(f);
 									}
 								} else {
-								    callback.receiveError<xsl:value-of select="@name"/>(error);
+								    callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(error);
 								}
                             }
 
@@ -865,7 +865,7 @@
                                 try {
                                     _messageContext.getTransportOut().getSender().cleanup(_messageContext);
                                 } catch (org.apache.axis2.AxisFault axisFault) {
-                                    callback.receiveError<xsl:value-of select="@name"/>(axisFault);
+                                    callback.receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(axisFault);
                                 }
                             }
                 });

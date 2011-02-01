@@ -156,7 +156,7 @@
                     // TODO : Fill in the <xsl:value-of select="@name"/> here
                 </xsl:for-each>
 
-                stub.start<xsl:value-of select="@name"/>(
+                stub.start<xsl:value-of select="@firstCharCapitalizedName"/>(
                          <xsl:for-each select="input/param[@type!='']">
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
@@ -178,7 +178,7 @@
                 );
               </xsl:when>
               <xsl:otherwise>
-                stub.start<xsl:value-of select="@name"/>(
+                stub.start<xsl:value-of select="@firstCharCapitalizedName"/>(
                     new <xsl:value-of select="$tempCallbackName"/>()
                 );
              </xsl:otherwise>
@@ -190,7 +190,7 @@
         private class <xsl:value-of select="$tempCallbackName"/>  extends <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>{
             public <xsl:value-of select="$tempCallbackName"/>(){ super(null);}
 
-            public void receiveResult<xsl:value-of select="@name"/>(
+            public void receiveResult<xsl:value-of select="@firstCharCapitalizedName"/>(
                          <xsl:choose>
                             <xsl:when test="$outParamCount=1">
                                  <xsl:value-of select="output/param[@location='body']/param/@type"/><xsl:text> </xsl:text>result
@@ -205,7 +205,7 @@
                 
             }
 
-            public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {
+            public void receiveError<xsl:value-of select="@firstCharCapitalizedName"/>(java.lang.Exception e) {
                 fail();
             }
 
