@@ -269,11 +269,13 @@ public class JAXWSMessageReceiver implements MessageReceiver {
      */
     private void mergeDeploymentCL(AxisService service) {
         ClassLoader deploymentClassLoader = service.getClassLoader();
-        // get URLs from deployment class loader
-        URL[] deploymentClassLoaderUrls = ((URLClassLoader) deploymentClassLoader).getURLs();
-        // create a new class loader by setting the current TCCL as the parent
-        setContextClassLoader(new URLClassLoader(deploymentClassLoaderUrls,
-                getContextClassLoader()));
+        if (deploymentClassLoader instanceof URLClassLoader) {
+            // get URLs from deployment class loader
+            URL[] deploymentClassLoaderUrls = ((URLClassLoader) deploymentClassLoader).getURLs();
+            // create a new class loader by setting the current TCCL as the parent
+            setContextClassLoader(new URLClassLoader(deploymentClassLoaderUrls,
+                    getContextClassLoader()));
+        }
     }
 
     /**
