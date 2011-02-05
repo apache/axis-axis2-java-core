@@ -156,10 +156,18 @@ public class TypeTable {
     public QName getSimpleSchemaTypeName(String typeName) {
         QName qName = (QName) simpleTypetoxsd.get(typeName);
         if(qName == null){
-            if((typeName.startsWith("java.lang")||typeName.startsWith("javax.")) &&
-                    !Exception.class.getName().equals(typeName)){
+             Class typeClass = null;
+            try {
+                typeClass = Class.forName(typeName);
+            } catch (ClassNotFoundException e) {
+                // we need to do this change only with the proper classes. this my gives
+                // the exceptions but that should be ok.
+            }
+            if ((typeName.startsWith("java.lang") || typeName.startsWith("javax.")) &&
+                    !Exception.class.isAssignableFrom(typeClass)) {
                 return ANY_TYPE;
             }
+
         }
         return qName;
     }
