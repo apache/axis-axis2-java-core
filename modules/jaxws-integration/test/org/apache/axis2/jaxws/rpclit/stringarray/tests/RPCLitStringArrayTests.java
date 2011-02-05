@@ -77,7 +77,7 @@ public class RPCLitStringArrayTests extends AbstractTestCase {
         Echo portType = service.getEchoPort();
         BindingProvider p = (BindingProvider) portType;
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                                  "http://localhost:6060/axis2/services/RPCLitStringArrayService.EchoNoSEIPort");
+                                  "http://localhost:6060/axis2/services/RPCLitStringArrayEchoNoSEIService.EchoNoSEIPort");
 
         String[] strArray= {"str1", "str2", "str3", "str4 5"};
         StringArray array = new StringArray();

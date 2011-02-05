@@ -78,7 +78,7 @@ public class PortDeserializationTests extends TestCase {
             EndpointDescription endpointDesc = bindingProvider.getEndpointDescription();
             AxisService axisService = endpointDesc.getAxisService();
             assertNotNull(axisService);
-            assertEquals(svc1QN.getLocalPart()+ "." + portQN.getLocalPart(), axisService.getName());
+            assertEquals(svc1QN.getLocalPart(), axisService.getName());
 
             // Now that the AxisService is setup, create an Axis2 message context, set the
             // AxisService on it.  Serialize it out then read it back in.
@@ -150,7 +150,7 @@ public class PortDeserializationTests extends TestCase {
             EndpointDescription endpointDesc1 = bindingProvider1.getEndpointDescription();
             AxisService axisService1 = endpointDesc1.getAxisService();
             assertNotNull(axisService1);
-            assertEquals(svc1QN.getLocalPart()+ "." + portQN.getLocalPart(), axisService1.getName());
+            assertEquals(svc1QN.getLocalPart(), axisService1.getName());
             
             org.apache.axis2.jaxws.spi.BindingProvider bindingProvider2 = 
                 (org.apache.axis2.jaxws.spi.BindingProvider) port2;
@@ -159,10 +159,10 @@ public class PortDeserializationTests extends TestCase {
             assertNotNull(axisService2);
             assertNotSame(axisService1, axisService2);
             // The 2nd AxisService created gets a unique ID appended to the name
-            String baseName = svc2QN.getLocalPart()+ "." + portQN.getLocalPart();
+            String baseName = svc2QN.getLocalPart();
             assertFalse(baseName.equals(axisService2.getName()));
             assertTrue(axisService2.getName().startsWith(baseName));
-            
+
             // Now that the AxisService is setup, create two Axis2 message contexts, set the
             // AxisServices on them.  Serialize them out
             MessageContext msgCtx1 = new MessageContext();
@@ -253,7 +253,7 @@ public class PortDeserializationTests extends TestCase {
             EndpointDescription endpointDesc1 = bindingProvider1.getEndpointDescription();
             AxisService axisService1 = endpointDesc1.getAxisService();
             assertNotNull(axisService1);
-            assertEquals(svc1QN.getLocalPart()+ "." + portQN.getLocalPart(), axisService1.getName());
+            assertEquals(svc1QN.getLocalPart(), axisService1.getName());
             
             org.apache.axis2.jaxws.spi.BindingProvider bindingProvider2 = 
                 (org.apache.axis2.jaxws.spi.BindingProvider) port2;
@@ -262,7 +262,7 @@ public class PortDeserializationTests extends TestCase {
             assertNotNull(axisService2);
             assertNotSame(axisService1, axisService2);
             // The 2nd AxisService created gets a unique ID appended to the name
-            String baseName = svc2QN.getLocalPart()+ "." + portQN.getLocalPart();
+            String baseName = svc2QN.getLocalPart();
             assertFalse(baseName.equals(axisService2.getName()));
             assertTrue(axisService2.getName().startsWith(baseName));
             
@@ -353,7 +353,7 @@ public class PortDeserializationTests extends TestCase {
             EndpointDescription endpointDesc1 = bindingProvider1.getEndpointDescription();
             AxisService axisService1 = endpointDesc1.getAxisService();
             assertNotNull(axisService1);
-            assertEquals(svc1QN.getLocalPart()+ "." + portQN.getLocalPart(), axisService1.getName());
+            assertEquals(svc1QN.getLocalPart(), axisService1.getName());
             
             org.apache.axis2.jaxws.spi.BindingProvider bindingProvider2 = 
                 (org.apache.axis2.jaxws.spi.BindingProvider) port2;
@@ -362,7 +362,7 @@ public class PortDeserializationTests extends TestCase {
             assertNotNull(axisService2);
             assertNotSame(axisService1, axisService2);
             // The 2nd AxisService created gets a unique ID appended to the name
-            String baseName = svc2QN.getLocalPart()+ "." + portQN.getLocalPart();
+            String baseName = svc2QN.getLocalPart();
             assertFalse(baseName.equals(axisService2.getName()));
             assertTrue(axisService2.getName().startsWith(baseName));
             

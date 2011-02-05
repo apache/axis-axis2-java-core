@@ -42,7 +42,7 @@ import java.io.InputStream;
  * The binding indicates MTOM, but @MTOM indicates enabled=false
  * Thus no MTOM.
  */
-@WebService(serviceName="MtomSampleService",
+@WebService(serviceName="MtomSampleMTOMDisable2Service",
 	    endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
 @BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 @MTOM(enabled=false)

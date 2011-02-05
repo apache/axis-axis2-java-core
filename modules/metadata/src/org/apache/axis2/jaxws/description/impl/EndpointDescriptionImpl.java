@@ -21,11 +21,12 @@ package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
@@ -1066,8 +1067,11 @@ public class EndpointDescriptionImpl
             axisService.setName(getServiceDescription().getServiceQName().getLocalPart());
             axisService.setParent(axisConfig);
 
-            //populate all existing bindings..
-            Utils.setEndpointsToAllUsedBindings(axisService);
+            // we always get only one endpoint as there's only one port in the generated WSDL
+            // from wsgen. Set the transport for that endpoint as http by default.
+            for (AxisEndpoint axisEndpoint : axisService.getEndpoints().values()) {
+                axisEndpoint.setTransportInDescription("http");
+            }
 
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(Messages
@@ -1104,6 +1108,25 @@ public class EndpointDescriptionImpl
             serviceName = ServiceClient.ANON_SERVICE + this.hashCode() + System.currentTimeMillis();
         }
         axisService = new AxisService(serviceName);
+
+        // Now we have to add an Endpoint to the AxisService instance according to the generated
+        // WSDL. Binding type can be SOAP 1.1, SOAP 1.2 or HTTP. Always we have to use the
+        // annotated port name as the endpoint name.
+        try {
+            String bindingType = getBindingType();
+            // Default transport protocol is set to HTTP
+            String protocol = "http";
+            if (bindingType.startsWith(SOAPBinding.SOAP12HTTP_BINDING)) {
+                Utils.addSoap12Endpoint(axisService, protocol, getPortQName().getLocalPart());
+            } else if (bindingType.startsWith(javax.xml.ws.http.HTTPBinding.HTTP_BINDING)) {
+                Utils.addHttpEndpoint(axisService, protocol, getPortQName().getLocalPart());
+            } else {
+                // Assume SOAP 1.1 over HTTP for all other cases
+                Utils.addSoap11Endpoint(axisService, protocol, getPortQName().getLocalPart());
+            }
+        } catch (Exception e) {
+            log.error("Error while generating the Endpoint for service :" + axisService.getName());
+        }
 
     }
 
@@ -1257,14 +1280,7 @@ public class EndpointDescriptionImpl
 
     //This should eventually be deprecated in favor 'createAxisServiceNameFromDBL
     private String createAxisServiceName() {
-        String portName = null;
-        if (portQName != null) {
-            portName = portQName.getLocalPart();
-        } else {
-            portName = "NoPortNameSpecified";
-
-        }
-        return getServiceDescription().getServiceQName().getLocalPart() + "." + portName;
+        return getServiceDescription().getServiceQName().getLocalPart();
     }
 
     public boolean isWSDLFullySpecified() {

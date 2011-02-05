@@ -24,7 +24,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
-@WebService(name = "EchoNoSEI", serviceName="RPCLitStringArrayService", targetNamespace = "http://sei.stringarray.rpclit.jaxws.axis2.apache.org")
+@WebService(name = "EchoNoSEI", serviceName="RPCLitStringArrayEchoNoSEIService", targetNamespace = "http://sei.stringarray.rpclit.jaxws.axis2.apache.org")
 @SOAPBinding(style = Style.RPC)
 public class EchoImplNoSEI {
 

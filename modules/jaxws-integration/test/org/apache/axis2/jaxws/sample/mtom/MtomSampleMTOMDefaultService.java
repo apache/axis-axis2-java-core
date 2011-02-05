@@ -41,7 +41,7 @@ import java.io.InputStream;
 /**
  * Endpoint with default MTOM annotation
  */
-@WebService(serviceName="MtomSampleService",
+@WebService(serviceName="MtomSampleMTOMDefaultService",
 	    endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
 //@BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 @MTOM

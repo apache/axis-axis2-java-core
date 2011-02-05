@@ -37,7 +37,7 @@ import org.test.mtom.ObjectFactory;
  * Endpoint with MTOM enabled and Threshold set to size bigger than the attachment size.
  * The response from Server should have attachments inlined.
  */
-@WebService(serviceName="MtomSampleService",
+@WebService(serviceName="MtomSampleMTOMThresholdService",
 	    endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
 @MTOM(enabled=true, threshold=99000)
 public class MtomSampleMTOMThresholdService implements MtomSample {

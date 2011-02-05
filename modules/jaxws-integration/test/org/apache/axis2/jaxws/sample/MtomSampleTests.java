@@ -60,15 +60,15 @@ public class MtomSampleTests extends AbstractTestCase {
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
     
     private static final String URL_ENDPOINT_MTOMDISABLE = 
-        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMDisableServicePort";
+        "http://localhost:6060/axis2/services/MtomSampleMTOMDisableService.MtomSampleMTOMDisableServicePort";
     private static final String URL_ENDPOINT_MTOMDISABLE2 = 
-        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMDisable2ServicePort";
+        "http://localhost:6060/axis2/services/MtomSampleMTOMDisable2Service.MtomSampleMTOMDisable2ServicePort";
     private static final String URL_ENDPOINT_MTOMENABLE = 
-        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMEnableServicePort";
+        "http://localhost:6060/axis2/services/MtomSampleMTOMEnableService.MtomSampleMTOMEnableServicePort";
     private static final String URL_ENDPOINT_MTOMDEFAULT = 
-        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMDefaultServicePort";
+        "http://localhost:6060/axis2/services/MtomSampleMTOMDefaultService.MtomSampleMTOMDefaultServicePort";
     private static final String URL_ENDPOINT_MTOMTHRESHOLD = 
-        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMThresholdServicePort";
+        "http://localhost:6060/axis2/services/MtomSampleMTOMThresholdService.MtomSampleMTOMThresholdServicePort";
     
     
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   

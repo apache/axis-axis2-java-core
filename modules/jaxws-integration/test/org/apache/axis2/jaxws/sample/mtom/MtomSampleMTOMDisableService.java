@@ -42,7 +42,7 @@ import java.io.InputStream;
 /**
  * Endpoint with MTOM disabled
  */
-@WebService(serviceName="MtomSampleService",
+@WebService(serviceName="MtomSampleMTOMDisableService",
 	    endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
 //@BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 @MTOM(enabled=false)

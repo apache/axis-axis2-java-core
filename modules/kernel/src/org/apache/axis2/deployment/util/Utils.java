@@ -1201,6 +1201,19 @@ public class Utils {
         axisService.setEndpointName(soap11EndpointName);
     }
 
+    public static void addSoap11Endpoint(AxisService axisService, String protocol,
+                                         String endpointName) throws Exception {
+        AxisEndpoint httpSoap11Endpoint = new AxisEndpoint();
+        httpSoap11Endpoint.setName(endpointName);
+        httpSoap11Endpoint.setParent(axisService);
+        httpSoap11Endpoint.setTransportInDescription(protocol);
+
+        populateSoap11Endpoint(axisService, httpSoap11Endpoint, null);
+        axisService.addEndpoint(httpSoap11Endpoint.getName(), httpSoap11Endpoint);
+        // setting soap11 endpoint as the default endpoint
+        axisService.setEndpointName(endpointName);
+    }
+
     public static void addSoap12Endpoint(AxisService axisService, String url)
             throws Exception {
         String protocol = org.apache.axis2.util.Utils.getURIScheme(url);
@@ -1217,6 +1230,17 @@ public class Utils {
                                 httpSoap12Endpoint);
     }
 
+    public static void addSoap12Endpoint(AxisService axisService, String protocol,
+                                         String endpointName) throws Exception {
+        AxisEndpoint httpSoap12Endpoint = new AxisEndpoint();
+        httpSoap12Endpoint.setName(endpointName);
+        httpSoap12Endpoint.setParent(axisService);
+        httpSoap12Endpoint.setTransportInDescription(protocol);
+
+        populateSoap12Endpoint(axisService, httpSoap12Endpoint, null);
+        axisService.addEndpoint(httpSoap12Endpoint.getName(), httpSoap12Endpoint);
+    }
+
     public static void addHttpEndpoint(AxisService axisService, String url) {
         String protocol = org.apache.axis2.util.Utils.getURIScheme(url);
         String httpEndpointName = getEndpointName(axisService, protocol, null);
@@ -1225,6 +1249,16 @@ public class Utils {
         httpEndpoint.setName(httpEndpointName);
         httpEndpoint.setParent(axisService);
         httpEndpoint.setEndpointURL(url.toString());
+        httpEndpoint.setTransportInDescription(protocol);
+        populateHttpEndpoint(axisService, httpEndpoint, null);
+        axisService.addEndpoint(httpEndpoint.getName(), httpEndpoint);
+    }
+
+    public static void addHttpEndpoint(AxisService axisService,
+                                       String protocol, String endpointName) {
+        AxisEndpoint httpEndpoint = new AxisEndpoint();
+        httpEndpoint.setName(endpointName);
+        httpEndpoint.setParent(axisService);
         httpEndpoint.setTransportInDescription(protocol);
         populateHttpEndpoint(axisService, httpEndpoint, null);
         axisService.addEndpoint(httpEndpoint.getName(), httpEndpoint);
