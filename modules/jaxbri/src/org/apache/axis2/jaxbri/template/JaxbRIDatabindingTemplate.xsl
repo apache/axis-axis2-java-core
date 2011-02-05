@@ -83,6 +83,27 @@
                     }
                 }
 
+                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent)
+                    throws org.apache.axis2.AxisFault {
+                        try {
+                            javax.xml.bind.JAXBContext context = wsContext;
+                            javax.xml.bind.Marshaller marshaller = context.createMarshaller();
+                            marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+
+                            org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
+
+                            JaxbRIDataSource source = new JaxbRIDataSource( <xsl:value-of select="@type"/>.class,
+                                                                            param,
+                                                                            marshaller,
+                                                                            "<xsl:value-of select="qname/@nsuri"/>",
+                                                                            "<xsl:value-of select="qname/@localname"/>");
+                            org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace("<xsl:value-of select="qname/@nsuri"/>", null);
+                            return factory.createOMElement(source, "<xsl:value-of select="qname/@localname"/>", namespace);
+                        } catch (javax.xml.bind.JAXBException bex){
+                            throw org.apache.axis2.AxisFault.makeFault(bex);
+                        }
+                    }
+
                 private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName methodQName)
                 throws org.apache.axis2.AxisFault {
                     org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
