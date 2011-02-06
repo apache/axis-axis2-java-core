@@ -54,10 +54,10 @@
                             <xsl:variable name="inputComplexType" select="input/param[@location='body' and @type!='']/@complextype"/>
                             <xsl:choose>
                                 <xsl:when test="string-length(normalize-space($inputComplexType)) > 0">
-                                   * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                   * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/> : <xsl:value-of select="input/param[@location='body' and @type!='']/@comment"/>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                    * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/> : <xsl:value-of select="input/param[@location='body' and @type!='']/@comment"/>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -73,19 +73,20 @@
                             <xsl:choose>
                                 <xsl:when test="$isUnwrapParameters">
                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
-                                     * @param<xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                     * @param<xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text> </xsl:text><xsl:value-of select="@comment"/>
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                     * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                     * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@comment"/>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
                     </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
+             * @return <xsl:value-of select="output/param/@name"/><xsl:text> </xsl:text><xsl:value-of select="output/param/@comment"/>
          <xsl:for-each select="fault/param[@type!='']">
-             * @throws <xsl:value-of select="@name"/> : <xsl:value-of select="@comment"/>
+             * @throws <xsl:value-of select="@name"/><xsl:text> </xsl:text><xsl:value-of select="@comment"/>
          </xsl:for-each>
          */
         <xsl:choose>

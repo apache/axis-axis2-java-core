@@ -596,6 +596,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             axisOperation = populateOperations(wsdl4jOperation, wsdl4jPortType, portTypeWSDL);
             addDocumentation(axisOperation, wsdl4jOperation.getDocumentationElement());
+            if (wsdl4jOperation.getInput() != null) {
+                addMessageDocumentation(axisOperation, wsdl4jOperation.getInput().getDocumentationElement(), WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            }
+            if (wsdl4jOperation.getOutput() != null) {
+                addMessageDocumentation(axisOperation, wsdl4jOperation.getOutput().getDocumentationElement(), WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            }
             axisOperation.setParent(axisService);
             axisService.addChild(axisOperation);
             operationNames.add(axisOperation.getName());
@@ -608,6 +614,27 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     }
 
+    /**
+     * This method is used for adding documentation for the message types of the service operations
+     * eg: input message
+     *     output message
+     *     fault messages 
+     *
+     * @param axisOperation
+     * @param documentationElement
+     * @param messageLabel
+     */
+    private void addMessageDocumentation(AxisOperation axisOperation, Element documentationElement, String messageLabel) {
+        if ((documentationElement != null) && (documentationElement.getFirstChild() != null)) {
+            Node firstChild = documentationElement.getFirstChild();
+            String documentation = DOM2Writer.nodeToString(firstChild);
+
+            if (!"".equals(documentation)) {
+                (axisOperation.getMessage(messageLabel)).setDocumentation(documentation);
+            }
+        }
+    }
+    
     private void populateBinding(AxisBinding axisBinding,
                                  Binding wsdl4jBinding,
                                  Definition bindingWSDL,

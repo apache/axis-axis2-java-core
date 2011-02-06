@@ -3009,6 +3009,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             // This is the  wrapped component - add the type mapping
             Element mainParameter = generateParamComponent(doc,
+                    inputMessage.getDocumentation(),
                     this.mapper.getParameterName(
                             inputMessage.getElementQName()),
                     this.mapper.getTypeMappingName(
@@ -3052,9 +3053,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 wrapped_jaxws = true;
                 //populate the parts list - this list is needed to generate multiple
                 //parameters in the signatures
+                //todo documentation is kept empty(null) in this scenario
                 for (int i = 0; i < partsList.size(); i++) {
                     QName qName = (QName) partsList.get(i);
                     mainParameter.appendChild(generateParamComponent(doc,
+                            null,
                             this.mapper.getParameterName(
                                     qName),
                             this.mapper.getTypeMappingName(
@@ -3091,11 +3094,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return DOM Element
      */
     protected Element generateParamComponent(Document doc,
+                                             String comment,
                                              String paramName,
                                              String paramType,
                                              QName operationName,
                                              QName paramQName) {
-        return generateParamComponent(doc, paramName, paramType, operationName, paramQName, null,
+        return generateParamComponent(doc, comment, paramName, paramType, operationName, paramQName, null,
                 false, false);
     }
 
@@ -3108,10 +3112,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return DOM Element
      */
     protected Element generateParamComponent(Document doc,
+                                             String comment,
                                              String paramName,
                                              String paramType,
                                              QName paramQName) {
-        return generateParamComponent(doc, paramName, paramType, null, paramQName, null, false,
+        return generateParamComponent(doc,comment, paramName, paramType, null, paramQName, null, false,
                 false);
     }
 
@@ -3141,6 +3146,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param paramName
      */
     protected Element generateParamComponent(Document doc,
+                                             String comment,
                                              String paramName,
                                              String paramType,
                                              QName opName,
@@ -3151,6 +3157,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element paramElement = doc.createElement("param");
         addAttribute(doc, "name",
                 paramName, paramElement);
+
+        addAttribute(doc, "comment",
+                (comment == null) ? "" : comment,
+                paramElement);
 
         if (codeGenConfiguration.getOutputLanguage().equals("jax-ws") && useHolderClass_jaxws) {
             Class primitive = JavaUtils.getWrapperClass(paramType);
@@ -3225,12 +3235,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
         String parameterName;
         String typeMappingStr;
+        String comment = null;
         parameterName = this.mapper.getParameterName(outputMessage.getElementQName());
+        comment = outputMessage.getDocumentation();
         String typeMapping = this.mapper.getTypeMappingName(outputMessage.getElementQName());
         typeMappingStr = (typeMapping == null) ? "" : typeMapping;
 
 
         addAttribute(doc, "name", parameterName, paramElement);
+        addAttribute(doc, "comment", (comment == null) ? "" : comment, paramElement);
         addAttribute(doc, "type", typeMappingStr, paramElement);
 
         //adds the short type
@@ -3286,11 +3299,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // in out put params we only intersted if there is only one parameter
             // otherwise we can not unwrap it.
             // this logic handles at the template level
+            //todo comment is empty(null) in this scenario
             QName qName;
             for (Iterator iter = partsList.iterator(); iter.hasNext();) {
                 qName = (QName) iter.next();
                 paramElement.
                         appendChild(generateParamComponent(doc,
+                                                           null,
                                                            this.mapper.getParameterName(qName),
                                                            this.mapper.getTypeMappingName(qName),
                                                            operation.getName(),
