@@ -174,7 +174,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             for (Class exceptionType : exceptionTypes){
                 if (exceptionType.getName().equals(cause.getClass().getName())){
                     // this is an bussiness logic exception so handle it properly
-                    String partQName = getSimpleClassName(exceptionType);
+                    String partQName = method.getName() + getSimpleClassName(exceptionType);
                     TypeTable typeTable = inMessage.getAxisService().getTypeTable();
                     QName elementQName = typeTable.getQNamefortheType(partQName);
                     SOAPFactory fac = getSOAPFactory(inMessage);
@@ -190,8 +190,9 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                        exceptionElement.addChild(innterExceptionElement);
                     } else {
                         // if it is a normal bussiness exception we need to generate the schema assuming it is a pojo
+                        QName innerElementQName = new QName(elementQName.getNamespaceURI(), getSimpleClassName(exceptionType));
                         XMLStreamReader xr = BeanUtil.getPullParser(cause,
-                                elementQName, typeTable, true, false);
+                                innerElementQName, typeTable, true, false);
                         StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
                         OMElement documentElement = stAXOMBuilder.getDocumentElement();
                         exceptionElement.addChild(documentElement);
