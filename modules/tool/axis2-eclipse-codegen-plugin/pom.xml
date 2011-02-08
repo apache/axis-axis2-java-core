@@ -32,9 +32,9 @@
     <packaging>bundle</packaging>
     <description>The Axis 2 Eclipse Codegen Plugin for wsdl2java and java2wsdl</description>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-eclipse-codegen-plugin</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-eclipse-codegen-plugin</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/tool/axis2-eclipse-codegen-plugin</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/tool/axis2-eclipse-codegen-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/tool/axis2-eclipse-codegen-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1.6.0/modules/tool/axis2-eclipse-codegen-plugin</url>
     </scm>
     <dependencies>
         <dependency>

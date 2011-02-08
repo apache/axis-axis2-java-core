@@ -50,9 +50,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/xmlbeans</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/xmlbeans</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/xmlbeans</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/xmlbeans</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/xmlbeans</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1.6.0/modules/xmlbeans</url>
     </scm>
     <build>
         <resources>

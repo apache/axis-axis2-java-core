@@ -31,9 +31,9 @@
     <name>Apache Axis2 - Resource bundle</name>
     <description>Contains the legal files that must be included in all artifacts</description>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/resource-bundle</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/resource-bundle</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/resource-bundle</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/resource-bundle</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/resource-bundle</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1.6.0/modules/resource-bundle</url>
     </scm>
     <build>
         <plugins>

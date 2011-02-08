@@ -93,9 +93,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxws-integration</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxws-integration</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/jaxws-integration</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/jaxws-integration</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/jaxws-integration</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1.6.0/modules/jaxws-integration</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -982,8 +982,7 @@
                                     </fileset>
                                 </copy>
 
-                                <zip destfile="${servicejars.dir}/BareDocLitNoArgService.jar"
-                                     basedir="${servicejars.dir}/BareDocLitNoArgService" />
+                                <zip destfile="${servicejars.dir}/BareDocLitNoArgService.jar" basedir="${servicejars.dir}/BareDocLitNoArgService" />
                                 <delete dir="${servicejars.dir}/BareDocLitNoArgService" />
 
                                 <copy toDir="${servicejars.dir}/EchoMessageService/">

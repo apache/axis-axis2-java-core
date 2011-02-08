@@ -120,9 +120,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/metadata</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/metadata</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/metadata</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/metadata</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1.6.0/modules/metadata</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1.6.0/modules/metadata</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
