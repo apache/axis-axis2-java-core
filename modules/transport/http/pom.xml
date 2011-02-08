@@ -32,9 +32,9 @@
     <description>This inclues all the available transports in Axis2</description>
     <packaging>bundle</packaging>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/transport/http</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/transport/http</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_6/modules/transport/http</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/transport/http</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/transport/http</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/transport/http</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
