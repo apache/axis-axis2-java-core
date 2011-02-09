@@ -68,7 +68,7 @@
     <properties>
 	<!-- Tracking SNAPSHOT(s) of a few projects -->
         <axiom.version>1.2.12-SNAPSHOT</axiom.version>
-        <neethi.version>3.0.0-SNAPSHOT</neethi.version>
+        <neethi.version>2.0.4</neethi.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
 
 	<!-- Use released versions for these projects -->
