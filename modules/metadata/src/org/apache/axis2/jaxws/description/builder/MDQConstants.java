@@ -97,4 +97,24 @@ public class MDQConstants {
     public static final String USE_MANIFEST_LEGACY_WEB_METHOD_RULES = "LegacyWebMethod";
     public static final String SUN_WEB_METHOD_BEHAVIOR_CHANGE_VERSION = "2.1.6";
 
+    /** 
+     * Context Property:
+     * Name: jaxws.share.dynamic.ports.enable
+     * Value: String "false" or "true"
+     * Default: null, which is interpreted as "false"
+     * Can be set on:
+     * - Axis Configuration, which indicates that dynamic ports should be shared across services based on 
+     * a key of (PortQName, BindingId, EndpointAddress)
+     *   
+     * Dynamic ports, which are those created by Service.addPort(...), should only be visible to the instance
+     * of the service that did the addPort.  However, for backwards compatibility, this flag can be used
+     * to enable the sharing of dynamic ports across all services on an AxisConfiguration based on the key
+     * (PortQName, BindingId, EndpointAddress).
+     * 
+     * The default setting of this property is null, which is interpreted as "false", which will scope the
+     * visibility of dynamic ports to the instance of the service that did the addPort().
+     */
+    public static final String  SHARE_DYNAMIC_PORTS_ACROSS_SERVICES = "jaxws.share.dynamic.ports.enable"; 
+
+
 }

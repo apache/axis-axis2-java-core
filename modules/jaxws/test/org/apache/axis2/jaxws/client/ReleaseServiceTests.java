@@ -118,16 +118,27 @@ public class ReleaseServiceTests extends TestCase {
      * before the next one is created.  This should release the resources for that service.  The
      * number of services and ports created is large enough to cause an OOM if the release isn't
      * being done correctly.
+     * 
+     * IMPORTANT NOTE!  Due to a change where dynamic ports are not shared across services,
+     * it *may* be that too many ports are being added, which could result in an OOM before
+     * they can be released.  The OOM does not necessarily indicate that the services are
+     * not being released; it may indicate that the given number of dynamic ports, now not
+     * shared across services, is too large. Even though the dynamic ports are being relased
+     * the memory is not freed up for re-use until garbage collection is run.
+     * 
+     * NOTE: This test is disabled because forcing garbage collection is an inexact science
+     * at best.  You can only ask the JVM to consider doing GC, and that behaves differently
+     * on different JVMS.  So, there's no reliable way to make sure this test runs on various
+     * JVMs.  So, it is disabled.  
      */
-    public void testMultipleServiceMultiplePortReleaseLoop() {
+    public void _DISABLED_testMultipleServiceMultiplePortReleaseLoop() {
         // Create a bunch of different services, make sure the service desc finalizer is called
         try {
             ClientMetadataTest.installCachingFactory();
-
             for (int i = 0; i < 1000; i++) {
                 QName svcQN = new QName(namespaceURI, svcLocalPart + "_" + i);
                 Service svc1 = Service.create(svcQN);
-                for (int j = 0; j < 200; j++) {
+                for (int j = 0; j < 100; j++) {
                     QName portQN = new QName(namespaceURI, dynamicPort1 + "_svc_" + i + "_port_" + j);
                     svc1.addPort(portQN, bindingID1, epr1);
                 }
@@ -545,17 +556,17 @@ public class ReleaseServiceTests extends TestCase {
             
             EndpointDescription epDesc1_port1 = svcDesc1.getEndpointDescription(portQN1, sd1);
             EndpointDescription epDesc2_port1 = svcDesc1.getEndpointDescription(portQN1, sd2);
-            assertSame(epDesc1_port1, epDesc2_port1);
+            assertNotSame(epDesc1_port1, epDesc2_port1);
             AxisService axisSvc1_port1 = epDesc1_port1.getAxisService();
             AxisService axisSvc2_port1 = epDesc2_port1.getAxisService();
-            assertSame(axisSvc1_port1, axisSvc2_port1);
+            assertNotSame(axisSvc1_port1, axisSvc2_port1);
 
             EndpointDescription epDesc1_port2 = svcDesc1.getEndpointDescription(portQN2, sd1);
             EndpointDescription epDesc2_port2 = svcDesc1.getEndpointDescription(portQN2, sd2);
-            assertSame(epDesc1_port2, epDesc2_port2);
+            assertNotSame(epDesc1_port2, epDesc2_port2);
             AxisService axisSvc1_port2 = epDesc1_port2.getAxisService();
             AxisService axisSvc2_port2 = epDesc2_port2.getAxisService();
-            assertSame(axisSvc1_port2, axisSvc2_port2);
+            assertNotSame(axisSvc1_port2, axisSvc2_port2);
 
             // First close should NOT cleanup the endpoints since the other service is
             // still using them.
@@ -584,9 +595,9 @@ public class ReleaseServiceTests extends TestCase {
             ServiceDescription svcDesc3 = sd3.getServiceDescription();
             assertSame(svcDesc2_afterClose, svcDesc3);
             EndpointDescription epDesc3_port1 = svcDesc3.getEndpointDescription(portQN1, sd3);
-            assertSame(epDesc3_port1, epDesc2_port1_afterClose);
+            assertNotSame(epDesc3_port1, epDesc2_port1_afterClose);
             EndpointDescription epDesc3_port2 = svcDesc3.getEndpointDescription(portQN2, sd3);
-            assertSame(epDesc3_port2, epDesc2_port2_afterClose);
+            assertNotSame(epDesc3_port2, epDesc2_port2_afterClose);
 
             // Close the 2nd delegate and make sure cahced objects are still there
             // since there's a 3rd delegate now
@@ -824,7 +835,7 @@ public class ReleaseServiceTests extends TestCase {
             QName portQN2 = new QName(namespaceURI, dynamicPort1 + "_2");
             QName portQN3 = new QName(namespaceURI, dynamicPort1 + "_3");
             QName portQN4 = new QName(namespaceURI, dynamicPort1 + "_4");
-            QName portQN5 = new QName(namespaceURI, dynamicPort1 + "_4");
+            QName portQN5 = new QName(namespaceURI, dynamicPort1 + "_5");
 
             svc1.addPort(portQN1,bindingID1, epr1);
             svc1.addPort(portQN2,bindingID1, epr1);
@@ -858,25 +869,25 @@ public class ReleaseServiceTests extends TestCase {
             // Since the services descriptions are shared, use this in the rest of the test for clarity
             ServiceDescription svcDesc = svcDesc1;
             
-            // Make sure the endpoint descriptions for the same ports are shared across the 
+            // Make sure the endpoint descriptions for the same ports are not shared across the 
             // delegate instances
             
             EndpointDescription epDesc1_port1 = svcDesc.getEndpointDescription(portQN1, sd1);
             EndpointDescription epDesc2_port1 = svcDesc.getEndpointDescription(portQN1, sd2);
-            assertSame(epDesc1_port1, epDesc2_port1);
+            assertNotSame(epDesc1_port1, epDesc2_port1);
             AxisService axisSvc1_port1 = epDesc1_port1.getAxisService();
             AxisService axisSvc2_port1 = epDesc2_port1.getAxisService();
-            assertSame(axisSvc1_port1, axisSvc2_port1);
+            assertNotSame(axisSvc1_port1, axisSvc2_port1);
             AxisService portQN1_AxisService = axisSvc1_port1;
             AxisService portQN3_AxisService = svcDesc.getEndpointDescription(portQN3, sd1).getAxisService();
             assertNull(svcDesc.getEndpointDescription(portQN1, sd3));
             
             EndpointDescription epDesc1_port2 = svcDesc.getEndpointDescription(portQN2, sd1);
             EndpointDescription epDesc2_port2 = svcDesc.getEndpointDescription(portQN2, sd2);
-            assertSame(epDesc1_port2, epDesc2_port2);
+            assertNotSame(epDesc1_port2, epDesc2_port2);
             AxisService axisSvc1_port2 = epDesc1_port2.getAxisService();
             AxisService axisSvc2_port2 = epDesc2_port2.getAxisService();
-            assertSame(axisSvc1_port2, axisSvc2_port2);
+            assertNotSame(axisSvc1_port2, axisSvc2_port2);
             AxisService portQN2_AxisService = axisSvc1_port2;
             
             EndpointDescription epDesc3_port4 = svcDesc.getEndpointDescription(portQN4, sd3);
@@ -895,9 +906,9 @@ public class ReleaseServiceTests extends TestCase {
             // Should remove the entries for this delegate
             assertNull(svcDesc.getEndpointDescription(portQN1, sd1));
             assertNull(svcDesc.getEndpointDescription(portQN2, sd1));
-            // Should only release port 3 since 1 and 2 are shared and 4 wasn't added to this delegate
-            assertTrue(axisConfig.getServiceGroup(portQN1_AxisService.getAxisServiceGroup().getServiceGroupName()) != null);
-            assertTrue(axisConfig.getServiceGroup(portQN2_AxisService.getAxisServiceGroup().getServiceGroupName()) != null);
+            // Should only release all ports added to this service; 4 wasn't added to this delegate
+            assertTrue(axisConfig.getServiceGroup(portQN1_AxisService.getAxisServiceGroup().getServiceGroupName()) == null);
+            assertTrue(axisConfig.getServiceGroup(portQN2_AxisService.getAxisServiceGroup().getServiceGroupName()) == null);
             assertTrue(axisConfig.getServiceGroup(portQN3_AxisService.getAxisServiceGroup().getServiceGroupName()) == null);
             assertTrue(axisConfig.getServiceGroup(portQN4_AxisService.getAxisServiceGroup().getServiceGroupName()) != null);
             
