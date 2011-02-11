@@ -19,8 +19,11 @@
 
 package org.apache.axis2.jaxws;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
@@ -34,6 +37,7 @@ import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,7 +49,11 @@ import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.soap.AddressingFeature.Responses;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 
 public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
@@ -404,6 +412,28 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
                 String wsdlLocation = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
 
                 epr = EndpointReferenceUtils.createAxis2EndpointReference(address, service, port, wsdlLocation, addressingNamespace);
+                
+                // Add reference parameters from WSDL to the EPR
+                AxisService axisService = endpointDesc.getAxisService();
+                if (axisService != null) {
+                    AxisEndpoint axisEndpoint = axisService.getEndpoint(axisService.getEndpointName());
+                    
+                    if(axisEndpoint != null){
+                        ArrayList referenceParameters = (ArrayList) axisEndpoint.getParameterValue(AddressingConstants.REFERENCE_PARAMETER_PARAMETER);
+                        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                            log.trace("getEndpointReference: Adding reference parameters to EPR from WSDL: axisService = " + axisService + ", axisEndpoint = " + axisEndpoint.getName() + ", referenceParameters = " + referenceParameters);
+                        }
+                        if(referenceParameters!=null){
+                            Iterator iterator = referenceParameters.iterator();
+                            HashMap<QName, OMElement> refParamMap = new HashMap<QName, OMElement>();
+                            while (iterator.hasNext()) {
+                                OMElement omElement = (OMElement)iterator.next();
+                                refParamMap.put(omElement.getQName(), omElement);
+                            }
+                            epr.setReferenceParameters(refParamMap);
+                        }
+                    }
+                }
             }
             else if (!addressingNamespace.equals(binding.getAddressingNamespace())) {
                 throw ExceptionFactory.

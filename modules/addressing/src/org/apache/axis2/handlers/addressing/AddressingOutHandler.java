@@ -526,17 +526,29 @@ public class AddressingOutHandler extends AbstractTemplatedHandler implements Ad
             			Iterator iterator = referenceparameters.iterator();
             			while (iterator.hasNext()) {
             				OMElement omElement = (OMElement)iterator.next();
-                            SOAPHeaderBlock newElement = ElementHelper.toSOAPHeaderBlock(omElement, factory);
-            				if (isFinalAddressingNamespace) {
-            					newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
-            							Final.WSA_TYPE_ATTRIBUTE_VALUE,
-            							addressingNamespaceObject);
-            				}
-            				addRoleToHeader(newElement);
-            				header.addChild(newElement);
+                            // Only add the reference parameter from the WSDL if it does not already exist.
+                            // This allows clients to override the values before invoking the service.
+                            if (referenceInformation == null || !referenceInformation.containsKey(omElement.getQName())) {
+                                SOAPHeaderBlock newElement = ElementHelper.toSOAPHeaderBlock(omElement, factory);
+                                if (isFinalAddressingNamespace) {
+                                    newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
+                                                            Final.WSA_TYPE_ATTRIBUTE_VALUE,
+                                                            addressingNamespaceObject);
+                                }
+                                addRoleToHeader(newElement);
+                                header.addChild(newElement);
+                            } else {
+                                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                                    log.trace("processToEPRReferenceInformation: Reference parameter already exists so ignoring value from WSDL: " + omElement);
+                                }
+                            }
             			}
             		}
             	}
+            }
+            
+            if (log.isTraceEnabled()) {
+                log.trace("processToEPRReferenceInformation: Header after adding reference parameters: "+header);
             }
         }
 

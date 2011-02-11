@@ -43,7 +43,6 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
@@ -526,7 +525,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
          * if both are not provided then throw exception.
          * (JLB): I'm not sure lack of WSDL should cause an exception
          */
-
+        
+        if (log.isTraceEnabled()) {
+            log.trace("getPort: jaxwsEPR = " + jaxwsEPR);
+        }
 
         if (!isValidWSDLLocation()) {
             //TODO: Should I throw Exception if no WSDL
@@ -554,6 +556,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.
               makeWebServiceException(Messages.getMessage("invalidEndpointReference", 
                                                           e.toString()));
+        }
+        
+        if (log.isTraceEnabled()) {
+            log.trace("getPort: Converted jaxwsEPR to axis2EPR = " + axis2EPR);
         }
 
         return getPort(axis2EPR, addressingNamespace, sei, features);
