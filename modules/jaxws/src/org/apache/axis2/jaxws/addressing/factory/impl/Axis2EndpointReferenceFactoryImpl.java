@@ -19,6 +19,11 @@
 
 package org.apache.axis2.jaxws.addressing.factory.impl;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -30,15 +35,17 @@ import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
-
-import javax.xml.namespace.QName;
-import java.net.URL;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class produces instances of {@link EndpointReference}.
  *
  */
 public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReferenceFactory {
+    
+    private static final Log log = LogFactory.getLog(Axis2EndpointReferenceFactoryImpl.class);
+    
     public Axis2EndpointReferenceFactoryImpl() {
     	super();
     }
@@ -111,12 +118,33 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
             EndpointReferenceUtils.addService(axis2EPR, serviceName, portName, addressingNamespace);
 
             if (wsdlDocumentLocation != null) {
-            	URL wsdlURL = new URL(wsdlDocumentLocation);
+                
+                URL wsdlURL;
+                try {
+                    wsdlURL = new URL(wsdlDocumentLocation);
+                } catch (MalformedURLException e) {
+                    // just to keep it clean:
+                    if (axis2EPR.getAddress().endsWith("/") && wsdlDocumentLocation.startsWith("/")) {
+                        wsdlDocumentLocation = axis2EPR.getAddress() + wsdlDocumentLocation.substring(1);
+                    } else {
+                        wsdlDocumentLocation = axis2EPR.getAddress() + wsdlDocumentLocation;
+                    }
+                }
+                
+            	wsdlURL = new URL(wsdlDocumentLocation);
             	// This is a temporary usage, so use a memory sensitive wrapper
                 WSDLWrapper wrapper = new WSDL4JWrapper(wsdlURL, true, 2);
             	
                 if (serviceName != null) {
-                    if (wrapper.getService(serviceName) == null) {
+                    
+                    QName serviceNameNoTrailingSlash = new QName("");
+                    // TODO: why in the world would we have to do this?
+                    if (serviceName.getNamespaceURI().endsWith("/")) {
+                        String ns = serviceName.getNamespaceURI();
+                        serviceNameNoTrailingSlash = new QName(ns.substring(0, ns.length()-1), serviceName.getLocalPart());
+                    }
+                    
+                    if ((wrapper.getService(serviceName) == null) && (wrapper.getService(serviceNameNoTrailingSlash) == null)) {
                         throw new IllegalStateException(
                             Messages.getMessage("MissingServiceName", 
                                                 serviceName.toString(), 
@@ -124,12 +152,18 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
                     }
                     if (portName != null) {
                         String[] ports = wrapper.getPorts(serviceName);
+                        // search the other name.  TODO: again, why do we have to do this?
+                        if (ports == null) {
+                            ports = wrapper.getPorts(serviceNameNoTrailingSlash);
+                        }
                         String portLocalName = portName.getLocalPart();
                         boolean found = false;
 
                         if (ports != null) {
                             for (String port : ports) {
-                                if (port.equals(portLocalName)) {
+                                // TODO: axis2 perhaps is deploying with "TypeImplPort" appended, but not reading/honoring the WSDL?
+                                if (port.equals(portLocalName) || (port + "TypeImplPort").equals(portLocalName)) {
+                                    log.debug("found port: " + port);
                                     found = true;
                                     break;
                                 }
@@ -142,6 +176,7 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
                                                              portName.toString(), 
                                                              wsdlDocumentLocation)); 
                         }
+                        log.debug("Setting wsdlDocumentLocation to " + wsdlDocumentLocation + " for EndpointReference at port " + portName);
                         EndpointReferenceUtils.addLocation(axis2EPR, portName.getNamespaceURI(), wsdlDocumentLocation, addressingNamespace);
                     }
                 }

@@ -19,9 +19,9 @@
   ~ under the License.
   -->
 
-<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://resourceinjection.sample.test.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="ResourceInjection" targetNamespace="http://resourceinjection.sample.test.org">
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://resourceinjection.sample.jaxws.axis2.apache.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="ResourceInjection" targetNamespace="http://resourceinjection.sample.jaxws.axis2.apache.org">
   <wsdl:types>
-    <xsd:schema targetNamespace="http://resourceinjection.sample.test.org" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:schema targetNamespace="http://resourceinjection.sample.jaxws.axis2.apache.org" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <xsd:element name="echoResponse">
       	<xsd:complexType>
       		<xsd:sequence>
@@ -53,7 +53,7 @@
   <wsdl:binding name="ResourceInjectionBinding" type="tns:ResourceInjectionPortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="echo">
-      <soap:operation soapAction="http://resourceinjection.sample.test.org/NewOperation"/>
+      <soap:operation soapAction="http://resourceinjection.sample.jaxws.axis2.apache.org/NewOperation"/>
       <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>

@@ -32,6 +32,8 @@ import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
+
+import java.net.URI;
 import java.security.Principal;
 
 public class WebServiceContextImpl implements WebServiceContext {
@@ -141,9 +143,10 @@ public class WebServiceContextImpl implements WebServiceContext {
         if (soapMessageContext != null) {
             QName service = (QName) soapMessageContext.get(MessageContext.WSDL_SERVICE);
             QName endpoint = (QName) soapMessageContext.get(MessageContext.WSDL_PORT);
+            String wsdlLocation = "/?wsdl";  // let the webcontainer redirect us to the real WSDL URL; it knows where it is
             
             org.apache.axis2.addressing.EndpointReference axis2EPR =
-                EndpointReferenceUtils.createAxis2EndpointReference(null, service, endpoint, null, addressingNamespace);
+                EndpointReferenceUtils.createAxis2EndpointReference(null, service, endpoint, wsdlLocation, addressingNamespace);
             
             try {
                 EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);

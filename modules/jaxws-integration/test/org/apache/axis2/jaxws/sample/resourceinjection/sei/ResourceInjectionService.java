@@ -28,7 +28,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-@WebServiceClient(name = "ResourceInjectionService", targetNamespace = "http://resourceinjection.sample.test.org", wsdlLocation = "resourceinjection.wsdl")
+@WebServiceClient(name = "ResourceInjectionService", targetNamespace = "http://resourceinjection.sample.jaxws.axis2.apache.org", wsdlLocation = "resourceinjection.wsdl")
 public class ResourceInjectionService
     extends Service
 {
@@ -58,7 +58,7 @@ public class ResourceInjectionService
     }
 
     public ResourceInjectionService() {
-        super(RESOURCEINJECTIONSERVICE_WSDL_LOCATION, new QName("http://resourceinjection.sample.test.org", "ResourceInjectionService"));
+        super(RESOURCEINJECTIONSERVICE_WSDL_LOCATION, new QName("http://resourceinjection.sample.jaxws.axis2.apache.org", "ResourceInjectionService"));
     }
 
     /**
@@ -68,7 +68,7 @@ public class ResourceInjectionService
      */
     @WebEndpoint(name = "ResourceInjectionPort")
     public ResourceInjectionPortType getResourceInjectionPort() {
-        return (ResourceInjectionPortType)super.getPort(new QName("http://resourceinjection.sample.test.org", "ResourceInjectionPort"), ResourceInjectionPortType.class);
+        return (ResourceInjectionPortType)super.getPort(new QName("http://resourceinjection.sample.jaxws.axis2.apache.org", "ResourceInjectionPort"), ResourceInjectionPortType.class);
     }
 
 }
