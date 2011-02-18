@@ -275,17 +275,51 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			}
 
 			// generate fault Messages
-			ArrayList faultyMessages = axisOperation.getFaultMessages();
+			ArrayList<AxisMessage> faultyMessages = this.extractWSDL11FaultMessages(axisOperation);
 			if (faultyMessages != null) {
-                for (Object faultyMessage : faultyMessages) {
-                    AxisMessage axisMessage = (AxisMessage)faultyMessage;
-                    String name = axisMessage.getName();
+                for (AxisMessage faultyMessage : faultyMessages) {
+                    String name = faultyMessage.getName();
                     if (faultMessageNames.add(name)) {
-                        writeMessage(axisMessage, fac, defintions);
-                        generateHeaderMessages(axisMessage, fac, defintions);
+                        writeMessage(faultyMessage, fac, defintions);
+                        generateHeaderMessages(faultyMessage, fac, defintions);
                     }
                 }
 			}
+		}
+	}
+	
+	/**
+	 * Checks if the given MEP is supported for containing fault messages.
+	 */
+	private boolean isWSDL11FaultyMessagesValidForMEP(String mepURI) {
+		return !(WSDL2Constants.MEP_URI_IN_ONLY.equals(mepURI) || 
+				WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI));
+	}
+	
+	/**
+	 * Return the fault messages only if it's not an in-only operation.
+	 * For WSDL11 generation, the fault messages must be not present in the operation,
+	 * as mentioned in <link>http://www.w3.org/TR/wsdl#_one-way</link>.
+	 */
+	private ArrayList<AxisMessage> extractWSDL11FaultMessages(AxisOperation axisOperation) {
+		String mepURI = axisOperation.getMessageExchangePattern();
+		if (this.isWSDL11FaultyMessagesValidForMEP(mepURI)) {
+			return axisOperation.getFaultMessages();
+		} else {
+			return new ArrayList<AxisMessage>();
+		}
+	}
+	
+	/**
+	 * @see AxisService2WSDL11#extractWSDL11FaultMessages(AxisOperation)
+	 */
+	private ArrayList<AxisBindingMessage> extractWSDL11FaultMessages(
+			AxisBindingOperation axisBindingOperation) {
+		String mepURI = axisBindingOperation.getAxisOperation().getMessageExchangePattern();
+		if (this.isWSDL11FaultyMessagesValidForMEP(mepURI)) {
+			return axisBindingOperation.getFaults();
+		} else {
+			return new ArrayList<AxisBindingMessage>();
 		}
 	}
 
@@ -421,21 +455,20 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			}
 
 			// generate fault Messages
-			ArrayList faultMessages = axisOperation.getFaultMessages();
+			ArrayList<AxisMessage> faultMessages = this.extractWSDL11FaultMessages(axisOperation);
 			if (faultMessages != null) {
-                for (Object faultMessage : faultMessages) {
-                    AxisMessage faultyMessage = (AxisMessage)faultMessage;
+                for (AxisMessage faultMessage : faultMessages) {
                     OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
-                    WSDLSerializationUtil.addWSDLDocumentationElement(faultyMessage,
+                    WSDLSerializationUtil.addWSDLDocumentationElement(faultMessage,
                                                                       fault,
                                                                       fac,
                                                                       wsdl);
                     fault.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
-                                                           + ":" + faultyMessage.getName(), null);
-                    fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(), null);
+                                                           + ":" + faultMessage.getName(), null);
+                    fault.addAttribute(ATTRIBUTE_NAME, faultMessage.getName(), null);
                     WSDLSerializationUtil.addWSAWActionAttribute(fault,
                                                                  axisOperation.getFaultAction(
-                                                                         faultyMessage.getName()),
+                                                                		 faultMessage.getName()),
                                                                  wsaw);
                     // TODO add policies for fault messages
                     operation.addChild(fault);
@@ -864,7 +897,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			}
 
 			// generate fault Messages
-			ArrayList faultyMessages = axisBindingOperation.getFaults();
+			ArrayList faultyMessages = this.extractWSDL11FaultMessages(axisBindingOperation);
 			if (faultyMessages != null) {
                 for (Object faultyMessage1 : faultyMessages) {
                     AxisBindingMessage bindingFaultyMessage = (AxisBindingMessage)faultyMessage1;
@@ -1003,7 +1036,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			}
 
 			// generate fault Messages
-			ArrayList faultyMessages = axisBindingOperation.getFaults();
+			ArrayList faultyMessages = this.extractWSDL11FaultMessages(axisBindingOperation);
 			if (faultyMessages != null) {
                 for (Object faultyMessage1 : faultyMessages) {
                     AxisBindingMessage bindingFaultyMessage = (AxisBindingMessage)faultyMessage1;
