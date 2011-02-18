@@ -66,11 +66,8 @@
         <url>http://issues.apache.org/jira/browse/AXIS2</url>
     </issueManagement>
     <properties>
-	<!-- Tracking SNAPSHOT(s) of a few projects -->
         <neethi.version>2.0.4</neethi.version>
-        <woden.version>1.0-SNAPSHOT</woden.version>
-
-	<!-- Use released versions for these projects -->
+        <woden.version>1.0M9</woden.version>
         <axiom.version>1.2.11</axiom.version>
         <xmlschema.version>1.4.7</xmlschema.version>
         <ant.version>1.7.0</ant.version>
