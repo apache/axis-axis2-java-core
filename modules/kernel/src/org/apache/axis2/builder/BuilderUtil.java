@@ -139,6 +139,10 @@ public class BuilderUtil {
                         while (iterator.hasNext()) {
                             XmlSchemaElement innerElement = (XmlSchemaElement)iterator.next();
                             QName qName = innerElement.getQName();
+                            // ignoring the elements without proper type and minoccurs zero
+                            if ((innerElement.getSchemaType() == null) && (innerElement.getMinOccurs() == 0)){
+                                continue;
+                            }
                             if (qName == null && innerElement.getSchemaTypeName()
                                     .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
                                 createSOAPMessageWithoutSchema(soapFactory, bodyFirstChild,
