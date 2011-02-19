@@ -1598,6 +1598,8 @@ public class MessageContext extends AbstractContext
         AxisBindingMessage bindingMessage =
         	(AxisBindingMessage) getProperty(Constants.AXIS_BINDING_MESSAGE);
 
+        AxisBinding binding;
+
         // If AxisBindingMessage is not set, try to find the binding message from the AxisService
         if (bindingMessage == null) {
         	bindingMessage = findBindingMessage();
@@ -1605,7 +1607,10 @@ public class MessageContext extends AbstractContext
 
         if (bindingMessage != null) {
             return bindingMessage.getEffectivePolicy();
-        // If we can't find the AxisBindingMessage, then try the AxisMessage
+            // If we can't find the AxisBindingMessage, then try the AxisBinding
+        } else if ((binding = findBinding()) != null) {
+            return binding.getEffectivePolicy();
+            // If we can't find the AxisBindingMessage, then try the AxisMessage
         } else if (axisMessage != null) {
         		return axisMessage.getEffectivePolicy();
         } else {
@@ -1619,6 +1624,19 @@ public class MessageContext extends AbstractContext
                return null;
             }
         }
+    }
+
+    private AxisBinding findBinding() {
+        if (axisService != null) {
+            if (axisService.getEndpointName() != null) {
+                AxisEndpoint axisEndpoint = axisService
+                        .getEndpoint(axisService.getEndpointName());
+                if (axisEndpoint != null) {
+                    return axisEndpoint.getBinding();
+                }
+            }
+        }
+        return null;
     }
 
     private AxisBindingMessage findBindingMessage() {
