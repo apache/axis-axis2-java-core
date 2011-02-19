@@ -39,7 +39,7 @@ import org.apache.neethi.builders.AssertionBuilder;
  * "org.apache.neethi.AssertionBuilderFactory".
  */
 
-public class MTOM11AssertionBuilder implements AssertionBuilder{
+public class MTOM11AssertionBuilder implements AssertionBuilder<OMElement> {
     
     private static Log log = LogFactory.getLog(MTOM10AssertionBuilder.class);
 
