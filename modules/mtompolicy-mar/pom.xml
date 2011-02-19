@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.1-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>mtompolicy</artifactId>
@@ -48,9 +48,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.0/modules/mtompolicy-mar</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.0/modules/mtompolicy-mar</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.6.0/modules/mtompolicy-mar</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/mtompolicy-mar</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/mtompolicy-mar</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_6/modules/mtompolicy-mar</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
