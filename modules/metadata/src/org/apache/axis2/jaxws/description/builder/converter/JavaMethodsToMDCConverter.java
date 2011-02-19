@@ -28,7 +28,6 @@ import org.apache.axis2.jaxws.description.builder.ResponseWrapperAnnot;
 import org.apache.axis2.jaxws.description.builder.WebEndpointAnnot;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.builder.WebResultAnnot;
-import sun.reflect.generics.reflectiveObjects.GenericArrayTypeImpl;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -39,6 +38,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebEndpoint;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -347,7 +347,7 @@ public class JavaMethodsToMDCConverter {
             mdc.setReturnType(fullType);
         } else if (type instanceof Class) {
             mdc.setReturnType(((Class)type).getName());
-        } else if (type instanceof GenericArrayTypeImpl) {
+        } else if (type instanceof GenericArrayType) {
             mdc.setReturnType(type.getClass().getName());
         }
     }
