@@ -23,7 +23,7 @@
     <groupId>org.apache.axis2.samples</groupId>
     <artifactId>jaxws-interop</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0</version>
     <name>JAXWS Interop Sample</name>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>1.6.0-SNAPSHOT</version>
+            <version>1.6.0</version>
         </dependency>
     </dependencies>
     <repositories>
