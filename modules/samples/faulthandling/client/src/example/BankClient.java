@@ -51,10 +51,10 @@ public final class BankClient {
             final WithdrawResponse withdrawResponse = bankService.withdraw(withdrawRequest);
             System.out.println("Balance = " + withdrawResponse.getBalance());
             
-        } catch (AccountNotExistFaultMessage e) {
+        } catch (AccountNotExistException e) {
             final AccountNotExistFault fault = e.getFaultMessage();
             System.out.println("Account#" + fault.getAccount() + " does not exist");
-        } catch (InsufficientFundFaultMessage e) {
+        } catch (InsufficientFundException e) {
             final InsufficientFundFault fault = e.getFaultMessage();
             System.out.println("Account#" + fault.getAccount() + " has balance of " + fault.getBalance() + ". It cannot support withdrawal of " + fault.getRequestedFund());
         } catch (RemoteException e) {
