@@ -20,32 +20,40 @@
 
 package org.apache.axis2.transport.local;
 
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
+import java.util.Map;
 
 /**
  * LocalResponder
  */
 public class LocalResponder extends AbstractHandler implements TransportSender {
     protected static final Log log = LogFactory.getLog(LocalResponder.class);
-    
-    
+
     //  fixed for Executing LocalTransport in MulthThread. 
     private OutputStream out;
 
     public LocalResponder(OutputStream response) {
-        this.out = response;        
+        this.out = response;
     }
 
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
@@ -87,13 +95,38 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
                     TransportUtils.writeMessage(msgContext, out);
                 }
             } else {
-                out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
+                if (/*(msgContext != null) &&*/ (msgContext.getOperationContext() != null) &&
+                        (msgContext.getOperationContext().getMessageContexts() != null)) {
+                    MessageContext proxyInMessageContext = msgContext.
+                            getOperationContext().getMessageContext(WSDL2Constants.MESSAGE_LABEL_IN);
 
-                if (out != null) {
-                    TransportUtils.writeMessage(msgContext, out);
+                    if (proxyInMessageContext != null) {
+                        MessageContext initialMessageContext = (MessageContext) proxyInMessageContext.
+                                getProperty(LocalTransportReceiver.IN_MESSAGE_CONTEXT);
+
+                        if (initialMessageContext != null) {
+                            handleResponse(msgContext, initialMessageContext);
+                        } else {
+                            out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
+
+                            if (out != null) {
+                                TransportUtils.writeMessage(msgContext, out);
+                            } else {
+                                throw new AxisFault(
+                                        "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+                            }
+
+                        }
+                    }
                 } else {
-                    throw new AxisFault(
-                            "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+                    out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
+
+                    if (out != null) {
+                        TransportUtils.writeMessage(msgContext, out);
+                    } else {
+                        throw new AxisFault(
+                                "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+                    }
                 }
             }
         } catch (AxisFault axisFault) {
@@ -103,7 +136,72 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
         }
 
         TransportUtils.setResponseWritten(msgContext, true);
-        
+
         return InvocationResponse.CONTINUE;
+    }
+
+    /**
+     * Retrieves the properties from the proxyOutMessageContext and sets the values to the
+     * inMessageContext.
+     *
+     * @param proxyOutMessageContext the active message context
+     * @param initialMessageContext  the initial message context, which was stored as a property
+     *                               in the proxyOutMessageContext
+     * @throws AxisFault AxisFault
+     */
+    private void handleResponse(MessageContext proxyOutMessageContext, MessageContext initialMessageContext) throws AxisFault {
+        MessageContext inMessageContext = initialMessageContext.getOperationContext().
+                getMessageContext(WSDL2Constants.MESSAGE_LABEL_IN);
+
+        // setting the properties
+        Map<String, Object> initialPropertyMap = initialMessageContext.getProperties();
+        initialMessageContext.setProperties(initialPropertyMap);
+
+        inMessageContext.setEnvelope(getEnvelope(proxyOutMessageContext));
+        inMessageContext.setAxisServiceGroup(initialMessageContext.getAxisServiceGroup());
+        inMessageContext.setAxisService(initialMessageContext.getAxisService());
+        inMessageContext.setAxisOperation(initialMessageContext.getAxisOperation());
+        inMessageContext.setAxisMessage(initialMessageContext.getAxisOperation().getMessage(
+                WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+        inMessageContext.setIncomingTransportName(Constants.TRANSPORT_LOCAL);
+        inMessageContext.setServiceContext(initialMessageContext.getServiceContext());
+
+        // set properties on response
+        inMessageContext.setServerSide(true);
+        inMessageContext.setProperty(MessageContext.TRANSPORT_OUT,
+                initialMessageContext.getProperty(MessageContext.TRANSPORT_OUT));
+        inMessageContext.setProperty(Constants.OUT_TRANSPORT_INFO,
+                initialMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
+        inMessageContext.setTransportIn(initialMessageContext.getTransportIn());
+        inMessageContext.setTransportOut(initialMessageContext.getTransportOut());
+
+        // copy the message type property that is used by the out message to the response message
+        inMessageContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                initialMessageContext.getProperty(Constants.Configuration.MESSAGE_TYPE));
+
+        if (initialMessageContext.getMessageID() != null) {
+            inMessageContext.setRelationships(
+                    new RelatesTo[]{new RelatesTo(initialMessageContext.getMessageID())});
+        }
+
+        inMessageContext.setReplyTo(initialMessageContext.getReplyTo());
+        inMessageContext.setFaultTo(initialMessageContext.getFaultTo());
+
+        AxisEngine.receive(inMessageContext);
+    }
+
+    private SOAPEnvelope getEnvelope(MessageContext messageContext) throws AxisFault {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TransportUtils.writeMessage(messageContext, out);
+
+        ByteArrayInputStream bs = new ByteArrayInputStream(out.toByteArray());
+        OMXMLParserWrapper builder;
+        try {
+            builder = BuilderUtil.getBuilder(bs);
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
+
+        return TransportUtils.createSOAPEnvelope(builder.getDocumentElement());
     }
 }

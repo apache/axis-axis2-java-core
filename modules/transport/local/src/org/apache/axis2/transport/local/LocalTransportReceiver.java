@@ -43,6 +43,10 @@ public class LocalTransportReceiver {
     public static ConfigurationContext CONFIG_CONTEXT;
     private ConfigurationContext confContext;
     private MessageContext inMessageContext;
+    /** Whether the call is blocking or non-blocking */
+    private boolean nonBlocking = false;
+    /** If the call is non-blocking the in message context will be stored in this property */
+    public static final String IN_MESSAGE_CONTEXT = "IN_MESSAGE_CONTEXT";
 
     public LocalTransportReceiver(ConfigurationContext configContext) {
         confContext = configContext;
@@ -50,6 +54,11 @@ public class LocalTransportReceiver {
 
     public LocalTransportReceiver(LocalTransportSender sender) {
         this(CONFIG_CONTEXT);
+    }
+
+    public LocalTransportReceiver(LocalTransportSender sender, boolean nonBlocking) {
+        this(CONFIG_CONTEXT);
+        this.nonBlocking = nonBlocking;
     }
 
     public void processMessage(MessageContext inMessageContext,
@@ -79,6 +88,12 @@ public class LocalTransportReceiver {
                                OutputStream response)
             throws AxisFault {
         MessageContext msgCtx = confContext.createMessageContext();
+
+        if (this.nonBlocking) {
+            // Set the in-message context as a property to the  current message context.
+            msgCtx.setProperty(IN_MESSAGE_CONTEXT, inMessageContext);
+        }
+
         if (inMessageContext != null) {
             msgCtx.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST,
                                inMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
