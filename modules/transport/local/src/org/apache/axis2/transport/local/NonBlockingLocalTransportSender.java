@@ -21,7 +21,7 @@ package org.apache.axis2.transport.local;
 
 public class NonBlockingLocalTransportSender extends LocalTransportSender {
 
-    private boolean isNonBlocking() {
+    protected boolean isNonBlocking() {
         return true;
     }
 

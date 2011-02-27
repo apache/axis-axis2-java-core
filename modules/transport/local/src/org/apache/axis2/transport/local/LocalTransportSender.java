@@ -112,7 +112,7 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
         }
     }
 
-    private boolean isNonBlocking() {
+    protected boolean isNonBlocking() {
         return false;
     }
 }
