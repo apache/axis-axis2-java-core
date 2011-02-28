@@ -127,6 +127,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String TCCL_COMPOSITE = "composite";
     public static final String TCCL_SERVICE = "service";
     public static final String FAULT_NAME = "faultName";
+    public static final String REQUEST_PARAMETER_MAP = "requestParameterMap";
 
     /**
      * Field REQUEST_URL_PREFIX

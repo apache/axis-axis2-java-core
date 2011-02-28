@@ -114,6 +114,7 @@ public class XFormURLEncodedBuilder implements Builder {
                                              Constants.Configuration.CHARACTER_SET_ENCODING),
                                      inputStream);
 
+        messageContext.setProperty(Constants.REQUEST_PARAMETER_MAP, parameterMap);
 
         return BuilderUtil.buildsoapMessage(messageContext, parameterMap,
                                             soapFactory);
