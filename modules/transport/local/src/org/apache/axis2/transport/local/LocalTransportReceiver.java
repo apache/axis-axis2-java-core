@@ -33,6 +33,8 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
@@ -40,6 +42,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class LocalTransportReceiver {
+    protected static final Log log = LogFactory.getLog(LocalTransportReceiver.class);
     public static ConfigurationContext CONFIG_CONTEXT;
     private ConfigurationContext confContext;
     private MessageContext inMessageContext;
@@ -90,16 +93,25 @@ public class LocalTransportReceiver {
         MessageContext msgCtx = confContext.createMessageContext();
 
         if (this.nonBlocking) {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting the in-message context as a property(" + IN_MESSAGE_CONTEXT +
+                        ") to the current message context");
+            }
             // Set the in-message context as a property to the  current message context.
             msgCtx.setProperty(IN_MESSAGE_CONTEXT, inMessageContext);
         }
 
         if (inMessageContext != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting the property " + HTTPConstants.MC_HTTP_SERVLETREQUEST + " to " +
+                        inMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
+                log.debug("Setting the property " + MessageContext.REMOTE_ADDR + " to " +
+                        inMessageContext.getProperty(MessageContext.REMOTE_ADDR));
+            }
             msgCtx.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST,
                                inMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
             msgCtx.setProperty(MessageContext.REMOTE_ADDR,
                                inMessageContext.getProperty(MessageContext.REMOTE_ADDR));
-
         }
 
         TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
@@ -134,6 +146,15 @@ public class LocalTransportReceiver {
 
             msgCtx.setEnvelope(envelope);
 
+             if (log.isDebugEnabled()) {
+                log.debug("Setting incoming Transport name - " + Constants.TRANSPORT_LOCAL);
+                log.debug("Setting TransportIn - " + tIn);
+                log.debug("Setting TransportOut - " + localTransportResOut);
+                log.debug("Setting To address - " + to);
+                log.debug("Setting WSAction - " + action);
+                log.debug("Setting Envelope - " + envelope.toString());
+            }
+
             AxisEngine.receive(msgCtx);
         } catch (AxisFault e) {
             // write the fault back.
@@ -142,6 +163,10 @@ public class LocalTransportReceiver {
                         MessageContextBuilder.createFaultMessageContext(msgCtx, e);
                 faultContext.setTransportOut(localTransportResOut);
                 faultContext.setProperty(MessageContext.TRANSPORT_OUT, response);
+
+                if(log.isDebugEnabled()) {
+                    log.debug("Setting FaultContext's TransportOut - " + localTransportResOut);
+                }
 
                 AxisEngine.sendFault(faultContext);
             } catch (AxisFault axisFault) {

@@ -175,6 +175,27 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
         inMessageContext.setTransportIn(initialMessageContext.getTransportIn());
         inMessageContext.setTransportOut(initialMessageContext.getTransportOut());
 
+        if (log.isDebugEnabled()) {
+            log.debug("Setting AxisServiceGroup - " + initialMessageContext.getAxisServiceGroup());
+            log.debug("Setting AxisService - " + initialMessageContext.getAxisService());
+            log.debug("Setting AxisOperation - " + initialMessageContext.getAxisOperation());
+            log.debug("Setting AxisMessage - " + initialMessageContext.getAxisOperation().
+                    getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+            log.debug("Setting Incoming Transport name - " + Constants.TRANSPORT_LOCAL);
+            log.debug("Setting Service Context " + initialMessageContext.getServiceGroupContext().toString());
+
+            log.debug("Setting ServerSide to true");
+            log.debug("Setting " + MessageContext.TRANSPORT_OUT + " property to " +
+                    initialMessageContext.getProperty(MessageContext.TRANSPORT_OUT));
+            log.debug("Setting " + Constants.OUT_TRANSPORT_INFO + " property to " +
+                    initialMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
+            log.debug("Setting TransportIn - " + initialMessageContext.getTransportIn());
+            log.debug("Setting TransportOut - " + initialMessageContext.getTransportOut());
+
+            log.debug("Setting ReplyTo - " + initialMessageContext.getReplyTo());
+            log.debug("Setting FaultTo - " + initialMessageContext.getFaultTo());
+        }
+
         // copy the message type property that is used by the out message to the response message
         inMessageContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
                 initialMessageContext.getProperty(Constants.Configuration.MESSAGE_TYPE));

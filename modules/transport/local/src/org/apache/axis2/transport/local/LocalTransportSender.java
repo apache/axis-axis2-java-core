@@ -113,6 +113,9 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
     }
 
     protected boolean isNonBlocking() {
+        if (log.isDebugEnabled()) {
+            log.debug("Local Transport Sender Selected");
+        }
         return false;
     }
 }
