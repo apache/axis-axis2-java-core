@@ -535,7 +535,7 @@
             "http://www.apache.org/dev/release-signing#openpgp">OpenPGP</a>
             compatible signature from the main Apache site. These can be
             downloaded by following the links above. This <a href=
-            "http://www.apache.org/dist/ws/axis2/KEYS">KEYS</a> file contains
+            "http://www.apache.org/dist/axis/axis2/java/core/KEYS">KEYS</a> file contains
             the public keys that can be used for verifying signatures. It is
             recommended that (when possible)a <a href=
             "http://www.apache.org/dev/release-signing#web-of-trust">Web of
