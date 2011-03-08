@@ -95,7 +95,9 @@ public final class Replicator {
         log.debug("Going to replicate state in " + abstractContext + "...");
         StateManager stateManager = getContextManager(abstractContext);
         if (!abstractContext.getPropertyDifferences().isEmpty()) {
-            stateManager.updateContext(abstractContext);
+            synchronized (abstractContext) {
+                stateManager.updateContext(abstractContext);
+            }
         }
     }
 
