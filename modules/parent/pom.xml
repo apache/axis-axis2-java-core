@@ -112,7 +112,7 @@
         <stax.impl.artifact>wstx-asl</stax.impl.artifact>
         <stax.impl.groupid>org.codehaus.woodstox</stax.impl.groupid>
         <stax.impl.version>3.2.9</stax.impl.version>
-        <tomcat.version>6.0.16</tomcat.version>
+        <tomcat.version>7.0.8</tomcat.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
         <xalan.version>2.7.0</xalan.version>
         <xmlbeans.version>2.3.0</xmlbeans.version>
@@ -472,12 +472,12 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
-                <artifactId>tribes</artifactId>
+                <artifactId>tomcat-tribes</artifactId>
                 <version>${tomcat.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>juli</artifactId>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-logging-juli</artifactId>
                 <version>${tomcat.version}</version>
             </dependency>
             <dependency>

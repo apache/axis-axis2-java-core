@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
@@ -113,6 +115,10 @@ public class WkaMembershipService implements MembershipService {
         return null;
     }
 
+    public void setLocalMemberProperties(String s, int i, int i1, int i2) {
+        //Nothing to implement at the momenet
+    }
+
     public void setLocalMemberProperties(String listenHost, int listenPort) {
         properties.setProperty("tcpListenHost", listenHost);
         properties.setProperty("tcpListenPort", String.valueOf(listenPort));
@@ -150,5 +156,9 @@ public class WkaMembershipService implements MembershipService {
     public void setDomain(byte[] domain) {
         this.domain = domain;
         ((StaticMember) membershipManager.getLocalMember()).setDomain(domain);
+    }
+
+    public void broadcast(ChannelMessage channelMessage) throws ChannelException {
+        //Nothing to implement at the momenet
     }
 }
