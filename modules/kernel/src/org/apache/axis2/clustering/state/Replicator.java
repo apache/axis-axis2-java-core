@@ -26,6 +26,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,9 +36,24 @@ import java.util.List;
 /**
  * Replicates serializable properties
  */
+@SuppressWarnings("unused")
 public final class Replicator {
 
     private static final Log log = LogFactory.getLog(Replicator.class);
+
+
+    /**
+     * Replicate state using a custom StateClusteringCommand
+     *
+     * @param command The StateClusteringCommand which is used for replicating state
+     * @param axisConfig  The AxisConfiguration
+     * @throws ClusteringFault If replication fails
+     */
+    public static void replicateState(StateClusteringCommand command,
+                                      AxisConfiguration axisConfig) throws ClusteringFault {
+
+        getStateManager(axisConfig).replicateState(command);
+    }
 
     /**
      * Replicates all serializable properties in the ConfigurationContext, ServiceGroupContext &
@@ -54,8 +70,8 @@ public final class Replicator {
         log.debug("Going to replicate state stored in ConfigurationContext," +
                   " ServiceGroupContext, ServiceContext associated with " + msgContext + "...");
         ConfigurationContext configurationContext = msgContext.getConfigurationContext();
-        StateManager stateManager = getContextManager(msgContext);
-        List contexts = new ArrayList();
+        StateManager stateManager = getStateManager(msgContext);
+        List<AbstractContext> contexts = new ArrayList<AbstractContext>();
 
         // Do we need to replicate state stored in ConfigurationContext?
         if (!configurationContext.getPropertyDifferences().isEmpty()) {
@@ -76,8 +92,7 @@ public final class Replicator {
 
         // Do the actual replication here
         if (!contexts.isEmpty()) {
-            AbstractContext[] contextArray =
-                    (AbstractContext[]) contexts.toArray(new AbstractContext[contexts.size()]);
+            AbstractContext[] contextArray = contexts.toArray(new AbstractContext[contexts.size()]);
             stateManager.updateContexts(contextArray);
         }
     }
@@ -93,9 +108,9 @@ public final class Replicator {
             return;
         }
         log.debug("Going to replicate state in " + abstractContext + "...");
-        StateManager stateManager = getContextManager(abstractContext);
+        StateManager stateManager = getStateManager(abstractContext);
         if (!abstractContext.getPropertyDifferences().isEmpty()) {
-            synchronized (abstractContext) {
+            synchronized (abstractContext) { // This IDEA/FindBugs warning can be ignored
                 stateManager.updateContext(abstractContext);
             }
         }
@@ -115,7 +130,7 @@ public final class Replicator {
             return;
         }
         log.debug("Going to replicate selected properties in " + abstractContext + "...");
-        StateManager stateManager = getContextManager(abstractContext);
+        StateManager stateManager = getStateManager(abstractContext);
         stateManager.updateContext(abstractContext, propertyNames);
     }
 
@@ -123,8 +138,12 @@ public final class Replicator {
         return abstractContext.getRootContext().getAxisConfiguration().getClusteringAgent();
     }
 
-    private static StateManager getContextManager(AbstractContext abstractContext) {
+    private static StateManager getStateManager(AbstractContext abstractContext) {
         return getClusterManager(abstractContext).getStateManager();
+    }
+
+    private static StateManager getStateManager(AxisConfiguration axisConfiguration) {
+        return axisConfiguration.getClusteringAgent().getStateManager();
     }
 
     /**

@@ -80,6 +80,10 @@ public class DefaultStateManager implements StateManager {
         sender.sendToGroup(cmd);
     }
 
+    public void replicateState(StateClusteringCommand command) throws ClusteringFault {
+        sender.sendToGroup(command);
+    }
+
     public void removeContext(AbstractContext context) throws ClusteringFault {
         StateClusteringCommand cmd = StateClusteringCommandFactory.getRemoveCommand(context);
         sender.sendToGroup(cmd);
