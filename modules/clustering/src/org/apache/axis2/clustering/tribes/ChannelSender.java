@@ -49,7 +49,7 @@ public class ChannelSender implements MessageSender {
         this.synchronizeAllMembers = synchronizeAllMembers;
     }
 
-    public void sendToGroup(ClusteringCommand msg,
+    public synchronized void sendToGroup(ClusteringCommand msg,
                             MembershipManager membershipManager,
                             int additionalOptions) throws ClusteringFault {
         if (channel == null) {

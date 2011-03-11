@@ -152,6 +152,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
         primaryMembershipManager = new MembershipManager(configurationContext);
 
         channel = new GroupChannel();
+        channel.setHeartbeat(true);
         channelSender = new ChannelSender(channel, primaryMembershipManager, synchronizeAllMembers());
         axis2ChannelListener =
                 new Axis2ChannelListener(configurationContext, configurationManager, contextManager);
