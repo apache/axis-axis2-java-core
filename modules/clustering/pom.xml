@@ -56,11 +56,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-tribes</artifactId>
+            <artifactId>tribes</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-logging-juli</artifactId>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>juli</artifactId>
         </dependency>
     </dependencies>
     <scm>
