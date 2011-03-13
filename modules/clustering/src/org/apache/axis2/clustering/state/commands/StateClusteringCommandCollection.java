@@ -24,25 +24,27 @@ import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 
+ *  A StateClusteringCommand consisting of a collection of other StateClusteringCommands
  */
 public class StateClusteringCommandCollection extends StateClusteringCommand {
 
-    private final ArrayList commands;
+    private final List<StateClusteringCommand> commands;
 
-    public StateClusteringCommandCollection(ArrayList commands) {
+    public StateClusteringCommandCollection(List<StateClusteringCommand> commands) {
         this.commands = commands;
     }
 
     public void execute(ConfigurationContext configContext) throws ClusteringFault {
-        for (int i = 0; i < commands.size(); i++) {
-            StateClusteringCommand cmd = (StateClusteringCommand) commands.get(i);
-            if (cmd != null) {
-                cmd.execute(configContext);
-            }
+        for (StateClusteringCommand command : commands) {
+            command.execute(configContext);
         }
+    }
+
+    public boolean isEmpty(){
+        return commands != null && commands.isEmpty();
     }
 
     public String toString() {

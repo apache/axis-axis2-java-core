@@ -76,8 +76,10 @@ public class DefaultStateManager implements StateManager {
     public void updateContexts(AbstractContext[] contexts) throws ClusteringFault {
         StateClusteringCommandCollection cmd =
                 StateClusteringCommandFactory.getCommandCollection(contexts,
-                                                                     excludedReplicationPatterns);
-        sender.sendToGroup(cmd);
+                                                                   excludedReplicationPatterns);
+        if (!cmd.isEmpty()) {
+            sender.sendToGroup(cmd);
+        }
     }
 
     public void replicateState(StateClusteringCommand command) throws ClusteringFault {
