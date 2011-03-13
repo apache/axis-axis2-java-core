@@ -52,7 +52,10 @@ public final class Replicator {
     public static void replicateState(StateClusteringCommand command,
                                       AxisConfiguration axisConfig) throws ClusteringFault {
 
-        getStateManager(axisConfig).replicateState(command);
+        StateManager stateManager = getStateManager(axisConfig);
+        if (stateManager != null) {
+            stateManager.replicateState(command);
+        }
     }
 
     /**
@@ -71,6 +74,9 @@ public final class Replicator {
                   " ServiceGroupContext, ServiceContext associated with " + msgContext + "...");
         ConfigurationContext configurationContext = msgContext.getConfigurationContext();
         StateManager stateManager = getStateManager(msgContext);
+        if (stateManager == null) {
+            return;
+        }
         List<AbstractContext> contexts = new ArrayList<AbstractContext>();
 
         // Do we need to replicate state stored in ConfigurationContext?
@@ -109,7 +115,7 @@ public final class Replicator {
         }
         log.debug("Going to replicate state in " + abstractContext + "...");
         StateManager stateManager = getStateManager(abstractContext);
-        if (!abstractContext.getPropertyDifferences().isEmpty()) {
+        if (stateManager != null && !abstractContext.getPropertyDifferences().isEmpty()) {
             synchronized (abstractContext) { // This IDEA/FindBugs warning can be ignored
                 stateManager.updateContext(abstractContext);
             }
@@ -131,7 +137,9 @@ public final class Replicator {
         }
         log.debug("Going to replicate selected properties in " + abstractContext + "...");
         StateManager stateManager = getStateManager(abstractContext);
-        stateManager.updateContext(abstractContext, propertyNames);
+        if (stateManager != null) {
+            stateManager.updateContext(abstractContext, propertyNames);
+        }
     }
 
     private static ClusteringAgent getClusterManager(AbstractContext abstractContext) {
@@ -143,7 +151,11 @@ public final class Replicator {
     }
 
     private static StateManager getStateManager(AxisConfiguration axisConfiguration) {
-        return axisConfiguration.getClusteringAgent().getStateManager();
+        ClusteringAgent clusteringAgent = axisConfiguration.getClusteringAgent();
+        if (clusteringAgent != null) {
+            return clusteringAgent.getStateManager();
+        }
+        return null;
     }
 
     /**
