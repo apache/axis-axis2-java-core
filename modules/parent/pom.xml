@@ -988,6 +988,14 @@
                          the runOnlyAtExecutionRoot parameter which is not supported in earlier
                          versions. -->
                     <version>2.2-beta-5</version>
+                    <configuration>
+                        <!-- Workaround for MASSEMBLY-422 / MASSEMBLY-449 -->
+                        <archiverConfig>
+                            <fileMode>420</fileMode> <!-- 420(dec) = 644(oct) -->
+                            <directoryMode>493</directoryMode> <!-- 493(dec) = 755(oct) -->
+                            <defaultDirectoryMode>493</defaultDirectoryMode>
+                        </archiverConfig>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
