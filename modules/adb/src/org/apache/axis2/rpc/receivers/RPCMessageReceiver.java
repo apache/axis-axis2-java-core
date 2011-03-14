@@ -174,7 +174,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             for (Class exceptionType : exceptionTypes){
                 if (exceptionType.getName().equals(cause.getClass().getName())){
                     // this is an bussiness logic exception so handle it properly
-                    String partQName = method.getName() + getSimpleClassName(exceptionType);
+                    String partQName = inMessage.getAxisService().getName() + getSimpleClassName(exceptionType);
                     TypeTable typeTable = inMessage.getAxisService().getTypeTable();
                     QName elementQName = typeTable.getQNamefortheType(partQName);
                     SOAPFactory fac = getSOAPFactory(inMessage);
