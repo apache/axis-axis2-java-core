@@ -35,6 +35,9 @@ here, you can visit the <a href=
 "http://axis.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
 Web site for Axis2/C implementation information.</p>
 <p>Apache Axis2, Axis2, Apache, the Apache feather logo, and the Apache Axis2 project logo are trademarks of The Apache Software Foundation.</p>
+<h3>February 19, 2011 - Apache Axis2/Java Version 1.6 Released!</h3>
+<p>1.6 is a major release of axis2 with many fixes and improvements to the core and all it's modules</p>
+<p>Refer to the following filter <a href="http://bit.ly/issues-fixed-for-1_6">Issues fixed for the 1.6 release</a> to find all the issues fixed for the 1.6 release</p>
 <h3>December 19, 2010 - Apache Axis2/Java Version 1.5.4 Released!</h3>
 <p>1.5.4 is a maintenance release that contains fixes for the following issues:</p>
 <ul>
@@ -50,7 +53,7 @@ Web site for Axis2/C implementation information.</p>
 <li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4842">AXIS2-4842</a>: NPE in TempFileManager</li>
 <li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4871">AXIS2-4871</a>: Null Pointer Exception in AxisService.printXSD</li>
 <li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4883">AXIS2-4883</a>: Javadoc link broken on site and in documents distribution</li>
-<li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4885">AXIS2-4885</a>: Unsubstituted variable ${axis2_version} in 1.5.3 site and documents distribution</li> 
+<li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4885">AXIS2-4885</a>: Unsubstituted variable ${axis2_version} in 1.5.3 site and documents distribution</li>
 <li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4887">AXIS2-4887</a>: TargetNameSpace required for XSD2Java</li>
 <li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4888">AXIS2-4888</a>: The org.apache.axis2:axis2 Maven artifact should not have a classifier</li>
 <li><a href="https://issues.apache.org:443/jira/browse/AXIS2-4889">AXIS2-4889</a>: SOAPConnectionTest#testGet slows down the build</li>

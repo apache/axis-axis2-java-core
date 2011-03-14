@@ -76,6 +76,32 @@
                         <th>Distribution</th>
                     </tr>
                     <tr>
+                        <td><a name="1_6_0"/><strong>1.6.0</strong></td>
+                        <td>19 - Feb - 2011</td>
+                        <td>1.6.0 Release (Mirrored)</td>
+                        <td>
+                            Binary Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.6.0/axis2-1.6.0-bin.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-bin.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-bin.zip.asc">PGP</a>
+                            <br/>
+                            Source Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.6.0/axis2-1.6.0-src.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-src.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-src.zip.asc">PGP</a>
+                            <br/>
+                            WAR Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.6.0/axis2-1.6.0-war.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-war.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-war.zip.asc">PGP</a>
+                            <br/>
+                            Documents Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.6.0/axis2-1.6.0-docs.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-docs.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.6.0/axis2-1.6.0-docs.zip.asc">PGP</a>
+                        </td>
+                    </tr>
+                    <tr>
                         <td><a name="1_5_4"/><strong>1.5.4</strong></td>
                         <td>19 - Dec - 2010</td>
                         <td>1.5.4 Release (Mirrored)</td>
