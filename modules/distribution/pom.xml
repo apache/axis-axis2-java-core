@@ -292,6 +292,63 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <!-- Prepare some additional dependencies required by specific samples -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>test-dependencies</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.codehaus.castor</groupId>
+                                    <artifactId>castor</artifactId>
+                                    <version>1.0.4</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>net.java.dev.stax-utils</groupId>
+                                    <artifactId>stax-utils</artifactId>
+                                    <version>20060502</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>xerces</groupId>
+                                    <artifactId>xercesImpl</artifactId>
+                                    <version>2.9.1</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/axis2-${project.version}/samples/databinding/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Now unpack the distribution and run some automated tests on the samples -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>test-samples</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <unzip src="${project.build.directory}/axis2-${project.version}-bin.zip" dest="${project.build.directory}" />
+                                
+                                <!-- Test of the databinding sample -->
+                                <!-- ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding"/ -->
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <plugin>
                 <!-- We don't want to deploy the distributions to the Maven repository.
                      Reasons:
