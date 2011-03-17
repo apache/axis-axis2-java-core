@@ -342,7 +342,7 @@
                                 <unzip src="${project.build.directory}/axis2-${project.version}-bin.zip" dest="${project.build.directory}" />
                                 
                                 <!-- Test of the databinding sample -->
-                                <!-- ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding"/ -->
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding"/>
                             </tasks>
                         </configuration>
                     </execution>
