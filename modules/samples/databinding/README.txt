@@ -13,12 +13,12 @@ Pre-Requisites
 ==============
  * Install Apache Ant 1.6.2 or later.
  * Please create a directory named lib under the directory that contains this file.
- * Download latest stax-utils jar from
-   https://stax-utils.dev.java.net/servlets/ProjectDocumentList?folderID=1106 and drop that into the
-   new lib directory.
- * Download version 1.0.4 of Castor jar from http://dist.codehaus.org/castor/1.0.4/castor-1.0.4.jar and drop that into the new
-   lib directory.(The latest releases of castor are available at http://www.castor.org/download.html, but this example may not run 	
-   with versions later than 1.0.4)
+ * Download the following libraries and drop them into the new lib directory:
+   * Latest stax-utils jar from https://stax-utils.dev.java.net/servlets/ProjectDocumentList?folderID=1106
+   * Version 1.0.4 of Castor jar from http://dist.codehaus.org/castor/1.0.4/castor-1.0.4.jar.
+     (The latest releases of castor are available at http://www.castor.org/download.html, but this example may not run 	
+     with versions later than 1.0.4)
+   * A recent Xerces version from http://xerces.apache.org/.
 
 You can achieve all three of the above steps by running "ant download.jars", but it will take some 
 time to download those two jars, using ant.
