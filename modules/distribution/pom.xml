@@ -293,7 +293,11 @@
                 </executions>
             </plugin>
             
-            <!-- Prepare some additional dependencies required by specific samples -->
+            <!-- Prepare some additional dependencies required by specific samples. We could
+                 also do this by invoking the relevant download.jars targets in the provided
+                 ant scripts, but this may cause issues with HTTP proxies and has the disadvantage
+                 that the JARs are downloaded every time instead of being copied from the local
+                 Maven repository. -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
