@@ -352,6 +352,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>build-maven-samples</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <projectsDirectory>${project.build.directory}/axis2-${project.version}/samples</projectsDirectory>
+                            <pomIncludes>
+                                <pomInclude>java_first_jaxws/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <streamLogs>true</streamLogs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             
             <plugin>
                 <!-- We don't want to deploy the distributions to the Maven repository.
