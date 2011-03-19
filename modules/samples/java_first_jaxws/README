@@ -1,14 +1,22 @@
 This example shows how to use Axis2 in a servlet container. You must 
 have Maven 2.x installed to build this example.  To build type:
 
-$ mvn install war:war
+$ mvn package
 
-To run the sample using a Servlet Engine: 
+To run the sample using a Servlet Engine there are two options.
 
-Please install a servlet engine say tomcat. Rename the resultant war as your_web_app.war and drop it into webapps directory under tomcat.
+The first is to install a servlet engine say tomcat. Rename the resultant war as your_web_app.war and drop it into webapps directory under tomcat.
 The WSDL file for the service should be viewable at:
 
 http://yourhost:port/your_web_app/services/HelloWorld.HelloWorldImplPort?wsdl
+
+Since the Maven project is configured for the Cargo plugin, it is also possible to launch an embedded servlet container (Jetty in this case) using the following command:
+
+$ mvn cargo:start
+
+In this case the WSDL file is viewable at:
+
+http://localhost:8080/java_first_jaxws-1.1/services/HelloWorld.HelloWorldImplPort?wsdl
 
 To run the sample under axis2server:
 
