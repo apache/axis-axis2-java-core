@@ -210,8 +210,11 @@ public class JAXWSDeployer extends AbstractDeployer {
                                 className,
                                 location);
                 if(axisService != null) {
+                    if (serviceHierarchy != null) {
+                        axisService.setName(serviceHierarchy + axisService.getName());
+                    }
                     log.info("Deploying JAXWS annotated class " + className + " as a service - "
-                            + serviceHierarchy + axisService.getName());
+                            + axisService.getName());
                     axisServiceList.add(axisService);
                 }
             }
@@ -222,9 +225,10 @@ public class JAXWSDeployer extends AbstractDeployer {
         }
         //creating service group by considering the hierarchical path also
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
-        serviceGroup.setServiceGroupName(serviceHierarchy + groupName);
+        if (serviceHierarchy != null) {
+            serviceGroup.setServiceGroupName(serviceHierarchy + groupName);
+        }
         for (AxisService axisService : axisServiceList) {
-            axisService.setName(serviceHierarchy + axisService.getName());
             serviceGroup.addService(axisService);
         }
         axisConfig.addServiceGroup(serviceGroup);
