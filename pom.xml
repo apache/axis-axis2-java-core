@@ -94,6 +94,7 @@
             <id>everything</id>
             <modules>
                 <module>modules/distribution</module>
+                <module>modules/samples/java_first_jaxws</module>
             </modules>
         </profile>
         <profile>
