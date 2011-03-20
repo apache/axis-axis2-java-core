@@ -228,24 +228,20 @@ public class AttachmentTest extends Assert {
 
     @Validated @Test
     public void testGetContent() throws Exception {
-        try {
-            MessageFactory factory = MessageFactory.newInstance();
-            SOAPMessage msg = factory.createMessage();
-            AttachmentPart ap = msg.createAttachmentPart();
-            Image image = ImageIO.read(TestUtils.getTestFileURL("attach.gif"));
-            ap = msg.createAttachmentPart(image, "image/gif");
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage msg = factory.createMessage();
+        AttachmentPart ap = msg.createAttachmentPart();
+        Image image = ImageIO.read(TestUtils.getTestFileURL("attach.gif"));
+        ap = msg.createAttachmentPart(image, "image/gif");
 
-            //Getting Content should return an Image object
-            Object o = ap.getContent();
-            if (o != null) {
-                if (o instanceof Image) {
-                    //Image object was returned (ok)
-                } else {
-                    fail("Unexpected object was returned");
-                }
+        //Getting Content should return an Image object
+        Object o = ap.getContent();
+        if (o != null) {
+            if (o instanceof Image) {
+                //Image object was returned (ok)
+            } else {
+                fail("Unexpected object was returned");
             }
-        } catch (Exception e) {
-            fail("Exception: " + e);
         }
     }
 
@@ -269,39 +265,35 @@ public class AttachmentTest extends Assert {
     }
 
     @Validated @Test
-    public void testSetBase64Content() {
-        try {
-            MessageFactory factory = MessageFactory.newInstance();
-            SOAPMessage msg = factory.createMessage();
-            AttachmentPart ap = msg.createAttachmentPart();
+    public void testSetBase64Content() throws Exception {
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage msg = factory.createMessage();
+        AttachmentPart ap = msg.createAttachmentPart();
 
-            String urlString = "http://ws.apache.org/images/project-logo.jpg";
-            if (isNetworkedResourceAvailable(urlString)) {
-                URL url = new URL(urlString);
-                DataHandler dh = new DataHandler(url);
-                //Create InputStream from DataHandler's InputStream
-                InputStream is = dh.getInputStream();
+        String urlString = "http://ws.apache.org/images/project-logo.jpg";
+        if (isNetworkedResourceAvailable(urlString)) {
+            URL url = new URL(urlString);
+            DataHandler dh = new DataHandler(url);
+            //Create InputStream from DataHandler's InputStream
+            InputStream is = dh.getInputStream();
 
-                byte buf[] = IOUtils.getStreamAsByteArray(is);
-                //Setting Content via InputStream for image/jpeg mime type
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                Base64.encode(buf, 0, buf.length, bos);
-                buf = bos.toByteArray();
-                InputStream stream = new ByteArrayInputStream(buf);
-                ap.setBase64Content(stream, "image/jpeg");
+            byte buf[] = IOUtils.getStreamAsByteArray(is);
+            //Setting Content via InputStream for image/jpeg mime type
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            Base64.encode(buf, 0, buf.length, bos);
+            buf = bos.toByteArray();
+            InputStream stream = new ByteArrayInputStream(buf);
+            ap.setBase64Content(stream, "image/jpeg");
 
-                //Getting Content.. should return InputStream object
-                InputStream r = ap.getBase64Content();
-                if (r != null) {
-                    if (r instanceof InputStream) {
-                        //InputStream object was returned (ok)
-                    } else {
-                        fail("Unexpected object was returned");
-                    }
+            //Getting Content.. should return InputStream object
+            InputStream r = ap.getBase64Content();
+            if (r != null) {
+                if (r instanceof InputStream) {
+                    //InputStream object was returned (ok)
+                } else {
+                    fail("Unexpected object was returned");
                 }
             }
-        } catch (Exception e) {
-            fail("Exception: " + e);
         }
     }
 
