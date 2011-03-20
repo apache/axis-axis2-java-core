@@ -56,7 +56,7 @@
                         </goals>
                         <configuration>
                             <resourceBundles>
-                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${pom.version}</resourceBundle>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${project.version}</resourceBundle>
                             </resourceBundles>
                         </configuration>
                     </execution>
@@ -68,11 +68,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Version>1.0.0.${pom.version}</Bundle-Version>
-                        <Bundle-Name>${pom.artifactId}</Bundle-Name>
+                        <Bundle-Version>1.0.0.${project.version}</Bundle-Version>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Vendor>Apache Axis2, 2008</Bundle-Vendor>
-                        <Bundle-Description>${pom.description}</Bundle-Description>
-                        <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Description>${project.description}</Bundle-Description>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
                             !org.apache.axis2.osgi.internal,
                             org.apache.axis2.osgi.*; version=1.0.0,
