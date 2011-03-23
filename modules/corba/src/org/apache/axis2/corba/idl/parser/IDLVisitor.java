@@ -338,6 +338,7 @@ public class IDLVisitor /*implements ASTVisitor*/ {
     private DataType findDataType(AST typeNode, String parentName) throws InvalidIDLException {
         return findDataType(typeNode, parentName, true, false);
     }
+
     private DataType findDataType(AST typeNode, String parentName, boolean root, boolean noTypeDefForSeqs) throws InvalidIDLException {
         // Check for sequences
         if (typeNode.getType()==IDLTokenTypes.LITERAL_sequence) {
@@ -387,6 +388,36 @@ public class IDLVisitor /*implements ASTVisitor*/ {
             } else {
                 typeName = "long";
             }
+        } else if (typeNode.getType() == IDLTokenTypes.LITERAL_struct) {
+            String innerModule = module + parentName + INNERTYPE_SUFFIX + CompositeDataType.MODULE_SEPERATOR;
+            Struct innerElem = visitStruct(typeNode);
+            innerElem.setModule(innerModule);
+            idl.addType(innerElem);
+            return innerElem;            
+        } else if (typeNode.getType() == IDLTokenTypes.LITERAL_valuetype) {
+            String innerModule = module + parentName + INNERTYPE_SUFFIX + CompositeDataType.MODULE_SEPERATOR;
+            ValueType innerElem = visitValueType(typeNode);
+            innerElem.setModule(innerModule);
+            idl.addType(innerElem);
+            return innerElem;
+        } else if (typeNode.getType() == IDLTokenTypes.LITERAL_exception) {
+            String innerModule = module + parentName + INNERTYPE_SUFFIX + CompositeDataType.MODULE_SEPERATOR;
+            Struct innerElem = visitException(typeNode);
+            innerElem.setModule(innerModule);
+            idl.addType(innerElem);
+            return innerElem;
+        } else if (typeNode.getType() == IDLTokenTypes.LITERAL_enum) {
+            String innerModule = module + parentName + INNERTYPE_SUFFIX + CompositeDataType.MODULE_SEPERATOR;
+            EnumType innerElem = visitEnum(typeNode);
+            innerElem.setModule(innerModule);
+            idl.addType(innerElem);
+            return innerElem;
+        } else if (typeNode.getType() == IDLTokenTypes.LITERAL_union) {
+            String innerModule = module + parentName + INNERTYPE_SUFFIX + CompositeDataType.MODULE_SEPERATOR;
+            UnionType innerElem = visitUnion(typeNode);
+            innerElem.setModule(innerModule);
+            idl.addType(innerElem);
+            return innerElem;
         } else {
             typeName = getTypeName(typeNode);    
         }
