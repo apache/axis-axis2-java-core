@@ -23,9 +23,7 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -33,7 +31,7 @@ import java.util.List;
 
 public class ArrayTest extends TestCase {
 
-    public void testArray1() {
+    public void testArray1() throws Exception {
 
         ArrayE arrayElement = new ArrayE();
         Array array = new Array();
@@ -48,29 +46,21 @@ public class ArrayTest extends TestCase {
         array.setArrayTypeQName(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/","int"));
         arrayElement.setArray(array);
 
-        try {
-            OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            java.lang.String omElementString = omElement.toStringWithConsume();
-            System.out.println("OMElement ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(omElementString.getBytes()));
-            ArrayE result = ArrayE.Factory.parse(xmlReader);
-            List resultList = result.getArray().getObjectList();
-            for (int i = 1; i < 6; i++) {
-               assertEquals(((_int)resultList.get(i-1)).get_int(),i);
-            }
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
+        OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        java.lang.String omElementString = omElement.toStringWithConsume();
+        System.out.println("OMElement ==> " + omElementString);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(omElementString.getBytes()));
+        ArrayE result = ArrayE.Factory.parse(xmlReader);
+        List resultList = result.getArray().getObjectList();
+        for (int i = 1; i < 6; i++) {
+           assertEquals(((_int)resultList.get(i-1)).get_int(),i);
         }
 
     }
 
-    public void testArray2() {
+    public void testArray2() throws Exception {
 
         ArrayE arrayElement = new ArrayE();
         Array array = new Array();
@@ -85,26 +75,18 @@ public class ArrayTest extends TestCase {
         array.setArrayTypeQName(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/","date"));
         arrayElement.setArray(array);
 
-        try {
-            OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            java.lang.String omElementString = omElement.toStringWithConsume();
-            System.out.println("OMElement ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(omElementString.getBytes()));
-            ArrayE result = ArrayE.Factory.parse(xmlReader);
-            List resultList = result.getArray().getObjectList();
-            assertEquals(resultList.size(),5);
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        java.lang.String omElementString = omElement.toStringWithConsume();
+        System.out.println("OMElement ==> " + omElementString);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(omElementString.getBytes()));
+        ArrayE result = ArrayE.Factory.parse(xmlReader);
+        List resultList = result.getArray().getObjectList();
+        assertEquals(resultList.size(),5);
     }
 
-    public void testArray3() {
+    public void testArray3() throws Exception {
 
         ArrayE arrayElement = new ArrayE();
         Array array = new Array();
@@ -118,29 +100,21 @@ public class ArrayTest extends TestCase {
 
         arrayElement.setArray(array);
 
-        try {
-            OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            java.lang.String omElementString = omElement.toStringWithConsume();
-            System.out.println("OMElement ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(omElementString.getBytes()));
-            ArrayE result = ArrayE.Factory.parse(xmlReader);
-            List resultList = result.getArray().getObjectList();
-            for (int i = 1; i < 6; i++) {
-               assertEquals(((_int)resultList.get(i-1)).get_int(),i);
-            }
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
+        OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        java.lang.String omElementString = omElement.toStringWithConsume();
+        System.out.println("OMElement ==> " + omElementString);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(omElementString.getBytes()));
+        ArrayE result = ArrayE.Factory.parse(xmlReader);
+        List resultList = result.getArray().getObjectList();
+        for (int i = 1; i < 6; i++) {
+           assertEquals(((_int)resultList.get(i-1)).get_int(),i);
         }
 
     }
 
-    public void testArray4() {
+    public void testArray4() throws Exception {
 
         ArrayE arrayElement = new ArrayE();
         Array array = new Array();
@@ -154,58 +128,41 @@ public class ArrayTest extends TestCase {
 
         arrayElement.setArray(array);
 
-        try {
-            OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            java.lang.String omElementString = omElement.toStringWithConsume();
-            System.out.println("OMElement ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(omElementString.getBytes()));
-            ArrayE result = ArrayE.Factory.parse(xmlReader);
-            List resultList = result.getArray().getObjectList();
-            assertEquals(resultList.size(),5);
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        java.lang.String omElementString = omElement.toStringWithConsume();
+        System.out.println("OMElement ==> " + omElementString);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(omElementString.getBytes()));
+        ArrayE result = ArrayE.Factory.parse(xmlReader);
+        List resultList = result.getArray().getObjectList();
+        assertEquals(resultList.size(),5);
     }
 
-    public void testArray5() {
+    public void testArray5() throws Exception {
 
 
-        try {
-            java.lang.String omElementString = "<ns1:Array xmlns:ns1=\"http://schemas.xmlsoap.org/soap/encoding/\" \n" +
-                    "           xmlns:s1=\"http://www.w3.org/2001/XMLSchema\"\n" +
-                    "           ns1:arrayType=\"s1:ur-type[5]\">\n" +
-                    "    <ns1:int>1</ns1:int>\n" +
-                    "    <ns1:int>2</ns1:int>\n" +
-                    "    <ns1:int>3</ns1:int>\n" +
-                    "    <ns1:int>4</ns1:int>\n" +
-                    "    <ns1:int>5</ns1:int>\n" +
-                    "</ns1:Array>";
-            System.out.println("OMElement ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(omElementString.getBytes()));
-            ArrayE result = ArrayE.Factory.parse(xmlReader);
-            List resultList = result.getArray().getObjectList();
-            for (int i = 1; i < 6; i++) {
-               assertEquals(((_int)resultList.get(i-1)).get_int(),i);
-            }
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
+        java.lang.String omElementString = "<ns1:Array xmlns:ns1=\"http://schemas.xmlsoap.org/soap/encoding/\" \n" +
+                "           xmlns:s1=\"http://www.w3.org/2001/XMLSchema\"\n" +
+                "           ns1:arrayType=\"s1:ur-type[5]\">\n" +
+                "    <ns1:int>1</ns1:int>\n" +
+                "    <ns1:int>2</ns1:int>\n" +
+                "    <ns1:int>3</ns1:int>\n" +
+                "    <ns1:int>4</ns1:int>\n" +
+                "    <ns1:int>5</ns1:int>\n" +
+                "</ns1:Array>";
+        System.out.println("OMElement ==> " + omElementString);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(omElementString.getBytes()));
+        ArrayE result = ArrayE.Factory.parse(xmlReader);
+        List resultList = result.getArray().getObjectList();
+        for (int i = 1; i < 6; i++) {
+           assertEquals(((_int)resultList.get(i-1)).get_int(),i);
         }
 
     }
 
-    public void testArray6() {
+    public void testArray6() throws Exception {
 
         ArrayE arrayElement = new ArrayE();
         Array array = new Array();
@@ -221,24 +178,16 @@ public class ArrayTest extends TestCase {
         array.setArrayTypeQName(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/","int"));
         arrayElement.setArray(array);
 
-        try {
-            OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            java.lang.String omElementString = omElement.toStringWithConsume();
-            System.out.println("OMElement ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(omElementString.getBytes()));
-            ArrayE result = ArrayE.Factory.parse(xmlReader);
-            List resultList = result.getArray().getObjectList();
-            for (int i = 1; i < 6; i++) {
-               assertEquals(((_int)resultList.get(i)).get_int(),i);
-            }
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
+        OMElement omElement = arrayElement.getOMElement(ArrayE.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        java.lang.String omElementString = omElement.toStringWithConsume();
+        System.out.println("OMElement ==> " + omElementString);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(omElementString.getBytes()));
+        ArrayE result = ArrayE.Factory.parse(xmlReader);
+        List resultList = result.getArray().getObjectList();
+        for (int i = 1; i < 6; i++) {
+           assertEquals(((_int)resultList.get(i)).get_int(),i);
         }
 
     }
