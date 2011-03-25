@@ -21,10 +21,8 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
@@ -800,21 +798,7 @@ public class EndpointInterfaceDescriptionImpl
         }
         return string.toString();
     }
-    /**
-     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
-     * @param cls Class that contains annotation 
-     * @param annotation Class of requrested Annotation
-     * @return annotation or null
-     */
-    private static Annotation getAnnotation(final Class cls, final Class annotation) {
-        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                return cls.getAnnotation(annotation);
-            }
-        });
-    }
-    
-    
+      
     /*
      * This method returns a method retriever that properly implements the specified behavior, 
      * which is determined by a user-defined system property
@@ -823,29 +807,39 @@ public class EndpointInterfaceDescriptionImpl
 
         MethodRetriever methodRetriever = null;
         //default behavior
-        boolean newSunBehavior = true;
-        //Lets make sure the default behavior is supported by packaged JDK.
-        //this check verifies JAX-WS2.2 tooling is supported.
-        newSunBehavior = isNewSunBehaviorSupported();
+        boolean newSunBehavior = false;
         
-        //The system property always overrides the manifest
-        //property. So, if both are set than the manifest property will be ignored
-        
-        String legacyWebmethod = readLegacyWebMethodFlag();
-        if (WSToolingUtils.hasValue(legacyWebmethod) && legacyWebmethod.equalsIgnoreCase("true")) {
-            if (log.isDebugEnabled()){
-                log.debug("EndpointInterfaceDescriptionImpl: System or Manifest property USE_LEGACY_WEB_METHOD_RULES set to true" );
+        String legacyWebmethod = null;
+        String postWebMethodRules = readUsePostWebMethodRulesFlag();
+        if (WSToolingUtils.hasValue(postWebMethodRules) && postWebMethodRules.equalsIgnoreCase("true")) {
+            if (log.isDebugEnabled()) {
+                log.debug("EndpointInterfaceDescriptionImpl: System property " + MDQConstants.USE_POST_WEB_METHOD_RULES + "  set to true, all other configurations are ignored");
             }
-            //LegacyWebmethod property set to true, use old JAX-WS tooling behavior.  
-            newSunBehavior = false;
-        }else {
-            //If LegacyWebmehtod was not set check for sun property.
-            String newSunRulesFlag = getNewSunRulesFlag();
-            if (WSToolingUtils.hasValue(newSunRulesFlag) && newSunRulesFlag.equalsIgnoreCase("true")) {
-                if (log.isDebugEnabled()){
-                    log.debug("EndpointInterfaceDescriptionImpl: System property USE_LEGACY_WEB_METHOD_RULES_SUN set to true" );
+            newSunBehavior = true;
+        } else {
+            //Lets make sure the default behavior is supported by packaged JDK.
+            //this check verifies JAX-WS2.2 tooling is supported.
+            newSunBehavior = isNewSunBehaviorSupported();
+
+            //The system property always overrides the manifest
+            //property. So, if both are set than the manifest property will be ignored
+
+            legacyWebmethod = readLegacyWebMethodFlag();
+            if (WSToolingUtils.hasValue(legacyWebmethod) && legacyWebmethod.equalsIgnoreCase("true")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("EndpointInterfaceDescriptionImpl: System or Manifest property " + MDQConstants.USE_LEGACY_WEB_METHOD_RULES + " set to true");
                 }
-                newSunBehavior = false;;
+                //LegacyWebmethod property set to true, use old JAX-WS tooling behavior.  
+                newSunBehavior = false;
+            } else {
+                //If LegacyWebmehtod was not set check for sun property.
+                String newSunRulesFlag = getNewSunRulesFlag();
+                if (WSToolingUtils.hasValue(newSunRulesFlag) && newSunRulesFlag.equalsIgnoreCase("true")) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("EndpointInterfaceDescriptionImpl: System property " + MDQConstants.USE_LEGACY_WEB_METHOD_RULES_SUN + " set to true");
+                    }
+                    newSunBehavior = false;
+                }
             }
         }
         //Now based on the outcome of LegacyWebmethod and sun property check, retrieve methods to expose.
@@ -871,68 +865,15 @@ public class EndpointInterfaceDescriptionImpl
      * @param propertyToSet
      * @return
      */
-    private boolean isNewSunBehavior(String propertyToSet) {
-
-        if (log.isDebugEnabled()) {
-            log.debug("isNewSunBehavior: Validating that JDK version can be used with property: " +propertyToSet);
-
-        }
-        
-        boolean versionValid = false;
-
-        try {
-            
-            String wsGenVersion = WSToolingUtils.getWsGenVersion();
-            
-            versionValid = WSToolingUtils.isValidVersion(wsGenVersion);
-            
-            if (log.isDebugEnabled()) {
-                log.debug("isNewSunBehavior: versionValid is: " +versionValid);
-            }
-            
-            if (!versionValid) {
-
-                if (log.isWarnEnabled()) {
-                    log.warn("You are attempting set a property: "
-                        + propertyToSet
-                        + " This property is not supported with this version of the JDK");
-                }
-            }
-
-            // We don't want to affect existing systems, if anything goes
-            // wrong just display
-            // a warning and default to old behavior
-        } catch (ClassNotFoundException e) {
-            if (log.isWarnEnabled()) {
-                log.warn(" Unable to determine WsGen version being used");
-            }
-        } catch (IOException ioex) {
-            if (log.isWarnEnabled()) {
-                log.warn(" Unable to determine WsGen version being used");
-            }
-        }
-        
-        return versionValid;
-    }
-    /**
-     * The user has indicated that they want to use the new Sun behavior (regardless) of which flag 
-     * they were using.
-     * This method determines whether we have the proper JDK version for using the new SUN behavior for
-     * retrieving methods. We determine this by checking the version of WsGen.
-     * @param propertyToSet
-     * @return
-     */
     private boolean isNewSunBehaviorSupported() {
 
         if (log.isDebugEnabled()) {
             log.debug("isNewSunBehavior: Validating that JDK version can be used");
-
         }
         
         boolean versionValid = false;
 
-        try {
-            
+        try {            
             String wsGenVersion = WSToolingUtils.getWsGenVersion();
             
             versionValid = WSToolingUtils.isValidVersion(wsGenVersion);
@@ -942,7 +883,6 @@ public class EndpointInterfaceDescriptionImpl
             }
             
             if (!versionValid) {
-
                 if (log.isDebugEnabled()) {
                     log.debug("New Sun tooling behavior is not supported with this version of the JDK");
                 }
@@ -963,19 +903,11 @@ public class EndpointInterfaceDescriptionImpl
         
         return versionValid;
     }
+    
     private String readLegacyWebMethodFlag () {
-        
-       String legacyWebmethod= null;
-            
+        String legacyWebmethod = null;
         try {
-            legacyWebmethod = (String) AccessController.doPrivileged(
-                new PrivilegedExceptionAction() {
-                    public Object run() {
-                        //System property takes precedence over manifest property.
-                        //So first lets check for system property.
-                        return (System.getProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES));
-                    }
-                });
+            legacyWebmethod = getSystemProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES);
         } catch (PrivilegedActionException e) {
             // Swallow and continue
             if (log.isWarnEnabled()) {
@@ -1018,16 +950,9 @@ public class EndpointInterfaceDescriptionImpl
     }
     
     private static String getNewSunRulesFlag () {
-        
         String newSunRulesFlag = null;
-            
         try {
-            newSunRulesFlag = (String) AccessController.doPrivileged(
-                new PrivilegedExceptionAction() {
-                    public Object run() {
-                        return (System.getProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES_SUN));
-                    }
-                });
+            newSunRulesFlag = getSystemProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES_SUN);
         } catch (PrivilegedActionException e) {
             // Swallow and continue
             if (log.isWarnEnabled()) {
@@ -1047,5 +972,33 @@ public class EndpointInterfaceDescriptionImpl
         return newSunRulesFlag;
     }
     
+    private String readUsePostWebMethodRulesFlag() {
+        String usePostMethodRules = null;
+        try {
+            usePostMethodRules = getSystemProperty(MDQConstants.USE_POST_WEB_METHOD_RULES);
+        } catch (PrivilegedActionException e) {
+            // Swallow and continue
+            if (log.isWarnEnabled()) {
+                log.debug("Exception getting USE_POST_WEB_METHOD_RULES system property: " + e.getException());
+            }
+        }
+        if (WSToolingUtils.hasValue(usePostMethodRules)) {
+            if (log.isDebugEnabled()) {
+                log.debug("EndpointInterfaceDescriptionImpl: system property '" + MDQConstants.USE_POST_WEB_METHOD_RULES + "' is set with " + usePostMethodRules);                
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("EndpointInterfaceDescriptionImpl: system property '" + MDQConstants.USE_POST_WEB_METHOD_RULES + "' is not set");
+            }
+        }
+        return usePostMethodRules;
+    }
 
+    private static String getSystemProperty(final String propertyName) throws PrivilegedActionException {
+        return AccessController.doPrivileged(new PrivilegedExceptionAction<String>() {
+            public String run() {
+                return System.getProperty(propertyName);
+            }
+        });
+    }
 }

@@ -96,5 +96,6 @@ public class MDQConstants {
     public static final String USE_LEGACY_WEB_METHOD_RULES = "jaxws.runtime.legacyWebMethod";
     public static final String USE_MANIFEST_LEGACY_WEB_METHOD_RULES = "LegacyWebMethod";
     public static final String SUN_WEB_METHOD_BEHAVIOR_CHANGE_VERSION = "2.1.6";
+    public static final String USE_POST_WEB_METHOD_RULES = "jaxws.runtime.usePostWebMethodRules";
 
 }
