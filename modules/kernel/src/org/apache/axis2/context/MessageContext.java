@@ -180,6 +180,14 @@ public class MessageContext extends AbstractContext
     public static final String TRANSPORT_ADDR = "TRANSPORT_ADDR";
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
 
+    /**
+     * Constant used as the key for the property which stores the In MessageContext in the
+     * Out MessageContext/FaultMessageContext. This is needed in cases where an OperationContext
+     * is not created, for example, since the request never gets dispatched to the service
+     * operation, either due to a security failure or a request coming in for a non-existing
+     * endpoint
+     */
+    public static final String IN_MESSAGE_CONTEXT = "axis2.inMsgContext";
 
     /**
      * message attachments
