@@ -70,7 +70,7 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         });
     }
 
-    public void testMessageWithOmittedAction() {
+    public void testMessageWithOmittedAction() throws Exception {
         try {
             testMessageWithOmittedHeaders("noAction");
             fail("An AxisFault should have been thrown due to a missing Action header.");
@@ -78,14 +78,9 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (AxisFault af) {
             //test passed
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedFaultTo() {
+    public void testMessageWithOmittedFaultTo() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noFaultTo");
             EndpointReference epr = options.getFaultTo();
@@ -97,14 +92,9 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing FaultTo header.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedFrom() {
+    public void testMessageWithOmittedFrom() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noFrom");
             EndpointReference epr = options.getFrom();
@@ -116,14 +106,9 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing From header.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedMessageID() {
+    public void testMessageWithOmittedMessageID() throws Exception {
         try {
             testMessageWithOmittedHeaders("noMessageID");
             fail("An AxisFault should have been thrown due to a missing MessageID header.");
@@ -131,14 +116,9 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (AxisFault af) {
             //test passed
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedMessageIDReplyToAndFaultTo() {
+    public void testMessageWithOmittedMessageIDReplyToAndFaultTo() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noMessageIDNoReplyToNoFaultTo");
             String messageID = options.getMessageId();
@@ -150,14 +130,9 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to missing MessageID, ReplyTo, and FaultTo headers.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedReplyTo() {
+    public void testMessageWithOmittedReplyTo() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noReplyTo");
             EndpointReference epr = options.getReplyTo();
@@ -171,25 +146,15 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing ReplyTo header.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedTo() {
+    public void testMessageWithOmittedTo() throws Exception {
         try {
             testMessageWithOmittedHeaders("noTo");
             fail("An AxisFault should have been thrown due to a missing To header.");
         }
         catch (AxisFault af) {
             //test passed
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
         }
     }
 }

@@ -106,60 +106,55 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         return options;
     }
 
-    private void testExtractAddressingInformationFromHeadersInvalidCardinality(String headerName) {
+    private void testExtractAddressingInformationFromHeadersInvalidCardinality(String headerName) throws Exception {
         String testfile = "invalid-cardinality-messages/" + versionDirectory +
                           "/invalidCardinality" + headerName + "Message.xml";
+        
+        MessageContext mc = new MessageContext();
+        mc.setConfigurationContext(
+                ConfigurationContextFactory.createEmptyConfigurationContext());
         try {
-            MessageContext mc = new MessageContext();
-            mc.setConfigurationContext(
-                    ConfigurationContextFactory.createEmptyConfigurationContext());
-            try {
-                basicExtractAddressingInformationFromHeaders(testfile, mc);
-                fail("An AxisFault should have been thrown due to 2 wsa:" + headerName +
-                     " headers.");
-            } catch (AxisFault af) {
-                if (headerName.equals(AddressingConstants.WSA_REPLY_TO)) {
-                    assertNull("No ReplyTo should be set on the MessageContext", mc.getReplyTo());
-                } else {
-                    assertReplyToEPR(mc.getReplyTo());
-                }
-
-                if (headerName.equals(AddressingConstants.WSA_FAULT_TO)) {
-                    assertNull("No FaultTo should be set on the MessageContext", mc.getFaultTo());
-                } else {
-                    assertFaultEPR(mc.getFaultTo());
-                }
-
-                if (headerName.equals(AddressingConstants.WSA_ACTION)) {
-                    assertNull("No Action should be set on the MessageContext", mc.getWSAAction());
-                } else {
-                    assertEquals("WSAAction property is not correct", mc.getWSAAction(), action);
-                }
-
-                if (headerName.equals(AddressingConstants.WSA_MESSAGE_ID)) {
-                    assertNull("No MessageID should be set on the MessageContext",
-                               mc.getMessageID());
-                } else {
-                    assertEquals("MessageID property is not correct", mc.getMessageID().trim(),
-                                 messageID.trim());
-                }
-
-                if (headerName.equals(AddressingConstants.WSA_FROM)) {
-                    assertNull("No From should be set on the MessageContext", mc.getFrom());
-                } else {
-                    assertFromEPR(mc.getFrom());
-                }
-
-                if (headerName.equals(AddressingConstants.WSA_TO)) {
-                    assertNull("No To should be set on the MessageContext", mc.getTo());
-                } else {
-                    assertToEPR(mc.getTo());
-                }
+            basicExtractAddressingInformationFromHeaders(testfile, mc);
+            fail("An AxisFault should have been thrown due to 2 wsa:" + headerName +
+                 " headers.");
+        } catch (AxisFault af) {
+            if (headerName.equals(AddressingConstants.WSA_REPLY_TO)) {
+                assertNull("No ReplyTo should be set on the MessageContext", mc.getReplyTo());
+            } else {
+                assertReplyToEPR(mc.getReplyTo());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
+
+            if (headerName.equals(AddressingConstants.WSA_FAULT_TO)) {
+                assertNull("No FaultTo should be set on the MessageContext", mc.getFaultTo());
+            } else {
+                assertFaultEPR(mc.getFaultTo());
+            }
+
+            if (headerName.equals(AddressingConstants.WSA_ACTION)) {
+                assertNull("No Action should be set on the MessageContext", mc.getWSAAction());
+            } else {
+                assertEquals("WSAAction property is not correct", mc.getWSAAction(), action);
+            }
+
+            if (headerName.equals(AddressingConstants.WSA_MESSAGE_ID)) {
+                assertNull("No MessageID should be set on the MessageContext",
+                           mc.getMessageID());
+            } else {
+                assertEquals("MessageID property is not correct", mc.getMessageID().trim(),
+                             messageID.trim());
+            }
+
+            if (headerName.equals(AddressingConstants.WSA_FROM)) {
+                assertNull("No From should be set on the MessageContext", mc.getFrom());
+            } else {
+                assertFromEPR(mc.getFrom());
+            }
+
+            if (headerName.equals(AddressingConstants.WSA_TO)) {
+                assertNull("No To should be set on the MessageContext", mc.getTo());
+            } else {
+                assertToEPR(mc.getTo());
+            }
         }
     }
 
@@ -175,31 +170,31 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         return mc.getOptions();
     }
 
-    public void testExtractAddressingInformationFromHeadersInvalidCardinalityReplyTo() {
+    public void testExtractAddressingInformationFromHeadersInvalidCardinalityReplyTo() throws Exception {
         testExtractAddressingInformationFromHeadersInvalidCardinality(
                 AddressingConstants.WSA_REPLY_TO);
     }
 
-    public void testExtractAddressingInformationFromHeadersInvalidCardinalityFaultTo() {
+    public void testExtractAddressingInformationFromHeadersInvalidCardinalityFaultTo() throws Exception {
         testExtractAddressingInformationFromHeadersInvalidCardinality(
                 AddressingConstants.WSA_FAULT_TO);
     }
 
-    public void testExtractAddressingInformationFromHeadersInvalidCardinalityAction() {
+    public void testExtractAddressingInformationFromHeadersInvalidCardinalityAction() throws Exception {
         testExtractAddressingInformationFromHeadersInvalidCardinality(
                 AddressingConstants.WSA_ACTION);
     }
 
-    public void testExtractAddressingInformationFromHeadersInvalidCardinalityMessageID() {
+    public void testExtractAddressingInformationFromHeadersInvalidCardinalityMessageID() throws Exception {
         testExtractAddressingInformationFromHeadersInvalidCardinality(
                 AddressingConstants.WSA_MESSAGE_ID);
     }
 
-    public void testExtractAddressingInformationFromHeadersInvalidCardinalityFrom() {
+    public void testExtractAddressingInformationFromHeadersInvalidCardinalityFrom() throws Exception {
         testExtractAddressingInformationFromHeadersInvalidCardinality(AddressingConstants.WSA_FROM);
     }
 
-    public void testExtractAddressingInformationFromHeadersInvalidCardinalityTo() {
+    public void testExtractAddressingInformationFromHeadersInvalidCardinalityTo() throws Exception {
         testExtractAddressingInformationFromHeadersInvalidCardinality(AddressingConstants.WSA_TO);
     }
 

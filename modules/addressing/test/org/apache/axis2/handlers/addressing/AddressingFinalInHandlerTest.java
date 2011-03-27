@@ -53,27 +53,20 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         secondRelationshipType = "http://some.custom.relationship";
     }
 
-    public void testExtractAddressingInformationFromHeaders() {
-        try {
-            Options options = extractAddressingInformationFromHeaders(null);
+    public void testExtractAddressingInformationFromHeaders() throws Exception {
+        Options options = extractAddressingInformationFromHeaders(null);
 
-            assertNotNull(options);
-            assertNotNull(options.getTo());
+        assertNotNull(options);
+        assertNotNull(options.getTo());
 
-            Map allReferenceParameters = options.getTo().getAllReferenceParameters();
-            assertNotNull(allReferenceParameters);
-            QName qName = new QName("http://ws.apache.org/namespaces/axis2", "ParamOne", "axis2");
-            assertNotNull(allReferenceParameters.get(qName));
+        Map allReferenceParameters = options.getTo().getAllReferenceParameters();
+        assertNotNull(allReferenceParameters);
+        QName qName = new QName("http://ws.apache.org/namespaces/axis2", "ParamOne", "axis2");
+        assertNotNull(allReferenceParameters.get(qName));
 
-            assertEPRHasCorrectMetadata(options.getFrom());
-            assertEPRHasCorrectMetadata(options.getFaultTo());
-            assertEPRHasCorrectMetadata(options.getReplyTo());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
+        assertEPRHasCorrectMetadata(options.getFrom());
+        assertEPRHasCorrectMetadata(options.getFaultTo());
+        assertEPRHasCorrectMetadata(options.getReplyTo());
     }
 
     public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception {
@@ -120,7 +113,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
 
     }
 
-    public void testMessageWithOmittedAction() {
+    public void testMessageWithOmittedAction() throws Exception {
         try {
             testMessageWithOmittedHeaders("noAction");
             fail("An AxisFault should have been thrown due to a missing Action header.");
@@ -128,14 +121,9 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (AxisFault af) {
             //test passed
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedFaultTo() {
+    public void testMessageWithOmittedFaultTo() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noFaultTo");
             EndpointReference epr = options.getFaultTo();
@@ -147,14 +135,9 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing FaultTo header.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedFrom() {
+    public void testMessageWithOmittedFrom() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noFrom");
             EndpointReference epr = options.getFrom();
@@ -166,14 +149,9 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing From header.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedMessageID() {
+    public void testMessageWithOmittedMessageID() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noMessageID");
             String messageID = options.getMessageId();
@@ -185,14 +163,9 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing MessageID header.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedReplyTo() {
+    public void testMessageWithOmittedReplyTo() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noReplyTo");
             EndpointReference epr = options.getReplyTo();
@@ -206,14 +179,9 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing ReplyTo header.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testMessageWithOmittedTo() {
+    public void testMessageWithOmittedTo() throws Exception {
         try {
             Options options = testMessageWithOmittedHeaders("noTo");
             EndpointReference epr = options.getTo();
@@ -226,11 +194,6 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             af.printStackTrace();
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown due to a missing To header.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
         }
     }
 
