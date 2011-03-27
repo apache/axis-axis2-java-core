@@ -21,15 +21,11 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class MessageContextChangeTest extends TestCase {
-    protected static final Log log = LogFactory.getLog(MessageContextChangeTest.class);
-    
     private FieldDescription[] knownList = {
             new FieldDescription("org.apache.commons.logging.Log", "log"),
             new FieldDescription("java.lang.String", "logCorrelationID"),
@@ -124,7 +120,7 @@ public class MessageContextChangeTest extends TestCase {
 
 
     public void testChange() throws Exception {
-        boolean noChange = true;
+        StringBuilder messages = new StringBuilder();
 
         MessageContext mc = new MessageContext();
 
@@ -136,10 +132,9 @@ public class MessageContextChangeTest extends TestCase {
         int numberKnownFields = knownList.length;
 
         if (numberKnownFields != numberFields) {
-            log.error("ERROR: number of actual fields [" + numberFields +
+            messages.append("ERROR: number of actual fields [" + numberFields +
                     "] in MessageContext does not match the expected number [" + numberKnownFields +
-                    "]");
-            noChange = false;
+                    "]\n");
         }
 
         // first check the expected fields with the actual fields
@@ -154,17 +149,15 @@ public class MessageContextChangeTest extends TestCase {
             }
 
             if (actualField == null) {
-                log.error("ERROR:  MessageContext is missing field [" + Arrays.asList(names) + "]");
-                noChange = false;
+                messages.append("ERROR:  MessageContext is missing field [" + Arrays.asList(names) + "]\n");
             } else {
                 String knownType = knownList[i].getType();
                 String actualType = actualField.getType().getName();
 
                 if (!knownType.equals(actualType)) {
-                    log.error("ERROR:  MessageContext field [" + Arrays.asList(names) +
+                    messages.append("ERROR:  MessageContext field [" + Arrays.asList(names) +
                             "] expected type [" + knownType + "] does not match actual type [" +
-                            actualType + "]");
-                    noChange = false;
+                            actualType + "]\n");
                 }
             }
         }
@@ -180,24 +173,24 @@ public class MessageContextChangeTest extends TestCase {
             FieldDescription fd = findFieldDescription(name);
 
             if (fd == null) {
-                log.error("ERROR:  MessageContext has new field [" + description +
-                        "] that needs to be assessed for message context save/restore functions");
-                noChange = false;
+                messages.append("ERROR:  MessageContext has new field [" + description +
+                        "] that needs to be assessed for message context save/restore functions\n");
             } else {
                 String knownType = fd.getType();
                 String actualType = fields[j].getType().getName();
 
                 if (!knownType.equals(actualType)) {
-                    log.error("ERROR:  MessageContext field [" + name +
+                    messages.append("ERROR:  MessageContext field [" + name +
                             "] expected type [" + knownType + "] does not match actual type [" +
-                            actualType + "]");
-                    noChange = false;
+                            actualType + "]\n");
                 }
             }
 
         }
 
-        assertTrue(noChange);
+        if (messages.length() > 0) {
+            fail(messages.toString());
+        }
     }
 
     private Field findField(Field[] fields, String name) {
