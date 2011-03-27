@@ -53,8 +53,7 @@ import org.apache.axiom.mime.impl.javamail.JavaMailMultipartWriterFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.OMMultipartWriter;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
@@ -343,8 +342,8 @@ public abstract class AbstractTestCase extends TestCase {
     private static void testSerializeDeserializeUsingOMStAXWrapper(Object bean, Object expectedResult) throws Exception {
         OMElement omElement = ADBBeanUtil.getOMElement(bean);
         String omElementString = omElement.toStringWithConsume();
-        OMElement omElement2 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(
-                new StringReader(omElementString))).getDocumentElement();
+        OMElement omElement2 = OMXMLBuilderFactory.createOMBuilder(
+                new StringReader(omElementString)).getDocumentElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement2.getXMLStreamReader()));
     }
     
@@ -364,7 +363,7 @@ public abstract class AbstractTestCase extends TestCase {
         ADBBeanUtil.serialize(bean, writer);
         writer.writeEndElement();
         writer.flush();
-        OMElement omElement3 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(new StringReader(sw.toString()))).getDocumentElement();
+        OMElement omElement3 = OMXMLBuilderFactory.createOMBuilder(new StringReader(sw.toString())).getDocumentElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement3.getFirstElement().getXMLStreamReader()));
     }
     
