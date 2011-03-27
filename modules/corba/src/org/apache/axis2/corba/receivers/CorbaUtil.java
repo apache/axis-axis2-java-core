@@ -631,7 +631,8 @@ public class CorbaUtil implements CorbaConstants {
             return null;
         value = value.trim();
         Object ret = null;
-        switch(type.getTypeCode().kind().value()) {
+        int kind = type.getTypeCode().kind().value();
+        switch(kind) {
             case TCKind._tk_long : ret = Integer.valueOf(value); break;
             case TCKind._tk_ulong : ret = Integer.valueOf(value); break;
             case TCKind._tk_longlong : ret = Long.valueOf(value); break;
@@ -653,8 +654,14 @@ public class CorbaUtil implements CorbaConstants {
                 enumValue.setValue(i);
                 ret = enumValue;
                 break;
+            case TCKind._tk_alias:
+                Typedef typedef = (Typedef) type;
+                AliasValue aliasValue = new AliasValue(typedef);
+                aliasValue.setValue(parseValue(typedef.getDataType(), value));
+                ret = aliasValue;
+                break;
             default:
-                log.error("ERROR! Invalid dataType");
+                log.error("ERROR! Invalid dataType (" + kind + ")");
                 break;
         }
         return ret;
