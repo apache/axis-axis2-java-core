@@ -191,9 +191,8 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         outHandler.invoke(msgCtxt);
 
         XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(msgCtxt.getEnvelope().toString(),
-                TestUtil.getOMBuilder("mustUnderstandTest.xml")
-                        .getDocumentElement().toString());
+        assertXMLEqual(TestUtil.getOMBuilder("mustUnderstandTest.xml")
+                        .getDocumentElement().toString(), msgCtxt.getEnvelope().toString());
     }
 
     public void testSOAPRoleSupport() throws Exception {
