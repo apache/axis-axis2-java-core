@@ -688,7 +688,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 jbc_classCL = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), 
                         holder_classCL,
                         marshalDesc.getPackagesKey(), 
-                        contextCL, 
+                        classCL, 
                         null);
             } catch (Throwable t) {
                 if (log.isDebugEnabled()) {
