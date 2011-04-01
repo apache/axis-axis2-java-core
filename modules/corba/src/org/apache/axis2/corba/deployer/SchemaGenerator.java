@@ -203,13 +203,11 @@ public class SchemaGenerator implements CorbaConstants {
             }
             uniqueMethods.put(operationName, operation);
             //create the schema type for the method wrapper
-            List paras = operation.getParams();
-            if (paras != null && paras.size() > 0) {
-                sequence = new XmlSchemaSequence();
-                methodSchemaType = createSchemaTypeForMethodPart(operationName);
-                methodSchemaType.setParticle(sequence);
-            }
+            sequence = new XmlSchemaSequence();
+            methodSchemaType = createSchemaTypeForMethodPart(operationName);
+            methodSchemaType.setParticle(sequence);
 
+            List paras = operation.getParams();
             List outparas = null;
             if (paras != null) {
                 for (int j = 0; j < paras.size(); j++) {
