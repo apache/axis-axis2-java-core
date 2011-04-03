@@ -338,6 +338,10 @@
                                 
                                 <!-- Test of the databinding sample -->
                                 <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding"/>
+                                
+                                <!-- Test of the mtom sample -->
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.service"/>
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.client"/>
                             </tasks>
                         </configuration>
                     </execution>
@@ -356,7 +360,7 @@
                         <configuration>
                             <projectsDirectory>${project.build.directory}/axis2-${project.version}/samples</projectsDirectory>
                             <pomIncludes>
-                                <pomInclude>java_first_jaxws/pom.xml</pomInclude>
+                                <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>
                             <streamLogs>true</streamLogs>
                         </configuration>

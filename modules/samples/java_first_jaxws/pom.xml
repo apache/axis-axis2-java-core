@@ -115,7 +115,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>true</inherited>
+                <version>2.3.2</version>
                 <configuration>
                     <compilerVersion>1.5</compilerVersion>
                     <source>1.5</source>
@@ -125,6 +125,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
                 <configuration>
                     <warSourceDirectory>${basedir}/src/webapp</warSourceDirectory>
                 </configuration>
@@ -133,6 +134,7 @@
                 <!-- Also build the JAR during the package phase. The JAR is required
                      when deploying on axis2server. -->
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -171,4 +173,14 @@
             </testResource>
         </testResources>
     </build>
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshot Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
 </project>
