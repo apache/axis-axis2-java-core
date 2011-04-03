@@ -24,7 +24,7 @@
     <groupId>org.apache.axis2.examples</groupId>
     <artifactId>jaxws-samples</artifactId>
     <name>JAXWS Samples - Echo, Ping, MTOM</name>
-    <version>1.4</version>
+    <version>1.7.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
