@@ -20,7 +20,7 @@
 <project name="mtom" basedir="." default="generate.service">
 
 	<property environment="env" />
-	<property name="build.dir" value="build" />
+	<property name="build.dir" value="${basedir}/build" />
 	<property name="client.dir" value="${build.dir}/client" />
 	<property name="service.dir" value="${build.dir}/service" />
 	<property name="client.classes.dir" value="${client.dir}/classes" />
@@ -38,7 +38,7 @@
 	<!-- Create Service -->
 	<target name="generate.service">
 
-		<java classname="org.apache.axis2.wsdl.WSDL2Java">
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<arg value="-uri" />
 			<arg value="${basedir}/resources/MTOMSample.wsdl" />
 			<arg value="-ss" />
@@ -71,7 +71,7 @@
 
 	<!-- Generate Client -->
 	<target name="generate.client">
-		<java classname="org.apache.axis2.wsdl.WSDL2Java">
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<arg value="-uri" />
 			<arg value="resources/MTOMSample.wsdl" />
 			<arg value="-p" />
