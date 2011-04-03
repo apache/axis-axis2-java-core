@@ -86,7 +86,7 @@
 
 		<mkdir dir="${client.classes.dir}" />
 		<!-- Compile client -->
-		<javac srcdir="${client.dir}/src" destdir="${client.classes.dir}">
+		<javac srcdir="${client.dir}/src" destdir="${client.classes.dir}" fork="true">
 			<classpath refid="class.path" />
 		</javac>
     </target>	
