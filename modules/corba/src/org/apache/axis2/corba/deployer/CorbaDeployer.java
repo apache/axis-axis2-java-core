@@ -466,6 +466,7 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
         axisService.addSchema(schemas);
         axisService.setSchemaTargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
         axisService.setTypeTable(schemaGenerator.getTypeTable());
+        axisService.addParameter(SCHEMA_TO_IDL_MAPPING_LITERAL, schemaGenerator.getSchemaToIDLMapping());
         if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(
                 axisService.getTargetNamespace())) {
             axisService.setTargetNamespace(schemaGenerator.getTargetNamespace());
@@ -548,23 +549,16 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
         AxisOperation operation;
         String opName = corbaOperation.getName();
         DataType returnType = corbaOperation.getReturnType();
-        if (returnType == null || CorbaUtil.getQualifiedName(returnType).equals(VOID)) {
-            if (corbaOperation.hasRaises()) {
-                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
-                AxisMessage outMessage = operation.getMessage(
-                        WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                outMessage.setElementQName(table.getQNamefortheType(opName + RESPONSE));
-                outMessage.setName(opName + RESPONSE);
-            } else {
-                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
-            }
+
+        if (returnType == null && !corbaOperation.hasRaises() && !corbaOperation.hasOutParams()) {
+            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
         } else {
             operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
-            AxisMessage outMessage = operation.getMessage(
-                    WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            AxisMessage outMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             outMessage.setElementQName(table.getQNamefortheType(opName + RESPONSE));
             outMessage.setName(opName + RESPONSE);
         }
+
         if (corbaOperation.hasRaises()) {
             List extypes = corbaOperation.getRaises();
             for (int j= 0 ; j < extypes.size() ; j++) {

@@ -26,38 +26,16 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.corba.deployer.CorbaConstants;
+import org.apache.axis2.corba.deployer.SchemaToIDLMapping;
 import org.apache.axis2.corba.exceptions.CorbaException;
 import org.apache.axis2.corba.exceptions.CorbaInvocationException;
 import org.apache.axis2.corba.idl.IDLProcessor;
 import org.apache.axis2.corba.idl.PreProcessorInputStream;
-import org.apache.axis2.corba.idl.types.AbstractCollectionType;
-import org.apache.axis2.corba.idl.types.ArrayType;
-import org.apache.axis2.corba.idl.types.CompositeDataType;
-import org.apache.axis2.corba.idl.types.DataType;
-import org.apache.axis2.corba.idl.types.EnumType;
-import org.apache.axis2.corba.idl.types.ExceptionType;
-import org.apache.axis2.corba.idl.types.IDL;
-import org.apache.axis2.corba.idl.types.Member;
-import org.apache.axis2.corba.idl.types.PrimitiveDataType;
-import org.apache.axis2.corba.idl.types.SequenceType;
-import org.apache.axis2.corba.idl.types.Struct;
-import org.apache.axis2.corba.idl.types.Typedef;
-import org.apache.axis2.corba.idl.types.UnionMember;
-import org.apache.axis2.corba.idl.types.UnionType;
-import org.apache.axis2.corba.idl.types.ValueType;
-import org.apache.axis2.corba.idl.values.AbstractCollectionValue;
-import org.apache.axis2.corba.idl.values.AbstractValue;
-import org.apache.axis2.corba.idl.values.AliasValue;
-import org.apache.axis2.corba.idl.values.ArrayValue;
-import org.apache.axis2.corba.idl.values.EnumValue;
-import org.apache.axis2.corba.idl.values.ExceptionValue;
-import org.apache.axis2.corba.idl.values.ObjectByValue;
-import org.apache.axis2.corba.idl.values.SequenceValue;
-import org.apache.axis2.corba.idl.values.StreamableValueFactory;
-import org.apache.axis2.corba.idl.values.StructValue;
-import org.apache.axis2.corba.idl.values.UnionValue;
+import org.apache.axis2.corba.idl.types.*;
+import org.apache.axis2.corba.idl.values.*;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.namespace.Constants;
 import org.apache.commons.logging.Log;
@@ -65,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.TCKind;
 import org.omg.CORBA.TypeCode;
+import org.omg.CORBA.TypeCodePackage.BadKind;
 import org.omg.CORBA_2_3.ORB;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
@@ -73,19 +52,10 @@ import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import javax.xml.namespace.QName;
-import java.io.File;
+import java.io.*;
+import java.util.*;
+
 //import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 //import java.util.zip.ZipEntry;
 //import java.util.zip.ZipInputStream;
 
@@ -212,7 +182,7 @@ public class CorbaUtil implements CorbaConstants {
         return invokerFactory.newInvoker(((String) interfaceName.getValue()).trim(), methodName, obj);
     }
 
-    public static Object[] extractParameters(OMElement methodElement, Member[] parameterMembers) throws CorbaInvocationException {
+    public static Object[] extractParameters(OMElement methodElement, Member[] parameterMembers, SchemaToIDLMapping mapping) throws CorbaInvocationException {
         if (parameterMembers==null)
             return new Object[0];
 
@@ -245,12 +215,16 @@ public class CorbaUtil implements CorbaConstants {
         String paramName;
         for (int i = 0; i < parameterMembers.length; i++) {
             paramName = parameterMembers[i].getName();
-            retObjs[i] = extractValue(parameterMembers[i].getDataType(), paramsMap.get(paramName));
+            retObjs[i] = extractValue(parameterMembers[i].getDataType(), paramsMap.get(paramName), mapping);
         }
         return retObjs;
     }
 
-    private static Object extractValue(DataType dataType, Object param) throws CorbaInvocationException {
+    private static Object extractValue(DataType dataType, Object param, SchemaToIDLMapping mapping) throws CorbaInvocationException {
+        if (param == null) {
+            return null;
+        }
+
         if (dataType instanceof Typedef) {
             Typedef typedef = (Typedef) dataType;
             AliasValue aliasValue = new AliasValue(typedef);
@@ -266,7 +240,7 @@ public class CorbaUtil implements CorbaConstants {
                 if (paramElement == null || !ARRAY_ITEM.equals(paramElement.getLocalName()))
                     return null;
             }
-            aliasValue.setValue(extractValue(aliasType, paramElement));
+            aliasValue.setValue(extractValue(aliasType, paramElement, mapping));
             return aliasValue;
         } else if (dataType instanceof PrimitiveDataType) {
             if (param!=null)
@@ -282,7 +256,7 @@ public class CorbaUtil implements CorbaConstants {
             Iterator paramsIter = paramElement.getChildElements();
             List children = new ArrayList();
             while (paramsIter.hasNext()) {
-                children.add(extractValue(collectionType.getDataType(), paramsIter.next()));
+                children.add(extractValue(collectionType.getDataType(), paramsIter.next(), mapping));
             }
 
             AbstractCollectionValue collectionValue;
@@ -320,13 +294,13 @@ public class CorbaUtil implements CorbaConstants {
                 }
             }
             if (member != null) {
-                unionValue.setMemberValue(extractValue(member.getDataType(), unElement));
+                unionValue.setMemberValue(extractValue(member.getDataType(), unElement, mapping));
             }
             return unionValue;
         } else if (dataType instanceof CompositeDataType) {
             CompositeDataType compositeType = (CompositeDataType) dataType;
             Member[] compositeMembers = compositeType.getMembers();
-            Object[] compositeValues = extractParameters(((OMElement) param), compositeMembers);
+            Object[] compositeValues = extractParameters(((OMElement) param), compositeMembers, mapping);
 
             AbstractValue value;
             if (compositeType instanceof ValueType)
@@ -338,6 +312,77 @@ public class CorbaUtil implements CorbaConstants {
 
             value.setMemberValues(compositeValues);
             return value;
+        } else if (dataType instanceof AnyType) {
+            OMElement anyElement = (OMElement) param;
+            DefaultNamespaceGenerator namespaceGenerator = new DefaultNamespaceGenerator();
+            String defaultNamespace = namespaceGenerator.schemaNamespaceFromPackageName("").toString();
+
+            OMElement typeElement = anyElement.getFirstChildWithName(new QName(defaultNamespace, "type"));
+
+            if (typeElement != null) {
+
+                OMElement definitionElement = typeElement.getFirstChildWithName(new QName(defaultNamespace, "definition"));
+                OMElement typenameElement = typeElement.getFirstChildWithName(new QName(defaultNamespace, "typename"));
+                OMElement anyValueElement = anyElement.getFirstChildWithName(new QName(defaultNamespace, "value"));
+
+                if (typenameElement != null && anyValueElement != null) {
+
+                    String typeName = typenameElement.getText();
+                    String definition = definitionElement != null ? definitionElement.getText() : Constants.URI_DEFAULT_SCHEMA_XSD;
+                    Object anyContent;
+                    DataType anyValueType;
+                    if (definition.equals(Constants.URI_DEFAULT_SCHEMA_XSD)) {
+                        String anyValueString = anyValueElement.getText();
+                        if (typeName.equals("boolean")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("boolean");
+                            anyContent = Boolean.parseBoolean(anyValueString);
+                        } else if (typeName.equals("double")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("double");
+                            anyContent = Double.parseDouble(anyValueString);
+                        } else if (typeName.equals("float")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("float");
+                            anyContent = Float.parseFloat(anyValueString);
+                        } else if (typeName.equals("unsignedByte")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("octet");
+                            anyContent = Byte.parseByte(anyValueString);
+                        } else if (typeName.equals("int")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("long");
+                            anyContent = Integer.parseInt(anyValueString);
+                        } else if (typeName.equals("long")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("longlong");
+                            anyContent = Long.parseLong(anyValueString);
+                        } else if (typeName.equals("short")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("short");
+                            anyContent = Short.parseShort(anyValueString);
+                        } else if (typeName.equals("string")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("string");
+                            anyContent = anyValueString;
+                        } else if (typeName.equals("unsignedShort")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("ushort");
+                            anyContent = Short.parseShort(anyValueString);
+                        } else if (typeName.equals("unsignedInt")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("ulong");
+                            anyContent = Integer.parseInt(anyValueString);
+                        } else if (typeName.equals("unsignedLong")) {
+                            anyValueType = PrimitiveDataType.getPrimitiveDataType("ulonglong");
+                            anyContent = Long.parseLong(anyValueString);
+                        } else {
+                            throw new CorbaInvocationException("Unsupported data type: " + typeName);
+                        }
+                    } else {
+                        anyValueType = mapping.getDataType(new QName(definition, typeName));
+                        if (anyValueType != null) {
+                            anyContent = CorbaUtil.extractValue(anyValueType, anyValueElement.getFirstElement(), mapping);
+                        } else {
+                            throw new CorbaInvocationException("Unsupported data schema: " + definition + " type:" + typeName);
+                        }
+                    }
+                    AnyValue anyValue = new AnyValue();
+                    anyValue.setContent(anyContent);
+                    anyValue.setContentType(anyValueType);
+                    return anyValue;
+                }
+            }
         }
         return null;
     }
@@ -395,7 +440,7 @@ public class CorbaUtil implements CorbaConstants {
     }
 
     private static void processResponse(OMElement child, OMElement bodyContent, Object resObject, DataType dataType,
-                                        SOAPFactory fac, OMNamespace defaultNS, boolean qualified, AxisService service) {
+                                        SOAPFactory fac, OMNamespace defaultNS, boolean qualified, AxisService service) throws AxisFault {
         if (dataType instanceof PrimitiveDataType) {
             child.addChild(fac.createOMText(child, resObject.toString()));
         } else if (dataType instanceof Typedef) {
@@ -454,6 +499,73 @@ public class CorbaUtil implements CorbaConstants {
         } else if (dataType instanceof EnumType) {
             EnumValue enumValue = (EnumValue) resObject;
             child.addChild(fac.createOMText(child, enumValue.getValueAsString()));
+        } else if (dataType instanceof AnyType) {
+            Any any = (Any) resObject;
+            TypeCode typeCode = any.type();
+            DataType contentDataType;
+            String dataTypeNameSpaceURI;
+            if (PrimitiveDataType.isPrimitive(typeCode)) {
+                contentDataType = new PrimitiveDataType(typeCode);
+                dataTypeNameSpaceURI = Constants.URI_DEFAULT_SCHEMA_XSD;
+            } else if (TCKind._tk_any == typeCode.kind().value()) {
+                dataTypeNameSpaceURI = Constants.URI_DEFAULT_SCHEMA_XSD;
+                contentDataType = new AnyType();
+            } else {
+                try {
+                    String id = typeCode.id();
+                    IDL idl = (IDL) service.getParameterValue(IDL_LITERAL);
+                    Map complexTypes = idl.getCompositeDataTypes();
+                    String typeKey = id.substring(id.indexOf(":") + 1, id.lastIndexOf(":")).replaceAll("/", "::");
+                    contentDataType = (DataType) complexTypes.get(typeKey);
+                    OMNamespace namespace = getNameSpaceForType(fac, service, (CompositeDataType) contentDataType);
+                    dataTypeNameSpaceURI = namespace.getNamespaceURI();
+                } catch (BadKind badKind) {
+                    throw AxisFault.makeFault(badKind);
+                }
+            }
+
+            if (contentDataType == null) {
+                throw new AxisFault("can't find the data type of the returned value.");
+            }
+
+            Object value = CorbaUtil.extractValue(contentDataType, any);
+
+            TypeTable typeTable = service.getTypeTable();
+            QName anySchema = typeTable.getComplexSchemaType(CorbaConstants.ANY_TYPE_NAME);
+            if (anySchema == null) {
+                throw new AxisFault("CORBA.Any schema type is not defined.");
+            }
+            String defaultNSURI = anySchema.getNamespaceURI();
+            String defaultNSPrefix = anySchema.getPrefix();
+
+            OMElement valueElement = fac.createOMElement(new QName(defaultNSURI, "value", defaultNSPrefix));
+            processResponse(valueElement, child, value, contentDataType, fac, defaultNS, qualified, service);
+            child.addChild(valueElement);
+
+            OMElement definitionElement =  fac.createOMElement(new QName(defaultNSURI, "definition", defaultNSPrefix));
+            definitionElement.addChild(fac.createOMText(dataTypeNameSpaceURI));
+
+            OMElement typeNameElement =  fac.createOMElement(new QName(defaultNSURI, "typename", defaultNSPrefix));
+            String typeName;
+            if (contentDataType instanceof PrimitiveDataType) {
+               typeName = ((PrimitiveDataType) contentDataType).getTypeName();
+               if (String.class.getName().equals(typeName)) {
+                   typeName = "string";
+               }
+            } else if (contentDataType instanceof CompositeDataType) {
+               typeName = ((CompositeDataType) contentDataType).getName();
+            } else if (contentDataType instanceof AnyType) {
+               typeName = CorbaConstants.ANY_TYPE_NAME;
+            } else {
+                throw new AxisFault("Invalid return type");
+            }
+
+            typeNameElement.addChild(fac.createOMText(typeName));
+
+            OMElement typeElement =  fac.createOMElement(new QName(defaultNSURI, "type", defaultNSPrefix));
+            typeElement.addChild(definitionElement);
+            typeElement.addChild(typeNameElement);
+            child.addChild(typeElement);
         }
     }
 
@@ -476,6 +588,8 @@ public class CorbaUtil implements CorbaConstants {
         } else if (type instanceof PrimitiveDataType) {
             PrimitiveDataType primitiveDataType = (PrimitiveDataType) type;
             return primitiveDataType.getTypeName();
+        } else if (type instanceof AnyType) {
+            return CorbaConstants.ANY_TYPE_NAME;
         }
         return null;
     }
@@ -496,9 +610,14 @@ public class CorbaUtil implements CorbaConstants {
             case TCKind._tk_octet: arg.insert_octet(((Byte) value).byteValue()); break;
             case TCKind._tk_string: arg.insert_string((String) value); break;
             case TCKind._tk_wstring: arg.insert_wstring((String) value); break;
-            case TCKind._tk_any: arg.insert_any((Any) value); break;
             case TCKind._tk_value: arg.insert_Value((Serializable) value); break;
             case TCKind._tk_objref: arg.insert_Object((org.omg.CORBA.Object) value); break;
+            case TCKind._tk_any:
+                AnyValue anyValue = (AnyValue) value;
+                Any any = ORB.init().create_any();
+                CorbaUtil.insertValue(any, anyValue.getContentType(), anyValue.getContent());
+                arg.insert_any(any);
+                break;
             case TCKind._tk_struct:
                 StructValue structValue = (StructValue) value;
                 org.omg.CORBA_2_3.portable.OutputStream outputStream = (org.omg.CORBA_2_3.portable.OutputStream) arg.create_output_stream();
@@ -683,9 +802,13 @@ public class CorbaUtil implements CorbaConstants {
             case TCKind._tk_octet: return new Byte("0");
             case TCKind._tk_string: return "";
             case TCKind._tk_wstring: return "";
-            //case TCKind._tk_any: return new Any();
             case TCKind._tk_value: return "";
             //case TCKind._tk_objref: return new org.omg.CORBA.Object();
+            case TCKind._tk_any:
+                AnyValue anyValue = new AnyValue();
+                anyValue.setContentType(PrimitiveDataType.getPrimitiveDataType("string"));
+                anyValue.setContent("");
+                return anyValue;
             case TCKind._tk_struct:
                 Struct struct = (Struct) type;
                 StructValue value = new StructValue(struct);

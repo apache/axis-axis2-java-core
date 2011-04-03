@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.corba.deployer.CorbaConstants;
+import org.apache.axis2.corba.deployer.SchemaToIDLMapping;
 import org.apache.axis2.corba.exceptions.CorbaInvocationException;
 import org.apache.axis2.corba.idl.types.IDL;
 import org.apache.axis2.description.AxisMessage;
@@ -106,7 +107,8 @@ public class CorbaInOnlyMessageReceiver extends AbstractInMessageReceiver implem
                                 "qualified element. But received a namespace qualified element");
                     }
 
-                    Object[] objectArray = CorbaUtil.extractParameters(methodElement, invoker.getParameterMembers());
+                    SchemaToIDLMapping mapping = (SchemaToIDLMapping) service.getParameterValue(SCHEMA_TO_IDL_MAPPING_LITERAL);
+                    Object[] objectArray = CorbaUtil.extractParameters(methodElement, invoker.getParameterMembers(), mapping);
                     invoker.setParameters(objectArray);
                 }
                 invoker.invoke();

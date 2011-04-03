@@ -48,7 +48,6 @@ public class PrimitiveDataType extends DataType {
         PRIMITIVE_TYPES.put("octet",orb.get_primitive_tc(TCKind.tk_octet));
         PRIMITIVE_TYPES.put("string",orb.get_primitive_tc(TCKind.tk_string));
         PRIMITIVE_TYPES.put("wstring",orb.get_primitive_tc(TCKind.tk_wstring));
-        PRIMITIVE_TYPES.put("any",orb.get_primitive_tc(TCKind.tk_any));
         PRIMITIVE_TYPES.put("longdouble",orb.get_primitive_tc(TCKind.tk_longdouble));
         PRIMITIVE_TYPES.put("void",orb.get_primitive_tc(TCKind.tk_void));
         //PRIMITIVE_TYPES.put("dateTime",orb.get_primitive_tc(TCKind.tk_dateTime));

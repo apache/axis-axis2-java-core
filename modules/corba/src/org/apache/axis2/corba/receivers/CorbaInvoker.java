@@ -79,7 +79,7 @@ public class CorbaInvoker implements Invoker {
                 if (mode.equals(Member.MODE_IN)) {
                     arg = request.add_in_arg();
                     value = paramsIter.next();
-                }else if (mode.equals(Member.MODE_INOUT)) {
+                } else if (mode.equals(Member.MODE_INOUT)) {
                     arg = request.add_inout_arg();
                     value = paramsIter.next();
                 } else if (mode.equals(Member.MODE_OUT)) {

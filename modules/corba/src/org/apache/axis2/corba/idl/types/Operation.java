@@ -64,6 +64,17 @@ public class Operation {
         return raises != null && (raises.size() > 0);
     }
 
+    public boolean hasOutParams() {
+        for (int i = 0; i < params.size(); i++) {
+            Member member = (Member) params.get(0);
+            if (Member.MODE_OUT.equals(member.getMode())
+                    || Member.MODE_INOUT.equals(member.getMode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setRaises(List raises) {
         this.raises = raises;
     }

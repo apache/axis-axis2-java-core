@@ -20,46 +20,18 @@
 package org.apache.axis2.corba.deployer;
 
 import org.apache.axis2.corba.exceptions.SchemaGeneratorException;
-import org.apache.axis2.corba.idl.types.AbstractCollectionType;
-import org.apache.axis2.corba.idl.types.ArrayType;
-import org.apache.axis2.corba.idl.types.CompositeDataType;
-import org.apache.axis2.corba.idl.types.DataType;
-import org.apache.axis2.corba.idl.types.EnumType;
-import org.apache.axis2.corba.idl.types.ExceptionType;
-import org.apache.axis2.corba.idl.types.IDL;
-import org.apache.axis2.corba.idl.types.Interface;
-import org.apache.axis2.corba.idl.types.Member;
-import org.apache.axis2.corba.idl.types.Operation;
-import org.apache.axis2.corba.idl.types.PrimitiveDataType;
-import org.apache.axis2.corba.idl.types.Typedef;
-import org.apache.axis2.corba.idl.types.UnionType;
+import org.apache.axis2.corba.idl.types.*;
 import org.apache.axis2.corba.receivers.CorbaUtil;
 import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaForm;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
+import org.apache.ws.commons.schema.*;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.net.URI;
+import java.util.*;
 
 public class SchemaGenerator implements CorbaConstants {
     private static int prefixCount = 1;
@@ -80,6 +52,7 @@ public class SchemaGenerator implements CorbaConstants {
     private NamespaceGenerator nsGen = null;
     private String targetNamespace = null;
     private ArrayList nonRpcMethods = new ArrayList();
+    private SchemaToIDLMapping schemaToIDLMapping = new SchemaToIDLMapping();
 
     public NamespaceGenerator getNsGen() throws SchemaGeneratorException {
         if ( nsGen == null ) {
@@ -265,12 +238,16 @@ public class SchemaGenerator implements CorbaConstants {
             }
 
         }
-        /*} else {
-        //generate the schema type for extra classes
-        extraSchemaTypeName = typeTable.getSimpleSchemaTypeName(getQualifiedName(jclass));
-        if (extraSchemaTypeName == null) {
-            generateSchema(jclass);
-        }*/
+
+        // if 'any' data type is used as a parameter or return type, we must generate schema types for all the composite types defined in the IDL file.
+        Map typeMap = idl.getCompositeDataTypes();
+        if (typeTable.getComplexSchemaType(CorbaConstants.ANY_TYPE_NAME) != null && typeMap != null) {
+            Iterator valuesIter = typeMap.values().iterator();
+            while (valuesIter.hasNext()) {
+                generateSchema((CompositeDataType) valuesIter.next());
+            }
+        }
+
         return schemaMap.values();
     }
 
@@ -405,6 +382,88 @@ public class SchemaGenerator implements CorbaConstants {
         return schemaTypeName;
     }
 
+    /**
+     * Generate schema construct for 'any' type
+     *
+     * @return Qname
+     * @throws SchemaGeneratorException if fails
+     */
+    private QName generateSchemaForAnyType() throws SchemaGeneratorException {
+        // Create 'TypeCode' complex type
+        QName schemaTypeName = typeTable.getComplexSchemaType(CorbaConstants.TYPECODE_TYPE_NAME);
+        if (schemaTypeName == null) {
+            String targetNameSpace = resolveSchemaNamespace("");
+
+            XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
+            String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
+            schemaTypeName = new QName(targetNameSpace, CorbaConstants.TYPECODE_TYPE_NAME, targetNamespacePrefix);
+
+            XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaSequence sequence = new XmlSchemaSequence();
+            XmlSchemaElement eltOuter = new XmlSchemaElement();
+            eltOuter.setName(CorbaConstants.TYPECODE_TYPE_NAME);
+            eltOuter.setQName(schemaTypeName);
+            complexType.setParticle(sequence);
+            complexType.setName(CorbaConstants.TYPECODE_TYPE_NAME);
+
+            xmlSchema.getItems().add(eltOuter);
+            xmlSchema.getElements().add(schemaTypeName, eltOuter);
+            eltOuter.setSchemaTypeName(complexType.getQName());
+
+            xmlSchema.getItems().add(complexType);
+            xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
+
+            typeTable.addComplexSchema(CorbaConstants.TYPECODE_TYPE_NAME, eltOuter.getQName());
+
+            XmlSchemaElement typeElement = new XmlSchemaElement();
+            typeElement.setName("definition");
+            typeElement.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(URI.class.getName()));
+            sequence.getItems().add(typeElement);
+
+            XmlSchemaElement valueElement = new XmlSchemaElement();
+            valueElement.setName("typename");
+            valueElement.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(String.class.getName()));
+            sequence.getItems().add(valueElement);
+        }
+
+        // Create 'Any' complex type
+        schemaTypeName = typeTable.getComplexSchemaType(CorbaConstants.ANY_TYPE_NAME);
+        if (schemaTypeName == null) {
+            String targetNameSpace = resolveSchemaNamespace("");
+
+            XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
+            String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
+            schemaTypeName = new QName(targetNameSpace, CorbaConstants.ANY_TYPE_NAME, targetNamespacePrefix);
+
+            XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaSequence sequence = new XmlSchemaSequence();
+            XmlSchemaElement eltOuter = new XmlSchemaElement();
+            eltOuter.setName(CorbaConstants.ANY_TYPE_NAME);
+            eltOuter.setQName(schemaTypeName);
+            complexType.setParticle(sequence);
+            complexType.setName(CorbaConstants.ANY_TYPE_NAME);
+
+            xmlSchema.getItems().add(eltOuter);
+            xmlSchema.getElements().add(schemaTypeName, eltOuter);
+            eltOuter.setSchemaTypeName(complexType.getQName());
+
+            xmlSchema.getItems().add(complexType);
+            xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
+
+            typeTable.addComplexSchema(CorbaConstants.ANY_TYPE_NAME, eltOuter.getQName());
+
+            XmlSchemaElement typeElement = new XmlSchemaElement();
+            typeElement.setName("type");
+            typeElement.setSchemaTypeName(typeTable.getComplexSchemaType(CorbaConstants.TYPECODE_TYPE_NAME));
+            sequence.getItems().add(typeElement);
+
+            XmlSchemaElement valueElement = new XmlSchemaElement();
+            valueElement.setName("value");
+            valueElement.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(Object.class.getName()));
+            sequence.getItems().add(valueElement);
+        }
+        return schemaTypeName;
+    }
 
     // moved code common to Fields & properties out of above method
     private XmlSchemaElement generateSchemaforFieldsandProperties(XmlSchema xmlSchema,
@@ -468,6 +527,8 @@ public class SchemaGenerator implements CorbaConstants {
                         put(generatePrefix(),
                                 typeTable.getComplexSchemaType(propertyTypeName).getNamespaceURI());
             }
+        } else if (type instanceof AnyType) {
+            elt1.setSchemaTypeName(generateSchemaForAnyType());
         } else {
             throw new SchemaGeneratorException("Unsupported type:" + type);
         }
@@ -517,17 +578,21 @@ public class SchemaGenerator implements CorbaConstants {
                     schemaTypeName,
                     partName,
                     isArrayType);
-            String schemaNamespace;
-            schemaNamespace = resolveSchemaNamespace(getModuleName(type));
+            String schemaNamespace = resolveSchemaNamespace(getModuleName(type));
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
-
+        } else if (schemaTypeName == null && type instanceof AnyType) {
+            schemaTypeName = generateSchemaForAnyType();
+            addContentToMethodSchemaType(sequence,
+                    schemaTypeName,
+                    partName,
+                    isArrayType);
         } else {
             addContentToMethodSchemaType(sequence,
                     schemaTypeName,
                     partName,
                     isArrayType);
         }
-
+        schemaToIDLMapping.addSchemaType(type, schemaTypeName);
         return schemaTypeName;
     }
 
@@ -732,5 +797,9 @@ public class SchemaGenerator implements CorbaConstants {
         } else {
             return "";
         }
+    }
+
+    public SchemaToIDLMapping getSchemaToIDLMapping() {
+        return schemaToIDLMapping;
     }
 }

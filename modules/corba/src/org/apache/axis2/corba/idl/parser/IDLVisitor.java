@@ -490,6 +490,10 @@ public class IDLVisitor /*implements ASTVisitor*/ {
             dataType = PrimitiveDataType.getPrimitiveDataType(typeName);
         }
 
+        if (dataType == null && "any".equals(typeName)) {
+            dataType = new AnyType();
+        }
+
         if (dataType == null) {
             throw new InvalidIDLException("Invalid data type: " + typeName);
         }
