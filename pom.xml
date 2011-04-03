@@ -95,6 +95,11 @@
             <modules>
                 <module>modules/distribution</module>
                 <module>modules/samples/java_first_jaxws</module>
+                <module>modules/samples/jaxws-addressbook</module>
+                <module>modules/samples/jaxws-calculator</module>
+                <module>modules/samples/jaxws-interop</module>
+                <module>modules/samples/jaxws-samples</module>
+                <module>modules/samples/jaxws-version</module>
             </modules>
         </profile>
         <profile>
