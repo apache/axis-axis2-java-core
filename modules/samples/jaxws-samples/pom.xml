@@ -25,7 +25,7 @@
     <artifactId>jaxws-samples</artifactId>
     <name>JAXWS Samples - Echo, Ping, MTOM</name>
     <version>1.7.0-SNAPSHOT</version>
-
+    <packaging>war</packaging>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -112,6 +112,23 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-modules</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <includeTypes>mar</includeTypes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
@@ -123,8 +140,7 @@
                     </archive>
                     <webResources>
                         <resource>
-                            <!-- Designed to work under the axis2 bin dist directory structure, edit if needed -->
-                            <directory>${basedir}/../../repository/modules/</directory>
+                            <directory>${project.build.directory}/modules/</directory>
                             <targetPath>WEB-INF/lib</targetPath>
                             <includes>
                                 <include>addressing*.mar</include>
