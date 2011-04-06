@@ -1071,6 +1071,7 @@ public class EndpointDescriptionImpl
             // from wsgen. Set the transport for that endpoint as http by default.
             for (AxisEndpoint axisEndpoint : axisService.getEndpoints().values()) {
                 axisEndpoint.setTransportInDescription("http");
+                axisEndpoint.setEndpointURL(null);
             }
 
         } catch (AxisFault e) {
