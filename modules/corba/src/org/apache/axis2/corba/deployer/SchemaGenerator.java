@@ -30,6 +30,7 @@ import org.apache.ws.commons.schema.*;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 
 import javax.xml.namespace.QName;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.*;
 
@@ -343,29 +344,74 @@ public class SchemaGenerator implements CorbaConstants {
 
                 typeTable.addComplexSchema(name, eltOuter.getQName());
             } else {
-                XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
-                XmlSchemaSequence sequence = new XmlSchemaSequence();
-                XmlSchemaElement eltOuter = new XmlSchemaElement();
-                eltOuter.setName(simpleName);
-                eltOuter.setQName(schemaTypeName);
-                complexType.setParticle(sequence);
-                complexType.setName(simpleName);
-
-                xmlSchema.getItems().add(eltOuter);
-                xmlSchema.getElements().add(schemaTypeName, eltOuter);
-                eltOuter.setSchemaTypeName(complexType.getQName());
-
-                xmlSchema.getItems().add(complexType);
-                xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
-
-                // adding this type to the table
-                typeTable.addComplexSchema(name, eltOuter.getQName());
                 if (dataType instanceof Typedef) {
                     Typedef typedef = (Typedef) dataType;
                     DataType aliasType = typedef.getDataType();
-                    sequence.getItems().add(generateSchemaforFieldsandProperties(xmlSchema, aliasType, "item", false));
+                    if (aliasType instanceof FixedType) {
+                        XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType(xmlSchema);
+                        XmlSchemaElement eltOuter = new XmlSchemaElement();
+                        eltOuter.setName(simpleName);
+                        eltOuter.setQName(schemaTypeName);
+                        simpleType.setName(simpleName);
+
+                        xmlSchema.getItems().add(eltOuter);
+                        xmlSchema.getElements().add(schemaTypeName, eltOuter);
+                        eltOuter.setSchemaTypeName(simpleType.getQName());
+
+                        xmlSchema.getItems().add(simpleType);
+                        xmlSchema.getSchemaTypes().add(schemaTypeName, simpleType);
+
+                        typeTable.addComplexSchema(name, eltOuter.getQName());
+                        XmlSchemaElement elt1 = new XmlSchemaElement();
+                        elt1.setName(name);
+
+                        XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+                        restriction.setBaseTypeName(typeTable.getSimpleSchemaTypeName(BigDecimal.class.getName()));
+
+                        FixedType fixedType = (FixedType) aliasType;
+                        XmlSchemaTotalDigitsFacet totalDigits = new XmlSchemaTotalDigitsFacet(fixedType.getDigits(), false);
+                        restriction.getFacets().add(totalDigits);
+                        XmlSchemaFractionDigitsFacet fractionDigits = new XmlSchemaFractionDigitsFacet(fixedType.getScale(), true);
+                        restriction.getFacets().add(fractionDigits);
+
+                        simpleType.setContent(restriction);
+                    } else {
+                        XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+                        XmlSchemaSequence sequence = new XmlSchemaSequence();
+                        XmlSchemaElement eltOuter = new XmlSchemaElement();
+                        eltOuter.setName(simpleName);
+                        eltOuter.setQName(schemaTypeName);
+                        complexType.setParticle(sequence);
+                        complexType.setName(simpleName);
+
+                        xmlSchema.getItems().add(eltOuter);
+                        xmlSchema.getElements().add(schemaTypeName, eltOuter);
+                        eltOuter.setSchemaTypeName(complexType.getQName());
+
+                        xmlSchema.getItems().add(complexType);
+                        xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
+
+                        typeTable.addComplexSchema(name, eltOuter.getQName());
+                        sequence.getItems().add(generateSchemaforFieldsandProperties(xmlSchema, aliasType, "item", false));
+                    }
                 } else {
-                    //Set propertiesNames = new HashSet() ;
+                    XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence sequence = new XmlSchemaSequence();
+                    XmlSchemaElement eltOuter = new XmlSchemaElement();
+                    eltOuter.setName(simpleName);
+                    eltOuter.setQName(schemaTypeName);
+                    complexType.setParticle(sequence);
+                    complexType.setName(simpleName);
+
+                    xmlSchema.getItems().add(eltOuter);
+                    xmlSchema.getElements().add(schemaTypeName, eltOuter);
+                    eltOuter.setSchemaTypeName(complexType.getQName());
+
+                    xmlSchema.getItems().add(complexType);
+                    xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
+
+                    typeTable.addComplexSchema(name, eltOuter.getQName());
+
                     Member[] members = dataType.getMembers();
                     for (int i = 0; i < members.length; i++) {
                         Member member = members[i];
@@ -378,6 +424,7 @@ public class SchemaGenerator implements CorbaConstants {
                     }
                 }
             }
+            schemaToIDLMapping.addSchemaType(dataType, schemaTypeName);
         }
         return schemaTypeName;
     }

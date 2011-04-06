@@ -25,6 +25,7 @@ import org.apache.axis2.corba.exceptions.InvalidIDLException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -339,11 +340,11 @@ public class IDLVisitor /*implements ASTVisitor*/ {
         return findDataType(typeNode, parentName, true, false);
     }
 
-    private DataType findDataType(AST typeNode, String parentName, boolean root, boolean noTypeDefForSeqs) throws InvalidIDLException {
+    private DataType findDataType(AST typeNode, String parentName, boolean root, boolean isInsideATypeDef) throws InvalidIDLException {
         // Check for sequences
         if (typeNode.getType()==IDLTokenTypes.LITERAL_sequence) {
             SequenceType sequenceType = visitAnonymousSequence(typeNode, parentName, root);
-            if (noTypeDefForSeqs) {
+            if (isInsideATypeDef) {
                 return sequenceType;
             }
             Typedef typedef = new Typedef();
@@ -418,6 +419,29 @@ public class IDLVisitor /*implements ASTVisitor*/ {
             innerElem.setModule(innerModule);
             idl.addType(innerElem);
             return innerElem;
+        } else if (typeNode.getType() == IDLTokenTypes.LITERAL_fixed) {
+            AST digitsNode = typeNode.getFirstChild();
+
+            short digits = 0;
+            short scale = 0;
+            if (digitsNode != null) {
+                AST scaleNode = digitsNode.getNextSibling();
+                digits = Short.parseShort(digitsNode.getText());
+                scale = Short.parseShort(scaleNode.getText());
+            }
+
+            FixedType fixedType = new FixedType(digits, scale);
+            if (isInsideATypeDef) {
+                return fixedType;
+            }
+
+            Typedef typedef = new Typedef();
+            typedef.setDataType(fixedType);
+            typedef.setModule(module);
+            String name = typeNode.getNextSibling().getText();
+            typedef.setName(parentName + '_' + name);
+            idl.addType(typedef);
+            return typedef;
         } else {
             typeName = getTypeName(typeNode);    
         }
@@ -698,11 +722,27 @@ public class IDLVisitor /*implements ASTVisitor*/ {
         ConstType constType = new ConstType();
         constType.setModule(module);
         constType.setName(constName);
-        DataType type = findDataType(constTypeNode, constName);
+        DataType type = findDataType(constTypeNode, constName, true, true);
         constType.setDataType(type);
         AST constValueNode = constNameNode.getNextSibling();
+
         constType.setValue(ExpressionUtil.eval(constValueNode, type, this));
-        //System.out.println(constType.getValue());
+
+        if (type instanceof FixedType) {
+            FixedType fixedType = (FixedType) type;
+            if (fixedType.getDigits() == 0 && fixedType.getScale() == 0) {
+                String value = constValueNode.getText().trim();
+                short digits = (short) value.replace(".", "").length();
+                int index = value.indexOf('.');
+                short scale = (short) (index > -1 ? digits - index : 0);
+                fixedType.setDigits(digits);
+                fixedType.setScale(scale);
+            }
+            BigDecimal value = (BigDecimal) constType.getValue();
+            value = value.setScale(fixedType.getDigits(), fixedType.getDigits());
+            constType.setValue(value);
+        }
+
         return constType;
     }
 

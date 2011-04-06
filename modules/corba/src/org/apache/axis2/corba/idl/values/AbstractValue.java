@@ -19,16 +19,7 @@
 
 package org.apache.axis2.corba.idl.values;
 
-import org.apache.axis2.corba.idl.types.ArrayType;
-import org.apache.axis2.corba.idl.types.CompositeDataType;
-import org.apache.axis2.corba.idl.types.DataType;
-import org.apache.axis2.corba.idl.types.EnumType;
-import org.apache.axis2.corba.idl.types.ExceptionType;
-import org.apache.axis2.corba.idl.types.Member;
-import org.apache.axis2.corba.idl.types.SequenceType;
-import org.apache.axis2.corba.idl.types.Struct;
-import org.apache.axis2.corba.idl.types.Typedef;
-import org.apache.axis2.corba.idl.types.UnionType;
+import org.apache.axis2.corba.idl.types.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.Any;
@@ -38,6 +29,7 @@ import org.omg.CORBA_2_3.portable.InputStream;
 import org.omg.CORBA_2_3.portable.OutputStream;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public abstract class AbstractValue {
     protected Object[] memberValues;
@@ -89,6 +81,7 @@ public abstract class AbstractValue {
             case TCKind._tk_alias: ((AliasValue) value).write(outputStream); break;
             case TCKind._tk_sequence: ((SequenceValue) value).write(outputStream); break;
             case TCKind._tk_array: ((ArrayValue) value).write(outputStream); break;
+            case TCKind._tk_fixed: outputStream.write_fixed((BigDecimal) value); break;
             default:
                 log.error("ERROR! Invalid dataType");
                 break;
@@ -115,7 +108,14 @@ public abstract class AbstractValue {
             case TCKind._tk_wstring: ret = inputStream.read_wstring(); break;
             case TCKind._tk_any: ret = inputStream.read_any(); break;
             case TCKind._tk_value: ret = inputStream.read_value(); break;
-            //case TCKind._tk_longdouble :
+            case TCKind._tk_fixed:
+                FixedType fixedType = (FixedType) dataType;
+                BigDecimal value = inputStream.read_fixed();
+                if (value != null) {
+                    value = value.movePointLeft(fixedType.getScale());
+                }
+                ret = value;
+                break;
             case TCKind._tk_struct:
                 StructValue structValue = new StructValue((Struct) dataType);
                 structValue.read(inputStream);

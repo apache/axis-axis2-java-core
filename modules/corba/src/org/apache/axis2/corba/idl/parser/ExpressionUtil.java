@@ -21,11 +21,13 @@ package org.apache.axis2.corba.idl.parser;
 
 import antlr.collections.AST;
 import org.apache.axis2.corba.exceptions.InvalidIDLException;
-import org.apache.axis2.corba.idl.types.*;
-import org.omg.CORBA.TypeCode;
+import org.apache.axis2.corba.idl.types.ConstType;
+import org.apache.axis2.corba.idl.types.DataType;
+import org.apache.axis2.corba.idl.types.Typedef;
 import org.omg.CORBA.TCKind;
+import org.omg.CORBA.TypeCode;
 
-import java.util.Map;
+import java.math.BigDecimal;
 
 public class ExpressionUtil {
     public static Object eval(AST expressionNode, DataType returnType, IDLVisitor visitor) throws InvalidIDLException {
@@ -164,6 +166,9 @@ public class ExpressionUtil {
             case TCKind._tk_octet:
                 valueObj = new Byte((byte) (((Byte) o1).byteValue() + ((Byte) o2).byteValue()));
                 break;
+            case TCKind._tk_fixed:
+                valueObj = ((BigDecimal) o1).add((BigDecimal) o2);
+                break;
             default:
                 throw new InvalidIDLException("Unsupported IDL token");
         }
@@ -194,6 +199,9 @@ public class ExpressionUtil {
                 break;
             case TCKind._tk_octet:
                 valueObj = new Byte((byte) (- ((Byte) o).byteValue()));
+                break;
+            case TCKind._tk_fixed:
+                valueObj = ((BigDecimal) o).multiply(new BigDecimal(-1));
                 break;
             default:
                 throw new InvalidIDLException("Unsupported IDL token");
@@ -226,6 +234,9 @@ public class ExpressionUtil {
             case TCKind._tk_octet:
                 valueObj = new Byte((byte) (((Byte) o1).byteValue() - ((Byte) o2).byteValue()));
                 break;
+            case TCKind._tk_fixed:
+                valueObj = ((BigDecimal) o1).subtract((BigDecimal) o2);
+                break;
             default:
                 throw new InvalidIDLException("Unsupported IDL token");
         }
@@ -257,6 +268,9 @@ public class ExpressionUtil {
             case TCKind._tk_octet:
                 valueObj = new Byte((byte) (((Byte) o1).byteValue() * ((Byte) o2).byteValue()));
                 break;
+            case TCKind._tk_fixed:
+                valueObj = ((BigDecimal) o1).multiply((BigDecimal) o2);
+                break;
             default:
                 throw new InvalidIDLException("Unsupported IDL token");
         }
@@ -287,6 +301,9 @@ public class ExpressionUtil {
                 break;
             case TCKind._tk_octet:
                 valueObj = new Byte((byte) (((Byte) o1).byteValue() / ((Byte) o2).byteValue()));
+                break;
+            case TCKind._tk_fixed:
+                valueObj = ((BigDecimal) o1).divide((BigDecimal) o2);
                 break;
             default:
                 throw new InvalidIDLException("Unsupported IDL token");
@@ -486,6 +503,9 @@ public class ExpressionUtil {
             case TCKind._tk_alias:
                 Typedef typedef = (Typedef) type;
                 valueObj = getValueObject(value, typedef.getDataType());
+                break;
+            case TCKind._tk_fixed:
+                valueObj = new BigDecimal(value);
                 break;
             default:
                 throw new InvalidIDLException("Unsupported IDL token ");

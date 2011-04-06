@@ -53,6 +53,7 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import javax.xml.namespace.QName;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 
 //import java.io.FileInputStream;
@@ -235,7 +236,7 @@ public class CorbaUtil implements CorbaConstants {
                 return null;
 
             DataType aliasType = typedef.getDataType();
-            if (!(aliasType instanceof AbstractCollectionType)) {
+            if (!(aliasType instanceof AbstractCollectionType || aliasType instanceof FixedType)) {
                 paramElement = paramElement.getFirstElement();
                 if (paramElement == null || !ARRAY_ITEM.equals(paramElement.getLocalName()))
                     return null;
@@ -383,6 +384,8 @@ public class CorbaUtil implements CorbaConstants {
                     return anyValue;
                 }
             }
+        } else if (dataType instanceof FixedType) {
+            return new BigDecimal(((OMElement) param).getText());
         }
         return null;
     }
@@ -449,6 +452,8 @@ public class CorbaUtil implements CorbaConstants {
             OMNamespace ns = getNameSpaceForType(fac, service, typedef);
             OMElement item = fac.createOMElement(ARRAY_ITEM, ns, child);
             processResponse(item, child, aliasValue.getValue(), typedef.getDataType(), fac, ns, qualified, service);
+        } else if (dataType instanceof FixedType) {
+            child.addChild(fac.createOMText(child, resObject.toString()));
         } else if (dataType instanceof AbstractCollectionType) {
             AbstractCollectionType collectionType = (AbstractCollectionType) dataType;
             AbstractCollectionValue collectionValue = (AbstractCollectionValue) resObject;
@@ -643,7 +648,7 @@ public class CorbaUtil implements CorbaConstants {
                 AliasValue aliasValue = (AliasValue) value;
                 outputStream = (org.omg.CORBA_2_3.portable.OutputStream) arg.create_output_stream();
                 arg.type(aliasValue.getTypeCode());
-                aliasValue.write(outputStream);
+                aliasValue.write(outputStream);//TODO: returning fixed variables, inside structs, etc.
                 arg.read_value(outputStream.create_input_stream (), aliasValue.getTypeCode());
                 break;
             case TCKind._tk_sequence:
