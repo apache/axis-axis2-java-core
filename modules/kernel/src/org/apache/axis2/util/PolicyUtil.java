@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -140,21 +139,20 @@ public class PolicyUtil {
 	public static PolicyComponent getPolicyComponentFromOMElement(
 			OMElement policyComponent) throws IllegalArgumentException {
 
-		if (Constants.Q_ELEM_POLICY.equals(policyComponent.getQName())) {
+		if (Constants.isPolicyElement(policyComponent.getQName())) {
 			return PolicyEngine.getPolicy(policyComponent);
 
-		} else if (policyComponent.getQName().equals(
-				new QName(Constants.URI_POLICY_NS, Constants.ELEM_POLICY_REF))) {
+		} else if (Constants.isPolicyRef(policyComponent.getQName())) {
 			return PolicyEngine.getPolicyReference(policyComponent);
 
 		} else {
 			throw new IllegalArgumentException(
-					"Agrument is neither a <wsp:Policy> nor a <wsp:PolicyReference> element");
+					"Argument is neither a <wsp:Policy> nor a <wsp:PolicyReference> element");
 		}
 	}
 
 	public static Policy getPolicyFromOMElement(OMElement policyElement) {
-		if (Constants.Q_ELEM_POLICY.equals(policyElement.getQName())) {
+		if (Constants.isPolicyElement(policyElement.getQName())) {
 			return PolicyEngine.getPolicy(policyElement);
 		} else {
 			throw new IllegalArgumentException(
@@ -164,10 +162,7 @@ public class PolicyUtil {
 
 	public static PolicyReference getPolicyReferenceFromOMElement(
 			OMElement policyRefElement) {
-		if (Constants.URI_POLICY_NS.equals(policyRefElement.getNamespace()
-				.getNamespaceURI())
-				&& Constants.ELEM_POLICY_REF.equals(policyRefElement
-						.getLocalName())) {
+		if (Constants.isPolicyRef(policyRefElement.getQName())) {
 			return PolicyEngine.getPolicyReference(policyRefElement);
 		} else {
 			throw new IllegalArgumentException(
@@ -176,17 +171,14 @@ public class PolicyUtil {
 	}
 
 	public static PolicyComponent getPolicyComponent(org.w3c.dom.Element element) {
-		if (Constants.URI_POLICY_NS.equals(element.getNamespaceURI())) {
+		if (Constants.isPolicyElement(element.getNamespaceURI(), (element.getLocalName()))) {
+			return PolicyEngine.getPolicy(nodeToStream(element));
 
-			if (Constants.ELEM_POLICY.equals(element.getLocalName())) {
-				return PolicyEngine.getPolicy(nodeToStream(element));
-
-			} else if (Constants.ELEM_POLICY_REF.equals(element.getLocalName())) {
-				return PolicyEngine.getPolicyReferene(nodeToStream(element));
-			}
+		} else if (Constants.isPolicyRef(element.getNamespaceURI(), element.getLocalName())) {
+			return PolicyEngine.getPolicyReferene(nodeToStream(element));
 		}
 		throw new IllegalArgumentException(
-				"Agrument is neither a <wsp:Policy> nor a <wsp:PolicyReference> element");
+				"Argument is neither a <wsp:Policy> nor a <wsp:PolicyReference> element");
 	}
 
 	private static InputStream nodeToStream(org.w3c.dom.Element element) {
