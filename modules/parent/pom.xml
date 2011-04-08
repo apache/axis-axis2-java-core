@@ -612,6 +612,12 @@
                 <groupId>org.apache.neethi</groupId>
                 <artifactId>neethi</artifactId>
                 <version>${neethi.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>woodstox-core-asl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>
