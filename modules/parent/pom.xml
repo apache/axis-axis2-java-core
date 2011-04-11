@@ -235,6 +235,12 @@
             <organization>Brazil Outsource</organization>
         </developer>
         <developer>
+            <name>Senaka Fernando</name>
+            <id>senaka</id>
+            <email>senaka AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
             <name>Steve Loughran</name>
             <id>stevel</id>
             <email>stevel AT apache.org</email>
