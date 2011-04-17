@@ -68,7 +68,7 @@
                 xmlOptions.setSaveNoXmlDecl();
                 xmlOptions.setSaveAggressiveNamespaces();
                 xmlOptions.setSaveNamespacesFirst();
-                org.apache.axiom.om.OMXMLParserWrapper builder = org.apache.axiom.om.OMXMLBuilderFactory.createSAXOMBuilder(
+                org.apache.axiom.om.OMXMLParserWrapper builder = org.apache.axiom.om.OMXMLBuilderFactory.createOMBuilder(
                         new javax.xml.transform.sax.SAXSource(new org.apache.axis2.xmlbeans.XmlBeansXMLReader(param, xmlOptions), new org.xml.sax.InputSource()));
                 try {
                     return builder.getDocumentElement(true);
