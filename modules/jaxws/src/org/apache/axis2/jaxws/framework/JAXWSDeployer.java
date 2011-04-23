@@ -52,6 +52,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -145,6 +146,10 @@ public class JAXWSDeployer extends AbstractDeployer {
                 ArrayList<URL> urls = new ArrayList<URL>();
                 urls.add(deploymentFileData.getFile().toURL());
                 urls.add(axisConfig.getRepository());
+
+                // adding libs under jaxws deployment dir
+                addJaxwsLibs(urls, axisConfig.getRepository().getPath() + directory);
+
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
                     urls.add(new File(webLocation).toURL());
@@ -348,5 +353,31 @@ public class JAXWSDeployer extends AbstractDeployer {
             map.put(key, axisService);
         }
     }
+
+    /**
+     * Checks whether there's a 'lib' folder inside the provided folder and adds all the lib URLs
+     * into the provided URL list.
+     *
+     * @param urls - list of URLs
+     * @param jaxwsDepDirPath - jaxws deployment folder path
+     * @throws Exception - on error while geting URLs of libs
+     */
+    private void addJaxwsLibs(ArrayList<URL> urls, String jaxwsDepDirPath)
+            throws Exception {
+        File jaxwsDepDirLib = new File(jaxwsDepDirPath + File.separator + "lib");
+        if (jaxwsDepDirLib.exists() && jaxwsDepDirLib.isDirectory()) {
+            for (File file : jaxwsDepDirLib.listFiles()) {
+                if (file.isFile()) {
+                    try {
+                        urls.add(file.toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        throw new Exception("Error while loading libraries from the " +
+                                "'lib' directory under jaxws deployment direcotry.", e);
+                    }
+                }
+            }
+        }
+    }
+
 }
 
