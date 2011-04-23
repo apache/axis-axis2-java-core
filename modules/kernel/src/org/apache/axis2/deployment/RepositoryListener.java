@@ -301,7 +301,8 @@ public class RepositoryListener implements DeploymentConstants {
                             Deployer deployer = deploymentEngine.getDeployer(dir, extension);
                             deployer.setDirectory(dir);
                             addFileToDeploy(file, deployer, WSInfo.TYPE_CUSTOM);
-                        } else if (file.isDirectory() && !file.getName().startsWith(".")) {
+                        } else if (file.isDirectory() && !file.getName().startsWith(".") &&
+                                !(dir.equals(directory.getName()) && "lib".equalsIgnoreCase(file.getName()))) {
                             //look in the child directory also
                             findFileForGivenDirectory(file, extension, dir);
                         }
