@@ -838,6 +838,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 // 4.3.2 conformance bullet 1 requires a ProtocolException here
                 ProtocolException pe =
                     MethodMarshallerUtils.createSystemException(msg.getXMLFault(), msg);
+                if (msgCtx.getLocalException() != null) {
+                    // If a local exception occured, set it as the initial cause of the 
+                    // exception that will be returned
+                    ExceptionFactory.setInitialCause(pe, msgCtx.getLocalException());
+                }
                 return pe;
             } else if (msgCtx.getLocalException() != null) {
                 // use the factory, it'll throw the right thing:

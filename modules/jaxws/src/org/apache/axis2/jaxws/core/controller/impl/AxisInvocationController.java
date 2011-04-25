@@ -26,6 +26,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.ClientUtils;
@@ -36,6 +38,8 @@ import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -140,22 +144,29 @@ public class AxisInvocationController extends InvocationControllerImpl {
             response = new MessageContext(axisResponseMsgCtx);
             response.setMEPContext(request.getMEPContext());
 
-            // If the Message object is still null, then it's possible that a
-            // local AxisFault was thrown and we need to save it for later throwing
-            // We do not want to create a message and go through the whole handler or
-            // XMLFault processing because it's unnecessary.
-            // 
-            // Same is true if we get a valid non-fault server response but some jaxws
-            // client processing (a handler, perhaps) throws an exception.
-            // 
-            // If the response message itself is a fault message, let it pass through.
+            // If there was a local exception caught and either there is no response message 
+            // OR the response message exists but is not a fault, then set the local exception
+            // on the response and determine how to set the response message to correspond to
+            // the local exception
             if ((faultexception != null) && ((response.getMessage() == null)
                     || (!response.getMessage().isFault()))) {
-                MessageFactory factory =
-                        (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
-                Message message = factory.create(request.getMessage().getProtocol());
-                response.setLocalException(faultexception);
-                response.setMessage(message);
+                // Unless this behavior is disabled, convert the local exception to SOAPFaultException
+                // and set it on the response message.  This will also cause the JAX-WS application handler
+                // handleFault() methods to be called.
+                if (!isSOAPFaultForLocalExceptionDisabled(response)) {
+                    HandlerChainProcessor.convertToFaultMessage(request.getMEPContext(), faultexception, 
+                            request.getMessage().getProtocol());
+                    response.setLocalException(faultexception);
+                } else {
+                    // The behavior was disabled, so instead of creating a SOAPFaultException
+                    // just create an empty message and set the local exception on it.  This will cause the
+                    // JAX-WS application handler handleMessage() methods to be called with the empty message.
+                    MessageFactory factory =
+                            (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+                    Message message = factory.create(request.getMessage().getProtocol());
+                    response.setLocalException(faultexception);
+                    response.setMessage(message);
+                }
             }
 
             // This assumes that we are on the ultimate execution thread
@@ -643,4 +654,44 @@ public class AxisInvocationController extends InvocationControllerImpl {
         ThreadContextMigratorUtil
                 .performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, msgContext);
     }
+    
+    /**
+     * Answer if generation of SOAPFaultExceptions for local Exceptions should be disabled..  The default value
+     * is "false", meaning that if a local exception is encountered, a SOAPFaultException should be generated in
+     * the message AND the appropriate JAX-WS application handlers handleFault() methods should be called with
+     * that message. 
+     * 
+     * @param msgContext used to get the Axis2 Configuration Context to check for the property
+     * @return false if generating SOAPFaultExceptions for local exceptions should be be enabled (default)
+     *   true if it should be disabled.
+     */
+    private static boolean isSOAPFaultForLocalExceptionDisabled(MessageContext msgContext) {
+        boolean soapFaultDisabled = false;
+
+        String flagValue = null;
+        org.apache.axis2.context.MessageContext axis2MC = msgContext.getAxisMessageContext();
+        if (axis2MC != null && axis2MC.getConfigurationContext() != null 
+                && axis2MC.getConfigurationContext().getAxisConfiguration() != null ) {
+            AxisConfiguration axisConfig = axis2MC.getConfigurationContext().getAxisConfiguration();
+            Parameter parameter = axisConfig.getParameter(org.apache.axis2.jaxws.Constants.DISABLE_SOAPFAULT_FOR_LOCAL_EXCEPTION);
+            if (parameter != null) {
+                flagValue = (String) parameter.getValue();
+                if (log.isDebugEnabled()) {
+                    log.debug("Property set on configuration: " + org.apache.axis2.jaxws.Constants.DISABLE_SOAPFAULT_FOR_LOCAL_EXCEPTION 
+                            + " with value " + flagValue);
+                }
+            }
+    
+            // If the property was set, check the value.
+            if (flagValue != null) {
+                if ("false".equalsIgnoreCase(flagValue)) {
+                    soapFaultDisabled = false;
+                } else if ("true".equalsIgnoreCase(flagValue)) {
+                    soapFaultDisabled = true;
+                }
+            }
+        }
+        return soapFaultDisabled;
+    }
+
 }

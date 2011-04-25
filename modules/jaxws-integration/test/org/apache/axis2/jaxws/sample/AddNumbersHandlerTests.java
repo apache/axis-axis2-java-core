@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -45,6 +46,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
@@ -53,7 +55,11 @@ import javax.xml.ws.soap.SOAPFaultException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler2;
@@ -64,11 +70,14 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerFault_Ex
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersProtocolHandler2;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 public class AddNumbersHandlerTests extends AbstractTestCase {
 	
     String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
+    String invalidAxisEndpoint = "http://invalidHostName:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
+
     static File requestFile = null;
     static {
         String resourceDir = System.getProperty("basedir",".")+
@@ -568,7 +577,6 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             
             fail("We should have got an exception due to the handler.");
         } catch(Exception e) {
-            e.printStackTrace();
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
             assertEquals(((SOAPFaultException)e).getMessage(), "I don't like the value 99");
             
@@ -828,12 +836,109 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             
             String log = readLogFile();
             String expected_calls = "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_OUTBOUND\n"
-                + "AddNumbersClientLogicalHandler3 HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler3 HANDLE_MESSAGE_OUTBOUND\n"
                 + "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
                 + "AddNumbersClientLogicalHandler3 HANDLE_FAULT_INBOUND\n"
                 + "AddNumbersClientLogicalHandler3 RETURNING FALSE INBOUND\n"
                 + "AddNumbersClientLogicalHandler CLOSE\n"
                 + "AddNumbersClientLogicalHandler3 CLOSE\n"
+                + "AddNumbersClientLogicalHandler4 CLOSE\n";
+            assertEquals(expected_calls, log);
+            
+        }
+        TestLogger.logger.debug("----------------------------------");
+    }
+
+    /**
+     * Validate that a local exception (in this case a ConnectionException caused by an invalid
+     * host on the EPR) is returned as a SOAPFaultException, and the JAX-WS application handler 
+     * handleFault() methods are driven.  This is the default behavior.
+     */
+    public void testAddNumbersClientHandlerWithLocalException() {
+        try{
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+
+            // Force a local connection exception by using an invalid host/port
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, invalidAxisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler4());
+            handlers.add(new AddNumbersClientLogicalHandler2());
+            
+            p.getBinding().setHandlerChain(handlers);
+
+            int total = proxy.addNumbersHandler(1,2);
+            
+            fail("Should have got an exception, but we didn't.");
+        } catch(Exception e) {
+            assertTrue("Exception should be SOAPFaultException. Found " +e.getClass() + " "+ e.getMessage(), e instanceof SOAPFaultException);
+            SOAPFault soapFault = ((SOAPFaultException) e).getFault();
+            assertTrue("Cause should be instanceof UnknownHostException", (e.getCause() instanceof java.net.UnknownHostException));
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler2 HANDLE_FAULT_INBOUND\n"
+                + "AddNumbersClientLogicalHandler4 HANDLE_FAULT_INBOUND\n"
+                + "AddNumbersClientLogicalHandler2 CLOSE\n"
+                + "AddNumbersClientLogicalHandler4 CLOSE\n";
+            assertEquals(expected_calls, log);
+            
+        }
+        TestLogger.logger.debug("----------------------------------");
+    }
+
+    /**
+     * Validate that setting a property reverts the logic for how local exceptions are handled.
+     * Validate that a local exception (in this case a ConnectionException caused by an invalid
+     * host on the EPR) is returned as a WebServiceExcpetion (not a SOAPFaultException), and the 
+     * JAX-WS application handler handleMessage() methods are driven.
+     */
+    public void testAddNumbersClientHandlerWithLocalException_RevertBehaviorFlag() {
+        try{
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            setAxisConfigParameter(service, org.apache.axis2.jaxws.Constants.DISABLE_SOAPFAULT_FOR_LOCAL_EXCEPTION, 
+                    "true");
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+
+            // Force a local connection exception by using an invalid host/port
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, invalidAxisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler4());
+            handlers.add(new AddNumbersClientLogicalHandler2());
+            
+            p.getBinding().setHandlerChain(handlers);
+
+            int total = proxy.addNumbersHandler(1,2);
+            
+            fail("Should have got an exception, but we didn't.");
+        } catch(Exception e) {
+            assertTrue("Exception should be WebServiceException.", e instanceof WebServiceException);
+            assertFalse("Exception should not be SOAPFaultException.", e instanceof SOAPFaultException);
+            assertTrue("Cause should be instanceof UnknownHostException", (e.getCause() instanceof java.net.UnknownHostException));
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientLogicalHandler2 CLOSE\n"
                 + "AddNumbersClientLogicalHandler4 CLOSE\n";
             assertEquals(expected_calls, log);
             
@@ -955,6 +1060,72 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
                 + "AddNumbersClientProtocolHandler CLOSE\n"
                 + "AddNumbersClientLogicalHandler2 CLOSE\n"
                 + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
+            TestLogger.logger.debug("----------------------------------");
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail(e.toString());
+        }
+    }
+    
+    /**
+     * Validate the behavior of a local exception regarding JAX-WS application handlers for an async
+     * callback invocation.  
+     * 
+     * IMPORTANT NOTE:  This is documenting the current behavior for an async callback invocation, which
+     * is different than a synchronous invocation.  For async callback, if a local exception occurs, the
+     * JAX-WS handlers are not invoked again, unlike for a synchronous invocation.  This behavior should
+     * probably be made consistent with the sync invocation flow through JAX-WS handlers.
+     * @see #testAddNumbersClientHandlerWithLocalException()
+     * @see #testAddNumbersClientHandlerWithLocalException_RevertBehaviorFlag()
+     * 
+     */
+    public void testAddNumbersClientHandlerWithLocalExceptionAsync_RevertBehavior() {
+        try{
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, invalidAxisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler4());
+            handlers.add(new AddNumbersClientLogicalHandler2());
+            p.getBinding().setHandlerChain(handlers);
+
+            
+            AddNumbersHandlerAsyncCallback callback = new AddNumbersHandlerAsyncCallback();
+            Future<?> future = proxy.addNumbersHandlerAsync(10, 10, callback);
+
+            while (!future.isDone()) {
+                Thread.sleep(1000);
+                TestLogger.logger.debug("Async invocation incomplete");
+            }
+            
+            int total = callback.getResponseValue();
+            assertEquals("Local exception should cause value to be 0", 0, total);
+            TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            
+            Exception exception = callback.getException();
+            assertNotNull("Exception should be set", exception);
+            
+            assertTrue("Exception should be ExecutionException.", exception instanceof java.util.concurrent.ExecutionException);
+            assertTrue("Cause should be Web Service Exception", exception.getCause() instanceof WebServiceException);
+
+            String log = readLogFile();
+            // IMPORTANT NOTE: Currently the JAX-WS handlers are not invoked after the local exception
+            // occurs trying to send the invocation.  This is not necessarily correct and is different than
+            // the flow through the JAX-WS handlers for synchronous invocation.  This test is validating CURRENT
+            // behavior, and not necessarily CORRECT behavior.
+            String expected_calls = "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n";
             assertEquals(expected_calls, log);
             
             TestLogger.logger.debug("----------------------------------");
@@ -1220,5 +1391,50 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         }
         return null;
     }
+
+    // These two methods enable a test spy, using the ServiceDelegate retrieved from a Service
+    // instance.  The spy will allow an parameter to be set on the AxisConfig in order to unit test
+    // the property.  This is NOT the way properties should be set on the config outside of a unit test
+    // environment.  The correct way to set properties on the config is to specify them in the associated
+    // axis2.xml file.
+    static private void setAxisConfigParameter(Service service, String key, String value) {
+        ServiceDelegate delegate = getServiceDelegate(service);
+        ServiceDescription svcDesc = delegate.getServiceDescription();
+        AxisConfiguration axisConfig = svcDesc.getAxisConfigContext().getAxisConfiguration();
+        Parameter parameter = new Parameter(key, value);
+        try {
+            axisConfig.addParameter(parameter);
+        } catch (AxisFault e) {
+            fail("Unable to set Parameter on AxisConfig due to exception " + e);
+        } 
+    }
+    static private ServiceDelegate getServiceDelegate(Service service) {
+        // Need to get to the private Service._delegate field in order to get to the ServiceDescription to test
+        ServiceDelegate returnServiceDelegate = null;
+        try {
+            try {
+//                Field serviceDelgateField = service.getClass().getDeclaredFields()[0];
+                Field serviceDelgateField = service.getClass().getDeclaredField("delegate");
+                serviceDelgateField.setAccessible(true);
+                returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
+            } catch (NoSuchFieldException e) {
+                // This may be a generated service subclass, so get the delegate from the superclass
+                Field serviceDelegateField = service.getClass().getSuperclass().getDeclaredField("delegate");
+                serviceDelegateField.setAccessible(true);
+                returnServiceDelegate = (ServiceDelegate) serviceDelegateField.get(service);
+            } 
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) { 
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return returnServiceDelegate;
+    }
+
 
 }

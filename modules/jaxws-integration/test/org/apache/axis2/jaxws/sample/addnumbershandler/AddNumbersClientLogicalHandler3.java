@@ -56,7 +56,7 @@ public class AddNumbersClientLogicalHandler3  implements javax.xml.ws.handler.Lo
 
     public boolean handleMessage(LogicalMessageContext messagecontext) {
         Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-        tracker.handleFault(outbound);
+        tracker.handleMessage(outbound);
         return true;
     }
     
