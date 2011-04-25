@@ -22,6 +22,8 @@ package org.apache.axis2.jaxws.server.endpoint;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
@@ -38,6 +40,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
 import javax.xml.ws.EndpointReference;
+import javax.xml.ws.EndpointContext;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
@@ -57,6 +60,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     private List<Source> metadata;
     private Map<String, Object> properties;
     private Executor executor;
+    private EndpointContext endpointCntx;
 
     public EndpointImpl(Object o) {
         implementor = o;
@@ -147,6 +151,14 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
+     * @see javax.xml.ws.Endpoint#setEndpointContext(javax.xml.ws.EndpointContext)
+     */
+    public void setEndpointContext(EndpointContext ctxt) {
+         this.endpointCntx = ctxt;
+     }
+
+    /*
+     * (non-Javadoc)
      * @see javax.xml.ws.Endpoint#isPublished()
      */
     public boolean isPublished() {
@@ -158,7 +170,39 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#publish(java.lang.Object)
      */
     public void publish(Object obj) {
+        if (isPublishDisabled()) {
+            throw new UnsupportedOperationException("Endpoint publish not allowed in managed environment");
+        }
 
+    }
+
+    /**
+     * Answer if the Endpoint.publish methods have been disabled.  Per JSR-109 Section 5.3.3, the use of 
+     * Endpoint.publish in a managed environment is non portable, and a managed environment may choose
+     * to disable dynamic publishing of endpoints.  The default is that publishing is NOT disabled, unless
+     * the property is set to true.  
+     * @return true if publishing of enpdoints is disabled, false otherwise.  False is the default.
+     */
+    private boolean isPublishDisabled() {
+        boolean publishDisabled = false;
+        if (endpointDesc != null) {
+            ConfigurationContext cfgCtx = endpointDesc.getServiceDescription().getAxisConfigContext();
+            AxisConfiguration axisConfig = cfgCtx.getAxisConfiguration();
+            Parameter parameter = axisConfig.getParameter(org.apache.axis2.jaxws.Constants.DISABLE_ENDPOINT_PUBLISH_METHODS);
+            String flagValue = null;
+            if (parameter != null) {
+                flagValue = (String) parameter.getValue();
+            }
+    
+            if (flagValue != null) {
+                if ("false".equalsIgnoreCase(flagValue)) {
+                    publishDisabled = false;
+                } else if ("true".equalsIgnoreCase(flagValue)) {
+                    publishDisabled = true;
+                }
+            }
+        }
+        return publishDisabled;
     }
 
     /*
@@ -166,6 +210,9 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#publish(java.lang.String)
      */
     public void publish(String s) {
+        if (isPublishDisabled()) {
+            throw new UnsupportedOperationException("Endpoint publish not allowed in managed environment");
+        }
         int port = -1;
         String address = s;
         try {

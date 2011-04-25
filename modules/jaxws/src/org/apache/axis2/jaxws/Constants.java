@@ -250,4 +250,21 @@ public interface Constants {
      * called with that empty message.  Setting this property to "true" will revert to this behavior.
      */
     public static final String  DISABLE_SOAPFAULT_FOR_LOCAL_EXCEPTION = "jaxws.soapfault.local.exceptions.disable"; 
+
+    /** 
+     * Context Property:
+     * Name: jaxws.endpoint.publish.disable
+     * Value: String "false" or "true"
+     * Default: null, which is interpreted as "false"
+     * Can be set on:
+     * - Axis Configuration, which affects all jax-ws endpoints
+     *
+     * Indicates if the javax.xml.ws.Endpoint.publish methods should be disabled, throwing an exception if
+     * they are called.  This may be necessary in a managed environment, since as noted in JSR-109 section
+     * 5.3.3 "Publishing Endpoints" using publish is non-portable in managed environments, and managed 
+     * environments may disallow publishing of endpoints dynamciall.
+     * 
+     * If this property is set, the Endpoint.publish methods will throw an UnsupportedOperationException.
+     */
+    public static final String  DISABLE_ENDPOINT_PUBLISH_METHODS = "jaxws.endpoint.publish.disable"; 
 }
