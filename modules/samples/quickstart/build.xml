@@ -68,6 +68,10 @@
         <jar destfile="${build.dir}/StockQuoteService.aar">
             <fileset excludes="**/Test.class" dir="${build.dir}/classes"/>
         </jar>
+        <copy file="${build.dir}/StockQuoteService.aar"
+              toDir="${basedir}/../../repository/services"
+              overwrite="yes">  
+        </copy> 
     </target>
 
     <target name="clean">
