@@ -423,4 +423,22 @@ public class SOAPHeaderTest extends Assert {
         assertEquals("DEF", text.getData());
         assertFalse(iter.hasNext());   
     }
+    
+    @Validated @Test
+    public void testAXIS2_5006() throws Exception {
+        MessageFactory fact = MessageFactory.newInstance();
+        SOAPMessage message = fact.createMessage();
+        SOAPHeader header = message.getSOAPHeader();
+        
+        Document doc = message.getSOAPPart();
+        Element orgElement = doc.createElementNS("urn:ns", "ns:test");
+        orgElement.appendChild(doc.createElementNS(null, "child1"));
+        orgElement.appendChild(doc.createElementNS(null, "child2"));
+        orgElement.appendChild(doc.createElementNS(null, "child3"));
+        header.appendChild(orgElement);
+        
+        SOAPElement element = (SOAPElement)header.getChildElements().next();
+        assertTrue(element instanceof SOAPHeaderElement);
+        assertEquals(3, element.getChildNodes().getLength());
+    }
 }
