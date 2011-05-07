@@ -933,9 +933,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
             childEle.addAttribute(name, node.getValue());
         }
 
-        NodeList children = child.getChildNodes();        
-        for (int i = 0; i < children.getLength(); i++) {
-            Node node = children.item(i);
+        Node node;
+        while ((node = child.getFirstChild()) != null) {
             childEle.appendChild(node);
         }
     }
