@@ -19,6 +19,8 @@
 
 package org.apache.axis2.engine;
 
+import java.lang.reflect.Modifier;
+
 import org.apache.axis2.AxisFault;
 
 public class DefaultObjectSupplier implements ObjectSupplier {
@@ -31,7 +33,7 @@ public class DefaultObjectSupplier implements ObjectSupplier {
 			Class parent = clazz.getDeclaringClass();
 			Object instance = null;
 
-			if (parent != null) {
+			if (parent != null && !Modifier.isStatic(clazz.getModifiers())) {
 				// if this is an inner class then that can be a non static inner class. 
 				// those classes have to be instantiated in a different way than a normal initialization.
 				instance = clazz.getConstructor(new Class[] { parent })
