@@ -576,6 +576,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             complexType.setName(simpleName);
 
+            if (Modifier.isAbstract(javaType.getModifiers())) {
+                complexType.setAbstract(true);
+            }
+
 //            xmlSchema.getItems().add(eltOuter);
             xmlSchema.getElements().add(schemaTypeName, eltOuter);
             eltOuter.setSchemaTypeName(complexType.getQName());
