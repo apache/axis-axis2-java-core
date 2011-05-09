@@ -101,7 +101,7 @@ public class ADBDataSource implements OMDataSourceExt {
         MTOMAwareOMBuilder mtomAwareOMBuilder = new MTOMAwareOMBuilder();
         serialize(mtomAwareOMBuilder);
         return mtomAwareOMBuilder.getOMElement().getXMLStreamReader();
-    }
+    }                         
 
     /**
      * Returns the backing Object.

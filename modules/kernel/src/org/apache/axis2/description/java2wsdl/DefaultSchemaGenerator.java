@@ -951,7 +951,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             elt1.setMaxOccurs(Long.MAX_VALUE);
         }
         elt1.setMinOccurs(0);
-        if (!isPrimitive) {
+
+        boolean disallowNillables = false;
+        Parameter param = service.getParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG);
+        if (param != null) {
+            disallowNillables = JavaUtils.isTrueExplicitly(param.getValue());
+        }
+
+        if (!isPrimitive && !disallowNillables) {
             elt1.setNillable(true);
         }
     }
@@ -1254,12 +1261,19 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             elt1.setMaxOccurs(Long.MAX_VALUE);
         }
         elt1.setMinOccurs(0);
+
+        boolean disallowNillables = false;
+        Parameter param = service.getParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG);
+        if (param != null) {
+            disallowNillables = JavaUtils.isTrueExplicitly(param.getValue());
+        }
+
         if (!("int".equals(schemaTypeName.getLocalPart()) ||
                 "double".equals(schemaTypeName.getLocalPart()) ||
                 "long".equals(schemaTypeName.getLocalPart()) ||
                 "boolean".equals(schemaTypeName.getLocalPart()) ||
                 "short".equals(schemaTypeName.getLocalPart()) ||
-                "float".equals(schemaTypeName.getLocalPart()))) {
+                "float".equals(schemaTypeName.getLocalPart())) && !disallowNillables) {
             elt1.setNillable(true);
         }
     }

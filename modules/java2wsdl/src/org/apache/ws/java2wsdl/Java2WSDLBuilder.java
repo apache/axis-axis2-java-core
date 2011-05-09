@@ -67,6 +67,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 	private String use = Java2WSDLConstants.LITERAL;
 	private String locationUri;
 	private ArrayList<String> extraClasses;
+    private boolean nillableElementsAllowed = true;
 
 	private String nsGenClassName = null;
 	private Map<String,String> pkg2nsMap = null;
@@ -244,6 +245,11 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
                     inOutmessageReceiver);
         }
         AxisService service = new AxisService();
+
+        if (!nillableElementsAllowed) {
+            service.addParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG, "true");
+        }
+
 		schemaGenerator.setAxisService(service);
 		AxisService axisService = AxisService.createService(className,
 				serviceName == null ? Java2WSDLUtils
@@ -433,5 +439,13 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setMappingFileLocation(String mappingFileLocation) {
         this.mappingFileLocation = mappingFileLocation;
+    }
+
+    public boolean isNillableElementsAllowed() {
+        return nillableElementsAllowed;
+    }
+
+    public void setNillableElementsAllowed(boolean nillableElementsAllowed) {
+        this.nillableElementsAllowed = nillableElementsAllowed;
     }
 }

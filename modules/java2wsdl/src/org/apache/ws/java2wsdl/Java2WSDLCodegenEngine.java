@@ -237,6 +237,13 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         if (option != null) {
             java2WsdlBuilder.setMappingFileLocation(option.getOptionValue());
         }
+
+        option = loadOption(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION,
+                           Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG,
+                           optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setNillableElementsAllowed(false);
+        }
     }
     
     private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption,

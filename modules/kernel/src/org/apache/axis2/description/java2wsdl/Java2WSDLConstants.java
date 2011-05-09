@@ -138,6 +138,9 @@ public interface Java2WSDLConstants {
     String SCHEMA_MAPPING_FILE_LOCATION = "mfl";
     String SCHEMA_MAPPING_FILE_LOCATION_LONG = "mapping-file-location";
 
+    String DISALLOW_NILLABLE_ELEMENTS_OPTION = "dne";
+    String DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG = "disallowNillableElements";
+
     String AXIS2_NAMESPACE_PREFIX = "ns1";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";

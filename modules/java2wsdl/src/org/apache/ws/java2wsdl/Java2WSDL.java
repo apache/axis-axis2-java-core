@@ -61,6 +61,7 @@ public class Java2WSDL {
         System.out.println("  -xc class1 -xc class2...                extra class(es) for which schematype must be generated.  ");
         System.out.println("  -wv <1.1/2.0>                           wsdl version - defaults to 1.1 if not specified");
         System.out.println("  -dlb                                    generate schemas conforming to doc/lit/bare style");
+        System.out.println("  -dne                                    disallow nillable elements in the generated schema");
         System.exit(0);
     }
 
