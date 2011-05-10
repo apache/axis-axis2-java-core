@@ -87,6 +87,8 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private boolean disableSOAP12 = false;
     private boolean disableREST = false;
 
+    private String messagePartName;
+
     public Java2WSDLBuilder() {
 		try {
 			ConfigurationContext configCtx = ConfigurationContextFactory
@@ -253,6 +255,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
         if (!nillableElementsAllowed) {
             service.addParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG, "true");
+        }
+
+        if (messagePartName != null){
+            service.addParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG, messagePartName);
         }
 
 		schemaGenerator.setAxisService(service);
@@ -489,5 +495,13 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setDisableSOAP11(boolean disableSOAP11) {
         this.disableSOAP11 = disableSOAP11;
+    }
+
+    public String getMessagePartName() {
+        return messagePartName;
+    }
+
+    public void setMessagePartName(String messagePartName) {
+        this.messagePartName = messagePartName;
     }
 }

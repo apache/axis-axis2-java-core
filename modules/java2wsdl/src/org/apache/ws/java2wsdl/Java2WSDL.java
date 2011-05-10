@@ -65,6 +65,7 @@ public class Java2WSDL {
         System.out.println("  -disableSOAP11                          disable binding generation for SOAP11");
         System.out.println("  -disableSOAP12                          disable binding generation for SOAP12");
         System.out.println("  -disableREST                            disable binding generation for REST");
+        System.out.println("  -mpn <messagePartName>                  change the part name of the generated wsdl messages");
         System.exit(0);
     }
 

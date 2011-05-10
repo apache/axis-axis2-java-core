@@ -144,6 +144,9 @@ public interface Java2WSDLConstants {
     String DISALLOW_NILLABLE_ELEMENTS_OPTION = "dne";
     String DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG = "disallowNillableElements";
 
+    String MESSAGE_PART_NAME_OPTION = "mpn";
+    String MESSAGE_PART_NAME_OPTION_LONG = "messagePartName";
+
     String AXIS2_NAMESPACE_PREFIX = "ns1";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";

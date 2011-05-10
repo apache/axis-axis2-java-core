@@ -360,6 +360,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             methodSchemaType = createSchemaTypeForMethodPart(methodName);
             methodSchemaType.setParticle(sequence);
             inMessage.setElementQName(typeTable.getQNamefortheType(methodName));
+
+            Parameter param = service.getParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG);
+            if (param != null) {
+                inMessage.setPartName((String) param.getValue());
+            }
+
             service.addMessageElementQNameToOperationMapping(methodSchemaType.getQName(),
                     axisOperation);
 
@@ -419,6 +425,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                 outMessage.setElementQName(typeTable.getQNamefortheType(partQname));
                 outMessage.setName(partQname);
+
+                Parameter outparam = service.getParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG);
+                if (outparam != null) {
+                    outMessage.setPartName((String) outparam.getValue());
+                }
+
                 service.addMessageElementQNameToOperationMapping(methodSchemaType.getQName(),
                         axisOperation);
             }
@@ -475,6 +487,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 AxisMessage faultMessage = new AxisMessage();
                 faultMessage.setName(this.service.getName() + getSimpleClassName(extype));
                 faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
+
+                Parameter param = service.getParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG);
+                if (param != null) {
+                    faultMessage.setPartName((String) param.getValue());
+                }
+
                 axisOperation.setFaultMessages(faultMessage);
             }
         }
