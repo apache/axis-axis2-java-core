@@ -62,6 +62,9 @@ public class Java2WSDL {
         System.out.println("  -wv <1.1/2.0>                           wsdl version - defaults to 1.1 if not specified");
         System.out.println("  -dlb                                    generate schemas conforming to doc/lit/bare style");
         System.out.println("  -dne                                    disallow nillable elements in the generated schema");
+        System.out.println("  -disableSOAP11                          disable binding generation for SOAP11");
+        System.out.println("  -disableSOAP12                          disable binding generation for SOAP12");
+        System.out.println("  -disableREST                            disable binding generation for REST");
         System.exit(0);
     }
 
