@@ -244,6 +244,19 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         if (option != null) {
             java2WsdlBuilder.setNillableElementsAllowed(false);
         }
+
+        option = loadOption(Java2WSDLConstants.DISABLE_BINDING_SOAP11, null, optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setDisableSOAP11(true);
+        }
+        option = loadOption(Java2WSDLConstants.DISABLE_BINDING_SOAP12, null, optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setDisableSOAP12(true);
+        }
+        option = loadOption(Java2WSDLConstants.DISABLE_BINDING_REST, null, optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setDisableREST(true);
+        }
     }
     
     private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption,

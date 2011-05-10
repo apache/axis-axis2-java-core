@@ -38,6 +38,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLPrettyPrinter;
+import org.apache.axis2.Constants;
 
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
@@ -81,6 +82,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     // File is simple file with qualifiedClassName:SchemaQName
     private String mappingFileLocation;
     private HashMap<String,MessageReceiver> messageReceivers = null;
+
+    private boolean disableSOAP11 = false;
+    private boolean disableSOAP12 = false;
+    private boolean disableREST = false;
 
     public Java2WSDLBuilder() {
 		try {
@@ -264,6 +269,19 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		axisService.setSchemaTargetNamespace(getSchemaTargetNamespace());
 		axisService
 				.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
+
+        if (disableREST) {
+            axisService.addParameter(Constants.Configuration.DISABLE_REST, disableREST);
+        }
+
+        if (disableSOAP11) {
+            axisService.addParameter(Constants.Configuration.DISABLE_SOAP11, disableSOAP11);
+        }
+
+        if (disableSOAP12) {
+            axisService.addParameter(Constants.Configuration.DISABLE_SOAP12, disableSOAP12);
+        }
+
 		String uri = locationUri;
 		if (uri == null) {
 			uri = DEFAULT_LOCATION_URL
@@ -447,5 +465,29 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setNillableElementsAllowed(boolean nillableElementsAllowed) {
         this.nillableElementsAllowed = nillableElementsAllowed;
+    }
+
+    public boolean isDisableREST() {
+        return disableREST;
+    }
+
+    public void setDisableREST(boolean disableREST) {
+        this.disableREST = disableREST;
+    }
+
+    public boolean isDisableSOAP12() {
+        return disableSOAP12;
+    }
+
+    public void setDisableSOAP12(boolean disableSOAP12) {
+        this.disableSOAP12 = disableSOAP12;
+    }
+
+    public boolean isDisableSOAP11() {
+        return disableSOAP11;
+    }
+
+    public void setDisableSOAP11(boolean disableSOAP11) {
+        this.disableSOAP11 = disableSOAP11;
     }
 }

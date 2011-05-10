@@ -137,6 +137,9 @@ public interface Java2WSDLConstants {
     String CUSTOM_SCHEMA_LOCATION_LONG = "custom-schema-location";
     String SCHEMA_MAPPING_FILE_LOCATION = "mfl";
     String SCHEMA_MAPPING_FILE_LOCATION_LONG = "mapping-file-location";
+    String DISABLE_BINDING_SOAP11 = "disableSOAP11";
+    String DISABLE_BINDING_SOAP12 = "disableSOAP12";
+    String DISABLE_BINDING_REST = "disableREST";
 
     String DISALLOW_NILLABLE_ELEMENTS_OPTION = "dne";
     String DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG = "disallowNillableElements";
