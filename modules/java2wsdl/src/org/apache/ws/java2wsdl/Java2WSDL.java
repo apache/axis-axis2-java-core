@@ -70,6 +70,7 @@ public class Java2WSDL {
         System.out.println("  -soap11BindingName                      soap11 binding name of the WSDL");
         System.out.println("  -soap12BindingName                      soap 12 binding name of the WSDL");
         System.out.println("  -restBindingName                        rest binding name of the WSDL");
+        System.out.println("  -res <requestElementSuffix>             Adds a suffix to the request elemment");
         System.exit(0);
     }
 

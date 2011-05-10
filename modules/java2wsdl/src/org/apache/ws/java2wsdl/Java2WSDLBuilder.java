@@ -95,6 +95,8 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private String soap12BindingName;
     private String restBindingName;
 
+    private String requestElementSuffix;
+
     public Java2WSDLBuilder() {
 		try {
 			ConfigurationContext configCtx = ConfigurationContextFactory
@@ -285,6 +287,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
         if (messagePartName != null){
             service.addParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG, messagePartName);
+        }
+
+        if (requestElementSuffix != null){
+            service.addParameter(Java2WSDLConstants.REQUEST_ELEMENT_SUFFIX_OPTION_LONG, requestElementSuffix);
         }
 
 		schemaGenerator.setAxisService(service);
@@ -561,5 +567,13 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setRestBindingName(String restBindingName) {
         this.restBindingName = restBindingName;
+    }
+
+    public String getRequestElementSuffix() {
+        return requestElementSuffix;
+    }
+
+    public void setRequestElementSuffix(String requestElementSuffix) {
+        this.requestElementSuffix = requestElementSuffix;
     }
 }

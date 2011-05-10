@@ -80,6 +80,8 @@ public class Java2WSDLOptionsValidator implements Java2WSDLConstants {
                 Java2WSDLConstants.SOAP11_BINDING_NAME_OPTION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.SOAP12_BINDING_NAME_OPTION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.REST_BINDING_NAME_OPTION_LONG.equalsIgnoreCase(optionType)||
+                Java2WSDLConstants.REQUEST_ELEMENT_SUFFIX_OPTION.equalsIgnoreCase(optionType)||
+                Java2WSDLConstants.REQUEST_ELEMENT_SUFFIX_OPTION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.SCHEMA_MAPPING_FILE_LOCATION.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.SCHEMA_MAPPING_FILE_LOCATION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.WSDL_VERSION_OPTION_LONG.equalsIgnoreCase(optionType)

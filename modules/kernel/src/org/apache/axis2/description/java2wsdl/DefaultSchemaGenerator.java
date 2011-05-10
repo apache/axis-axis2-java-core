@@ -362,9 +362,16 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             // we need to add the method opration wrapper part even to
             // empty parameter operations 
             sequence = new XmlSchemaSequence();
-            methodSchemaType = createSchemaTypeForMethodPart(methodName);
+
+            String requestElementSuffix = getRequestElementSuffix();
+            String requestLocalPart = methodName;
+            if (requestElementSuffix != null) {
+                requestLocalPart += requestElementSuffix;
+            }
+
+            methodSchemaType = createSchemaTypeForMethodPart(requestLocalPart);
             methodSchemaType.setParticle(sequence);
-            inMessage.setElementQName(typeTable.getQNamefortheType(methodName));
+            inMessage.setElementQName(typeTable.getQNamefortheType(requestLocalPart));
 
             Parameter param = service.getParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG);
             if (param != null) {
@@ -1341,6 +1348,15 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             xmlSchema.getElements().add(elementName, globalElement);
         }
         return complexType;
+    }
+
+    private String getRequestElementSuffix() {
+        String requestElementSuffix = null;
+        Parameter param = service.getParameter(Java2WSDLConstants.REQUEST_ELEMENT_SUFFIX_OPTION_LONG);
+        if (param != null) {
+            requestElementSuffix = (String) param.getValue();
+        }
+        return requestElementSuffix;
     }
 
     protected XmlSchemaComplexType getComplexTypeForElement(XmlSchema xmlSchema, QName name) {
