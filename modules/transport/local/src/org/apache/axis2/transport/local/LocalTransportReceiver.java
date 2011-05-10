@@ -131,6 +131,11 @@ public class LocalTransportReceiver {
             msgCtx.setTransportOut(localTransportResOut);
             msgCtx.setProperty(MessageContext.TRANSPORT_OUT, response);
 
+            Object headers = inMessageContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+            if (headers != null) {
+                msgCtx.setProperty(MessageContext.TRANSPORT_HEADERS, headers);
+            }
+
             msgCtx.setTo(to);
             msgCtx.setWSAAction(action);
             msgCtx.setServerSide(true);
