@@ -216,13 +216,15 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
         TransportUtils.writeMessage(messageContext, out);
 
         ByteArrayInputStream bs = new ByteArrayInputStream(out.toByteArray());
+        InputStreamReader streamReader = new InputStreamReader(bs);
         OMXMLParserWrapper builder;
+
         try {
-            builder = BuilderUtil.getBuilder(bs);
+            builder = BuilderUtil.getBuilder(streamReader);
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         }
 
-        return TransportUtils.createSOAPEnvelope(builder.getDocumentElement());
+        return (SOAPEnvelope) builder.getDocumentElement();
     }
 }
