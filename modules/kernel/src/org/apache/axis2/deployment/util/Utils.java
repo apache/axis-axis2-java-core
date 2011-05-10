@@ -521,14 +521,19 @@ public class Utils {
                     .getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
         }
         String opName = method.getName();
-        operation.setName(new QName(opName));
+
         WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(method);
         if (methodAnnon != null) {
             String action = methodAnnon.getAction();
             if (action != null && !"".equals(action)) {
                 operation.setSoapAction(action);
             }
+            if (methodAnnon.getOperationName() != null){
+                opName = methodAnnon.getOperationName();
+            }
         }
+
+        operation.setName(new QName(opName));
         return operation;
     }
 

@@ -25,10 +25,12 @@ package org.apache.axis2.jsr181;
 public class WebMethodAnnotation {
     private final boolean exclude;
     private final String action;
+    private final String operationName;
 
-    WebMethodAnnotation(boolean exclude, String action) {
+    WebMethodAnnotation(boolean exclude, String action, String operationName) {
         this.exclude = exclude;
         this.action = action;
+        this.operationName = operationName;
     }
 
     public boolean isExclude() {
@@ -37,5 +39,9 @@ public class WebMethodAnnotation {
 
     public String getAction() {
         return action;
+    }
+
+    public String getOperationName() {
+        return operationName;
     }
 }

@@ -39,7 +39,7 @@ class JSR181HelperImpl extends JSR181Helper {
     public WebMethodAnnotation getWebMethodAnnotation(Method method) {
         WebMethod annotation = method.getAnnotation(WebMethod.class);
         return annotation == null ? null : new WebMethodAnnotation(annotation.exclude(),
-                annotation.action());
+                annotation.action(),annotation.operationName());
     }
 
     @Override

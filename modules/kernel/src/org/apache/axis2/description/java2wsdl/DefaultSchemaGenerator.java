@@ -297,13 +297,18 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             if (jMethod.isBridge()) {
                 continue;
             }
+
             WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jMethod);
+            String methodName = jMethod.getName();
             if (methodAnnon != null) {
                 if (methodAnnon.isExclude()) {
                     continue;
                 }
+                if (methodAnnon.getOperationName() != null){
+                    methodName = methodAnnon.getOperationName();
+                }
             }
-            String methodName = jMethod.getName();
+
             // no need to think abt this method , since that is system
             // config method
             if (excludeMethods.contains(methodName)) {
@@ -418,8 +423,6 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     } else {
                     generateSchemaForType(sequence, returnType, returnName);
                 }
-
-
 
                 AxisMessage outMessage = axisOperation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
