@@ -98,7 +98,7 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
             InputStream in = new ByteArrayInputStream(out.toByteArray());
             ByteArrayOutputStream response = new ByteArrayOutputStream();
 
-            LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver(this);
+            LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver(this, isNonBlocking());
             localTransportReceiver.processMessage(msgContext, in, response);
 
             in.close();
@@ -110,5 +110,12 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
+    }
+
+    protected boolean isNonBlocking() {
+        if (log.isDebugEnabled()) {
+            log.debug("Local Transport Sender Selected");
+        }
+        return false;
     }
 }
