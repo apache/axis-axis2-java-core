@@ -89,6 +89,12 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     private String messagePartName;
 
+    private String portTypeName;
+
+    private String soap11BindingName;
+    private String soap12BindingName;
+    private String restBindingName;
+
     public Java2WSDLBuilder() {
 		try {
 			ConfigurationContext configCtx = ConfigurationContextFactory
@@ -255,6 +261,26 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
         if (!nillableElementsAllowed) {
             service.addParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG, "true");
+        }
+
+        if (messagePartName != null){
+            service.addParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG, messagePartName);
+        }
+
+        if (portTypeName != null){
+            service.addParameter(Java2WSDLConstants.PORT_TYPE_NAME_OPTION_LONG, portTypeName);
+        }
+
+        if (soap11BindingName != null){
+            service.addParameter(Java2WSDLConstants.SOAP11_BINDING_NAME_OPTION_LONG, soap11BindingName);
+        }
+
+        if (soap12BindingName != null){
+            service.addParameter(Java2WSDLConstants.SOAP12_BINDING_NAME_OPTION_LONG, soap12BindingName);
+        }
+
+        if (restBindingName != null){
+            service.addParameter(Java2WSDLConstants.REST_BINDING_NAME_OPTION_LONG, restBindingName);
         }
 
         if (messagePartName != null){
@@ -503,5 +529,37 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setMessagePartName(String messagePartName) {
         this.messagePartName = messagePartName;
+    }
+
+    public String getPortTypeName() {
+        return portTypeName;
+    }
+
+    public void setPortTypeName(String portTypeName) {
+        this.portTypeName = portTypeName;
+    }
+
+    public String getSoap11BindingName() {
+        return soap11BindingName;
+    }
+
+    public void setSoap11BindingName(String soap11BindingName) {
+        this.soap11BindingName = soap11BindingName;
+    }
+
+    public String getSoap12BindingName() {
+        return soap12BindingName;
+    }
+
+    public void setSoap12BindingName(String soap12BindingName) {
+        this.soap12BindingName = soap12BindingName;
+    }
+
+    public String getRestBindingName() {
+        return restBindingName;
+    }
+
+    public void setRestBindingName(String restBindingName) {
+        this.restBindingName = restBindingName;
     }
 }

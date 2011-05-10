@@ -388,8 +388,14 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		OMElement portType = fac.createOMElement(PORT_TYPE_LOCAL_NAME, wsdl);
 		defintions.addChild(portType);
 
-		portType.addAttribute(ATTRIBUTE_NAME, serviceName + PORT_TYPE_SUFFIX,
-				null);
+        String portTypeName = serviceName + PORT_TYPE_SUFFIX;
+
+        Parameter param = this.axisService.getParameter(Java2WSDLConstants.PORT_TYPE_NAME_OPTION_LONG);
+        if (param != null){
+            portTypeName = (String) param.getValue();
+        }
+
+		portType.addAttribute(ATTRIBUTE_NAME, portTypeName, null);
 
 		addPolicyAsExtAttribute(axisService, portType, fac);
 
@@ -791,8 +797,15 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
 		QName qname = axisBinding.getName();
 		binding.addAttribute(ATTRIBUTE_NAME, qname.getLocalPart(), null);
-		binding.addAttribute("type", tns.getPrefix() + ":" + serviceName
-				+ PORT_TYPE_SUFFIX, null);
+
+        String portTypeName = serviceName + PORT_TYPE_SUFFIX;
+
+        Parameter param = this.axisService.getParameter(Java2WSDLConstants.PORT_TYPE_NAME_OPTION_LONG);
+        if (param != null){
+            portTypeName = (String) param.getValue();
+        }
+
+		binding.addAttribute("type", tns.getPrefix() + ":" + portTypeName, null);
 
 		// Adding ext elements
 		addPolicyAsExtElement(axisBinding, binding);
@@ -932,8 +945,15 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
 		QName qname = axisBinding.getName();
 		binding.addAttribute(ATTRIBUTE_NAME, qname.getLocalPart(), null);
-		binding.addAttribute("type", tns.getPrefix() + ":" + serviceName
-				+ PORT_TYPE_SUFFIX, null);
+
+        String portTypeName = serviceName + PORT_TYPE_SUFFIX;
+
+        Parameter param = this.axisService.getParameter(Java2WSDLConstants.PORT_TYPE_NAME_OPTION_LONG);
+        if (param != null){
+            portTypeName = (String) param.getValue();
+        }
+
+		binding.addAttribute("type", tns.getPrefix() + ":" + portTypeName, null);
 
 		// Adding ext elements
 		addPolicyAsExtElement(axisBinding, binding);
@@ -1072,8 +1092,15 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
 		QName qname = axisBinding.getName();
 		binding.addAttribute(ATTRIBUTE_NAME, qname.getLocalPart(), null);
-		binding.addAttribute("type", tns.getPrefix() + ":" + serviceName
-				+ PORT_TYPE_SUFFIX, null);
+
+        String portTypeName = serviceName + PORT_TYPE_SUFFIX;
+
+        Parameter param = this.axisService.getParameter(Java2WSDLConstants.PORT_TYPE_NAME_OPTION_LONG);
+        if (param != null){
+            portTypeName = (String) param.getValue();
+        }
+
+		binding.addAttribute("type", tns.getPrefix() + ":" + portTypeName, null);
 
 		OMElement httpBinding = fac.createOMElement("binding", http);
 		binding.addChild(httpBinding);

@@ -264,6 +264,28 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         if (option != null) {
             java2WsdlBuilder.setMessagePartName(option.getOptionValue());
         }
+
+        option = loadOption(Java2WSDLConstants.PORT_TYPE_NAME_OPTION,
+                           Java2WSDLConstants.PORT_TYPE_NAME_OPTION_LONG,
+                           optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setPortTypeName(option.getOptionValue());
+        }
+
+        option = loadOption(null,Java2WSDLConstants.SOAP11_BINDING_NAME_OPTION_LONG, optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setSoap11BindingName(option.getOptionValue());
+        }
+
+        option = loadOption(null,Java2WSDLConstants.SOAP12_BINDING_NAME_OPTION_LONG, optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setSoap12BindingName(option.getOptionValue());
+        }
+
+        option = loadOption(null,Java2WSDLConstants.REST_BINDING_NAME_OPTION_LONG, optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setRestBindingName(option.getOptionValue());
+        }
     }
     
     private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption,

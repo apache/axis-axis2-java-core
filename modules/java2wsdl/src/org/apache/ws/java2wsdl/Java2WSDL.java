@@ -66,6 +66,10 @@ public class Java2WSDL {
         System.out.println("  -disableSOAP12                          disable binding generation for SOAP12");
         System.out.println("  -disableREST                            disable binding generation for REST");
         System.out.println("  -mpn <messagePartName>                  change the part name of the generated wsdl messages");
+        System.out.println("  -ptn <portTypeName>                     port Type name of the WSDL");
+        System.out.println("  -soap11BindingName                      soap11 binding name of the WSDL");
+        System.out.println("  -soap12BindingName                      soap 12 binding name of the WSDL");
+        System.out.println("  -restBindingName                        rest binding name of the WSDL");
         System.exit(0);
     }
 

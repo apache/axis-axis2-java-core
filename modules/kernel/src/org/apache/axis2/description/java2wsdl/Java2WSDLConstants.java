@@ -141,6 +141,12 @@ public interface Java2WSDLConstants {
     String DISABLE_BINDING_SOAP12 = "disableSOAP12";
     String DISABLE_BINDING_REST = "disableREST";
 
+    String PORT_TYPE_NAME_OPTION = "ptn";
+    String PORT_TYPE_NAME_OPTION_LONG = "portTypeName";
+    String SOAP11_BINDING_NAME_OPTION_LONG = "soap11BindingName";
+    String SOAP12_BINDING_NAME_OPTION_LONG = "soap12BindingName";
+    String REST_BINDING_NAME_OPTION_LONG = "restBindingName";
+
     String DISALLOW_NILLABLE_ELEMENTS_OPTION = "dne";
     String DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG = "disallowNillableElements";
 

@@ -1332,6 +1332,12 @@ public class Utils {
         String serviceName = axisService.getName();
         String name = serviceName + "Soap11Binding";
 
+        Parameter parameter =
+                axisService.getParameter(Java2WSDLConstants.SOAP11_BINDING_NAME_OPTION_LONG);
+        if (parameter != null) {
+            name = (String) parameter.getValue();
+        }
+
         QName bindingName = new QName(name);
 
         AxisBinding axisBinding = (bindingCache != null) ? (AxisBinding)bindingCache
@@ -1378,6 +1384,12 @@ public class Utils {
                                                AxisEndpoint axisEndpoint, HashMap bindingCache) {
         String serviceName = axisService.getName();
         String name = serviceName + "Soap12Binding";
+
+        Parameter parameter =
+                axisService.getParameter(Java2WSDLConstants.SOAP12_BINDING_NAME_OPTION_LONG);
+        if (parameter != null) {
+            name = (String) parameter.getValue();
+        }
 
         QName bindingName = new QName(name);
 
@@ -1426,6 +1438,12 @@ public class Utils {
                                              AxisEndpoint axisEndpoint, HashMap bindingCache) {
         String serviceName = axisService.getName();
         String name = serviceName + "HttpBinding";
+
+        Parameter param =
+                axisService.getParameter(Java2WSDLConstants.REST_BINDING_NAME_OPTION_LONG);
+        if (param != null) {
+            name = (String) param.getValue();
+        }
 
         QName bindingName = new QName(name);
 
