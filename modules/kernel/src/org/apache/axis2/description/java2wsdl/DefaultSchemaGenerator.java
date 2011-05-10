@@ -398,7 +398,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 String returnName = "return";
                 if (returnAnnon != null) {
                     returnName = returnAnnon.getName();
-                    if (returnName != null && !"".equals(returnName)) {
+                    if (returnName == null || "".equals(returnName)) {
                         returnName = "return";
                     }
                 }
