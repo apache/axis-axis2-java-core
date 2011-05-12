@@ -156,6 +156,9 @@ public interface Java2WSDLConstants {
     String REQUEST_ELEMENT_SUFFIX_OPTION = "res";
     String REQUEST_ELEMENT_SUFFIX_OPTION_LONG = "requestElementSuffix";
 
+    String DISALLOW_ANON_TYPES_OPTION = "dat";
+    String DISALLOW_ANON_TYPES_OPTION_LONG = "disallowAnonymousTypes";
+
     String AXIS2_NAMESPACE_PREFIX = "ns1";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";

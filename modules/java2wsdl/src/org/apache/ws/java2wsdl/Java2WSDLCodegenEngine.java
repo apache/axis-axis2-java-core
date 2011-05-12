@@ -293,6 +293,14 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         if (option != null) {
             java2WsdlBuilder.setRequestElementSuffix(option.getOptionValue());
         }
+
+        option = loadOption(Java2WSDLConstants.DISALLOW_ANON_TYPES_OPTION,
+                Java2WSDLConstants.DISALLOW_ANON_TYPES_OPTION_LONG,
+                optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setAnonymousTypesAllowed(false);
+        }
+
     }
     
     private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption,

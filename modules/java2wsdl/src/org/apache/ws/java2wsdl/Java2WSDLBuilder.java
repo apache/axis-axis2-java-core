@@ -97,6 +97,8 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     private String requestElementSuffix;
 
+    private boolean anonymousTypesAllowed = true;
+
     public Java2WSDLBuilder() {
 		try {
 			ConfigurationContext configCtx = ConfigurationContextFactory
@@ -291,6 +293,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
         if (requestElementSuffix != null){
             service.addParameter(Java2WSDLConstants.REQUEST_ELEMENT_SUFFIX_OPTION_LONG, requestElementSuffix);
+        }
+
+        if (!anonymousTypesAllowed) {
+            service.addParameter(Java2WSDLConstants.DISALLOW_ANON_TYPES_OPTION_LONG, "true");
         }
 
 		schemaGenerator.setAxisService(service);
@@ -575,5 +581,13 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setRequestElementSuffix(String requestElementSuffix) {
         this.requestElementSuffix = requestElementSuffix;
+    }
+
+    public boolean isAnonymousTypesAllowed() {
+        return anonymousTypesAllowed;
+    }
+
+    public void setAnonymousTypesAllowed(boolean anonymousTypesAllowed) {
+        this.anonymousTypesAllowed = anonymousTypesAllowed;
     }
 }

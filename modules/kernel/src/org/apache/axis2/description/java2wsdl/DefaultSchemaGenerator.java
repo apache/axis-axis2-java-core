@@ -1320,9 +1320,21 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             complexType = new XmlSchemaComplexType(xmlSchema);
 
             XmlSchemaElement globalElement = new XmlSchemaElement();
-            globalElement.setSchemaType(complexType);
             globalElement.setName(localPartName);
             globalElement.setQName(elementName);
+
+            boolean disallowAnonTypes = isAnonymousTypesDisallowed();
+            if (disallowAnonTypes) {
+                String complexTypeName = localPartName.substring(0, 1).toUpperCase()
+                        + localPartName.substring(1);
+                complexType.setName(complexTypeName);
+                globalElement.setSchemaTypeName(complexType.getQName());
+                xmlSchema.getItems().add(complexType);
+                xmlSchema.getSchemaTypes().add(complexType.getQName(), complexType);
+            } else {
+                globalElement.setSchemaType(complexType);
+            }
+
             xmlSchema.getItems().add(globalElement);
             xmlSchema.getElements().add(elementName, globalElement);
         }
@@ -1341,13 +1353,33 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             complexType = new XmlSchemaComplexType(xmlSchema);
 
             XmlSchemaElement globalElement = new XmlSchemaElement();
-            globalElement.setSchemaType(complexType);
             globalElement.setName(localPartName);
             globalElement.setQName(elementName);
+
+            boolean disallowAnonTypes = isAnonymousTypesDisallowed();
+            if (disallowAnonTypes) {
+                complexType.setName(localPartName);
+                globalElement.setSchemaTypeName(complexType.getQName());
+                xmlSchema.getItems().add(complexType);
+                xmlSchema.getSchemaTypes().add(complexType.getQName(), complexType);
+            } else {
+                globalElement.setSchemaType(complexType);
+            }
+
             xmlSchema.getItems().add(globalElement);
             xmlSchema.getElements().add(elementName, globalElement);
+
         }
         return complexType;
+    }
+
+     private boolean isAnonymousTypesDisallowed() {
+        boolean disallowAnonTypes = false;
+        Parameter param = service.getParameter(Java2WSDLConstants.DISALLOW_ANON_TYPES_OPTION_LONG);
+        if (param != null) {
+            disallowAnonTypes = JavaUtils.isTrueExplicitly(param.getValue());
+        }
+        return disallowAnonTypes;
     }
 
     private String getRequestElementSuffix() {
@@ -1360,11 +1392,17 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     protected XmlSchemaComplexType getComplexTypeForElement(XmlSchema xmlSchema, QName name) {
+        
         Iterator<?> iterator = xmlSchema.getItems().getIterator();
         while (iterator.hasNext()) {
             XmlSchemaObject object = (XmlSchemaObject) iterator.next();
             if (object instanceof XmlSchemaElement && ((XmlSchemaElement) object).getQName().equals(name)) {
-                return (XmlSchemaComplexType) ((XmlSchemaElement) object).getSchemaType();
+                XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType) ((XmlSchemaElement) object).getSchemaType();
+                if ((xmlSchemaComplexType == null) && (((XmlSchemaElement) object).getSchemaTypeName() != null)){
+                    xmlSchemaComplexType =
+                            (XmlSchemaComplexType) xmlSchema.getTypeByName(((XmlSchemaElement) object).getSchemaTypeName());
+                }
+                return xmlSchemaComplexType;
             }
         }
         return null;
