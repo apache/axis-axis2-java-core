@@ -46,6 +46,8 @@ public class WSDL2CodeMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "syncMode", "both");
         setVariableValueToObject(mojo, "databindingName", "adb");
         setVariableValueToObject(mojo, "language", "java");
+        // "src" is the default, but we need to set this explicitly because of MPLUGINTESTING-7
+        setVariableValueToObject(mojo, "targetSourceFolderLocation", "src");
         return mojo;
     }
 

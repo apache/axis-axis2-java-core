@@ -173,9 +173,9 @@ public class WSDL2CodeMojo extends AbstractMojo {
     private String wsdlVersion = null;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.targetSourceFolderLocation}"
+     * @parameter expression="${axis2.wsdl2code.targetSourceFolderLocation}" default-value="src"
      */
-    private String targetSourceFolderLocation = null;
+    private String targetSourceFolderLocation;
 
     /**
      * @parameter expression="${axis2.wsdl2code.targetResourcesFolderLocation}"
@@ -462,13 +462,11 @@ public class WSDL2CodeMojo extends AbstractMojo {
                             new String[]{wsdlVersion}));
         }
 
-        if (targetSourceFolderLocation != null) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
-                            new String[]{targetSourceFolderLocation}));
-        }
+        optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                        new String[]{targetSourceFolderLocation}));
 
         if (targetResourcesFolderLocation != null) {
             optionMap.put(
@@ -595,7 +593,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
     }
 
     private void fixCompileSourceRoots() {
-        File srcDir = new File(outputDirectory, "src");
+        File srcDir = new File(outputDirectory, targetSourceFolderLocation);
         project.addCompileSourceRoot(srcDir.getPath());
 	}
 }
