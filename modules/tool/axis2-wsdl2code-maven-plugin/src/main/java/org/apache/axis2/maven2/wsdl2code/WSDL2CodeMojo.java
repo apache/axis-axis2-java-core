@@ -241,8 +241,8 @@ public class WSDL2CodeMojo extends AbstractMojo {
     private NamespaceURIMapping[] namespaceURIs = null;
 
     /** Fills the option map. This map is passed onto the code generation API to generate the code. */
-    private Map fillOptionMap() throws MojoFailureException {
-        Map optionMap = new HashMap();
+    private Map<String,CommandLineOption> fillOptionMap() throws MojoFailureException {
+        Map<String,CommandLineOption> optionMap = new HashMap<String,CommandLineOption>();
 
         ////////////////////////////////////////////////////////////////
         //WSDL file name
@@ -479,9 +479,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
         }
 
         if(options != null) {
-            Iterator iterator = options.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry) iterator.next();
+            for (Map.Entry<?,?> entry : options.entrySet()) {
                 String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX + entry.getKey();
                 String value = (String) entry.getValue();
                 optionMap.put(
@@ -560,7 +558,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
         fixCompileSourceRoots();
         showDependencies();
 
-        Map commandLineOptions = this.fillOptionMap();
+        Map<String,CommandLineOption> commandLineOptions = this.fillOptionMap();
         CommandLineOptionParser parser =
                 new CommandLineOptionParser(commandLineOptions);
         try {
@@ -581,14 +579,14 @@ public class WSDL2CodeMojo extends AbstractMojo {
             return;
         }
         log.debug("The projects dependency artifacts are: ");
-        for (Iterator iter = project.getDependencyArtifacts().iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = project.getDependencyArtifacts().iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact)iter.next();
             log.debug("    " + artifact.getGroupId() + ":" + artifact.getArtifactId() +
                     ":" + artifact.getVersion() + ":" + artifact.getClassifier() +
                     ":" + artifact.getScope() + ":" + artifact.getType());
         }
         log.debug("The projects transitive artifacts are: ");
-        for (Iterator iter = project.getArtifacts().iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = project.getArtifacts().iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact)iter.next();
             log.debug("    " + artifact.getGroupId() + ":" + artifact.getArtifactId() +
                     ":" + artifact.getVersion() + ":" + artifact.getClassifier() +
