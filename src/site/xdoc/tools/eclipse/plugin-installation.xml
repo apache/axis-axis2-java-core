@@ -31,6 +31,9 @@
                 (<a href="servicearchiver-plugin.html">Service Archive Generator</a> and
                 <a href="wsdl2java-plugin.html">Code Generator Wizard</a>).
                 The two plugins should work on Eclipse version 3.1 and upwards, and require at least Java 1.5.
+                The plugins have dependencies on bundles that are installed by default in the Eclipse IDE for Java EE Developers
+                edition, but not in the Eclipse IDE for Java Developers edition. It is therefore recommended
+                to use the EE edition.
                 The installation procedure is the same for both plugins, but depends on the Eclipse
                 version being used. To determine which procedure to use, check if there is a
                 <tt>dropins</tt> folder in the Eclipse installation directory. This folder is used
