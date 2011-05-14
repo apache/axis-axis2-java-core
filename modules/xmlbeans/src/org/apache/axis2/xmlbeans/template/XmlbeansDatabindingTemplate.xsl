@@ -29,6 +29,26 @@
     <xsl:template match="databinders[@dbtype='xmlbeans']">
         <xsl:variable name="serverside" select="@isserverside"/>
         <xsl:variable name="base64" select="base64Elements/name"/>
+        
+        private final org.apache.xmlbeans.XmlOptions _xmlOptions;
+        
+        {
+            _xmlOptions = new org.apache.xmlbeans.XmlOptions();
+            _xmlOptions.setSaveNoXmlDecl();
+            _xmlOptions.setSaveAggressiveNamespaces();
+            _xmlOptions.setSaveNamespacesFirst();
+        }
+        
+        /**
+         * Get the {@link org.apache.xmlbeans.XmlOptions} object that the stub uses when
+         * serializing objects to XML.
+         *
+         * @return the options used for serialization
+         */
+        public org.apache.xmlbeans.XmlOptions _getXmlOptions() {
+            return _xmlOptions;
+        }
+        
         <xsl:if test="$base64">
             private static javax.xml.namespace.QName[] qNameArray = {
             <xsl:for-each select="base64Elements/name">
@@ -64,12 +84,8 @@
             private org.apache.axiom.om.OMElement toOM(final <xsl:value-of select="@type"/> param)
                     throws org.apache.axis2.AxisFault {
 
-                org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
-                xmlOptions.setSaveNoXmlDecl();
-                xmlOptions.setSaveAggressiveNamespaces();
-                xmlOptions.setSaveNamespacesFirst();
                 org.apache.axiom.om.OMXMLParserWrapper builder = org.apache.axiom.om.OMXMLBuilderFactory.createOMBuilder(
-                        new javax.xml.transform.sax.SAXSource(new org.apache.axis2.xmlbeans.XmlBeansXMLReader(param, xmlOptions), new org.xml.sax.InputSource()));
+                        new javax.xml.transform.sax.SAXSource(new org.apache.axis2.xmlbeans.XmlBeansXMLReader(param, _xmlOptions), new org.xml.sax.InputSource()));
                 try {
                     return builder.getDocumentElement(true);
                 } catch (java.lang.Exception e) {
