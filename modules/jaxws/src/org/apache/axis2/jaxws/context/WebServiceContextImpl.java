@@ -143,7 +143,7 @@ public class WebServiceContextImpl implements WebServiceContext {
         if (soapMessageContext != null) {
             QName service = (QName) soapMessageContext.get(MessageContext.WSDL_SERVICE);
             QName endpoint = (QName) soapMessageContext.get(MessageContext.WSDL_PORT);
-            String wsdlLocation = "/?wsdl";  // let the webcontainer redirect us to the real WSDL URL; it knows where it is
+            String wsdlLocation = "?wsdl";  // let the webcontainer redirect us to the real WSDL URL; it knows where it is
             
             org.apache.axis2.addressing.EndpointReference axis2EPR =
                 EndpointReferenceUtils.createAxis2EndpointReference(null, service, endpoint, wsdlLocation, addressingNamespace);
