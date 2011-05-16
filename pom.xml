@@ -494,6 +494,12 @@
             <email>ruwan AT apache.org</email>
             <url>http://www.linkedin.com/in/ruwanlinton</url>
         </developer>
+        <developer>
+            <name>Sagara Gunathunga</name>
+            <id>sagara</id>
+            <email>sagara AT apache.org</email>
+            <organization>WSO2</organization>
+        </developer>
     </developers>
     <contributors>
         <contributor>
