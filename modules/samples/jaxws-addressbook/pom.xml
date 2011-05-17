@@ -22,7 +22,7 @@
     <groupId>org.apache.axis2.samples</groupId>
     <artifactId>jaxws-addressbook</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.0</version>
+    <version>1.6.1-SNAPSHOT</version>
     <name>JAXWS Addressbook Service</name>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>1.6.0</version>
+            <version>1.6.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <repositories>
