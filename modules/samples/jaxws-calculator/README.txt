@@ -30,7 +30,7 @@ Running the Client
 
 1. Set up a CLASSPATH with the following 
 - all the jars in <AXIS2_HOME/lib>
-- the jaxws-calculator-1.6.0-client.jar under the target directory
+- the jaxws-calculator-SNAPSHOT-client.jar under the target directory
 - addressing mar in <AXIS2_HOME/repository/modules>
 
 2. Run the client using say "java -classpath %CLASSPATH% org.apache.axis2.jaxws.calculator.client.AddSEIClient 3 33"

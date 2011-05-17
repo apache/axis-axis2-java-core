@@ -28,9 +28,9 @@ To build this sample, execute the following maven command:
 This will do the following:
 - Generate the JAXB artifacts (in target/schema)
 - Compile the service implementation classes (in target/classes), including the JAXB artifacts, 
-  and create a JAR containing those classes (target/jaxws-addressbook-1.6.0.jar)
+  and create a JAR containing those classes (target/jaxws-addressbook-SNAPSHOT.jar)
 - Compile the Dispatch client classes (in target/classes) and create a JAR containing those classes
-  (target/jaxws-addressbook-1.6.0-Client.jar).
+  (target/jaxws-addressbook-SNAPSHOT-Client.jar).  
 
 
 Step 1: Generate JAXB artifacts from simple schema
@@ -84,8 +84,8 @@ Step 4: Run the Dispatch client against the service implementation deployed in t
 ===============================================================================================
 (a) Setup your environment to run the sample.  You will need two windows, one for the server
 and one for the client.  Each needs the following environment variables set:
-- Axis2 binary distribution.  For example: AXIS2_HOME=C:\temp\Axis2\axis2-1.6.0
-- Java5 JDK.  For example: JAVA_HOME=c:\java\java6
+- Axis2 binary distribution.  For example: AXIS2_HOME=C:\temp\Axis2\axis2-SNAPSHOT
+- Java5 JDK.  For example: JAVA_HOME=c:\java\java5 
 
 (b) Copy the service implementation JAR file from the sample target directory to the appropriate 
 Axis2 repository directory, %AXIS2_HOME%\repository\servicejars.  Note that JAR files in this 
@@ -95,14 +95,14 @@ within the JARs; no deployment descriptor is required.
 If the repository directory does not exist, create it first, then copy the service 
 implementation JAR:
 	mkdir %AXIS2_HOME%\repository\servicejars
-	copy target\jaxws-addressbook-1.6.0.jar %AXIS2_HOME%\repository\servicejars
+	copy target\jaxws-addressbook-SNAPSHOT.jar %AXIS2_HOME%\repository\servicejars
 
 (c) Start the axis2 server.  This will deploy the JAX-WS service implementation.
 	cd %AXIS2_HOME%
 	bin\axis2server.bat
 
 You should see a message such as:
-[INFO] Deploying artifact : jaxws-addressbook-1.6.0.jar
+[INFO] Deploying artifact : jaxws-addressbook-SNAPSHOT.jar
 [INFO] Deploying JAXWS annotated class org.apache.axis2.jaxws.addressbook.AddressBookImpl as a service - AddressBookImplService.AddressBookImplPort
 
 (d) From another window with the environment setup, in the jaxws-addressbook samples directory run 

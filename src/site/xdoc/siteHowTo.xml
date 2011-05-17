@@ -43,8 +43,8 @@ get a <a href=
 "https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk">commiter
 check out.</a></p>
 <h2>Building the Site</h2>
-<p>cd to modules/documentation and type <i>mvn install</i> The built
-site will be available under target/site.</p>
+<p>During maven releases site should have been generated on target/site directory and no special action required. Further <a href="release-process.html">release process guide </a> describes necessary steps to update Axis2 site with your new modifications.</p>
+<p>In case if you want to generate site only you could run <i>mvn site</i> on root project of your local copy.</p>
 <h2>FAQ</h2>
 <ol>
 <li>How can I update a document in the site ?<br />

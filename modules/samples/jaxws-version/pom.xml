@@ -17,17 +17,13 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.6.0</version>
-        <relativePath>../../parent/pom.xml</relativePath>
-    </parent>
-    <artifactId>version</artifactId>
-    <name>Apache Axis2 - JAXWS Version Service</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>   
+    <groupId>org.apache.axis2.examples</groupId>      
+    <artifactId>jaxws-version</artifactId>
+    <version>1.6.0</version>
+    <packaging>jar</packaging>
+    <name>Apache Axis2 -JAXWS Version Service</name>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <resources>
@@ -53,4 +49,14 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshot Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
 </project>

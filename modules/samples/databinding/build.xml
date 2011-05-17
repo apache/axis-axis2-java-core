@@ -182,6 +182,8 @@
              dest="lib/stax-utils-20060915.jar" verbose="true"/>
         <get src="http://dist.codehaus.org/castor/1.0.4/castor-1.0.4.jar" dest="lib/castor-1.0.4.jar"
              verbose="true"/>
+        <get src="http://repo2.maven.org/maven2/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar"
+             dest="lib/xercesImpl-2.9.1.jar" verbose="true"/>
     </target>
 
     <target name="clean">

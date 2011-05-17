@@ -94,6 +94,12 @@
             <id>everything</id>
             <modules>
                 <module>modules/distribution</module>
+                <module>modules/samples/java_first_jaxws</module>
+                <module>modules/samples/jaxws-addressbook</module>
+                <module>modules/samples/jaxws-calculator</module>
+                <module>modules/samples/jaxws-interop</module>
+                <module>modules/samples/jaxws-samples</module>
+                <module>modules/samples/jaxws-version</module>
             </modules>
         </profile>
         <profile>
@@ -488,6 +494,12 @@
             <email>ruwan AT apache.org</email>
             <url>http://www.linkedin.com/in/ruwanlinton</url>
         </developer>
+        <developer>
+            <name>Sagara Gunathunga</name>
+            <id>sagara</id>
+            <email>sagara AT apache.org</email>
+            <organization>WSO2</organization>
+        </developer>
     </developers>
     <contributors>
         <contributor>
@@ -539,14 +551,6 @@
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.0</developerConnection>
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.6.0</url>
     </scm>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>apache.snapshots.https</id>
-            <name>${distMgmtSnapshotsName}</name>
-            <url>${distMgmtSnapshotsUrl}</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
     <properties>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
@@ -613,7 +617,7 @@
                         </goals>
                         <configuration>
                             <resourceBundles>
-                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${pom.version}</resourceBundle>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${project.version}</resourceBundle>
                             </resourceBundles>
                         </configuration>
                     </execution>

@@ -66,7 +66,7 @@
         <url>http://issues.apache.org/jira/browse/AXIS2</url>
     </issueManagement>
     <properties>
-        <neethi.version>2.0.4</neethi.version>
+        <neethi.version>2.0.5</neethi.version>
         <woden.version>1.0M9</woden.version>
         <axiom.version>1.2.11</axiom.version>
         <xmlschema.version>1.4.7</xmlschema.version>
@@ -230,6 +230,12 @@
             <id>robertlazarski</id>
             <email>robertlazarski AT gmail.com</email>
             <organization>Brazil Outsource</organization>
+        </developer>
+        <developer>
+            <name>Senaka Fernando</name>
+            <id>senaka</id>
+            <email>senaka AT wso2.com</email>
+            <organization>WSO2</organization>
         </developer>
         <developer>
             <name>Steve Loughran</name>
@@ -942,14 +948,6 @@
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.0/modules/parent</developerConnection>
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.6.0/modules/parent</url>
     </scm>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>apache.snapshots.https</id>
-            <name>${distMgmtSnapshotsName}</name>
-            <url>${distMgmtSnapshotsUrl}</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
     <build>
         <pluginManagement>
             <plugins>
@@ -963,6 +961,14 @@
                          the runOnlyAtExecutionRoot parameter which is not supported in earlier
                          versions. -->
                     <version>2.2-beta-5</version>
+                    <configuration>
+                        <!-- Workaround for MASSEMBLY-422 / MASSEMBLY-449 -->
+                        <archiverConfig>
+                            <fileMode>420</fileMode> <!-- 420(dec) = 644(oct) -->
+                            <directoryMode>493</directoryMode> <!-- 493(dec) = 755(oct) -->
+                            <defaultDirectoryMode>493</defaultDirectoryMode>
+                        </archiverConfig>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>

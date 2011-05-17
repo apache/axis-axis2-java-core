@@ -443,7 +443,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 if (AxisFault.class.getName().equals(extype.getName())) {
                     continue;
                 }
-                String partQname = jMethod.getName() + getSimpleClassName(extype);
+                String partQname = this.service.getName() + getSimpleClassName(extype);
                 methodSchemaType = createSchemaTypeForFault(partQname);
                 QName elementName =
                         new QName(this.schemaTargetNameSpace, partQname, this.schema_namespace_prefix);
@@ -473,7 +473,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     continue;
                 }
                 AxisMessage faultMessage = new AxisMessage();
-                faultMessage.setName(jMethod.getName() + getSimpleClassName(extype));
+                faultMessage.setName(this.service.getName() + getSimpleClassName(extype));
                 faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
                 axisOperation.setFaultMessages(faultMessage);
             }
