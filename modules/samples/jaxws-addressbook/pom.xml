@@ -17,13 +17,12 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2.samples</groupId>
     <artifactId>jaxws-addressbook</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.6.0</version>
     <name>JAXWS Addressbook Service</name>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -63,20 +62,19 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
-                                <property name="schema.output.base.dir" value="target/schema"/>
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src"/>
-                                <property name="schema.generated.classes.dir"
-                                          value="${schema.output.base.dir}/classes"/>
+                                <property name="schema.output.base.dir" value="target/schema" />
+                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
+                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
                                 <!-- make the dirs -->
-                                <mkdir dir="${schema.output.base.dir}"/>
-                                <mkdir dir="${schema.generated.src.dir}"/>
-                                <mkdir dir="${schema.generated.classes.dir}"/>
+                                <mkdir dir="${schema.output.base.dir}" />
+                                <mkdir dir="${schema.generated.src.dir}" />
+                                <mkdir dir="${schema.generated.classes.dir}" />
                                 <!-- Run JAXB schema compiler with designated schemas -->
                                 <echo>Generating java from echo.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} src/AddressBookEntry.xsd"/>
+                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath location="${compiled.classes.dir}" />
+                                    <arg line="-d ${schema.generated.src.dir} src/AddressBookEntry.xsd" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -131,7 +129,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>1.6.1-SNAPSHOT</version>
+            <version>1.6.0</version>
         </dependency>
     </dependencies>
     <repositories>
