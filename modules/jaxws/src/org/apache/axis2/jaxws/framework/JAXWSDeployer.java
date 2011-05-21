@@ -167,9 +167,9 @@ public class JAXWSDeployer extends AbstractDeployer {
                 AxisServiceGroup serviceGroup = deployClasses(groupName, location, classLoader, classList);
                 
                 if(serviceGroup == null) {
-                    String msg = "Error:\n No @WebService annotated service implementations found in the jar: " +
+                    String msg = "Error while deploying JAX-WS jar: " +
                             location.toString() +
-                            ". Service deployment failed.";
+                            ". JAX-WS Service deployment failed.";
                     log.error(msg);
                     axisConfig.getFaultyServices().
                             put(deploymentFileData.getFile().getAbsolutePath(), msg);
