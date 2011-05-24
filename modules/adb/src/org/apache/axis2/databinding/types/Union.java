@@ -107,6 +107,8 @@ public abstract class Union implements Serializable {
             setObject(new NonNegativeInteger(value));
         } else if ("nonPositiveInteger".equals(type)) {
             setObject(new NonPositiveInteger(value));
+        } else if ("duration".equals(type)) {
+            setObject(ConverterUtil.convertToDuration(value));
         } else {
             throw new RuntimeException("Object not found");
         }
