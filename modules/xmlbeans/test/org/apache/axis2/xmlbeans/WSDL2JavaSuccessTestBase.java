@@ -39,7 +39,7 @@ import java.util.Map;
 public abstract class WSDL2JavaSuccessTestBase extends TestCase {
 
     public static final String OUTPUT_LOCATION_BASE =
-            System.getProperty("basedir", ".") + "/out_put_classes";
+            System.getProperty("basedir", ".") + "/target/out_put_classes";
     public static final String OUTPUT_LOCATION_PREFIX = "/test";
     protected static int folderCount = 0;
     public static final String WSDL_BASE_DIR =
@@ -63,7 +63,7 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase {
             deleteDir(outputFile);
             outputFile.mkdir();
         } else {
-            outputFile.mkdir();
+            outputFile.mkdirs();
         }
     }
 
