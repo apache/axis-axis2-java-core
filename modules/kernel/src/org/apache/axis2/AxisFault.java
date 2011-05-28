@@ -37,6 +37,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -86,7 +87,7 @@ public class AxisFault extends RemoteException {
     private List<QName> faultSubCodes;
     private String faultNode;
     private String faultRole;
-    private OMElement detail;
+    private List<OMElement> details;
 
     private SOAPFaultCode soapFaultCode;
     private SOAPFaultReason soapFaultReason;
@@ -222,11 +223,10 @@ public class AxisFault extends RemoteException {
 //                cause = new Exception(exceptionElement.getText());
 //            }
 
-            // TODO - Wha? Details can have multiple elements, why take the first child here?
-            // TODO - Review the API for details
-            // setting the first child element of the fault detail as this.detail
-            this.detail = soapFaultDetail.getFirstElement();
-
+            details = new ArrayList<OMElement>();
+            for (Iterator<?> it = soapFaultDetail.getChildElements(); it.hasNext(); ) {
+                details.add((OMElement)it.next());
+            }
         }
 
         if (soapFaultReason != null) {
@@ -431,12 +431,23 @@ public class AxisFault extends RemoteException {
     }
 
     /**
-     * Get the current fault detail
-     *
-     * @return om element
+     * Get the current fault detail. If the fault has several detail elements, only the first one is
+     * returned.
+     * 
+     * @return the (first) detail element, or <code>null</code> if there is no detail element
      */
     public OMElement getDetail() {
-        return detail;
+        return details == null || details.isEmpty() ? null : details.get(0);
+    }
+
+    /**
+     * Get the SOAP fault detail elements.
+     * 
+     * @return the list of SOAP fault detail elements, or <code>null</code> if no detail elements
+     *         have been set for this fault
+     */
+    public List<OMElement> getDetails() {
+        return details;
     }
 
     public QName getFaultCode() {
@@ -503,7 +514,18 @@ public class AxisFault extends RemoteException {
      * @param detail an OMElement which MUST be 
      */
     public void setDetail(OMElement detail) {
-        this.detail = detail;
+        details = new ArrayList<OMElement>();
+        details.add(detail);
+    }
+
+    /**
+     * Set the SOAP fault details.
+     * 
+     * @param details
+     *            a list of elements for the SOAP fault details
+     */
+    public void setDetails(List<OMElement> details) {
+        this.details = details;
     }
 
     public void setFaultCode(QName soapFaultCode) {
