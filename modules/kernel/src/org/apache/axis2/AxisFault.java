@@ -77,13 +77,13 @@ public class AxisFault extends RemoteException {
     /**
      * assume headers are not used very often
      */
-    private List headers = new ArrayList(0);
+    private List<SOAPHeaderBlock> headers = new ArrayList<SOAPHeaderBlock>(0);
 
     private String message;
 
-    private List faultReasonList = new ArrayList(1);
+    private List<FaultReason> faultReasonList = new ArrayList<FaultReason>(1);
     private QName faultCode;
-    private List faultSubCodes;
+    private List<QName> faultSubCodes;
     private String faultNode;
     private String faultRole;
     private OMElement detail;
@@ -147,7 +147,7 @@ public class AxisFault extends RemoteException {
      * @param faultReason - the reason for the fault. The language will be defaulted to 'en'
      * @param cause embedded fault which caused this one
      */
-    public AxisFault(QName faultCode,List faultSubCodes, String faultReason, Throwable cause) {
+    public AxisFault(QName faultCode, List<QName> faultSubCodes, String faultReason, Throwable cause) {
         this(faultReason, cause);
         setFaultCode(faultCode);
         setFaultSubCodes(faultSubCodes);
@@ -239,7 +239,7 @@ public class AxisFault extends RemoteException {
 
             SOAPFaultSubCode subCode = soapFaultCode.getSubCode();
             if (subCode != null) {
-                faultSubCodes = new ArrayList();
+                faultSubCodes = new ArrayList<QName>();
                 while (subCode != null) {
                     faultSubCodes.add(subCode.getValue().getTextAsQName());
                     subCode = subCode.getSubCode();
@@ -378,7 +378,7 @@ public class AxisFault extends RemoteException {
      */
     public String getReason() {
         if (faultReasonList.size() >= 1) {
-            return ((FaultReason) faultReasonList.get(0)).getText();
+            return faultReasonList.get(0).getText();
         } else if (soapFaultReason != null) {
             return soapFaultReason.getText();
         }
@@ -391,7 +391,7 @@ public class AxisFault extends RemoteException {
      *
      * @return iterator
      */
-    public ListIterator headerIterator() {
+    public ListIterator<SOAPHeaderBlock> headerIterator() {
         return headers.listIterator();
     }
 
@@ -400,7 +400,7 @@ public class AxisFault extends RemoteException {
      *
      * @return the headers for this fault
      */
-    public List headers() {
+    public List<SOAPHeaderBlock> headers() {
         return headers;
     }
 
@@ -420,7 +420,7 @@ public class AxisFault extends RemoteException {
         } else if (e instanceof UndeclaredThrowableException) {
             Throwable t = ((UndeclaredThrowableException) e).getCause();
             if (t instanceof Exception) {
-                e = (Exception) t;
+                e = t;
             }
         }
         if (e instanceof AxisFault) {
@@ -443,7 +443,7 @@ public class AxisFault extends RemoteException {
         return faultCode;
     }
 
-    public List getFaultSubCodes() {
+    public List<QName> getFaultSubCodes() {
         return faultSubCodes;
     }
 
@@ -510,7 +510,7 @@ public class AxisFault extends RemoteException {
         this.faultCode = soapFaultCode;
     }
     
-    public void setFaultSubCodes(List faultSubCodes) {
+    public void setFaultSubCodes(List<QName> faultSubCodes) {
         this.faultSubCodes = faultSubCodes;
     }
     
