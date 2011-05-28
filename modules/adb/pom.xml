@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.5-SNAPSHOT</version>
+        <version>1.5.5</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -32,9 +32,9 @@
     <name>Apache Axis2 - Data Binding</name>
     <description>Axis2 Data Binding module</description>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/adb</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/adb</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/adb</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.5/modules/adb</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.5/modules/adb</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.5/modules/adb</url>
     </scm>
     <dependencies>
         <dependency>

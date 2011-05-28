@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.5-SNAPSHOT</version>
+        <version>1.5.5</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -230,9 +230,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/distribution</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/distribution</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/distribution</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.5/modules/distribution</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.5/modules/distribution</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.5/modules/distribution</url>
     </scm>
     <build>
         <plugins>
@@ -337,11 +337,11 @@
                                 <unzip src="${project.build.directory}/axis2-${project.version}-bin.zip" dest="${project.build.directory}" />
                                 
                                 <!-- Test of the databinding sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding"/>
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding" />
                                 
                                 <!-- Test of the mtom sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.service"/>
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.client"/>
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.service" />
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.client" />
                             </tasks>
                         </configuration>
                     </execution>
