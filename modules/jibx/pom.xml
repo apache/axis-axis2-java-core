@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.5</version>
+        <version>1.5.6-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-jibx</artifactId>
@@ -68,9 +68,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.5/modules/jibx</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.5/modules/jibx</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.5/modules/jibx</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/jibx</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/jibx</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/jibx</url>
     </scm>
     <build>
         <resources>
