@@ -37,7 +37,14 @@
 question and answers published on various Web sites on the Apache
 Axis2 engine. These references will prove to be a great help in
 boosting your knowledge on Axis2.</p>
-<h2>Books:</h2><ul><li><a class="externalLink" href="http://www.packtpub.com/article/create-quality-web-services-with-quicktstart-apache-axis2">
+<h2>Books:</h2>
+<ul>
+<li><a class="externalLink" href="https://www.packtpub.com/apache-axis2-web-services/book">
+Apache Axis2 Web Services</a>
+- By Deepal Jayasinghe and Afkham Azeez</li>
+<img alt="Apache Axis2 Web Services" src="https://www.packtpub.com/sites/default/files/imagecache/productview/1568_Apache%20Axis2cov.jpg"></img>
+
+<li><a class="externalLink" href="http://www.packtpub.com/article/create-quality-web-services-with-quicktstart-apache-axis2">
 Quicktstart Apache Axis2</a>
 - By Deepal Jayasinghe</li>
 <img alt="Quicktstart Apache Axis2" src="http://images.packtpub.com/images/100x123/1847192866.png"></img>
