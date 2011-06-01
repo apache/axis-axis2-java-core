@@ -276,6 +276,7 @@ public class JAXWSDeployer extends AbstractDeployer {
             axisService.setFileName(serviceLocation);
             axisService.setClassLoader(classLoader);
             axisService.addParameter(new Parameter(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER, classLoader));
+            axisService.addParameter(new Parameter("modifyUserWSDLPortAddress", "true"));
         }
         return axisService;
     }
