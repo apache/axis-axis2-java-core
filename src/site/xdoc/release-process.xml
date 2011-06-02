@@ -91,6 +91,7 @@
         <section name="Performing a release">
             <p><strong>Note:</strong> performing the release requires at least Maven 2.1.0. The recommended version is 2.2.1.</p>
             <subsection name="Preparation">
+                <p>Verify that the code meets the basic requirements for being releasable:</p>
                 <ol>
                     <li>Check the consistency between the metadata in <tt>pom.xml</tt> and <tt>modules/parent/pom.xml</tt>.
                     Since the root and parent POMs are different, some of the metadata is duplicated and needs to be synchronized
@@ -102,9 +103,16 @@
                     <pre>mvn clean install -Papache-release -Dmaven.test.skip=true</pre></li>
                     <li>Check that the source distribution is buildable.</li>
                     <li>Check that the source tree is buildable with an empty local Maven repository.</li>
-                    <li>Update the <tt>release-notes.html</tt> and <tt>src/site/xdoc/index.xml</tt> files with a description
-                    of the release.</li>
-                    <li>Add an entry for the release in <tt>src/site/xdoc/download.xml</tt>.</li>
+                </ol>
+                <p>If any problems are detected, they should be fixed on the trunk (except for issues specific to the
+                release branch) and then merged to the release branch.</p>
+                <p>Next update the relevant documents for the new release:</p>
+                <ol>
+                    <li>Update the <tt>release-notes.html</tt> file on the release branch (since the content of this file is replaced
+                    with every release, there is no need to keep it in sync with the trunk, except if the template changes).</li>
+                    <li>Update the <tt>src/site/xdoc/index.xml</tt> file with a description of the release and add an entry for
+                    the release in <tt>src/site/xdoc/download.xml</tt>. To avoid extra work for the RM doing the next major release,
+                    these changes should be done on the trunk first and then merged to the release branch.</li>
                 </ol>
             </subsection>
             <subsection name="Pre-requisites">
