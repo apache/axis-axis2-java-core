@@ -1277,7 +1277,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         } else {
                             throw new WSDLProcessingException(
                                     "No element type is defined for message " +
-                                    wsdl4jMessage.getQName().getLocalPart());
+                                    wsdl4jMessage.getQName().getLocalPart() + " (see WS-I BP 1.0, R2204)");
                         }
                     } else {
                         // user has specified more than one parts with out specifing a part in
@@ -1312,8 +1312,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                                                              operation);
                         } else {
                             throw new WSDLProcessingException(
-                                    "No element type is defined for message" +
-                                    wsdl4jMessage.getQName().getLocalPart());
+                                    "No element type is defined for message " +
+                                    wsdl4jMessage.getQName().getLocalPart() + " (see WS-I BP 1.0, R2204)");
                         }
                     } else {
                         throw new WSDLProcessingException("Missing part named "
