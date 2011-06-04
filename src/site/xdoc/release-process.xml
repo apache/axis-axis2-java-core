@@ -112,7 +112,12 @@
                     with every release, there is no need to keep it in sync with the trunk, except if the template changes).</li>
                     <li>Update the <tt>src/site/xdoc/index.xml</tt> file with a description of the release and add an entry for
                     the release in <tt>src/site/xdoc/download.xml</tt>. To avoid extra work for the RM doing the next major release,
-                    these changes should be done on the trunk first and then merged to the release branch.</li>
+                    these changes should be done on the trunk first and then merged to the release branch.
+                    If the release is a maintenance release, then the previous release from that branch must be prepared
+                    for archiving by changing the links in the download page. This is necessary to conform to the
+                    <a href="http://www.apache.org/dev/release.html#when-to-archive">release archiving policy</a>. If the release
+                    is a major release, then this should be done with the release from the oldest branch, unless it is expected
+                    that users will still continue to download and use that release.</li>
                 </ol>
             </subsection>
             <subsection name="Pre-requisites">
@@ -228,6 +233,7 @@ svn update</pre></li>
                 <ol>
                     <li>Update the DOAP file (<tt>etc/doap_Axis2.rdf</tt>) and add a new entry for the release.</li>
                     <li>Update the status of the release version in JIRA.</li>
+                    <li>Remove archived releases from <tt>/www/www.apache.org/dist/axis</tt> on <tt>people.apache.org</tt>.</li>
                 </ol>
             </subsection>
         </section>
