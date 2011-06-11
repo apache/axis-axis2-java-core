@@ -76,6 +76,32 @@
                         <th>Distribution</th>
                     </tr>
                     <tr>
+                        <td><a name="1_5_5"/><strong>1.5.5</strong></td>
+                        <td>29 - May - 2011</td>
+                        <td>1.5.5 Release (Mirrored)</td>
+                        <td>
+                            Binary Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.5.5/axis2-1.5.5-bin.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-bin.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-bin.zip.asc">PGP</a>
+                            <br/>
+                            Source Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.5.5/axis2-1.5.5-src.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-src.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-src.zip.asc">PGP</a>
+                            <br/>
+                            WAR Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.5.5/axis2-1.5.5-war.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-war.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-war.zip.asc">PGP</a>
+                            <br/>
+                            Documents Distribution
+                            <a href="[preferred]/axis/axis2/java/core/1.5.5/axis2-1.5.5-docs.zip">zip</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-docs.zip.md5">MD5</a> |
+                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.5/axis2-1.5.5-docs.zip.asc">PGP</a>
+                        </td>
+                    </tr>
+                    <tr>
                         <td><a name="1_6_0"/><strong>1.6.0</strong></td>
                         <td>17 - May - 2011</td>
                         <td>1.6.0 Release (Mirrored)</td>
@@ -104,27 +130,27 @@
                     <tr>
                         <td><a name="1_5_4"/><strong>1.5.4</strong></td>
                         <td>19 - Dec - 2010</td>
-                        <td>1.5.4 Release (Mirrored)</td>
+                        <td>1.5.4 Release (Archived)</td>
                         <td>
                             Binary Distribution
-                            <a href="[preferred]/axis/axis2/java/core/1.5.4/axis2-1.5.4-bin.zip">zip</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-bin.zip.md5">MD5</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-bin.zip.asc">PGP</a>
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-bin.zip">zip</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-bin.zip.md5">MD5</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-bin.zip.asc">PGP</a>
                             <br/>
                             Source Distribution
-                            <a href="[preferred]/axis/axis2/java/core/1.5.4/axis2-1.5.4-src.zip">zip</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-src.zip.md5">MD5</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-src.zip.asc">PGP</a>
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-src.zip">zip</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-src.zip.md5">MD5</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-src.zip.asc">PGP</a>
                             <br/>
                             WAR Distribution
-                            <a href="[preferred]/axis/axis2/java/core/1.5.4/axis2-1.5.4-war.zip">zip</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-war.zip.md5">MD5</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-war.zip.asc">PGP</a>
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-war.zip">zip</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-war.zip.md5">MD5</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-war.zip.asc">PGP</a>
                             <br/>
                             Documents Distribution
-                            <a href="[preferred]/axis/axis2/java/core/1.5.4/axis2-1.5.4-docs.zip">zip</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-docs.zip.md5">MD5</a> |
-                            <a href="http://www.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-docs.zip.asc">PGP</a>
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-docs.zip">zip</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-docs.zip.md5">MD5</a> |
+                            <a href="http://archive.apache.org/dist/axis/axis2/java/core/1.5.4/axis2-1.5.4-docs.zip.asc">PGP</a>
                         </td>
                     </tr>
                     <tr>
