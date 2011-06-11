@@ -93,6 +93,7 @@ public class MultirefHelper {
                 while (itrChild.hasNext()) {
                     Object obj = itrChild.next();
                     if (obj instanceof OMNode) {
+                        itrChild.remove();
                         omElement.addChild((OMNode)obj);
                     }
                 }
@@ -245,7 +246,8 @@ public class MultirefHelper {
                     OMNode omNode = null;
                     for (Iterator iter = clonedReferenceElement.getChildren(); iter.hasNext();) {
                         omNode = (OMNode) iter.next();
-                        elementToProcess.addChild(omNode.detach());
+                        iter.remove();
+                        elementToProcess.addChild(omNode);
                     }
 
                     // add attributes

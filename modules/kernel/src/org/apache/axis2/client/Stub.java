@@ -212,6 +212,7 @@ public abstract class Stub {
         // add child elements
         for (Iterator iter = omElementToadd.getChildren(); iter.hasNext();){
              omNode = (OMNode) iter.next();
+             iter.remove();
              soapHeaderBlock.addChild(omNode);
         }
 
