@@ -21,11 +21,13 @@ package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
 import org.apache.axis2.saaj.util.SAAJDataSource;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.activation.DataHandler;
+import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
@@ -45,6 +47,8 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -187,8 +191,7 @@ public class SOAPMessageTest extends Assert {
         }
     }
 
-    // TODO: check why this fails with Sun's SAAJ implementation
-    @Test
+    @Validated @Test
     public void testGetContent() {
         try {
             MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -201,7 +204,7 @@ public class SOAPMessageTest extends Assert {
             AttachmentPart ap;
 
             InputStream inputStream = TestUtils.getTestFile("attach.xml");
-            ap = msg.createAttachmentPart(inputStream, "text/xml");
+            ap = msg.createAttachmentPart(new StreamSource(inputStream), "text/xml");
             DataHandler dh =
                     new DataHandler(new SAAJDataSource(inputStream, 1000, "text/xml", true));
 
@@ -229,6 +232,67 @@ public class SOAPMessageTest extends Assert {
         }
     }
 
+    @Validated @Test
+    public void testContentTypeGeneration() throws Exception{        
+        MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage msg = fac.createMessage();
+        InputStream inputStream = TestUtils.getTestFile("attach.xml");
+        AttachmentPart ap = msg.createAttachmentPart(new StreamSource(inputStream), "text/xml");        
+        msg.addAttachmentPart(ap);
+        msg.saveChanges();
+        assertNotNull(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE));        
+        String contentTypeValue = msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0];
+        ContentType contentType = new ContentType(contentTypeValue);
+        assertNotNull("boundary parameter should exist in the content-type header", contentType.getParameter("boundary"));
+        //start parameter is not checked, due to it is optional parameter, and seems RI will not add this value
+        //assertNotNull("start parameter should exist in the content-type header", contentType.getParameter("start"));
+        assertNotNull("type parameter should exist in the content-type header", contentType.getParameter("type"));
+        assertEquals(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType.getBaseType());        
+    }
+
+    @Validated @Test
+    public void testCreateMessageWithMimeHeaders() throws Exception{
+        MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage msg = fac.createMessage();               
+        InputStream inputStream = TestUtils.getTestFile("attach.xml");
+        AttachmentPart ap = msg.createAttachmentPart(new StreamSource(inputStream), "text/xml");        
+        msg.addAttachmentPart(ap);
+        msg.saveChanges();
+        ContentType contentType = new ContentType(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0]);
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        msg.writeTo(out);
+        SOAPMessage msg2 = fac.createMessage(msg.getMimeHeaders(), new ByteArrayInputStream(out.toByteArray()));
+        msg2.saveChanges();
+        ContentType contentType2 = new ContentType(msg2.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0]);
+
+        assertEquals(contentType.getBaseType(), contentType2.getBaseType());
+        assertEquals(contentType.getParameter("boundary"), contentType2.getParameter("boundary"));
+        assertEquals(contentType.getParameter("type"), contentType2.getParameter("type"));
+        //start parameter is not checked, due to it is an optional parameter, and seems RI will not add this value
+        //assertEquals(contentType.getParameter("start"), contentType2.getParameter("start"));
+    }
+    
+    @Validated @Test
+    public void testContentTypeUpdateWithAttachmentChanges() throws Exception{
+        MessageFactory fac = MessageFactory.newInstance();
+        SOAPMessage msg = fac.createMessage();               
+        InputStream inputStream = TestUtils.getTestFile("attach.xml");
+        AttachmentPart ap = msg.createAttachmentPart(new StreamSource(inputStream), "text/xml");        
+        msg.addAttachmentPart(ap);
+        msg.saveChanges();
+        
+        assertNotNull(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE));
+        ContentType contentType = new ContentType(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0]);        
+        assertEquals(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType.getBaseType());
+        
+        msg.removeAllAttachments();
+        msg.saveChanges();
+
+        assertNotNull(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE));
+        contentType = new ContentType(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0]);        
+        assertEquals("text/xml", contentType.getBaseType());
+    }
 
     private StringBuffer copyToBuffer(InputStream inputStream) {
         if (inputStream == null) {
