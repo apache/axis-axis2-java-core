@@ -109,7 +109,7 @@
     <target name="generate.all" depends="generate.service, generate.client"/>
 
     <target name="run.client" depends="generate.client">
-        <java classname="samples.quickstart.clients.ADBClient">
+        <java classname="samples.quickstart.clients.ADBClient" fork="true">
             <classpath refid="client.class.path" />
         </java>
     </target>
