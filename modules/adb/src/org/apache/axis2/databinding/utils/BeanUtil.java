@@ -670,7 +670,7 @@ public class BeanUtil {
             if (genericParameterTypes != null) {
                 genericType = genericParameterTypes[count];
             }
-            omElement = ProcessElement(classType, omElement, helper, parts,
+            omElement = processElement(classType, omElement, helper, parts,
                                        currentLocalName, retObjs, count, objectSupplier, genericType);
             while (omElement != null) {
                 count++;
@@ -696,7 +696,7 @@ public class BeanUtil {
                 if (genericParameterTypes != null) {
                     genericType = genericParameterTypes[count];
                 }
-                omElement = ProcessElement((Class) javaTypes[count], omElement,
+                omElement = processElement((Class) javaTypes[count], omElement,
                                            helper, parts, omElement.getLocalName(), retObjs, count,
                                            objectSupplier, genericType);
             }
@@ -715,7 +715,7 @@ public class BeanUtil {
         return retObjs;
     }
 
-    private static OMElement ProcessElement(Class classType, OMElement omElement,
+    private static OMElement processElement(Class classType, OMElement omElement,
                                             MultirefHelper helper, Iterator parts,
                                             String currentLocalName,
                                             Object[] retObjs,
@@ -766,7 +766,7 @@ public class BeanUtil {
         return null;
     }
 
-    private static List<Object> ProcessGenericsElement(Class classType, OMElement omElement,
+    private static List<Object> processGenericsElement(Class classType, OMElement omElement,
                                                MultirefHelper helper, Iterator parts,
                                                ObjectSupplier objectSupplier,
                                                Type genericType) throws AxisFault {
@@ -836,7 +836,7 @@ public class BeanUtil {
                         Type[] parameterArgTypes = aType.getActualTypeArguments();
                         Type parameter = parameterArgTypes[0];
                         Iterator parts = omElement.getChildElements();
-                        return ProcessGenericsElement((Class) parameter, omElement, helper, parts, objectSupplier, generictype);
+                        return processGenericsElement((Class) parameter, omElement, helper, parts, objectSupplier, generictype);
                     }
                     return SimpleTypeMapper.getArrayList(omElement);
                 } else if (SimpleTypeMapper.isDataHandler(classType)) {

@@ -39,10 +39,10 @@ import java.net.URI;
 
 public class TypeTable {
     
-    private static HashMap  simpleTypetoxsd;
+    private static HashMap<String,QName>  simpleTypetoxsd;
     public static final QName ANY_TYPE = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs");
 
-    private HashMap complexTypeMap;
+    private HashMap<String,QName> complexTypeMap;
 
     /**
      * this map is used to keep the class names with the Qnames.
@@ -57,8 +57,8 @@ public class TypeTable {
     public TypeTable() {
         //complex type table is resetted every time this is
         //instantiated
-        complexTypeMap = new HashMap();
-        this.qNameToClassMap = new HashMap();
+        complexTypeMap = new HashMap<String,QName>();
+        this.qNameToClassMap = new HashMap<QName, String>();
     }
 
     /* statically populate the simple type map  - this is not likely to
@@ -70,7 +70,7 @@ public class TypeTable {
 
     /* populate the simpletype hashmap */
     private static void populateSimpleTypes() {
-        simpleTypetoxsd = new HashMap();
+        simpleTypetoxsd = new HashMap<String,QName>();
         //todo pls use the types from org.apache.ws.commons.schema.constants.Constants
         simpleTypetoxsd.put("int",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "int", "xs"));
@@ -239,7 +239,7 @@ public class TypeTable {
      * Return the complex type map
      * @return  the map with complex types
      */
-    public Map getComplexSchemaMap() {
+    public Map<String,QName> getComplexSchemaMap() {
         return complexTypeMap;
     }
 
