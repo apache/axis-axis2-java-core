@@ -45,7 +45,6 @@ import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Collection;
 
 public class RPCUtil {
@@ -84,6 +83,7 @@ public class RPCUtil {
                     child = fac.createOMElement(RETURN_WRAPPER, null);
                 }
                 child.addChild(fac.createOMText(child, SimpleTypeMapper.getStringValue(resObject)));
+                addInstanceTypeInfo(fac, child, method, resObject, typeTable);               
                 bodyContent.addChild(child);
             } else {
                 bodyContent = fac.createOMElement(
@@ -115,6 +115,7 @@ public class RPCUtil {
                                                  Object resObject,
                                                  OMElement bodyContent,
                                                  OMNamespace ns,
+                                                 Method method,
                                                  SOAPEnvelope envelope,
                                                  boolean qualified,
                                                  TypeTable typeTable,
@@ -127,6 +128,7 @@ public class RPCUtil {
         } else if (SimpleTypeMapper.isSimpleType(resObject)) {
             bodyContent = fac.createOMElement(
                     partName, ns);
+            addInstanceTypeInfo(fac, bodyContent, method, resObject, typeTable); 
             bodyContent.addChild(fac.createOMText(bodyContent,
                     SimpleTypeMapper.getStringValue(resObject)));
         } else {
@@ -145,6 +147,15 @@ public class RPCUtil {
             envelope.getBody().addChild(bodyContent);
         }
     }
+    
+	public static void processObjectAsDocLitBare(SOAPFactory fac,
+			Object resObject, OMElement bodyContent, OMNamespace ns,
+			SOAPEnvelope envelope, boolean qualified, TypeTable typeTable,
+			String partName) {
+		processObjectAsDocLitBare(fac, resObject, bodyContent, ns, null,
+				envelope, qualified, typeTable, partName);
+
+	}
 
     public static Object[] processRequest(OMElement methodElement,
                                           Method method, ObjectSupplier objectSupplier, String[] parameterNames)
@@ -234,6 +245,7 @@ public class RPCUtil {
 
     public static void processResonseAsDocLitBare(Object resObject,
                                                   AxisService service,
+                                                  Method method,
                                                   SOAPEnvelope envelope,
                                                   SOAPFactory fac,
                                                   OMNamespace ns,
@@ -311,6 +323,7 @@ public class RPCUtil {
                                     resObject,
                                     bodyContent,
                                     ns,
+                                    method,
                                     envelope,
                                     service.isElementFormDefault(),
                                     service.getTypeTable(),
@@ -320,6 +333,7 @@ public class RPCUtil {
                                     resObject,
                                     bodyContent,
                                     ns,
+                                    method,
                                     envelope,
                                     service.isElementFormDefault(),
                                     null,
@@ -331,7 +345,16 @@ public class RPCUtil {
         }
         outMessage.setEnvelope(envelope);
     }
+    
+	public static void processResonseAsDocLitBare(Object resObject,
+			AxisService service, SOAPEnvelope envelope, SOAPFactory fac,
+			OMNamespace ns, OMElement bodyContent, MessageContext outMessage)
+			throws Exception {
+		processResonseAsDocLitBare(resObject, service, null, envelope, fac, ns,
+				bodyContent, outMessage);
 
+	}
+	
     /**
      * This method is use to to crete the reposne when , the return value is null
      *
@@ -469,4 +492,14 @@ public class RPCUtil {
         }
         outMessage.setEnvelope(envelope);
     }
+    
+	private static void addInstanceTypeInfo(SOAPFactory fac, OMElement element,
+			Method method, Object resObject, TypeTable typeTable) {
+		Class returnType = method.getReturnType();
+		// add instanceTypeInfo only if return type is java.lang.Object
+		if (SimpleTypeMapper.isObjectType(returnType)) {
+			BeanUtil.addInstanceTypeAttribute(fac, element, resObject,
+					typeTable);
+		}
+	}
 }

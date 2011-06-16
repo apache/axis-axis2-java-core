@@ -123,7 +123,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             Parameter generateBare = service.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
             if (generateBare!=null && "true".equals(generateBare.getValue())) {
                 RPCUtil.processResonseAsDocLitBare(resObject, service,
-                        envelope, fac, ns,
+                		method, envelope, fac, ns,
                         bodyContent, outMessage);
             } else {
                 RPCUtil.processResponseAsDocLitWrapped(resObject, service,

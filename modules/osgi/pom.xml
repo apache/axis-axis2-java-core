@@ -112,6 +112,7 @@
                             javax.xml.transform;resolution:=optional,
                             javax.xml.transform.dom;resolution:=optional,
                             javax.xml.transform.stream;resolution:=optional,
+                            javax.xml.datatype.*,
                             org.apache.axiom.*,
                             org.apache.commons.fileupload.*,
                             org.apache.commons.httpclient.*,

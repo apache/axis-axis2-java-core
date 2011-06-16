@@ -23,6 +23,7 @@ import org.apache.axiom.om.*;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -33,6 +34,8 @@ import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
 
+import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
 import java.util.List;
 
 
@@ -66,7 +69,6 @@ public class BeanUtilTest extends TestCase {
 
         MessageContext msgContext = new MessageContext();
         msgContext.setEnvelope(omFactory.createSOAPEnvelope());
-
         MessageContext.setCurrentMessageContext(msgContext);
     }
 
@@ -186,4 +188,83 @@ public class BeanUtilTest extends TestCase {
             assertTrue(e.getMessage().contains("Brisbane"));
         }
     }
+    
+    public void testDeserializeWithArrayLocalNameForString() throws Exception {    	
+    	   omElement.declareNamespace(omFactory.createOMNamespace(Constants.XSD_NAMESPACE, "xs"));
+
+           omElement.setText("World");
+           omElement.addAttribute(createTypeAttribute("xs:string"));
+           
+           Object result = BeanUtil.deserialize(String.class, omElement, objectSupplier, null);
+           assertNotNull("Result can not be null",result);
+           assertEquals("Not the expected Class",String.class,result.getClass());
+           assertEquals("Not the expected value","World",result);
+	   
+   }
+    
+    public void testDeserializeWithArrayLocalNameForInt() throws Exception {    	
+ 	   omElement.declareNamespace(omFactory.createOMNamespace(Constants.XSD_NAMESPACE, "xs"));
+
+        omElement.setText("1000");
+        omElement.addAttribute(createTypeAttribute("xs:int"));
+        
+        Object result = BeanUtil.deserialize(Integer.class, omElement, objectSupplier, null);
+        assertNotNull("Result can not be null",result);
+        assertEquals("Not the expected Class",Integer.class,result.getClass());
+        assertEquals("Not the expected value",1000,result);
+	   
+   } 
+    public void testDeserializeWithArrayLocalNameForInteger() throws Exception {    	
+  	   omElement.declareNamespace(omFactory.createOMNamespace(Constants.XSD_NAMESPACE, "xs"));
+
+         omElement.setText("100000");
+         omElement.addAttribute(createTypeAttribute("xs:integer"));
+         
+         Object result = BeanUtil.deserialize(BigInteger.class, omElement, objectSupplier, null);
+         assertNotNull("Result can not be null",result);
+         assertEquals("Not the expected Class",BigInteger.class,result.getClass());
+         assertEquals("Not the expected value",new BigInteger("100000"),result);
+ 	   
+    } 
+    public void testDeserializeWithArrayLocalNameForBase64Binary() throws Exception {    	
+  	   omElement.declareNamespace(omFactory.createOMNamespace(Constants.XSD_NAMESPACE, "xs"));
+
+         omElement.setText("SGVsbG8gV29ybGQ=");
+         omElement.addAttribute(createTypeAttribute("xs:base64Binary"));
+         
+         Object result = BeanUtil.deserialize(DataHandler.class, omElement, objectSupplier, null);
+         assertNotNull("Result can not be null",result);
+         assertEquals("Not the expected Class",DataHandler.class,result.getClass());
+         assertEquals("Not the expected value","Hello World",toStr((ByteArrayInputStream) ((DataHandler)result).getContent()));
+ 	   
+    } 
+    public void testDeserializeWithArrayLocalNameForHexBinary() throws Exception {
+    	 AxisService service = new AxisService();
+    	 service.setTypeTable(new TypeTable());
+    	 MessageContext.getCurrentMessageContext().setAxisService(service);
+  	     omElement.declareNamespace(omFactory.createOMNamespace(Constants.XSD_NAMESPACE, "xs"));
+
+         omElement.setText("48656c6c6f20576f726c64");
+         omElement.addAttribute(createTypeAttribute("xs:hexBinary"));
+         
+         Object result = BeanUtil.deserialize(DataHandler.class, omElement, objectSupplier, null);
+         assertNotNull("Result can not be null",result);
+         assertEquals("Not the expected Class",DataHandler.class,result.getClass());
+         assertEquals("Not the expected value","Hello World",toStr((ByteArrayInputStream) ((DataHandler)result).getContent()));
+ 	   
+    } 
+    
+    private static String toStr(ByteArrayInputStream is) {
+	    int size = is.available();
+	    char[] theChars = new char[size];
+	    byte[] bytes    = new byte[size];
+
+	    is.read(bytes, 0, size);
+	    for (int i = 0; i < size;)
+	        theChars[i] = (char)(bytes[i++]&0xff);
+	    
+	    return new String(theChars);
+	      }
+  
+   
 }

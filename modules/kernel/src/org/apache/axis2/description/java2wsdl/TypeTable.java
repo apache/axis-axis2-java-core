@@ -20,7 +20,11 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.ws.commons.schema.constants.Constants;
 
+import javax.activation.DataHandler;
+import javax.xml.datatype.Duration;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +32,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
+
 
 public class TypeTable {
     
@@ -42,6 +48,11 @@ public class TypeTable {
      * this map is used to keep the class names with the Qnames.
      */
     private Map<QName, String> qNameToClassMap;
+    /**
+     * Keep simpleType to Java mapping separately so that
+     * this table does not not populate it over and over.  
+     */
+    private static Map<QName, String> qNameToJavaTypeMap;
 
     public TypeTable() {
         //complex type table is resetted every time this is
@@ -54,6 +65,7 @@ public class TypeTable {
     * change and we need not populate it over and over */
     static{
           populateSimpleTypes();
+          populateJavaTypeMap();
     }
 
     /* populate the simpletype hashmap */
@@ -147,6 +159,50 @@ public class TypeTable {
         simpleTypetoxsd.put("base64Binary",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "base64Binary", "xs"));
     }
+    
+    private static void populateJavaTypeMap(){
+    	/*
+    	 * This Table populated according to the JAXB 2.0 XSD2Java binding. 
+    	 * According to following table http://download.oracle.com/javaee/5/tutorial/doc/bnazq.html#bnazu 
+    	 */
+    	qNameToJavaTypeMap = new HashMap<QName, String>();
+    	qNameToJavaTypeMap.put(Constants.XSD_STRING, String.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_INT, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_INTEGER, BigInteger.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_LONG, Long.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_SHORT, Short.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_DECIMAL, BigDecimal.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_FLOAT, Float.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_DOUBLE, Double.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_BOOLEAN, Boolean.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_BYTE, Byte.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_QNAME, QName.class.getName());     	
+    	qNameToJavaTypeMap.put(Constants.XSD_UNSIGNEDINT, Long.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_UNSIGNEDSHORT, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_UNSIGNEDBYTE, Short.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_UNSIGNEDLONG, BigInteger.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_TIME, XMLGregorianCalendar.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_DATE, XMLGregorianCalendar.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_DATETIME, XMLGregorianCalendar.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_DURATION, Duration.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_NOTATION, QName.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_ANYURI, URI.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_ANY, Object.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_ANYSIMPLETYPE, Object.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_ANYTYPE, Object.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_NONNEGATIVEINTEGER, BigInteger.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_NONPOSITIVEINTEGER, BigInteger.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_NEGATIVEINTEGER, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_POSITIVEINTEGER, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_NORMALIZEDSTRING,String.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_POSITIVEINTEGER, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_POSITIVEINTEGER, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_POSITIVEINTEGER, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_POSITIVEINTEGER, Integer.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_BASE64, DataHandler.class.getName());
+    	qNameToJavaTypeMap.put(Constants.XSD_HEXBIN, DataHandler.class.getName());
+    	
+    }
 
     /**
      * Return the schema type QName given the type class name
@@ -193,10 +249,21 @@ public class TypeTable {
 
     public QName getComplexSchemaType(String name) {
         return (QName) complexTypeMap.get(name);
-    }
-
+    }   
+ 
+    /**
+     * Gets the class name for QName.
+     * first try the complex types if not try the simple types.
+     *
+     * @param qname the qname
+     * @return the class name for QName
+     */
     public String getClassNameForQName(QName qname) {
-        return this.qNameToClassMap.get(qname);
+        String className = this.qNameToClassMap.get(qname);
+        if(className == null){
+        	className = qNameToJavaTypeMap.get(qname);
+        }
+		return className;
     }
 
     public void addClassNameForQName(QName qname, String className) {

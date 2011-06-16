@@ -19,10 +19,12 @@
 
 package org.apache.axis2.databinding.typemapping;
 
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.utils.DataHandlerUtils;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
+import org.apache.axis2.databinding.types.HexBinary;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
@@ -188,6 +190,22 @@ public class SimpleTypeMapper {
             }
         }
         return null;
+    }    
+
+    /**
+     * Gets the DataHandler according to hexBin value.
+     *
+     * @param element the element
+     * @param hexBin the hex bin
+     * @return the DataHandler object
+     */
+    public static DataHandler getDataHandler(OMElement element, boolean hexBin) {
+       if(hexBin){
+    	   ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
+   				HexBinary.decode(element.getText()));
+           return new DataHandler(byteArrayDataSource);
+       }
+       return getDataHandler(element);
     }
 
 
@@ -327,5 +345,32 @@ public class SimpleTypeMapper {
     public static Object makeDate(String source) {
         return ConverterUtil.convertToDate(source);
     }
+    
+    
+	/**
+	 * Checks weather passed parameter class is java.lang.Object[] or not.
+	 * 
+	 * @param obj the Class type of particular object.
+	 * @return true, if is object array
+	 */
+	public static boolean isObjectArray(Class obj) {
+		if (obj.getComponentType().getName().equals(Object.class.getName())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks weather passed parameter class is java.lang.Object or not.
+	 *
+	 * @param obj the Class type of particular object.
+	 * @return true, if is object type
+	 */
+	public static boolean isObjectType(Class obj) {
+		if (obj.getName().equals(Object.class.getName())) {
+			return true;
+		}
+		return false;
+	}
 
 }

@@ -29,6 +29,9 @@ public interface Constants {
     static String TRUE = "true";
     static String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
     static String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
+    static String XSI_TYPE_ATTRIBUTE = "type";
+    static String DEFAULT_XSI_NAMESPACE_PREFIX = "xsi";
+    static String DEFAULT_XSD_NAMESPACE_PREFIX = "xs";
 
     static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
     static Object OM_ELEMENT_KEY = new OMElementKey();

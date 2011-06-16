@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
@@ -256,15 +257,23 @@ public class BeanUtil {
                 } else {
                     addTypeQname(elemntNameSpace, propertyQnameValueList, property,
                                  beanName, processingDocLitBare);
-                    if (Object.class.equals(ptype)) {
-                        if ((value instanceof Integer) ||
-                            (value instanceof Short) ||
-                            (value instanceof Long) ||
-                            (value instanceof Float)) {
-                            propertyQnameValueList.add(value.toString());
-                            continue;
-                        }
-                    }
+					if (Object.class.equals(ptype)) {
+						//this is required to match this element prefix as
+						//root element's prefix.
+						QName qNamefortheType = (QName) typeTable
+								.getComplexSchemaMap().get(
+										getClassName(beanClass));
+						OMFactory fac = OMAbstractFactory.getOMFactory();
+						OMElement element = fac
+								.createOMElement(new QName(elemntNameSpace
+										.getNamespaceURI(), property.getName(),
+										qNamefortheType.getPrefix()));
+						element.addChild(fac.createOMText(SimpleTypeMapper
+								.getStringValue(value)));
+						addInstanceTypeAttribute(fac, element, value, typeTable);
+						propertyQnameValueList.add(element);
+						continue;
+					}
 
                     propertyQnameValueList.add(value);
                 }
@@ -329,6 +338,7 @@ public class BeanUtil {
             // and retrieve the class.
             
             String instanceTypeName = beanElement.getAttributeValue(new QName(Constants.XSI_NAMESPACE, "type"));
+            boolean hexBin = false;
             if (instanceTypeName != null) {
                 MessageContext messageContext = MessageContext.getCurrentMessageContext();
                 // we can have this support only at the server side. we need to find the axisservice
@@ -337,6 +347,10 @@ public class BeanUtil {
                     AxisService axisService = messageContext.getAxisService();
                     if (axisService != null) {
                         QName typeQName = beanElement.resolveQName(instanceTypeName);
+                        //Need this flag to differentiate "xsd:hexBinary" and "xsd:base64Binary" data. 
+                        if(org.apache.ws.commons.schema.constants.Constants.XSD_HEXBIN.equals(typeQName)){
+                        	hexBin = true;
+                        }
                         TypeTable typeTable = axisService.getTypeTable();
                         String className = typeTable.getClassNameForQName(typeQName);
                         if (className != null) {
@@ -356,6 +370,10 @@ public class BeanUtil {
             QName nilAttName = new QName(Constants.XSI_NAMESPACE, Constants.NIL, "xsi");
             if (beanElement.getAttribute(nilAttName) != null) {
                 return null;
+            }
+            
+            if(beanClass.getName().equals(DataHandler.class.getName())){    
+            	return SimpleTypeMapper.getDataHandler(beanElement,hexBin);            	
             }
 
             if (beanClass.isArray()) {
@@ -884,13 +902,22 @@ public class BeanUtil {
                 }
 
             } else {
-                if (SimpleTypeMapper.isSimpleType(arg)) {
-                    if (partName == null) {
-                        objects.add("arg" + argCount);
-                    } else {
-                        objects.add(partName);
-                    }
-                    objects.add(SimpleTypeMapper.getStringValue(arg));
+                if (SimpleTypeMapper.isSimpleType(arg)) { 
+                	OMElement element;
+                	OMFactory fac = OMAbstractFactory.getOMFactory();
+                	if(partName != null){
+                		element = fac.createOMElement(partName, null);
+                	}else{
+                		String eleName = "arg" + argCount;
+                		element = fac.createOMElement(eleName, null);
+                	}					
+					element.addChild(fac.createOMText(SimpleTypeMapper
+							.getStringValue(arg)));
+					if (SimpleTypeMapper.isObjectArray(args.getClass())) {
+						addInstanceTypeAttribute(fac, element, arg, typeTable);
+					}
+					objects.add(element.getQName());
+					objects.add(element);
                 } else {
                     if (partName == null) {
                         objects.add(new QName("arg" + argCount));
@@ -981,5 +1008,40 @@ public class BeanUtil {
                                 omElement.getLocalName(), faultCode, e);
         }
     }
+    
+	/**
+	 * Adds the instance type attribute to the passed OMElement.	 
+	 *  
+	 *  e.g - <sam:obj xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 *                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	 *                xsi:type="xsd:string">
+	 *                String Value
+	 *        </sam:obj> 
+	 *
+	 *
+	 * @param fac the SOAPFactory instance.
+	 * @param child the child OMElement to add attributes.
+	 * @param method the java reflection method
+	 * @param resObject the res object
+	 * @param typeTable the type table of particular Axis2 service
+	 */
+	public static void addInstanceTypeAttribute(OMFactory fac,
+			OMElement element, Object resObject,
+			TypeTable typeTable) {
+		if(typeTable == null){
+			return;
+		}
+		OMNamespace xsiNS = fac.createOMNamespace(Constants.XSI_NAMESPACE,
+				Constants.DEFAULT_XSI_NAMESPACE_PREFIX);
+		OMNamespace xsdNS = fac.createOMNamespace(Constants.XSD_NAMESPACE,
+				Constants.DEFAULT_XSD_NAMESPACE_PREFIX);
+		element.declareNamespace(xsiNS);
+		element.declareNamespace(xsdNS);
+		QName xsdType = typeTable.getSimpleSchemaTypeName(resObject.getClass()
+				.getName());
+		String attrValue = xsdType.getPrefix() + ":" + xsdType.getLocalPart();
+		element.addAttribute(Constants.XSI_TYPE_ATTRIBUTE, attrValue, xsiNS);
+	}
+	
 
 }
