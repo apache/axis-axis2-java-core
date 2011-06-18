@@ -43,6 +43,7 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/soapmonitor/module</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/soapmonitor/module</developerConnection>

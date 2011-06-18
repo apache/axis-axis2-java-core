@@ -30,6 +30,7 @@
     <artifactId>axis2-saaj</artifactId>
     <name>Apache Axis2 - SAAJ</name>
     <description>Axis2 SAAJ implementation</description>
+    <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/saaj</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/saaj</developerConnection>
