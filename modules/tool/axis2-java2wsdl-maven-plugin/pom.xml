@@ -33,6 +33,7 @@
         A Maven 2 plugin for creating WSDL files from Java source.
     </description>
     <packaging>maven-plugin</packaging>
+    <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/tool/axis2-java2wsdl-maven-plugin</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/tool/axis2-java2wsdl-maven-plugin</developerConnection>

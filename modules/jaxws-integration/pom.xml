@@ -92,6 +92,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/jaxws-integration</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/jaxws-integration</developerConnection>
