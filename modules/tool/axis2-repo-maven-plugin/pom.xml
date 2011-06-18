@@ -46,6 +46,7 @@
             <version>1.2</version>
         </dependency>
     </dependencies>
+    <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/tool/axis2-repo-maven-plugin</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/tool/axis2-repo-maven-plugin</developerConnection>

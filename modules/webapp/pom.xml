@@ -28,6 +28,7 @@
     <artifactId>axis2-webapp</artifactId>
     <packaging>war</packaging>
     <name>Apache Axis2 - Web Application module</name>
+    <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/webapp</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/webapp</developerConnection>
