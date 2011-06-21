@@ -21,6 +21,7 @@ package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.ws.commons.schema.constants.Constants;
+import org.w3c.dom.Document;
 
 import javax.activation.DataHandler;
 import javax.xml.datatype.Duration;
@@ -155,6 +156,7 @@ public class TypeTable {
                  ANY_TYPE);
          simpleTypetoxsd.put(Hashtable.class.getName(),
                  ANY_TYPE);
+        simpleTypetoxsd.put(Document.class.getName(), ANY_TYPE);
         //byteArrat
         simpleTypetoxsd.put("base64Binary",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "base64Binary", "xs"));

@@ -43,6 +43,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.*;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -54,6 +56,15 @@ import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.StreamWrapper;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.traversal.DocumentTraversal;
+import org.w3c.dom.traversal.NodeFilter;
+import org.w3c.dom.traversal.TreeWalker;
 
 
 public class BeanUtil {
@@ -196,6 +207,12 @@ public class BeanUtil {
                                  beanName, processingDocLitBare);
                     propertyQnameValueList.add(
                             value == null ? null : SimpleTypeMapper.getStringValue(value));
+                } else if(SimpleTypeMapper.isDomDocument(ptype)){
+                	addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                            beanName, processingDocLitBare);
+                	OMFactory fac = OMAbstractFactory.getOMFactory();
+                    propertyQnameValueList.add(convertDOMtoOM(fac, value));            	
+                	
                 } else if (ptype.isArray()) {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         if (value != null) {
@@ -409,6 +426,8 @@ public class BeanUtil {
                     }
                     return ConverterUtil.convertToArray(arrayClassType, valueList);
                 }
+            }else if(SimpleTypeMapper.isDomDocument(beanClass)){                  	
+                return convertOMtoDOM(beanElement);
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
                     return getSimpleTypeObjectChecked(beanClass, beanElement);
@@ -841,6 +860,9 @@ public class BeanUtil {
                     return SimpleTypeMapper.getArrayList(omElement);
                 } else if (SimpleTypeMapper.isDataHandler(classType)) {
                     return SimpleTypeMapper.getDataHandler(omElement);
+                    
+                } else if(SimpleTypeMapper.isDomDocument(classType)){                  	
+                    return convertOMtoDOM(omElement);
                 } else {
                     return BeanUtil.deserialize(classType, omElement, objectSupplier, null);
                 }
@@ -1041,6 +1063,105 @@ public class BeanUtil {
 				.getName());
 		String attrValue = xsdType.getPrefix() + ":" + xsdType.getLocalPart();
 		element.addAttribute(Constants.XSI_TYPE_ATTRIBUTE, attrValue, xsiNS);
+	}
+	
+	/**
+	 * Gets the DOOM implementation of org.w3c.dom.Document  
+	 *
+	 * @param omElement the OMelement
+	 * @return the DOOM document
+	 */
+	public static OMDocument convertOMtoDOM(OMContainer omElement) {
+		// use AXIOM DOOMAbstractFactory to get org.w3c.dom.Document
+		OMFactory doomFactory = DOOMAbstractFactory.getOMFactory();
+		StAXOMBuilder doomBuilder = new StAXOMBuilder(doomFactory,
+				omElement.getXMLStreamReader());
+		OMDocument domElement = doomBuilder.getDocument();
+		return domElement;
+	}
+	
+	/**
+	 * Convert DOM Document to a OMElement.
+	 *
+	 * @param fac the fac
+	 * @param document the document
+	 * @return the OMElement
+	 */
+	public static OMElement convertDOMtoOM(OMFactory fac, Object document) {
+		DocumentTraversal traversal = (DocumentTraversal) document;
+		TreeWalker walker = traversal.createTreeWalker(
+				((Document)document).getDocumentElement(), NodeFilter.SHOW_ALL, null, true);
+		return (OMElement) traverseDOMDocument(fac, walker, null);
+	}
+	
+	/**
+	 * Traverse dom document and construct a OMElement.
+	 * Act as a helper method for convertDOMtoOM()
+	 *
+	 * @param fac the fac
+	 * @param walker the walker
+	 * @param parent the parent
+	 * @return the oM node
+	 */
+	private static OMNode traverseDOMDocument(OMFactory fac, TreeWalker walker,
+			OMContainer parent) {
+		OMNode curr = null;
+		Node node = walker.getCurrentNode();
+		
+		switch (node.getNodeType()) {
+		case Node.ELEMENT_NODE:
+			OMNamespace eleNS = null;
+			if (node.getNamespaceURI() != null) {
+				eleNS = fac.createOMNamespace(node.getNamespaceURI(),
+						node.getPrefix());
+			}
+			curr = fac.createOMElement(node.getNodeName(), eleNS);
+			curr = processDOMAttributes(fac, (OMElement) curr,	node.getAttributes());
+			if (parent != null) {
+				parent.addChild(curr);
+			}
+			if (node.getFirstChild() != null) {
+				walker.setCurrentNode(node.getFirstChild());
+				traverseDOMDocument(fac, walker, (OMContainer) curr);
+			}
+			break;
+
+		case Node.PROCESSING_INSTRUCTION_NODE:
+			ProcessingInstruction domPI = (ProcessingInstruction) node;
+			parent.addChild(fac.createOMProcessingInstruction(parent,
+					domPI.getTarget(), domPI.getData()));
+			break;
+
+		case Node.COMMENT_NODE:
+			parent.addChild(fac.createOMComment(parent,
+					((Comment) node).getNodeValue()));
+			break;
+
+		case Node.TEXT_NODE:
+			parent.addChild(fac.createOMText(node.getNodeValue()));
+			break;
+		}
+		if (node.getNextSibling() != null && parent != null) {
+			walker.setCurrentNode(node.getNextSibling());
+			traverseDOMDocument(fac, walker, parent);
+		}
+		return curr;
+	}
+	
+	private static OMElement processDOMAttributes(OMFactory fac,
+			OMElement curr, NamedNodeMap attMap) {
+		if (attMap != null && attMap.getLength() > 0) {			
+			for (int i = 0; i < attMap.getLength(); i++) {
+				Attr att = (Attr) attMap.item(i);
+				OMNamespace attrNS = null;				
+				if (att.getNamespaceURI() != null) {
+					attrNS = fac.createOMNamespace(att.getNamespaceURI(),
+							att.getPrefix());
+				}
+				curr.addAttribute(att.getNodeName(), att.getNodeValue(), attrNS);
+			}
+		}
+		return curr;
 	}
 	
 

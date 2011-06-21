@@ -73,7 +73,18 @@ public class RPCUtil {
                 }
                 resWrapper.addChild(result);
                 bodyContent.addChild(resWrapper);
-            } else if (SimpleTypeMapper.isSimpleType(resObject)) {
+            } else if (SimpleTypeMapper.isDomDocument(resObject.getClass())){				
+				OMElement doc = BeanUtil.convertDOMtoOM(fac, resObject);
+				bodyContent = fac.createOMElement(method.getName() + "Response", ns);
+				OMElement child;
+				if (qualified) {
+					child = fac.createOMElement(RETURN_WRAPPER, ns);
+				} else {
+					child = fac.createOMElement(RETURN_WRAPPER, null);
+				}
+				child.addChild(doc);
+				bodyContent.addChild(child);	
+			} else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
                 OMElement child;
@@ -125,6 +136,10 @@ public class RPCUtil {
             bodyContent = fac.createOMElement(
                     partName, ns);
             bodyContent.addChild(result);
+        } else if(SimpleTypeMapper.isDomDocument(resObject.getClass())){
+        	bodyContent = fac.createOMElement(
+                    partName, ns);          
+            bodyContent.addChild(BeanUtil.convertDOMtoOM(fac, resObject));        	
         } else if (SimpleTypeMapper.isSimpleType(resObject)) {
             bodyContent = fac.createOMElement(
                     partName, ns);

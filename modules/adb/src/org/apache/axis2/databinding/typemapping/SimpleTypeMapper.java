@@ -28,6 +28,7 @@ import org.apache.axis2.databinding.types.HexBinary;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.w3c.dom.Document;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -371,6 +372,17 @@ public class SimpleTypeMapper {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Checks that given classType is a W3C Document.
+	 * 
+	 * @param classType
+	 *            the class type
+	 * @return true, if is dom document
+	 */
+	public static boolean isDomDocument(Class classType) {
+		return Document.class.isAssignableFrom(classType);
 	}
 
 }

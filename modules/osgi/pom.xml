@@ -133,6 +133,7 @@
                             org.apache.woden.*;version="0.0.0",
                             org.apache.ws.commons.schema.*,
                             org.w3c.dom;resolution:=optional,
+                            org.w3c.dom.traversal;resolution:=optional,
                             org.xml.sax;resolution:=optional,
                         </Import-Package>
                         <Private-Package>
