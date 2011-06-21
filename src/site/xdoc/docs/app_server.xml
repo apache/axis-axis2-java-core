@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -18,46 +17,39 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta name="generator" content=
-"HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
-<meta http-equiv="content-type" content=
-"text/html; charset=us-ascii" />
-<title>Application Server Specific Configuration Guide</title>
-<meta content="amaya 9.2.1, see http://www.w3.org/Amaya/" />
-</head>
-<body>
-<h1>Application Server Specific Configuration Guide</h1>
-<p>This document provides configuration information required for
-your Application Server to run Apache Axis2 to its fullest
-potential.</p>
-<h3>WebLogic/ WebSphere</h3>
-<p><strong>1. Use exploded configuration to deploy Axis2
-WAR</strong></p>
-<p>We recommend using the exploded configuration to deploy Axis2
-WAR in WebLogic and WebSphere application servers to support the
-hotupdate/ hotdeployment features in Axis2. However, if you want to
-deploy custom WARs, say in a clustering environment, you need to
-add two additional files into the WEB-INF named "services.list" and
-"modules.list" under the modules and services directory
-respectively.</p>
-<ul>
-<li><b>WEB-INF/services/services.list</b> : should list all the
-services (aar files) that you want to expose.</li>
-<li><b>WEB-INF/modules/modules.list</b> : should list all the
-modules (mar files) that you want to use.</li>
-</ul>
-NOTE: In both cases, please list one entry per line.
-<p>WebLogic ships with JARs that conflict with JARs present in
-Axis2. Therefore use &lt;prefer-web-inf-classes&gt; to ensure that
-JARs packaged in Axis2 WAR are picked up from WEB-INF/lib. You can
-do this by setting the &lt;prefer-web-inf-classes&gt; element in
-WEB-INF/weblogic.xml to true. An example of weblogic.xml is shown
-below:</p>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Application Server Specific Configuration Guide</title>
+    </properties>
+    <body>
+        <h1>Application Server Specific Configuration Guide</h1>
+        <p>This document provides configuration information required for
+        your Application Server to run Apache Axis2 to its fullest
+        potential.</p>
+        <section name="WebLogic/ WebSphere">
+            <subsection name="Use exploded configuration to deploy Axis2 WAR">
+                <p>We recommend using the exploded configuration to deploy Axis2
+                WAR in WebLogic and WebSphere application servers to support the
+                hotupdate/ hotdeployment features in Axis2. However, if you want to
+                deploy custom WARs, say in a clustering environment, you need to
+                add two additional files into the WEB-INF named "services.list" and
+                "modules.list" under the modules and services directory
+                respectively.</p>
+                <ul>
+                <li><b>WEB-INF/services/services.list</b> : should list all the
+                services (aar files) that you want to expose.</li>
+                <li><b>WEB-INF/modules/modules.list</b> : should list all the
+                modules (mar files) that you want to use.</li>
+                </ul>
+                NOTE: In both cases, please list one entry per line.
+                <p>WebLogic ships with JARs that conflict with JARs present in
+                Axis2. Therefore use &lt;prefer-web-inf-classes&gt; to ensure that
+                JARs packaged in Axis2 WAR are picked up from WEB-INF/lib. You can
+                do this by setting the &lt;prefer-web-inf-classes&gt; element in
+                WEB-INF/weblogic.xml to true. An example of weblogic.xml is shown
+                below:</p>
 <pre>
 &lt;weblogic-web-app&gt;
  &lt;container-descriptor&gt;
@@ -65,32 +57,33 @@ below:</p>
   &lt;/container-descriptor&gt;
 &lt;/weblogic-web-app&gt;
 </pre>
-<p>If set to true, the &lt;prefer-web-inf-classes&gt; element will
-force WebLogic's classloader to load classes located in the WEB-INF
-directory of a Web application in preference to application or
-system classes. This is a recommended approach since it only
-impacts a single Web module.</p>
-<p>Please refer to the following documents in WebLogic/ WebSphere
-for more information:</p>
-<ul>
-<li><a href=
-"http://e-docs.bea.com/wls/docs81/programming/classloading.html">WebLogic
-ServerApplication Classloading</a>- For more information on how
-WebLogic's class loader works</li>
-<li><a href=
-"http://e-docs.bea.com/wls/docs81/webapp/deployment.html">Redeploying
-a Web Application in Exploded Directory Format</a></li>
-<li><a href=
-"http://publib.boulder.ibm.com/infocenter/wsiihelp/v8r3/index.jsp?topic=/com.ibm.websphere.ii.product.ce.doc/configuring/iiyviigdepwebexpl.htm">
-Deploying the Web application in exploded form</a></li>
-</ul>
-<p><strong>2. Lack of namespacing on serialised items</strong></p>
-<p>BEA WebLogic Server 9.0 comes with its own StAX implementation.
-This results in lack of namespacing on serialised items. In turn,
-WebLogic server (WLS) breaks with AXIOM on the WLS classpath. Hence
-a filtering classloader is required:</p>
-<p>Adding the following to weblogic-application.xml should resolve
-this issue:</p>
+                <p>If set to true, the &lt;prefer-web-inf-classes&gt; element will
+                force WebLogic's classloader to load classes located in the WEB-INF
+                directory of a Web application in preference to application or
+                system classes. This is a recommended approach since it only
+                impacts a single Web module.</p>
+                <p>Please refer to the following documents in WebLogic/ WebSphere
+                for more information:</p>
+                <ul>
+                <li><a href=
+                "http://e-docs.bea.com/wls/docs81/programming/classloading.html">WebLogic
+                ServerApplication Classloading</a>- For more information on how
+                WebLogic's class loader works</li>
+                <li><a href=
+                "http://e-docs.bea.com/wls/docs81/webapp/deployment.html">Redeploying
+                a Web Application in Exploded Directory Format</a></li>
+                <li><a href=
+                "http://publib.boulder.ibm.com/infocenter/wsiihelp/v8r3/index.jsp?topic=/com.ibm.websphere.ii.product.ce.doc/configuring/iiyviigdepwebexpl.htm">
+                Deploying the Web application in exploded form</a></li>
+                </ul>
+            </subsection>
+            <subsection name="Lack of namespacing on serialised items">
+                <p>BEA WebLogic Server 9.0 comes with its own StAX implementation.
+                This results in lack of namespacing on serialised items. In turn,
+                WebLogic server (WLS) breaks with AXIOM on the WLS classpath. Hence
+                a filtering classloader is required:</p>
+                <p>Adding the following to weblogic-application.xml should resolve
+                this issue:</p>
 <pre>
 &lt;prefer-application-packages&gt;
 &lt;package-name&gt;com.ctc.wstx.*&lt;/package-name&gt;
@@ -98,7 +91,9 @@ this issue:</p>
 &lt;package-name&gt;org.apache.*&lt;/package-name&gt;
 &lt;/prefer-application-packages&gt;
 </pre>
-<p>Note that the libraries listed--Xerces, StAX API, Woodstox--need
-to be on the application classpath.</p>
-</body>
-</html>
+                <p>Note that the libraries listed--Xerces, StAX API, Woodstox--need
+                to be on the application classpath.</p>
+            </subsection>
+        </section>
+    </body>
+</document>
