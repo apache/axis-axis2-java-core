@@ -48,7 +48,8 @@ public class ThreadPool implements ThreadFactory {
 
     //integers that define the pool size, with the default values set.
     private int corePoolSize = 5;
-    private int maxPoolSize = Integer.MAX_VALUE;
+    //max pool size is set to 100 to control the maximum number of threads created
+    private int maxPoolSize = 100;
 
     public ThreadPool() {
         setExecutor(createDefaultExecutor("Axis2 Task", Thread.NORM_PRIORITY, true));
