@@ -441,4 +441,20 @@ public class SOAPHeaderTest extends Assert {
         assertTrue(element instanceof SOAPHeaderElement);
         assertEquals(3, element.getChildNodes().getLength());
     }
+    
+    @Validated @Test
+    public void testExtractAllHeaderElements() throws Exception {
+        MessageFactory fact = MessageFactory.newInstance();
+        SOAPMessage message = fact.createMessage();
+        SOAPHeader header = message.getSOAPHeader();
+        SOAPHeaderElement headerElement1 = header.addHeaderElement(new QName("urn:ns1", "test1", "p1"));
+        SOAPHeaderElement headerElement2 = header.addHeaderElement(new QName("urn:ns2", "test2", "p2"));
+        Iterator it = header.extractAllHeaderElements();
+        assertTrue(it.hasNext());
+        assertSame(headerElement1, it.next());
+        assertTrue(it.hasNext());
+        assertSame(headerElement2, it.next());
+        assertFalse(it.hasNext());
+        assertEquals(0, header.getChildNodes().getLength());
+    }
 }
