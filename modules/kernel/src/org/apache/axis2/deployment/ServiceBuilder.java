@@ -127,12 +127,15 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             Parameter childFirstClassLoading =
                     service.getParameter(Constants.Configuration.ENABLE_CHILD_FIRST_CLASS_LOADING);
-            if (childFirstClassLoading != null){
-                DeploymentClassLoader deploymentClassLoader = (DeploymentClassLoader) service.getClassLoader();
-                if (JavaUtils.isTrueExplicitly(childFirstClassLoading.getValue())){
-                    deploymentClassLoader.setChildFirstClassLoading(true);
-                } else if (JavaUtils.isFalseExplicitly(childFirstClassLoading.getValue())){
-                    deploymentClassLoader.setChildFirstClassLoading(false);
+            if (childFirstClassLoading != null) {
+                ClassLoader cl = service.getClassLoader();
+                if (cl instanceof DeploymentClassLoader) {
+                    DeploymentClassLoader deploymentClassLoader = (DeploymentClassLoader) cl;
+                    if (JavaUtils.isTrueExplicitly(childFirstClassLoading.getValue())){
+                        deploymentClassLoader.setChildFirstClassLoading(true);
+                    } else if (JavaUtils.isFalseExplicitly(childFirstClassLoading.getValue())){
+                        deploymentClassLoader.setChildFirstClassLoading(false);
+                    }
                 }
             }
 
