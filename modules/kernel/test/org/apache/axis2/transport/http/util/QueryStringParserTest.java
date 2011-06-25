@@ -78,4 +78,13 @@ public class QueryStringParserTest extends TestCase {
         assertEquals("20% down", p.getValue());
         assertFalse(p.next());
     }
+    
+    // Regression test for AXIS2-5078
+    public void testEmptyParameter() {
+        QueryStringParser p = new QueryStringParser("&name=value");
+        assertTrue(p.next());
+        assertEquals("name", p.getName());
+        assertEquals("value", p.getValue());
+        assertFalse(p.next());
+    }
 }

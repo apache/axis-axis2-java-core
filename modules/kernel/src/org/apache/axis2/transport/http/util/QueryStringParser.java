@@ -32,7 +32,7 @@ public class QueryStringParser {
      * The position of the current parameter.
      */
     private int paramBegin;
-    private int paramEnd;
+    private int paramEnd = -1;
     private int paramNameEnd;
     private String paramName;
     private String paramValue;
@@ -55,17 +55,21 @@ public class QueryStringParser {
      */
     public boolean next() {
         int len = queryString.length();
-        if (paramEnd == len) {
-            return false;
+        while (true) {
+            if (paramEnd == len) {
+                return false;
+            }
+            paramBegin = paramEnd == -1 ? 0 : paramEnd+1;
+            int idx = queryString.indexOf('&', paramBegin);
+            paramEnd = idx == -1 ? len : idx;
+            if (paramEnd > paramBegin) {
+                idx = queryString.indexOf('=', paramBegin);
+                paramNameEnd = idx == -1 || idx > paramEnd ? paramEnd : idx;
+                paramName = null;
+                paramValue = null;
+                return true;
+            }
         }
-        paramBegin = paramEnd == 0 ? 0 : paramEnd+1;
-        int idx = queryString.indexOf('&', paramBegin);
-        paramEnd = idx == -1 ? len : idx;
-        idx = queryString.indexOf('=', paramBegin);
-        paramNameEnd = idx == -1 || idx > paramEnd ? paramEnd : idx;
-        paramName = null;
-        paramValue = null;
-        return true;
     }
     
     /**
