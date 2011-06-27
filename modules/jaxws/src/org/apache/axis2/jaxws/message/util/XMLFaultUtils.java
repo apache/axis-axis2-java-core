@@ -416,7 +416,7 @@ public class XMLFaultUtils {
                 OMBlockFactory bf =
                         (OMBlockFactory)FactoryRegistry.getFactory(OMBlockFactory.class);
                 ArrayList<Block> list = new ArrayList<Block>();
-                Iterator it = detail.getChildElements();
+                Iterator it = detail.getDetailEntries();
                 while (it.hasNext()) {
                     DetailEntry de = (DetailEntry)it.next();
                     OMElement om = converter.toOM(de);
