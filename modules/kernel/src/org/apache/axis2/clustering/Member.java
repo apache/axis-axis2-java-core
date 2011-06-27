@@ -57,9 +57,44 @@ public class Member {
      */
     private Properties properties = new Properties();
 
+    /**
+     * Time at which this member was suspended
+     */
+    private long suspendedTime = -1;
+
+    /**
+     * Time in millis which this member should be suspended
+     */
+    private long suspensionDuration = -1;
+
     public Member(String hostName, int port) {
         this.hostName = hostName;
         this.port = port;
+    }
+
+    /**
+     * Temporarilly suspend this member
+     * @param suspensionDurationMillis The time duration in millis in which this member should be suspended
+     */
+    public void suspend(long suspensionDurationMillis){
+        this.suspendedTime = System.currentTimeMillis();
+        this.suspensionDuration = suspensionDurationMillis;
+    }
+
+    /**
+     * Check whether this member is suspended
+     * @return true if this member is still suspended, false oterwise
+     */
+    public boolean isSuspended() {
+        if (suspendedTime == -1) {
+            return false;
+        }
+        if (System.currentTimeMillis() - suspendedTime >= suspensionDuration) {
+            this.suspendedTime = -1;
+            this.suspensionDuration = -1;
+            return false;
+        }
+        return true;
     }
 
     public String getHostName() {

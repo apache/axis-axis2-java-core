@@ -96,11 +96,11 @@ public class DefaultGroupManagementAgent implements GroupManagementAgent {
                 return;
             }
             if (canConnect(member)) {
-                //                try
-                //                    Thread.sleep(10000);   // Sleep for sometime to allow complete initialization of the node
-                //                } catch (InterruptedException e) {
-                //                    e.printStackTrace();
-                //                }
+                try {
+                    Thread.sleep(10000);   // Sleep for sometime to allow complete initialization of the node
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 if (!members.contains(member)) {
                     members.add(member);
                 }
