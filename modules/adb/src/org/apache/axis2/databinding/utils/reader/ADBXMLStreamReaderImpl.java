@@ -962,9 +962,8 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                     }
                 }
 
-                ADBXMLStreamReader reader = new ADBXMLStreamReaderImpl(propertyQName,
+                childReader = new ADBXMLStreamReaderImpl(propertyQName,
                         objects.toArray(), new ArrayList().toArray(), typeTable, qualified);
-                childReader = new WrappingXMLStreamReader(reader);
             }
         } else if (propertyValue instanceof ADBBean) {
             //ADBbean has it's own method to get a reader
@@ -991,9 +990,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         } else {
             //all special possiblilities has been tried! Let's treat
             //the thing as a bean and try generating events from it
-            childReader = new WrappingXMLStreamReader
-                    (BeanUtil.getPullParser(propertyValue,
-                                            propertyQName, typeTable, qualified, false));
+            childReader = (ADBXMLStreamReader)
+                    BeanUtil.getPullParser(propertyValue,
+                                            propertyQName, typeTable, qualified, false);
             //we cannot register the namespace context here
         }
 

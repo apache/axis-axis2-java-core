@@ -28,17 +28,15 @@ import javax.xml.stream.XMLStreamReader;
 public class WrappingXMLStreamReader implements ADBXMLStreamReader {
 
     private XMLStreamReader reader;
+    private int depth;
+    private boolean done;
 
     public WrappingXMLStreamReader(XMLStreamReader reader) {
         this.reader = reader;
     }
 
     public boolean isDone() {
-        try {
-            return !hasNext();
-        } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        }
+        return done;
     }
 
     public Object getProperty(String string) throws IllegalArgumentException {
@@ -46,7 +44,16 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public int next() throws XMLStreamException {
-        return reader.next();
+        int event = reader.next();
+        if (event == START_ELEMENT) {
+            depth++;
+        } else if (event == END_ELEMENT) {
+            depth--;
+            if (depth == 0) {
+                done = true;
+            }
+        }
+        return event;
     }
 
     public void require(int i, String string, String string1) throws XMLStreamException {
