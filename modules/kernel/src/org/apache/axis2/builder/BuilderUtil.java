@@ -192,21 +192,18 @@ public class BuilderUtil {
         return soapEnvelope;
     }
 
-    private static void createSOAPMessageWithoutSchema(SOAPFactory soapFactory,
+    public static void createSOAPMessageWithoutSchema(SOAPFactory soapFactory,
                                                        OMElement bodyFirstChild,
                                                        MultipleEntryHashMap requestParameterMap) {
 
         // first add the parameters in the URL
         if (requestParameterMap != null) {
-            Iterator requestParamMapIter = requestParameterMap.keySet().iterator();
-            while (requestParamMapIter.hasNext()) {
-                String key = (String)requestParamMapIter.next();
-                Object value = requestParameterMap.get(key);
-                if (value != null) {
-                    addRequestParameter(soapFactory, bodyFirstChild, null, key,
-                                        value);
+            for (Object o : requestParameterMap.keySet()) {
+                String key = (String) o;
+                Object value;
+                while ((value = requestParameterMap.get(key)) != null) {
+                    addRequestParameter(soapFactory, bodyFirstChild, null, key, value);
                 }
-
             }
         }
     }
