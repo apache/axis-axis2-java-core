@@ -271,7 +271,25 @@ public class BeanUtil {
                                      beanName, processingDocLitBare);
                         propertyQnameValueList.add(value);
                     }
-                } else {
+				} else if (SimpleTypeMapper.isMap(ptype)) {
+					OMFactory fac = OMAbstractFactory.getOMFactory();
+					QName qNamefortheType = (QName) typeTable
+							.getComplexSchemaMap().get(getClassName(beanClass));
+					OMNamespace ns = fac.createOMNamespace(
+										qNamefortheType.getNamespaceURI(),
+										qNamefortheType.getPrefix());
+					List<OMElement> mapEntries = getMapElement(fac,
+							ptype, (Map) value, typeTable, qualified);
+					OMElement map = fac.createOMElement(propertyName,
+										qNamefortheType.getNamespaceURI(),
+										qNamefortheType.getPrefix());
+					for (OMElement ele : mapEntries) {
+						map.addChild(ele);
+					}
+					addTypeQname(elemntNameSpace, propertyQnameValueList,
+							property, beanName, processingDocLitBare);
+					propertyQnameValueList.add(map);
+				} else {
                     addTypeQname(elemntNameSpace, propertyQnameValueList, property,
                                  beanName, processingDocLitBare);
 					if (Object.class.equals(ptype)) {
@@ -280,13 +298,25 @@ public class BeanUtil {
 						QName qNamefortheType = (QName) typeTable
 								.getComplexSchemaMap().get(
 										getClassName(beanClass));
-						OMFactory fac = OMAbstractFactory.getOMFactory();
-						OMElement element = fac
-								.createOMElement(new QName(elemntNameSpace
-										.getNamespaceURI(), property.getName(),
-										qNamefortheType.getPrefix()));
-						element.addChild(fac.createOMText(SimpleTypeMapper
-								.getStringValue(value)));
+						OMFactory fac = OMAbstractFactory.getOMFactory();						
+						QName elementName = new QName(elemntNameSpace
+								.getNamespaceURI(), property.getName(),
+								qNamefortheType.getPrefix());
+						OMElement element;
+						if(SimpleTypeMapper.isSimpleType(value)){
+							element = fac.createOMElement(elementName);					
+							element.addChild(fac.createOMText(SimpleTypeMapper
+									.getStringValue(value)));	            		
+		            	}else{		            		 
+		            		 XMLStreamReader xr = BeanUtil.getPullParser(value,
+		            				 elementName, typeTable, true, false);
+		                     OMXMLParserWrapper stAXOMBuilder =
+		                             OMXMLBuilderFactory.createStAXOMBuilder(
+		                                     OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
+		                     element = stAXOMBuilder.getDocumentElement();
+		                     
+		            		
+		            	}	      
 						addInstanceTypeAttribute(fac, element, value, typeTable);
 						propertyQnameValueList.add(element);
 						continue;
@@ -503,6 +533,19 @@ public class BeanUtil {
                             } else if (parameters.isArray()) {
                                 partObj = deserialize(parameters, (OMElement) parts.getParent(),
                                                       objectSupplier, prty.getName());
+                            } else if (SimpleTypeMapper.isMap(parameters)){
+                                partObj = null;								
+                                final Type type = prty.getReadMethod().getGenericReturnType();
+                                if (type instanceof ParameterizedType) {
+                                    ParameterizedType aType = (ParameterizedType) type;
+                                    Type[] parameterArgTypes = aType.getActualTypeArguments();                                 
+                                    partObj = processGenericsMapElement(parameterArgTypes
+                                 		 , (OMElement) parts.getParent(), null, parts.getChildren(), objectSupplier, beanClass);
+                                } else {                                	 
+                                	 Type[] parameterArgTypes = {Object.class,Object.class}; 
+                                	 partObj = processGenericsMapElement(parameterArgTypes
+                                     		 , (OMElement) parts.getParent(), null, parts.getChildren(), objectSupplier, beanClass);                                	
+                                }
                             } else {
                                 partObj = deserialize(parameters, parts, objectSupplier, null);
                             }
@@ -863,6 +906,21 @@ public class BeanUtil {
                     
                 } else if(SimpleTypeMapper.isDomDocument(classType)){                  	
                     return convertOMtoDOM(omElement);
+                } else if(SimpleTypeMapper.isMap(classType)){
+                	if (generictype != null && (generictype instanceof ParameterizedType)) {
+                      ParameterizedType aType = (ParameterizedType) generictype;
+                      Type[] parameterArgTypes = aType.getActualTypeArguments();                       
+                      Iterator parts = omElement.getChildElements();
+                      return processGenericsMapElement(parameterArgTypes
+                     		 , omElement, helper, parts, objectSupplier, generictype);
+                  } else {                	 
+                	  Type[] parameterArgTypes = {Object.class,Object.class}; 
+                	  Iterator parts = omElement.getChildElements();
+                  	  return processGenericsMapElement(parameterArgTypes,
+                      		 omElement, helper, parts, objectSupplier, generictype);   
+                  }
+                 
+                	
                 } else {
                     return BeanUtil.deserialize(classType, omElement, objectSupplier, null);
                 }
@@ -1059,8 +1117,8 @@ public class BeanUtil {
 				Constants.DEFAULT_XSD_NAMESPACE_PREFIX);
 		element.declareNamespace(xsiNS);
 		element.declareNamespace(xsdNS);
-		QName xsdType = typeTable.getSimpleSchemaTypeName(resObject.getClass()
-				.getName());
+		QName xsdType = typeTable.getSchemaTypeName(resObject.getClass()
+				.getName());		
 		String attrValue = xsdType.getPrefix() + ":" + xsdType.getLocalPart();
 		element.addAttribute(Constants.XSI_TYPE_ATTRIBUTE, attrValue, xsiNS);
 	}
@@ -1164,5 +1222,242 @@ public class BeanUtil {
 		return curr;
 	}
 	
+	/**
+	 * This method deserialize OM model in to a instance of java.util.Map
+	 *
+	 * @param parameterArgTypes the parameter argument types of Map <k,V>
+	 * @param omElement the OMElement
+	 * @param helper the helper
+	 * @param parts the parts
+	 * @param objectSupplier the object supplier
+	 * @param genericType the generic type
+	 * @return a instance of java.util.Map
+	 * @throws AxisFault the axis fault
+	 */
+	private static Map<Object,Object> processGenericsMapElement(Type[] parameterArgTypes,
+			OMElement omElement, MultirefHelper helper, Iterator parts,
+			ObjectSupplier objectSupplier, Type genericType) throws AxisFault {
+		Object objValue;			
+		Map<Object,Object> valueMap = getMapInstance(genericType) ;
+		while (parts.hasNext()) {
+			objValue = parts.next();
+			if (objValue instanceof OMElement) {
+				omElement = (OMElement) objValue;
+			} else {
+				continue;
+			}
+			
+			if(omElement != null){
+				Iterator entryParts = omElement.getChildren();
+				Object entryKey = null;
+				Object entryValue = null;
+				while (entryParts.hasNext()) {
+					objValue = entryParts.next();
+					if (objValue instanceof OMElement) {
+						omElement = (OMElement) objValue;
+					} else {
+						continue;
+					}
+					if (omElement.getLocalName().equals(
+							org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME)) {
+						entryKey = processMapParameterObject( parameterArgTypes[0], omElement,
+								helper, objectSupplier, genericType);
+						continue;
+					}
+					if (omElement.getLocalName().equals(
+							org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME)) {
+						entryValue = processMapParameterObject( parameterArgTypes[1],
+								omElement, helper, objectSupplier, genericType);
+						continue;
+					}			
+				}
+				if(entryKey != null){
+					valueMap.put(entryKey, entryValue);
+				}				
+			}
 
+		}
+		return valueMap;
+	}
+	
+	
+	/**
+	 * This method convert a instance of java.util.Map into
+	 * OM object model for serialization. 
+	 *
+	 * @param fac the OMFactory
+	 * @param type of the java.util.Map
+	 * @param results the results values
+	 * @param typeTable the type table
+	 * @param elementFormDefault the element form default
+	 * @return list of OMElement
+	 */
+	public static List<OMElement> getMapElement(OMFactory fac, Type type,
+			Map results, TypeTable typeTable, boolean elementFormDefault) {
+		Iterator<Object> keyItr = results.keySet().iterator();
+		List<OMElement> list = new ArrayList<OMElement>();
+		OMNamespace ns = fac.createOMNamespace(
+				org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_URI,
+				org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_PREFIX);
+		Type keyType = Object.class;
+		Type valueType = Object.class;
+		if (type instanceof ParameterizedType) {
+			ParameterizedType aType = (ParameterizedType) type;
+			Type[] parameterArgTypes = aType.getActualTypeArguments();
+			keyType = parameterArgTypes[0];
+			valueType = parameterArgTypes[1];
+		}
+
+		while (keyItr.hasNext()) {
+			OMElement omEntry;
+			Object key = keyItr.next();
+			Object value;
+			if (key != null) {
+				value = results.get(key);
+				List<Object> properties = new ArrayList<Object>();
+
+				key = getMapParameterElement(fac,
+						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, key,
+						keyType, typeTable, ns, elementFormDefault);
+				properties.add(new QName(ns.getNamespaceURI(),
+						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, ns
+								.getPrefix()));
+				properties.add(key);
+
+				value = getMapParameterElement(fac,
+						org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME,
+						value, valueType, typeTable, ns, elementFormDefault);
+				properties.add(new QName(ns.getNamespaceURI(),
+						org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME, ns
+								.getPrefix()));
+				properties.add(value);
+
+				XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+						new QName(
+								ns.getNamespaceURI(),
+								org.apache.axis2.Constants.MAP_ENTRY_ELEMENT_NAME,
+								ns.getPrefix()), properties.toArray(), null,
+						typeTable, elementFormDefault);
+
+				StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
+						OMAbstractFactory.getOMFactory(), new StreamWrapper(
+								pullParser));
+				omEntry = stAXOMBuilder.getDocumentElement();
+				list.add(omEntry);
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * Helper method to deserialize each parameter of Map.
+	 *
+	 * @param paraType the parameter type
+	 * @param omElement the OMElement
+	 * @param helper the helper
+	 * @param objectSupplier the object supplier
+	 * @param genericType the generic type
+	 * @return the object
+	 * @throws AxisFault the axis fault
+	 */
+	private static Object processMapParameterObject(Type paraType, OMElement omElement,
+			MultirefHelper helper, ObjectSupplier objectSupplier,
+			Type genericType) throws AxisFault {
+		if (paraType instanceof ParameterizedType) {
+			if (Map.class.isAssignableFrom((Class)
+					((ParameterizedType) paraType).getRawType())) {
+				return processGenericsMapElement(
+						((ParameterizedType) paraType).getActualTypeArguments(),
+						omElement, helper, omElement.getChildren(),
+						objectSupplier, paraType);
+			} else if (Collection.class	.isAssignableFrom((Class) 
+					((ParameterizedType) paraType).getRawType())) {
+				//TODO
+				return null;
+			} else {
+				// TODO - support for custom ParameterizedTypes
+				return null;
+			}
+
+		} else {
+			return processObject(omElement, (Class) paraType, helper, true,
+					objectSupplier, genericType);
+		}
+	}
+	
+	/**
+	 * This method instantiate a Map instance according to the expected 
+	 * parameter type of the service method. a instance HashMap<Object, Object> 
+	 * returns as the default value and in case of Exception.   
+	 *
+	 * @param genericType the generic type
+	 * @return the map instance 
+	 */
+	private static Map<Object, Object> getMapInstance(Type genericType) {
+		 Class rowType;
+		 if (genericType instanceof ParameterizedType) {
+			 rowType = (Class) ((ParameterizedType) genericType).getRawType();			 
+		 } else {
+			 rowType = (Class) genericType;
+		 }
+		
+		if (Map.class.getName().equals(rowType.getName())) {
+			return new HashMap<Object, Object>();
+		} else {
+			try {
+				return (Map<Object, Object>) rowType.newInstance();
+			} catch (Exception e) {
+				return new HashMap<Object, Object>();
+			}
+		}
+	}
+	
+	/**
+	 * Process the provided return  value and constructs OMElement accordingly.  
+	 *
+	 * @param fac the OMFactory instance
+	 * @param elementName the element name for return OMElement
+	 * @param value the actual return value
+	 * @param valueType the value type of return value
+	 * @param typeTable the type table
+	 * @param ns the OMNamespace
+	 * @param elementFormDefault the element form default
+	 * @return the map parameter object
+	 */
+	private static Object getMapParameterElement(OMFactory fac,
+			String elementName, Object value, Type valueType,
+			TypeTable typeTable, OMNamespace ns, boolean elementFormDefault) {
+         //TODO - key/value can be a Collection, Array , Dom document ,OMElement etc
+		if (SimpleTypeMapper.isMap(value.getClass())) {
+			List<OMElement> childList = getMapElement(fac, valueType,
+					(Map) value, typeTable, elementFormDefault);
+			OMElement omValue = fac.createOMElement(elementName,
+					ns.getNamespaceURI(), ns.getPrefix());
+			for (OMElement child : childList) {
+				omValue.addChild(child);
+			}
+			return omValue;
+			
+		} else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
+			OMElement omValue;
+			omValue = fac.createOMElement(elementName, ns);
+			if (SimpleTypeMapper.isSimpleType(value)) {
+				omValue.addChild(fac.createOMText(SimpleTypeMapper
+						.getStringValue(value)));
+			} else {
+				QName name = new QName(ns.getNamespaceURI(), elementName,
+						ns.getPrefix());
+				XMLStreamReader xr = BeanUtil.getPullParser(value, name,
+						typeTable, true, false);
+				OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
+						.createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
+								new StreamWrapper(xr));
+				omValue = stAXOMBuilder.getDocumentElement();
+
+			}
+			addInstanceTypeAttribute(fac, omValue, value, typeTable);
+			return omValue;
+		}
+		return value;
+	}
 }

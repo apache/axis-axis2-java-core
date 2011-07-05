@@ -20,6 +20,7 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.jaxrs.JAXRSUtils;
 import org.apache.axis2.jaxrs.JAXRSModel;
 import org.apache.axis2.util.JavaUtils;
@@ -58,6 +59,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     public static final String NAME_SPACE_PREFIX = "ax2";// axis2 name space
 
     private static int prefixCount = 1;
+    
+    /* This is required to get unique name for java.util.Map.
+     * e.g - Map<String,Map<String,Object>> outerMap; 
+     */
+    private static int mapCount = 1;
+    private static int entryCount = 1;
 
     private JAXRSModel classModel;
 
@@ -391,7 +398,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 if (nonRpcMethods.contains(jMethod.getName())) {
                     generateSchemaForType(sequence, null, jMethod.getName());
                     break;
-                } else {
+                    
+                } else if(methodParameter != null && Map.class.isAssignableFrom(methodParameter)) {
+                	generateWrappedSchemaTypeForMap(sequence,genericParameterTypes[j], parameterName);                
+                }
+                else {
                     Type genericParameterType = genericParameterTypes[j];
                     Type genericType = null;
                     if(genericParameterType instanceof ParameterizedType){
@@ -423,12 +434,18 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 Type genericParameterType = jMethod.getGenericReturnType();
                 if (nonRpcMethods.contains(jMethod.getName())) {
                     generateSchemaForType(sequence, null, returnName);
+                } else if (Map.class.isAssignableFrom(returnType)){
+					if (genericParameterType instanceof ParameterizedType) {
+						generateWrappedSchemaTypeForMap(sequence, genericParameterType, returnName);
+					} else {
+						generateWrappedSchemaTypeForMap(sequence, returnType, returnName);
+					}                  	
                 } else if(genericParameterType instanceof ParameterizedType){
-                        ParameterizedType aType = (ParameterizedType) genericParameterType;
-                        Type[] parameterArgTypes = aType.getActualTypeArguments();
-                        generateSchemaForType(sequence, parameterArgTypes[0], returnName, true);
-                    } else {
-                    generateSchemaForType(sequence, returnType, returnName);
+                    ParameterizedType aType = (ParameterizedType) genericParameterType;
+                    Type[] parameterArgTypes = aType.getActualTypeArguments();
+                    generateSchemaForType(sequence, parameterArgTypes[0], returnName, true);
+                } else {
+                generateSchemaForType(sequence, returnType, returnName);
                 }
 
                 AxisMessage outMessage = axisOperation.getMessage(
@@ -646,24 +663,34 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         if(genericFieldType instanceof ParameterizedType){
                             ParameterizedType aType = (ParameterizedType) genericFieldType;
                             Type[] fieldArgTypes = aType.getActualTypeArguments();
-                            try {
-                                generateSchemaforGenericFields(xmlSchema,
-                                    sequence,
-                                    fieldArgTypes[0],
-                                    propertyName);
-                            } catch (Exception e) {
-                                generateSchemaforFieldsandProperties(xmlSchema,
-                                    sequence,
-                                    property.getPropertyType(),
-                                    propertyName,
-                                    property.getPropertyType().isArray());
+                            if(Map.class.isAssignableFrom((Class)((ParameterizedType)aType).getRawType())){
+                            	generateWrappedSchemaTypeForMap(sequence, aType, propertyName);
+                            } else {
+                            	try {
+                                    generateSchemaforGenericFields(xmlSchema,
+                                        sequence,
+                                        fieldArgTypes[0],
+                                        propertyName);
+                                } catch (Exception e) {
+                                    generateSchemaforFieldsandProperties(xmlSchema,
+                                        sequence,
+                                        property.getPropertyType(),
+                                        propertyName,
+                                        property.getPropertyType().isArray());
+                                }
+                            	
                             }
+                            
                         } else {
-                            generateSchemaforFieldsandProperties(xmlSchema,
-                                    sequence,
-                                    property.getPropertyType(),
-                                    propertyName,
-                                    property.getPropertyType().isArray());
+                        	if(genericFieldType != null && Map.class.isAssignableFrom((Class)genericFieldType)){
+                        		generateWrappedSchemaTypeForMap(sequence, genericFieldType, propertyName);
+                            } else {
+                            	generateSchemaforFieldsandProperties(xmlSchema,
+                                        sequence,
+                                        property.getPropertyType(),
+                                        propertyName,
+                                        property.getPropertyType().isArray());                            	
+                            }                            
                         }
                     }
                 }
@@ -1665,4 +1692,152 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             }
         }
     }
+    
+	/**
+	 * Generate wrapped schema type for map.
+	 *
+	 * @param sequence the sequence
+	 * @param genericParameterType the generic parameter type
+	 * @param parameterName the parameter name
+	 * @throws Exception the exception
+	 */
+	private void generateWrappedSchemaTypeForMap(XmlSchemaSequence sequence,
+			Type genericParameterType, String parameterName) throws Exception {
+		generateSchemaTypeForMap(sequence, genericParameterType, parameterName);
+	}
+    
+	/**
+	 * Generate schema type for map.
+	 *
+	 * @param sequence the sequence
+	 * @param genericParameterType the generic parameter type
+	 * @param parameterName the parameter name
+	 * @return the q name
+	 * @throws Exception the exception
+	 */
+	protected QName generateSchemaTypeForMap(XmlSchemaSequence sequence,
+			Type genericParameterType, String parameterName) throws Exception {
+		/*
+		 * In Doc/Lit Wrapped - sequence should not be null.
+		 * In Doc/lit Bare    - sequence should be null.
+		 */
+		Type keyType = Object.class;
+		Type valueType = Object.class;
+		String entryName = generateUniqueNameForMapEntry();
+		String mapName = generateUniqueNameForMap();
+
+		if (genericParameterType instanceof ParameterizedType) {
+			ParameterizedType aType = (ParameterizedType) genericParameterType;
+			Type[] parameterArgTypes = aType.getActualTypeArguments();
+			keyType = parameterArgTypes[0];
+			valueType = parameterArgTypes[1];
+		}
+
+		XmlSchema xmlSchema = getXmlSchema(Constants.AXIS2_MAP_NAMESPACE_URI);
+		String targetNamespacePrefix = targetNamespacePrefixMap
+				.get(Constants.AXIS2_MAP_NAMESPACE_URI);
+		
+		XmlSchemaComplexType entryType = new XmlSchemaComplexType(xmlSchema);
+		QName entryTypeName = new QName(Constants.AXIS2_MAP_NAMESPACE_URI,
+				entryName, targetNamespacePrefix);
+		XmlSchemaSequence entrySequence = new XmlSchemaSequence();
+		generateSchemaTypeForMapParameter(entrySequence, keyType,
+				Constants.MAP_KEY_ELEMENT_NAME);
+		generateSchemaTypeForMapParameter(entrySequence, valueType,
+				Constants.MAP_VALUE_ELEMENT_NAME);
+		entryType.setParticle(entrySequence);
+		entryType.setName(entryName);
+		xmlSchema.getItems().add(entryType);
+
+		XmlSchemaElement entryElement = new XmlSchemaElement();
+		entryElement.setName(Constants.MAP_ENTRY_ELEMENT_NAME);
+		entryElement.setNillable(true);
+		entryElement.setSchemaTypeName(entryTypeName);
+		entryElement.setMaxOccurs(Long.MAX_VALUE);
+		entryElement.setQName(entryTypeName);
+
+		XmlSchemaComplexType mapType = new XmlSchemaComplexType(xmlSchema);
+		QName mapTypeName = new QName(Constants.AXIS2_MAP_NAMESPACE_URI,
+				mapName, targetNamespacePrefix);
+		XmlSchemaSequence mapSequence = new XmlSchemaSequence();
+		mapSequence.getItems().add(entryElement);
+		mapType.setParticle(mapSequence);
+		mapType.setName(mapName);
+		xmlSchema.getItems().add(mapType);
+
+		QName schemaTypeName = new QName(Constants.AXIS2_MAP_NAMESPACE_URI,
+				mapName);
+		addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
+
+		if (sequence != null) {
+			XmlSchemaComplexType parameterType = new XmlSchemaComplexType(
+					xmlSchema);
+			QName parameterTypeName = new QName(
+					Constants.AXIS2_MAP_NAMESPACE_URI, mapName,
+					targetNamespacePrefix);
+			XmlSchemaSequence parameterSequence = new XmlSchemaSequence();
+			parameterSequence.getItems().add(entryElement);
+			parameterType.setParticle(parameterSequence);
+
+			XmlSchemaElement parameterElement = new XmlSchemaElement();
+			parameterElement.setName(parameterName);
+			sequence.getItems().add(parameterElement);
+			parameterElement.setSchemaTypeName(parameterTypeName);
+			return parameterTypeName;
+		}
+		return mapTypeName;
+	}
+    
+	/**
+	 * Generate schema type for map parameter.
+	 *
+	 * @param entrySequence the entry sequence
+	 * @param parameterType the parameter type
+	 * @param elementName the element name
+	 * @throws Exception the exception
+	 */
+	private void generateSchemaTypeForMapParameter(
+			XmlSchemaSequence entrySequence, Type parameterType,
+			String elementName) throws Exception {
+		if (parameterType instanceof ParameterizedType) {
+			if (Map.class
+					.isAssignableFrom((Class) ((ParameterizedType) parameterType)
+							.getRawType())) {
+				generateWrappedSchemaTypeForMap(entrySequence, parameterType,
+						elementName);
+
+			} else if (Collection.class
+					.isAssignableFrom((Class) ((ParameterizedType) parameterType)
+							.getRawType())) {
+				// TODO - support for Collection and Arrays
+			} else {
+				// TODO - support for custom ParameterizedTypes
+			}
+		} else {
+			generateSchemaForType(entrySequence, parameterType, elementName,
+					false);
+			}
+	}
+    
+	/**
+	 * Provides unique name for a Map.
+	 *
+	 * @return the string
+	 */
+	private static String generateUniqueNameForMap() {
+		String name = Constants.MAP_MAP_ELEMENT_NAME + mapCount;
+		mapCount++;
+		return name;
+	}
+    
+	/**
+	 * Provides unique name for a Map entry.
+	 *
+	 * @return the unique name for map entry
+	 */
+	private static String generateUniqueNameForMapEntry() {
+		String name = Constants.MAP_ENTRY_ELEMENT_NAME + entryCount;
+		entryCount++;
+		return name;
+	}
 }

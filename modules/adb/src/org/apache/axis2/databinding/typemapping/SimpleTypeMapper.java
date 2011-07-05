@@ -384,5 +384,15 @@ public class SimpleTypeMapper {
 	public static boolean isDomDocument(Class classType) {
 		return Document.class.isAssignableFrom(classType);
 	}
+	
+	/**
+	 * Checks weather passed parameter class is a java.util.Map 
+	 *
+	 * @param classType the class type
+	 * @return true, if it is a map
+	 */
+	public static boolean isMap(Class classType){
+		return java.util.Map.class.isAssignableFrom(classType);
+	}
 
 }

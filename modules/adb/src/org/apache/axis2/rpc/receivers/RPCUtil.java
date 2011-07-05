@@ -46,6 +46,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class RPCUtil {
 
@@ -322,7 +325,22 @@ public class RPCUtil {
                                 service.isElementFormDefault(),
                                 service.getTypeTable());
                         envelope.getBody().addChild(bodyChild);
-                    } else if (SimpleTypeMapper.isDataHandler(resObject.getClass())) {
+                        
+					} else if (SimpleTypeMapper.isMap(resObject.getClass())) {
+						OMElement resElemt = fac.createOMElement(
+								partName, ns);
+						List<OMElement> omList = BeanUtil.getMapElement(fac,
+								method.getGenericReturnType(), (Map) resObject,
+								service.getTypeTable(),
+								service.isElementFormDefault());					
+						Iterator<OMElement> omItr = omList.iterator();
+						while (omItr.hasNext()) {
+							resElemt.addChild(omItr.next());
+						}						
+						envelope.getBody().addChild(resElemt);
+
+					} else if (SimpleTypeMapper.isDataHandler(resObject
+							.getClass())) {
                         OMElement resElemt;
                         if (service.isElementFormDefault()) {
                             resElemt = fac.createOMElement(partName, ns);
@@ -477,6 +495,22 @@ public class RPCUtil {
                                 service.isElementFormDefault(),
                                 service.getTypeTable());
                         envelope.getBody().addChild(bodyChild);
+                    } else if (SimpleTypeMapper.isMap(resObject.getClass())){
+                    	 OMElement resElemt = fac.createOMElement(method.getName() + "Response", ns);
+                    	 List<OMElement> omList = BeanUtil.getMapElement(fac,method.getGenericReturnType(), (Map) resObject,service.getTypeTable(),service.isElementFormDefault());
+                         OMElement returnElement;
+                         if (service.isElementFormDefault()) {
+                             returnElement = fac.createOMElement(RETURN_WRAPPER, ns);
+                         } else {
+                             returnElement = fac.createOMElement(RETURN_WRAPPER, null);
+                         }
+                         Iterator<OMElement> omItr = omList.iterator();
+                         while(omItr.hasNext()){
+                        	 returnElement.addChild(omItr.next());                        	 
+                         }                         
+                         resElemt.addChild(returnElement);
+                         envelope.getBody().addChild(resElemt);
+                    	
                     } else if (SimpleTypeMapper.isDataHandler(resObject.getClass())) {
                         OMElement resElemt = fac.createOMElement(method.getName() + "Response", ns);
                         OMText text = fac.createOMText(resObject, true);

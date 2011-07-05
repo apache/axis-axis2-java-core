@@ -37,6 +37,7 @@ import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 
 public class BeanUtilTest extends TestCase {
@@ -253,6 +254,22 @@ public class BeanUtilTest extends TestCase {
          assertEquals("Not the expected value","Hello World",toStr((ByteArrayInputStream) ((DataHandler)result).getContent()));
  	   
     } 
+    
+    public void testProcessSimpleMap() throws Exception {
+    	OMNamespace ns = omFactory.createOMNamespace(org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_URI,
+    			org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_PREFIX);
+    	OMElement entry = omFactory.createOMElement(org.apache.axis2.Constants.MAP_ENTRY_ELEMENT_NAME,ns);
+    	OMElement key = omFactory.createOMElement(org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME,ns);
+    	OMElement value = omFactory.createOMElement(org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME,ns);
+    	key.setText("key1");
+    	value.setText("value1");
+    	entry.addChild(key);
+    	entry.addChild(value);
+    	omElement.addChild(entry);   
+    	
+        Object result = BeanUtil.processObject(omElement, Map.class, new MultirefHelper(omElement), false, objectSupplier, Map.class);
+        assertTrue(result instanceof Map);       
+    }
     
     private static String toStr(ByteArrayInputStream is) {
 	    int size = is.available();

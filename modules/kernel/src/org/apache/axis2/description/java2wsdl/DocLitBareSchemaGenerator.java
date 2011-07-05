@@ -41,10 +41,12 @@ import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 
@@ -122,6 +124,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 
             uniqueMethods.put(methodName, jMethod);
             Class<?>[] paras = jMethod.getParameterTypes();
+            Type[] genericParameterTypes = jMethod.getGenericParameterTypes();
             String parameterNames[] = methodTable.getParameterNames(methodName);
             AxisMessage inMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             if (inMessage != null) {
@@ -139,7 +142,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                 for (int j = 0; j < paras.length; j++) {
                     Class<?> methodParameter = paras[j];
                     String parameterName = getParameterName(parameterAnnotation, j, parameterNames);
-                    if (generateRequestSchema(methodParameter , parameterName,jMethod, sequence)) {
+                    if (generateRequestSchema(methodParameter , parameterName,jMethod, sequence, genericParameterTypes[j])) {
                         break;
                     }
                 }
@@ -155,7 +158,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                             axisOperation);
                     inMessage.setPartName(methodName);
                     String parameterName = getParameterName(parameterAnnotation, 0, parameterNames);
-                    if (generateRequestSchema(methodParameter , parameterName,jMethod, sequence)) {
+                    if (generateRequestSchema(methodParameter , parameterName,jMethod, sequence, genericParameterTypes[0])) {
                         break;
                     }
                 } else {
@@ -168,7 +171,11 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                                 jMethod.getName() + " ]which have the same parameter names");
                     } else {
                         processedParameters.put(parameterName, jMethod);
-                        generateSchemaForType(null, methodParameter, parameterName);
+                        if (methodParameter != null && Map.class.isAssignableFrom(methodParameter)){                        	
+							generateBareSchemaTypeForMap(parameterName, genericParameterTypes[0], null);
+                        } else {
+                        	generateSchemaForType(null, methodParameter, parameterName);                        	
+                        }                        
                         inMessage.setElementQName(typeTable.getQNamefortheType(parameterName));
                         inMessage.setPartName(parameterName);
                         inMessage.setWrapped(false);
@@ -180,6 +187,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 
             // for its return type
             Class<?> returnType = jMethod.getReturnType();
+            Type genericReturnType = jMethod.getGenericReturnType();
 
             if (!"void".equals(jMethod.getReturnType().getName())) {
                 AxisMessage outMessage = axisOperation.getMessage(
@@ -203,7 +211,11 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                         generateSchemaForType(sequence, returnType, returnName);
                     }
                 } else {
-                    generateSchemaForType(null, returnType, methodName + RESULT);
+                	if (returnType != null && Map.class.isAssignableFrom(returnType)){                        	
+						generateBareSchemaTypeForMap(methodName + RESULT, genericReturnType, null);
+                    } else {
+                    	generateSchemaForType(null, returnType, methodName + RESULT);                    	
+                    }                    
                     outMessage.setWrapped(false);
                 }
                 outMessage.setElementQName(typeTable.getQNamefortheType(methodName + RESULT));
@@ -224,10 +236,12 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
     private boolean generateRequestSchema(Class<?> methodParameter,
                                           String parameterName,
                                           Method jMethod,
-                                          XmlSchemaSequence sequence) throws Exception {
+                                          XmlSchemaSequence sequence, Type genericParameterType) throws Exception {
         if (nonRpcMethods.contains(jMethod.getName())) {
             generateSchemaForType(sequence, null, jMethod.getName());
             return true;
+        } else if (methodParameter != null && Map.class.isAssignableFrom(methodParameter)){                        	
+			generateBareSchemaTypeForMap(parameterName, genericParameterType, sequence);			
         } else {
             generateSchemaForType(sequence, methodParameter, parameterName);
         }
@@ -359,5 +373,35 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
         }
         return xmlSchema;
     }
+    
+	/**
+	 * Generate bare schema type for map.
+	 *
+	 * @param paraName the para name
+	 * @param genericParameterType the generic parameter type
+	 * @param sequence the sequence
+	 * @throws Exception the exception
+	 */
+	private void generateBareSchemaTypeForMap(String paraName,
+			Type genericParameterType, XmlSchemaSequence sequence)
+			throws Exception {
+		QName schemaTypeName = generateSchemaTypeForMap(sequence,
+				genericParameterType, paraName);
+		if (sequence != null) {
+			return;
+		}
+		XmlSchemaElement elt1 = new XmlSchemaElement();
+		elt1.setSchemaTypeName(schemaTypeName);
+		elt1.setName(paraName);
+		elt1.setNillable(true);
+		QName elementName = new QName(schemaTargetNameSpace, paraName,
+				schema_namespace_prefix);
+		elt1.setQName(elementName);
+		XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+		xmlSchema.getElements().add(elementName, elt1);
+		xmlSchema.getItems().add(elt1);
+		typeTable.addComplexSchema(paraName, elementName);
+
+	}
 
 }

@@ -320,6 +320,15 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static int MAX_HIERARCHICAL_DEPTH = 10;
     public static final String HIDDEN_SERVICE_PARAM_NAME = "hiddenService";
+    
+    
+    public static final String MAP_MAP_ELEMENT_NAME = "map";
+    public static final String MAP_ENTRY_ELEMENT_NAME = "entry";
+    public static final String MAP_KEY_ELEMENT_NAME = "key";
+    public static final String MAP_VALUE_ELEMENT_NAME = "value";
+    public static final String AXIS2_MAP_NAMESPACE_URI =
+        "http://ws.apache.org/namespaces/axis2/map"; 
+    public static final String AXIS2_MAP_NAMESPACE_PREFIX = "map";
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";

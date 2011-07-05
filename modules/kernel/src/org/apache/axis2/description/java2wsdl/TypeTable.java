@@ -29,7 +29,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -152,10 +151,6 @@ public class TypeTable {
                 ANY_TYPE);
         simpleTypetoxsd.put(List.class.getName(),
                 ANY_TYPE);
-         simpleTypetoxsd.put(HashMap.class.getName(),
-                 ANY_TYPE);
-         simpleTypetoxsd.put(Hashtable.class.getName(),
-                 ANY_TYPE);
         simpleTypetoxsd.put(Document.class.getName(), ANY_TYPE);
         //byteArrat
         simpleTypetoxsd.put("base64Binary",
@@ -285,6 +280,20 @@ public class TypeTable {
         }
         return type;
     }
+    
+	/**
+	 * Gets the schema type name.
+	 *
+	 * @param name the name
+	 * @return the schema type name
+	 */
+	public QName getSchemaTypeName(String name) {
+		QName qName = getSimpleSchemaTypeName(name);
+		if( qName == null){
+			qName = getComplexSchemaType(name);
+		}
+		return qName;
+	}
 }
 
 
