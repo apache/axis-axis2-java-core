@@ -122,6 +122,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 throw fault;
             }
         } finally {
+            //We can call the serviceContext destroy method for request scope services
+            if (Constants.SCOPE_REQUEST.equals(messageCtx.getAxisService().getScope())) {
+                DependencyManager.destroyServiceObject(messageCtx.getServiceContext());
+            }
             restoreThreadContext(tc);
         }
     }
