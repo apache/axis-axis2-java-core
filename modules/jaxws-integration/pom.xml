@@ -179,6 +179,31 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>wsdl2code</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>server</packageName>
+                            <wsdlFile>test-resources/wsdl/echo.wsdl</wsdlFile>
+                            <databindingName>adb</databindingName>
+                            <generateServerSide>true</generateServerSide>
+                            <namespaceURIs>
+                                <namespaceURI>
+                                    <uri>http://test</uri>
+                                    <packageName>server</packageName>
+                                </namespaceURI>
+                            </namespaceURIs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -1229,7 +1254,8 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/schema/src</source>
+                                <source>${project.build.directory}/schema/src</source>
+                                <source>${project.build.directory}/generated-sources/axis2/wsdl2code/src</source>
                             </sources>
                         </configuration>
                     </execution>

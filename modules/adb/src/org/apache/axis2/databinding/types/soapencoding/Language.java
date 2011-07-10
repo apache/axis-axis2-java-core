@@ -325,11 +325,14 @@ import javax.xml.stream.XMLStreamWriter;
 
                 if (prefix == null) {
                     prefix = generatePrefix(namespace);
-
-                    while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
+                    javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
+                    while (true) {
+                        java.lang.String uri = nsContext.getNamespaceURI(prefix);
+                        if (uri == null || uri.length() == 0) {
+                            break;
+                        }
                         prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
                     }
-
                     xmlWriter.writeNamespace(prefix, namespace);
                     xmlWriter.setPrefix(prefix, namespace);
                 }
