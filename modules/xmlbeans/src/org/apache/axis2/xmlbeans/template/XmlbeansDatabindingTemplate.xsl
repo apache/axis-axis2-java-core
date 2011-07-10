@@ -64,15 +64,14 @@
             private org.apache.axiom.om.OMElement toOM(final <xsl:value-of select="@type"/> param)
                     throws org.apache.axis2.AxisFault {
 
-                org.apache.axiom.om.impl.builder.SAXOMBuilder builder = new org.apache.axiom.om.impl.builder.SAXOMBuilder();
                 org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
                 xmlOptions.setSaveNoXmlDecl();
                 xmlOptions.setSaveAggressiveNamespaces();
                 xmlOptions.setSaveNamespacesFirst();
+                org.apache.axiom.om.OMXMLParserWrapper builder = org.apache.axiom.om.OMXMLBuilderFactory.createOMBuilder(
+                        new javax.xml.transform.sax.SAXSource(new org.apache.axis2.xmlbeans.XmlBeansXMLReader(param, xmlOptions), new org.xml.sax.InputSource()));
                 try {
-                   param.save(builder, builder, xmlOptions);
-                   org.apache.axiom.om.OMElement element = builder.getRootElement();
-                   return element;
+                    return builder.getDocumentElement(true);
                 } catch (java.lang.Exception e) {
                     throw org.apache.axis2.AxisFault.makeFault(e);
                 }
