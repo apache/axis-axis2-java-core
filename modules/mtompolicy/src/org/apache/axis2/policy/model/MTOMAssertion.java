@@ -52,5 +52,8 @@ public abstract class MTOMAssertion implements Assertion {
         this.optional = isOptional;
     }
 
+    public boolean isIgnorable() {
+        return false;
+    }
 }
 	

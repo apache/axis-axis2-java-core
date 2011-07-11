@@ -43,7 +43,7 @@ import javax.xml.namespace.QName;
  * The builder will be picked by the
  * "org.apache.neethi.AssertionBuilderFactory".
  */
-public class MTOM10AssertionBuilder implements AssertionBuilder {
+public class MTOM10AssertionBuilder implements AssertionBuilder<OMElement> {
 
     private static Log log = LogFactory.getLog(MTOM10AssertionBuilder.class);
 
