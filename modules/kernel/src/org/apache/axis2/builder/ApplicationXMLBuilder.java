@@ -21,7 +21,7 @@ package org.apache.axis2.builder;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -30,7 +30,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -60,8 +59,8 @@ public class ApplicationXMLBuilder implements Builder {
                 int b;
                 if ((b = pushbackInputStream.read()) > 0) {
                     pushbackInputStream.unread(b);
-                    StAXBuilder builder =
-                            BuilderUtil.getPOXBuilder(pushbackInputStream,
+                    OMXMLParserWrapper builder =
+                            BuilderUtil.createPOXBuilder(pushbackInputStream,
                                     (String) messageContext.getProperty(
                                             Constants.Configuration.CHARACTER_SET_ENCODING));
                     OMElement documentElement = builder.getDocumentElement(true);
@@ -69,8 +68,6 @@ public class ApplicationXMLBuilder implements Builder {
                     body.addChild(documentElement);
                 }
 
-            } catch (XMLStreamException e) {
-                throw AxisFault.makeFault(e);
             } catch (IOException e) {
                 throw AxisFault.makeFault(e);
             }

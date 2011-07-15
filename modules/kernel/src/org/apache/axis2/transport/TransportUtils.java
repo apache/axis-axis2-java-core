@@ -27,12 +27,13 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
@@ -184,7 +185,7 @@ public class TransportUtils {
                 if (log.isDebugEnabled()) {
                     log.debug("Could not find a Builder for type (" + type + ").  Using REST.");
                 }
-                StAXBuilder builder = BuilderUtil.getPOXBuilder(inStream, null);
+                OMXMLParserWrapper builder = BuilderUtil.createPOXBuilder(inStream, null);
                 documentElement = builder.getDocumentElement();
             } else {
                 // FIXME making soap defualt for the moment..might effect the
@@ -194,7 +195,7 @@ public class TransportUtils {
                 }
                 String charSetEnc = (String) msgContext
                         .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-                StAXBuilder builder = BuilderUtil.getSOAPBuilder(inStream, charSetEnc);
+                SOAPModelBuilder builder = BuilderUtil.createSOAPModelBuilder(inStream, charSetEnc);
                 documentElement = builder.getDocumentElement();
             }
         }

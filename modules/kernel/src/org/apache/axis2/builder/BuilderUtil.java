@@ -28,6 +28,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -40,6 +42,7 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
@@ -226,6 +229,10 @@ public class BuilderUtil {
         }
     }
 
+    /**
+     * @deprecated Please use {@link #createPOXBuilder(InputStream, String)} to enable usage of non
+     *             standard Axiom implementations.
+     */
     public static StAXBuilder getPOXBuilder(InputStream inStream, String charSetEnc)
             throws XMLStreamException {
         StAXBuilder builder;
@@ -236,6 +243,22 @@ public class BuilderUtil {
                 StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, inStream, charSetEnc);
         builder = new StAXOMBuilder(xmlreader);
         return builder;
+    }
+
+    /**
+     * Create a builder suitable for an XML message. This method uses
+     * {@link StAXParserConfiguration#SOAP} to disallow document type declarations (that potentially
+     * reference external entities).
+     * 
+     * @param in
+     *            the input stream containing the plain XML message
+     * @param encoding
+     *            the charset encoding of the message or <code>null</code> if the parser should
+     *            determine the charset encoding
+     * @return the builder
+     */
+    public static OMXMLParserWrapper createPOXBuilder(InputStream in, String encoding) {
+        return OMXMLBuilderFactory.createOMBuilder(StAXParserConfiguration.SOAP, in, encoding);
     }
 
     /**
@@ -613,11 +636,7 @@ public class BuilderUtil {
     }
 
     /**
-     * Creates an OMBuilder for a plain XML message. Default character set encording is used.
-     *
-     * @param inStream InputStream for a XML message
-     * @return Handler to a OMBuilder implementation instance
-     * @throws XMLStreamException
+     * @deprecated Please use {@link OMXMLBuilderFactory#createOMBuilder(InputStream)} instead.
      */
     public static StAXBuilder getBuilder(InputStream inStream) throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
@@ -625,12 +644,35 @@ public class BuilderUtil {
     }
 
     /**
-     * Creates an OMBuilder for a plain XML message.
-     *
-     * @param inStream   InputStream for a XML message
-     * @param charSetEnc Character set encoding to be used
-     * @return Handler to a OMBuilder implementation instance
-     * @throws XMLStreamException
+     * Create a SOAP model builder. This method delegates to
+     * {@link OMXMLBuilderFactory#createSOAPModelBuilder(InputStream, String)} but generates
+     * additional logging if an error occurs.
+     * 
+     * @param in
+     *            the input stream containing the SOAP message
+     * @param encoding
+     *            the charset encoding of the SOAP message or <code>null</code> if the parser should
+     *            determine the charset encoding
+     * @return the builder
+     */
+    public static SOAPModelBuilder createSOAPModelBuilder(InputStream in, String encoding) {
+        try {
+            return OMXMLBuilderFactory.createSOAPModelBuilder(in, encoding);
+        } catch (OMException e) {
+            log.info("OMException in getSOAPBuilder", e);
+            try {
+                log.info("Remaining input stream :[" +
+                         new String(IOUtils.getStreamAsByteArray(in), encoding) + "]");
+            } catch (IOException e1) {
+                // Nothing here?
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * @deprecated Please use {@link #createSOAPModelBuilder(InputStream, String)} to enable usage
+     *             of non standard Axiom implementations.
      */
     public static StAXBuilder getBuilder(InputStream inStream, String charSetEnc)
             throws XMLStreamException {
@@ -650,11 +692,8 @@ public class BuilderUtil {
     }
 
     /**
-     * Creates an OMBuilder for a SOAP message. Default character set encording is used.
-     *
-     * @param inStream InputStream for a SOAP message
-     * @return Handler to a OMBuilder implementation instance
-     * @throws XMLStreamException
+     * @deprecated Please use {@link #createSOAPModelBuilder(InputStream, String)} to enable usage
+     *             of non standard Axiom implementations.
      */
     public static StAXBuilder getSOAPBuilder(InputStream inStream) throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
@@ -673,12 +712,8 @@ public class BuilderUtil {
     }
 
     /**
-     * Creates an OMBuilder for a SOAP message.
-     *
-     * @param inStream   InputStream for a SOAP message
-     * @param charSetEnc Character set encoding to be used
-     * @return Handler to a OMBuilder implementation instance
-     * @throws XMLStreamException
+     * @deprecated Please use {@link #createSOAPModelBuilder(InputStream, String)} to enable usage
+     *             of non standard Axiom implementations.
      */
     public static StAXBuilder getSOAPBuilder(InputStream inStream, String charSetEnc)
             throws XMLStreamException {
