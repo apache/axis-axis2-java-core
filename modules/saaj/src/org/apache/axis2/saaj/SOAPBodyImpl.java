@@ -178,7 +178,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                                                                     prefix + ":" + localName));
         }
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(childEle.element.declareNamespace(uri, prefix));
+        childEle.element.setNamespace(getOMFactory().createOMNamespace(uri, prefix));
         element.appendChild(childEle.element);
         ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
@@ -546,8 +546,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                                                                             qname.getLocalPart()));
         }
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(childEle.element.declareNamespace(
-                qname.getNamespaceURI(), qname.getPrefix()));
+        childEle.element.setNamespace(getOMFactory().createOMNamespace(qname.getNamespaceURI(), qname.getPrefix()));
 
         element.appendChild(childEle.element);
         ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
