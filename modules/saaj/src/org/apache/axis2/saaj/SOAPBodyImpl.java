@@ -164,11 +164,14 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         if (omSOAPBody.hasFault()) {
             throw new SOAPException("A SOAPFault has been already added to this SOAPBody");
         }
+        if (prefix == null) {
+            prefix = "";
+        }
         SOAPBodyElementImpl childEle;
         if (uri == null || "".equals(uri)) {
             childEle = new SOAPBodyElementImpl(
                     (ElementImpl)getOwnerDocument().createElement(localName));
-        } else if (prefix == null || "".equals(prefix)) {
+        } else if (prefix.length() == 0) {
             childEle = new SOAPBodyElementImpl(
                 (ElementImpl)getOwnerDocument().createElementNS(uri,
                                                                 localName));
