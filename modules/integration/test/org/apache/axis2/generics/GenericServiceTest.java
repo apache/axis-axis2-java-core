@@ -40,12 +40,13 @@ public class GenericServiceTest extends RPCLocalTestCase {
 
     public void testProcessStringList() throws AxisFault {
         RPCServiceClient sender = getRPCClient("GenericService", "processStringList");
-        ArrayList<StringArray> args = new ArrayList<StringArray>();
-        args.add(new StringArray());
-
-        Object[] value = sender.invokeBlocking(new QName("http://generics.axis2.apache.org", "processStringList", "req"), args.toArray(),
-                new Class[]{String.class});
-        assertEquals(value[0], "Test1");
+        ArrayList<String> args = new ArrayList<String>();       
+	args.add("Test1");
+	Object[] value = sender.invokeBlocking(
+		new QName("http://generics.axis2.apache.org",
+			"processStringList", "req"), args.toArray(),
+			new Class[] { String.class });
+	assertEquals(value[0], "Test1");
     }
 
     public void testGetStringList() throws AxisFault {
@@ -69,11 +70,14 @@ public class GenericServiceTest extends RPCLocalTestCase {
 
     public void testProcessPersonList() throws AxisFault {
         RPCServiceClient sender = getRPCClient("GenericService", "processPersonList");
-        ArrayList<PersonArray> args = new ArrayList<PersonArray>();
-        args.add(new PersonArray());
-
-        Object[] value = sender.invokeBlocking(new QName("http://generics.axis2.apache.org", "processPersonList", "req"), args.toArray(),
-                new Class[]{Person.class});
+        ArrayList<Person> args = new ArrayList<Person>();
+        Person p = new Person();
+        p.setAge(10);
+        args.add(p);
+        Object[] value = sender.invokeBlocking(
+        	new QName("http://generics.axis2.apache.org",
+        		"processPersonList", "req"), args.toArray(),
+        		new Class[] { Person.class });
         Person person = (Person) value[0];
         assertNotNull(person);
         assertEquals(person.getAge(), 10);

@@ -221,6 +221,9 @@ public class SimpleTypeMapper {
     }
 
     public static boolean isSimpleType(Object obj) {
+    	if(obj == null){
+    		return false;
+    	}
         String objClassName = obj.getClass().getName();
         return obj instanceof Calendar || obj instanceof Date || isSimpleType(objClassName);
     }
@@ -354,8 +357,11 @@ public class SimpleTypeMapper {
 	 * @param obj the Class type of particular object.
 	 * @return true, if is object array
 	 */
-	public static boolean isObjectArray(Class obj) {
-		if (obj.getComponentType().getName().equals(Object.class.getName())) {
+	public static boolean isObjectArray(Class obj) {		
+		if (obj != null
+				&& obj.getComponentType() != null
+				&& obj.getComponentType().getName()
+						.equals(Object.class.getName())) {
 			return true;
 		}
 		return false;
@@ -393,6 +399,23 @@ public class SimpleTypeMapper {
 	 */
 	public static boolean isMap(Class classType){
 		return java.util.Map.class.isAssignableFrom(classType);
+	}
+
+	/**
+	 * Checks weather passed parameter class is a multidimensional object array.
+	 *
+	 * @param type the type
+	 * @return true, if is multidimensional object array
+	 */
+	public static boolean isMultidimensionalObjectArray(Class type) {
+		Class compType = type.getComponentType();
+		if (compType == null) {
+			return false;
+		} else if (isObjectArray(compType)) {
+			return true;
+		} else {
+			return isMultidimensionalObjectArray(compType);
+		}
 	}
 
 }

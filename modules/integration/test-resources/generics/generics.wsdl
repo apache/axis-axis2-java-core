@@ -18,17 +18,10 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="processStringArray">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="values" nillable="true" type="ns:String"/>
-                    </xs:sequence>
+                 <xs:complexType>
+                    <xs:sequence/>
                 </xs:complexType>
-            </xs:element>
-            <xs:complexType name="String">
-                <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="array" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
+            </xs:element>           
             <xs:element name="processPersonList">
                 <xs:complexType>
                     <xs:sequence>

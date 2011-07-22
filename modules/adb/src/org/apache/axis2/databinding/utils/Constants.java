@@ -32,6 +32,9 @@ public interface Constants {
     static String XSI_TYPE_ATTRIBUTE = "type";
     static String DEFAULT_XSI_NAMESPACE_PREFIX = "xsi";
     static String DEFAULT_XSD_NAMESPACE_PREFIX = "xs";
+    
+    public static String INNTER_ARRARY_COMPLEX_TYPE_NAME = "array";
+    public static String RETURN_WRAPPER = "return";
 
     static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
     static Object OM_ELEMENT_KEY = new OMElementKey();

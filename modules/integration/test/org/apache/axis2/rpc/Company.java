@@ -23,14 +23,14 @@ import java.util.ArrayList;
 
 public class Company {
 
-    private ArrayList persons;
+    private ArrayList<Person> persons;
     private String name;
 
-    public ArrayList getPersons() {
+    public ArrayList<Person> getPersons() {
         return persons;
     }
 
-    public void setPersons(ArrayList persons) {
+    public void setPersons(ArrayList<Person> persons) {
         this.persons = persons;
     }
 

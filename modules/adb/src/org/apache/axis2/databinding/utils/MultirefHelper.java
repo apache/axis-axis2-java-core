@@ -33,6 +33,8 @@ import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.engine.ObjectSupplier;
 
 import javax.xml.namespace.QName;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -106,7 +108,11 @@ public class MultirefHelper {
         return new StAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
     }
 
-    public Object processRef(Class javatype, String id, ObjectSupplier objectSupplier)
+    public Object processRef(Class javatype, String id,
+	    ObjectSupplier objectSupplier) throws AxisFault {
+	return processRef(javatype, null, id, objectSupplier);
+    }
+    public Object processRef(Class javatype, Type generictype, String id, ObjectSupplier objectSupplier)
             throws AxisFault {
         if (!filledTable) {
             readallChildElements();
@@ -128,10 +134,20 @@ public class MultirefHelper {
                 Object valObj = SimpleTypeMapper.getSimpleTypeObject(javatype, val);
                 objectmap.put(id, valObj);
                 return valObj;
-            } else if (SimpleTypeMapper.isCollection(javatype)) {
-                Object valobj = SimpleTypeMapper.getArrayList(val);
-                objectmap.put(id, valobj);
-                return valobj;
+            } else if (generictype != null
+        	    && SimpleTypeMapper.isCollection(javatype)) {
+        	return BeanUtil.processGenericCollection(val.getFirstElement(),
+        		generictype, this, objectSupplier);
+            } else if (generictype != null
+        	    && SimpleTypeMapper.isMap(javatype)) {
+        	Type[] parameterArgTypes = {Object.class, Object.class};
+        	if (generictype instanceof ParameterizedType) {
+        	    ParameterizedType aType = (ParameterizedType) generictype;
+        	    parameterArgTypes = aType.getActualTypeArguments();        	     
+        	}                                   
+		return BeanUtil.processGenericsMapElement(parameterArgTypes,
+			val.getFirstElement(), this, val.getChildren(),
+			objectSupplier, generictype);
             } else {
                 Object obj = BeanUtil.deserialize(javatype, val, this, objectSupplier);
                 objectmap.put(id, obj);

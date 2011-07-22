@@ -32,6 +32,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.axis2.databinding.utils.Constants;
 import org.apache.axis2.databinding.utils.reader.NullXMLStreamReader;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisService;
@@ -45,6 +46,8 @@ import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -52,8 +55,7 @@ import java.util.Map;
 
 public class RPCUtil {
 
-    private static String RETURN_WRAPPER = "return";
-
+    
     public static void processResponse(SOAPFactory fac, Object resObject,
                                        OMElement bodyContent,
                                        OMNamespace ns,
@@ -69,10 +71,10 @@ public class RPCUtil {
                         method.getName() + "Response", ns);
                 OMElement resWrapper;
                 if (qualified) {
-                    resWrapper = fac.createOMElement(RETURN_WRAPPER, ns.getNamespaceURI(),
+                    resWrapper = fac.createOMElement(Constants.RETURN_WRAPPER, ns.getNamespaceURI(),
                             ns.getPrefix());
                 } else {
-                    resWrapper = fac.createOMElement(RETURN_WRAPPER, null);
+                    resWrapper = fac.createOMElement(Constants.RETURN_WRAPPER, null);
                 }
                 resWrapper.addChild(result);
                 bodyContent.addChild(resWrapper);
@@ -81,9 +83,9 @@ public class RPCUtil {
 				bodyContent = fac.createOMElement(method.getName() + "Response", ns);
 				OMElement child;
 				if (qualified) {
-					child = fac.createOMElement(RETURN_WRAPPER, ns);
+					child = fac.createOMElement(Constants.RETURN_WRAPPER, ns);
 				} else {
-					child = fac.createOMElement(RETURN_WRAPPER, null);
+					child = fac.createOMElement(Constants.RETURN_WRAPPER, null);
 				}
 				child.addChild(doc);
 				bodyContent.addChild(child);	
@@ -92,9 +94,9 @@ public class RPCUtil {
                         method.getName() + "Response", ns);
                 OMElement child;
                 if (qualified) {
-                    child = fac.createOMElement(RETURN_WRAPPER, ns);
+                    child = fac.createOMElement(Constants.RETURN_WRAPPER, ns);
                 } else {
-                    child = fac.createOMElement(RETURN_WRAPPER, null);
+                    child = fac.createOMElement(Constants.RETURN_WRAPPER, null);
                 }
                 child.addChild(fac.createOMText(child, SimpleTypeMapper.getStringValue(resObject)));
                 addInstanceTypeInfo(fac, child, method, resObject, typeTable);               
@@ -105,9 +107,9 @@ public class RPCUtil {
                 // Java Beans
                 QName returnWrapper;
                 if (qualified) {
-                    returnWrapper = new QName(ns.getNamespaceURI(), RETURN_WRAPPER, ns.getPrefix());
+                    returnWrapper = new QName(ns.getNamespaceURI(), Constants.RETURN_WRAPPER, ns.getPrefix());
                 } else {
-                    returnWrapper = new QName(RETURN_WRAPPER);
+                    returnWrapper = new QName(Constants.RETURN_WRAPPER);
                 }
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
                         returnWrapper, typeTable, qualified, false);
@@ -250,13 +252,13 @@ public class RPCUtil {
         if (qualified) {
             return BeanUtil.getOMElement(resname, objs,
                     new QName(resname.getNamespaceURI(),
-                            RETURN_WRAPPER,
+                	    Constants.RETURN_WRAPPER,
                             resname.getPrefix()),
                     qualified,
                     typeTable);
         } else {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(RETURN_WRAPPER), qualified,
+                    new QName(Constants.RETURN_WRAPPER), qualified,
                     typeTable);
         }
     }
@@ -308,24 +310,17 @@ public class RPCUtil {
                     envelope.getBody().addChild(bodyChild);
                 } else {
                     if (SimpleTypeMapper.isCollection(resObject.getClass())) {
-                        Collection collection = (Collection) resObject;
-                        int size = collection.size();
-                        Object values[] = new Object[size];
-                        int count = 0;
-                        for (Object aCollection : collection) {
-                            values[count] = aCollection;
-                            count++;
-
-                        }
-                        QName resName = new QName(elementQName.getNamespaceURI(),
-                                partName,
-                                elementQName.getPrefix());
-                        OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                                values,
-                                service.isElementFormDefault(),
-                                service.getTypeTable());
-                        envelope.getBody().addChild(bodyChild);
-                        
+                    	QName resName = new QName(
+								elementQName.getNamespaceURI(),
+								method.getName() + "Response",
+								elementQName.getPrefix());
+						OMElement bodyChild = BeanUtil.getCollectionElement(
+								fac, method.getGenericReturnType(),
+								(Collection) resObject, Constants.RETURN_WRAPPER,null,
+								resName, service.getTypeTable(),
+								service.isElementFormDefault());
+						envelope.getBody().addChild(bodyChild);
+						
 					} else if (SimpleTypeMapper.isMap(resObject.getClass())) {
 						OMElement resElemt = fac.createOMElement(
 								partName, ns);
@@ -428,10 +423,10 @@ public class RPCUtil {
             QName resName;
             if (service.isElementFormDefault()) {
                 resName = new QName(service.getSchemaTargetNamespace(),
-                        RETURN_WRAPPER,
+                	Constants.RETURN_WRAPPER,
                         service.getSchemaTargetNamespacePrefix());
             } else {
-                resName = new QName(RETURN_WRAPPER);
+                resName = new QName(Constants.RETURN_WRAPPER);
             }
             XMLStreamReader xr = new NullXMLStreamReader(resName);
             StreamWrapper parser = new StreamWrapper(xr);
@@ -477,32 +472,25 @@ public class RPCUtil {
                             service.getTypeTable());
                     envelope.getBody().addChild(bodyChild);
                 } else {
-                    if (SimpleTypeMapper.isCollection(resObject.getClass())) {
-                        Collection collection = (Collection) resObject;
-                        int size = collection.size();
-                        Object values[] = new Object[size];
-                        int count = 0;
-                        for (Object aCollection : collection) {
-                            values[count] = aCollection;
-                            count++;
-
-                        }
-                        QName resName = new QName(elementQName.getNamespaceURI(),
-                                method.getName() + "Response",
-                                elementQName.getPrefix());
-                        OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                                values,
-                                service.isElementFormDefault(),
-                                service.getTypeTable());
-                        envelope.getBody().addChild(bodyChild);
+                    if (SimpleTypeMapper.isCollection(resObject.getClass())) {                       
+						QName resName = new QName(
+								elementQName.getNamespaceURI(),
+								method.getName() + "Response",
+								elementQName.getPrefix());
+						OMElement bodyChild = BeanUtil.getCollectionElement(
+								fac, method.getGenericReturnType(),
+								(Collection) resObject, Constants.RETURN_WRAPPER,null,
+								resName, service.getTypeTable(),
+								service.isElementFormDefault());
+						envelope.getBody().addChild(bodyChild);
                     } else if (SimpleTypeMapper.isMap(resObject.getClass())){
                     	 OMElement resElemt = fac.createOMElement(method.getName() + "Response", ns);
                     	 List<OMElement> omList = BeanUtil.getMapElement(fac,method.getGenericReturnType(), (Map) resObject,service.getTypeTable(),service.isElementFormDefault());
                          OMElement returnElement;
                          if (service.isElementFormDefault()) {
-                             returnElement = fac.createOMElement(RETURN_WRAPPER, ns);
+                             returnElement = fac.createOMElement(Constants.RETURN_WRAPPER, ns);
                          } else {
-                             returnElement = fac.createOMElement(RETURN_WRAPPER, null);
+                             returnElement = fac.createOMElement(Constants.RETURN_WRAPPER, null);
                          }
                          Iterator<OMElement> omItr = omList.iterator();
                          while(omItr.hasNext()){
@@ -516,9 +504,9 @@ public class RPCUtil {
                         OMText text = fac.createOMText(resObject, true);
                         OMElement returnElement;
                         if (service.isElementFormDefault()) {
-                            returnElement = fac.createOMElement(RETURN_WRAPPER, ns);
+                            returnElement = fac.createOMElement(Constants.RETURN_WRAPPER, ns);
                         } else {
-                            returnElement = fac.createOMElement(RETURN_WRAPPER, null);
+                            returnElement = fac.createOMElement(Constants.RETURN_WRAPPER, null);
                         }
                         returnElement.addChild(text);
                         resElemt.addChild(returnElement);

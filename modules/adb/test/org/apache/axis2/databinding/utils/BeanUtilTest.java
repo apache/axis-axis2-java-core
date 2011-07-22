@@ -114,7 +114,7 @@ public class BeanUtilTest extends TestCase {
         OMElement child = omFactory.createOMElement(new QName("child"), omElement);
         child.setText("World");
         
-        Object result = BeanUtil.processObject(omElement, List.class, new MultirefHelper(omElement), false, objectSupplier, null);
+        Object result = BeanUtil.processObject(omElement.getFirstElement(), List.class, new MultirefHelper(omElement), false, objectSupplier, List.class);
         assertTrue(result instanceof List);
         assertEquals(1, ((List) result).size());
     }

@@ -44,6 +44,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -173,6 +174,19 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                         processedParameters.put(parameterName, jMethod);
                         if (methodParameter != null && Map.class.isAssignableFrom(methodParameter)){                        	
 							generateBareSchemaTypeForMap(parameterName, genericParameterTypes[0], null);
+							
+                        } else if (methodParameter != null
+                        	&& Collection.class
+                        	.isAssignableFrom(methodParameter)) {
+                            
+                            sequence = new XmlSchemaSequence();
+                            methodSchemaType = createSchemaTypeForMethodPart(methodName);
+                            methodSchemaType.setParticle(sequence);
+                            generateBareSchemaTypeForCollection(sequence,
+                        	    genericParameterTypes[0], parameterName,
+                        	    methodName);
+                            parameterName = methodName;
+
                         } else {
                         	generateSchemaForType(null, methodParameter, parameterName);                        	
                         }                        
@@ -188,17 +202,18 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             // for its return type
             Class<?> returnType = jMethod.getReturnType();
             Type genericReturnType = jMethod.getGenericReturnType();
+            String methodTypeName = jMethod.getName() + RESULT;
+            String returnName = "return";
 
             if (!"void".equals(jMethod.getReturnType().getName())) {
                 AxisMessage outMessage = axisOperation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                 if (returnType.isArray()) {
                     methodSchemaType =
-                            createSchemaTypeForMethodPart(jMethod.getName() + RESULT);
+                            createSchemaTypeForMethodPart(methodTypeName);
                     sequence = new XmlSchemaSequence();
                     methodSchemaType.setParticle(sequence);
-                    WebResultAnnotation returnAnnon = JSR181Helper.INSTANCE.getWebResultAnnotation(jMethod);
-                    String returnName = "return";
+                    WebResultAnnotation returnAnnon = JSR181Helper.INSTANCE.getWebResultAnnotation(jMethod);                  
                     if (returnAnnon != null) {
                         returnName = returnAnnon.getName();
                         if (returnName != null && !"".equals(returnName)) {
@@ -212,17 +227,26 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                     }
                 } else {
                 	if (returnType != null && Map.class.isAssignableFrom(returnType)){                        	
-						generateBareSchemaTypeForMap(methodName + RESULT, genericReturnType, null);
-                    } else {
-                    	generateSchemaForType(null, returnType, methodName + RESULT);                    	
+						generateBareSchemaTypeForMap(methodTypeName, genericReturnType, null);
+						
+                	} else if (returnType != null
+                		&& Collection.class.isAssignableFrom(returnType)) {
+                	    sequence = new XmlSchemaSequence();
+                	    methodSchemaType = createSchemaTypeForMethodPart(methodTypeName);
+                	    methodSchemaType.setParticle(sequence);
+                	    generateBareSchemaTypeForCollection(sequence,
+                		    genericReturnType, returnName, methodName);
+
+                	} else {
+                    	generateSchemaForType(null, returnType, methodTypeName);                    	
                     }                    
                     outMessage.setWrapped(false);
                 }
-                outMessage.setElementQName(typeTable.getQNamefortheType(methodName + RESULT));
+                outMessage.setElementQName(typeTable.getQNamefortheType(methodTypeName));
                 outMessage.setName(methodName + "ResponseMessage");
-                outMessage.setPartName(methodName + RESULT);
+                outMessage.setPartName(methodTypeName);
                 service.addMessageElementQNameToOperationMapping(
-                        typeTable.getQNamefortheType(methodName + RESULT),
+                        typeTable.getQNamefortheType(methodTypeName),
                         axisOperation);
             }
             if (addToService) {
@@ -242,6 +266,11 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             return true;
         } else if (methodParameter != null && Map.class.isAssignableFrom(methodParameter)){                        	
 			generateBareSchemaTypeForMap(parameterName, genericParameterType, sequence);			
+        } else if (methodParameter != null
+        	&& Collection.class.isAssignableFrom(methodParameter)) {
+            generateBareSchemaTypeForCollection(sequence, genericParameterType,
+        	    parameterName, jMethod.getName());
+            
         } else {
             generateSchemaForType(sequence, methodParameter, parameterName);
         }
@@ -386,7 +415,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 			Type genericParameterType, XmlSchemaSequence sequence)
 			throws Exception {
 		QName schemaTypeName = generateSchemaTypeForMap(sequence,
-				genericParameterType, paraName);
+				genericParameterType, paraName, false);
 		if (sequence != null) {
 			return;
 		}
@@ -402,6 +431,22 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 		xmlSchema.getItems().add(elt1);
 		typeTable.addComplexSchema(paraName, elementName);
 
+	}
+	
+	/**
+	 * Generate bare schema type for collection.
+	 *
+	 * @param sequence the sequence
+	 * @param genericType the generic type
+	 * @param partName the part name
+	 * @param methodName the method name
+	 * @throws Exception the exception
+	 */
+	private void generateBareSchemaTypeForCollection(
+		XmlSchemaSequence sequence, Type genericType, String partName,
+		String methodName) throws Exception {
+	    QName schemaTypeName = generateSchemaForCollection(sequence,
+		    genericType, partName);
 	}
 
 }

@@ -139,14 +139,11 @@ public class RPCServiceClass {
         return bean2 != null && bean != null;
     }
 
-    public String handleArrayList(ArrayList list, int b) {
-        String str = "";
+    public String handleArrayList(ArrayList<String> list, int b) {	
+        String str = "";      
         for (int i = 0; i < list.size(); i++) {
-            Object obj = list.get(i);
-            if (obj instanceof OMElement) {
-                OMElement omElement = (OMElement)obj;
-                str = str + omElement.getText();
-            }
+            String obj = list.get(i);           
+            str = str + obj;            
         }
         return str + b;
     }
@@ -170,12 +167,10 @@ public class RPCServiceClass {
 
 
     public Company echoCompany(Company com) throws AxisFault {
-        ArrayList pss = com.getPersons();
-        ArrayList tems = new ArrayList();
-        for (int i = 0; i < pss.size(); i++) {
-            OMElement omElement = (OMElement)pss.get(i);
-            Person p = (Person)BeanUtil
-                    .deserialize(Person.class, omElement, new DefaultObjectSupplier(), null);
+        ArrayList<Person> pss = com.getPersons();
+        ArrayList<Person> tems = new ArrayList<Person>();
+        for (int i = 0; i < pss.size(); i++) {  
+            Person p = pss.get(i);
             tems.add(p);
         }
         com.setPersons(tems);

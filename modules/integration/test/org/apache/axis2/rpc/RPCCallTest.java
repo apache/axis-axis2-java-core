@@ -203,7 +203,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         Company com = new Company();
         com.setName("MyCompany");
 
-        ArrayList ps = new ArrayList();
+        ArrayList<Person> ps = new ArrayList<Person>();
 
         Person p1 = new Person();
         p1.setAge(10);
@@ -269,7 +269,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         Company com = new Company();
         com.setName("MyCompany");
 
-        ArrayList ps = new ArrayList();
+        ArrayList<Person> ps = new ArrayList<Person>();
 
         Person p1 = new Person();
         p1.setAge(10);
@@ -467,13 +467,12 @@ public class RPCCallTest extends RPCLocalTestCase {
     }
 
     private OMElement getPayload() throws Exception {
-        String str = "<req:handleArrayList xmlns:req=\"http://rpc.axis2.apache.org\">\n" +
-                "  <arg0>\n" +
-                "    <item0>abc</item0>\n" +
-                "    <item0>def</item0>\n" +
-                "    <item0>ghi</item0>\n" +
-                "    <item0>klm</item0>\n" +
-                "  </arg0><arg1>10</arg1>" +
+        String str = "<req:handleArrayList xmlns:req=\"http://rpc.axis2.apache.org\">\n" +               
+                "    <item0 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xsd:string\">abc</item0>\n" +
+                "    <item0 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xsd:string\">def</item0>\n" +
+                "    <item0 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xsd:string\">ghi</item0>\n" +
+                "    <item0 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xsd:string\">klm</item0>\n" +
+                " <arg1 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xsd:int\">10</arg1>" +
                 "</req:handleArrayList>";
         StAXOMBuilder staxOMBuilder;
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(

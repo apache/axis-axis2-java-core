@@ -33,10 +33,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -156,7 +167,7 @@ public class BeanUtil {
                                         beanObject.getClass().getPackage().getName());
                 }
 
-                elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(), "elementName");
+                elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(), "elementName", qNamefortheType.getPrefix());
             }
             AxisService axisService = null;
             if (MessageContext.getCurrentMessageContext() != null) {
@@ -239,8 +250,39 @@ public class BeanUtil {
                         if (value != null) {
                             for (Object o : (Object[]) value) {
                                 addTypeQname(elemntNameSpace, propertyQnameValueList,
-                                             property, beanName, processingDocLitBare);
-                                propertyQnameValueList.add(o);
+                                             property, beanName, processingDocLitBare);   
+                                QName propertyQName = new QName(elemntNameSpace.getNamespaceURI(),
+        								propertyName,
+        								elemntNameSpace.getPrefix());                              
+                                
+								if (SimpleTypeMapper
+										.isObjectArray(o.getClass())
+										|| SimpleTypeMapper
+												.isMultidimensionalObjectArray(o
+														.getClass())) {
+									/**
+            						 * If it is a Object[] we need to add instance type
+            						 * attributes to the response message.
+            						 * Copied from ADBXMLStreamReaderImpl. 
+            						 * For inner Arrary Complex types we use the special local name array - "array"
+            						 */
+            						QName itemName = new QName(elemntNameSpace.getNamespaceURI(),
+            								Constants.INNTER_ARRARY_COMPLEX_TYPE_NAME,
+            								elemntNameSpace.getPrefix());            						
+    								propertyQnameValueList.add(getOMElement(propertyQName , (Object[]) o,
+            								itemName, qualified, typeTable));                                	
+                                } else {
+                                	if(SimpleTypeMapper.isObjectArray(value.getClass())){
+                                		OMFactory fac = OMAbstractFactory.getOMFactory();
+                                    	OMElement element = fac.createOMElement(propertyQName);
+                                    	element.addChild(fac.createOMText(SimpleTypeMapper.getStringValue(o)));  
+                                    	addInstanceTypeAttribute(fac, element, o, typeTable);
+                                    	propertyQnameValueList.add(element);
+                                	} else {
+                                		propertyQnameValueList.add(o);                                 		
+                                	}                                	
+                                }
+                               
                             }
                         } else {
                             addTypeQname(elemntNameSpace, propertyQnameValueList, property,
@@ -248,30 +290,54 @@ public class BeanUtil {
                             propertyQnameValueList.add(value);
                         }
                     }
-                } else if (SimpleTypeMapper.isCollection(ptype)) {
-                    Collection<?> objList = (Collection<?>) value;
-                    if (objList != null && objList.size() > 0) {
-                        //this was given error , when the array.size = 0
-                        // and if the array contain simple type , then the ADBPullParser asked
-                        // PullParser from That simpel type
-                        for (Object o : objList) {
-                            if (SimpleTypeMapper.isSimpleType(o)) {
-                                addTypeQname(elemntNameSpace, propertyQnameValueList,
-                                             property, beanName, processingDocLitBare);
-                                propertyQnameValueList.add(o);
-                            } else {
-                                addTypeQname(elemntNameSpace, propertyQnameValueList,
-                                             property, beanName, processingDocLitBare);
-                                propertyQnameValueList.add(o);
-                            }
-                        }
-
+                } else  if (SimpleTypeMapper.isCollection(ptype)) { 
+                    if (typeTable != null) {
+                	OMFactory fac = OMAbstractFactory.getOMFactory();					
+			QName qNamefortheType = null;					
+			qNamefortheType = (QName) typeTable
+				.getComplexSchemaMap().get(getClassName(beanClass));					
+			Type genericType = property.getReadMethod().getGenericReturnType();
+			OMElement collection = BeanUtil.getCollectionElement(
+					fac, genericType,
+					(Collection) value, propertyName,null,
+					qNamefortheType,typeTable,
+					qualified);					
+//			addTypeQname(elemntNameSpace, propertyQnameValueList,
+//					property, beanName, processingDocLitBare);
+			Iterator childItr = collection.getChildren();
+			while(childItr.hasNext()){						
+				addTypeQname(elemntNameSpace, propertyQnameValueList,
+						property, beanName, processingDocLitBare);
+				propertyQnameValueList.add(childItr.next());						
+			}	
+                	
                     } else {
-                        addTypeQname(elemntNameSpace, propertyQnameValueList, property,
-                                     beanName, processingDocLitBare);
-                        propertyQnameValueList.add(value);
+                	 Collection<?> objList = (Collection<?>) value;
+                         if (objList != null && objList.size() > 0) {
+                             //this was given error , when the array.size = 0
+                             // and if the array contain simple type , then the ADBPullParser asked
+                             // PullParser from That simpel type
+                             for (Object o : objList) {
+                                 if (SimpleTypeMapper.isSimpleType(o)) {
+                                     addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                                  property, beanName, processingDocLitBare);
+                                     propertyQnameValueList.add(o);
+                                 } else {
+                                     addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                                  property, beanName, processingDocLitBare);
+                                     propertyQnameValueList.add(o);
+                                 }
+                             }
+
+                         } else {
+                             addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                          beanName, processingDocLitBare);
+                             propertyQnameValueList.add(value);
+                         }
                     }
-				} else if (SimpleTypeMapper.isMap(ptype)) {
+                          
+									
+                } else if (SimpleTypeMapper.isMap(ptype)) {
 					OMFactory fac = OMAbstractFactory.getOMFactory();
 					QName qNamefortheType = (QName) typeTable
 							.getComplexSchemaMap().get(getClassName(beanClass));
@@ -526,8 +592,9 @@ public class BeanUtil {
                                 partObj = SimpleTypeMapper.getHashSet((OMElement)
                                         parts.getParent(), prty.getName());
                             } else if (SimpleTypeMapper.isCollection(parameters)) {
-                                partObj = SimpleTypeMapper.getArrayList((OMElement)
-                                        parts.getParent(), prty.getName());
+                            	Type type = prty.getReadMethod().getGenericReturnType();
+                            	partObj = processGenericCollection(parts, type, null, objectSupplier);  
+
                             } else if (SimpleTypeMapper.isDataHandler(parameters)) {
                                 partObj = SimpleTypeMapper.getDataHandler(parts);
                             } else if (parameters.isArray()) {
@@ -732,8 +799,16 @@ public class BeanUtil {
             if (genericParameterTypes != null) {
                 genericType = genericParameterTypes[count];
             }
-            omElement = processElement(classType, omElement, helper, parts,
-                                       currentLocalName, retObjs, count, objectSupplier, genericType);
+            /*
+             * In bare invocation "parameterNames" comes as null value.
+             */
+            boolean bare = false;
+            if(parameterNames == null){
+            	bare = true;            	
+            }
+           
+			omElement = processElement(classType, omElement, helper, parts,
+                                       currentLocalName, retObjs, count, objectSupplier, genericType, bare);
             while (omElement != null) {
                 count++;
                 // if the local part is not match. this means element is not present
@@ -777,14 +852,28 @@ public class BeanUtil {
         return retObjs;
     }
 
+	private static OMElement processElement(Class classType,
+			OMElement omElement, MultirefHelper helper, Iterator parts,
+			String currentLocalName, Object[] retObjs, int count,
+			ObjectSupplier objectSupplier, Type genericType) throws AxisFault {
+
+		return processElement(classType, omElement, helper, parts,
+				currentLocalName, retObjs, count, objectSupplier, genericType, false);
+
+	}
     private static OMElement processElement(Class classType, OMElement omElement,
                                             MultirefHelper helper, Iterator parts,
                                             String currentLocalName,
                                             Object[] retObjs,
                                             int count,
                                             ObjectSupplier objectSupplier,
-                                            Type genericType) throws AxisFault {
+                                            Type genericType, boolean bare) throws AxisFault {
         Object objValue;
+        boolean isRef = false;
+        OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);	        
+        if (omatribute != null) {
+            isRef = true;
+        }	
         if (classType.isArray()) {
             boolean done = true;
             ArrayList<Object> valueList = new ArrayList<Object>();
@@ -821,29 +910,78 @@ public class BeanUtil {
             if (!done) {
                 return omElement;
             }
+            
+        } else if(SimpleTypeMapper.isCollection(classType) && ! isRef){
+        	if(bare){
+        		OMElement[] toReturn = new OMElement[1];
+        		parts = omElement.getChildren();
+            	retObjs[count] = processGenericCollection(omElement.getFirstElement(), toReturn, genericType, helper, objectSupplier, parts,bare);
+            	OMNode node = omElement.getNextOMSibling();
+            	while(node != null){
+            		if(OMElement.class.isAssignableFrom(node.getClass())){
+            			return (OMElement) node;
+            		} else {
+            			node = node.getNextOMSibling();
+            		}            		
+            	}      	
+            	            	 
+        	} else {
+        	OMElement[] toReturn = new OMElement[1];
+            	retObjs[count] = processGenericCollection(omElement, toReturn, genericType, helper, objectSupplier, parts,bare);
+            	 if (toReturn[0] != null) {        		
+                     return toReturn[0];
+                 }        		
+        	}        	
         } else {
             //handling refs
             retObjs[count] = processObject(omElement, classType, helper, false, objectSupplier, genericType);
+            
+            
         }
         return null;
     }
 
-    private static List<Object> processGenericsElement(Class classType, OMElement omElement,
+    private static Collection<Object> processGenericsElement(Type classType, OMElement omElement,
                                                MultirefHelper helper, Iterator parts,
                                                ObjectSupplier objectSupplier,
                                                Type genericType) throws AxisFault {
         Object objValue;
-        ArrayList<Object> valueList = new ArrayList<Object>();
+        Collection<Object> valueList = getCollectionInstance(genericType);
         while (parts.hasNext()) {
             objValue = parts.next();
+            Object o;
             if (objValue instanceof OMElement) {
                 omElement = (OMElement) objValue;
             } else {
                 continue;
             }
-            Object o = processObject(omElement, classType,
-                                     helper, true, objectSupplier, genericType);
-            valueList.add(o);
+			if (classType instanceof ParameterizedType) {
+				ParameterizedType parameterizedClassType = (ParameterizedType) classType;
+				if (Collection.class
+						.isAssignableFrom((Class<?>) parameterizedClassType
+								.getRawType())) {
+					o = processGenericCollection(omElement.getFirstElement(),
+							classType, helper, objectSupplier);
+				} else if (Map.class
+						.isAssignableFrom((Class<?>) parameterizedClassType
+								.getRawType())) {
+					o = processGenericsMapElement( 
+							parameterizedClassType.getActualTypeArguments(),
+							omElement, helper, omElement.getChildren(), objectSupplier,
+							parameterizedClassType);
+				} else {
+					o = processObject(omElement, (Class) classType,
+	                         helper, true, objectSupplier, genericType);
+				}
+    			   			
+    		} else {
+    			o = processObject(omElement, (Class) classType,
+                         helper, true, objectSupplier, genericType);
+    			
+    		}
+            
+			valueList.add(o);
+			
         }
         return valueList;
     }
@@ -877,7 +1015,7 @@ public class BeanUtil {
                 if (helper.getObject(ref) != null) {
                     return helper.getObject(ref);
                 } else {
-                    return helper.processRef(classType, ref, objectSupplier);
+                    return helper.processRef(classType, generictype, ref, objectSupplier);
                 }
             } else {
                 OMAttribute attribute = omElement.getAttribute(
@@ -893,14 +1031,8 @@ public class BeanUtil {
                         return getSimpleTypeObjectChecked(classType, omElement);
                     }
                 } else if (SimpleTypeMapper.isCollection(classType)) {
-                    if (generictype != null && (generictype instanceof ParameterizedType)) {
-                        ParameterizedType aType = (ParameterizedType) generictype;
-                        Type[] parameterArgTypes = aType.getActualTypeArguments();
-                        Type parameter = parameterArgTypes[0];
-                        Iterator parts = omElement.getChildElements();
-                        return processGenericsElement((Class) parameter, omElement, helper, parts, objectSupplier, generictype);
-                    }
-                    return SimpleTypeMapper.getArrayList(omElement);
+                	return processGenericCollection(omElement, generictype, null, objectSupplier); 
+
                 } else if (SimpleTypeMapper.isDataHandler(classType)) {
                     return SimpleTypeMapper.getDataHandler(omElement);
                     
@@ -977,10 +1109,26 @@ public class BeanUtil {
                     }
                 } else {
                     // this happens at the server side. this means it is an multidimentional array.
-                    objects.add(partName);
-                    objects.add(arg);
+					objects.add(partName);
+					if (SimpleTypeMapper.isObjectArray(arg.getClass())
+							|| SimpleTypeMapper
+									.isMultidimensionalObjectArray(arg
+											.getClass())) {
+						/**
+						 * If it is a Object[] we need to add instance type
+						 * attributes to the response message.
+						 * Copied from ADBXMLStreamReaderImpl. 
+						 * For inner Arrary Complex types we use the special local name array - "array"
+						 */
+						QName itemName = new QName(partName.getNamespaceURI(),
+								Constants.INNTER_ARRARY_COMPLEX_TYPE_NAME,
+								partName.getPrefix());
+						objects.add(getOMElement(partName, (Object[]) arg,
+								itemName, qualifed, typeTable));
+					} else {
+						objects.add(arg);
+					}
                 }
-
             } else {
                 if (SimpleTypeMapper.isSimpleType(arg)) { 
                 	OMElement element;
@@ -1234,7 +1382,7 @@ public class BeanUtil {
 	 * @return a instance of java.util.Map
 	 * @throws AxisFault the axis fault
 	 */
-	private static Map<Object,Object> processGenericsMapElement(Type[] parameterArgTypes,
+	public static Map<Object,Object> processGenericsMapElement(Type[] parameterArgTypes,
 			OMElement omElement, MultirefHelper helper, Iterator parts,
 			ObjectSupplier objectSupplier, Type genericType) throws AxisFault {
 		Object objValue;			
@@ -1315,22 +1463,44 @@ public class BeanUtil {
 			if (key != null) {
 				value = results.get(key);
 				List<Object> properties = new ArrayList<Object>();
+				QName keyName = new QName(ns.getNamespaceURI(),
+						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, ns
+								.getPrefix());
+				QName valueName = new QName(ns.getNamespaceURI(),
+						org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME, ns
+								.getPrefix());				
 
-				key = getMapParameterElement(fac,
+				Object kValue = getMapParameterElement(fac,
 						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, key,
 						keyType, typeTable, ns, elementFormDefault);
-				properties.add(new QName(ns.getNamespaceURI(),
-						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, ns
-								.getPrefix()));
-				properties.add(key);
-
-				value = getMapParameterElement(fac,
+				
+				Object vValue = getMapParameterElement(fac,
 						org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME,
 						value, valueType, typeTable, ns, elementFormDefault);
-				properties.add(new QName(ns.getNamespaceURI(),
-						org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME, ns
-								.getPrefix()));
-				properties.add(value);
+				
+				if(Iterator.class.isAssignableFrom(kValue.getClass())){
+					Iterator valItr = (Iterator) kValue;
+					while (valItr.hasNext()) {
+						properties.add(keyName);
+						properties.add(valItr.next());						
+					}	
+				} else {
+					properties.add(keyName);
+					properties.add(kValue);
+				}			
+
+				
+				if(Iterator.class.isAssignableFrom(vValue.getClass())){
+					Iterator valItr = (Iterator) vValue;
+					while (valItr.hasNext()) {
+						properties.add(valueName);
+						properties.add(valItr.next());						
+					}			
+				} else {
+					properties.add(valueName);
+					properties.add(vValue);
+				}
+				
 
 				XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
 						new QName(
@@ -1371,9 +1541,11 @@ public class BeanUtil {
 						omElement, helper, omElement.getChildren(),
 						objectSupplier, paraType);
 			} else if (Collection.class	.isAssignableFrom((Class) 
-					((ParameterizedType) paraType).getRawType())) {
-				//TODO
-				return null;
+					((ParameterizedType) paraType).getRawType())) {				
+				return processGenericCollection(
+						omElement,
+						(ParameterizedType) paraType,
+						helper, objectSupplier);
 			} else {
 				// TODO - support for custom ParameterizedTypes
 				return null;
@@ -1438,6 +1610,13 @@ public class BeanUtil {
 			}
 			return omValue;
 			
+		} else if (SimpleTypeMapper.isCollection(value.getClass())) {			
+			QName elementQName = new QName(ns.getNamespaceURI(), elementName,
+					ns.getPrefix());
+			return getCollectionElement(fac, valueType, (Collection) value,
+					elementName, null, elementQName, typeTable,
+					elementFormDefault).getChildren();
+			
 		} else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
 			OMElement omValue;
 			omValue = fac.createOMElement(elementName, ns);
@@ -1460,4 +1639,236 @@ public class BeanUtil {
 		}
 		return value;
 	}
+	
+	/**
+	 * Process generic collection.
+	 *
+	 * @param omElement the om element
+	 * @param generictype the generictype
+	 * @param helper the helper
+	 * @param objectSupplier the object supplier
+	 * @return the collection
+	 * @throws AxisFault the axis fault
+	 */
+	public static Collection<Object> processGenericCollection(OMElement omElement,
+			Type generictype, MultirefHelper helper,
+			ObjectSupplier objectSupplier) throws AxisFault {
+	QName partName = omElement.getQName();
+	Type parameter = Object.class;
+	if (generictype != null && (generictype instanceof ParameterizedType)) {
+	    ParameterizedType aType = (ParameterizedType) generictype;
+	    Type[] parameterArgTypes = aType.getActualTypeArguments();
+	    parameter = parameterArgTypes[0];
+	}
+	/*
+	 * Fix for AXIS2-5090. Use siblings with same QName instead of look for
+	 * children because list elements available on same level.
+	 */
+	Iterator parts = omElement.getParent().getChildrenWithName(partName);
+	return processGenericsElement(parameter, omElement, helper, parts,
+		objectSupplier, generictype);
+	}	
+	
+	/**
+	 * Process collection.
+	 *
+	 * @param omElement the om element
+	 * @param toReturn the to return
+	 * @param generictype the generictype
+	 * @param helper the helper
+	 * @param objectSupplier the object supplier
+	 * @param parts the parts
+	 * @param bare the bare
+	 * @return the collection
+	 * @throws AxisFault the axis fault
+	 */
+	public static Collection<Object> processGenericCollection(OMElement omElement,
+		OMElement[] toReturn, Type generictype, MultirefHelper helper,
+		ObjectSupplier objectSupplier, Iterator parts, boolean bare)
+		throws AxisFault {
+	    String currentLocalName = omElement.getLocalName();
+	    Type parameter = Object.class;
+	    List<OMElement> eleList = new ArrayList<OMElement>();
+	    // in 'Bare' style no need to add first element to the list.
+	    if (!bare) {
+		eleList.add(omElement);
+	    }
+
+	    if (generictype != null && (generictype instanceof ParameterizedType)) {
+		ParameterizedType aType = (ParameterizedType) generictype;
+		Type[] parameterArgTypes = aType.getActualTypeArguments();
+		parameter = parameterArgTypes[0];
+	    }
+
+	    while (parts.hasNext()) {
+		Object objValue = parts.next();
+		OMElement currElement;
+		if (objValue instanceof OMElement) {
+		    currElement = (OMElement) objValue;
+		} else {
+		    continue;
+		}
+		if (currentLocalName.equals(currElement.getLocalName())) {
+		    eleList.add(currElement);
+		} else {
+		    // This just a container to bring back un-proceeded OMEleemnt.
+		    toReturn[0] = currElement;
+		    break;
+		}
+	    }
+	    return processGenericsElement(parameter, omElement, helper,
+		    eleList.iterator(), objectSupplier, generictype);
+	}	
+
+	/**
+	 * Gets the collection element.
+	 *
+	 * @param fac the fac
+	 * @param type the type
+	 * @param results the results
+	 * @param name the name
+	 * @param innerName the inner name
+	 * @param elementQName the element q name
+	 * @param typeTable the type table
+	 * @param elementFormDefault the element form default
+	 * @return the collection element
+	 */
+	public static OMElement getCollectionElement(OMFactory fac, Type type,
+		Collection results, String name, String innerName,
+		QName elementQName, TypeTable typeTable, boolean elementFormDefault) {
+
+	    String elementName = (innerName == null) ? name : innerName;
+	    Iterator<Object> itr = results.iterator();
+	    List<Object> properties = new ArrayList<Object>();
+	    OMNamespace ns = fac.createOMNamespace(elementQName.getNamespaceURI(),
+		    elementQName.getPrefix());
+	    Type valueType = Object.class;
+	    if (type instanceof ParameterizedType) {
+		ParameterizedType aType = (ParameterizedType) type;
+		Type[] parameterArgTypes = aType.getActualTypeArguments();
+		valueType = parameterArgTypes[0];
+	    }
+
+	    while (itr.hasNext()) {
+		Object value = itr.next();
+		if (value != null) {
+		    value = getCollectionItemElement(fac, elementName, value,
+			    valueType, typeTable, ns, elementFormDefault);
+		    properties.add(new QName(ns.getNamespaceURI(), elementName, ns
+			    .getPrefix()));
+		    properties.add(value);
+		}
+	    }
+
+	    XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(new QName(
+		    ns.getNamespaceURI(), elementQName.getLocalPart(),
+		    ns.getPrefix()), properties.toArray(), null, typeTable,
+		    elementFormDefault);
+
+	    StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
+		    OMAbstractFactory.getOMFactory(), new StreamWrapper(pullParser));
+	    return stAXOMBuilder.getDocumentElement();
+	}	
+
+	/**
+	 * Gets the collection item element.
+	 *
+	 * @param fac the fac
+	 * @param elementName the element name
+	 * @param value the value
+	 * @param valueType the value type
+	 * @param typeTable the type table
+	 * @param ns the ns
+	 * @param elementFormDefault the element form default
+	 * @return the collection item element
+	 */
+	private static Object getCollectionItemElement(OMFactory fac,
+		String elementName, Object value, Type valueType,
+		TypeTable typeTable, OMNamespace ns, boolean elementFormDefault) {
+	    if (SimpleTypeMapper.isMap(value.getClass())) {
+		List<OMElement> childList = getMapElement(fac, valueType,
+			(Map) value, typeTable, elementFormDefault);
+		OMElement omValue = fac.createOMElement(elementName,
+			ns.getNamespaceURI(), ns.getPrefix());
+		for (OMElement child : childList) {
+		    omValue.addChild(child);
+		}
+		return omValue;
+
+	    } else if (SimpleTypeMapper.isCollection(value.getClass())) {
+		return getCollectionElement(
+			fac,
+			valueType,
+			(Collection) value,
+			elementName,
+			Constants.INNTER_ARRARY_COMPLEX_TYPE_NAME,
+			new QName(ns.getNamespaceURI(), elementName, ns.getPrefix()),
+			typeTable, elementFormDefault);
+	    } else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
+		OMElement omValue;
+		omValue = fac.createOMElement(elementName, ns);
+		if (SimpleTypeMapper.isSimpleType(value)) {
+		    omValue.addChild(fac.createOMText(SimpleTypeMapper
+			    .getStringValue(value)));
+		} else {
+		    QName name = new QName(ns.getNamespaceURI(), elementName,
+			    ns.getPrefix());
+		    XMLStreamReader xr = BeanUtil.getPullParser(value, name,
+			    typeTable, true, false);
+		    OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
+		    .createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
+			    new StreamWrapper(xr));
+		    omValue = stAXOMBuilder.getDocumentElement();
+
+		}
+		addInstanceTypeAttribute(fac, omValue, value, typeTable);
+		return omValue;
+	    }
+	    return value;
+	}
+	
+	/**
+	 * Gets the collection instance object according to the genericType passed.
+	 *
+	 * @param genericType the generic type
+	 * @return the collection instance
+	 */
+	private static Collection<Object> getCollectionInstance(Type genericType) {
+	    Class rowType;
+	    if (genericType instanceof ParameterizedType) {
+		rowType = (Class) ((ParameterizedType) genericType).getRawType();
+	    } else {
+		rowType = (Class) genericType;
+	    }
+
+	    if (Collection.class.getName().equals(rowType.getName())
+		    || List.class.getName().equals(rowType.getName())) {
+		return new ArrayList<Object>();
+
+	    } else if (Set.class.getName().equals(rowType.getName())) {
+		return new HashSet<Object>();
+
+	    } else if (Queue.class.getName().equals(rowType.getName())) {
+		return new LinkedList<Object>();
+
+	    } else if (BlockingDeque.class.getName().equals(rowType.getName())) {
+		return new LinkedBlockingDeque<Object>();
+
+	    } else if (BlockingQueue.class.getName().equals(rowType.getName())) {
+		return new LinkedBlockingQueue<Object>();
+
+	    } else if (NavigableSet.class.getName().equals(rowType.getName())
+		    || SortedSet.class.getName().equals(rowType.getName())) {
+		return new TreeSet<Object>();
+
+	    } else {
+		try {
+		    return (Collection<Object>) rowType.newInstance();
+		} catch (Exception e) {
+		    return new ArrayList<Object>();
+		}
+	    }
+	}
+	
+
 }
