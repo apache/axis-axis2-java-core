@@ -220,7 +220,11 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(java.lang.String, java.lang.String)
       */
     public SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException {
-        element.declareNamespace(uri, prefix);
+        if (prefix == null || prefix.length() == 0) {
+            element.declareDefaultNamespace(uri);
+        } else {
+            element.declareNamespace(uri, prefix);
+        }
         return this;
     }
 
