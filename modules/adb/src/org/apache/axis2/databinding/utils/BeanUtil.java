@@ -38,6 +38,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.SortedMap;
 //import java.util.NavigableSet;
 import java.util.Queue;
 import java.util.Set;
@@ -48,6 +50,8 @@ import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentNavigableMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 //import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -1580,8 +1584,19 @@ public class BeanUtil {
 			
 		} else if (ConcurrentMap.class.getName().equals(rowType.getName())) {
 			return new ConcurrentHashMap<Object, Object>();
-		}
-		
+			
+		} else if (SortedMap.class.getName().equals(rowType.getName())) {
+			return new TreeMap<Object, Object>();
+			
+		} 
+//		TODO - Enable this logic once the Axis2 move to Java 1.6.		
+//		else if (NavigableMap.class.getName().equals(rowType.getName())) {
+//			return new TreeMap<Object, Object>();
+//			
+//		}  else if (ConcurrentNavigableMap.class.getName().equals(rowType.getName())) {
+//			return new ConcurrentSkipListMap<Object, Object>();
+//		}
+//		
 		else {
 			try {
 				return (Map<Object, Object>) rowType.newInstance();
