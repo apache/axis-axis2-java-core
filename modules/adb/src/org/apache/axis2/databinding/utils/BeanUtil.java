@@ -38,15 +38,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
+//import java.util.NavigableSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.BlockingDeque;
+//import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+//import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.activation.DataHandler;
@@ -1851,17 +1851,20 @@ public class BeanUtil {
 	    } else if (Queue.class.getName().equals(rowType.getName())) {
 		return new LinkedList<Object>();
 
-	    } else if (BlockingDeque.class.getName().equals(rowType.getName())) {
-		return new LinkedBlockingDeque<Object>();
-
-	    } else if (BlockingQueue.class.getName().equals(rowType.getName())) {
+	    }  else if (BlockingQueue.class.getName().equals(rowType.getName())) {
 		return new LinkedBlockingQueue<Object>();
 
-	    } else if (NavigableSet.class.getName().equals(rowType.getName())
-		    || SortedSet.class.getName().equals(rowType.getName())) {
-		return new TreeSet<Object>();
-
-	    } else {
+	    } 
+//	    TODO - Enable this logic once the Axis2 move to Java 1.6.
+//	    else if (BlockingDeque.class.getName().equals(rowType.getName())) {
+//		return new LinkedBlockingDeque<Object>();
+//
+//	    }else if (NavigableSet.class.getName().equals(rowType.getName())
+//		    || SortedSet.class.getName().equals(rowType.getName())) {
+//		return new TreeSet<Object>();
+//
+//	    } 	    
+	    else {
 		try {
 		    return (Collection<Object>) rowType.newInstance();
 		} catch (Exception e) {
