@@ -46,6 +46,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 //import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 //import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -1575,7 +1577,12 @@ public class BeanUtil {
 		
 		if (Map.class.getName().equals(rowType.getName())) {
 			return new HashMap<Object, Object>();
-		} else {
+			
+		} else if (ConcurrentMap.class.getName().equals(rowType.getName())) {
+			return new ConcurrentHashMap<Object, Object>();
+		}
+		
+		else {
 			try {
 				return (Map<Object, Object>) rowType.newInstance();
 			} catch (Exception e) {
