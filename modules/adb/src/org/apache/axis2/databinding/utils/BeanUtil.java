@@ -55,6 +55,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -1293,10 +1294,16 @@ public class BeanUtil {
 	 * @return the OMElement
 	 */
 	public static OMElement convertDOMtoOM(OMFactory fac, Object document) {
+	    
+	    if(DocumentImpl.class.getName().equals(document.getClass().getName())) {
+		return ((OMDocument)document).getOMDocumentElement();
+		
+	    } else {
 		DocumentTraversal traversal = (DocumentTraversal) document;
 		TreeWalker walker = traversal.createTreeWalker(
 				((Document)document).getDocumentElement(), NodeFilter.SHOW_ALL, null, true);
-		return (OMElement) traverseDOMDocument(fac, walker, null);
+		return (OMElement) traverseDOMDocument(fac, walker, null);		
+	    }		
 	}
 	
 	/**
