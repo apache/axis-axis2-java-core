@@ -251,9 +251,16 @@ public class BeanUtil {
                             for (Object o : (Object[]) value) {
                                 addTypeQname(elemntNameSpace, propertyQnameValueList,
                                              property, beanName, processingDocLitBare);   
-                                QName propertyQName = new QName(elemntNameSpace.getNamespaceURI(),
-        								propertyName,
-        								elemntNameSpace.getPrefix());                              
+                                QName propertyQName = null;
+                                if (elemntNameSpace != null) {
+                                    propertyQName = new QName(
+                                            elemntNameSpace.getNamespaceURI(),
+                                            propertyName,
+                                            elemntNameSpace.getPrefix());
+                                } else {
+                                    propertyQName = new QName(propertyName);
+
+                                }                                                    
                                 
 								if (SimpleTypeMapper
 										.isObjectArray(o.getClass())
@@ -267,7 +274,7 @@ public class BeanUtil {
             						 * For inner Arrary Complex types we use the special local name array - "array"
             						 */
             						QName itemName = new QName(elemntNameSpace.getNamespaceURI(),
-            								Constants.INNTER_ARRARY_COMPLEX_TYPE_NAME,
+            								Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
             								elemntNameSpace.getPrefix());            						
     								propertyQnameValueList.add(getOMElement(propertyQName , (Object[]) o,
             								itemName, qualified, typeTable));                                	
@@ -1121,7 +1128,7 @@ public class BeanUtil {
 						 * For inner Arrary Complex types we use the special local name array - "array"
 						 */
 						QName itemName = new QName(partName.getNamespaceURI(),
-								Constants.INNTER_ARRARY_COMPLEX_TYPE_NAME,
+								Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
 								partName.getPrefix());
 						objects.add(getOMElement(partName, (Object[]) arg,
 								itemName, qualifed, typeTable));
@@ -1823,7 +1830,7 @@ public class BeanUtil {
 			valueType,
 			(Collection) value,
 			elementName,
-			Constants.INNTER_ARRARY_COMPLEX_TYPE_NAME,
+			Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
 			new QName(ns.getNamespaceURI(), elementName, ns.getPrefix()),
 			typeTable, elementFormDefault);
 	    } else if (SimpleTypeMapper.isObjectType((Class) valueType)) {

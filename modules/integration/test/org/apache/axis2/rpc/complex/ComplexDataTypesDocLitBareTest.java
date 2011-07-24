@@ -35,6 +35,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.tempuri.complex.ComplexDataTypesDocLitBareStub;
+import org.tempuri.complex.ComplexDataTypesDocLitBareStub.RetArrayString2DResult;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -160,7 +161,10 @@ public class ComplexDataTypesDocLitBareTest extends
         a1.setString(new String[]{"foo", "bar"});
         input.setArrayOfstring(new ComplexDataTypesDocLitBareStub.ArrayOfstring[]{a1, a2});
         req.setInArrayString2D(input);
-        assertNotNull(stub.retArrayString2D(req));
+        RetArrayString2DResult res = stub.retArrayString2D(req);
+        assertNotNull(res);
+        assertEquals("foo", res.getRetArrayString2DResult().getArrayOfstring()[0].getString()[0]);
+        assertEquals("bar", res.getRetArrayString2DResult().getArrayOfstring()[0].getString()[1]);
     }
 
     /**
