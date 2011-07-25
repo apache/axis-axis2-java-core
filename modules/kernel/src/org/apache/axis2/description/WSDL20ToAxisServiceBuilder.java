@@ -42,6 +42,7 @@ import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImp
 import org.apache.woden.resolver.URIResolver;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.types.NamespaceDeclaration;
+import org.apache.woden.types.QNameTokenUnion;
 import org.apache.woden.wsdl20.Binding;
 import org.apache.woden.wsdl20.BindingFault;
 import org.apache.woden.wsdl20.BindingFaultReference;
@@ -76,6 +77,8 @@ import org.apache.woden.wsdl20.extensions.soap.SOAPModule;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.apache.woden.wsdl20.xml.DocumentableElement;
 import org.apache.woden.wsdl20.xml.DocumentationElement;
+import org.apache.woden.wsdl20.xml.ImportElement;
+import org.apache.woden.wsdl20.xml.InterfaceFaultElement;
 import org.apache.woden.wsdl20.xml.InterfaceMessageReferenceElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
 import org.apache.woden.xml.XMLAttr;
@@ -253,26 +256,43 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // }
 
             DescriptionElement descriptionElement = description.toElement();
-            TypesElement typesElement = descriptionElement
-                    .getTypesElement();
-            if (typesElement != null) {
-                Schema[] schemas = typesElement.getSchemas();
-                for (int i = 0; i < schemas.length; i++) {
-                    XmlSchema schemaDefinition = schemas[i].getSchemaDefinition();
-
-                    // WSDL 2.0 spec requires that even the built-in schema should be returned
-                    // once asked for schema definitions. But for data binding purposes we can ignore that
-                    if (schemaDefinition != null && !Constants.URI_2001_SCHEMA_XSD
-                            .equals(schemaDefinition.getTargetNamespace())) {
-                        axisService.addSchema(schemaDefinition);
-                    }
-                }
-            }
+            processTypes(descriptionElement);
 
             processService();
             return axisService;
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
+        }
+    }
+    
+    /**
+     * recursively drills down to find all type definitions 
+     * (XSD schemas) in all imported WSDLs and XSDs
+     * 
+     * @param descriptionElement - a description element from where import elements 
+     *                             and types can be found
+     */
+    private void processTypes(DescriptionElement descriptionElement) {
+        TypesElement typesElement = descriptionElement
+                .getTypesElement();
+        if (typesElement != null) {
+            Schema[] schemas = typesElement.getSchemas();
+            for (int i = 0; i < schemas.length; i++) {
+                XmlSchema schemaDefinition = schemas[i].getSchemaDefinition();
+                
+                // WSDL 2.0 spec requires that even the built-in schema should be returned
+                // once asked for schema definitions. But for data binding purposes we can ignore that
+                if (schemaDefinition != null && !Constants.URI_2001_SCHEMA_XSD
+                        .equals(schemaDefinition.getTargetNamespace())) {
+                    axisService.addSchema(schemaDefinition);
+                }
+            }
+        }
+        
+        ImportElement[] importElements = descriptionElement.getImportElements();
+        for (int i = 0; i < importElements.length; i++) {
+            DescriptionElement descElem = importElements[i].getDescriptionElement();
+            processTypes(descElem); // recursively drill down
         }
     }
 
@@ -493,7 +513,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 stringBasedNamespaceMap.put(namespaceDeclaration.getPrefix(),
                                             namespaceDeclaration.getNamespaceURI().toString());
             }
-
+            
+            DescriptionElement descriptionElement = description.toElement();
+            createNamespaceMap(descriptionElement);
+            
             setupComplete = true;
         } catch (AxisFault e) {
             throw e; // just rethrow AxisFaults
@@ -502,6 +525,29 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw e;
         } catch(Exception e) {
             throw AxisFault.makeFault(e);
+        }
+    }
+    
+    /**
+     * recursively drills down to get namespace pairs in nested imported elements
+     * 
+     * @param descriptionElement - a description element from where import elements 
+     *                             and types can be found
+     */
+    private void createNamespaceMap(DescriptionElement descriptionElement) {
+        ImportElement[] importElements = descriptionElement.getImportElements();
+        for (int i = 0; i < importElements.length; i++) {
+            DescriptionElement descElem = importElements[i].getDescriptionElement();
+            NamespaceDeclaration[] namespaceDeclarations = descElem.getDeclaredNamespaces();
+            for (int j = 0; j < namespaceDeclarations.length; j++) {
+                NamespaceDeclaration importedNamespaceDeclaration = namespaceDeclarations[j];
+                if (!stringBasedNamespaceMap.containsKey(importedNamespaceDeclaration.getPrefix())) {
+                    stringBasedNamespaceMap.put(importedNamespaceDeclaration.getPrefix(),
+                                                importedNamespaceDeclaration.getNamespaceURI().toString());
+                }
+            }
+            
+            createNamespaceMap(descElem); // recursively drill down
         }
     }
 
@@ -1079,9 +1125,16 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (interfaceFault == null) {
                 throw new AxisFault("Interface Fault reference defined in operation " + opName + " cannot be found in interface");
             }
-
-            faultMessage.setElementQName(interfaceFault.getElementDeclaration().getName());
-            faultMessage.setName(interfaceFault.getName().getLocalPart());
+            
+            // retrieve interface fault element
+            InterfaceFaultElement interfaceFaultElement = interfaceFault.toElement();
+            // drill down to get actual interface fault element definition
+            QNameTokenUnion interfaceFaultElementDef = interfaceFaultElement.getElement();
+            QName qName = interfaceFaultElementDef.getQName();
+            String name = qName.getLocalPart();
+            
+            faultMessage.setElementQName(qName);
+            faultMessage.setName(name);
 
             axisOperation.setFaultMessages(faultMessage);
         }
