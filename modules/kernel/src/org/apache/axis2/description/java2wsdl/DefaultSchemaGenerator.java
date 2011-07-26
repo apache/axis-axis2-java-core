@@ -399,6 +399,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     generateSchemaForType(sequence, null, jMethod.getName());
                     break;
                     
+                } else if(methodParameter != null && Document.class.isAssignableFrom(methodParameter)) {
+                    generateSchemaTypeForDocument(sequence, parameterName);  
+                    
                 } else if(methodParameter != null && Map.class.isAssignableFrom(methodParameter)) {
                 	generateWrappedSchemaTypeForMap(sequence, genericParameterTypes[j], parameterName);   
                 	
@@ -437,6 +440,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 Type genericParameterType = jMethod.getGenericReturnType();
                 if (nonRpcMethods.contains(jMethod.getName())) {
                     generateSchemaForType(sequence, null, returnName);
+                    
+                } else if(returnType != null && Document.class.isAssignableFrom(returnType)) {
+                    generateSchemaTypeForDocument(sequence, returnName);   
+                    
                 } else if (Map.class.isAssignableFrom(returnType)){
 					if (genericParameterType instanceof ParameterizedType) {
 						generateWrappedSchemaTypeForMap(sequence, genericParameterType, returnName);
@@ -672,31 +679,36 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         if(genericFieldType instanceof ParameterizedType){
                             ParameterizedType aType = (ParameterizedType) genericFieldType;
                             Type[] fieldArgTypes = aType.getActualTypeArguments();
-                            if(Map.class.isAssignableFrom((Class)((ParameterizedType)aType).getRawType())){
-                            	generateWrappedSchemaTypeForMap(sequence, aType, propertyName);
-                            	
-			    }
-			    if (Collection.class
-				    .isAssignableFrom((Class) ((ParameterizedType) aType)
-					    .getRawType())) {     
-				
-				generateWrappedSchemaTypeForCollection(
-					sequence, aType, propertyName);
+                        if(Map.class.isAssignableFrom((Class)((ParameterizedType)aType).getRawType())){
+                                generateWrappedSchemaTypeForMap(sequence, aType, propertyName);
+
+                            } else if (Collection.class
+                                    .isAssignableFrom((Class) ((ParameterizedType) aType)
+                                            .getRawType())) {     
+
+                                generateWrappedSchemaTypeForCollection(
+                                        sequence, aType, propertyName);
                             } else {
-                            	try {
+                                try {
                                     generateSchemaforGenericFields(xmlSchema,
-                                        sequence,
-                                        fieldArgTypes[0],
-                                        propertyName);
+                                            sequence,
+                                            fieldArgTypes[0],
+                                            propertyName);
                                 } catch (Exception e) {
                                     generateSchemaforFieldsandProperties(xmlSchema,
-                                        sequence,
-                                        property.getPropertyType(),
-                                        propertyName,
-                                        property.getPropertyType().isArray());
+                                            sequence,
+                                            property.getPropertyType(),
+                                            propertyName,
+                                            property.getPropertyType().isArray());
                                 }
-                            	
+
                             }
+                            
+                        } else if (genericFieldType != null && !(genericFieldType instanceof ParameterizedType)
+                                && Document.class
+                                .isAssignableFrom((Class) genericFieldType)) {
+                            generateSchemaTypeForDocument(sequence,
+                                    propertyName);
                             
                         } else {
                         	if(genericFieldType != null && Map.class.isAssignableFrom((Class)genericFieldType)){
@@ -1998,4 +2010,40 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 		entryCount++;
 		return name;
 	}
+
+    /**
+     * Generate schema type for document.
+     * 
+     * @param sequence
+     *            the sequence
+     * @param parameterName
+     *            the parameter name
+     */
+    protected void generateSchemaTypeForDocument(XmlSchemaSequence sequence,
+            String parameterName) {
+
+        XmlSchema xmlSchema = getXmlSchema(targetNamespace);
+        QName entryName = new QName(targetNamespace, "document");
+        XmlSchemaType schemaType = xmlSchema.getTypeByName(entryName);
+
+        if (schemaType == null) {
+            XmlSchemaComplexType entryType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaSequence entrySequence = new XmlSchemaSequence();
+            XmlSchemaAny any = new XmlSchemaAny();
+            entrySequence.getItems().add(any);
+            entryType.setParticle(entrySequence);
+            entryType.setName(entryName.getLocalPart());
+            xmlSchema.getItems().add(entryType);
+            xmlSchema.getSchemaTypes().add(entryName, entryType);
+            schemaType = entryType;
+
+        }
+
+        XmlSchemaElement entryElement = new XmlSchemaElement();
+        entryElement.setName(parameterName);
+        entryElement.setSchemaTypeName(schemaType.getQName());
+        entryElement.setQName(schemaType.getQName());
+        sequence.getItems().add(entryElement);
+
+    }
 }
