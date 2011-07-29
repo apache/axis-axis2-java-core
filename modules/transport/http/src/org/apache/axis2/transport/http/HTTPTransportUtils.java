@@ -32,6 +32,7 @@ import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -63,7 +64,12 @@ public class HTTPTransportUtils {
     private static final Log log = LogFactory.getLog(HTTPTransportUtils.class);
 
     /**
+     * @param requestUrl the request url
+     * @param map the map of url parameters
+     * @param configCtx axis ConfigurationContext
      * @deprecated This was used only by the now deprecated processHTTPGetRequest() method.
+     * @return the SOAPEnvelope object
+     * @throws org.apache.axis2.AxisFault if an error occurs
      */
     public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl,
                                                             Map map, ConfigurationContext configCtx)
@@ -169,6 +175,45 @@ public class HTTPTransportUtils {
                             msgContext,
                             handleGZip(msgContext, in), 
                             contentType));
+            return AxisEngine.receive(msgContext);
+        } catch (SOAPProcessingException e) {
+            throw AxisFault.makeFault(e);
+        } catch (AxisFault e) {
+            throw e;
+        } catch (IOException e) {
+            throw AxisFault.makeFault(e);
+        } catch (OMException e) {
+            throw AxisFault.makeFault(e);
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        } catch (FactoryConfigurationError e) {
+            throw AxisFault.makeFault(e);
+        } finally {
+            if ((msgContext.getEnvelope() == null) && soapVersion != VERSION_SOAP11) {
+                msgContext.setEnvelope(OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope());
+            }
+        }
+    }
+
+    public static InvocationResponse processHTTPPostRequest(MessageContext msgContext,
+                                                            InputStream in,
+                                                            OutputStream out,
+                                                            String contentType,
+                                                            Builder builder,
+                                                            String soapActionHeader,
+                                                            String requestURI)
+            throws AxisFault {
+        int soapVersion = VERSION_UNKNOWN;
+        try {
+            soapVersion = initializeMessageContext(msgContext, soapActionHeader,
+                    requestURI, contentType);
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+
+            msgContext.setEnvelope(
+                    TransportUtils.createSOAPMessage(
+                            msgContext,
+                            handleGZip(msgContext, in),
+                            contentType, builder));
             return AxisEngine.receive(msgContext);
         } catch (SOAPProcessingException e) {
             throw AxisFault.makeFault(e);

@@ -22,6 +22,7 @@ package org.apache.axis2.transport.http.util;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisBindingOperation;
@@ -89,6 +90,49 @@ public class RESTUtil {
         return invokeAxisEngine(msgContext);
     }
 
+    public static Handler.InvocationResponse processXMLRequest(MessageContext msgContext,
+                                                               InputStream in,
+                                                               OutputStream out, String contentType,
+                                                               Builder builder)
+            throws AxisFault {
+        try {
+            msgContext.setDoingREST(true);
+            String charSetEncoding = BuilderUtil.getCharSetEncoding(contentType);
+            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEncoding);
+            dispatchAndVerify(msgContext);
+            in = HTTPTransportUtils.handleGZip(msgContext, in);
+            SOAPEnvelope soapEnvelope;
+            if (msgContext.getAxisService() == null) {
+                soapEnvelope = TransportUtils.createSOAPEnvelope(null);
+            } else {
+                soapEnvelope = TransportUtils.createSOAPMessage(msgContext, in,
+                        contentType, builder);
+            }
+
+            msgContext.setEnvelope(soapEnvelope);
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,
+                                   contentType);
+
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+
+        } catch (AxisFault axisFault) {
+            throw axisFault;
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        } catch (IOException e) {
+            throw AxisFault.makeFault(e);
+        } finally {
+            String messageType =
+                    (String) msgContext.getProperty(Constants.Configuration.MESSAGE_TYPE);
+            if (HTTPConstants.MEDIA_TYPE_X_WWW_FORM.equals(messageType) ||
+                    HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA.equals(messageType)) {
+                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                                       HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+            }
+        }
+        return invokeAxisEngine(msgContext);
+    }
+
     public static Handler.InvocationResponse processURLRequest(MessageContext msgContext,
                                                                OutputStream out, String contentType)
             throws AxisFault {
@@ -110,10 +154,64 @@ public class RESTUtil {
             SOAPEnvelope soapEnvelope;
             if (msgContext.getAxisService() == null) {
                 soapEnvelope = TransportUtils.createSOAPEnvelope(null);
-                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, TransportUtils.getContentType(contentType, msgContext));
+                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                        TransportUtils.getContentType(contentType, msgContext));
             } else {
                 try {
                     soapEnvelope = TransportUtils.createSOAPMessage(msgContext, null, contentType);
+                } catch (XMLStreamException e) {
+                    throw AxisFault.makeFault(e);
+                }
+            }
+
+            msgContext.setEnvelope(soapEnvelope);
+
+
+        } catch (AxisFault axisFault) {
+            throw axisFault;
+        }
+        catch (IOException e) {
+            throw AxisFault.makeFault(e);
+        } finally {
+            String messageType =
+                    (String) msgContext.getProperty(Constants.Configuration.MESSAGE_TYPE);
+            if (HTTPConstants.MEDIA_TYPE_X_WWW_FORM.equals(messageType) ||
+                    HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA.equals(messageType)) {
+                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                                       HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+            }
+        }
+        return invokeAxisEngine(msgContext);
+    }
+
+    public static Handler.InvocationResponse processURLRequest(MessageContext msgContext,
+                                                               OutputStream out,
+                                                               String contentType, Builder builder)
+            throws AxisFault {
+        // here, only the parameters in the URI are supported. Others will be discarded.
+        try {
+
+            if (contentType == null || "".equals(contentType)) {
+                contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM;
+            }
+
+            // set the required properties so that even if there is an error during the dispatch
+            // phase the response message will be passed to the client well.
+            msgContext.setDoingREST(true);
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+            String charSetEncoding = BuilderUtil.getCharSetEncoding(contentType);
+            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEncoding);
+            // 1. First dispatchAndVerify and find out the service and the operation.
+            dispatchAndVerify(msgContext);
+            SOAPEnvelope soapEnvelope;
+            if (msgContext.getAxisService() == null) {
+                soapEnvelope = TransportUtils.createSOAPEnvelope(null);
+                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                        TransportUtils.getContentType(contentType, msgContext));
+            } else {
+                try {
+                    soapEnvelope = TransportUtils.createSOAPMessage(msgContext, null,
+                            contentType, builder);
                 } catch (XMLStreamException e) {
                     throw AxisFault.makeFault(e);
                 }

@@ -129,13 +129,13 @@ public class TransportUtils {
      * Objective of this method is to capture the SOAPEnvelope creation logic
      * and make it a common for all the transports and to in/out flows.
      *
-     * @param msgContext
-     * @param inStream
-     * @param contentType
+     * @param msgContext message context
+     * @param inStream input stream
+     * @param contentType content type of the message
      * @return the SOAPEnvelope
-     * @throws AxisFault
-     * @throws OMException
-     * @throws XMLStreamException
+     * @throws AxisFault if an error occurs
+     * @throws OMException if the xml is invalid
+     * @throws XMLStreamException if the stream is invalid
      * @throws FactoryConfigurationError
      */
     public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
@@ -144,6 +144,30 @@ public class TransportUtils {
             throws AxisFault, OMException, XMLStreamException,
             FactoryConfigurationError {
         OMElement documentElement = createDocumentElement(contentType, msgContext, inStream);
+        return createSOAPEnvelope(documentElement);
+    }
+
+    /**
+     * Objective of this method is to capture the SOAPEnvelope creation logic
+     * and make it a common for all the transports and to in/out flows.
+     *
+     * @param msgContext message context
+     * @param inStream input stream
+     * @param contentType content type of the message
+     * @param builder the builder to be used
+     * @return the SOAPEnvelope
+     * @throws AxisFault if an error occurs
+     * @throws OMException if the xml is invalid
+     * @throws XMLStreamException if the stream is invalid
+     * @throws FactoryConfigurationError
+     */
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
+                                                 InputStream inStream,
+                                                 String contentType,
+                                                 Builder builder)
+            throws AxisFault, OMException, XMLStreamException, FactoryConfigurationError {
+        OMElement documentElement = createDocumentElement(contentType, builder,
+                msgContext, inStream);
         return createSOAPEnvelope(documentElement);
     }
 
@@ -166,7 +190,8 @@ public class TransportUtils {
 
     public static OMElement createDocumentElement(String contentType,
                                                   MessageContext msgContext,
-                                                  InputStream inStream) throws AxisFault, XMLStreamException {
+                                                  InputStream inStream)
+            throws AxisFault, XMLStreamException {
         OMElement documentElement = null;
         String type = null;
         if (contentType != null) {
@@ -181,23 +206,53 @@ public class TransportUtils {
             }
         }
         if (documentElement == null) {
-            if (msgContext.isDoingREST()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Could not find a Builder for type (" + type + ").  Using REST.");
-                }
-                OMXMLParserWrapper builder = BuilderUtil.createPOXBuilder(inStream, null);
-                documentElement = builder.getDocumentElement();
-            } else {
-                // FIXME making soap defualt for the moment..might effect the
-                // performance
-                if (log.isDebugEnabled()) {
-                    log.debug("Could not find a Builder for type (" + type + ").  Using SOAP.");
-                }
-                String charSetEnc = (String) msgContext
-                        .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-                SOAPModelBuilder builder = BuilderUtil.createSOAPModelBuilder(inStream, charSetEnc);
-                documentElement = builder.getDocumentElement();
+            documentElement = createDefaultDocumentElement(msgContext, inStream, type);
+        }
+        return documentElement;
+    }
+
+    private static OMElement createDefaultDocumentElement(MessageContext msgContext,
+                                                          InputStream inStream, String type) {
+        OMElement documentElement;
+        if (msgContext.isDoingREST()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not find a Builder for type (" + type + ").  Using REST.");
             }
+            OMXMLParserWrapper builder = BuilderUtil.createPOXBuilder(inStream, null);
+            documentElement = builder.getDocumentElement();
+        } else {
+            // FIXME making soap defualt for the moment..might effect the
+            // performance
+            if (log.isDebugEnabled()) {
+                log.debug("Could not find a Builder for type (" + type + ").  Using SOAP.");
+            }
+            String charSetEnc = (String) msgContext
+                    .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+            SOAPModelBuilder builder = BuilderUtil.createSOAPModelBuilder(inStream, charSetEnc);
+            documentElement = builder.getDocumentElement();
+        }
+        return documentElement;
+    }
+
+    public static OMElement createDocumentElement(String contentType, Builder builder,
+                                                  MessageContext msgContext,
+                                                  InputStream inStream)
+            throws AxisFault, XMLStreamException {
+        OMElement documentElement = null;
+        String type = null;
+        if (contentType != null) {
+            type = getContentType(contentType, msgContext);
+            if (builder != null) {
+	            if (log.isDebugEnabled()) {
+	                log.debug("createSOAPEnvelope using Builder (" +
+	                          builder.getClass() + ") selected from type (" + type +")");
+	            }
+                documentElement = builder.processDocument(inStream, contentType, msgContext);
+            }
+        }
+
+        if (documentElement == null) {
+            documentElement = createDefaultDocumentElement(msgContext, inStream, type);
         }
         return documentElement;
     }
