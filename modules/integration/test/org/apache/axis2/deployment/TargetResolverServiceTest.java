@@ -39,7 +39,7 @@ public class TargetResolverServiceTest extends LocalTestCase {
 			public void receive(MessageContext msgContext) throws AxisFault {
 				// Set the reply to on the server side to test server side
 				// target resolvers
-				msgContext.setReplyTo(new EndpointReference(
+				msgContext.setTo(new EndpointReference(
 	            "http://ws.apache.org/new/anonymous/address"));
 			    new RawXMLINOutMessageReceiver().receive(msgContext);
 			}

@@ -83,27 +83,31 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault if a problem occurred
      */
     public void receive(final MessageContext messageCtx) throws AxisFault {
-    	if (messageCtx.isPropertyTrue(DO_ASYNC)
-				|| ((messageCtx.getParameter(DO_ASYNC) != null) &&
-                    JavaUtils.isTrueExplicitly(messageCtx.getParameter(DO_ASYNC).getValue()))) {
-
+        // Checking whether the replyTo address, if it is non Anonymous then we need to send the ACK and
+        // send the reply to on replyTo address
+        EndpointReference replyTo = messageCtx.getReplyTo();
+        if (replyTo != null && !replyTo.hasAnonymousAddress()) {
+            // We have a valid reply to address, so processing the request through AsyncMessageReceiverWorker and send the ACK
+            processAsAsync(messageCtx);
+            return;
+        }
+        // Checking for long running services
+        if (messageCtx.isPropertyTrue(DO_ASYNC)
+                || ((messageCtx.getParameter(DO_ASYNC) != null) &&
+                JavaUtils.isTrueExplicitly(messageCtx.getParameter(DO_ASYNC).getValue()))) {
             String mep = messageCtx.getAxisOperation()
-					.getMessageExchangePattern();
-			EndpointReference replyTo = messageCtx.getReplyTo();
-			// In order to invoke the service in the ASYNC mode, the request
+                    .getMessageExchangePattern();
+            // Checking whether the replyTo address is valid, so that we can send the Application response
+            // In order to invoke the service in the ASYNC mode, the request
 			// should contain ReplyTo header if the MEP of the service is not
 			// InOnly type
-			if ((!WSDLUtil.isOutputPresentForMEP(mep))
-					|| (replyTo != null && !replyTo.hasAnonymousAddress())) {
-				AsyncMessageReceiverWorker worker = new AsyncMessageReceiverWorker(
-						messageCtx);
-				messageCtx.getEnvelope().build();
-				messageCtx.getConfigurationContext().getThreadPool().execute(
-						worker);
-				return;
-			}
-		}
+            if ((!WSDLUtil.isOutputPresentForMEP(mep))
+                    || (replyTo != null && !replyTo.hasAnonymousAddress())) {
+                processAsAsync(messageCtx);
+                return;
+            }
 
+        }
 
         ThreadContextDescriptor tc = setThreadContext(messageCtx);
         try {
@@ -126,6 +130,28 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             }
             restoreThreadContext(tc);
         }
+    }
+
+    /**
+     * This is to create a separate thread to process business logic invocation. We create a AsyncMessageReceiverWorker
+     * which internally calls the message receiver specified for the operation.
+     *
+     * We send the ACK through the incoming transport and reply through the address specified in replyTo address.
+     * @param messageCtx msgContext the current MessageContext
+     */
+    private void processAsAsync(MessageContext messageCtx) {
+        AsyncMessageReceiverWorker worker = new AsyncMessageReceiverWorker(
+                messageCtx);
+        if (messageCtx.isDoingMTOM() || messageCtx.isDoingSwA()) {
+            // If we are doing MTOM or SWA then we need to build with attachment, because we are going to close the incoming connection
+            messageCtx.getEnvelope().buildWithAttachments();
+        } else {
+            // We need to build the envelop since we are going to close the input stream
+            messageCtx.getEnvelope().build();
+        }
+
+        messageCtx.getConfigurationContext().getThreadPool().execute(
+                worker);
     }
 
     /**

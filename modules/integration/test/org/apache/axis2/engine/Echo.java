@@ -29,7 +29,7 @@ public class Echo {
     private static final Log log = LogFactory.getLog(Echo.class);
     public static final String SERVICE_NAME = "EchoXMLService";
     public static final String ECHO_OM_ELEMENT_OP_NAME = "echoOMElement";
-    
+
     public Echo() {
     }
 
@@ -42,7 +42,7 @@ public class Echo {
         log.info("echoOMElementNoResponse service called.");
     }
 
-     public void echoWithExeption(OMElement omEle) throws Exception {
+    public void echoWithExeption(OMElement omEle) throws Exception {
         throw new Exception("Invoked the service");
     }
 
@@ -54,6 +54,21 @@ public class Echo {
         }
         return omEle;
     }
+
+    public OMElement longRunning(OMElement omEle) {
+        omEle.buildWithAttachments();
+        omEle.setLocalName(omEle.getLocalName() + "Response");
+        if (omEle.getFirstElement().getText().trim().startsWith("fault")) {
+            throw new RuntimeException("fault string found in echoOMElement");
+        }
+        try {
+            Thread.sleep(60000);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return omEle;
+    }
+
 
     public OMElement echoOM(OMElement omEle) {
         return omEle;
@@ -68,7 +83,7 @@ public class Echo {
     }
 
     public OMElement echoMTOMtoBase64(OMElement omEle) {
-        OMText omText = (OMText)(omEle.getFirstElement()).getFirstOMChild();
+        OMText omText = (OMText) (omEle.getFirstElement()).getFirstOMChild();
         omText.setOptimize(false);
         return omEle;
     }
