@@ -273,9 +273,14 @@ public class BeanUtil {
             						 * Copied from ADBXMLStreamReaderImpl. 
             						 * For inner Arrary Complex types we use the special local name array - "array"
             						 */
-            						QName itemName = new QName(elemntNameSpace.getNamespaceURI(),
-            								Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
-            								elemntNameSpace.getPrefix());            						
+								    QName itemName;
+								    if (qualified) {
+								        itemName = new QName(elemntNameSpace.getNamespaceURI(),
+	                                            Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
+	                                            elemntNameSpace.getPrefix()); 								        
+								    } else {
+								        itemName = new QName(Constants.INNER_ARRAY_COMPLEX_TYPE_NAME); 								        
+								    }            						           						
     								propertyQnameValueList.add(getOMElement(propertyQName , (Object[]) o,
             								itemName, qualified, typeTable));                                	
                                 } else {
@@ -1457,11 +1462,15 @@ public class BeanUtil {
 			Map results, TypeTable typeTable, boolean elementFormDefault) {
 		Iterator<Object> keyItr = results.keySet().iterator();
 		List<OMElement> list = new ArrayList<OMElement>();
-		OMNamespace ns = fac.createOMNamespace(
-				org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_URI,
-				org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_PREFIX);
+        OMNamespace ns = null;
 		Type keyType = Object.class;
-		Type valueType = Object.class;
+        Type valueType = Object.class;
+        if (elementFormDefault) {
+            ns = fac.createOMNamespace(
+                    org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_URI,
+                    org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_PREFIX);
+        }	
+		
 		if (type instanceof ParameterizedType) {
 			ParameterizedType aType = (ParameterizedType) type;
 			Type[] parameterArgTypes = aType.getActualTypeArguments();
@@ -1476,12 +1485,21 @@ public class BeanUtil {
 			if (key != null) {
 				value = results.get(key);
 				List<Object> properties = new ArrayList<Object>();
-				QName keyName = new QName(ns.getNamespaceURI(),
-						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, ns
-								.getPrefix());
-				QName valueName = new QName(ns.getNamespaceURI(),
-						org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME, ns
-								.getPrefix());				
+                QName keyName;
+                QName valueName;
+                if (elementFormDefault) {
+                    keyName = new QName(ns.getNamespaceURI(),
+                            org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME,
+                            ns.getPrefix());
+                    valueName = new QName(ns.getNamespaceURI(),
+                            org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME,
+                            ns.getPrefix());
+                } else {
+                    keyName = new QName(
+                            org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME);
+                    valueName = new QName(
+                            org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME);
+                }
 
 				Object kValue = getMapParameterElement(fac,
 						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, key,
@@ -1514,12 +1532,18 @@ public class BeanUtil {
 					properties.add(vValue);
 				}
 				
+                QName entryQName;
+                if (elementFormDefault) {
+                    entryQName = new QName(ns.getNamespaceURI(),
+                            org.apache.axis2.Constants.MAP_ENTRY_ELEMENT_NAME,
+                            ns.getPrefix());
+                } else {
+                    entryQName = new QName(
+                            org.apache.axis2.Constants.MAP_ENTRY_ELEMENT_NAME);
 
+                }
 				XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-						new QName(
-								ns.getNamespaceURI(),
-								org.apache.axis2.Constants.MAP_ENTRY_ELEMENT_NAME,
-								ns.getPrefix()), properties.toArray(), null,
+				        entryQName, properties.toArray(), null,
 						typeTable, elementFormDefault);
 
 				StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
@@ -1632,16 +1656,29 @@ public class BeanUtil {
 		if (SimpleTypeMapper.isMap(value.getClass())) {
 			List<OMElement> childList = getMapElement(fac, valueType,
 					(Map) value, typeTable, elementFormDefault);
-			OMElement omValue = fac.createOMElement(elementName,
-					ns.getNamespaceURI(), ns.getPrefix());
+			OMElement omValue;
+			if(elementFormDefault) {
+			    omValue = fac.createOMElement(elementName,
+	                    ns.getNamespaceURI(), ns.getPrefix());			    
+			} else {
+			    omValue = fac.createOMElement(elementName, null);
+			    
+			}
 			for (OMElement child : childList) {
 				omValue.addChild(child);
 			}
 			return omValue;
 			
-		} else if (SimpleTypeMapper.isCollection(value.getClass())) {			
-			QName elementQName = new QName(ns.getNamespaceURI(), elementName,
-					ns.getPrefix());
+		} else if (SimpleTypeMapper.isCollection(value.getClass())) {	
+		    QName elementQName;
+		    if(elementFormDefault) {
+		       elementQName = new QName(ns.getNamespaceURI(), elementName,
+	                    ns.getPrefix());		        
+		    } else {
+		       elementQName = new QName(elementName);
+		        
+		    }
+			
 			return getCollectionElement(fac, valueType, (Collection) value,
 					elementName, null, elementQName, typeTable,
 					elementFormDefault).getChildren();
@@ -1653,8 +1690,13 @@ public class BeanUtil {
 				omValue.addChild(fac.createOMText(SimpleTypeMapper
 						.getStringValue(value)));
 			} else {
-				QName name = new QName(ns.getNamespaceURI(), elementName,
-						ns.getPrefix());
+			    QName name;
+			    if(elementFormDefault) {
+			        name = new QName(ns.getNamespaceURI(), elementName,
+	                        ns.getPrefix());			        
+			    } else {
+			        name = new QName(elementName);			        
+			    }
 				XMLStreamReader xr = BeanUtil.getPullParser(value, name,
 						typeTable, true, false);
 				OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
@@ -1783,15 +1825,25 @@ public class BeanUtil {
 		if (value != null) {
 		    value = getCollectionItemElement(fac, elementName, value,
 			    valueType, typeTable, ns, elementFormDefault);
-		    properties.add(new QName(ns.getNamespaceURI(), elementName, ns
-			    .getPrefix()));
+                QName valueQName;
+                if (elementFormDefault) {
+                    valueQName = new QName(ns.getNamespaceURI(), elementName,
+                            ns.getPrefix());
+                } else {
+                    valueQName = new QName(elementName);
+                }
+		    properties.add(valueQName);
 		    properties.add(value);
 		}
 	    }
-
-	    XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(new QName(
-		    ns.getNamespaceURI(), elementQName.getLocalPart(),
-		    ns.getPrefix()), properties.toArray(), null, typeTable,
+        QName eleQName;
+        if (elementFormDefault) {
+            eleQName = new QName(ns.getNamespaceURI(),
+                    elementQName.getLocalPart(), ns.getPrefix());
+        } else {
+            eleQName = new QName(elementQName.getLocalPart());
+        }
+	    XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(eleQName, properties.toArray(), null, typeTable,
 		    elementFormDefault);
 
 	    StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
@@ -1840,9 +1892,14 @@ public class BeanUtil {
 		    omValue.addChild(fac.createOMText(SimpleTypeMapper
 			    .getStringValue(value)));
 		} else {
-		    QName name = new QName(ns.getNamespaceURI(), elementName,
-			    ns.getPrefix());
-		    XMLStreamReader xr = BeanUtil.getPullParser(value, name,
+                QName name;
+                if (elementFormDefault) {
+                    name = new QName(ns.getNamespaceURI(), elementName,
+                            ns.getPrefix());
+                } else {
+                    name = new QName(elementName);
+                }
+                XMLStreamReader xr = BeanUtil.getPullParser(value, name,
 			    typeTable, true, false);
 		    OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
 		    .createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
