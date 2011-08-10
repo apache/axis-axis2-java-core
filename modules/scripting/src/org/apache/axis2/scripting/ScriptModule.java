@@ -49,6 +49,8 @@ public class ScriptModule implements Module {
 
     static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
+    private ScriptDeploymentEngine deploymentEngine;
+    
     /**
      * Init by creating and deploying AxisServices for each script
      */
@@ -61,7 +63,7 @@ public class ScriptModule implements Module {
             log.error("AxisConfiguration getRepository returns null, cannot deploy scripts");
         } else {
             File scriptServicesDirectory = getScriptServicesDirectory(axisConfig);
-            ScriptDeploymentEngine deploymentEngine = new ScriptDeploymentEngine(axisConfig);
+            deploymentEngine = new ScriptDeploymentEngine(axisConfig);
             deploymentEngine.loadRepository(scriptServicesDirectory);
             deploymentEngine.loadServices();
         }
@@ -104,6 +106,9 @@ public class ScriptModule implements Module {
     }
 
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
+        if (deploymentEngine != null) {
+            deploymentEngine.cleanup();
+        }
     }
 
 }
