@@ -28,7 +28,7 @@
   xmlns:ns2="urn:types2"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
-  <wsdl:import namespace="http://www.example.com/test/messageTypes" location="http://example.com/test/doesnotexist.wsdl"/>
+  <wsdl:import namespace="http://www.example.com/test/messageTypes" location="http://localhost:12345/test/doesnotexist.wsdl"/>
   
   <!-- Importing does not actually bring in the messages, just the ability to refer to them.
        Without the following (duplicated) messages the wsdl definition would not have any messages.
