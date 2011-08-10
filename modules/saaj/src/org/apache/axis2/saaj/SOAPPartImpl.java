@@ -89,7 +89,7 @@ public class SOAPPartImpl extends SOAPPart {
                         SOAPEnvelopeImpl soapEnvelope) {
         //setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, IDGenerator.generateID());
         //setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/xml");
-        this.mimeHeaders = parentSoapMsg.getMimeHeaders();
+        this.mimeHeaders = SAAJUtil.copyMimeHeaders(parentSoapMsg.getMimeHeaders());
         soapMessage = parentSoapMsg;
         envelope = soapEnvelope;
         document = soapEnvelope.getOwnerDocument();
@@ -122,7 +122,7 @@ public class SOAPPartImpl extends SOAPPart {
             this.mimeHeaders.addHeader("Content-ID", IDGenerator.generateID());
             this.mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
         } else {
-            String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
+            String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE);
             if (contentTypes != null && contentTypes.length > 0) {
                 try {
                     contentType = new ContentType(contentTypes[0]);

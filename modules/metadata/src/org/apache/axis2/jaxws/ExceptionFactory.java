@@ -323,6 +323,27 @@ public class ExceptionFactory {
         pw.close();
         return sw.getBuffer().toString();
     }
-
+    
+    /**
+     * Give a target Throwable, set the initialCause Throwable as the initial cause on the target. 
+     * @param target The throwable on which to set the initial cause
+     * @param initialCause The initial cause to set on the target Throwable.
+     */
+    public static void setInitialCause(Throwable target, Throwable initialCause) {
+        if (target != null && initialCause != null) {
+            // Create a WebServiceException from the initialCause throwable.  This skips over things like
+            // AxisFault as a cause.  Set the result on the target throwable.
+            try {
+                WebServiceException localException = ExceptionFactory.makeWebServiceException(initialCause);
+                target.initCause(localException.getCause());
+            } catch (Throwable t) {
+                // If the cause had already been set, then it can't be set again; it throws an exception.
+                if (log.isDebugEnabled()) {
+                    log.debug("Caught exception trying to set initial cause on: " + target +".  Initial cause: " +
+                            initialCause + ".  Caught: " + t);
+                }
+            }
+        }
+    }
 }
 

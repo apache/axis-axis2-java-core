@@ -19,13 +19,14 @@
 
 package org.apache.axis2.jaxws.sample;
 
+import javax.xml.ws.BindingProvider;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionService;
-
-import javax.xml.ws.BindingProvider;
 
 public class ResourceInjectionTests extends AbstractTestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/ResourceInjectionService.ResourceInjectionPortTypeImplPort";
@@ -64,6 +65,32 @@ public class ResourceInjectionTests extends AbstractTestCase {
             assertTrue("Illegal characters were not filtered: " + response,
                     response.indexOf(insert) < 0);
         
+    }
+   
+    /*
+     * TODO:  This test is currently disabled.  The path tested assumes the webcontainer will
+     * receive the request for <EPR_address>/?wsdl and redirect appropriately to either
+     * the on-disk WSDL or, if an on-disk WSDL does not exist, a generated WSDL.  The
+     * Axis2 test webserver/webcontainer has no such ability currently.  To support this,
+     * the test SimpleServer would have to be coded to detect inbound requests appended with
+     * /?wsdl and redirect accordingly.
+     *
+     * See: jaxws/src/org/apache/axis2/jaxws/context/WebServiceContextImpl.java line 146
+     */ 
+    public void _testResourceInjectionEndpointReference() {
+        ResourceInjectionPortType proxy = getProxy();
+        String response = proxy.testInjection("epr");
+        assertTrue("The response was null", response != null);
+        assertTrue("The response was not succesful: " + response, response
+                .indexOf("SUCCESS") >= 0);
+
+        // Make sure the EPR contains the fields we expect
+        assertTrue("The EPR did not contain EndpointReference", response
+                .indexOf("EndpointReference") >= 0);
+        assertTrue("The EPR did not contain ServiceName", response
+                .indexOf("ServiceName") >= 0);
+        assertTrue("The EPR did not contain wsdlLocation", response
+                .indexOf("wsdlLocation") >= 0);
     }
    
 }

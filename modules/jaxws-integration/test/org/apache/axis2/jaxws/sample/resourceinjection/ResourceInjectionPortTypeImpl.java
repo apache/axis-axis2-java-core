@@ -28,6 +28,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -36,6 +37,7 @@ import javax.xml.ws.handler.MessageContext;
  *
  */
 @WebService(serviceName="ResourceInjectionService",
+            wsdlLocation="META-INF/resourceinjection.wsdl",
             endpointInterface="org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionPortType")
             public class ResourceInjectionPortTypeImpl implements ResourceInjectionPortType {
 
@@ -50,10 +52,29 @@ import javax.xml.ws.handler.MessageContext;
      */
     public String testInjection(String arg) {
         
-        
         if (ctx == null) {
             return "FAILURE: The WebServiceContext was not set";
         }
+
+        if ("sample".equals(arg)) {
+            return basicInjectionTest();
+        } else if ("epr".equals(arg)) {
+            return eprInjectionTest();
+        } else {
+            return "FAILURE: Unexpected test type " + arg;
+        }
+    }
+
+    private String eprInjectionTest() {
+        EndpointReference epr = ctx.getEndpointReference();
+
+        if (epr == null) {
+            return "FAILURE: The context did not return and endpoint reference";
+        }
+        return "SUCCESS: " + epr.toString();
+    }
+
+    private String basicInjectionTest() {
         
         MessageContext msgContext = ctx.getMessageContext();
         if (msgContext == null) {

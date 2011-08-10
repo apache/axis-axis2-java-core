@@ -27,7 +27,7 @@ import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
-@WebService(name = "ResourceInjectionPortType", targetNamespace = "http://resourceinjection.sample.test.org")
+@WebService(name = "ResourceInjectionPortType", targetNamespace = "http://resourceinjection.sample.jaxws.axis2.apache.org")
 public interface ResourceInjectionPortType {
 
 
@@ -37,10 +37,10 @@ public interface ResourceInjectionPortType {
      * @return
      *     returns java.lang.String
      */
-    @WebMethod(action = "http://resourceinjection.sample.test.org/NewOperation")
+    @WebMethod(action = "http://resourceinjection.sample.jaxws.axis2.apache.org/NewOperation")
     @WebResult(name = "response", targetNamespace = "")
-    @RequestWrapper(localName = "testInjection", targetNamespace = "http://resourceinjection.sample.test.org", className = "org.test.sample.resourceinjection.TestInjection")
-    @ResponseWrapper(localName = "testInjectionResponse", targetNamespace = "http://resourceinjection.sample.test.org", className = "org.test.sample.resourceinjection.TestInjectionResponse")
+    @RequestWrapper(localName = "testInjection", targetNamespace = "http://resourceinjection.sample.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.sample.resourceinjection.TestInjection")
+    @ResponseWrapper(localName = "testInjectionResponse", targetNamespace = "http://resourceinjection.sample.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.sample.resourceinjection.TestInjectionResponse")
     public String testInjection(
         @WebParam(name = "arg", targetNamespace = "")
         String arg);

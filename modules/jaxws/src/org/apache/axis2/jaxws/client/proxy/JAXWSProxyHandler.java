@@ -581,7 +581,11 @@ public class JAXWSProxyHandler extends BindingProvider implements
                     log.debug("Throwing a fault of type: " + object.getClass().getName() +
                     " back to the clent.");
                 }
-
+                if (msgCtx.getLocalException() != null) {
+                    // If a local exception occured, set it as the initial cause of the 
+                    // exception that will be returned
+                    ExceptionFactory.setInitialCause((Throwable) object, msgCtx.getLocalException());
+                }
                 return (Throwable)object;
             } else if (msgCtx.getLocalException() != null) {
                 // use the factory, it'll throw the right thing:

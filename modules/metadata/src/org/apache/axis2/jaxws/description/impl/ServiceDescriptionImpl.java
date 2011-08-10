@@ -146,6 +146,14 @@ public class ServiceDescriptionImpl
     // RUNTIME INFORMATION
     Map<String, ServiceRuntimeDescription> runtimeDescMap =
             new ConcurrentHashMap<String, ServiceRuntimeDescription>();
+    
+    /**
+     * Property representing a collection of endpointDescription instances for dynamic ports 
+     * which are shared across all services on an AxisConfig.  Note that this behavior is incorrect; dynamic 
+     * ports should only be visible to the instance of the service that created them.  However, the sharing
+     * across services is maintained for backwards compatibility.
+     * @deprecated 
+     */
     private static final String JAXWS_DYNAMIC_ENDPOINTS = "jaxws.dynamic.endpoints";
 
     /**
@@ -491,7 +499,7 @@ public class ServiceDescriptionImpl
                                  Messages.getMessage("serviceDescriptionImplAddPortErr"));
                     }
 
-                    endpointDescription = createEndpointDescriptionImpl(sei, portQName, bindingId, endpointAddress);    
+                    endpointDescription = getDynamicEndpointDescriptionImpl(sei, portQName, bindingId, endpointAddress);    
                     addDynamicEndpointDescriptionImpl(endpointDescription, serviceDelegateKey);
 
                 } else {
@@ -596,19 +604,104 @@ public class ServiceDescriptionImpl
         return endpointDescription;
     }
 
-    private EndpointDescriptionImpl createEndpointDescriptionImpl(Class sei, QName portQName, String bindingId, String endpointAddress) {
+    /**
+     * Find or create an EndpointDescription instance for a dynamic port.  Dynamic ports should be scoped to
+     * the instance of the service that created them, so the method getDynamicEndpointDescriptionImpl should
+     * have find one if it already exists.  However, logic was introduced (in Apache Axis2 revision 664411) that
+     * also scoped dynamic ports to a configuration context based on port name, binding ID, and endpointAddress.
+     * Although that logic is incorrect, it is maintained for backwards compatability based on the setting of
+     * a property.
+     * 
+     * @param sei
+     * @param portQName
+     * @param bindingId
+     * @param endpointAddress
+     * @return
+     */
+    private EndpointDescriptionImpl getDynamicEndpointDescriptionImpl(Class sei, QName portQName, String bindingId, String endpointAddress) {
         if (log.isDebugEnabled()) {
             log.debug("Calling createEndpointDescriptionImpl : ("
                       + portQName + "," + bindingId + "," + endpointAddress + ")");
         }
         EndpointDescriptionImpl endpointDescription = null;
+        SharedDynamicEndpointEntry sharedDynamicEndpointEntry = null;
+        boolean areDynamicPortsShared = isShareDynamicPortsAcrossServicesEnabled();
+        if (areDynamicPortsShared) {
+            // If ports are being shared, see if there's already one in the cache.  Note that this will
+            // always return an Entry value, but the endpoint in it may be null if one wasn't found.
+            sharedDynamicEndpointEntry = findSharedDynamicEndpoint(portQName, bindingId, endpointAddress);
+            endpointDescription = sharedDynamicEndpointEntry.endpointDescription;
+        }
+        
+        boolean endpointCreated = false;
+        if(endpointDescription == null) {
+            endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
+            endpointCreated = true;
+        }
+        if (areDynamicPortsShared && endpointCreated) {
+            // If ports are being shared and a new endpoint was created, then it needs to be 
+            // added to the cache.  Note that the other values in the entry (the cache hashmap and
+            // the key) were set when we looked for the entry above.
+            sharedDynamicEndpointEntry.endpointDescription = endpointDescription;
+            cacheSharedDynamicPointEndpoint(sharedDynamicEndpointEntry);
+        }
+        return endpointDescription;
+    }
+    
+    /**
+     * Add the EndpointDescriptionImpl representing the dynamic port to the cache of ports shared across 
+     * services.   
+     * @param sharedDynamicEndpointEntry Contains the EndpointDescriptionImpl instance and the key 
+     *  associated with to be added to the cache, which is also contained in the entry.
+     */
+    private void cacheSharedDynamicPointEndpoint(SharedDynamicEndpointEntry sharedDynamicEndpointEntry) {
+        
+        HashMap cachedDescriptions = sharedDynamicEndpointEntry.cachedDescriptions;
+        String key = sharedDynamicEndpointEntry.key;
+        EndpointDescriptionImpl endpointDescription = sharedDynamicEndpointEntry.endpointDescription;
+        
+        synchronized(cachedDescriptions) {
+            if (log.isDebugEnabled()) {
+                log.debug("Calling cachedDescriptions.put : ("
+                        + key.toString() + ") : size - " + cachedDescriptions.size());
+            }
+            cachedDescriptions.put(key.toString(), new WeakReference(endpointDescription));
+        }
+    }
+    
+    /**
+     * Look for an existing shared endpointDescriptionImpl instance corresponding to a dynamic port based on
+     * a key of(portQname, bindingId, endpointAddress).  Note that sharing dynamic ports across services is
+     * disable by default, and must be enabled via a property.  Dynamic ports, by default, should only be 
+     * visible to the instance of the service that added them.
+     * 
+     * Note that a SharedDynamicEntry will be returned whether or not an existing EndpointDescriptionImpl
+     * is found.  If one is not found, then one needs to be created and then added to the cache.  The information
+     * in the returned SharedDynamicEntry can be used to add it.
+     * 
+     * @see #isShareDynamicPortsAcrossServicesEnabled()
+     * @see #cacheSharedDynamicPointEndpoint(SharedDynamicEndpointEntry)
+     * @see SharedDynamicEndpointEntry
+     * @see #getDynamicEndpointDescriptionImpl(QName, Object)
+     * 
+     * @param portQName
+     * @param bindingId
+     * @param endpointAddress
+     * @return A non-null SharedDynamicEndpointEntry is always returned.  The key and cachedDescriptions
+     * variables will always be set.  If an existing endpoint is found, then endpointDescription will be non-null.
+     */
+    private SharedDynamicEndpointEntry findSharedDynamicEndpoint(QName portQName,
+            String bindingId, String endpointAddress) {
+        
+        SharedDynamicEndpointEntry returnDynamicEntry = new SharedDynamicEndpointEntry();
+        EndpointDescriptionImpl sharedDynamicEndpoint = null;
+        
         AxisConfiguration configuration = configContext.getAxisConfiguration();
         if (log.isDebugEnabled()) {
             log.debug("looking for " + JAXWS_DYNAMIC_ENDPOINTS + " in AxisConfiguration : " + configuration);
         }
         Parameter parameter = configuration.getParameter(JAXWS_DYNAMIC_ENDPOINTS);
-        HashMap cachedDescriptions = (HashMap)
-                ((parameter == null) ? null : parameter.getValue());
+        HashMap cachedDescriptions = (HashMap)((parameter == null) ? null : parameter.getValue());
         if(cachedDescriptions == null) {
             cachedDescriptions = new HashMap();
             try {
@@ -622,10 +715,10 @@ public class ServiceDescriptionImpl
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("found old jaxws.dynamic.endpoints cache in AxisConfiguration ("  +  cachedDescriptions + ") with size : ("
-                          + cachedDescriptions.size() + ")");
+                        + cachedDescriptions.size() + ")");
             }
         }
-
+        
         StringBuffer key = new StringBuffer();
         key.append(portQName == null ? "NULL" : portQName.toString());
         key.append(':');
@@ -635,27 +728,50 @@ public class ServiceDescriptionImpl
         synchronized(cachedDescriptions) {
             WeakReference ref = (WeakReference) cachedDescriptions.get(key.toString());
             if (ref != null) {
-                endpointDescription = (EndpointDescriptionImpl) ref.get();
-            }
-        }
-        if(endpointDescription == null) {
-            endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
-            synchronized(cachedDescriptions) {
+                sharedDynamicEndpoint = (EndpointDescriptionImpl) ref.get();
                 if (log.isDebugEnabled()) {
-                    log.debug("Calling cachedDescriptions.put : ("
-                              + key.toString() + ") : size - " + cachedDescriptions.size());
+                    log.debug("found old entry for endpointDescription in jaxws.dynamic.endpoints cache : ("
+                            + cachedDescriptions.size() + ")");
                 }
-                cachedDescriptions.put(key.toString(), new WeakReference(endpointDescription));
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("found old entry for endpointDescription in jaxws.dynamic.endpoints cache : ("
-                          + cachedDescriptions.size() + ")");
             }
         }
-        return endpointDescription;
+        
+        returnDynamicEntry.cachedDescriptions = cachedDescriptions;
+        returnDynamicEntry.key = key.toString();
+        returnDynamicEntry.endpointDescription = sharedDynamicEndpoint;
+        
+        return returnDynamicEntry;
     }
-    
+
+    /**
+     * Answer if dynamic ports are to be shared across services.  The default value is FALSE, but it
+     * can be configured by an AxisConfig property.  Note that this can only be set via a config property 
+     * and not via a request context property since the setting affects multiple services.
+     * 
+     * @return true if dynamic ports are to be shared across services, false otherwise.
+     */
+    private boolean isShareDynamicPortsAcrossServicesEnabled() {
+        boolean resolutionEnabled = false;
+
+        // See if an  AxisConfig property enables the sharing of dynamic ports 
+        String flagValue = null;
+        AxisConfiguration axisConfig = getAxisConfigContext().getAxisConfiguration();
+        Parameter parameter = axisConfig.getParameter(MDQConstants.SHARE_DYNAMIC_PORTS_ACROSS_SERVICES);
+        if (parameter != null) {
+            flagValue = (String) parameter.getValue();
+        }
+
+        // If the property was set, check the value.
+        if (flagValue != null) {
+            if ("false".equalsIgnoreCase(flagValue)) {
+                resolutionEnabled = false;
+            } else if ("true".equalsIgnoreCase(flagValue)) {
+                resolutionEnabled = true;
+            }
+        }
+        return resolutionEnabled;
+    }
+
     /**
      * This method will get all properties that have been set on the DescriptionBuilderComposite
      * instance. If the DBC represents an implementation class that references an SEI, the
@@ -3039,4 +3155,13 @@ public class ServiceDescriptionImpl
         return responses;
     }
 
+    /**
+     * Entry returned from looking for an endpointDescriptionImpl for a shared dynamic port, or to be used
+     * to add one that was created to the cache.
+     */
+    class SharedDynamicEndpointEntry {
+        String key;
+        EndpointDescriptionImpl endpointDescription;
+        HashMap cachedDescriptions;
+    }
 }

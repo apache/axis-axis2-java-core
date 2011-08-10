@@ -232,4 +232,39 @@ public interface Constants {
      */
     public static final String  DISPATCH_CLIENT_OUTBOUND_RESOLUTION = "jaxws.dispatch.outbound.operation.resolution.enable"; 
 
+    /** 
+     * Context Property:
+     * Name: jaxws.soapfault.local.exceptions.disable
+     * Value: String "false" or "true"
+     * Default: null, which is interpreted as "false"
+     * Can be set on:
+     * - Axis Configuration, which affects all jax-ws clients
+     *
+     * Indicates if local exceptions encountered by a JAX-WS client should be turned into a SOAPFaultException
+     * and then call the appropriate JAX-WS application handlers handleFault()methods with that SOAPFault
+     * in the message.  This is new behavior, which is the default behavior indicated by this property not being
+     * set or having a value of "false".
+     * 
+     * The previous behavior was for local exceptions to be turned into a WebServiceException that was set
+     * on an empty response message.  The appropriate JAX-WS application handers handleMessage() methods would be
+     * called with that empty message.  Setting this property to "true" will revert to this behavior.
+     */
+    public static final String  DISABLE_SOAPFAULT_FOR_LOCAL_EXCEPTION = "jaxws.soapfault.local.exceptions.disable"; 
+
+    /** 
+     * Context Property:
+     * Name: jaxws.endpoint.publish.disable
+     * Value: String "false" or "true"
+     * Default: null, which is interpreted as "false"
+     * Can be set on:
+     * - Axis Configuration, which affects all jax-ws endpoints
+     *
+     * Indicates if the javax.xml.ws.Endpoint.publish methods should be disabled, throwing an exception if
+     * they are called.  This may be necessary in a managed environment, since as noted in JSR-109 section
+     * 5.3.3 "Publishing Endpoints" using publish is non-portable in managed environments, and managed 
+     * environments may disallow publishing of endpoints dynamciall.
+     * 
+     * If this property is set, the Endpoint.publish methods will throw an UnsupportedOperationException.
+     */
+    public static final String  DISABLE_ENDPOINT_PUBLISH_METHODS = "jaxws.endpoint.publish.disable"; 
 }

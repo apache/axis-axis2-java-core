@@ -52,68 +52,80 @@ public class WebServiceExceptionLogger {
                            Class serviceImplClass,
                            Object serviceInstance,
                            Object[] args) {
-        
-        // Must have debug or error logging enabled
-        if (!log.isDebugEnabled() && !log.isErrorEnabled()) {
-            return;
-        }
-        
-        // Get the root of the exception
-        Throwable rootT = null;
-        if (throwable instanceof InvocationTargetException) {
-            rootT = ((InvocationTargetException) throwable).getTargetException();
-        }
-        
-        
-        String name = rootT.getClass().getName();
-        String stack = stackToString(rootT);
-        
-        // Determine if this is a checked exception or non-checked exception
-        Class checkedException = JavaUtils.getCheckedException(rootT, method);
-        
-        if (checkedException == null) {
-            // Only log errors for non-checked exceptions
-            if (log.isErrorEnabled()) {
-                String text = "";
-                if (logFully) {
-                    text = Messages.getMessage("failureLogger", name, rootT.toString());
-                   
-                } else {
-                    text = Messages.getMessage("failureLogger", name, stack);
+
+        // No matter what happens in this logging method, do not surface that exception.  We don't want a logging
+        // failure to mask the real exception we are trying to log or affect subsequent processing.
+        try {
+                
+            // Must have debug or error logging enabled
+            if (!log.isDebugEnabled() && !log.isErrorEnabled()) {
+                return;
+            }
+            
+            // Get the root of the exception
+            Throwable rootT = null;
+            if (throwable instanceof InvocationTargetException) {
+                rootT = ((InvocationTargetException) throwable).getTargetException();
+            } else {
+                rootT = throwable;
+            }
+            
+            String name = rootT.getClass().getName();
+            log.debug("693210: root Throwable, may cause index error: " + rootT.toString(), rootT);
+            String stack = stackToString(rootT);
+            
+            // Determine if this is a checked exception or non-checked exception
+            Class checkedException = JavaUtils.getCheckedException(rootT, method);
+            
+            if (checkedException == null) {
+                // Only log errors for non-checked exceptions
+                if (log.isErrorEnabled()) {
+                    String text = "";
+                    if (logFully) {
+                        text = Messages.getMessage("failureLogger", name, rootT.toString());
+                       
+                    } else {
+                        text = Messages.getMessage("failureLogger", name, stack);
+                    }
+                    log.error(text);
                 }
-                log.error(text);
-            }
+                
+            } 
             
-        } 
-        
-        // Full logging if debug is enabled.
-        if (log.isDebugEnabled()) {
-            log.debug("Exception invoking a method of " + serviceImplClass.toString()
-                    + " of instance " + serviceInstance.toString());
-            log.debug("Exception type thrown: " + throwable.getClass().getName());
-            if (rootT != null) {
-                log.debug("Root Exception type thrown: " + rootT.getClass().getName());
+            // Full logging if debug is enabled.
+            if (log.isDebugEnabled()) {
+                log.debug("Exception invoking a method of " + serviceImplClass.toString()
+                        + " of instance " + serviceInstance.toString());
+                log.debug("Exception type thrown: " + throwable.getClass().getName());
+                if (rootT != null) {
+                    log.debug("Root Exception type thrown: " + rootT.getClass().getName());
+                }
+                if (checkedException != null) {
+                    log.debug("The exception is an instance of checked exception: " + 
+                              checkedException.getName());
+                }
+                
+                // Extra trace if ElementNSImpl incompatibility problem.
+                // The incompatibility exception occurs if the JAXB Unmarshaller 
+                // unmarshals to a dom element instead of a generated object.  This can 
+                // result in class cast exceptions.  The solution is usually a missing
+                // @XmlSeeAlso annotation in the jaxws or jaxb classes. 
+                if (rootT.toString().contains("org.apache.xerces.dom.ElementNSImpl incompatible")) {
+                	log.debug("This exception may be due to a missing @XmlSeeAlso in the client's jaxws or" +
+                			" jaxb classes.");
+                }
+                log.debug("Method = " + method.toGenericString());
+                for (int i = 0; i < args.length; i++) {
+                    String value =
+                            (args[i] == null) ? "null"
+                                    : args[i].getClass().toString();
+                    log.debug(" Argument[" + i + "] is " + value);
+                }
             }
-            if (checkedException != null) {
-                log.debug("The exception is an instance of checked exception: " + 
-                          checkedException.getName());
-            }
-            
-            // Extra trace if ElementNSImpl incompatibility problem.
-            // The incompatibility exception occurs if the JAXB Unmarshaller 
-            // unmarshals to a dom element instead of a generated object.  This can 
-            // result in class cast exceptions.  The solution is usually a missing
-            // @XmlSeeAlso annotation in the jaxws or jaxb classes. 
-            if (rootT.toString().contains("org.apache.xerces.dom.ElementNSImpl incompatible")) {
-            	log.debug("This exception may be due to a missing @XmlSeeAlso in the client's jaxws or" +
-            			" jaxb classes.");
-            }
-            log.debug("Method = " + method.toGenericString());
-            for (int i = 0; i < args.length; i++) {
-                String value =
-                        (args[i] == null) ? "null"
-                                : args[i].getClass().toString();
-                log.debug(" Argument[" + i + "] is " + value);
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Caught throwable in logger", t);
+                log.debug("While attempting to log original exception", throwable);
             }
         }
         return;
@@ -126,15 +138,18 @@ public class WebServiceExceptionLogger {
      * @param e
      * @return
      */
-    private static String stackToString(Throwable e) {
+    static String stackToString(Throwable e) {
         java.io.StringWriter sw = new java.io.StringWriter();
         java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
         java.io.PrintWriter pw = new java.io.PrintWriter(bw);
         e.printStackTrace(pw);
         pw.close();
         String text = sw.getBuffer().toString();
-        // Jump past the throwable
-        text = text.substring(text.indexOf("at"));
+        // Jump past the name of the throwable cause in the stack
+        int indexOfThrowable = text.indexOf("at");
+        if (indexOfThrowable > 0) {
+            text = text.substring(indexOfThrowable);
+        }
         return text;
     }
     
