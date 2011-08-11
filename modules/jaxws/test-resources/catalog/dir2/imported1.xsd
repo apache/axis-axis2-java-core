@@ -21,7 +21,7 @@
 <xsd:schema targetNamespace="urn:types1"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
-      <xsd:import namespace="urn:types2" schemaLocation="http://example.com/neverExisted.xsd"/>
+      <xsd:import namespace="urn:types2" schemaLocation="http://localhost:12345/neverExisted.xsd"/>
       <xsd:element name="add">
         <xsd:complexType>
           <xsd:sequence>

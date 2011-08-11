@@ -25,13 +25,13 @@
        systemId="http://soapinterop.org/xsd2"
        uri="importAux.xsd" />
    <system
-       systemId="http://example.com/test/doesnotexist.wsdl"
+       systemId="http://localhost:12345/test/doesnotexist.wsdl"
        uri="dir1/abstract.wsdl" />
    <system
        systemId="doesnotexist.xsd"
        uri="dir2/imported1.xsd" />
    <!-- system
-       systemId="http://example.com/neverExisted.xsd"
+       systemId="http://localhost:12345/neverExisted.xsd"
        uri="dir3/imported2.xsd" /-->
    <public
        publicId="-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.1//EN"
