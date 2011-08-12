@@ -115,6 +115,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     public static final int COMPONENT_MESSAGE = 2;
     public static final int COMPONENT_BINDING = 3;
 
+    /**
+     * Parameter used on {@link AxisMessage} objects to track the value of the <tt>name</tt>
+     * attribute of the <tt>wsdl:fault</tt>. Note that this is more like a workaround. The problem
+     * is that {@link AxisMessage} stores the faults as a simple list. A better fix would be to
+     * replace that by a map with the fault name as key, similar to what WSDL4J does (see
+     * {@link Operation#getFaults()}).
+     */
+    private static final String FAULT_NAME = "faultName";
+    
     protected static final Log log = LogFactory
             .getLog(WSDL11ToAxisServiceBuilder.class);
     private static final boolean isTraceEnabled = log.isTraceEnabled();
@@ -1182,7 +1191,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         AxisMessage tempMessage;
         for (int i = 0; i < faultMessages.size(); i++) {
             tempMessage = (AxisMessage) faultMessages.get(i);
-            if (name.equals(tempMessage.getName())) {
+            if (name.equals(tempMessage.getParameterValue(FAULT_NAME))) {
                 return tempMessage;
             }
 
@@ -1550,10 +1559,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Fault fault = (Fault) faults.get(faultKeyIterator.next());
             AxisMessage axisFaultMessage = new AxisMessage();
             addDocumentation(axisFaultMessage,fault.getDocumentationElement());
+            axisFaultMessage.addParameter(FAULT_NAME, fault.getName());
             Message faultMessage = fault.getMessage();
             if (null != faultMessage) {
                 axisFaultMessage
-                        .setName(fault.getName());
+                        .setName(faultMessage.getQName().getLocalPart());
 
                 copyExtensibleElements(faultMessage.getExtensibilityElements(),
                                        dif, axisFaultMessage, PORT_TYPE_OPERATION_FAULT);
