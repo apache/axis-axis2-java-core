@@ -30,17 +30,12 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.testutils.RuntimeIgnoreException;
-import org.apache.log4j.BasicConfigurator;
 
 public class AbstractTestCase extends TestCase {
     public AbstractTestCase() {
         super();
     }
 
-    static {
-        BasicConfigurator.configure();
-    }
-    
     /*
      * users may pass in their own repositoryDir path and path to custom configuration file.
      * Passing 'null' for either param will use the default
