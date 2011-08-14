@@ -43,7 +43,7 @@ public class CommonsHTTPTransportSenderTest {
      * @throws Exception
      */
     @Test
-    public void test() throws Exception {
+    public void testConnectionReleaseWith404() throws Exception {
         // Create a Jetty server instance without any contexts. It will always return HTTP 404.
         Server server = new Server();
         SocketListener listener = new SocketListener();
