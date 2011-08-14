@@ -305,6 +305,8 @@ public class HTTPSender extends AbstractHTTPSender {
                          method.getStatusText()));
             }
         } else {
+            // Since we don't process the response, we must release the connection immediately
+            method.releaseConnection();
             throw new AxisFault(Messages.getMessage("transportError",
                                                     String.valueOf(statusCode),
                                                     method.getStatusText()));

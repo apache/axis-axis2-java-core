@@ -919,6 +919,13 @@
                 <artifactId>commons-cli</artifactId>
                 <version>${commons.cli.version}</version>
             </dependency>
+            
+            <!-- Jetty is used by some of the unit tests -->
+            <dependency>
+                <groupId>jetty</groupId>
+                <artifactId>jetty</artifactId>
+                <version>5.1.10</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
