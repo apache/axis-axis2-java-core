@@ -187,7 +187,7 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
      * 
      * @throws Exception
      */
-    public void _testConnectionReleaseForInvokeOneWayWithMEPMismatch() throws Exception {
+    public void testConnectionReleaseForInvokeOneWayWithMEPMismatch() throws Exception {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, url);
         Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
