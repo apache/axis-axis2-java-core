@@ -100,11 +100,11 @@ import java.util.concurrent.Future;
 
 class OperationDescriptionImpl
         implements OperationDescription, OperationDescriptionJava, OperationDescriptionWSDL {
-    private EndpointInterfaceDescription parentEndpointInterfaceDescription;
-    private AxisOperation axisOperation;
-    private QName operationQName;
+    private final EndpointInterfaceDescription parentEndpointInterfaceDescription;
+    private final AxisOperation axisOperation;
+    private final QName operationQName;
     private Method seiMethod;
-    private MethodDescriptionComposite methodComposite;
+    private final MethodDescriptionComposite methodComposite;
     private ParameterDescription[] parameterDescriptions;
     private FaultDescription[] faultDescriptions;
     private static final Log log = LogFactory.getLog(OperationDescriptionImpl.class);
@@ -200,6 +200,7 @@ class OperationDescriptionImpl
 
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         parentEndpointInterfaceDescription = parent;
+        methodComposite = null;
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         setSEIMethod(method);
 		
@@ -210,7 +211,11 @@ class OperationDescriptionImpl
         if (getEndpointInterfaceDescription().getEndpointDescription() != null) {
             if (!getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription().isServerSide()) {
                 axisOperation = createClientAxisOperation();
+            } else {
+                axisOperation = null;
             }
+        } else {
+            axisOperation = null;
         }
         if(this.axisOperation != null) {
             try {
@@ -228,6 +233,7 @@ class OperationDescriptionImpl
         parentEndpointInterfaceDescription = parent;
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         axisOperation = operation;
+        methodComposite = null;
         if(this.axisOperation != null) {
             this.operationQName = axisOperation.getName();
             try {
@@ -237,6 +243,8 @@ class OperationDescriptionImpl
             catch(AxisFault af) {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("operationDescriptionErr1"));
             }
+        } else {
+            operationQName = null;
         }
         buildAttachmentInformation();
     }
@@ -637,6 +645,38 @@ class OperationDescriptionImpl
         	throw ExceptionFactory.makeWebServiceException(
         			new UnsupportedOperationException(Messages.getMessage("seiMethodErr")));
         } else {
+            // Reset any cached state (see AXIS2-5115)
+            webMethodAnnotation = null;
+            webMethodOperationName = null;
+            webMethodAction = null;
+            webMethodExclude = null;
+            requestWrapperAnnotation = null;
+            requestWrapperLocalName = null;
+            requestWrapperTargetNamespace = null;
+            requestWrapperClassName = null;
+            requestWrapperPartName = null;
+            responseWrapperAnnotation = null;
+            responseWrapperLocalName = null;
+            responseWrapperTargetNamespace = null;
+            responseWrapperClassName = null;
+            responseWrapperPartName = null;
+            webParamNames = null;
+            webParamTargetNamespace = null;
+            webParamMode = null;
+            webResultAnnotation = null;
+            webResultName = null;
+            webResultPartName = null;
+            webResultTargetNamespace = null;
+            webResultHeader = null;
+            soapBindingAnnotation = null;
+            soapBindingStyle = null;
+            soapBindingUse = null;
+            soapBindingParameterStyle = null;
+            actionAnnotation = null;
+            onewayAnnotation = null;
+            onewayIsOneway = null;
+            resultActualTypeClazz = null;
+            
             seiMethod = method;
             webMethodAnnotation = (WebMethod)
                 getAnnotation(seiMethod, WebMethod.class);

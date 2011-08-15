@@ -66,11 +66,11 @@ import org.apache.commons.logging.LogFactory;
 public class EndpointInterfaceDescriptionImpl
         implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava,
         EndpointInterfaceDescriptionWSDL {
-    private EndpointDescriptionImpl parentEndpointDescription;
-    private ArrayList<OperationDescription> operationDescriptions =
+    private final EndpointDescriptionImpl parentEndpointDescription;
+    private final ArrayList<OperationDescription> operationDescriptions =
             new ArrayList<OperationDescription>();
     private Map<QName, List<OperationDescription>> dispatchableOperations;
-    private DescriptionBuilderComposite dbc;
+    private final DescriptionBuilderComposite dbc;
 
     //Logging setup
     private static final Log log = LogFactory.getLog(EndpointInterfaceDescriptionImpl.class);
@@ -354,6 +354,16 @@ public class EndpointInterfaceDescriptionImpl
             return;
         }
         else if (sei != null) {
+            // Reset any cached state (see AXIS2-5115)
+            webServiceAnnotation = null;
+            webServiceTargetNamespace = null;
+            webService_Name = null;
+            soapBindingAnnotation = null;
+            soapBindingStyle = null;
+            soapBindingUse = null;
+            soapParameterStyle = null;
+            dispatchableOperations = null;
+            
             seiClass = sei;
             dbc.setCorrespondingClass(sei);
             // Update (or possibly add) the OperationDescription for each of the methods on the SEI.
