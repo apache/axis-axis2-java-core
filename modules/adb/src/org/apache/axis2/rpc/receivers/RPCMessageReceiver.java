@@ -139,8 +139,10 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
 
             if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
                     op.getMessageExchangePattern())){
-                OMElement bodyChild = fac.createOMElement(outMessage.getAxisMessage().getName(), ns);
-                envelope.getBody().addChild(bodyChild);
+                if (outMessage.getAxisMessage().getName() != null) {
+                    OMElement bodyChild = fac.createOMElement(outMessage.getAxisMessage().getName(), ns);
+                    envelope.getBody().addChild(bodyChild);
+                }
                 outMessage.setEnvelope(envelope);
                 return;
             }
