@@ -450,6 +450,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
     public void invokeOneWay(Object obj) throws WebServiceException {
 
         // All exceptions are caught and rethrown as a WebServiceException
+        MessageContext requestMsgCtx = null;
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Entered one-way invocation: BaseDispatch.invokeOneWay()");
@@ -462,7 +463,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
             // Create the MessageContext to hold the actual request message and its
             // associated properties
-            MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx = new MessageContext();
             requestMsgCtx.getAxisMessageContext().setProperty(BINDING_PROVIDER, this);
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
@@ -550,6 +551,18 @@ public abstract class BaseDispatch<T> extends BindingProvider
                         " Exception caught: ", e);
             }
             throw ExceptionFactory.makeWebServiceException(e);
+        } finally {
+            // In all other cases we rely on freeInputStream to perform the clean up. Since we don't expect
+            // a response in the invokeOneWay case, we need to perform call TransportSender#cleanup explicitly
+            try {
+                if (requestMsgCtx != null && requestMsgCtx.getAxisMessageContext() != null) {
+                    org.apache.axis2.context.MessageContext axisMsgCtx = requestMsgCtx.getAxisMessageContext();
+                    if (axisMsgCtx.getTransportOut() != null && axisMsgCtx.getTransportOut().getSender() != null) {
+                        axisMsgCtx.getTransportOut().getSender().cleanup(axisMsgCtx);
+                    }
+                }
+            } catch (Exception ignore) {
+            }
         }
     }
 

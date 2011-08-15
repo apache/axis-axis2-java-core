@@ -180,4 +180,25 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
         response.writeTo(System.out);
     }
 
+    /**
+     * Tests that HTTP connections are properly released if {@link Dispatch#invokeOneWay(Object)} is
+     * used to invoke a service that actually uses the in-out MEP. This is a regression test for
+     * AXIS2-5062.
+     * 
+     * @throws Exception
+     */
+    public void testConnectionReleaseForInvokeOneWayWithMEPMismatch() throws Exception {
+        Service svc = Service.create(serviceName);
+        svc.addPort(portName, null, url);
+        Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
+                                                            SOAPMessage.class, Service.Mode.MESSAGE);
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage message = factory.createMessage();
+        message.getSOAPBody().addBodyElement(new QName("urn:test", "test"));
+        // If HTTP connections are not properly released, then this will end up with a
+        // ConnectionPoolTimeoutException.
+        for (int i=0; i<200; i++) {
+            dispatch.invokeOneWay(message);
+        }
+    }
 }
