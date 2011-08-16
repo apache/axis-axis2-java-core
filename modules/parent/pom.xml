@@ -70,7 +70,7 @@
         <axiom.version>1.2.13-SNAPSHOT</axiom.version>
         <neethi.version>3.0.2-SNAPSHOT</neethi.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
-        <xmlschema.version>1.4.8-SNAPSHOT</xmlschema.version>
+        <xmlschema.version>2.0.1-SNAPSHOT</xmlschema.version>
 
 	<!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>
@@ -610,8 +610,8 @@
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ws.commons.schema</groupId>
-                <artifactId>XmlSchema</artifactId>
+                <groupId>org.apache.ws.xmlschema</groupId>
+                <artifactId>xmlschema-core</artifactId>
                 <version>${xmlschema.version}</version>
             </dependency>
             <dependency>
