@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<definitions name="TestWS"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="urn:test"
+             targetNamespace="urn:test">
+
+    <types>
+        <xs:schema targetNamespace="urn:test">
+            <xs:element name="input">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="output">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="error">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </types>
+
+    <message name="inputMessage">
+        <part name="parameters" element="tns:input" />
+    </message>
+    <message name="outputMessage">
+        <part name="reponse" element="tns:output" />
+    </message>
+    <message name="errorMessage">
+        <part name="fault" element="tns:error" />
+    </message>
+
+    <portType name="TestPortType">
+        <operation name="test">
+            <input message="tns:inputMessage" />
+            <output message="tns:outputMessage" />
+            <fault message="tns:errorMessage" name="error1" />
+            <fault message="tns:errorMessage" name="error2" />
+        </operation>
+    </portType>
+
+    <binding name="TestSOAP11Binding" type="tns:TestPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+        <operation name="test">
+        <soap:operation soapAction="urn:test" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="error1">
+                <soap:fault name="error1" use="literal"/>
+            </fault>
+            <fault name="error2">
+                <soap:fault name="error2" use="literal" />
+            </fault>
+        </operation>
+    </binding>
+
+    <service name="TestService">
+        <port name="TestSOAP11Port" binding="tns:TestSOAP11Binding">
+            <soap:address location="http://localhost:8080/service" />
+        </port>
+    </service>
+</definitions>

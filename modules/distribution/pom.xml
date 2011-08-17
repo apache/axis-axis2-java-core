@@ -352,6 +352,9 @@
                                 <!-- Test of the mtom sample -->
                                 <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.service" />
                                 <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.client" />
+                                
+                                <!-- Test of the faulthandling sample -->
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/faulthandling" target="generate.service"/>
                             </tasks>
                         </configuration>
                     </execution>
