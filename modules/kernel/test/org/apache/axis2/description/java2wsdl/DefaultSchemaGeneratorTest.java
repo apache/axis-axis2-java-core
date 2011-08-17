@@ -51,7 +51,7 @@ public class DefaultSchemaGeneratorTest extends TestCase {
         XmlSchema schema = schemaColl.iterator().next();
 
         boolean foundExtra = false;
-        Iterator names = schema.getElements().getNames();
+        Iterator names = schema.getSchemaTypes().getNames();
         while (names.hasNext()) {
             QName name = (QName) names.next();
             if (name.getLocalPart().equals("ExtraClass"))

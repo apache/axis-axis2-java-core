@@ -582,10 +582,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             XmlSchemaComplexContentExtension complexExtension =
                     new XmlSchemaComplexContentExtension();
 
-            XmlSchemaElement eltOuter = new XmlSchemaElement();
             schemaTypeName = new QName(targetNameSpace, simpleName, targetNamespacePrefix);
-            eltOuter.setName(simpleName);
-            eltOuter.setQName(schemaTypeName);
 
             Class<?> sup = javaType.getSuperclass();
             if ((sup != null)
@@ -641,19 +638,15 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 complexType.setAbstract(true);
             }
 
-//            xmlSchema.getItems().add(eltOuter);
-            xmlSchema.getElements().add(schemaTypeName, eltOuter);
-            eltOuter.setSchemaTypeName(complexType.getQName());
-
             xmlSchema.getItems().add(complexType);
             xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
 
             // adding this type to the table
-            typeTable.addComplexSchema(name, eltOuter.getQName());
+            typeTable.addComplexSchema(name, schemaTypeName);
             // adding this type's package to the table, to support inheritance.
-            typeTable.addComplexSchema(getQualifiedName(javaType.getPackage()), eltOuter.getQName());
+            typeTable.addComplexSchema(getQualifiedName(javaType.getPackage()), schemaTypeName);
 
-            typeTable.addClassNameForQName(eltOuter.getQName(), name);
+            typeTable.addClassNameForQName(schemaTypeName, name);
 
             BeanExcludeInfo beanExcludeInfo = null;
             if (service.getExcludeInfo() != null) {
