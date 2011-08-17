@@ -548,7 +548,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
         complexType.setName("Exception");
         xmlSchema.getItems().add(complexType);
-        xmlSchema.getElements().add(elementName, complexType);
+        xmlSchema.getSchemaTypes().add(elementName, complexType);
         typeTable.addComplexSchema(Exception.class.getName(), elementName);
         QName schemaTypeName = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "string");
         addContentToMethodSchemaType(sequence, schemaTypeName, "Message", false);
