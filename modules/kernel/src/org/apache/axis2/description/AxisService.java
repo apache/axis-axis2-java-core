@@ -2068,9 +2068,8 @@ public class AxisService extends AxisDescription {
 	public void addSchema(Collection<XmlSchema> schemas) {
 		Iterator<XmlSchema> iterator = schemas.iterator();
 		while (iterator.hasNext()) {
-			XmlSchema schema = (XmlSchema) iterator.next();
-			schemaList.add(schema);
-			addSchemaNameSpace(schema);
+			XmlSchema schema = iterator.next();
+            addSchema(schema);
 		}
 	}
 
