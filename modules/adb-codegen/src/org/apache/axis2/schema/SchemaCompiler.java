@@ -2809,4 +2809,8 @@ public class SchemaCompiler {
         }
        return isExists;
     }
+
+    public Map<String, XmlSchema> getLoadedSchemaMap(){
+        return this.loadedSchemaMap;
+    }
 }

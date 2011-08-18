@@ -146,6 +146,26 @@ public class ExtensionUtility {
 
         }
 
+        //replace the Axis2 schemas with the processed ones.
+        //otherwise it gives some problems if we try to code generate with multiple
+        //services with the -uw option.
+        //inorder to work for -uw option there must be some metadata with the schema list
+
+        Map<String, XmlSchema> loadedSchemaMap = schemaCompiler.getLoadedSchemaMap();
+        for (AxisService service : configuration.getAxisServices()) {
+            List<XmlSchema> serviceSchemaList = service.getSchema();
+            List<XmlSchema> schemaListToAdd = new ArrayList<XmlSchema>();
+            for (XmlSchema xmlSchema : serviceSchemaList){
+                if (loadedSchemaMap.containsKey(xmlSchema.getTargetNamespace())){
+                    schemaListToAdd.add(loadedSchemaMap.get(xmlSchema.getTargetNamespace()));
+                } else {
+                    schemaListToAdd.add(xmlSchema);
+                }
+            }
+            service.releaseSchemaList();
+            service.addSchema(schemaListToAdd);
+        }
+
         //process the unwrapped parameters
         if (!configuration.isParametersWrapped()) {
             //figure out the unwrapped operations
