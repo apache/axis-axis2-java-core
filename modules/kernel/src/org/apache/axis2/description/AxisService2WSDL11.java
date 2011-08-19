@@ -1183,6 +1183,24 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					}
 				}
 			}
+
+            // generate fault Messages
+            ArrayList faultyMessages = axisBindingOperation.getFaults();
+            if (faultyMessages != null) {
+                for (Object faultyMessage1 : faultyMessages) {
+                    AxisBindingMessage bindingFaultyMessage = (AxisBindingMessage) faultyMessage1;
+                    if (bindingFaultyMessage != null) {
+                        AxisMessage faultyMessage = bindingFaultyMessage
+                                .getAxisMessage();
+                        OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
+                                wsdl);
+                        fault.addAttribute(ATTRIBUTE_NAME, faultyMessage
+                                .getName(), null);
+                        // add policies for fault messages
+                        operation.addChild(fault);
+                    }
+                }
+            }
 		}
 	}
 
