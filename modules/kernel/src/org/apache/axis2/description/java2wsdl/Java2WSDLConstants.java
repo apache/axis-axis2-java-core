@@ -167,4 +167,6 @@ public interface Java2WSDLConstants {
     String WSDL_VERSION_2_OPTIONAL = "2";
     String WSDL_VERSION_1 = "1.1";
     String PARAMETERS = "parameters";
+    String JAX_WS_SERVICE_OPTION = "jws";
+    String JAX_WS_SERVICE_OPTION_LONG = "jax_ws_service";
 }

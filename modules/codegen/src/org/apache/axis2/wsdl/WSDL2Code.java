@@ -19,9 +19,13 @@
 
 package org.apache.axis2.wsdl;
 
+import java.util.Map;
+
+import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.jaxws.JAXWSCodeGenerationEngine;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.WSDL2JavaOptionsValidator;
 
@@ -31,6 +35,11 @@ public class WSDL2Code {
     public static void main(String[] args) throws Exception {
         CommandLineOptionParser commandLineOptionParser = new CommandLineOptionParser(
                 args);
+      //If it is a JAX-WS code generation request call WSimportTool.
+      if (isJwsOptionEnabled(commandLineOptionParser)){
+         new JAXWSCodeGenerationEngine(commandLineOptionParser, args).generate();
+         return;
+      }
         if (isOptionsValid(commandLineOptionParser)){
             new CodeGenerationEngine(commandLineOptionParser).generate();
         } else {
@@ -59,5 +68,14 @@ public class WSDL2Code {
         }
         return isValid;
     }
-
+  
+    private static boolean isJwsOptionEnabled(CommandLineOptionParser parser) {
+        Map allOptions = parser.getAllOptions();       
+        CommandLineOption option = (CommandLineOption) allOptions
+                .get(CommandLineOptionConstants.WSDL2JavaConstants.JAX_WS_SERVICE_OPTION);
+        if( option == null){
+            return false;
+        }
+        return true;
+    }
 }

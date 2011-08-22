@@ -53,6 +53,30 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>            
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>jaxws-rt</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-xjc</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>           
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+             <groupId>com.sun.xml.ws</groupId>
+             <artifactId>jaxws-rt</artifactId>            
+             <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>

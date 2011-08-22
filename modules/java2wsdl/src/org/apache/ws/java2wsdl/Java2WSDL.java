@@ -19,8 +19,14 @@
 
 package org.apache.ws.java2wsdl;
 
+import java.util.Map;
+
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.java2wsdl.jaxws.JAXWS2WSDLCodegenEngine;
+import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOptionParser;
 import org.apache.ws.java2wsdl.utils.Java2WSDLOptionsValidator;
 
@@ -30,6 +36,11 @@ public class Java2WSDL {
     public static void main(String[] args) throws Exception {
         Java2WSDLCommandLineOptionParser commandLineOptionParser = new Java2WSDLCommandLineOptionParser(
                 args);
+        if (isJwsOptionEnabled(commandLineOptionParser)){
+            JAXWS2WSDLCodegenEngine engine = new JAXWS2WSDLCodegenEngine(commandLineOptionParser.getAllOptions(), args);
+            engine.generate();
+            return;
+         }        
         //  validate the arguments
         validateCommandLineOptions(commandLineOptionParser);
         Java2WSDLCodegenEngine engine = new Java2WSDLCodegenEngine(commandLineOptionParser.getAllOptions());
@@ -84,6 +95,16 @@ public class Java2WSDL {
             printUsage();
         }
 
+    }
+    
+    private static boolean isJwsOptionEnabled(Java2WSDLCommandLineOptionParser parser) {
+        Map allOptions = parser.getAllOptions();       
+        Java2WSDLCommandLineOption option = (Java2WSDLCommandLineOption) allOptions
+                .get(Java2WSDLConstants.JAX_WS_SERVICE_OPTION);
+        if( option == null){
+            return false;
+        }
+        return true;
     }
 
 }

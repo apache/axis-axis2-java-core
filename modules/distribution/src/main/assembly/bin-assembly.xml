@@ -178,6 +178,13 @@
                  <exclude>com.sun.xml.fastinfoset:FastInfoset:jar</exclude>
                  <exclude>rhino:js:jar</exclude>
                  <exclude>javax.servlet:servlet-api</exclude>
+                 <exclude>javax.xml.ws:jaxws-api:jar</exclude>
+                 <exclude>com.sun.xml.messaging.saaj:saaj-impl:jar</exclude>
+                 <exclude>com.sun.xml.stream:sjsxp:jar</exclude>
+                 <exclude>com.sun.org.apache.xml.internal:resolver:jar</exclude>
+                 <exclude>javax.xml.stream:stax-api:jar</exclude>
+                 <exclude>javax.xml.soap:saaj-api:jar</exclude>
+                 <exclude>org.jvnet:mimepull:jar</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
