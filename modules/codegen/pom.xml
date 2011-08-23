@@ -134,9 +134,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
+                   <excludes>
+                        <exclude>**/JAXWSCodeGenerationEngineTest.java</exclude>                       
+                    </excludes>
                     <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
+                        <include>**/*Test.java</include>                       
+                    </includes>                    
                 </configuration>
             </plugin>
 

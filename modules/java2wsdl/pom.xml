@@ -148,6 +148,7 @@
                 <configuration>
                     <excludes>
                         <exclude>**/*Abstract*.java</exclude>
+                        <exclude>**/JAXWS2WSDLCodegenEngineTest.java</exclude>
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>
