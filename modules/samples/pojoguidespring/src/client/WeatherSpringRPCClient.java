@@ -42,7 +42,7 @@ public class WeatherSpringRPCClient {
         options.setTo(targetEPR);
 
         // Get the weather (no setting, the Spring Framework has already initialized it for us)
-        QName opGetWeather = new QName("http://service.spring.sample/xsd", "getWeather");
+        QName opGetWeather = new QName("http://service.spring.sample", "getWeather");
 
         Object[] opGetWeatherArgs = new Object[] { };
         Class[] returnTypes = new Class[] { Weather.class };
