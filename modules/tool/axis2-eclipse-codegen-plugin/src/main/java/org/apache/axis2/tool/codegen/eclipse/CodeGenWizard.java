@@ -43,6 +43,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -173,6 +175,10 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
             switch (selectedWizardType) {
             case SettingsConstants.WSDL_2_JAVA_TYPE:
                 doFinishWSDL2Java();
+                IProject selectedWorkspaceProject = outputPage.getSelectedWorkspaceProject();
+                if(selectedWorkspaceProject != null){
+                	selectedWorkspaceProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+                }
                 break;
             case SettingsConstants.JAVA_2_WSDL_TYPE:
                 doFinishJava2WSDL();

@@ -88,6 +88,8 @@ public class OutputPage extends AbstractWizardPage {
 	
 	private boolean hintVisible = false;
 	
+	private IProject selectedWorkspaceProject;
+	
 
 	/**
 	 * 
@@ -110,6 +112,7 @@ public class OutputPage extends AbstractWizardPage {
 		settings.put(PREF_CHECK_AXIS_PLUGIN_LIB_COPY, false);
 		workspaceSaveOption = false;
 		jarFileCopyOption = false;
+		selectedWorkspaceProject=null;
 	}
 
 	/*
@@ -643,6 +646,8 @@ public class OutputPage extends AbstractWizardPage {
 						if (project != null) {
 							outputLocation.setText(project.getLocation()
 									.toOSString() + builder.toString());
+							//Fixing AXIS2-4063
+							selectedWorkspaceProject=project;
 						} else {
 							// append to the workspace path if the project is
 							// null
@@ -663,5 +668,12 @@ public class OutputPage extends AbstractWizardPage {
 	 */
 	public int getPageType() {
 		return WSDL_2_JAVA_TYPE;
+	}
+	
+	public IProject getSelectedWorkspaceProject(){
+		if(workspaceSaveOption){
+			return selectedWorkspaceProject;
+		}
+		return null;
 	}
 }
