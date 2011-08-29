@@ -678,7 +678,9 @@ public class Utils {
     }
 
     public static String sanitizeWebOutput(String text) {
-        text = text.replaceAll("<", "&lt;");
+        if(text != null){
+            text = text.replaceAll("<", "&lt;");
+        }
         return text;
     }
 
