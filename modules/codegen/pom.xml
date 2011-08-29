@@ -133,10 +133,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
-                <configuration>
-                   <excludes>
-                        <exclude>**/JAXWSCodeGenerationEngineTest.java</exclude>                       
-                    </excludes>
+                <configuration>                  
                     <includes>
                         <include>**/*Test.java</include>                       
                     </includes>                    

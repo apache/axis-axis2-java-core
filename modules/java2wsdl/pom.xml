@@ -147,8 +147,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <excludes>
-                        <exclude>**/*Abstract*.java</exclude>
-                        <exclude>**/JAXWS2WSDLCodegenEngineTest.java</exclude>
+                        <exclude>**/*Abstract*.java</exclude>                        
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>
