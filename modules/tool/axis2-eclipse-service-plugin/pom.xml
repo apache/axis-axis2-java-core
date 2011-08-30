@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5.6-SNAPSHOT</version>
+        <version>1.5.6</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2.eclipse.service.plugin</artifactId>
@@ -33,9 +33,9 @@
     <description>The Axis 2 Eclipse Service Plugin for Service archive creation</description>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/tool/axis2-eclipse-service-plugin</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5/modules/tool/axis2-eclipse-service-plugin</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_5/modules/tool/axis2-eclipse-service-plugin</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.6/modules/tool/axis2-eclipse-service-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.5.6/modules/tool/axis2-eclipse-service-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.5.6/modules/tool/axis2-eclipse-service-plugin</url>
     </scm>
     <dependencies>
         <dependency>
