@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>1.6.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-jaxws-mar</artifactId>
@@ -42,9 +42,9 @@
 
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/jaxws-mar</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/jaxws-mar</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_6/modules/jaxws-mar</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.1/modules/jaxws-mar</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.1/modules/jaxws-mar</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.6.1/modules/jaxws-mar</url>
     </scm>
     
     <build>
