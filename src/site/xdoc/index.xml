@@ -35,6 +35,16 @@ here, you can visit the <a href=
 "http://axis.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
 Web site for Axis2/C implementation information.</p>
 <p>Apache Axis2, Axis2, Apache, the Apache feather logo, and the Apache Axis2 project logo are trademarks of The Apache Software Foundation.</p>
+<h3>Aug 30, 2011 - Apache Axis2/Java 1.5.6 and 1.6.1 released!</h3>
+<p>1.5.6 and 1.6.1 are maintenance releases containing fixes for several issues discovered over the last months.
+Both versions upgrade Axiom to 1.2.12. Axis2 1.6.1 also upgrades Neethi to version 3.0.1 and contains changes required
+for Geronimo 3.0. The complete list of fixes can be found here:</p>
+<ul>
+<li><a href="http://s.apache.org/axis2-1.5.6">Fix list for 1.5.6</a></li>
+<li><a href="http://s.apache.org/axis2-1.6.1">Fix list for 1.6.1</a></li>
+</ul>
+<p>If possible users should upgrade to Axis2 1.6.1. The Axis2 1.5.6 maintenance release is intended for use in situations where
+upgrading to 1.6.1 is not possible immediately.</p>
 <h3>May 29, 2011 - Apache Axis2/Java Version 1.5.5 Released!</h3>
 <p>1.5.5 is a maintenance release that contains fixes for several issues in the sample projects included with the binary distribution
 as well as a couple of <a href="http://s.apache.org/Q9q">other issues</a>.</p>
