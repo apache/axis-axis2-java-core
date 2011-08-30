@@ -20,31 +20,29 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>Apache Axis2 1.5.5 Release Notes</title>
+  <title>Apache Axis2 1.5.6 Release Notes</title>
 </head>
 
 <body lang="en">
-<h1>Apache Axis2 1.5.5 Release Notes</h1>
+<h1>Apache Axis2 1.5.6 Release Notes</h1>
 
 <h2>About this version</h2>
 
-<p>1.5.5 is a maintenance release that contains fixes for the following issues:</p>
+<p>1.5.6 is a maintenance release that contains fixes for the following issues:</p>
 <ul>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-3788">AXIS2-3788</a>: NPE in finally block in generate Stub methods</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4200">AXIS2-4200</a>: ConverterUtil.compare fails for BigInteger values</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4349">AXIS2-4349</a>: Child first class loading</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4448">AXIS2-4448</a>: DefaultObjectSupplier fails to instantiate static nested classes</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4582">AXIS2-4582</a>: WARNING: Cannot set header. Response already committed. is logged when ever a Axis2 based webservice is called</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4620">AXIS2-4620</a>: Adding OnDemandLogger to allow the LogFactory lookup to occur on first touch versus during static class initialization</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4712">AXIS2-4712</a>: remove hardcoded setting of content-type to text/xml from AxisServlet</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4898">AXIS2-4898</a>: Thread named [MultiThreadedHttpConnectionManager cleanup] not cleaned up properly</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4924">AXIS2-4924</a>: CLONE -ConverterUtil.compare fails for BigInteger values</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-4933">AXIS2-4933</a>: Response in call method of SOAPConnectionImpl returned attachment input instead of attachment output</li>
-<li><a href="https://issues.apache.org/jira/browse/AXIS2-5006">AXIS2-5006</a>: SoapElementImpl.copyContents skips child elements</li>
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-4263">AXIS2-4263</a>: Stopping ListenerManager does not cleanup several Timer threads</li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5067">AXIS2-5067</a>: content-type header is not generated with SAAJ API</li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5071">AXIS2-5071</a>: Failure to populate all members of an xs:sequence in a SOAP header</li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5074">AXIS2-5074</a>: Engaging Module for a Service Group not possible</li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5076">AXIS2-5076</a>: Number of pages broken in Axis2-admin web app. </li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5078">AXIS2-5078</a>: Axis takes 100% CPU, infinite loop in the QueryStringParser</li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5079">AXIS2-5079</a>: 1.5.5 does not allow exploded services to be dropped in services directory</li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5086">AXIS2-5086</a>: destroy(ServiceContext context) method never called in request scope. </li> 
+<li><a href="https://issues.apache.org/jira/browse/AXIS2-5093">AXIS2-5093</a>: Connection cannot be cleaned up after 404 response</li> 
 </ul>
-<p>This release also contains fixes for several issues in the sample projects included with the binary distribution.</p>
-<p>If possible users should upgrade to Axis2 1.6.0. The Axis2 1.5.5 maintenance release is intended for use in situations where
-upgrading to 1.6.0 is not possible immediately.</p>
+<p>This release also upgrades Axiom from 1.2.11 to 1.2.12.</p>
+<p>If possible users should upgrade to Axis2 1.6.1. The Axis2 1.5.6 maintenance release is intended for use in situations where
+upgrading to 1.6.x is not possible immediately.</p>
 
 <h2>About Axis2</h2>
 
