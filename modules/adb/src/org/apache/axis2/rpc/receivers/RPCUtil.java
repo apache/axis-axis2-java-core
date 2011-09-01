@@ -46,8 +46,6 @@ import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -511,7 +509,11 @@ public class RPCUtil {
                         returnElement.addChild(text);
                         resElemt.addChild(returnElement);
                         envelope.getBody().addChild(resElemt);
-                    } else {
+                    }
+                    else {
+                        if(SimpleTypeMapper.isEnum(resObject.getClass())){
+                           resObject = resObject.toString();
+                        }
                         if (service.isElementFormDefault()) {
                             RPCUtil.processResponse(fac, resObject, bodyContent, ns,
                                     envelope, method,

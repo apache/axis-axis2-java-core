@@ -44,6 +44,8 @@ public class TypeTable {
 
     private HashMap<String,QName> complexTypeMap;
 
+    private HashMap<String , QName> simpleTypeEnum;
+
     /**
      * this map is used to keep the class names with the Qnames.
      */
@@ -59,6 +61,9 @@ public class TypeTable {
         //instantiated
         complexTypeMap = new HashMap<String,QName>();
         this.qNameToClassMap = new HashMap<QName, String>();
+
+        // keep qname of enum
+        simpleTypeEnum = new HashMap<String , QName>();
     }
 
     /* statically populate the simple type map  - this is not likely to
@@ -236,17 +241,34 @@ public class TypeTable {
      * Return the complex type map
      * @return  the map with complex types
      */
-    public Map<String,QName> getComplexSchemaMap() {
-        return complexTypeMap;
+    public Map<String,QName> getSimpleTypeEnumMap() {
+        return simpleTypeEnum;
     }
 
-    public void addComplexSchema(String name, QName schemaType) {
-        complexTypeMap.put(name, schemaType);
+    public void addSimpleTypeEnum(String className, QName simpleSchemaType) {
+        simpleTypeEnum.put(className, simpleSchemaType);
     }
 
-    public QName getComplexSchemaType(String name) {
-        return (QName) complexTypeMap.get(name);
-    }   
+    public QName getSimpleTypeEnum(String className) {
+        return (QName) simpleTypeEnum.get(className);
+    }
+
+    /**
+        * Return the complex type map
+        * @return  the map with complex types
+        */
+       public Map<String,QName> getComplexSchemaMap() {
+           return complexTypeMap;
+       }
+
+       public void addComplexSchema(String name, QName schemaType) {
+           complexTypeMap.put(name, schemaType);
+       }
+
+       public QName getComplexSchemaType(String name) {
+           return (QName) complexTypeMap.get(name);
+       }
+
  
     /**
      * Gets the class name for QName.

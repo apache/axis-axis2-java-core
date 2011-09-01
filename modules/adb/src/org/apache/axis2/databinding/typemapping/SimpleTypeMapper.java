@@ -418,4 +418,13 @@ public class SimpleTypeMapper {
 		}
 	}
 
+    /*check weather passed parameter class is a java.lang.Enum
+    *
+    * @param classType the class type
+    * @return true , if it is an Enum
+    * */
+
+    public static boolean isEnum(Class classType) {
+        return java.lang.Enum.class.isAssignableFrom(classType);
+    }
 }

@@ -330,6 +330,10 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         "http://ws.apache.org/namespaces/axis2/map"; 
     public static final String AXIS2_MAP_NAMESPACE_PREFIX = "map";
 
+    public static final String AXIS2_ENUM_NAMESPACE_PREFIX = "enum";
+    public static final String AXIS2_ENUM_NAMESPACE_URI = "http://ws.apache.org/namespaces/axis2/enum";
+    public static final String ENUM_ELEMENT_NAME = "enum";
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_HTTP_CONTENT_NEGOTIATION = "httpContentNegotiation";

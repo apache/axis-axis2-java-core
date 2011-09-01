@@ -21,18 +21,17 @@ package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.jaxrs.JAXRSUtils;
-import org.apache.axis2.jaxrs.JAXRSModel;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
-import org.apache.axis2.jsr181.JSR181Helper;
-import org.apache.axis2.jsr181.WebMethodAnnotation;
-import org.apache.axis2.jsr181.WebParamAnnotation;
-import org.apache.axis2.jsr181.WebResultAnnotation;
-import org.apache.axis2.jsr181.WebServiceAnnotation;
+import org.apache.axis2.jaxrs.JAXRSModel;
+import org.apache.axis2.jaxrs.JAXRSUtils;
+import org.apache.axis2.jsr181.*;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,13 +43,13 @@ import org.w3c.dom.Document;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
-import java.beans.PropertyDescriptor;
-import java.beans.BeanInfo;
-import java.beans.Introspector;
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
 
@@ -408,7 +407,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 } else if(methodParameter != null && Collection.class.isAssignableFrom(methodParameter)){
                 	generateWrappedSchemaTypeForCollection(sequence, genericParameterTypes[j], parameterName); 
                 	
-                } else {
+                }else if(methodParameter != null && Enum.class.isAssignableFrom(methodParameter)){
+                    generateWrappedSchemaTypeForEnum(sequence , parameterName , methodParameter , false);
+                }else {
                     Type genericParameterType = genericParameterTypes[j];
                     Type genericType = null;
                     if(genericParameterType instanceof ParameterizedType){
@@ -417,7 +418,17 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         genericType = parameterArgTypes[0];
                         generateSchemaForType(sequence, genericType, parameterName, true);
                     }else{
-                        generateSchemaForType(sequence, methodParameter, parameterName);
+                        if(methodParameter.isArray()){
+                            Class<?> componentType = methodParameter.getComponentType();
+                            if (Enum.class.isAssignableFrom(componentType)) {
+                                generateWrappedSchemaTypeForEnum(sequence,  parameterName, componentType, true);
+                            } else {
+                                 generateSchemaForType(sequence, methodParameter, parameterName);
+                            }
+
+                        }else{
+                            generateSchemaForType(sequence, methodParameter, parameterName);
+                        }
                     }
                 }
             }
@@ -455,13 +466,24 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 						generateWrappedSchemaTypeForCollection(sequence, genericParameterType, returnName);
 					} else {						
 						generateWrappedSchemaTypeForCollection(sequence, genericParameterType, returnName);
-					}                  	
+					}
+                }else if(Enum.class .isAssignableFrom(returnType)){
+                      generateWrappedSchemaTypeForEnum(sequence ,  returnName , returnType , false);
                 } else if(genericParameterType instanceof ParameterizedType){
                     ParameterizedType aType = (ParameterizedType) genericParameterType;
                     Type[] parameterArgTypes = aType.getActualTypeArguments();
                     generateSchemaForType(sequence, parameterArgTypes[0], returnName, true);
                 } else {
-                generateSchemaForType(sequence, returnType, returnName);
+                    if (returnType.isArray()) {
+                        Class<?> returnComponentType = returnType.getComponentType();
+                        if (Enum.class.isAssignableFrom(returnComponentType)) {
+                            generateWrappedSchemaTypeForEnum(sequence,  returnName, returnComponentType, true);
+                        } else {
+                            generateSchemaForType(sequence, returnType, returnName);
+                        }
+                    } else {
+                        generateSchemaForType(sequence, returnType, returnName);
+                    }
                 }
 
                 AxisMessage outMessage = axisOperation.getMessage(
@@ -702,25 +724,27 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                                 .isAssignableFrom((Class) genericFieldType)) {
                             generateSchemaTypeForDocument(sequence,
                                     propertyName);
-                            
+
                         } else {
-                        	if(genericFieldType != null && Map.class.isAssignableFrom((Class)genericFieldType)){
-                        		generateWrappedSchemaTypeForMap(sequence, genericFieldType, propertyName);
-                        		
-			    }
-			    if (genericFieldType != null
-				    && Collection.class
-					    .isAssignableFrom((Class) genericFieldType)) {
-				generateWrappedSchemaTypeForCollection(
-					sequence, genericFieldType,
-					propertyName);
-			    } else {
-                            	generateSchemaforFieldsandProperties(xmlSchema,
+                            if(genericFieldType != null && Map.class.isAssignableFrom((Class) genericFieldType)){
+                                generateWrappedSchemaTypeForMap(sequence, genericFieldType, propertyName);
+
+                            }
+                            if (genericFieldType != null
+                                    && Collection.class
+                                    .isAssignableFrom((Class) genericFieldType)) {
+                                generateWrappedSchemaTypeForCollection(
+                                        sequence, genericFieldType,
+                                        propertyName);
+                            }else if (genericFieldType!=null && Enum.class.isAssignableFrom((Class)genericFieldType)) {
+                                generateWrappedSchemaTypeForEnum(sequence ,  propertyName ,(Class)genericFieldType , false );
+                            }else {
+                                generateSchemaforFieldsandProperties(xmlSchema,
                                         sequence,
                                         property.getPropertyType(),
                                         propertyName,
-                                        property.getPropertyType().isArray());                            	
-                            }                            
+                                        property.getPropertyType().isArray());
+                            }
                         }
                     }
                 }
@@ -2041,4 +2065,96 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         sequence.getItems().add(entryElement);
 
     }
+
+
+    /**
+	 * Generate wrapped schema type for Enum.
+	 *
+	 * @param sequence the sequence
+	 * @param methodParameterType the generic parameter type
+	 * @param parameterName the parameter name
+	 * @throws Exception the exception
+	 */
+	private void generateWrappedSchemaTypeForEnum(XmlSchemaSequence sequence,
+			 String parameterName , Class<?> methodParameterType , boolean isArray) throws Exception {
+		//generateSchemaTypeForMap(sequence, genericParameterType, parameterName, false);
+        generateSchemaTypeForEnum(sequence , parameterName, isArray , methodParameterType);
+	}
+
+
+    /**
+	 * Generate schema type for Enum.
+	 *
+	 * @param sequence the sequence
+	 * @param classType the generic parameter type
+	 * @param parameterName the parameter name
+	 * @param isArrayType parameter is an array or not
+	 * @return the q name
+	 * @throws Exception the exception
+	 */
+    private QName generateSchemaTypeForEnum(XmlSchemaSequence sequence,
+                                            String parameterName, boolean isArrayType , Class<?> classType) {
+        if(Enum.class .isAssignableFrom(classType)){
+            XmlSchema xmlSchema = getXmlSchema(Constants.AXIS2_ENUM_NAMESPACE_URI);
+            String targetNamespacePrefix = targetNamespacePrefixMap
+                  .get(Constants.AXIS2_ENUM_NAMESPACE_URI);
+//          String enumName = generateUniqueNameForEnum();
+            String enumClass = classType.getName().substring(
+                    classType.getName().lastIndexOf("$")+1 , classType.getName().length());
+            //String enumInstanceName = generateUniqueNameForEnumInstance(enumClass);
+            QName enumQname = new QName(Constants.AXIS2_ENUM_NAMESPACE_URI,
+                  enumClass, targetNamespacePrefix);
+                 // check weather this enum class have already added to schema
+            if(typeTable.getSimpleTypeEnum(classType.getName())==null){
+                XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType(xmlSchema);
+                simpleType.setName(enumClass);
+                XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+                restriction.setBaseTypeName(Constants.XSD_STRING);
+                List enumList = Arrays.asList(classType.getEnumConstants());
+                for(Object enumObj : enumList){        // add all enum constants to restriction facet
+                    restriction.getFacets().add(new XmlSchemaEnumerationFacet(enumObj.toString(), false));
+                }
+                simpleType.setContent(restriction);
+                xmlSchema.getItems().add(simpleType);       // add enum to wsdl
+                typeTable.addSimpleTypeEnum( classType.getName() ,enumQname ); //add to typetable
+            }
+
+
+          XmlSchemaElement entryElement = new XmlSchemaElement();
+          entryElement.setName(Constants.ENUM_ELEMENT_NAME);
+          entryElement.setNillable(true);
+          entryElement.setSchemaTypeName(enumQname);
+          entryElement.setQName(enumQname);
+             QName schemaTypeName = new QName(Constants.AXIS2_ENUM_NAMESPACE_URI,
+                  enumClass);
+          addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
+          if (sequence != null) {
+              XmlSchemaComplexType parameterType = new XmlSchemaComplexType(
+                      xmlSchema);
+              QName parameterTypeName = new QName(
+                      Constants.AXIS2_ENUM_NAMESPACE_URI, enumClass,
+                      targetNamespacePrefix);
+              XmlSchemaSequence parameterSequence = new XmlSchemaSequence();
+              parameterSequence.getItems().add(entryElement);
+              parameterType.setParticle(parameterSequence);
+
+              XmlSchemaElement parameterElement = new XmlSchemaElement();
+              parameterElement.setName(parameterName);
+              if(isArrayType){
+                  parameterElement.setMaxOccurs(Long.MAX_VALUE);
+                  parameterElement.setMinOccurs(0);
+                  parameterElement.setNillable(true);
+              }
+              sequence.getItems().add(parameterElement);
+              parameterElement.setSchemaTypeName(parameterTypeName);
+              return parameterTypeName;
+          }
+//          return enumTypeName;
+          return enumQname;
+      }else{
+        // if classType is not enum
+          return null;
+      }
+    }
+
 }

@@ -79,6 +79,7 @@ import org.w3c.dom.traversal.TreeWalker;
 
 
 public class BeanUtil {
+   
     private static int nsCount = 1;
 
     /**
@@ -367,7 +368,12 @@ public class BeanUtil {
 					addTypeQname(elemntNameSpace, propertyQnameValueList,
 							property, beanName, processingDocLitBare);
 					propertyQnameValueList.add(map);
-				} else {
+				} else if (SimpleTypeMapper.isEnum(ptype)){
+                    addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                 beanName, processingDocLitBare);
+                    propertyQnameValueList.add(
+                            value == null ? null : SimpleTypeMapper.getStringValue(value.toString()));
+                }else {
                     addTypeQname(elemntNameSpace, propertyQnameValueList, property,
                                  beanName, processingDocLitBare);
 					if (Object.class.equals(ptype)) {
@@ -376,16 +382,16 @@ public class BeanUtil {
 						QName qNamefortheType = (QName) typeTable
 								.getComplexSchemaMap().get(
 										getClassName(beanClass));
-						OMFactory fac = OMAbstractFactory.getOMFactory();						
+						OMFactory fac = OMAbstractFactory.getOMFactory();
 						QName elementName = new QName(elemntNameSpace
 								.getNamespaceURI(), property.getName(),
 								qNamefortheType.getPrefix());
 						OMElement element;
 						if(SimpleTypeMapper.isSimpleType(value)){
-							element = fac.createOMElement(elementName);					
+							element = fac.createOMElement(elementName);
 							element.addChild(fac.createOMText(SimpleTypeMapper
-									.getStringValue(value)));	            		
-		            	}else{		            		 
+									.getStringValue(value)));            
+		            	}else{    
 		            		 XMLStreamReader xr = BeanUtil.getPullParser(value,
 		            				 elementName, typeTable, true, false);
 		                     OMXMLParserWrapper stAXOMBuilder =
@@ -625,6 +631,8 @@ public class BeanUtil {
                                 	 partObj = processGenericsMapElement(parameterArgTypes
                                      		 , (OMElement) parts.getParent(), null, parts.getChildren(), objectSupplier, beanClass);                                	
                                 }
+                            }else if (SimpleTypeMapper.isEnum(parameters)) {
+                                partObj =processEnumObject(parameters , parts);
                             } else {
                                 partObj = deserialize(parameters, parts, objectSupplier, null);
                             }
@@ -944,7 +952,10 @@ public class BeanUtil {
                      return toReturn[0];
                  }        		
         	}        	
-        } else {
+        } else if (SimpleTypeMapper.isEnum(classType)) {
+            /* handling enum types */
+            retObjs[count] = processEnumObject(classType, omElement);
+        } else{
             //handling refs
             retObjs[count] = processObject(omElement, classType, helper, false, objectSupplier, genericType);
             
@@ -1065,11 +1076,30 @@ public class BeanUtil {
                   }
                  
                 	
-                } else {
+                }else if(SimpleTypeMapper.isEnum(classType)){
+                    return processEnumObject(classType, omElement);
+                }else {
                     return BeanUtil.deserialize(classType, omElement, objectSupplier, null);
                 }
             }
         }
+    }
+
+    /*This method check is service method required enum type instance as method parameter
+    * if so return required enum object
+    *
+    * @param classType method required instance type
+    * @param omElement OMElement
+    * @return an Enum object
+    * */
+    public static Object processEnumObject(Class classType , OMElement omElement)throws AxisFault{
+          /*
+            *reason to add this block is check is soap sending a string but service require Enum
+            * then this convert string to relevant enum object and add to retObjs[] as object
+            * */
+        Object enumIbj = Enum.valueOf(classType , omElement.getText());
+        return enumIbj;
+
     }
 
 
@@ -1188,6 +1218,9 @@ public class BeanUtil {
                         OMText text = fac.createOMText(arg, true);
                         wrappingElement.addChild(text);
                         objects.add(wrappingElement);
+                    }else if (SimpleTypeMapper.isEnum(arg.getClass())) {
+                        // in here i can return enum instances but for now i return it as a simple string
+                        objects.add(arg.toString());
                     } else {
                         objects.add(arg);
                     }
@@ -1260,8 +1293,8 @@ public class BeanUtil {
 	 *
 	 *
 	 * @param fac the SOAPFactory instance.
-	 * @param child the child OMElement to add attributes.
-	 * @param method the java reflection method
+	 * @param element the child OMElement to add attributes.
+	 * @param resObject the java reflection method
 	 * @param resObject the res object
 	 * @param typeTable the type table of particular Axis2 service
 	 */
