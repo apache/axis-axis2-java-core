@@ -84,8 +84,6 @@ public class ReleaseServiceTests extends TestCase {
             epDesc= svcDesc.getEndpointDescription(portQN, delegate);
             assertNull(epDesc);                
 
-        } catch (Throwable t) {
-            fail("Caught throwable " + t);
         } finally {
             ClientMetadataTest.restoreOriginalFactory();
         }
@@ -107,8 +105,6 @@ public class ReleaseServiceTests extends TestCase {
                 svc1.addPort(portQN, bindingID1, epr1);
             }
             org.apache.axis2.jaxws.spi.ServiceDelegate.releaseService(svc1);
-        } catch (Throwable t) {
-            fail("Caught throwable " + t);
         } finally {
             ClientMetadataTest.restoreOriginalFactory();
         }
@@ -135,8 +131,6 @@ public class ReleaseServiceTests extends TestCase {
                 }
                 org.apache.axis2.jaxws.spi.ServiceDelegate.releaseService(svc1);
             }
-        } catch (Throwable t) {
-            fail("Caught throwable " + t);
         } finally {
             ClientMetadataTest.restoreOriginalFactory();
         }
@@ -541,8 +535,6 @@ public class ReleaseServiceTests extends TestCase {
                 ClientMetadataPortSEI port = genSvc.getPort(ClientMetadataPortSEI.class);
                 org.apache.axis2.jaxws.spi.ServiceDelegate.releaseService(genSvc);
             }
-        } catch (Throwable t) {
-            fail("Caught throwable " + t);
         } finally {
             ClientMetadataTest.restoreOriginalFactory();
         }
