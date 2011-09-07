@@ -67,7 +67,7 @@ public class Client{
 
             req.setMessageString("An in only request");
 
-            stub.DoInOnly(req);
+            stub.doInOnly(req);
             System.out.println("done");
         } catch(Exception e){
             e.printStackTrace();
@@ -83,7 +83,7 @@ public class Client{
             req.setEchoString("echo! ... echo!");
 
             TwoWayOneParameterEchoResponse res =
-                stub.TwoWayOneParameterEcho(req);
+                stub.twoWayOneParameterEcho(req);
 
             System.out.println(res.getEchoString());
         } catch(Exception e){
@@ -97,7 +97,7 @@ public class Client{
         try{
             NoParametersRequest req = new NoParametersRequest();
 
-            System.out.println(stub.NoParameters(req));
+            System.out.println(stub.noParameters(req));
         } catch(Exception e){
             e.printStackTrace();
             System.out.println("\n\n\n");
@@ -116,7 +116,7 @@ public class Client{
             req.setItemName("flour");
 
             MultipleParametersAddItemResponse res =
-                stub.MultipleParametersAddItem(req);
+                stub.multipleParametersAddItem(req);
 
             System.out.println(res.getSuccessfulAdd());
             System.out.println(res.getItemId());
