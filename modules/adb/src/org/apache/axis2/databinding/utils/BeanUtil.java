@@ -22,7 +22,6 @@ package org.apache.axis2.databinding.utils;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -58,6 +57,7 @@ import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.classloader.BeanInfoCache;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
@@ -121,19 +121,7 @@ public class BeanUtil {
 
 
     private static BeanInfo getBeanInfo(Class beanClass, Class beanSuperclass) throws IntrospectionException {
-        BeanInfo beanInfo; 
-        try {
-            if (beanSuperclass != null)
-            	beanInfo = Introspector.getBeanInfo(beanClass, beanSuperclass);
-            else
-                beanInfo = Introspector.getBeanInfo(beanClass);
-        }
-        catch (IntrospectionException e) {
-            throw e;
-        }
-
-         
-        return beanInfo;
+        return BeanInfoCache.getCachedBeanInfo(beanClass, beanSuperclass);
     }
 
     private static BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException {
