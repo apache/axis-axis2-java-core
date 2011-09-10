@@ -60,7 +60,7 @@
     <release><Version><name>Apache Axis2</name><created>2011-05-29</created><revision>1.5.5</revision></Version></release>
     <release><Version><name>Apache Axis2</name><created>2011-08-30</created><revision>1.5.6</revision></Version></release>
     <release><Version><name>Apache Axis2</name><created>2011-05-17</created><revision>1.6.0</revision></Version></release>
-    <release><Version><name>Apache Axis2</name><created>2011-03-30</created><revision>1.6.1</revision></Version></release>
+    <release><Version><name>Apache Axis2</name><created>2011-08-30</created><revision>1.6.1</revision></Version></release>
     
     <repository>
       <SVNRepository>
