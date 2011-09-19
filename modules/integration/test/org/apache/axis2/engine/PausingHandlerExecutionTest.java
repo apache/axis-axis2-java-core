@@ -161,7 +161,6 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
     private void executeClient() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
         OMElement result = createClient().sendReceive(payload);
-
         TestingUtils.compareWithCreatedOMElement(result);
     }
 
@@ -192,8 +191,8 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
 
         // expected results when pausing
         List expectedExecutionState = Arrays.asList(new String[] { "In1", "In2", "In2", "In3",
-                "In4", "In5", "In6", "Out1", "Out2", "Out3", "FCOut3", "FCOut2", "FCOut1", "FCIn6",
-                "FCIn5", "FCIn4", "FCIn3", "FCIn2", "FCIn1" });
+                "In4", "In5", "In6", "FCIn6", "FCIn5", "FCIn4", "FCIn3", "FCIn2", "FCIn1", "Out1",
+                "Out2", "Out3", "FCOut3", "FCOut2", "FCOut1" });
         //-----------------------------------------------------------------------
         assertEquals(expectedExecutionState, testResults);
 

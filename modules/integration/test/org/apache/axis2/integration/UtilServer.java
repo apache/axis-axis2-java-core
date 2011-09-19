@@ -137,8 +137,8 @@ public class UtilServer {
         }
         return ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(file.getAbsolutePath(),
-                                                          file.getAbsolutePath() +
-                                                                  "/conf/axis2.xml");
+                        file.getAbsolutePath() +
+                                "/conf/axis2.xml");
     }
 
     public static ConfigurationContext getNewConfigurationContext(
@@ -150,7 +150,7 @@ public class UtilServer {
         }
         return ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(file.getAbsolutePath(),
-                                                          axis2xml);
+                        axis2xml);
     }
 
     public static synchronized void stop() throws AxisFault {
@@ -184,7 +184,7 @@ public class UtilServer {
                 .createConfigurationContextFromFileSystem(
                         TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
         AxisModule axisModule = DeploymentEngine.buildModule(file,
-                                                             configContext.getAxisConfiguration());
+                configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
 
         configContext.getAxisConfiguration().addService(service);
@@ -215,18 +215,26 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory .createConfigurationContextFromFileSystem(
-                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH +"/integrationRepo"),
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "/integrationRepo"),
                         TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "/integrationRepo/conf/axis2.xml"));
         AxisModule axisModule = DeploymentEngine.buildModule(file,
-                                                             configContext.getAxisConfiguration());
+                configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
         return configContext;
     }
 
+    public static void engageAddressingModule() throws AxisFault {
+        File file = getAddressingMARFile();
+        AxisModule axisModule = DeploymentEngine.buildModule(file,
+                receiver.getConfigurationContext().getAxisConfiguration());
+        receiver.getConfigurationContext().getAxisConfiguration().engageModule(axisModule);
+    }
+
+
     public static ConfigurationContext createClientConfigurationContext(String repo)
             throws AxisFault {
-        return ConfigurationContextFactory .createConfigurationContextFromFileSystem(
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                 repo,
                 repo + "/conf/axis2.xml");
     }
@@ -239,7 +247,7 @@ public class UtilServer {
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome, null);
         AxisModule axisModule = DeploymentEngine.buildModule(file,
-                                                             configContext.getAxisConfiguration());
+                configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);
 // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
