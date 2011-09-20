@@ -1542,7 +1542,7 @@ public class BeanUtil {
 				}			
 
 				
-				if(Iterator.class.isAssignableFrom(vValue.getClass())){
+				if(vValue != null && Iterator.class.isAssignableFrom(vValue.getClass())){
 					Iterator valItr = (Iterator) vValue;
 					while (valItr.hasNext()) {
 						properties.add(valueName);
@@ -1674,6 +1674,9 @@ public class BeanUtil {
 			String elementName, Object value, Type valueType,
 			TypeTable typeTable, OMNamespace ns, boolean elementFormDefault) {
          //TODO - key/value can be a Collection, Array , Dom document ,OMElement etc
+	    if(value == null) {
+	        return null;
+	    }
 		if (SimpleTypeMapper.isMap(value.getClass())) {
 			List<OMElement> childList = getMapElement(fac, valueType,
 					(Map) value, typeTable, elementFormDefault);
@@ -1728,7 +1731,14 @@ public class BeanUtil {
 			}
 			addInstanceTypeAttribute(fac, omValue, value, typeTable);
 			return omValue;
-		}
+			
+		} else if (SimpleTypeMapper.isSimpleType(value)) {
+            OMElement omValue;
+            omValue = fac.createOMElement(elementName, ns);
+            omValue.addChild(fac.createOMText(SimpleTypeMapper
+                    .getStringValue(value)));
+            return omValue;            
+        } 
 		return value;
 	}
 	

@@ -1808,6 +1808,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 		entryElement.setNillable(true);
 		entryElement.setSchemaTypeName(entryTypeName);
 		entryElement.setMaxOccurs(Long.MAX_VALUE);
+		entryElement.setMinOccurs(0);
 		entryElement.setQName(entryTypeName);
 
 		XmlSchemaComplexType mapType = new XmlSchemaComplexType(xmlSchema);
