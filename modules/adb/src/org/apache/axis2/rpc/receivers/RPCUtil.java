@@ -41,6 +41,7 @@ import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Array;
@@ -99,6 +100,20 @@ public class RPCUtil {
                 child.addChild(fac.createOMText(child, SimpleTypeMapper.getStringValue(resObject)));
                 addInstanceTypeInfo(fac, child, method, resObject, typeTable);               
                 bodyContent.addChild(child);
+                
+            } else if (resObject instanceof XMLGregorianCalendar) {
+                bodyContent = fac.createOMElement(
+                        method.getName() + "Response", ns);
+                OMElement child;
+                if (qualified) {
+                    child = fac.createOMElement(Constants.RETURN_WRAPPER, ns);
+                } else {
+                    child = fac.createOMElement(Constants.RETURN_WRAPPER, null);
+                }
+                child.addChild(fac.createOMText(child, ((XMLGregorianCalendar)resObject).toXMLFormat()));
+                addInstanceTypeInfo(fac, child, method, resObject, typeTable);               
+                bodyContent.addChild(child);
+                
             } else {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);

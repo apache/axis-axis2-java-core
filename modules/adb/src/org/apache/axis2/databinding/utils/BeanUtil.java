@@ -48,6 +48,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.activation.DataHandler;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
@@ -63,6 +66,7 @@ import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.Loader;
@@ -530,6 +534,11 @@ public class BeanUtil {
                 }
             }else if(SimpleTypeMapper.isDomDocument(beanClass)){                  	
                 return convertOMtoDOM(beanElement);
+                
+            } else if (XMLGregorianCalendar.class.getName().equals(
+                    beanClass.getName())) {
+                return getXMLGregorianCalendar(beanElement);
+
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
                     return getSimpleTypeObjectChecked(beanClass, beanElement);
@@ -641,6 +650,8 @@ public class BeanUtil {
             throw new AxisFault("InvocationTargetException : " + e);
         } catch (IntrospectionException e) {
             throw new AxisFault("IntrospectionException : " + e);
+        } catch (DatatypeConfigurationException e) {
+            throw new AxisFault("DatatypeConfigurationException : " + e);            
         }
 
 
@@ -1299,7 +1310,11 @@ public class BeanUtil {
 		element.declareNamespace(xsiNS);
 		element.declareNamespace(xsdNS);
 		QName xsdType = typeTable.getSchemaTypeName(resObject.getClass()
-				.getName());		
+				.getName());	
+        if (xsdType == null && resObject instanceof XMLGregorianCalendar) {
+            xsdType = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "date",
+                    "xs");
+        }
 		String attrValue = xsdType.getPrefix() + ":" + xsdType.getLocalPart();
 		element.addAttribute(Constants.XSI_TYPE_ATTRIBUTE, attrValue, xsiNS);
 	}
@@ -1713,7 +1728,11 @@ public class BeanUtil {
 			if (SimpleTypeMapper.isSimpleType(value)) {
 				omValue.addChild(fac.createOMText(SimpleTypeMapper
 						.getStringValue(value)));
-			} else {
+            } else if (value instanceof XMLGregorianCalendar) {
+                omValue.addChild(fac
+                        .createOMText(((XMLGregorianCalendar) value)
+                                .toXMLFormat()));
+            } else {
 			    QName name;
 			    if(elementFormDefault) {
 			        name = new QName(ns.getNamespaceURI(), elementName,
@@ -1990,5 +2009,12 @@ public class BeanUtil {
 	    }
 	}
 	
+    private static XMLGregorianCalendar getXMLGregorianCalendar(
+            OMElement beanElement) throws DatatypeConfigurationException {
+        String greCal = beanElement.getText();
+        XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance()
+                .newXMLGregorianCalendar(greCal);
+        return xmlCal;
+    }	
 
 }
