@@ -1874,8 +1874,13 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 				// TODO - support for custom ParameterizedTypes
 			}
 		} else {
-			generateSchemaForType(entrySequence, parameterType, elementName,
-					false);
+		    if (Document.class.
+                    isAssignableFrom((Class) parameterType)) {
+                generateSchemaTypeForDocument(entrySequence, elementName);                
+            } else {
+                generateSchemaForType(entrySequence, parameterType, elementName,
+                        false);                
+            }			
 			}
 	}
 	
@@ -2061,6 +2066,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         entryElement.setName(parameterName);
         entryElement.setSchemaTypeName(schemaType.getQName());
         entryElement.setQName(schemaType.getQName());
+        entryElement.setMinOccurs(0);
+        entryElement.setNillable(true);
         sequence.getItems().add(entryElement);
 
     }

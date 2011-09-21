@@ -1722,6 +1722,9 @@ public class BeanUtil {
 					elementName, null, elementQName, typeTable,
 					elementFormDefault).getChildren();
 			
+		} else if(SimpleTypeMapper.isDomDocument((Class)valueType)) {
+		    return convertDOMtoOM(fac, value);
+		    
 		} else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
 			OMElement omValue;
 			omValue = fac.createOMElement(elementName, ns);
