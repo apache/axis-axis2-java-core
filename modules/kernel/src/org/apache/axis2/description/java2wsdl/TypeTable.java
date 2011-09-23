@@ -160,6 +160,8 @@ public class TypeTable {
         //byteArrat
         simpleTypetoxsd.put("base64Binary",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "base64Binary", "xs"));
+        simpleTypetoxsd.put(XMLGregorianCalendar.class.getName(),
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "date", "xs"));
     }
     
     private static void populateJavaTypeMap(){
@@ -311,11 +313,45 @@ public class TypeTable {
 	 */
 	public QName getSchemaTypeName(String name) {
 		QName qName = getSimpleSchemaTypeName(name);
+		if (qName == null) {
+		    qName = getSchemaTypeNameByClass(name);
+		}
 		if( qName == null){
 			qName = getComplexSchemaType(name);
 		}
 		return qName;
 	}
+	
+    /**
+     * Gets the schema type name by class name. Sometimes it's required perform class
+     * name mapping to find correct Schema type.
+     * 
+     * @param name
+     *            the name
+     * @return the schema type name by class
+     */
+    private QName getSchemaTypeNameByClass(String name) {       
+        Object dataClass;
+        try {
+            dataClass = Class.forName(name).newInstance();
+            /*
+             * XMLGregorianCalendar can be found as following classes.
+             * 1.)com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
+             * 2.)org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl
+             */
+            if (dataClass instanceof XMLGregorianCalendar) {
+                return (QName) simpleTypetoxsd.get(XMLGregorianCalendar.class
+                        .getName());
+            }
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
 
 

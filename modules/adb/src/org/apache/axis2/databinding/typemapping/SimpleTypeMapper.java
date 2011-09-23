@@ -31,6 +31,7 @@ import org.apache.axis2.description.AxisService;
 import org.w3c.dom.Document;
 
 import javax.activation.DataHandler;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -234,7 +235,7 @@ public class SimpleTypeMapper {
     		return false;
     	}
         String objClassName = obj.getClass().getName();
-        return obj instanceof Calendar || obj instanceof Date || isSimpleType(objClassName);
+        return obj instanceof Calendar || obj instanceof Date || obj instanceof XMLGregorianCalendar || isSimpleType(objClassName);
     }
 
     public static boolean isSimpleType(Class obj) {

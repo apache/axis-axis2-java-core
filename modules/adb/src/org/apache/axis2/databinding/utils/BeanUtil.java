@@ -66,7 +66,6 @@ import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.Loader;
@@ -1311,10 +1310,6 @@ public class BeanUtil {
 		element.declareNamespace(xsdNS);
 		QName xsdType = typeTable.getSchemaTypeName(resObject.getClass()
 				.getName());	
-        if (xsdType == null && resObject instanceof XMLGregorianCalendar) {
-            xsdType = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "date",
-                    "xs");
-        }
 		String attrValue = xsdType.getPrefix() + ":" + xsdType.getLocalPart();
 		element.addAttribute(Constants.XSI_TYPE_ATTRIBUTE, attrValue, xsiNS);
 	}
@@ -1731,10 +1726,6 @@ public class BeanUtil {
 			if (SimpleTypeMapper.isSimpleType(value)) {
 				omValue.addChild(fac.createOMText(SimpleTypeMapper
 						.getStringValue(value)));
-            } else if (value instanceof XMLGregorianCalendar) {
-                omValue.addChild(fac
-                        .createOMText(((XMLGregorianCalendar) value)
-                                .toXMLFormat()));
             } else {
 			    QName name;
 			    if(elementFormDefault) {
