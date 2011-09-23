@@ -80,7 +80,7 @@ public class HTTPWorker implements Worker {
                 response.addHeader(new BasicHeader("Location", contextPath));
                 return;
             }
-            if (uri.endsWith("axis2/services/")) {
+            if (uri.endsWith(contextPath)) {
                 String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
                 response.setStatus(HttpStatus.SC_OK);
                 response.setContentType("text/html");
