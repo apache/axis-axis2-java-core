@@ -103,7 +103,7 @@
     <target name="generate.all" depends="generate.service, generate.client"/>
 
     <target name="run.client" depends="generate.client">
-        <java classname="samples.quickstart.clients.JiBXClient">
+        <java classname="samples.quickstart.clients.JiBXClient" fork="true">
             <classpath refid="client.class.path" />
         </java>
     </target>
