@@ -168,5 +168,44 @@ public class ConverterUtilTest extends TestCase {
         TestCase.assertTrue(ConverterUtil.convertToString(c).endsWith("+09:00"));
         
     }
+    
+    public void testconvertToDateXML() {
+
+        Date date = null;
+        String dateStr = null;
+
+        dateStr = "2007-02-15";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+        dateStr = "2007-02-15Z";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+        dateStr = "2007-02-15+05:30";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+        dateStr = "2007-02-15-12:30";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+        dateStr = "1997-07-16T19:20:30.45+01:00";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+        dateStr = "2011-09-27T14:43:55.162+05:30";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+        dateStr = "1997-07-16T19:20:30+01:00";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+        dateStr = "1994-11-05T13:15:30Z";
+        date = ConverterUtil.convertXmlToDate(dateStr);
+        assertNotNull(date);
+
+    }
 
 }

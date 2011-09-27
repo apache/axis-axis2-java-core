@@ -63,6 +63,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -616,6 +619,30 @@ public class ConverterUtil {
         }
 
         return calendar.getTime();
+
+    }    
+    
+    /**
+     * Convert lexical representation of date to java.util.Date.
+     * 
+     * @param source
+     *            the source
+     * @return the date
+     * 
+     * This method used to parse the lexical string representation
+     * defined in XML Schema 1.0 Part 2, Section 3.2.[7-14].1 to a
+     * java.util.Date based on XMLGregorianCalendar. This replaced the
+     * behavior of convertToDate() method that copied from Axis1 .
+     */
+    public static Date convertXmlToDate(String source) {
+        try {
+            XMLGregorianCalendar cal = DatatypeFactory.newInstance()
+                    .newXMLGregorianCalendar(source);
+            return cal.toGregorianCalendar().getTime();
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
+        return null;
 
     }
 
@@ -1567,7 +1594,7 @@ public class ConverterUtil {
                                     throw new XMLStreamException("Invalid URI");
                                 }
                             } else if ("date".equals(attributeType)) {
-                                returnObject = ConverterUtil.convertToDate(attribValue);
+                                returnObject = ConverterUtil.convertXmlToDate(attribValue);
                             } else if ("dateTime".equals(attributeType)) {
                                 returnObject = ConverterUtil.convertToDateTime(attribValue);
                             } else if ("time".equals(attributeType)) {
