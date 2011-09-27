@@ -330,25 +330,18 @@ public class TypeTable {
      *            the name
      * @return the schema type name by class
      */
-    private QName getSchemaTypeNameByClass(String name) {       
-        Object dataClass;
-        try {
-            dataClass = Class.forName(name).newInstance();
-            /*
-             * XMLGregorianCalendar can be found as following classes.
-             * 1.)com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
-             * 2.)org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl
-             */
-            if (dataClass instanceof XMLGregorianCalendar) {
-                return (QName) simpleTypetoxsd.get(XMLGregorianCalendar.class
-                        .getName());
-            }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+    private QName getSchemaTypeNameByClass(String name) {
+        /*
+         * XMLGregorianCalendar can be found as following classes.
+         * 1.)com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
+         * 2.)org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl
+         */
+        if ("com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl"
+                .equals(name)
+                || "org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl"
+                        .equals(name)) {
+            return (QName) simpleTypetoxsd.get(XMLGregorianCalendar.class
+                    .getName());
         }
         return null;
     }
