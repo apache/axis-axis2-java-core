@@ -152,4 +152,28 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
         log.info("AARBasedWSDLLocator: Unable to resolve " + lastImportLocation);
         return null;
     }
+
+    /**
+     * Override logic in DefaultURIResolver class
+     * to include more schemes (protocols)
+     *
+     * @param uri
+     * @return boolean
+     */
+    protected boolean isAbsolute(String uri) {
+        String[] protocols = {
+                "http://",
+                "https://",
+                "file:/",
+                "jar:",
+        };
+        
+        for (int i = 0; i < protocols.length; i++) {
+            if (uri.startsWith(protocols[i])) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
