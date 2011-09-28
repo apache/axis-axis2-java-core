@@ -115,6 +115,8 @@ public class TypeTable {
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "date", "xs"));
         simpleTypetoxsd.put("java.util.Calendar",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+        simpleTypetoxsd.put("java.util.GregorianCalendar",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
 
         // SQL date time
          simpleTypetoxsd.put("java.sql.Date",
