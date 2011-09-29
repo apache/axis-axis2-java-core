@@ -28,6 +28,7 @@ import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,9 +115,7 @@ public class TypeTable {
         simpleTypetoxsd.put("java.util.Date",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "date", "xs"));
         simpleTypetoxsd.put("java.util.Calendar",
-                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
-        simpleTypetoxsd.put("java.util.GregorianCalendar",
-                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));        
 
         // SQL date time
          simpleTypetoxsd.put("java.sql.Date",
@@ -334,18 +333,51 @@ public class TypeTable {
      */
     private QName getSchemaTypeNameByClass(String name) {
         /*
+         * e.g 
          * XMLGregorianCalendar can be found as following classes.
          * 1.)com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
          * 2.)org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl
          */
-        if ("com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl"
-                .equals(name)
-                || "org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl"
-                        .equals(name)) {
-            return (QName) simpleTypetoxsd.get(XMLGregorianCalendar.class
-                    .getName());
+        try {
+            Class thisClass = Class.forName(name);
+            if(isSuperClass(thisClass, XMLGregorianCalendar.class)) {
+                return (QName) simpleTypetoxsd.get(XMLGregorianCalendar.class
+                        .getName());   
+                
+            } else if(isSuperClass(thisClass, Calendar.class)) {
+                return (QName) simpleTypetoxsd.get(Calendar.class
+                        .getName());                 
+            }
+        } catch (ClassNotFoundException e) {           
+            e.printStackTrace();
         }
+        
         return null;
+    }
+    
+    /**
+     * This method check whether given child class in a extended class of given
+     * parent class. 
+     * TODO - may be need to come up with a better name for this method .
+     * 
+     * @param child
+     *            the child
+     * @param parent
+     *            the parent
+     * @return true, if is super class
+     */
+    public static boolean isSuperClass(Class child, Class parent) {
+        if (child == null || parent == null) {
+            return false;
+        }
+        Class superclass = child.getSuperclass();
+        while (superclass != null) {
+            if (superclass.getName().equals(parent.getName())) {
+                return true;
+            }
+            superclass = superclass.getSuperclass();
+        }
+        return false;
     }
 }
 

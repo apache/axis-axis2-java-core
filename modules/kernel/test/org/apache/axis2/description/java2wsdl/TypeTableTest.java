@@ -19,14 +19,22 @@
 
 package org.apache.axis2.description.java2wsdl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.activation.DataHandler;
+import javax.xml.datatype.Duration;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
 import org.apache.ws.commons.schema.constants.Constants;
+
+
 
 /**
  * The Class TypeTableTest is used to test
@@ -80,5 +88,217 @@ public class TypeTableTest extends TestCase {
 		assertNull("NULl value expected",
 				typeTable.getClassNameForQName(Constants.XSD_LANGUAGE));
 	}
+	
+	
+    public void testGetSchemaTypeName() {
+        String className = null;    
+        QName dateType = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD,
+                "date", "xs");
+        TypeTable typeTable = new TypeTable();
+        
+        className = "com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl";
+        assertEquals("Not the expected value", dateType,
+                typeTable.getSchemaTypeName(className));
+        
+        className = TestXMLGregorianCalendarImpl.class.getName();
+        assertEquals("Not the expected value", dateType,
+                typeTable.getSchemaTypeName(className));
+        
+        className = GregorianCalendar.class.getName();
+        dateType = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD,
+                "dateTime", "xs");
+        System.out.println( typeTable.getSchemaTypeName(className));
+        assertEquals("Not the expected value", dateType,
+                typeTable.getSchemaTypeName(className));
+        
+        className = TestCalendarImpl.class.getName();
+        assertNull("Not the expected value",
+                typeTable.getSchemaTypeName(className));
+    }
+
+    class TestXMLGregorianCalendarImpl extends XMLGregorianCalendar {
+        @Override
+        public void clear() {
+        }
+
+        @Override
+        public void reset() {
+
+        }
+
+        @Override
+        public void setYear(BigInteger year) {
+
+        }
+
+        @Override
+        public void setYear(int year) {
+
+        }
+
+        @Override
+        public void setMonth(int month) {
+
+        }
+
+        @Override
+        public void setDay(int day) {
+
+        }
+
+        @Override
+        public void setTimezone(int offset) {
+
+        }
+
+        @Override
+        public void setHour(int hour) {
+
+        }
+
+        @Override
+        public void setMinute(int minute) {
+
+        }
+
+        @Override
+        public void setSecond(int second) {
+
+        }
+
+        @Override
+        public void setMillisecond(int millisecond) {
+
+        }
+
+        @Override
+        public void setFractionalSecond(BigDecimal fractional) {
+
+        }
+
+        @Override
+        public BigInteger getEon() {
+
+            return null;
+        }
+
+        @Override
+        public int getYear() {
+
+            return 0;
+        }
+
+        @Override
+        public BigInteger getEonAndYear() {
+
+            return null;
+        }
+
+        @Override
+        public int getMonth() {
+
+            return 0;
+        }
+
+        @Override
+        public int getDay() {
+
+            return 0;
+        }
+
+        @Override
+        public int getTimezone() {
+
+            return 0;
+        }
+
+        @Override
+        public int getHour() {
+
+            return 0;
+        }
+
+        @Override
+        public int getMinute() {
+
+            return 0;
+        }
+
+        @Override
+        public int getSecond() {
+
+            return 0;
+        }
+
+        @Override
+        public BigDecimal getFractionalSecond() {
+
+            return null;
+        }
+
+        @Override
+        public int compare(XMLGregorianCalendar xmlGregorianCalendar) {
+
+            return 0;
+        }
+
+        @Override
+        public XMLGregorianCalendar normalize() {
+
+            return null;
+        }
+
+        @Override
+        public String toXMLFormat() {
+
+            return null;
+        }
+
+        @Override
+        public QName getXMLSchemaType() {
+
+            return null;
+        }
+
+        @Override
+        public boolean isValid() {
+            return false;
+        }
+
+        @Override
+        public void add(Duration duration) {
+
+        }
+
+        @Override
+        public GregorianCalendar toGregorianCalendar() {
+
+            return null;
+        }
+
+        @Override
+        public GregorianCalendar toGregorianCalendar(TimeZone timezone,
+                Locale aLocale, XMLGregorianCalendar defaults) {
+
+            return null;
+        }
+
+        @Override
+        public TimeZone getTimeZone(int defaultZoneoffset) {
+
+            return null;
+        }
+
+        @Override
+        public Object clone() {
+
+            return null;
+        }
+
+    }
+
+    class TestCalendarImpl {
+
+    }
 
 }
