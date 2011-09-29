@@ -19,6 +19,9 @@
 
 package org.apache.axis2.scripting;
 
+import java.util.Iterator;
+
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.scripting.convertors.OMElementConvertor;
@@ -59,7 +62,12 @@ public class ScriptMessageContext extends MessageContext {
      * @throws XMLStreamException
      */
     public void setPayloadXML(Object payload) {
-        mc.getEnvelope().getBody().setFirstChild(convertor.fromScript(payload));
+        SOAPBody body = mc.getEnvelope().getBody();
+        for (Iterator it = body.getChildren(); it.hasNext(); ) {
+            it.next();
+            it.remove();
+        }
+        body.addChild(convertor.fromScript(payload));
     }
 
     /**
