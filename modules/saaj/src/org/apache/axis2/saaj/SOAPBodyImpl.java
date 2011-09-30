@@ -164,11 +164,14 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         if (omSOAPBody.hasFault()) {
             throw new SOAPException("A SOAPFault has been already added to this SOAPBody");
         }
+        if (prefix == null) {
+            prefix = "";
+        }
         SOAPBodyElementImpl childEle;
         if (uri == null || "".equals(uri)) {
             childEle = new SOAPBodyElementImpl(
                     (ElementImpl)getOwnerDocument().createElement(localName));
-        } else if (prefix == null || "".equals(prefix)) {
+        } else if (prefix.length() == 0) {
             childEle = new SOAPBodyElementImpl(
                 (ElementImpl)getOwnerDocument().createElementNS(uri,
                                                                 localName));
@@ -178,7 +181,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                                                                     prefix + ":" + localName));
         }
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(childEle.element.declareNamespace(uri, prefix));
+        childEle.element.setNamespace(getOMFactory().createOMNamespace(uri, prefix));
         element.appendChild(childEle.element);
         ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
@@ -546,8 +549,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                                                                             qname.getLocalPart()));
         }
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(childEle.element.declareNamespace(
-                qname.getNamespaceURI(), qname.getPrefix()));
+        childEle.element.setNamespace(getOMFactory().createOMNamespace(qname.getNamespaceURI(), qname.getPrefix()));
 
         element.appendChild(childEle.element);
         ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
