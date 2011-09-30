@@ -175,7 +175,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     */
     public SOAPElement addChildElement(String localName, String prefix, String uri)
             throws SOAPException {
-        OMNamespace omNamespace = prefix == null || prefix.length() == 0 ? element.declareDefaultNamespace(uri) : element.declareNamespace(uri, prefix);
+        OMNamespace omNamespace = element.declareNamespace(uri, prefix);
         return addChildElement(localName, omNamespace.getPrefix());
     }
 
@@ -194,9 +194,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
                         createElementNS(namespaceURI, prefix + ":" + localName));
 
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(prefix == null || prefix.length() == 0
-                ? childEle.element.declareDefaultNamespace(namespaceURI)
-                : childEle.element.declareNamespace(namespaceURI, prefix));
+        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
         ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
@@ -220,11 +218,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(java.lang.String, java.lang.String)
       */
     public SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException {
-        if (prefix == null || prefix.length() == 0) {
-            element.declareDefaultNamespace(uri);
-        } else {
-            element.declareNamespace(uri, prefix);
-        }
+        element.declareNamespace(uri, prefix);
         return this;
     }
 

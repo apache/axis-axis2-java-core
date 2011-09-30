@@ -226,11 +226,8 @@ public class SOAPFactoryImpl extends SOAPFactory {
         } else {
             omdomFactory = (OMDOMFactory)DOOMAbstractFactory.getSOAP11Factory();
         }
-        String prefix = element.getPrefix();
-        if (prefix == null) {
-            prefix = "";
-        }
-        OMNamespace ns = omdomFactory.createOMNamespace(element.getNamespaceURI(), prefix);
+        OMNamespace ns = omdomFactory.createOMNamespace(element.getNamespaceURI()
+                , element.getPrefix());
         OMElement omElement = omdomFactory.createOMElement(element.getLocalName(), ns);
         return new SOAPElementImpl((ElementImpl)omElement);
     }

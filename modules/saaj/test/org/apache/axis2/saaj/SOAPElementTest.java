@@ -23,11 +23,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
@@ -382,17 +380,6 @@ public class SOAPElementTest extends Assert {
         assertNull(body.getAttributeValue(name));
     }
 
-    @Validated @Test
-    public void testAddNamespaceDeclarationDefaultNamespace() throws SOAPException {
-        SOAPMessage msg = MessageFactory.newInstance().createMessage();
-        SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
-        SOAPBody body = envelope.getBody();
-        SOAPElement element = body.addChildElement("test", "p", "urn:test");
-        element.addNamespaceDeclaration("", "urn:ns");
-        Attr attr = (Attr)element.getAttributes().getNamedItemNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns");
-        assertEquals("urn:ns", attr.getValue());
-    }
-    
     @Validated @Test
     public void testRemoveNamespaceDeclaration() throws Exception {
         String prefix = "myPrefix";
