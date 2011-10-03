@@ -105,9 +105,8 @@ public class ContextListenerUtils {
         String prefix = (ns!=null)?ns.getPrefix():null;
         String uri = (ns!=null)?ns.getNamespaceURI():null;
         
-        HashMap<String, String> nsDecls = new HashMap<String, String>();
         //Get all of the namespaces associated with Body, envelope, etc
-        getParentnsdeclarations(nsDecls, parent);
+        HashMap<String, String> nsDecls = getParentnsdeclarations(parent);
         
         nsDecls.putAll(nsElementDecls);
         
@@ -134,23 +133,16 @@ public class ContextListenerUtils {
     /*
      * fetch all prent namespace declarations
      */
-    private static void getParentnsdeclarations(HashMap<String, String> nsDecls, OMContainer parent){
-        if(nsDecls == null){
-            nsDecls = new HashMap<String, String>();
-        }
-        while (parent instanceof OMElement){
-            OMElement omElement = (OMElement) parent;
-            Iterator ite = omElement.getAllDeclaredNamespaces();
+    private static HashMap<String, String> getParentnsdeclarations(OMContainer parent){
+        HashMap<String, String> nsDecls = new HashMap<String, String>();
+        if (parent instanceof OMElement) {
+            Iterator ite = ((OMElement) parent).getNamespacesInScope();
             while (ite.hasNext()) {
                 OMNamespace omn = (OMNamespace) ite.next();
-                String prefix = omn.getPrefix();
-                String nsUri = omn.getNamespaceURI();
-                if (!nsDecls.containsKey(prefix)) {
-                    nsDecls.put(prefix, nsUri);
-                }
+                nsDecls.put(omn.getPrefix(), omn.getNamespaceURI());
             }
-            parent = omElement.getParent();
         }
+        return nsDecls;
     }
     /*
      * add all parent namespace declarations to the element
