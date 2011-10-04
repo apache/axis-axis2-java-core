@@ -1095,7 +1095,13 @@ public class BeanUtil {
             *reason to add this block is check is soap sending a string but service require Enum
             * then this convert string to relevant enum object and add to retObjs[] as object
             * */
-        Object enumIbj = Enum.valueOf(classType , omElement.getText());
+          String paraArgString = omElement.getText();
+         Object enumIbj;
+        if (paraArgString == null || paraArgString.length() == 0) {
+            enumIbj = null;
+        }else{
+            enumIbj = Enum.valueOf(classType , paraArgString);
+        }
         return enumIbj;
 
     }

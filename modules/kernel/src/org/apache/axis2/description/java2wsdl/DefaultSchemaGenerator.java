@@ -2148,9 +2148,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
               parameterElement.setName(parameterName);
               if(isArrayType){
                   parameterElement.setMaxOccurs(Long.MAX_VALUE);
-                  parameterElement.setMinOccurs(0);
-                  parameterElement.setNillable(true);
               }
+              parameterElement.setMinOccurs(0);
+              parameterElement.setNillable(true);
               sequence.getItems().add(parameterElement);
               parameterElement.setSchemaTypeName(parameterTypeName);
               return parameterTypeName;
