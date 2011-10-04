@@ -70,7 +70,7 @@
     }
 
 
-    String serviceDescription = axisService.getServiceDescription();
+    String serviceDescription = axisService.getDocumentation();
     if (serviceDescription == null || "".equals(serviceDescription)) {
         serviceDescription = "No description available for this service";
     }

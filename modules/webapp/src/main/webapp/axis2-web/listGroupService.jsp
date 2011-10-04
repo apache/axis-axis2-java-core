@@ -52,7 +52,7 @@
 <h2><font color="blue"><a href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a>
 </font></h2>
 <font color="blue">Service EPR :</font><font color="black"><%=prefix + axisService.getName()%></font>
-<h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></font></h4>
+<h4>Service Description : <font color="black"><%=axisService.getDocumentation()%></font></h4>
 <i><font color="blue">Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></font></i><br/>
 <%
   Collection engagedModules = axisService.getEngagedModules();
