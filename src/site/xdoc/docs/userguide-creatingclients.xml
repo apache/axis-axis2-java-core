@@ -156,7 +156,7 @@ for calling each of these operations.</p>
 <li>
 <a href="../download.cgi">Download</a> and unpack the Apache Axis2 Standard
 Distribution, if you have not done it already.</li>
-<li>Create the client stub with the following command:
+<li>Create the client stub with the following command (Assuming that you have Axis2UserGuide.wsdl file on your current working directory):
 <pre>
 %AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s
 </pre></li>
