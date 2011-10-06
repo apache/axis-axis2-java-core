@@ -20,4 +20,4 @@
 <jsp:include page="include/adminheader.jsp"/>
 <p><%=request.getSession().getAttribute("status")%></p>
 <p>Click <a href="services/listServices">here</a> to go to the service list page</p>
-<jsp:include page="include/adminfooter.inc" />
+<jsp:include page="include/adminfooter.jsp"/>

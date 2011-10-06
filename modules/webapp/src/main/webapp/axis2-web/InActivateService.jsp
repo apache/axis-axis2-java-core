@@ -23,10 +23,10 @@
                  java.util.HashMap,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>Deactivate Service</h1>
 <form method="get" name="serviceInActivate" action="axis2-admin/deactivateService">
-  <table width="100%"  border="0">
+  <table summary="main content table" style="width: 100%"  border="0">
 <tr>
   <td colspan="2" >
      <p>Only the services that are active are listed below. Note that although you can activate a service from this page, once system is restarted the service will be active again</p>
@@ -51,16 +51,16 @@ request.getSession().setAttribute(Constants.SERVICE_MAP,null);
 if (count > 0) {
 %>
 
-    <td width="20%"> Select Service : </td>
-    <td width="80%">
+    <td style="width: 20%"> Select Service : </td>
+    <td style="width: 80%">
        <select name="axisService" class="selectBoxes">
 <%=html%>
 		</select>
 	</td>
   </tr>
   <tr>
-    <td width="20%">Deactivate Service </td>
-    <td width="80%"><input type="checkbox" name="turnoff">
+    <td style="width: 20%">Deactivate Service </td>
+    <td style="width: 80%"><input type="checkbox" name="turnoff">
     </td>
   </tr>
   <tr>
@@ -80,4 +80,4 @@ if (count > 0) {
 
 </table>
 </form>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

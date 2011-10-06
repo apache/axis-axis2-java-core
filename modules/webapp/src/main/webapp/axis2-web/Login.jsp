@@ -18,6 +18,7 @@
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
     <jsp:include page="include/httpbase.jsp"/>
@@ -28,7 +29,7 @@
   <body onload="javascript:document.LoginForm.userName.focus();">
     <jsp:include page="include/header.inc"/>
     <jsp:include page="include/link-footer.jsp"/>
-    <table class="FULL_BLANK">
+    <table summary="main content table" class="FULL_BLANK">
       <tr>
         <td valign="top">
         	<h2>Welcome :</h2>
@@ -38,26 +39,26 @@
  	       		<li>Change any parameters at run time.</li>
  	       		<li>Upload new services into Axis2 [Service hot-deployment].</li>
  	   		</ul>
-	        <font color="orange">Warning: Please note that configuration changes done through the administration console
-    	    will be lost when the server is restarted.</font>
+	        <span style="color:orange">Warning: Please note that configuration changes done through the administration console
+    	    will be lost when the server is restarted.</span>
     	</td>
         <td valign="top" align="left">
           <form method="post" name="LoginForm" action="axis2-admin/login">
-            <table class="LOG_IN_FORM">
+            <table summary="login table" class="LOG_IN_FORM">
               <tr>
-                <td align="center" colspan="2" bgcolor="#b0b0b0" color="#FFFFFF"><font color="#FFFFFF">Login</font></td>
+                <td align="center" colspan="2" style="bgcolor:#b0b0b0"><span style="color:#FFFFFF">Login</span></td>
               </tr>
               <tr>
                  <td align="center" colspan="2">&nbsp;</td>
                </tr>
               <tr>
                 <td align="right">Username:</td>
-                <td><input align="left" type="text" name="userName" tabindex="1">
+                <td><input style="align:left" type="text" name="userName" tabindex="1">
                 </td>
               </tr>
               <tr>
                 <td align="right">Password : </td>
-                <td><input align="left" type="password" name="password" tabindex="2">
+                <td><input style="align:left" type="password" name="password" tabindex="2">
                 </td>
               </tr>
               <tr>
@@ -73,16 +74,15 @@
               </tr>
               <tr>
                 <td align="center" colspan="2">
-                  <font color="red">&nbsp;<% if (request.getAttribute("errorMessage") != null) {%><%= request.getAttribute("errorMessage")%><% } %>&nbsp;</font>
+                  <span style="color:red">&nbsp;<% if (request.getAttribute("errorMessage") != null) {%><%= request.getAttribute("errorMessage")%><% } %>&nbsp;</span>
                 </td>
               </tr>
             </table>
           </form>
-          <br/><br/><br/><br/><br/><br/>
+          <br><br><br><br><br><br>
         </td>
       </tr>
-    </table>
-    <p>Test</p>
+    </table>   
     <jsp:include page="include/footer.inc"/>
   </body>
 </html>

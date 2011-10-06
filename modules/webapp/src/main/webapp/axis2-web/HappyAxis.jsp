@@ -16,7 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   --%>
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <%@ page import="org.apache.axis2.AxisFault,
                  org.apache.axis2.Constants,
@@ -132,9 +132,9 @@
             } else {
                 String location = getLocation(out, clazz);
                 if (location == null) {
-                    out.write("Found " + axisOperation + " (" + classname + ")<br/>");
+                    out.write("Found " + axisOperation + " (" + classname + ")<br>");
                 } else {
-                    out.write("Found " + axisOperation + " (" + classname + ") <br/> &nbsp;&nbsp;at " + location + "<br/>");
+                    out.write("Found " + axisOperation + " (" + classname + ") <br> &nbsp;&nbsp;at " + location + "<br/>");
                 }
                 return 0;
             }
@@ -349,6 +349,8 @@
             result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
             writer.flush();
             value = writer.toString();
+            value = value.replaceAll("<", "&lt;");
+            value = value.replaceAll(">", "&gt;");
             return true;
         } catch (AxisFault axisFault) {
             System.out.println(value);
@@ -370,7 +372,7 @@
 
 <h2>Examining webapp configuration</h2>
 
-<blockquote>
+
 
 <h4>Essential Components</h4>
 
@@ -416,50 +418,50 @@
     //is everything we need here
     if (needed == 0) {
         //yes, be happy
-        out.write("<p><font color='green'><strong>The core axis2 libraries are present.</strong></font></p>");
+        out.write("<p style=\"color:green; font-style:bold\">The core axis2 libraries are present.</p>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        out.write("<font color='red'><i>"
+        out.write("<p style=\"color:red; font-style:italic\">"
                 + needed
                 + " core axis2 librar"
                 + (needed == 1 ? "y is" : "ies are")
-                + " missing</i></font>");
+                + " missing</p>");
     }
     //now look at wanted stuff
 %>
 <p>
-    <B><I>Note:</I></B> Even if everything this page probes for is present,
+    <span style="font-style:bold italic">Note:</span> Even if everything this page probes for is present,
     there is no guarantee your Axis Service will work, because there are many configuration options
-    that we do not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
+    that we do not check for. These tests are <span style="font-style:italic">necessary</span> but not <span style="font-style:italic">sufficient</span>
 </p>
-</blockquote>
+
 <h2>Examining Version Service</h2>
 <%
     boolean serviceStatus = invokeTheService();
     if (serviceStatus) {
 %>
-<blockquote>
-    <font color="green"><strong>
+<div>
+    <p style="color:green; font-style:bold">
         Found Axis2 default Version service and Axis2 is working
-        properly.</strong></font>
+        properly.
+    </p>
+        
     <p>Now you can drop a service archive in axis2/WEB-INF/services.
         Following output was produced while invoking Axis2 version service
-        </p>
-        <p><%= value%></p>
-</blockquote>
+    </p>
+    <p><%= value%></p>
+</div>
 
 <%
 } else {
 %>
-<p>
-    <font color="brown"> There was a problem in Axis2 version service , may be
+<p style="color:brown">
+    There was a problem in Axis2 version service , may be
         the service not available or some thing has gone wrong. But this does
         not mean system is not working !
         Try to upload some other service and check to see whether it is
         working.
-        <br>
-    </font>
 </p>
 
 <%
@@ -467,7 +469,7 @@
 %>
 <h2>Examining Application Server</h2>
 <blockquote>
-<table>
+<table summary="main content table">
     <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
     <tr><td>Platform</td>
         <td><%=getServletConfig().getServletContext().getServerInfo()%></td>
@@ -485,17 +487,16 @@
     } catch (SecurityException se) {
     }
     if (e != null) {
-        out.write("<pre>");
-        out.write("<table cellpadding='5px' cellspacing='0px' style='border: .5px blue solid;'>");
+        out.write("<table summary=\"main content table\" cellpadding=\"5\" cellspacing=\"0\" style=\"border: .5 blue solid;\">");
         for (; e.hasMoreElements();) {
             out.write("<tr>");
             String key = (String) e.nextElement();
             out.write("<th style='border: .5px #A3BBFF solid;'>" + key + "</th>");
             out.write("<td style='border: .5px #A3BBFF solid;'>" + getFormatedSystemProperty(System.getProperty(key)) + "&nbsp;</td>");
-            out.write("<tr>");
+            out.write("</tr>");
         }
         out.write("</table>");
-        out.write("</pre><p>");
+        out.write("<p>");
     } else {
         out.write("System properties are not accessible<p>");
     }

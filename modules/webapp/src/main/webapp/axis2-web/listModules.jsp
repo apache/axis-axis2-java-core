@@ -23,7 +23,7 @@
  <%@ page import="java.util.Hashtable"%>
  <%@ page import="java.util.Iterator"%>
  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
   <h1>Available Modules</h1>
      <%
          boolean foundModules = false;
@@ -61,7 +61,7 @@
       %>
       <%if(errornesModules.size()>0){
           %>
-      <h3><font color="red">Faulty Modules</font></h3>
+      <h3 style="color:red">Faulty Modules</h3>
              <%
              Enumeration faultyModules = errornesModules.keys();
              while (faultyModules.hasMoreElements()) {
@@ -74,8 +74,8 @@
       }
              if(! foundModules) {
                  %>
-                 <h2><font color="blue">There are no modules deployed in the system.</font></h2>
+                 <h2 style="color:blue">There are no modules deployed in the system.</h2>
                  <%
              }
      %>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

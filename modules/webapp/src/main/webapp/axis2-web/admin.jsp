@@ -18,7 +18,7 @@
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>Welcome to Axis2 Web Admin Module !!</h1>
 <p>You are now logged into the Axis2 administration console from inside
 the console you will be able to</p>
@@ -28,4 +28,4 @@ the console you will be able to</p>
         <li>to upload new services into Axis2 [Service hot-deployment].</li>
     </ul>
 
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

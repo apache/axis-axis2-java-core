@@ -16,13 +16,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<table width="100%">
+<table summary="header table"width="100%">
   <tr>
-    <td align="left"><img src="axis2-web/images/asf-logo.gif"/><h1>Axis 2</h1></td>
-    <td align="right"><img src="axis2-web/images/axis.jpg"/></td>
-    </tr>
-    <tr>
+    <td align="left"><img src="axis2-web/images/asf-logo.gif" alt="Apache Software Foundation Logo"><h1>Axis 2</h1></td>
+    <td align="right"><img src="axis2-web/images/axis.jpg" alt="AXIS Logo"></td>
+  </tr>
+  <tr>
     <td>.</td>
-   <td align="right"><a href="logout" target="_parent" >Log out</a></td>
-   </tr>
+    <td align="right"><a href="logout" target="_parent" >Log out</a></td>
+  </tr>
 </table>

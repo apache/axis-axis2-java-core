@@ -23,10 +23,10 @@
                  java.util.HashMap,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>Turn On Service</h1>
 <form method="get" name="serviceActivate" action="axis2-admin/activateService">
-  <table width="100%"  border="0">
+  <table summary="main content table" width="100%"  border="0">
 <tr>
   <td colspan="2" >
      <p>The services that are inactive are listed below. Although you can activate the services from this page, once system is restarted the services will be inactive again</p>
@@ -79,4 +79,4 @@ if (count > 0) {
 
 </table>
 </form>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

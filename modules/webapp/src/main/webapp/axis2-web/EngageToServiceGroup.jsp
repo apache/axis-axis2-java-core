@@ -24,7 +24,7 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="org.apache.axis2.util.Utils" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
     HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
@@ -52,7 +52,7 @@
 		<%} else {
 %>
 <form method="get" name="selectModuleForm" action="axis2-admin/engageToServiceGroup">
-    <table border="0" width="100%" cellspacing="1" cellpadding="1">
+    <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
             <td>Select a Module :</td>
         </tr>
@@ -63,10 +63,11 @@
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
                     AxisModule axisOperation = (AxisModule) iterator.next();
                     String modulename = axisOperation.getName();
-            %> <option  align="left" value="<%=modulename%>"><%=modulename%></option>
+            %> <option  value="<%=modulename%>"><%=modulename%></option>
                     <%
                 }
              %>
+                </select>
             </td>
         </tr>
         <tr>
@@ -86,7 +87,7 @@
                         while(servicesGroups.hasNext()){
                             AxisServiceGroup axisServiceGroup = (AxisServiceGroup) servicesGroups.next();
                             String serviceName = axisServiceGroup.getServiceGroupName();
-                    %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
+                    %> <option value="<%=serviceName%>"><%=serviceName%></option>
                     <%
                         }
 
@@ -134,5 +135,4 @@
 		}
 	}
 %>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
-
+<jsp:include page="include/adminfooter.jsp"/>

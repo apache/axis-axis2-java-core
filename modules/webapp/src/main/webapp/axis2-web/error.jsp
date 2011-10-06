@@ -19,8 +19,8 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@page isErrorPage="true" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
-  <table>
+<jsp:include page="include/adminheader.jsp"/>
+  <table summary="main content table">
   <tr>
   <td align="center">An error has occured!. Please check the details below</td>
   </tr>
@@ -28,4 +28,4 @@
   <td align="center"><%=exception.getMessage()%></td>
   </tr>
   </table>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

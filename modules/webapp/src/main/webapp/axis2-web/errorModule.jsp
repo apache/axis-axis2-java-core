@@ -20,11 +20,12 @@
 <%@ page import="org.apache.axis2.Constants,
                  java.util.Hashtable"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
   <%
       Hashtable errornessModules =(Hashtable)request.getSession().getAttribute(Constants.ERROR_MODULE_MAP);
       String moduleName = request.getParameter("moduleName");
   %> <h3>The Module has deployment faults</h3><%
-  %><font color="red" ><%=(String)errornessModules.get(moduleName) %></font><%
+  %><span style="color:red"><%=(String)errornessModules.get(moduleName) %></span><%
+  
   %>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

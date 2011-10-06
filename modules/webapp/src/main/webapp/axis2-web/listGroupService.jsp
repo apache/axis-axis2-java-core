@@ -29,7 +29,7 @@
 <head>
   <jsp:include page="include/httpbase.jsp"/>
   <title>List Services</title>
-  <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css" />
+  <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -49,17 +49,28 @@
         serviceName = axisService.getName();
 %><hr>
 
-<h2><font color="blue"><a href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a>
-</font></h2>
-<font color="blue">Service EPR :</font><font color="black"><%=prefix + axisService.getName()%></font>
-<h4>Service Description : <font color="black"><%=axisService.getDocumentation()%></font></h4>
-<i><font color="blue">Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></font></i><br/>
+<h2><a style="color:blue" href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></h2>
+<p>
+<span style="color:blue">Service EPR :</span>
+<span style="color:black"><%=prefix + axisService.getName()%></span>
+</p>
+
+<h4>Service Description : <span style="color:black"><%=axisService.getDocumentation()%></span></h4>
+
+<p style="color:blue; font-style:italic">
+Service Status : <%=axisService.isActive() ? "Active" : "InActive"%>
+</p>
+
 <%
   Collection engagedModules = axisService.getEngagedModules();
   String moduleName;
   if (engagedModules.size() > 0) {
 %>
-<i>Engaged Modules for the Axis Service</i><ul>
+<p style="font-style:italic">
+Engaged Modules for the Axis Service
+</p>
+
+<ul>
   <%
     for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
       AxisModule axisOperation = (AxisModule) iteratorm.next();
@@ -71,9 +82,18 @@
 <%
   }
   if (operations.hasNext()) {
-%><br><i>Available operations</i><%
+%>
+
+<p style="font-style:italic">
+Available operations
+</p>
+<%
 } else {
-%><i> There are no operations specified</i><%
+%>
+<p style="font-style:italic">
+There are no operations specified
+</p>
+<%
   }
 %><ul><%
   operations = axisService.getOperations();
@@ -84,12 +104,17 @@
     engagedModules = axisOperation.getEngagedModules();
     if (engagedModules.size() > 0) {
   %>
-  <br><i>Engaged Modules for the Operation</i><ul>
+  
+<p style="font-style:italic">
+Engaged Modules for the Operation
+</p>
+<ul>
   <%
     for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
       AxisModule moduleDecription = (AxisModule) iterator2.next();
       moduleName = moduleDecription.getName();
-  %><li><%=moduleName%></li><br><%
+  %><li><%=moduleName%></li>
+  <%
   }
 %></ul><%
     }

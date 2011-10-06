@@ -24,14 +24,14 @@
                  java.util.ArrayList,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>Edit Service Parameters</h1>
   <form method="get" name="editServicepara" action="axis2-admin/editServicepara">
    <%
             AxisService axisService = (AxisService)request.getSession().
                     getAttribute(Constants.SERVICE);
              if(axisService != null ){
-   %>     <table width="100%">
+   %>     <table summary="main content table" width="100%">
 
             <tr>
                  <td colspan="2" ><b>
@@ -118,5 +118,5 @@
              }
 
        %>
-       <form>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+       </form>
+<jsp:include page="include/adminfooter.jsp"/>

@@ -48,7 +48,7 @@
             AxisService axisService = (AxisService) iterator.next();
             operations = axisService.getOperations();
             serviceName = axisService.getName();
-%><h2><font color="blue"><a href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
+%><h2><a style="color:blue" href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></h2>
 <%
     // do we need to enable REST in the main servlet so that it handles both REST and SOAP messages
     boolean disableREST = false;
@@ -75,9 +75,9 @@
         serviceDescription = "No description available for this service";
     }
 %>
-<p>Service Description : <%=serviceDescription%><br/>
-Service EPR : <%=prefix + axisService.getName()%><br/>
-Service Status : <%=axisService.isActive() ? "Active" : "InActive"%>
+<p>Service Description : <%=serviceDescription%><br>
+Service EPR : <%=prefix + axisService.getName()%><br>
+Service Status : <%=axisService.isActive() ? "Active" : "InActive"%><br>
 Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remove Service</a></p><br>
 <%
     Collection engagedModules = axisService.getEngagedModules();
@@ -85,7 +85,7 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
     boolean modules_present = false;
     if (engagedModules.size() > 0) {
 %>
-<i>Engaged modules for the service</i>
+<span style="font-style: italic">Engaged modules for the service</span>
 <%
     for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
         AxisModule axisOperation = (AxisModule) iteratorm.next();
@@ -95,8 +95,8 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
 %>
 <ul>
     <% }
-    %><li><%=moduleName%> :: <a href="axis2-admin/disengageModule?type=service&serviceName=<%=serviceName%>&module=<%=moduleName%>">Disengage</a></li>
-    <br>
+    %><li><%=moduleName%> :: <a href="axis2-admin/disengageModule?type=service&amp;serviceName=<%=serviceName%>&amp;module=<%=moduleName%>">Disengage</a></li>
+
     <%
         }
         if (modules_present) {%>
@@ -105,11 +105,16 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
         }
     }
     if (operations.hasNext()) {
-%><br><i>Available operations</i><%
+%>
+<br>
+<span style="font-style: italic">Available operations</span>
+<%
 } else {
-%><i> There are no Operations specified</i><%
+%><span style="font-style: italic"> There are no Operations specified</span>
+<%
     }
-%><ul><%
+%>
+<ul><%
     operations = axisService.getOperations();
     while (operations.hasNext()) {
         AxisOperation axisOperation = (AxisOperation) operations.next();
@@ -119,18 +124,27 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
         engagedModules = axisOperation.getEngagedModules();
         if (engagedModules.size() > 0) {
     %>
-    <br><i>Engaged Modules for the Operation</i><ul>
+    <li>
+    
+    <span style="font-style: italic">Engaged Modules for the Operation</span>
+    <ul>
     <%
         for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
             AxisModule moduleDecription = (AxisModule) iterator2.next();
             moduleName = moduleDecription.getName();
-    %><li><%=moduleName%> :: <a href="axis2-admin/disengageModule?type=operation&serviceName=<%=serviceName%>&operation=<%=axisOperation.getName().getLocalPart()%>&module=<%=moduleName%>">Disengage</a></li><br><%
+    %>
+    <li>
+    <%=moduleName%> :: <a href="axis2-admin/disengageModule?type=operation&amp;serviceName=<%=serviceName%>&amp;operation=<%=axisOperation.getName().getLocalPart()%>&amp;module=<%=moduleName%>">Disengage</a>
+    </li>
+    <%
     }
-%></ul><%
+	%>
+</ul></li><%
         }
 
     }
-%></ul>
+%>
+</ul>
 <%
             status = true;
         }
@@ -139,13 +153,13 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
         if (errornessservice.size() > 0) {
             request.getSession().setAttribute(Constants.IS_FAULTY, Constants.IS_FAULTY);
 %>
-<h3><font color="red">Faulty Services</font></h3>
+<h3 style="color:red">Faulty Services</h3>
 <%
     Enumeration faultyservices = errornessservice.keys();
     while (faultyservices.hasMoreElements()) {
         String faultyserviceName = (String) faultyservices.nextElement();
-%><h3><font color="blue"><a href="services/ListFaultyServices?serviceName=<%=faultyserviceName%>">
-    <%=faultyserviceName%></a></font></h3>
+%><h3><a styel="color:blue" href="services/ListFaultyServices?serviceName=<%=faultyserviceName%>">
+    <%=faultyserviceName%></a></h3>
 <%
             }
         }
@@ -155,4 +169,4 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
 %> No services listed! Try hitting refresh. <%
     }
 %>
-<jsp:include page="include/adminfooter.inc" />
+<jsp:include page="include/adminfooter.jsp"/>

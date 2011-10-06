@@ -38,7 +38,7 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<table width="100%" style="border-right:1px solid #CCCCCC;">
+<table summary="main content table" width="100%" style="border-right:1px solid #CCCCCC;">
     <tr>
      <td colspan="2" >
        <b>Tools </b>
@@ -54,7 +54,7 @@
     </tr>
 <tr>
      <td colspan="2" >
-      <b><nobr>System Components&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</nobr></b>
+      <span style="font-style:bold; white-space:nowrap">System Components&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
      </td>
   </tr>
   <tr>

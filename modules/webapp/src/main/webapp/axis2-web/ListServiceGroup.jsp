@@ -36,14 +36,15 @@
         Collection modules = axisServiceGroup.getEngagedModules();
         Iterator axisServiceIter = axisServiceGroup.getServices();
 %>
-<h2><%=groupName%></h2><ul>
+<h2><%=groupName%></h2>
+<ul>
     <%
         while (axisServiceIter.hasNext()){
             AxisService axisService = (AxisService) axisServiceIter.next();
             String serviceName = axisService.getName();
     %>
-    <li><font color="blue"><a href="axis2-admin/ListSingleService?serviceName=<%=serviceName%>">
-        <%=serviceName%></a></font></li>
+    <li><a style="color:blue" href="axis2-admin/ListSingleService?serviceName=<%=serviceName%>">
+        <%=serviceName%></a></li>
     <%
         }
     %>
@@ -64,4 +65,4 @@
         }
     }
 %>
-<jsp:include page="include/adminfooter.inc"/>
+<jsp:include page="include/adminfooter.jsp"/>

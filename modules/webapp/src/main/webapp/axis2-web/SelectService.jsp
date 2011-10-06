@@ -23,7 +23,7 @@
                  java.util.HashMap,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 
   <%
       String action ="";
@@ -51,9 +51,9 @@
 <h1><%=heading%></h1>
 <p><%=disc%></p>
 <form method="get" name="selectServiceForm" action="axis2-admin/<%=action%>">
-<table border="0" width="50%" cellspacing="1" cellpadding="1">
+<table summary="main content table" border="0" style="width: 50%" cellspacing="1" cellpadding="1">
          <tr>
-        <td width="35%">Select a Service :</td><td width="65%">
+        <td style="width: 35%">Select a Service :</td><td style="width:65%">
             <select name="axisService">
             <%
                 HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
@@ -61,11 +61,12 @@
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
                     AxisService axisService = (AxisService)iterator.next();
                     String serviceName = axisService.getName();
-            %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
+            %> <option value="<%=serviceName%>"><%=serviceName%></option>
              <%
                 }
                 request.getSession().setAttribute(Constants.SERVICE_MAP,null);
              %>
+             </select>
            </td>
         </tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
@@ -76,4 +77,4 @@
          </tr>
       </table>
    </form>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

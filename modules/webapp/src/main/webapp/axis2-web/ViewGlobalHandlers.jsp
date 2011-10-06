@@ -23,7 +23,7 @@
                  org.apache.axis2.engine.Phase,
                  java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>View Global Execution Chains</h1>
    <%
             AxisConfiguration axisConfig = (AxisConfiguration)request.getSession().
@@ -134,4 +134,4 @@
 
              }
               %>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

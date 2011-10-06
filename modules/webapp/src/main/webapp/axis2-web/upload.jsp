@@ -18,7 +18,6 @@
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <jsp:include page="include/adminheader.jsp"/>
 <script type="text/javascript">
 <!--
@@ -42,23 +41,30 @@
 <p>Simple as that!</p>
 
 <% if ("success".equals(request.getAttribute("status"))) { %>
-<font color="green">File <%= request.getAttribute("filename") %> successfully uploaded </font><br/><br/>
+<p style="color:green">
+File <%= request.getAttribute("filename") %> successfully uploaded 
+</p>
 <%
 } else if ("failure".equals(request.getAttribute("status"))) {
 %>
-<font color="red">The following error occurred <br/> <%= request.getAttribute("cause") %></font><br/>
+<p style="color:red">
+The following error occurred
+</p>
+<p style="color:red">
+<%= request.getAttribute("cause") %>
+</p>
 <% } %>
 
 <form method="post" name="Axis2upload" id="Axis2upload" action="axis2-admin/upload"
       enctype="multipart/form-data">
-  <table>
+  <table summary="main content table">
     <tr>
       <td>Service archive : </td>
-      <td><input id="serviceUpload" type="file" name="filename" size="50"/></td>
+      <td><input id="serviceUpload" type="file" name="filename" size="50"></td>
     </tr>
     <tr>
       <td>&nbsp;</td>
-      <td><input name="upload" type="button" onclick="javascript:checkFileUpload();" value=" Upload "/></td>
+      <td><input name="upload" type="button" onclick="javascript:checkFileUpload();" value=" Upload "></td>
     </tr>
   </table>
 </form>
@@ -66,4 +72,4 @@
 <p>Hot deployment of new service archives is <%=request.getAttribute("hotDeployment") %></p>
 <p>Hot update of existing service archives is <%=request.getAttribute("hotUpdate") %></p>
 </blockquote>
-<jsp:include page="include/adminfooter.inc"/>
+<jsp:include page="include/adminfooter.jsp"/>

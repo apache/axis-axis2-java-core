@@ -24,7 +24,7 @@
                                                                              java.util.Collection,
                                                                              java.util.HashMap,
                                                                              java.util.Iterator"%>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
@@ -37,7 +37,7 @@
         </ol>
 
 <form method="get" name="selectModuleForm" action="axis2-admin/listOperations">
-<table border="0" width="100%" cellspacing="1" cellpadding="1">
+<table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>
         <td>
             &nbsp;
@@ -57,10 +57,11 @@
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
                     AxisModule axisOperation = (AxisModule) iterator.next();
                     String modulename = axisOperation.getName();
-            %> <option  align="left" value="<%=modulename%>"><%=modulename%></option>
+            %> <option  value="<%=modulename%>"><%=modulename%></option>
              <%
                 }
              %>
+             </select>
            </td>
         </tr>
         <tr>
@@ -80,11 +81,12 @@
                 while (operations.hasNext()) {
                     AxisOperation axisOperationtion = (AxisOperation)operations.next();
                     String opname = axisOperationtion.getName().getLocalPart();
-            %> <option  align="left" value="<%=opname%>"><%=opname%></option>
+            %> <option value="<%=opname%>"><%=opname%></option>
              <%
                 }
                 request.getSession().setAttribute(Constants.OPERATION_MAP,null);
              %>
+             </select>
            </td>
         </tr>
         <tr>
@@ -123,4 +125,4 @@
            </tr>
       </table>
    </form>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

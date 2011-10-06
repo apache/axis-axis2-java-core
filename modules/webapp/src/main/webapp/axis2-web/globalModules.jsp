@@ -20,7 +20,7 @@
                  java.util.Collection,
                  java.util.Iterator"%>
  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>Globally Engaged Modules</h1>
      <%
          boolean foundModules = false;
@@ -48,8 +48,8 @@
 		}
          } else{
      %>
-    <h2><font color="blue">There are no modules engaged globally</font></h2> 
+    <h2 style="color:blue">There are no modules engaged globally</h2> 
                  <%
          }
                  %>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

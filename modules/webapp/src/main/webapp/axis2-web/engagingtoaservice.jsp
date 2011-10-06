@@ -25,7 +25,7 @@
                                                                              java.util.Iterator"
          %>
 <%@ page import="org.apache.axis2.util.Utils" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <%
     String status = (String) request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
@@ -40,7 +40,7 @@
     </ol>
 
 <form method="get" name="selectModuleForm" action="axis2-admin/engageToService">
-    <table border="0" width="100%" cellspacing="1" cellpadding="1">
+    <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
             <td>
                 &nbsp;
@@ -63,13 +63,14 @@
                             String modulename = axisOperation.getName();
 
                     %>
-                    <option align="left" value="<%=modulename%>"><%=modulename%>
+                    <option value="<%=modulename%>"><%=modulename%>
                     </option>
                     <%
 
                        }
 
                     %>
+                 </select>
             </td>
         </tr>
         <tr>
@@ -93,7 +94,7 @@
                             String serviceName = axisService.getName();
 
                     %>
-                    <option align="left" value="<%=serviceName%>"><%=serviceName%>
+                    <option value="<%=serviceName%>"><%=serviceName%>
                     </option>
                     <%
 
@@ -101,6 +102,7 @@
                        request.getSession().setAttribute(Constants.SERVICE_MAP,null);
 
                     %>
+                 </select>
             </td>
         </tr>
         <tr>
@@ -128,17 +130,21 @@
         </tr>
         <tr>
             <td>
-                <textarea cols="50"  <%
-                    if (status == null) {
+                <textarea cols="50" rows="5" <%
+                    //if (status == null) {
                 %>
                           style="display:none"
                         <%
-                            } %>
-                        ><%=Utils.sanitizeWebOutput(status)%>
+                            //} %>
+                        >
+                       
+                <%--
+                Following call causes exception so I commented out.
+                	<%=Utils.sanitizeWebOutput(status)%>
+                --%>
                 </textarea>
             </td>
         </tr>
     </table>
 </form>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
-
+<jsp:include page="include/adminfooter.jsp"/>

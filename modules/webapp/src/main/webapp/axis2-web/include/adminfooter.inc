@@ -16,8 +16,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-</td></tr>
+<table summary="header table" width="100%">
+  <tr>
+    <td align="left"><img src="axis2-web/images/asf-logo.gif" alt="Apache Software Foundation Logo"><h1>Axis 2</h1></td>
+    <td align="right"><img src="axis2-web/images/axis.jpg" alt="AXIS Logo"></td>
+  </tr>
+  <tr>
+    <td>.</td>
+    <td align="right"><a href="logout" target="_parent" >Log out</a></td>
+  </tr>
 </table>
-<jsp:include page="footer.inc"></jsp:include>
-</body>
-</html>

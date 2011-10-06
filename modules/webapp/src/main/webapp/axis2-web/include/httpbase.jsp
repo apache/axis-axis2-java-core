@@ -68,4 +68,4 @@
         return curentUrl;
     }
 %>
-<base href="<%= calculateHttpBase(request)%>"/>
+<base href="<%= calculateHttpBase(request)%>">

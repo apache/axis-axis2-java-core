@@ -20,13 +20,13 @@
                  org.apache.axis2.engine.Phase"%>
  <%@ page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>Available Phases</h1>
      <%
          PhasesInfo phases = (PhasesInfo)request.getSession().getAttribute(Constants.PHASE_LIST);
          request.getSession().setAttribute(Constants.PHASE_LIST,null);
          List tempList = phases.getGlobalInflow();
-     %><h2><font color="blue">System Pre-defined Phases</font></h2>
+     %><h2 style="color:blue">System Pre-defined Phases</h2>
      <b>InFlow Up to Dispatcher</b>
      <blockquote>
          <%
@@ -67,7 +67,7 @@
          %>
          </blockquote>
          <br>
-         <h2><font color="blue">User Defined Phases</font></h2>
+         <h2 style="color:blue">User Defined Phases</h2>
          <b>Inflow after Dispatcher</b>
          <blockquote>
          <%
@@ -108,4 +108,4 @@
              }
          %>
          </blockquote>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

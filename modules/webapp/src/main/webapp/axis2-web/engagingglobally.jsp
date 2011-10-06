@@ -23,7 +23,6 @@
                  java.util.HashMap,
                  java.util.Iterator" %>
 <%@ page import="org.apache.axis2.util.Utils" %>
-<html>
 <jsp:include page="include/adminheader.jsp"/>
 <%
     String status = (String) request.getSession().getAttribute(Constants.ENGAGE_STATUS);
@@ -35,10 +34,10 @@
     phase needs to be engaged globally.</p>
 
 <form method="get" name="selectModuleForm" action="axis2-admin/engagingglobally">
-    <table border="0" width="100%" cellspacing="1" cellpadding="1">
+    <table summary="main content table" border="0" style="width:100%" cellspacing="1" cellpadding="1">
         <tr>
-            <td width="15%">Select a Module :</td>
-            <td width="75%" align="left">
+            <td style="width: 15%">Select a Module :</td>
+            <td style="width: 75%" align="left">
                 <select name="modules">
                     <%
                         HashMap modules = (HashMap) request.getSession().getAttribute(Constants.MODULE_MAP);
@@ -48,7 +47,7 @@
                             AxisModule axisOperation = (AxisModule) iterator.next();
                             String modulename = axisOperation.getName();
                     %>
-                    <option align="left" value="<%=modulename%>"><%=modulename%>
+                    <option value="<%=modulename%>"><%=modulename%>
                     </option>
                     <%
                         }
@@ -69,4 +68,4 @@
 <p style="color:blue"><%=Utils.sanitizeWebOutput(status)%></p>
 <%
     } %>
-<jsp:include page="include/adminfooter.inc"/>
+<jsp:include page="include/adminfooter.jsp"/>

@@ -29,15 +29,17 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
+<head>
 <jsp:include page="include/httpbase.jsp"/>
-<head><title>List Services</title>
-    <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css"/>
+<title>List Services</title>
+    <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-<jsp:include page="include/header.inc" />
-<jsp:include page="include/link-footer.jsp" />
+<jsp:include page="include/header.inc"/>
+<jsp:include page="include/link-footer.jsp"/>
 <h1>Available services</h1>
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
 %>
@@ -57,7 +59,7 @@
             opItr = axisService.getOperations();
             //operationsList = operations.values();
             serviceName = axisService.getName();
-%><h2><font color="blue"><a href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
+%><h2><a style="color:blue" href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></h2>
 <%
     boolean disableREST = false;
     AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
@@ -82,7 +84,7 @@
         serviceDescription = "No description available for this service";
     }
 %>
-<h5>Service Description : <font color="black"><%=serviceDescription%></font></h5>
+<h5>Service Description : <span style="color:black;"><%=serviceDescription%></span></h5>
 <h5>Service EPR : <%=prefix + axisService.getName()%></h5>
 <h5>Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></h5><br>
 <%
@@ -110,13 +112,14 @@
 %>
 <hr>
 
-<h3><font color="blue">Faulty Services</font></h3>
+<h3 style="color:blue">Faulty Services</h3>
 <%
     Enumeration faultyservices = errornessservice.keys();
     while (faultyservices.hasMoreElements()) {
         String faultyserviceName = (String) faultyservices.nextElement();
-%><h3><font color="blue"><a href="services/ListFaultyServices?serviceName=<%=faultyserviceName%>">
-    <%=faultyserviceName%></a></font></h3>
+%>
+<h3><a style="color:blue" href="services/ListFaultyServices?serviceName=<%=faultyserviceName%>">
+    <%=faultyserviceName%></a></h3>
 <%
             }
         }
@@ -126,6 +129,6 @@
 %> No services listed! Try hitting refresh. <%
     }
 %>
-<jsp:include page="include/footer.inc" />
+<jsp:include page="include/footer.inc"/>
 </body>
 </html>

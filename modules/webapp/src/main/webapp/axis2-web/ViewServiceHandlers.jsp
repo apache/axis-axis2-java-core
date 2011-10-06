@@ -27,7 +27,7 @@
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>View Operation Specific Chains</h1>
    <%
             AxisService axisService = (AxisService)request.getSession().
@@ -144,4 +144,4 @@
                  }
 
               %>
-<jsp:include page="include/adminfooter.inc"></jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

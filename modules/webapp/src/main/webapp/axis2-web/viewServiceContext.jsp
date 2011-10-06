@@ -47,4 +47,4 @@
         }
     }
 %>
-<jsp:include page="include/adminfooter.inc"/>
+<jsp:include page="include/adminfooter.jsp"/>

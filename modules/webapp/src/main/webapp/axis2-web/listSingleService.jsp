@@ -37,8 +37,8 @@
     if (Constants.IS_FAULTY.equals(isFault)) {
         Hashtable errornessservices = (Hashtable) request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
 %>
-<h3>This Axis service has deployment faults.</h3><%
-%><font color="red"><%=(String) errornessservices.get(servicName) %></font>
+<h3>This Axis service has deployment faults.</h3>
+<p style="color:red"><%=(String) errornessservices.get(servicName) %></p>
 <%
 
 } else {
@@ -49,8 +49,12 @@
         Iterator opItr = axisService.getOperations();
         //operationsList = operations.values();
         String serviceName = axisService.getName();
-%><h2><font color="blue"><a href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
-<font color="blue">Service EPR : </font><font color="black"><%=prefix + axisService.getName()%></font><br>
+%>
+<h2><a style="color:blue" href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></h2>
+<p>
+<span style="color:blue">Service EPR : </span>
+<span style="color:black"><%=prefix + axisService.getName()%></span>
+</p>
 <%
     boolean disableREST = false;
     AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
@@ -73,9 +77,10 @@
         serviceDescription = "No description available for this service";
     }
 %>
-<h4>Service Description : <font color="black"><%=serviceDescription%></font></h4>
-
-<i><font color="blue">Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></font></i><br>
+<h4>Service Description : <span style="color:black"><%=serviceDescription%></span></h4>
+<p style="color:blue; font-style:italic">
+Service Status : <%=axisService.isActive() ? "Active" : "InActive"%>
+</p>
 <%
     if (opItr.hasNext()) {
 %><i>Available operations</i><%
@@ -94,10 +99,10 @@
 <%
 } else {
 %>
-<h3><font color="red">No services found in this location</font></h3>
+<h3 style="color:red">No services found in this location</h3>
 <%
         }
 
     }
 %>
-<jsp:include page="include/adminfooter.inc"/>
+<jsp:include page="include/adminfooter.jsp"/>

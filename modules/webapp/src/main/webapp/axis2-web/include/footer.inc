@@ -18,18 +18,24 @@
   -->
 </td>
 </tr>
-<tr height="20px">
+<tr>
 	<td>
-	<table width="100%">
-		<tr><td>
-			<table width="950px">
-				<tr><td><hr size="1" noshade="" /></td></tr>
+	<table summary="footer table"width="100%">
+		<tr>
+			<td>
+			<table summary="footer table" width="100%">
 				<tr>
-					<td align="center">Copyright &#169; 1999-2006, The Apache Software Foundation<br />Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.</td>
+					<td>
+					<hr>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+					Copyright &#169; 1999-2006, The Apache Software Foundation<br />Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
+					</td>
 				</tr>
 			</table>
-		</td>
-		<td>&nbsp;</td>
+			</td>
 		</tr>
 	</table>
 	</td>

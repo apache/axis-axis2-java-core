@@ -16,7 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<table width="100%">
+<table summary="back home table" width="100%">
  <tr>
    <td align="center"><a href="index.jsp">Back Home</a></td>
    </tr>
