@@ -543,15 +543,31 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
 
         // Add the output element
-        AxisMessage outMessage = (AxisMessage) axisOperation.getChild(WSDLConstants.WSDL_MESSAGE_OUT_MESSAGE);
-        if (outMessage != null) {
-            OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
-            outMessageElement.addAttribute(omFactory.createOMAttribute(
-                    WSDL2Constants.ATTRIBUTE_ELEMENT, null,
-                    WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
-            WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, axisOperation.getOutputAction(),wsaw);
-            WSDLSerializationUtil.addWSDLDocumentationElement(outMessage, outMessageElement, omFactory, wsdl);
-            axisOperationElement.addChild(outMessageElement);
+        // here we need to consider the mep. since at the AxisOperationFactory class even for the roubust in only
+        // messages it creates an InOutAxis Operation
+        //         case WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY : {
+        //                abOpdesc = new InOutAxisOperation();
+        //                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY);
+        //                break;
+        //            }
+        // get the same logic from the AxisServiceToWSDL11 class.
+        
+        String mep = axisOperation.getMessageExchangePattern();
+        if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(mep)
+                || WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep)
+                || WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep)
+                || WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mep)
+                || WSDL2Constants.MEP_URI_IN_OUT.equals(mep)) {
+            AxisMessage outMessage = (AxisMessage) axisOperation.getChild(WSDLConstants.WSDL_MESSAGE_OUT_MESSAGE);
+            if (outMessage != null) {
+                OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
+                outMessageElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.ATTRIBUTE_ELEMENT, null,
+                        WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
+                WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, axisOperation.getOutputAction(), wsaw);
+                WSDLSerializationUtil.addWSDLDocumentationElement(outMessage, outMessageElement, omFactory, wsdl);
+                axisOperationElement.addChild(outMessageElement);
+            }
         }
 
         // Add the fault element
