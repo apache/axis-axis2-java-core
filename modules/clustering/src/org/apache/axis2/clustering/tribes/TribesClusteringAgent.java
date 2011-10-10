@@ -264,11 +264,14 @@ public class TribesClusteringAgent implements ClusteringAgent {
                 OMElement propEle = (OMElement) iter.next();
                 OMAttribute nameAttrib = propEle.getAttribute(new QName("name"));
                 if(nameAttrib != null){
+                    String attribName = nameAttrib.getAttributeValue();
+                    attribName = replaceProperty(attribName, memberInfo);
+
                     OMAttribute valueAttrib = propEle.getAttribute(new QName("value"));
                     if  (valueAttrib != null) {
                         String attribVal = valueAttrib.getAttributeValue();
                         attribVal = replaceProperty(attribVal, memberInfo);
-                        memberInfo.setProperty(nameAttrib.getAttributeValue(), attribVal);
+                        memberInfo.setProperty(attribName, attribVal);
                     }
                 }
             }
@@ -300,6 +303,9 @@ public class TribesClusteringAgent implements ClusteringAgent {
             String sysProp = text.substring(indexOfStartingChars + 2,
                                             indexOfClosingBrace);
             String propValue = props.getProperty(sysProp);
+            if (propValue == null) {
+                propValue = System.getProperty(sysProp);
+            }
             if (propValue != null) {
                 text = text.substring(0, indexOfStartingChars) + propValue +
                        text.substring(indexOfClosingBrace + 1);
