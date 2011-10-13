@@ -19,16 +19,8 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.http.Header;
-
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
 public class HttpUtils {
 
@@ -47,4 +39,26 @@ public class HttpUtils {
         }
     }
 
+    public static int indexOfIngnoreCase(String str , String subStr){
+        String lowerStr = str.toLowerCase();
+        String lowerSubStr = subStr.toLowerCase();
+        return lowerStr.indexOf(lowerSubStr);
+    }
+
+    public static boolean endsWithIgnoreCase(String str, String suffix) {
+        if (str == null || suffix == null) {
+            return (str == null && suffix == null);
+        }
+        if (suffix.length() > str.length()) {
+            return false;
+        }
+        int strOffset = str.length() - suffix.length();
+        return str.regionMatches(true, strOffset, suffix, 0, suffix.length());
+    }
+
+    public static int lastIndexOfIgnoreCase(String str , String subStr){
+        String lowerStr = str.toLowerCase();
+        String lowerSubStr = subStr.toLowerCase();
+        return lowerStr.lastIndexOf(lowerSubStr);
+    }
 }

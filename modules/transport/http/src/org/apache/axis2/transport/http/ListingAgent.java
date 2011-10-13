@@ -24,8 +24,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.IOUtils;
 import org.apache.axis2.util.JavaUtils;
@@ -43,6 +44,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -67,8 +69,8 @@ public class ListingAgent extends AbstractAgent {
 
         String query = httpServletRequest.getQueryString();
         if (query != null) {
-            if (query.indexOf("wsdl2") > 0 || query.indexOf("wsdl") > 0 ||
-                query.indexOf("xsd") > 0 || query.indexOf("policy") > 0) {
+            if (HttpUtils.indexOfIngnoreCase(query , "wsdl2") > 0 || HttpUtils.indexOfIngnoreCase(query, "wsdl") > 0 ||
+                HttpUtils.indexOfIngnoreCase(query, "xsd") > 0 || HttpUtils.indexOfIngnoreCase(query, "policy") > 0) {
                 processListService(httpServletRequest, httpServletResponse);
             } else {
                 super.handle(httpServletRequest, httpServletResponse);
@@ -167,10 +169,10 @@ public class ListingAgent extends AbstractAgent {
         String serviceName = extractServiceName(url);
         HashMap services = configContext.getAxisConfiguration().getServices();
         String query = req.getQueryString();
-        int wsdl2 = query.indexOf("wsdl2");
-        int wsdl = query.indexOf("wsdl");
-        int xsd = query.indexOf("xsd");
-        int policy = query.indexOf("policy");
+        int wsdl2 = HttpUtils.indexOfIngnoreCase(query, "wsdl2");
+        int wsdl = HttpUtils.indexOfIngnoreCase(query, "wsdl");
+        int xsd = HttpUtils.indexOfIngnoreCase(query, "xsd");
+        int policy = HttpUtils.indexOfIngnoreCase(query, "policy");
 
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(serviceName);
@@ -297,7 +299,7 @@ public class ListingAgent extends AbstractAgent {
             return;
         }
         res.setContentType("text/xml");
-        int ret = axisService.printXSD(res.getOutputStream(), req.getParameter("xsd"));
+        int ret = axisService.printXSD(res.getOutputStream(), getParamtereIgnoreCase(req ,"xsd"));
         if (ret == 0) {
             //multiple schemas are present and the user specified
             //no name - in this case we cannot possibly pump a schema
@@ -319,7 +321,7 @@ public class ListingAgent extends AbstractAgent {
         OutputStream out = res.getOutputStream();
         res.setContentType("text/xml");
         String ip = extractHost(url);
-        String wsdlName = req.getParameter("wsdl");
+        String wsdlName = getParamtereIgnoreCase(req , "wsdl");
 
         if (wsdlName != null && wsdlName.length()>0) {
             axisService.printUserWSDL(out, wsdlName, ip);
@@ -338,7 +340,7 @@ public class ListingAgent extends AbstractAgent {
         }
         res.setContentType("text/xml");
         String ip = extractHost(url);
-        String wsdlName = req.getParameter("wsdl2");
+        String wsdlName = getParamtereIgnoreCase(req , "wsdl2");
 
         int ret = axisService.printWSDL2(res.getOutputStream(), ip, wsdlName);
         if (ret == 0) {
@@ -346,6 +348,19 @@ public class ListingAgent extends AbstractAgent {
         } else if (ret == -1) {
             res.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    public String getParamtereIgnoreCase(HttpServletRequest req ,String paraName){
+        Enumeration e = req.getParameterNames();
+        while (e.hasMoreElements()) {
+            String name = (String)e.nextElement();
+            if(name.equalsIgnoreCase(paraName)) {
+                String value = req.getParameter(name);
+                return value;
+            }
+
+        }
+        return null;
     }
 
     /**

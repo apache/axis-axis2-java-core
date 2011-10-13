@@ -46,6 +46,7 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.QueryStringParser;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
@@ -65,10 +66,10 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -91,9 +92,8 @@ public class AxisServlet extends HttpServlet {
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
     
-    private static final Set<String> metadataQueryParamNames = new HashSet<String>(
-            Arrays.asList("wsdl2", "wsdl", "xsd", "policy"));
-    
+    private static final Set<String> metadataQueryParamNames;
+
     protected transient ConfigurationContext configContext;
     protected transient AxisConfiguration axisConfiguration;
 
@@ -114,6 +114,23 @@ public class AxisServlet extends HttpServlet {
     private transient AxisServletListener httpListener;
     private transient AxisServletListener httpsListener;
 
+    static {
+        Comparator comparator = new Comparator(){
+            public int compare(Object o1, Object o2) {
+                String string1 = (String) o1;
+                String string2 = (String) o2;
+                return string1.compareToIgnoreCase(string2);
+            }
+        };
+
+        metadataQueryParamNames= new TreeSet(comparator);
+        metadataQueryParamNames.add("wsdl2");
+        metadataQueryParamNames.add("wsdl");
+        metadataQueryParamNames.add("xsd");
+        metadataQueryParamNames.add("policy");
+
+
+    }
     /**
      * Implementaion of POST interface
      *
@@ -258,8 +275,8 @@ public class AxisServlet extends HttpServlet {
         if ((query != null) && new QueryStringParser(query).search(metadataQueryParamNames)) {
             // handling meta data exchange stuff
             agent.processListService(request, response);
-        } else if (requestURI.endsWith(".xsd") ||
-                requestURI.endsWith(".wsdl")) {
+        } else if (HttpUtils.endsWithIgnoreCase(requestURI , ".xsd") ||
+                HttpUtils.endsWithIgnoreCase(requestURI, ".wsdl")) {
             agent.processExplicitSchemaAndWSDL(request, response);
         } else if (requestURI.endsWith(LIST_SERVICES_SUFFIX) ||
                 requestURI.endsWith(LIST_FAULTY_SERVICES_SUFFIX)) {

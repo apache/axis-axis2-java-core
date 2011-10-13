@@ -92,7 +92,7 @@ public class HTTPWorker implements Worker {
             }
             if (uri.indexOf("?") < 0) {
                 if (!uri.endsWith(contextPath)) {
-                    if (uri.endsWith(".xsd") || uri.endsWith(".wsdl")) {
+                    if (HttpUtils.endsWithIgnoreCase(uri , ".xsd") || HttpUtils.endsWithIgnoreCase(uri , ".wsdl")){
                         HashMap services = configurationContext.getAxisConfiguration().getServices();
                         String file = uri.substring(uri.lastIndexOf("/") + 1,
                                 uri.length());
@@ -115,7 +115,7 @@ public class HTTPWorker implements Worker {
                     }
                 }
             }
-            if (uri.endsWith("?wsdl2")) {
+            if (HttpUtils.endsWithIgnoreCase(uri , "?wsdl2")) {
                 String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 6);
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
@@ -131,7 +131,7 @@ public class HTTPWorker implements Worker {
                     return;
                 }
             }
-            if (uri.endsWith("?wsdl")) {
+            if (HttpUtils.endsWithIgnoreCase(uri , "?wsdl")) {
                 /**
                  * service name can be hierarchical (axis2/services/foo/1.0.0/Version?wsdl) or
                  * normal (axis2/services/Version?wsdl).
@@ -153,7 +153,7 @@ public class HTTPWorker implements Worker {
                     return;
                 }
             }
-            if (uri.endsWith("?xsd")) {
+            if (HttpUtils.endsWithIgnoreCase(uri , "?xsd")) {
                 String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 4);
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
@@ -170,7 +170,7 @@ public class HTTPWorker implements Worker {
                 }
             }
             //cater for named xsds - check for the xsd name
-            if (uri.indexOf("?xsd=") > 0) {
+            if (HttpUtils.indexOfIngnoreCase(uri , "?xsd=") > 0) {
             	// fix for imported schemas
             	String[] uriParts = uri.split("[?]xsd=");
                 String serviceName =
@@ -250,14 +250,14 @@ public class HTTPWorker implements Worker {
                     }
                 }
             }
-            if (uri.indexOf("?wsdl2=") > 0) {
+            if (HttpUtils.indexOfIngnoreCase(uri , "?wsdl2=") > 0) {
                 String serviceName =
-                        uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?wsdl2="));
+                        uri.substring(uri.lastIndexOf("/") + 1, HttpUtils.lastIndexOfIgnoreCase(uri , "?wsdl2="));
                 if (processInternalWSDL(uri, configurationContext, serviceName, response, getHost(request))) return;
             }
-            if (uri.indexOf("?wsdl=") > 0) {
+            if (HttpUtils.indexOfIngnoreCase(uri , "?wsdl=") > 0) {
                 String serviceName =
-                        uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?wsdl="));
+                        uri.substring(uri.lastIndexOf("/") + 1, HttpUtils.lastIndexOfIgnoreCase(uri , "?wsdl="));
                 if (processInternalWSDL(uri, configurationContext, serviceName, response, getHost(request))) return;
             }
 
