@@ -1025,6 +1025,20 @@ public class JavaBeanWriter implements BeanWriter {
 
         if (metainf.isRestrictionBaseType(name) && metainf.getPatternFacet() != null) {
             XSLTUtils.addAttribute(model, "patternFacet", metainf.getPatternFacet(), property);
+            /*
+              if restriction use either maxLenFacet or minLenFacet then other xxxLenFacet get following default value
+              for minLenFacet = -1 as default
+               for maxLenFacet = 9223372036854775807 (Long.MAX_VALUE) as default
+             */
+            if(metainf.getMaxLengthFacet() != -1){
+                if(metainf.getMinLengthFacet() == -1){
+                    XSLTUtils.addAttribute(model, "minLenFacet", "-1", property);
+                }
+            }else{
+                if(metainf.getMinLengthFacet()!=-1){
+                    XSLTUtils.addAttribute(model, "maxLenFacet", Long.MAX_VALUE + "", property);
+                }
+            }
         }
     }
 

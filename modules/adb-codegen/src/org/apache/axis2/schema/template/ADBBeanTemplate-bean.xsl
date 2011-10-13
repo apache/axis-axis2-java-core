@@ -450,6 +450,18 @@
                                <xsl:choose>
                                     <xsl:when test="(@restrictionBaseType)">
                                        <xsl:choose>
+                                        <xsl:when test="(@maxLenFacet) and (@minLenFacet)  and (@patternFacet)">
+                                            if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt;= java.lang.String.valueOf(param).length())</xsl:if>
+                                                        &amp;&amp; <xsl:if test="(@maxLenFacet)"> (java.lang.String.valueOf(param).length() &lt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if>
+                                                        &amp;&amp; <xsl:if test="(@patternFacet)"> (org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).matches("<xsl:value-of select="$patternFacet"/>")) </xsl:if> ) {
+
+                                                this.<xsl:value-of select="$varName"/>=param;
+
+                                            }
+                                            else {
+                                                throw new java.lang.RuntimeException();
+                                            }
+                                        </xsl:when>
                                         <xsl:when test="(@patternFacet)">
                                             if (org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).matches("<xsl:value-of select="$patternFacet"/>")) {
                                                 this.<xsl:value-of select="$varName"/>=param;
