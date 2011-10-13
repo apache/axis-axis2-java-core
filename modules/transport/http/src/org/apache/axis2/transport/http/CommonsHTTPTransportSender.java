@@ -32,7 +32,7 @@ import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.transport.http.server.AxisHttpResponseImpl;
+import org.apache.axis2.transport.http.server.AxisHttpResponse;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpException;
@@ -309,7 +309,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     }
                 }
             }
-        } else if (transportInfo instanceof AxisHttpResponseImpl) {
+        } else if (transportInfo instanceof AxisHttpResponse) {
             Object customHeaders = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
             if (customHeaders != null) {
                 if (customHeaders instanceof List) {
@@ -317,7 +317,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     while (iter.hasNext()) {
                         Header header = (Header) iter.next();
                         if (header != null) {
-                            ((AxisHttpResponseImpl) transportInfo)
+                            ((AxisHttpResponse) transportInfo)
                                     .addHeader(header.getName(), header.getValue());
                         }
                     }
@@ -326,15 +326,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     while (iter.hasNext()) {
                         Map.Entry header = (Map.Entry) iter.next();
                         if (header != null) {
-                            ((AxisHttpResponseImpl) transportInfo)
+                            ((AxisHttpResponse) transportInfo)
                                     .addHeader((String) header.getKey(), (String) header.getValue());
                         }
                     }
                 }
             }
         }
-
-        format.setAutoCloseWriter(true);
 
         MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
         if (messageFormatter == null) throw new AxisFault("No MessageFormatter in MessageContext");
