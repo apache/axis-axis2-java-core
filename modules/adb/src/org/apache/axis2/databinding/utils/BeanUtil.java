@@ -56,8 +56,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.classloader.BeanInfoCache;
@@ -1327,9 +1325,10 @@ public class BeanUtil {
 	 * @return the DOOM document
 	 */
 	public static OMDocument convertOMtoDOM(OMContainer omElement) {
-		// use AXIOM DOOMAbstractFactory to get org.w3c.dom.Document
-		OMFactory doomFactory = DOOMAbstractFactory.getOMFactory();
-		StAXOMBuilder doomBuilder = new StAXOMBuilder(doomFactory,
+		// use an Axiom meta factory with feature "dom" to get org.w3c.dom.Document
+		OMFactory doomFactory = OMAbstractFactory.getMetaFactory(
+		        OMAbstractFactory.FEATURE_DOM).getOMFactory();
+		OMXMLParserWrapper doomBuilder = OMXMLBuilderFactory.createStAXOMBuilder(doomFactory,
 				omElement.getXMLStreamReader());
 		OMDocument domElement = doomBuilder.getDocument();
 		return domElement;
@@ -1344,7 +1343,7 @@ public class BeanUtil {
 	 */
 	public static OMElement convertDOMtoOM(OMFactory fac, Object document) {
 	    
-	    if(DocumentImpl.class.getName().equals(document.getClass().getName())) {
+	    if (document instanceof OMDocument) {
 		return ((OMDocument)document).getOMDocumentElement();
 		
 	    } else {
