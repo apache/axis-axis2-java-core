@@ -202,7 +202,7 @@
 
                                 <property name="axis2.home" value="${basedir}/target" />
                                 <path id="maven.dependency.classpath">
-                                    <path refid="maven.compile.classpath" />
+                                    <path refid="maven.runtime.classpath" />
                                 </path>
                                 <!-- compiling some custom wsdl files -->
                                 <property name="wsdl.source.dir" value="test-resources/wsdl" />
