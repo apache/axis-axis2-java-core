@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -38,7 +37,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-/** Makes the OMSourcedElementImpl object with the JSONDataSource inside. */
+/** Makes the OMSourcedElement object with the JSONDataSource inside. */
 
 public abstract class AbstractJSONOMBuilder implements Builder {
 
@@ -47,12 +46,12 @@ public abstract class AbstractJSONOMBuilder implements Builder {
     }
 
     /**
-     * gives the OMSourcedElementImpl using the incoming JSON stream
+     * gives the OMSourcedElement using the incoming JSON stream
      *
      * @param inputStream - incoming message as an input stream
      * @param contentType - content type of the message (eg: application/json)
      * @param messageContext - inflow message context
-     * @return OMSourcedElementImpl with JSONDataSource inside
+     * @return OMSourcedElement with JSONDataSource inside
      * @throws AxisFault
      */
 
@@ -146,7 +145,7 @@ public abstract class AbstractJSONOMBuilder implements Builder {
             throw AxisFault.makeFault(e);
         }
         AbstractJSONDataSource jsonDataSource = getDataSource(reader, prefix, localName);
-        return new OMSourcedElementImpl(localName, ns, factory, jsonDataSource);
+        return factory.createOMElement(jsonDataSource, localName, ns);
     }
 
     protected abstract AbstractJSONDataSource getDataSource(Reader

@@ -22,8 +22,7 @@ package org.apache.axis2.json;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.llom.OMElementImpl;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -66,7 +65,7 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
     }
 
     /**
-     * Gives the JSON message as an array of bytes. If the payload is an OMSourcedElementImpl and
+     * Gives the JSON message as an array of bytes. If the payload is an OMSourcedElement and
      * it contains a JSONDataSource with a correctly formatted JSON String, gets it directly from
      * the DataSource and returns as a byte array. If not, the OM tree is expanded and it is
      * serialized into the output stream and byte array is returned.
@@ -81,12 +80,12 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
 
     public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format) throws AxisFault {
         OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
-        //if the element is an OMSourcedElementImpl and it contains a JSONDataSource with
+        //if the element is an OMSourcedElement and it contains a JSONDataSource with
         //correct convention, directly get the JSON string.
 
-        if (element instanceof OMSourcedElementImpl &&
-                getStringToWrite(((OMSourcedElementImpl)element).getDataSource()) != null) {
-            String jsonToWrite = getStringToWrite(((OMSourcedElementImpl)element).getDataSource());
+        if (element instanceof OMSourcedElement &&
+                getStringToWrite(((OMSourcedElement)element).getDataSource()) != null) {
+            String jsonToWrite = getStringToWrite(((OMSourcedElement)element).getDataSource());
             return jsonToWrite.getBytes();
             //otherwise serialize the OM by expanding the tree
         } else {
@@ -139,7 +138,7 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
 
     /**
      * Writes the JSON message to the output stream with the correct convention. If the payload is
-     * an OMSourcedElementImpl and it contains a JSONDataSource with a correctly formatted JSON
+     * an OMSourcedElement and it contains a JSONDataSource with a correctly formatted JSON
      * String, gets it directly from the DataSource and writes to the output stream. If not, the OM
      * tree is expanded and it is serialized into the output stream.              *
      *
@@ -159,14 +158,14 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
             //Mapped format cannot handle element with namespaces.. So cannot handle Faults
             if (element instanceof SOAPFault) {
                 SOAPFault fault = (SOAPFault)element;
-                OMElement element2 = new OMElementImpl("Fault", null, element.getOMFactory());
+                OMElement element2 = element.getOMFactory().createOMElement("Fault", null);
                 element2.setText(fault.toString());
                 element = element2;
             }
-            if (element instanceof OMSourcedElementImpl &&
-                    getStringToWrite(((OMSourcedElementImpl)element).getDataSource()) != null) {
+            if (element instanceof OMSourcedElement &&
+                    getStringToWrite(((OMSourcedElement)element).getDataSource()) != null) {
                 String jsonToWrite =
-                        getStringToWrite(((OMSourcedElementImpl)element).getDataSource());
+                        getStringToWrite(((OMSourcedElement)element).getDataSource());
 
                 out.write(jsonToWrite.getBytes());
             } else {
@@ -200,9 +199,9 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
                 && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
             try {
                 String jsonString;
-                if (dataOut instanceof OMSourcedElementImpl && getStringToWrite(
-                        ((OMSourcedElementImpl) dataOut).getDataSource()) != null) {
-                    jsonString = getStringToWrite(((OMSourcedElementImpl)
+                if (dataOut instanceof OMSourcedElement && getStringToWrite(
+                        ((OMSourcedElement) dataOut).getDataSource()) != null) {
+                    jsonString = getStringToWrite(((OMSourcedElement)
                             dataOut).getDataSource());
                 } else {
                     StringWriter out = new StringWriter();
