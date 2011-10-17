@@ -35,7 +35,7 @@ import java.io.BufferedReader;
 
 /**
  * JSONDataSource keeps the JSON String inside and consumes it when needed. This is to be kept in
- * the OMSourcedElementImpl and can be used either to expand the tree or get the JSON String
+ * the OMSourcedElement and can be used either to expand the tree or get the JSON String
  * directly without expanding. This uses the "Mapped" JSON convention.
  */
 

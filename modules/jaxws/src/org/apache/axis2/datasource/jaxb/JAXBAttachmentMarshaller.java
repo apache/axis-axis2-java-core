@@ -20,9 +20,8 @@
 package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.context.MessageContext;
@@ -191,7 +190,6 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
      */
     private String addDataHandler(DataHandler dh, boolean isSWA) {
         String cid = null;
-        OMText textNode = null;
         
         // If this is an MTOMXMLStreamWriter then inform the writer 
         // that it must write out this attachment (I guess we should do this
@@ -200,22 +198,19 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
             if (log.isDebugEnabled()){ 
                 log.debug("adding DataHandler for SWA");
             }
-            textNode = new OMTextImpl(dh, null);
             // If old SWA attachments, get the ID and add the attachment to message
-            cid = textNode.getContentID();
+            cid = UIDGenerator.generateContentId();
             addDataHandler(dh, cid);   
         } else {
             if (log.isDebugEnabled()){ 
                 log.debug("adding DataHandler for MTOM");
             }
             if (writer instanceof MTOMXMLStreamWriter) {
-                textNode = new OMTextImpl(dh, null);
-                if(((MTOMXMLStreamWriter) writer).isOptimizedThreshold(textNode)){
+                cid = ((MTOMXMLStreamWriter)writer).prepareDataHandler(dh);
+                if (cid != null) {
                     if (log.isDebugEnabled()){ 
                         log.debug("The MTOM attachment is written as an attachment part.");
                     }
-                    cid = textNode.getContentID();
-                    ((MTOMXMLStreamWriter) writer).writeOptimized(textNode);
                     // Remember the attachment on the message.
                     addDataHandler(dh, cid);
                 } else {

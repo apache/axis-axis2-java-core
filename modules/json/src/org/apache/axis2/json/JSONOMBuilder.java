@@ -21,7 +21,7 @@ package org.apache.axis2.json;
 
 import java.io.Reader;
 
-/** Makes the OMSourcedElementImpl object with the JSONDataSource inside. */
+/** Makes the OMSourcedElement object with the JSONDataSource inside. */
 
 public class JSONOMBuilder extends AbstractJSONOMBuilder {
     @Override

@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.message.impl;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -34,8 +35,6 @@ import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
@@ -707,13 +706,13 @@ class XMLSpineImpl implements XMLSpine {
     private static SOAPFactory _getFactory(Protocol protocol) {
         SOAPFactory soapFactory;
         if (protocol == Protocol.soap11) {
-            soapFactory = new SOAP11Factory();
+            soapFactory = OMAbstractFactory.getSOAP11Factory();
         } else if (protocol == Protocol.soap12) {
-            soapFactory = new SOAP12Factory();
+            soapFactory = OMAbstractFactory.getSOAP12Factory();
         } else if (protocol == Protocol.rest) {
             // For REST, create a SOAP 1.1 Envelope to contain the message
             // This is consistent with Axis2.
-            soapFactory = new SOAP11Factory();
+            soapFactory = OMAbstractFactory.getSOAP11Factory();
         } else {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("RESTIsNotSupported"), null);
