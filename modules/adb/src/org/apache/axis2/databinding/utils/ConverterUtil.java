@@ -1360,18 +1360,27 @@ public class ConverterUtil {
      *
      * @return string
      */
-    public static String getStringFromDatahandler(DataHandler dataHandler) {
-        try {
-            InputStream inStream;
-            if (dataHandler == null) {
-                return "";
-            }
-            inStream = dataHandler.getDataSource().getInputStream();
-            byte[] data = IOUtils.getStreamAsByteArray(inStream);
-            return Base64.encode(data);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+	public static String getStringFromDatahandler(DataHandler dataHandler) {
+		InputStream inStream = null;
+		try {
+			if (dataHandler == null) {
+				return "";
+			}
+			inStream = dataHandler.getDataSource().getInputStream();
+			byte[] data = IOUtils.getStreamAsByteArray(inStream);
+			return Base64.encode(data);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+
+		} finally {
+			try {
+				if (inStream != null)
+					inStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
     }
 
     /**
