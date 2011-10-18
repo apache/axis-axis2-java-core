@@ -48,7 +48,6 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.mock.MockAxisHttpResponse;
 import org.apache.axis2.transport.http.mock.MockHttpServletResponse;
 import org.apache.axis2.transport.http.mock.MockHTTPResponse;
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.http.ProtocolVersion;
