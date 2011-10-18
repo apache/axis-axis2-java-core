@@ -29,6 +29,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.om.util.Base64;
+
 public class ConverterUtilTest extends TestCase {
 
     /** Test conversion of Big Integer */
@@ -168,5 +174,14 @@ public class ConverterUtilTest extends TestCase {
         TestCase.assertTrue(ConverterUtil.convertToString(c).endsWith("+09:00"));
         
     }
+    
+	public void testConvertToStringFromDataHandler() {
+		String inStr = "Sample Data";
+		DataSource ds = new ByteArrayDataSource(inStr.getBytes());
+		DataHandler dh = new DataHandler(ds);
+		String rawOutStr = ConverterUtil.convertToString(dh);
+		String outStr = new String(Base64.decode(rawOutStr));
+		assertEquals("Not expected content", inStr, outStr);
+	}
 
 }
