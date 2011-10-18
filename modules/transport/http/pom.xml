@@ -105,10 +105,5 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
         </dependency>
-        <dependency>
-            <groupId>jetty</groupId>
-            <artifactId>jetty</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

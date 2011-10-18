@@ -36,9 +36,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -56,48 +53,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.message.BasicRequestLine;
-import org.mortbay.http.SocketListener;
-import org.mortbay.jetty.Server;
 
 public class CommonsHTTPTransportSenderTest extends TestCase  {
-
-    /**
-     * Tests that HTTP connections are properly released when the server returns a 404 error. This
-     * is a regression test for AXIS2-5093.
-     * 
-     * @throws Exception
-     */
-    
-    public void testConnectionReleaseWith404() throws Exception {
-        // Create a Jetty server instance without any contexts. It will always return HTTP 404.
-        Server server = new Server();
-        SocketListener listener = new SocketListener();
-        server.addListener(listener);
-        server.start();
-        try {
-            ConfigurationContext configurationContext =
-                    ConfigurationContextFactory.createConfigurationContextFromURIs(
-                            CommonsHTTPTransportSenderTest.class.getResource("axis2.xml"), null);
-            ServiceClient serviceClient = new ServiceClient(configurationContext, null);
-            Options options = serviceClient.getOptions();
-            options.setTo(new EndpointReference("http://localhost:" + listener.getPort() + "/nonexisting"));
-            OMElement request = OMAbstractFactory.getOMFactory().createOMElement(new QName("urn:test", "test"));
-            // If connections are not properly released then we will end up with a
-            // ConnectionPoolTimeoutException here.
-            for (int i=0; i<200; i++) {
-                try {
-                    serviceClient.sendReceive(request);
-                } catch (AxisFault ex) {
-                    // Check that this is a 404 error
-                    assertNull(ex.getCause());
-                    assertTrue(ex.getMessage().contains("404"));
-                }
-                serviceClient.cleanupTransport();
-            }
-        } finally {
-            server.stop();
-        }
-    }    
 
     public void testInvokeWithServletBasedOutTransportInfo() throws Exception {
         MockHTTPResponse httpResponse = new MockHttpServletResponse();
@@ -128,34 +85,7 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
         assertEquals("Not the expected body content", envelope.toString().replace("utf", "UTF"),
                 new String(httpResponse.getByteArrayOutputStream().toByteArray()));
     }
-    
-    public void testInvokeWithEPR() throws Exception {
-        RequestLine line = new BasicRequestLine("", "", new ProtocolVersion("http", 1, 0));
-        MockHTTPResponse httpResponse = new MockAxisHttpResponse(line);
-        /*
-         * TODO - This method used to test client side support of
-         * CommonsHTTPTransportSender. At the moment this will return Connection
-         * refused exception because there is no server side support given. It
-         * is required to complete this test by adding a HTTP server and verify
-         * data in the server side.
-         */
-        try {
-            httpResponse = (MockAxisHttpResponse) configAndRun(httpResponse,
-                    (OutTransportInfo) httpResponse, "http://localhost:8080");
-            fail("Should raise org.apache.axis2.AxisFault: Connection refused");
-        } catch (AxisFault e) {
-        }
 
-        // assertEquals("Not the expected Header value", "application/xml",
-        // httpResponse.getHeaders().get("Content-Type"));
-        // assertEquals("Not the expected Header value", "custom-value",
-        // httpResponse.getHeaders().get("Custom-header"));
-        // assertEquals("Not the expected body content",
-        // envelope.toString().replace("utf", "UTF"), new String(httpResponse
-        // .getByteArrayOutputStream().toByteArray()));
-
-    }
-    
     public void testCleanup() throws AxisFault {
         TransportSender sender = new CommonsHTTPTransportSender();
         MessageContext msgContext = new MessageContext();
@@ -176,8 +106,8 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
         sender.init(confContext, transportOut);
 
     }
-    
-    private MockHTTPResponse configAndRun(MockHTTPResponse outResponse,
+
+    public static MockHTTPResponse configAndRun(MockHTTPResponse outResponse,
             OutTransportInfo outTransportInfo, String epr) throws Exception {
         MockHTTPResponse response = outResponse;
         ConfigurationContext confContext = ConfigurationContextFactory
@@ -213,7 +143,7 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
 
     }
     
-    private SOAPEnvelope getEnvelope() throws IOException, MessagingException {
+    static SOAPEnvelope getEnvelope() throws IOException, MessagingException {
         SOAPFactory soapFac = OMAbstractFactory.getSOAP11Factory();
         OMFactory omFac = OMAbstractFactory.getOMFactory();
         SOAPEnvelope enp = soapFac.createSOAPEnvelope();
