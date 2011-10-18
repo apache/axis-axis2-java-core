@@ -39,6 +39,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.Handler.InvocationResponse;
@@ -130,9 +131,9 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
             msgContext.setProperty(Constants.Configuration.TRANSPORT_URL, epr);
         }
         // set two Headers for testing
-        List<Header> headerList = new ArrayList<Header>();
-        Header header1 = new Header("Content-Type", "application/xml");
-        Header header2 = new Header("Custom-header", "custom-value");
+        List<NamedValue> headerList = new ArrayList<NamedValue>();
+        NamedValue header1 = new NamedValue("Content-Type", "application/xml");
+        NamedValue header2 = new NamedValue("Custom-header", "custom-value");
         headerList.add(header1);
         headerList.add(header2);
         msgContext.setProperty(HTTPConstants.HTTP_HEADERS, headerList);

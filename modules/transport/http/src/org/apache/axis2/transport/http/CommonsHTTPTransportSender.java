@@ -25,6 +25,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -34,7 +35,6 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.server.AxisHttpResponse;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
@@ -292,10 +292,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 if (customHeaders instanceof List) {
                     Iterator iter = ((List) customHeaders).iterator();
                     while (iter.hasNext()) {
-                        Header header = (Header) iter.next();
-                        if (header != null) {
+                        NamedValue nv = (NamedValue) iter.next();
+                        if (nv != null) {
                             servletBasedOutTransportInfo
-                                    .addHeader(header.getName(), header.getValue());
+                                    .addHeader(nv.getName(), nv.getValue());
                         }
                     }
                 } else if (customHeaders instanceof Map) {
@@ -315,10 +315,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 if (customHeaders instanceof List) {
                     Iterator iter = ((List) customHeaders).iterator();
                     while (iter.hasNext()) {
-                        Header header = (Header) iter.next();
-                        if (header != null) {
+                        NamedValue nv = (NamedValue) iter.next();
+                        if (nv != null) {
                             ((AxisHttpResponse) transportInfo)
-                                    .addHeader(header.getName(), header.getValue());
+                                    .addHeader(nv.getName(), nv.getValue());
                         }
                     }
                 } else if (customHeaders instanceof Map) {

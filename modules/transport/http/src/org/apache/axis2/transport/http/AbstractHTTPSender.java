@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportOutDescription;
@@ -627,15 +628,17 @@ public abstract class AbstractHTTPSender {
         // set the custom headers, if available
         Object httpHeadersObj = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
         if (httpHeadersObj != null) {
-            if (httpHeadersObj instanceof ArrayList) {
-                ArrayList httpHeaders = (ArrayList) httpHeadersObj;
-                Header header;
+            if (httpHeadersObj instanceof List) {
+                List httpHeaders = (List) httpHeadersObj;
                 for (int i = 0; i < httpHeaders.size(); i++) {
-                    header = (Header) httpHeaders.get(i);
-                    if (HTTPConstants.HEADER_USER_AGENT.equals(header.getName())) {
-                        isCustomUserAgentSet = true;
+                    NamedValue nv = (NamedValue) httpHeaders.get(i);
+                    if (nv != null) {
+                        Header header = new Header(nv.getName(), nv.getValue());
+                        if (HTTPConstants.HEADER_USER_AGENT.equals(header.getName())) {
+                            isCustomUserAgentSet = true;
+                        }
+                        method.addRequestHeader(header);
                     }
-                    method.addRequestHeader(header);
                 }
     
             }

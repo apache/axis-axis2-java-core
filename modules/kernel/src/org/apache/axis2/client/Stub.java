@@ -35,13 +35,13 @@ import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.commons.httpclient.Header;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -160,10 +160,8 @@ public abstract class Stub {
             headersObj = new java.util.ArrayList();
         }
         java.util.List headers = (java.util.List) headersObj;
-        Header header = new Header();
-        header.setName(name);
-        header.setValue(value);
-        headers.add(header);
+        NamedValue nameValue = new NamedValue(name , value);
+        headers.add(nameValue);
         messageContext.setProperty(HTTPConstants.HTTP_HEADERS, headers);
     }
 
