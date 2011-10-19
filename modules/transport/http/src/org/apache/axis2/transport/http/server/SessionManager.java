@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.SessionContext;
@@ -31,11 +31,11 @@ import java.util.Map;
 
 public class SessionManager {
 
-    private final Map sessionmap;
+    private final Map<String, SessionContext> sessionmap;
 
     public SessionManager() {
         super();
-        this.sessionmap = new HashMap();
+        this.sessionmap = new HashMap<String, SessionContext>();
     }
 
     public synchronized SessionContext getSessionContext(String sessionKey) {
@@ -44,7 +44,7 @@ public class SessionManager {
             sessionContext = (SessionContext) this.sessionmap.get(sessionKey);
         }
         if (sessionContext == null) {
-            sessionKey = UUIDGenerator.getUUID();
+            sessionKey = UIDGenerator.generateUID();
             sessionContext = new SessionContext(null);
             sessionContext.setCookieID(sessionKey);
             this.sessionmap.put(sessionKey, sessionContext);
@@ -56,13 +56,13 @@ public class SessionManager {
 
     private void cleanupServiceGroupContexts() {
         long currentTime = System.currentTimeMillis();
-        for (Iterator it = this.sessionmap.keySet().iterator(); it.hasNext();) {
+        for (Iterator<String> it = this.sessionmap.keySet().iterator(); it.hasNext();) {
             String cookieID = (String) it.next();
             SessionContext sessionContext = (SessionContext) this.sessionmap.get(cookieID);
             if ((currentTime - sessionContext.getLastTouchedTime()) >
                     sessionContext.sessionContextTimeoutInterval) {
                 it.remove();
-                Iterator serviceGroupContext = sessionContext.getServiceGroupContext();
+                Iterator<ServiceGroupContext> serviceGroupContext = sessionContext.getServiceGroupContext();
                 if (serviceGroupContext != null) {
                     while (serviceGroupContext.hasNext()) {
                         ServiceGroupContext groupContext =
@@ -75,7 +75,7 @@ public class SessionManager {
     }
 
     private void cleanupServiceContexts(final ServiceGroupContext serviceGroupContext) {
-        for (Iterator it = serviceGroupContext.getServiceContexts(); it.hasNext();) {
+        for (Iterator<ServiceContext> it = serviceGroupContext.getServiceContexts(); it.hasNext();) {
             ServiceContext serviceContext = (ServiceContext) it.next();
             DependencyManager.destroyServiceObject(serviceContext);
         }
