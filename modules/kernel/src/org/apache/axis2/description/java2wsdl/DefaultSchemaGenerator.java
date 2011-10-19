@@ -62,8 +62,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     /* This is required to get unique name for java.util.Map.
      * e.g - Map<String,Map<String,Object>> outerMap; 
      */
-    private static int mapCount = 1;
-    private static int entryCount = 1;
+    private int mapCount = 1;
+    private int entryCount = 1;
 
     private JAXRSModel classModel;
 

@@ -1620,8 +1620,8 @@ public class BeanUtil {
 						(ParameterizedType) paraType,
 						helper, objectSupplier);
 			} else {
-				// TODO - support for custom ParameterizedTypes
-				return null;
+                throw new AxisFault("Map parameter does not support for "
+                        + ((ParameterizedType) paraType).getRawType());
 			}
 
 		} else {
