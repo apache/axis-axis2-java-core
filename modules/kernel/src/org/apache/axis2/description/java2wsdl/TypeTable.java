@@ -340,11 +340,11 @@ public class TypeTable {
          */
         try {
             Class thisClass = Class.forName(name);
-            if(isSuperClass(thisClass, XMLGregorianCalendar.class)) {
+            if(XMLGregorianCalendar.class.isAssignableFrom(thisClass)) {
                 return (QName) simpleTypetoxsd.get(XMLGregorianCalendar.class
                         .getName());   
                 
-            } else if(isSuperClass(thisClass, Calendar.class)) {
+            } else if(Calendar.class.isAssignableFrom(thisClass)) {     
                 return (QName) simpleTypetoxsd.get(Calendar.class
                         .getName());                 
             }
@@ -353,31 +353,6 @@ public class TypeTable {
         }
         
         return null;
-    }
-    
-    /**
-     * This method check whether given child class in a extended class of given
-     * parent class. 
-     * TODO - may be need to come up with a better name for this method .
-     * 
-     * @param child
-     *            the child
-     * @param parent
-     *            the parent
-     * @return true, if is super class
-     */
-    public static boolean isSuperClass(Class child, Class parent) {
-        if (child == null || parent == null) {
-            return false;
-        }
-        Class superclass = child.getSuperclass();
-        while (superclass != null) {
-            if (superclass.getName().equals(parent.getName())) {
-                return true;
-            }
-            superclass = superclass.getSuperclass();
-        }
-        return false;
     }
 }
 
