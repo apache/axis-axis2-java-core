@@ -2017,7 +2017,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 	 *
 	 * @return the string
 	 */
-	private static String generateUniqueNameForMap() {
+	private String generateUniqueNameForMap() {
 		String name = Constants.MAP_MAP_ELEMENT_NAME + mapCount;
 		mapCount++;
 		return name;
@@ -2028,7 +2028,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 	 *
 	 * @return the unique name for map entry
 	 */
-	private static String generateUniqueNameForMapEntry() {
+	private String generateUniqueNameForMapEntry() {
 		String name = Constants.MAP_ENTRY_ELEMENT_NAME + entryCount;
 		entryCount++;
 		return name;
