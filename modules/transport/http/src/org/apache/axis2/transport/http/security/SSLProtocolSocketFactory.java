@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and         
  * limitations under the License.                                              
  */
-package org.apache.axis2.java.security;
+package org.apache.axis2.transport.http.security;
 
 import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
