@@ -20,10 +20,9 @@
 package org.apache.axis2.context.externalize;
 
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
@@ -32,7 +31,6 @@ import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -229,7 +227,7 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         }
         
         MessageInputStream mis = new MessageInputStream(in);
-        StAXBuilder  builder = null;
+        OMXMLParserWrapper builder = null;
         try {
             if (optimized) {
                 boolean isSOAP = true;
@@ -241,8 +239,7 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
                 envelope.buildWithAttachments();
             } else {
-                XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(mis, charSetEnc);
-                builder = new StAXSOAPModelBuilder(xmlreader, namespaceURI);
+                builder = OMXMLBuilderFactory.createSOAPModelBuilder(mis, charSetEnc);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
                 envelope.build();
             }
