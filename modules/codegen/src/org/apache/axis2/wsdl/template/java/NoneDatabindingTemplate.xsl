@@ -26,8 +26,7 @@
     <xsl:template match="databinders[@dbtype='none']">
         private  org.apache.axiom.om.OMElement fromOM(
         org.apache.axiom.om.OMElement param,
-        java.lang.Class type,
-        java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault {
+        java.lang.Class type) throws org.apache.axis2.AxisFault {
         return param;
         }
 

@@ -134,8 +134,7 @@
                                                      <xsl:value-of select="$inputtype"/> wrappedParam =
                                                                  (<xsl:value-of select="$inputtype"/>)fromOM(
                                                         msgContext.getEnvelope().getBody().getFirstElement(),
-                                                        <xsl:value-of select="$inputtype"/>.class,
-                                                        getEnvelopeNamespaces(msgContext.getEnvelope()));
+                                                        <xsl:value-of select="$inputtype"/>.class);
 
                                                         <xsl:if test="string-length(normalize-space($returntype)) > 0"><xsl:value-of select="$returnvariable"/> =</xsl:if>
                                                         <xsl:choose>
@@ -176,8 +175,7 @@
                                                  <xsl:value-of select="$inputtype"/> wrappedParam =
                                                              (<xsl:value-of select="$inputtype"/>)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
-                                    <xsl:value-of select="$inputtype"/>.class,
-                                    getEnvelopeNamespaces(msgContext.getEnvelope()));
+                                    <xsl:value-of select="$inputtype"/>.class);
                                                 <!-- Even when the parameters are 1 we have to see whether we have the
                                               wrapped parameters -->
                                                <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
@@ -296,19 +294,6 @@
         <!-- Call templates recursively-->
         //<xsl:apply-templates><xsl:with-param name="context">message-receiver</xsl:with-param></xsl:apply-templates>
 
-        /**
-        *  A utility method that copies the namepaces from the SOAPEnvelope
-        */
-        private java.util.Map getEnvelopeNamespaces(org.apache.axiom.soap.SOAPEnvelope env){
-        java.util.Map returnMap = new java.util.HashMap();
-        java.util.Iterator namespaceIterator = env.getBody().getNamespacesInScope();
-        while (namespaceIterator.hasNext()) {
-        org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
-        returnMap.put(ns.getPrefix(),ns.getNamespaceURI());
-        }
-        return returnMap;
-        }
-
         private org.apache.axis2.AxisFault createAxisFault(java.lang.Exception e) {
         org.apache.axis2.AxisFault f;
         Throwable cause = e.getCause();
@@ -383,8 +368,7 @@
                                 <xsl:when test="$paramCount =1">
                                     <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/> wrappedParam = (<xsl:value-of select="input/param[@location='body' and @type!='']/@type"/>)fromOM(
                                                         inMessage.getEnvelope().getBody().getFirstElement(),
-                                                        <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/>.class,
-                                                        getEnvelopeNamespaces(inMessage.getEnvelope()));
+                                                        <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/>.class);
                                             <xsl:choose>
                                                 <xsl:when test="($isUnwrapParameters)">
                                                     <!-- generate the references. the getters need to be
@@ -437,23 +421,6 @@
 
         <!-- Call templates recursively-->
         //<xsl:apply-templates><xsl:with-param name="context">message-receiver</xsl:with-param></xsl:apply-templates>
-
-
-
-        /**
-        *  A utility method that copies the namepaces from the SOAPEnvelope
-        */
-        private java.util.Map getEnvelopeNamespaces(org.apache.axiom.soap.SOAPEnvelope env){
-        java.util.Map returnMap = new java.util.HashMap();
-        java.util.Iterator namespaceIterator = env.getBody().getNamespacesInScope();
-        while (namespaceIterator.hasNext()) {
-        org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
-        returnMap.put(ns.getPrefix(),ns.getNamespaceURI());
-        }
-        return returnMap;
-        }
-
-
 
         }//end of class
 
@@ -525,8 +492,7 @@
                                              <xsl:value-of select="$inputtype"/> wrappedParam =
                                                          (<xsl:value-of select="$inputtype"/>)fromOM(
                                                         msgContext.getEnvelope().getBody().getFirstElement(),
-                                                        <xsl:value-of select="$inputtype"/>.class,
-                                                        getEnvelopeNamespaces(msgContext.getEnvelope()));
+                                                        <xsl:value-of select="$inputtype"/>.class);
                                             <!-- Even when the parameters are 1 we have to see whether we have the
                                           wrapped parameters -->
                                            <xsl:variable name="inputComplexType" select="count(input/param[@location='body' and @type!='']/param)"/>
@@ -553,8 +519,7 @@
                                              <xsl:value-of select="$inputtype"/> wrappedParam =
                                                          (<xsl:value-of select="$inputtype"/>)fromOM(
                                                         msgContext.getEnvelope().getBody().getFirstElement(),
-                                                        <xsl:value-of select="$inputtype"/>.class,
-                                                        getEnvelopeNamespaces(msgContext.getEnvelope()));
+                                                        <xsl:value-of select="$inputtype"/>.class);
                                             <!-- Even when the parameters are 1 we have to see whether we have the
                                           wrapped parameters -->
                                            <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
@@ -621,19 +586,6 @@
         }
         <!-- Call templates recursively-->
         //<xsl:apply-templates><xsl:with-param name="context">message-receiver</xsl:with-param></xsl:apply-templates>
-
-        /**
-        *  A utility method that copies the namepaces from the SOAPEnvelope
-        */
-        private java.util.Map getEnvelopeNamespaces(org.apache.axiom.soap.SOAPEnvelope env){
-        java.util.Map returnMap = new java.util.HashMap();
-        java.util.Iterator namespaceIterator = env.getBody().getNamespacesInScope();
-        while (namespaceIterator.hasNext()) {
-        org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
-        returnMap.put(ns.getPrefix(),ns.getNamespaceURI());
-        }
-        return returnMap;
-        }
 
         private org.apache.axis2.AxisFault createAxisFault(java.lang.Exception e) {
         org.apache.axis2.AxisFault f;

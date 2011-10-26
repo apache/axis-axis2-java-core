@@ -397,8 +397,7 @@
 
         private  java.lang.Object fromOM(
         org.apache.axiom.om.OMElement param,
-        java.lang.Class type,
-        java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+        java.lang.Class type) throws org.apache.axis2.AxisFault{
 
         try {
         <xsl:for-each select="param[not(@primitive) and @type!='']">

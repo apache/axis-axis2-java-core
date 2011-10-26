@@ -238,20 +238,13 @@
 
         public org.apache.xmlbeans.XmlObject fromOM(
         org.apache.axiom.om.OMElement param,
-        java.lang.Class type,
-        java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+        java.lang.Class type) throws org.apache.axis2.AxisFault{
         try{
         <xsl:for-each select="param[@type!='' and not(@primitive)]">
 
             if (<xsl:value-of select="@type"/>.class.equals(type)){
-            if (extraNamespaces!=null){
             return <xsl:value-of select="@type"/>.Factory.parse(
-            param.getXMLStreamReaderWithoutCaching(),
-            new org.apache.xmlbeans.XmlOptions().setLoadAdditionalNamespaces(extraNamespaces));
-            }else{
-            return <xsl:value-of select="@type"/>.Factory.parse(
-            param.getXMLStreamReaderWithoutCaching());
-            }
+            param.getXMLStreamReader(false, true));
             }
 
         </xsl:for-each>

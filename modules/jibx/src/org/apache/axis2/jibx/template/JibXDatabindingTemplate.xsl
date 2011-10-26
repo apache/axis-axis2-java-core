@@ -689,7 +689,7 @@
                         // build the message object from the details
                         String messageClassName = (String)faultMessageMap.get(faultElt.getQName());
                         Class messageClass = Class.forName(messageClassName);
-                        Object messageObject = fromOM(faultElt, messageClass, null);
+                        Object messageObject = fromOM(faultElt, messageClass);
                         java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
                             new Class[] { messageClass });
                         m.invoke(e, new Object[] { messageObject });
@@ -849,8 +849,7 @@
     }
     
     <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->
-    private static Object fromOM(org.apache.axiom.om.OMElement param, Class type,
-        java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+    private static Object fromOM(org.apache.axiom.om.OMElement param, Class type) throws org.apache.axis2.AxisFault{
         try {
             org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
             return ctx.unmarshalElement(type);

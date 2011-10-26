@@ -460,42 +460,33 @@
                     <xsl:when test="$style='document' or $style='rpc'">
                         <xsl:choose>
                             <xsl:when test="$outputtype='byte'">
-                                return toByte(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toByte(_returnEnv.getBody().getFirstElement());
                             </xsl:when>
                             <xsl:when test="$outputtype='char'">
-                                return toChar(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toChar(_returnEnv.getBody().getFirstElement());
                             </xsl:when>
                             <xsl:when test="$outputtype='double'">
-                                return toDouble(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toDouble(_returnEnv.getBody().getFirstElement());
                             </xsl:when>
                             <xsl:when test="$outputtype='float'">
-                                return toFloat(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toFloat(_returnEnv.getBody().getFirstElement());
                             </xsl:when>
                             <xsl:when test="$outputtype='int'">
-                                return toInt(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toInt(_returnEnv.getBody().getFirstElement());
                             </xsl:when>
                             <xsl:when test="$outputtype='long'">
-                                return toLong(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toLong(_returnEnv.getBody().getFirstElement());
                             </xsl:when>
                             <xsl:when test="$outputtype='short'">
-                                return toShort(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toShort(_returnEnv.getBody().getFirstElement());
                             </xsl:when>
                             <xsl:when test="$outputtype='boolean'">
-                                return toBoolean(_returnEnv.getBody().getFirstElement(),
-                                                                 getEnvelopeNamespaces(_returnEnv));
+                                return toBoolean(_returnEnv.getBody().getFirstElement());
                             </xsl:when>                            
                             <xsl:otherwise>
                                 java.lang.Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             <xsl:value-of select="$outputtype"/>.class,
-                                              getEnvelopeNamespaces(_returnEnv));
+                                             <xsl:value-of select="$outputtype"/>.class);
 
                                <xsl:choose>
                                    <xsl:when test="$outputparamcount=1">
@@ -535,7 +526,7 @@
                         //message class
                         java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
                         java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
-                        java.lang.Object messageObject = fromOM(faultElt,messageClass,null);
+                        java.lang.Object messageObject = fromOM(faultElt,messageClass);
                         java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
                                    new java.lang.Class[]{messageClass});
                         m.invoke(ex,new java.lang.Object[]{messageObject});
@@ -741,41 +732,32 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 <xsl:choose>
                                     <xsl:when test="$outputtype='byte'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toByte(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toByte(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='char'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toChar(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toChar(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='double'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toDouble(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toDouble(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='float'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toFloat(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toFloat(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='int'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toInt(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toInt(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='long'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toLong(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toLong(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='short'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toShort(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toShort(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>
                                     <xsl:when test="$outputtype='boolean'">
-                                        callback.receiveResult<xsl:value-of select="@name"/>(toBoolean(resultEnv.getBody().getFirstElement(),
-                                                                         getEnvelopeNamespaces(resultEnv)));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toBoolean(resultEnv.getBody().getFirstElement()));
                                     </xsl:when>                                    
                                     <xsl:otherwise>
                                         java.lang.Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         <xsl:value-of select="$outputtype"/>.class,
-                                                                         getEnvelopeNamespaces(resultEnv));
+                                                                         <xsl:value-of select="$outputtype"/>.class);
                                         callback.receiveResult<xsl:value-of select="@name"/>(<xsl:choose>
                                         <xsl:when test="$outputtype=''">);</xsl:when>
                                         <xsl:when test="$outputparamcount=1">
@@ -811,7 +793,7 @@
 													//message class
 													java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
 														java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
-													java.lang.Object messageObject = fromOM(faultElt,messageClass,null);
+													java.lang.Object messageObject = fromOM(faultElt,messageClass);
 													java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
 															new java.lang.Class[]{messageClass});
 													m.invoke(ex,new java.lang.Object[]{messageObject});
@@ -1069,7 +1051,7 @@
                               //message class
                               java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
                               java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
-                              java.lang.Object messageObject = fromOM(faultElt,messageClass,null);
+                              java.lang.Object messageObject = fromOM(faultElt,messageClass);
                               java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
                                          new java.lang.Class[]{messageClass});
                               m.invoke(ex,new java.lang.Object[]{messageObject});
@@ -1121,20 +1103,6 @@
             </xsl:if>
           </xsl:if>
         </xsl:for-each>
-
-
-       /**
-        *  A utility method that copies the namepaces from the SOAPEnvelope
-        */
-       private java.util.Map getEnvelopeNamespaces(org.apache.axiom.soap.SOAPEnvelope env){
-        java.util.Map returnMap = new java.util.HashMap();
-        java.util.Iterator namespaceIterator = env.getBody().getNamespacesInScope();
-        while (namespaceIterator.hasNext()) {
-            org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
-            returnMap.put(ns.getPrefix(),ns.getNamespaceURI());
-        }
-       return returnMap;
-    }
 
     <xsl:if test="//@policy">
     ////////////////////////////////////////////////////////////////////////

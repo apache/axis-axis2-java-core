@@ -115,8 +115,7 @@
                 <xsl:choose>
                     <xsl:when test="$propertyType='byte'">
                         private byte toByte (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -130,8 +129,7 @@
                     </xsl:when>
                     <xsl:when test="$propertyType='char'">
                         private char toChar (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -145,8 +143,7 @@
                     </xsl:when>
                     <xsl:when test="$propertyType='double'">
                         private double toDouble (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -160,8 +157,7 @@
                     </xsl:when>
                     <xsl:when test="$propertyType='float'">
                         private float toFloat (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -175,8 +171,7 @@
                     </xsl:when>
                     <xsl:when test="$propertyType='int'">
                         private int toInt (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -190,8 +185,7 @@
                     </xsl:when>
                     <xsl:when test="$propertyType='long'">
                         private long toLong (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -205,8 +199,7 @@
                     </xsl:when>
                     <xsl:when test="$propertyType='short'">
                         private short toShort (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -220,8 +213,7 @@
                     </xsl:when>
                     <xsl:when test="$propertyType='boolean'">
                         private boolean toBoolean (
-                            org.apache.axiom.om.OMElement param,
-                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
                                 javax.xml.bind.JAXBContext context = wsContext;
                                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -246,8 +238,7 @@
 
         private java.lang.Object fromOM (
             org.apache.axiom.om.OMElement param,
-            java.lang.Class type,
-            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+            java.lang.Class type) throws org.apache.axis2.AxisFault{
             try {
                 javax.xml.bind.JAXBContext context = wsContext;
                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
