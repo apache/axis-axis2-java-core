@@ -201,6 +201,21 @@ public class CodeGenerationUtility {
                 });
 
                 sc.parseSchema((InputSource) schemaToInputSourceMap.get(key));
+                sc.getOptions().addGrammar((InputSource) schemaToInputSourceMap.get(key));
+
+                for (Object property : properties.keySet()){
+                    String propertyName = (String) property;
+                    if (propertyName.startsWith("X")) {
+                        String[] args = null;
+                        String propertyValue = (String) properties.get(property);
+                        if (propertyValue != null) {
+                            args = new String[]{"-" + propertyName, propertyValue};
+                        } else {
+                            args = new String[]{"-" + propertyName};
+                        }
+                        sc.getOptions().parseArguments(args);
+                    }
+                }
 
                 // Bind the XML
                 S2JJAXBModel jaxbModel = sc.bind();
