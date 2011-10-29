@@ -19,13 +19,14 @@
 
 package org.apache.axis2.transport.http.util;
 
-import org.apache.commons.httpclient.methods.multipart.PartBase;
-import org.apache.commons.httpclient.util.EncodingUtil;
+//import org.apache.commons.httpclient.methods.multipart.PartBase;
+//import org.apache.commons.httpclient.util.EncodingUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class ComplexPart extends PartBase {
+@Deprecated
+public class ComplexPart /* extends PartBase */ {
 
     /**
      * Default content encoding of string parameters.
@@ -62,12 +63,12 @@ public class ComplexPart extends PartBase {
      */
     public ComplexPart(String name, String value, String charset) {
 
-        super(
-                name,
-                DEFAULT_CONTENT_TYPE,
-                charset == null ? DEFAULT_CHARSET : charset,
-                DEFAULT_TRANSFER_ENCODING
-        );
+//        super(
+//                name,
+//                DEFAULT_CONTENT_TYPE,
+//                charset == null ? DEFAULT_CHARSET : charset,
+//                DEFAULT_TRANSFER_ENCODING
+//        );
         if (value == null) {
             throw new IllegalArgumentException("Value may not be null");
         }
@@ -96,7 +97,7 @@ public class ComplexPart extends PartBase {
      */
     private byte[] getContent() {
         if (content == null) {
-            content = EncodingUtil.getBytes(value, getCharSet());
+//            content = EncodingUtil.getBytes(value, getCharSet());
         }
         return content;
     }
@@ -126,7 +127,7 @@ public class ComplexPart extends PartBase {
      * @see org.apache.commons.httpclient.methods.multipart.BasePart#setCharSet(java.lang.String)
      */
     public void setCharSet(String charSet) {
-        super.setCharSet(charSet);
+//        super.setCharSet(charSet);
         this.content = null;
     }
 

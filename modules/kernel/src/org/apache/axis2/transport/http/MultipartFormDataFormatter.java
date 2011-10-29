@@ -23,19 +23,16 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.OMMultipartWriter;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.http.util.ComplexPart;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
-import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.commons.httpclient.methods.multipart.StringPart;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -85,23 +82,14 @@ public class MultipartFormDataFormatter implements MessageFormatter {
      *         message format.
      */
     public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-
         OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
-
-        Part[] parts = createMultipatFormDataRequest(omElement);
-        if (parts.length > 0) {
-            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            try {
-
-                // This is accessing a class of Commons-FlieUpload
-                Part.sendParts(bytesOut, parts, format.getMimeBoundary().getBytes());
-            } catch (IOException e) {
-                throw AxisFault.makeFault(e);
-            }
+        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+        try {
+            createMultipatFormDataRequest(omElement, bytesOut, format);
             return bytesOut.toByteArray();
-        }
-
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        } catch (IOException e) {
+            throw new AxisFault(e.getMessage());
+        }     
     }
 
     /**
@@ -175,14 +163,18 @@ public class MultipartFormDataFormatter implements MessageFormatter {
 
     /**
      * @param dataOut
+     * @param bytesOut 
+     * @param format 
      * @return
+     * @throws IOException 
      */
-    private Part[] createMultipatFormDataRequest(OMElement dataOut) {
-        ArrayList parts = new ArrayList();
+    private void createMultipatFormDataRequest(OMElement dataOut, ByteArrayOutputStream bytesOut,
+            OMOutputFormat format) throws IOException {
         if (dataOut != null) {
             Iterator iter1 = dataOut.getChildElements();
             OMFactory omFactory = OMAbstractFactory.getOMFactory();
-            while (iter1.hasNext()) {
+            OMMultipartWriter writer = new OMMultipartWriter(bytesOut, format);
+            while (iter1.hasNext()) {               
                 OMElement ele = (OMElement) iter1.next();
                 Iterator iter2 = ele.getChildElements();
                 // check whether the element is a complex type
@@ -190,15 +182,20 @@ public class MultipartFormDataFormatter implements MessageFormatter {
                     OMElement omElement =
                             omFactory.createOMElement(ele.getQName().getLocalPart(), null);
                     omElement.addChild(
-                            processComplexType(omElement, ele.getChildElements(), omFactory));
-                    parts.add(new ComplexPart(ele.getQName().getLocalPart(), omElement.toString()));
+                            processComplexType(omElement, ele.getChildElements(), omFactory));                   
+                    OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
+                            DISPOSITION_TYPE, "name=\"" + omElement.getLocalName() + "\"");
+                    partOutputStream.write(omElement.toString().getBytes());
+                    partOutputStream.close();
                 } else {
-                    parts.add(new StringPart(ele.getQName().getLocalPart(), ele.getText()));
+                    OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
+                            DISPOSITION_TYPE, "name=\"" + ele.getLocalName() + "\"");
+                    partOutputStream.write(ele.getText().getBytes());
+                    partOutputStream.close();
                 }
             }
+            writer.complete();            
         }
-        Part[] partsArray = new Part[parts.size()];
-        return (Part[]) parts.toArray(partsArray);
     }
 
     /**
@@ -224,4 +221,8 @@ public class MultipartFormDataFormatter implements MessageFormatter {
         }
         return omElement;
     }
+    
+    public static final String DEFAULT_CONTENT_TYPE = "text/plain; charset=US-ASCII";
+    public static final String DISPOSITION_TYPE = "form-data";
+    
 }
