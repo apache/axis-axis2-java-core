@@ -19,6 +19,7 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axiom.mime.Header;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -33,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -184,12 +186,14 @@ public class MultipartFormDataFormatter implements MessageFormatter {
                     omElement.addChild(
                             processComplexType(omElement, ele.getChildElements(), omFactory));                   
                     OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
-                            DISPOSITION_TYPE, "name=\"" + omElement.getLocalName() + "\"");
+                            Collections.singletonList(new Header("Content-Disposition",
+                                    DISPOSITION_TYPE + "; name=\"" + omElement.getLocalName() + "\"")));
                     partOutputStream.write(omElement.toString().getBytes());
                     partOutputStream.close();
                 } else {
                     OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
-                            DISPOSITION_TYPE, "name=\"" + ele.getLocalName() + "\"");
+                            Collections.singletonList(new Header("Content-Disposition",
+                                    DISPOSITION_TYPE + "; name=\"" + ele.getLocalName() + "\"")));
                     partOutputStream.write(ele.getText().getBytes());
                     partOutputStream.close();
                 }
