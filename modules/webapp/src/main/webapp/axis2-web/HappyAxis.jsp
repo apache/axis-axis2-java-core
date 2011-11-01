@@ -318,7 +318,7 @@
 
     private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://axisversion.sample/xsd", "ns1");
+        OMNamespace omNs = fac.createOMNamespace("http://axisversion.sample", "ns1");
         OMElement method = fac.createOMElement("getVersion", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         method.addChild(value);
