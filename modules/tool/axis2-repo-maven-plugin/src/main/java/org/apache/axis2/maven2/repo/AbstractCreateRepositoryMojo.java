@@ -22,7 +22,6 @@ package org.apache.axis2.maven2.repo;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,10 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -48,35 +43,11 @@ import org.codehaus.plexus.util.StringUtils;
 
 public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     /**
-     * @component
-     */
-    private ArtifactFactory factory;
-    
-    /**
-     * @component
-     */
-    private ArtifactResolver resolver;
-    
-    /**
      * @parameter expression="${project.artifacts}"
      * @readonly
      * @required
      */
     private Set<Artifact> projectArtifacts;
-    
-    /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @readonly
-     * @required
-     */
-    private List remoteRepositories;
-    
-    /**
-     * @parameter expression="${localRepository}"
-     * @readonly
-     * @required
-     */
-    private ArtifactRepository localRepository;
     
     /**
      * @parameter expression="${project.collectedProjects}"
@@ -213,11 +184,16 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
             }
             selectArtifacts(artifacts, modules, "mar");
             selectArtifacts(artifacts, services, "aar");
-            artifacts = replaceIncompleteArtifacts(artifacts);
             Map<String,ArchiveDeployer> deployers = new HashMap<String,ArchiveDeployer>();
             deployers.put("aar", new ArchiveDeployer(outputDirectory, servicesDirectory, "services.list", generateFileLists, stripServiceVersion));
             deployers.put("mar", new ArchiveDeployer(outputDirectory, modulesDirectory, "modules.list", generateFileLists, stripModuleVersion));
             for (Artifact artifact : artifacts) {
+                File file = artifact.getFile();
+                if (file == null || file.isDirectory()) {
+                    throw new MojoFailureException("Artifact " + artifact.getId() + " not available. " +
+                    		"This typically means that it is part of the reactor but that the " +
+                    		"package phase has not been executed.");
+                }
                 String type = artifact.getType();
                 ArchiveDeployer deployer = deployers.get(type);
                 if (deployer == null) {
@@ -254,33 +230,5 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 throw new MojoFailureException("The following " + type + " artifacts have not been found: " + set);
             }
         }
-    }
-
-    /**
-     * Replace artifacts that have not been packaged yet. This occurs if the artifact is
-     * part of the reactor build and the compile phase has been executed, but not the
-     * the package phase. These artifacts will be replaced by new artifact objects
-     * resolved from the repository.
-     * 
-     * @param artifacts the original sets of {@link Artifact} objects
-     * @return a set of {@link Artifact} objects built as described above
-     * @throws MojoExecutionException
-     */
-    private Set<Artifact> replaceIncompleteArtifacts(Set<Artifact> artifacts) throws MojoExecutionException {
-        Set<Artifact> result = new HashSet<Artifact>();
-        for (Artifact artifact : artifacts) {
-            File file = artifact.getFile();
-            if (file != null && file.isDirectory()) {
-                artifact = factory.createDependencyArtifact(artifact.getGroupId(), artifact.getArtifactId(),
-                        artifact.getVersionRange(), artifact.getType(), artifact.getClassifier(), artifact.getScope());
-                try {
-                    resolver.resolve(artifact, remoteRepositories, localRepository);
-                } catch (AbstractArtifactResolutionException ex) {
-                    throw new MojoExecutionException(ex.getMessage(), ex);
-                }
-            }
-            result.add(artifact);
-        }
-        return result;
     }
 }
