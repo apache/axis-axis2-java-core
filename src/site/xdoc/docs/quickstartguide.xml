@@ -114,7 +114,7 @@ little housekeeping. First off, you'll need to get your environment
 ready for working with Axis2. Fortunately, it involves just a few
 simple steps:</p>
 <ol>
-<li>Download and install Java (Minimum version is JDK1.4). Set the
+<li>Download and install Java (Minimum version is JDK1.5). Set the
 JAVA_HOME environment variable to the pathname of the directory
 into which you installed the JDK release.</li>
 <li>Download Axis2 and extract it to a target directory.</li>
