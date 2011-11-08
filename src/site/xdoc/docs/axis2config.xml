@@ -45,10 +45,7 @@ configuration). This document explains the above configurations in detail.</p>
 </ul>
 <a name="Global_Configuration"></a>
 
-<h2>Global Configuration</h2>
-<ul>
-  <li>Writing axis2.xml</li>
-</ul>
+<h2>Global Configuration (axis2.xml)</h2>
 
 <p>All the configurations that require starting Axis2 are obtained from
 axis2.xml. The way to specify them is extremely simple and easy. The document
@@ -291,10 +288,7 @@ and it should be noted that the Implementation class should implement
 AxisObserver interface, and the class has to be available in the classpath.
 <a name="Service_Configuration"></a></p>
 
-<h2><font>Service Configuration</font></h2>
-<ul>
-  <li><font>Writing services.xml</font></li>
-</ul>
+<h2><font>Service Configuration (services.xml)</font></h2>
 
 <p><font>The description of services are specified using services.xml. Each
 service archive file needs to have a services.xml in order to be a valid
@@ -302,7 +296,11 @@ service and it should be available in the META-INF directory of the archive
 file(aar) which should be located in AXIS2_HOME/repository/services in 
 standalone use. In war distribution this will be axis2/WEB-INF/services 
 inside the servlet container. A very simple services.xml is shown below:</font></p>
-<pre>&lt;service name="name of the service" scope="name of the scope" class="full qualifide name the service lifecycle class"   targetNamespace="target namespase for the service"&gt;
+<pre>
+&lt;service name="name of the service" scope="name of the scope" 
+    class="fully qualified name the service lifecycle class"   
+    targetNamespace="target namespace for the service"&gt;
+    
     &lt;Description&gt; The description of the service  &lt;/Description&gt;  
 
     &lt;transports&gt; 
@@ -323,7 +321,8 @@ inside the servlet container. A very simple services.xml is shown below:</font><
         &lt;module ref=" a module name "/&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
-&lt;/service&gt;</pre>
+&lt;/service&gt;
+</pre>
 <p><strong>name</strong>: The service name will be the name of the archive
 file if the .aar file contains only one service, or else the name of the
 service will be the name given by the name attribute.</p>
@@ -366,10 +365,12 @@ has to add the "operation" tag and override it. In a non-Java scenario or if
 you do not have a service class, then all the operations the user wants to
 expose by the service has to be indicated in the services.xml. It is
 specified as follows:</p>
-<pre>    &lt;operation name="echoString"&gt;
-        &lt;module ref=" a module name "/&gt;
-        &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
-    &lt;/operation&gt;</pre>
+<pre>    
+&lt;operation name="echoString"&gt;
+   &lt;module ref=" a module name "/&gt;
+   &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
+&lt;/operation&gt;
+</pre>
 <p>The only compulsory attribute here is "name", which represents the
 operation name that is going to be exposed. Any operation can contain module
 references as well as any number of parameters. The most interesting thing is
@@ -379,10 +380,7 @@ corresponding operation. If you do not specify the message receiver, then the
 default message receiver will perform the operation. <br/>
 <a name="Module_Configuration"></a></p>
 
-<h2>Module Configuration</h2>
-<ul>
-  <li>Writing module.xml</li>
-</ul>
+<h2>Module Configuration (module.xml)</h2>
 
 <p>The description of the module is specified using the module.xml. Each
 module archive file needs to have a module.xml in order to be a valid module,
@@ -392,7 +390,8 @@ In war distribution this will be axis2/WEB-INF/modules inside the servlet contai
 </p>
 
 <p>A very simple module.xml is shown below:</p>
-<pre>&lt;module class="org.apache.module.Module1Impl"&gt;
+<pre>
+&lt;module class="org.apache.module.Module1Impl"&gt;
     &lt;InFlow&gt;
         .
         .
@@ -416,7 +415,8 @@ In war distribution this will be axis2/WEB-INF/modules inside the servlet contai
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
         &lt;parameter name="para1" locked="xsd:true"&gt;10&lt;/parameter&gt;
     &lt;/operation&gt;
-&lt;/module&gt;</pre>
+&lt;/module&gt;
+</pre>
 <p><strong>class:</strong> (Optional attribute) Indicates the module
 implementation class. A module may or may not contain a module implementation
 class since the module can also be a collection of handlers. If a module
