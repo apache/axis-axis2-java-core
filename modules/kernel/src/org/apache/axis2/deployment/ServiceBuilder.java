@@ -409,6 +409,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 			for (String opName : excludeops) {
 				service.removeOperation(new QName(opName));
+				service.addExcludeOperationName(opName);
 			}
 
 			// Need to call the same logic towice

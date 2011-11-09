@@ -256,8 +256,11 @@ public class AxisService extends AxisDescription {
         private CopyOnWriteArrayList<MessageContextListener> messageContextListeners = 
             new CopyOnWriteArrayList<MessageContextListener>();
 
-        // names list keep to preserve the parameter order
-        private List operationsNameList;
+    // names list keep to preserve the parameter order
+    private List operationsNameList;
+    
+    // Excluded operations name list to know which operations to exclude.
+    private List excludeOperationsNameList;
 
 	private String[] eprs;
 	private boolean customWsdl = false;
@@ -325,6 +328,7 @@ public class AxisService extends AxisDescription {
 		super();
 		this.operationsAliasesMap = new HashMap();
 		this.invalidOperationsAliases = new ArrayList();
+		this.excludeOperationsNameList = new ArrayList();
 		moduleConfigmap = new HashMap();
 		// by default service scope is for the request
 		scope = Constants.SCOPE_REQUEST;
@@ -597,6 +601,36 @@ public class AxisService extends AxisDescription {
 		moduleRefs.add(moduleref);
 	}
 
+    /**
+     * Adds operation name to exclude list.
+     * 
+     * @param operation operation name to add to exclude list
+     * 
+     */
+    public void addExcludeOperationName(String operation){        
+        excludeOperationsNameList.add(operation);       
+    }
+    
+    /**
+     * Removes operation name from exclude list.
+     * 
+     * @param operation operation name to remove from exclude list
+     * 
+     */
+    public void removeExcludeOperationName(String operation){        
+        excludeOperationsNameList.remove(operation);       
+    }
+    
+    /**
+     * Returns whether operation name is in exclude list. 
+     * 
+     * @param operation name to check if operation is in the exlude list.
+     * @return boolean indicating whether operation name is in exlude list. 
+     */
+    public boolean isExcludedOperation(String operation){        
+        return excludeOperationsNameList.contains(operation);       
+    }
+	
 	/*
 	 * (non-Javadoc)
 	 * 

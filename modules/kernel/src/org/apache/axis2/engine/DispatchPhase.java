@@ -83,6 +83,21 @@ public class DispatchPhase extends Phase {
 
         AxisService service = msgContext.getAxisService();
         AxisOperation operation = msgContext.getAxisOperation();
+        
+        // If operation is an excluded operation, throw an exception.
+        // This code is needed to enable exclude operations for static WSDL files. 
+        // Without this code, if one specifies excludeOperations in services.xml
+        // file and a static WSDL is used that contains the operation, 
+        // the operation would succeed.
+        if (operation != null 
+                && service.isExcludedOperation(operation.getName().getLocalPart())) {
+            AxisFault fault = new AxisFault(Messages.getMessage("operationnotfoundforepr2",
+                    ((toEPR != null) ? toEPR.getAddress()
+                            : ""), msgContext.getWSAAction()));
+            fault.setFaultCode(org.apache.axis2.namespace.Constants.FAULT_CLIENT);
+            throw fault;
+        }
+
         // If we're configured to do so, check the service for a single op...
         if (operation == null &&
                 JavaUtils.isTrue(service.getParameterValue(AxisService.SUPPORT_SINGLE_OP))) {
