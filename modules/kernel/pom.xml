@@ -122,13 +122,6 @@
         </resources>
         <testResources>
             <testResource>
-                <targetPath>../test-resources</targetPath>
-                <directory>test-resources</directory>
-                <includes>
-                    <include>**/**</include>
-                </includes>
-            </testResource>
-            <testResource>
                 <directory>test-resources/deployment/ClasspathModule</directory>
                 <includes>
                     <include>**/**</include>
@@ -192,6 +185,9 @@
                         <phase>process-test-resources</phase>
                         <configuration>
                             <tasks unless="maven.test.skip">
+                                <copy todir="${project.build.directory}/test-resources">
+                                    <fileset dir="${basedir}/test-resources"/>
+                                </copy>
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/service2" />
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/echo" />
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/invalidservice" />
