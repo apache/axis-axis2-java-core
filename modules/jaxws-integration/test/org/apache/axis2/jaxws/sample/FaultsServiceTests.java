@@ -85,9 +85,9 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         Object fault = ((BaseFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == BaseFault.class);
+        assertSame(BaseFault.class, fault.getClass());
         BaseFault bf = (BaseFault) fault;
-        assertTrue(bf.getA() == 2);
+        assertEquals(2, bf.getA());
         
         // Repeat to verify 
         try{
@@ -105,9 +105,9 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         fault = ((BaseFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == BaseFault.class);
+        assertSame(BaseFault.class, fault.getClass());
         bf = (BaseFault) fault;
-        assertTrue(bf.getA() == 2);
+        assertEquals(2, bf.getA());
         
     }
     /**
@@ -131,10 +131,10 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         Object fault = ((BaseFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == DerivedFault1.class);
+        assertSame(DerivedFault1.class, fault.getClass());
         DerivedFault1 df = (DerivedFault1) fault;
-        assertTrue(df.getA() == 2);
-        assertTrue(df.getB().equals("DerivedFault1"));
+        assertEquals(2, df.getA());
+        assertEquals("DerivedFault1", df.getB());
         
         // Repeat to verify behavior
         try{
@@ -152,10 +152,10 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         fault = ((BaseFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == DerivedFault1.class);
+        assertSame(DerivedFault1.class, fault.getClass());
         df = (DerivedFault1) fault;
-        assertTrue(df.getA() == 2);
-        assertTrue(df.getB().equals("DerivedFault1"));
+        assertEquals(2, df.getA());
+        assertEquals("DerivedFault1", df.getB());
         
     }
     /**
@@ -179,11 +179,11 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         Object fault = ((BaseFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == DerivedFault2.class);
+        assertSame(DerivedFault2.class, fault.getClass());
         DerivedFault2 df = (DerivedFault2) fault;
-        assertTrue(df.getA() == 2);
-        assertTrue(df.getB().equals("DerivedFault2"));  
-        assertTrue(df.getC() == 2);
+        assertEquals(2, df.getA());
+        assertEquals("DerivedFault2", df.getB());  
+        assertEquals(2F, df.getC());
         
         // Repeat to verify behavior
         try{
@@ -201,11 +201,11 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         fault = ((BaseFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == DerivedFault2.class);
+        assertSame(DerivedFault2.class, fault.getClass());
         df = (DerivedFault2) fault;
-        assertTrue(df.getA() == 2);
-        assertTrue(df.getB().equals("DerivedFault2"));  
-        assertTrue(df.getC() == 2);
+        assertEquals(2, df.getA());
+        assertEquals("DerivedFault2", df.getB());  
+        assertEquals(2F, df.getC());
     }
     
     /**
@@ -230,12 +230,12 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         Object fault = ((ComplexFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == ComplexFault.class);
+        assertSame(ComplexFault.class, fault.getClass());
         ComplexFault cf = (ComplexFault) fault;
-        assertTrue(cf.getA() == 2);
-        assertTrue(cf.getB().equals("Complex"));  
-        assertTrue(cf.getC() == 2);
-        assertTrue(cf.getD() == 5);
+        assertEquals(2, cf.getA());
+        assertEquals("Complex", cf.getB());  
+        assertEquals(2F, cf.getC());
+        assertEquals(5, cf.getD());
         
         
         // Repeat to verify behavior
@@ -255,12 +255,12 @@ public class FaultsServiceTests extends AbstractTestCase {
         
         assertNotNull(exception);
         fault = ((ComplexFault_Exception)exception).getFaultInfo();
-        assertTrue(fault.getClass() == ComplexFault.class);
+        assertSame(ComplexFault.class, fault.getClass());
         cf = (ComplexFault) fault;
-        assertTrue(cf.getA() == 2);
-        assertTrue(cf.getB().equals("Complex"));  
-        assertTrue(cf.getC() == 2);
-        assertTrue(cf.getD() == 5);
+        assertEquals(2, cf.getA());
+        assertEquals("Complex", cf.getB());  
+        assertEquals(2F, cf.getC());
+        assertEquals(5, cf.getD());
     }
     
     
@@ -280,7 +280,7 @@ public class FaultsServiceTests extends AbstractTestCase {
             SimpleFault fault = (SimpleFault) e;
 
             int faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo == 100);
+            assertEquals(100, faultInfo);
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected SimpleFault but received " + e.getClass());
         }
@@ -296,7 +296,7 @@ public class FaultsServiceTests extends AbstractTestCase {
             SimpleFault fault = (SimpleFault) e;
 
             int faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo == 100);
+            assertEquals(100, faultInfo);
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected SimpleFault but received " + e.getClass());
         }
@@ -319,8 +319,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         }catch(InvalidTickerFault_Exception e){
             InvalidTickerFault_Exception fault = (InvalidTickerFault_Exception) e;
 
-            assertTrue(fault.getLegacyData1().equals("LEGC"));
-            assertTrue(fault.getLegacyData2() == 123);
+            assertEquals("LEGC", fault.getLegacyData1());
+            assertEquals(123, fault.getLegacyData2());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected InvalidTickerFault_Exception but received " + e.getClass());
         }
@@ -333,8 +333,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         }catch(InvalidTickerFault_Exception e){
             InvalidTickerFault_Exception fault = (InvalidTickerFault_Exception) e;
 
-            assertTrue(fault.getLegacyData1().equals("LEGC"));
-            assertTrue(fault.getLegacyData2() == 123);
+            assertEquals("LEGC", fault.getLegacyData1());
+            assertEquals(123, fault.getLegacyData2());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected InvalidTickerFault_Exception but received " + e.getClass());
         }
@@ -354,8 +354,8 @@ public class FaultsServiceTests extends AbstractTestCase {
             BaseFault_Exception fault = (BaseFault_Exception) e;
 
             BaseFault faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo != null);
-            assertTrue(faultInfo.getA() == 400);
+            assertNotNull(faultInfo);
+            assertEquals(400, faultInfo.getA());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected BaseFault_Exception but received " + e.getClass());
         }
@@ -369,8 +369,8 @@ public class FaultsServiceTests extends AbstractTestCase {
             BaseFault_Exception fault = (BaseFault_Exception) e;
 
             BaseFault faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo != null);
-            assertTrue(faultInfo.getA() == 400);
+            assertNotNull(faultInfo);
+            assertEquals(400, faultInfo.getA());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected BaseFault_Exception but received " + e.getClass());
         }
@@ -390,9 +390,9 @@ public class FaultsServiceTests extends AbstractTestCase {
             DerivedFault1_Exception fault = (DerivedFault1_Exception) e;
 
             DerivedFault1 faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo != null);
-            assertTrue(faultInfo.getA() == 100);
-            assertTrue(faultInfo.getB().equals("DF1"));
+            assertNotNull(faultInfo);
+            assertEquals(100, faultInfo.getA());
+            assertEquals("DF1", faultInfo.getB());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected DerivedFault1_Exception but received " + e.getClass());
         }
@@ -406,9 +406,9 @@ public class FaultsServiceTests extends AbstractTestCase {
             DerivedFault1_Exception fault = (DerivedFault1_Exception) e;
 
             DerivedFault1 faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo != null);
-            assertTrue(faultInfo.getA() == 100);
-            assertTrue(faultInfo.getB().equals("DF1"));
+            assertNotNull(faultInfo);
+            assertEquals(100, faultInfo.getA());
+            assertEquals("DF1", faultInfo.getB());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected DerivedFault1_Exception but received " + e.getClass());
         }
@@ -428,10 +428,10 @@ public class FaultsServiceTests extends AbstractTestCase {
             DerivedFault2_Exception fault = (DerivedFault2_Exception) e;
 
             DerivedFault2 faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo != null);
-            assertTrue(faultInfo.getA() == 200);
-            assertTrue(faultInfo.getB().equals("DF2"));
-            assertTrue(faultInfo.getC() == 80.0F);
+            assertNotNull(faultInfo);
+            assertEquals(200, faultInfo.getA());
+            assertEquals("DF2", faultInfo.getB());
+            assertEquals(80.0F, faultInfo.getC());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected DerivedFault1_Exception but received " + e.getClass());
         }
@@ -445,10 +445,10 @@ public class FaultsServiceTests extends AbstractTestCase {
             DerivedFault2_Exception fault = (DerivedFault2_Exception) e;
 
             DerivedFault2 faultInfo = fault.getFaultInfo();
-            assertTrue(faultInfo != null);
-            assertTrue(faultInfo.getA() == 200);
-            assertTrue(faultInfo.getB().equals("DF2"));
-            assertTrue(faultInfo.getC() == 80.0F);
+            assertNotNull(faultInfo);
+            assertEquals(200, faultInfo.getA());
+            assertEquals("DF2", faultInfo.getB());
+            assertEquals(80.0F, faultInfo.getC());
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected DerivedFault1_Exception but received " + e.getClass());
         }
@@ -478,10 +478,10 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("hello world"));
-        assertTrue(soapFault.getFaultActor().equals("actor"));
-        assertTrue(soapFault.getDetail() == null);
+        assertNotNull(soapFault);
+        assertEquals("hello world", soapFault.getFaultString());
+        assertEquals("actor", soapFault.getFaultActor());
+        assertNull(soapFault.getDetail());
         
         // Repeat to verify behavior
         try{
@@ -502,10 +502,10 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         sfe = (SOAPFaultException) exception;
         soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("hello world"));
-        assertTrue(soapFault.getFaultActor().equals("actor"));
-        assertTrue(soapFault.getDetail() == null);
+        assertNotNull(soapFault);
+        assertEquals("hello world", soapFault.getFaultString());
+        assertEquals("actor", soapFault.getFaultActor());
+        assertNull(soapFault.getDetail());
     }
     
     /**
@@ -532,15 +532,15 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("hello world2"));
-        assertTrue(soapFault.getFaultActor().equals("actor2"));
-        assertTrue(soapFault.getDetail() != null);
+        assertNotNull(soapFault);
+        assertEquals("hello world2", soapFault.getFaultString());
+        assertEquals("actor2", soapFault.getFaultActor());
+        assertNotNull(soapFault.getDetail());
         DetailEntry de = (DetailEntry) soapFault.getDetail().getDetailEntries().next();
-        assertTrue(de != null);
-        assertTrue(de.getNamespaceURI().equals("urn://sample"));
-        assertTrue(de.getLocalName().equals("detailEntry"));
-        assertTrue(de.getValue().equals("Texas"));
+        assertNotNull(de);
+        assertEquals("urn://sample", de.getNamespaceURI());
+        assertEquals("detailEntry", de.getLocalName());
+        assertEquals("Texas", de.getValue());
         
         // Repeat to verify behavior
         try{
@@ -561,15 +561,15 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         sfe = (SOAPFaultException) exception;
         soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("hello world2"));
-        assertTrue(soapFault.getFaultActor().equals("actor2"));
-        assertTrue(soapFault.getDetail() != null);
+        assertNotNull(soapFault);
+        assertEquals("hello world2", soapFault.getFaultString());
+        assertEquals("actor2", soapFault.getFaultActor());
+        assertNotNull(soapFault.getDetail());
         de = (DetailEntry) soapFault.getDetail().getDetailEntries().next();
-        assertTrue(de != null);
-        assertTrue(de.getNamespaceURI().equals("urn://sample"));
-        assertTrue(de.getLocalName().equals("detailEntry"));
-        assertTrue(de.getValue().equals("Texas"));
+        assertNotNull(de);
+        assertEquals("urn://sample", de.getNamespaceURI());
+        assertEquals("detailEntry", de.getLocalName());
+        assertEquals("Texas", de.getValue());
     }
     
     /**
@@ -596,8 +596,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("java.lang.NullPointerException"));
+        assertNotNull(soapFault);
+        assertEquals("java.lang.NullPointerException", soapFault.getFaultString());
         
         // Repeat to verify behavior
         try{
@@ -618,8 +618,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         sfe = (SOAPFaultException) exception;
         soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("java.lang.NullPointerException"));
+        assertNotNull(soapFault);
+        assertEquals("java.lang.NullPointerException", soapFault.getFaultString());
     }
     
     /**
@@ -646,8 +646,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("Null Pointer Exception occurred"));
+        assertNotNull(soapFault);
+        assertEquals("Null Pointer Exception occurred", soapFault.getFaultString());
         
         
         // Repeat to verify behavior
@@ -669,8 +669,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         sfe = (SOAPFaultException) exception;
         soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("Null Pointer Exception occurred"));
+        assertNotNull(soapFault);
+        assertEquals("Null Pointer Exception occurred", soapFault.getFaultString());
     }
     
     /**
@@ -698,8 +698,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("This is a WebServiceException"));
+        assertNotNull(soapFault);
+        assertEquals("This is a WebServiceException", soapFault.getFaultString());
         
         // Repeat to verify behavior
         try{
@@ -721,8 +721,8 @@ public class FaultsServiceTests extends AbstractTestCase {
         assertNotNull(exception);
         sfe = (SOAPFaultException) exception;
         soapFault = sfe.getFault();
-        assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("This is a WebServiceException"));
+        assertNotNull(soapFault);
+        assertEquals("This is a WebServiceException", soapFault.getFaultString());
     }
     
     /**
@@ -734,12 +734,12 @@ public class FaultsServiceTests extends AbstractTestCase {
         float total = proxy.getQuote("INJECTION");
         
         // If resource injection occurred properly, then the a value of 1234567 is expected
-        assertTrue("Resource Injection Failed", total == 1234567);
+        assertEquals("Resource Injection Failed", 1234567F, total);
         
         // Repeat to verify behavior
         total = proxy.getQuote("INJECTION");
         
         // If resource injection occurred properly, then the a value of 1234567 is expected
-        assertTrue("Resource Injection Failed", total == 1234567);
+        assertEquals("Resource Injection Failed", 1234567F, total);
     }
 }
