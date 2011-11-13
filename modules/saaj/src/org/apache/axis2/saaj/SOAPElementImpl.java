@@ -173,10 +173,23 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     /* (non-Javadoc)
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
-    public SOAPElement addChildElement(String localName, String prefix, String uri)
+    public SOAPElement addChildElement(String localName, String prefix, String namespaceURI)
             throws SOAPException {
-        OMNamespace omNamespace = prefix == null || prefix.length() == 0 ? element.declareDefaultNamespace(uri) : element.declareNamespace(uri, prefix);
-        return addChildElement(localName, omNamespace.getPrefix());
+        if (prefix == null) {
+            prefix = "";
+        }
+        SOAPElementImpl childEle =
+                new SOAPElementImpl((ElementImpl)getOwnerDocument().
+                        createElementNS(namespaceURI, prefix.length() == 0 ? localName : prefix + ":" + localName));
+    
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.element.setNamespace(prefix.length() == 0
+                ? childEle.element.declareDefaultNamespace(namespaceURI)
+                : childEle.element.declareNamespace(namespaceURI, prefix));
+        element.appendChild(childEle.element);
+        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
+        return childEle;
     }
 
     /* (non-Javadoc)
@@ -189,18 +202,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
             throw new SOAPException("Namespace not declared for the give prefix: " + prefix);
         }
 
-        SOAPElementImpl childEle =
-                new SOAPElementImpl((ElementImpl)getOwnerDocument().
-                        createElementNS(namespaceURI, prefix + ":" + localName));
-
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(prefix == null || prefix.length() == 0
-                ? childEle.element.declareDefaultNamespace(namespaceURI)
-                : childEle.element.declareNamespace(namespaceURI, prefix));
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
-        childEle.setParentElement(this);
-        return childEle;
+        return addChildElement(localName, prefix, namespaceURI);
     }
 
     /* (non-Javadoc)
