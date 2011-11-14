@@ -38,7 +38,6 @@ import org.apache.axis2.util.OptionsParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -170,11 +169,11 @@ public class SimpleHTTPServer implements TransportListener {
 
             // should all transports be started? specified as "-t all"
             if (startAllTransports) {
-                Iterator iter = configctx.getAxisConfiguration().
+                Iterator<String> iter = configctx.getAxisConfiguration().
                         getTransportsIn().keySet().iterator();
                 while (iter.hasNext()) {
-                    QName trp = (QName) iter.next();
-                    if (!new QName(Constants.TRANSPORT_HTTP).equals(trp)) {
+                    String trp = iter.next();
+                    if (!Constants.TRANSPORT_HTTP.equals(trp)) {
                         trsIn = (TransportInDescription)
                                 configctx.getAxisConfiguration().getTransportsIn().get(trp);
                         listenerManager.addListener(trsIn, false);
