@@ -917,7 +917,7 @@ public class BeanUtil {
                                          helper, true, objectSupplier, genericType);
                 valueList.add(o);
             }
-            if (valueList.get(0) == null) {
+            if (valueList.size() == 1 && valueList.get(0) == null) {
                 retObjs[count] = null;
             } else {
                 retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
