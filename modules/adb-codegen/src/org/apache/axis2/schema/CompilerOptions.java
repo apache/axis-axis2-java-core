@@ -204,4 +204,18 @@ public class CompilerOptions {
     public void setUseWrapperClasses(boolean useWrapperClasses) {
         this.isUseWrapperClasses = useWrapperClasses;
     }
+
+    /**
+     * Should unexpected elements be ignored (log warning) instead of
+     * creating an exception?
+     */
+    private boolean isIgnoreUnexpected;
+
+    public boolean isIgnoreUnexpected() {
+        return isIgnoreUnexpected;
+    }
+
+    public void setIgnoreUnexpected(boolean isIgnoreUnexpected) {
+        this.isIgnoreUnexpected = isIgnoreUnexpected;
+    }
 }

@@ -606,6 +606,10 @@ public class ExtensionUtility {
         if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.USE_WRAPPER_CLASSES)){
             options.setUseWrapperClasses(true);
         }
+        
+        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.IGNORE_UNEXPECTED)){
+            options.setIgnoreUnexpected(true);
+        }
 
         //set helper mode
         //this becomes effective only if the classes are unpacked

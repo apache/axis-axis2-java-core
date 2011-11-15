@@ -35,6 +35,7 @@
         <xsl:variable name="restriction" select="@restriction"/>
         <xsl:variable name="mapperClass" select="@mapperClass"/>
         <xsl:variable name="usewrapperclasses" select="@usewrapperclasses"/>
+        <xsl:variable name="ignoreunexpected" select="@ignoreunexpected"/>
         <xsl:variable name="package" select="@package"/>
         <xsl:variable name="helpername"><xsl:value-of select="$name"/>Helper</xsl:variable>
 
@@ -1400,12 +1401,14 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             <xsl:if test="not(property/enumFacet)"><xsl:value-of select="$fullyQualifiedName"/> object = new <xsl:value-of select="$fullyQualifiedName"/>();</xsl:if>
             <xsl:if test="property/enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
             int event;
+            javax.xml.namespace.QName currentQName;
             java.lang.String nillableValue = null;
             try {
                 <!-- Advance to our start element, or if we are a complex type, to our first property start element or the outer end element if no properties -->
                 while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
                     reader.next();
 
+                currentQName = reader.getName();
                 <xsl:if test="@nillable">
                    nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
                    if ("true".equals(nillableValue) || "1".equals(nillableValue)){
@@ -2039,7 +2042,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             </xsl:if>
                             <xsl:if test="$ordered and $min!=0">
                                 else{
-                                    // A start element we are not expecting indicates an invalid parameter was passed
+                                    // 1 - A start element we are not expecting indicates an invalid parameter was passed
                                     throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                                 }
                             </xsl:if>
@@ -2049,16 +2052,39 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
                                 reader.next();
                             if (reader.isStartElement())
-                                // A start element we are not expecting indicates a trailing invalid property
-                                throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                // 2 - A start element we are not expecting indicates a trailing invalid property
+                                <xsl:if test="$ignoreunexpected">
+                                {
+                                    log.warn("Unexpected subelement " + reader.getLocalName());
+                                    // consume everything, ending on the current element's endtag
+                                    while (!(reader.isEndElement() &amp;&amp; reader.getName().equals(currentQName))) {
+                                        reader.next();
+                                    }
+                                }
+                                </xsl:if>
+                                <xsl:if test="not($ignoreunexpected)">
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                </xsl:if>
                         </xsl:if>
 
                         <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
                         <xsl:if test="$unordered">
                           <xsl:if test="not(property/enumFacet)">
                              else{
-                                        // A start element we are not expecting indicates an invalid parameter was passed
-                                        throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                        // 3 - A start element we are not expecting indicates an invalid parameter was passed
+                                        <xsl:if test="$ignoreunexpected">
+                                            log.warn("Unexpected subelement " + reader.getLocalName());
+                                            // consume everything, ending on the unexpected subelement's endtag
+                                            javax.xml.namespace.QName subQName = reader.getName();
+                                            while (!(reader.isEndElement() &amp;&amp; reader.getName().equals(subQName))) {
+                                                reader.next();
+                                            }
+                                            // skip past this extra element completely
+                                            reader.next();
+                                        </xsl:if>
+                                        <xsl:if test="not($ignoreunexpected)">
+                                            throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
+                                        </xsl:if>
                              }
                           </xsl:if>
                              } else reader.next();  <!-- At neither a start nor an end element, skip it -->

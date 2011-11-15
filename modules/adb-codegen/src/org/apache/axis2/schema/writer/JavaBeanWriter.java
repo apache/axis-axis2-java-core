@@ -107,6 +107,8 @@ public class JavaBeanWriter implements BeanWriter {
 
     private boolean isSuppressPrefixesMode = false;
 
+    private boolean isIgnoreUnexpected = false;
+
     /**
      * package for the mapping class
      */
@@ -170,6 +172,7 @@ public class JavaBeanWriter implements BeanWriter {
             packageName = options.getPackageName();
             writeClasses = options.isWriteOutput();
             isUseWrapperClasses = options.isUseWrapperClasses();
+            isIgnoreUnexpected = options.isIgnoreUnexpected();
 
             if (!writeClasses) {
                 wrapClasses = false;
@@ -550,6 +553,10 @@ public class JavaBeanWriter implements BeanWriter {
 
         if (isUseWrapperClasses){
             XSLTUtils.addAttribute(model, "usewrapperclasses", "yes", rootElt);
+        }
+
+        if (isIgnoreUnexpected) {
+            XSLTUtils.addAttribute(model, "ignoreunexpected", "yes", rootElt);
         }
 
         if (metainf.isExtension()) {

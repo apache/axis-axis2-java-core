@@ -166,6 +166,8 @@ public class SchemaConstants {
         public static final String OFF_STRICT_VALIDATION = "osv";
         // this option is used to use Wrapper classes for primitives
         public static final String USE_WRAPPER_CLASSES = "uwc";
+        // This option logs warnings instead of throwing exceptions for unexpected elements
+        public static final String IGNORE_UNEXPECTED = "iu";
 
     }
 
