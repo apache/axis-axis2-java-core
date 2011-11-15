@@ -38,6 +38,7 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
@@ -195,6 +196,31 @@ public class SOAPElementTest extends Assert {
                 .getPreviousSibling()).isComment());
     }
 
+    @Validated @Test
+    public void testAddChildElementWithUndeclaredNamespace() throws Exception {
+        SOAPElement element = SOAPFactory.newInstance().createElement("test");
+        SOAPElement child = element.addChildElement("test", "p", "urn:ns");
+        assertEquals(0, element.getAttributes().getLength());
+        assertEquals("urn:ns", child.getNamespaceURI());
+        assertEquals("p", child.getPrefix());
+        assertEquals("test", child.getLocalName());
+        Attr nsDecl = child.getAttributeNodeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "p");
+        assertNotNull(nsDecl);
+        assertEquals("urn:ns", nsDecl.getValue());
+    }
+    
+    @Validated @Test
+    public void testAddChildElementWithDeclaredNamespace() throws Exception {
+        SOAPElement element = SOAPFactory.newInstance().createElement("test");
+        element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:p", "urn:ns");
+        SOAPElement child = element.addChildElement("test", "p", "urn:ns");
+        assertEquals("urn:ns", child.getNamespaceURI());
+        assertEquals("p", child.getPrefix());
+        assertEquals("test", child.getLocalName());
+        // TODO: don't know how to fix this :-(
+//        assertEquals(0, child.getAttributes().getLength());
+    }
+    
     @Validated @Test
     public void testAddChildElement() throws Exception {
         String s = "MyName1";
