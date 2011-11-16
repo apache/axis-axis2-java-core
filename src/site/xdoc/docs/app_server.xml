@@ -138,6 +138,20 @@
                     Axis2 to use a repository location outside of the <tt>installedApps</tt> directory.
                 </p>
             </subsection>
+            <subsection name="Known issues">
+                <p>
+                    On some WAS versions the following error may occur, e.g. when accessing a WSDL exposed by Axis2:
+                </p>
+<pre>java.lang.VerifyError: JVMVRFY013 class loading constraint violated;
+class=org/apache/xerces/dom/CoreDocumentImpl, method=getDomConfig()Lorg/w3c/dom/DOMConfiguration</pre>
+                <p>
+                    This is caused by the XmlBeans library
+                    packaged with Axis2. This library contains a set of interfaces in the <code>org.w3c.dom</code> package
+                    and this may cause issues with class loaders that don't use a simple parent-first policy.
+                    To avoid this issue, upgrade your WAS to a more recent fix pack level, remove the XmlBeans library
+                    from the Axis2 WAR or remove the content of the <code>org.w3c.dom</code> package from the XmlBeans library.
+                </p>
+            </subsection>
         </section>
     </body>
 </document>
