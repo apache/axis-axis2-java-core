@@ -101,6 +101,10 @@ public class TribesUtil {
         return (new String(domain) + ":" + TribesConstants.RPC_INIT_CHANNEL).getBytes();
     }
 
+    public static byte[] getRpcMessagingChannelId(byte[] domain) {
+        return (new String(domain) + ":" + TribesConstants.RPC_MESSAGING_CHANNEL).getBytes();
+    }
+
     public static boolean isInDomain(Member member, byte[] domain) {
         return Arrays.equals(domain, member.getDomain());
     }

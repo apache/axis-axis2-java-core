@@ -26,6 +26,11 @@ public final class TribesConstants {
     public static final String RPC_INIT_CHANNEL = "rpc.init.channel";
 
     /**
+     * The ID of the RPC messaging channel
+     */
+    public static final String RPC_MESSAGING_CHANNEL = "rpc.msg.channel";
+
+    /**
      * The ID of the RPC membership message channel. This channel is only used when WKA
      * membership discovery mechanism is used
      */
