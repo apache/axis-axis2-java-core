@@ -329,7 +329,7 @@ public class BeanUtil {
                         String className = typeTable.getClassNameForQName(typeQName);
                         if (className != null) {
                             try {
-                                beanClass = Loader.loadClass(beanClass.getClassLoader(), className);
+                                beanClass = Loader.loadClass(axisService.getClassLoader(), className);
                             } catch (ClassNotFoundException ce) {
                                 throw AxisFault.makeFault(ce);
                             }
