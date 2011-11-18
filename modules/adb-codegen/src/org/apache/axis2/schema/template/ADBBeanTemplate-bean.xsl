@@ -1314,6 +1314,13 @@
                     </xsl:when>
                     <!-- end of ours block-->
                     <xsl:otherwise>
+
+                        <xsl:if test="property/@default">
+                            if (<xsl:value-of select="$varName"/> instanceof org.apache.axis2.databinding.ADBBean){
+                                    ((org.apache.axis2.databinding.ADBBean)<xsl:value-of select="$varName"/>).serialize(MY_QNAME, xmlWriter,true);
+                            } else {
+                        </xsl:if>
+
                         <xsl:if test="not(property/@simple)">
                             java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
                             java.lang.String _localName = "<xsl:value-of select="$propertyName"/>";
@@ -1421,6 +1428,9 @@
                                                }
                             </xsl:if>
                             xmlWriter.writeEndElement();
+                         <xsl:if test="property/@default">
+                            }
+                         </xsl:if>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
