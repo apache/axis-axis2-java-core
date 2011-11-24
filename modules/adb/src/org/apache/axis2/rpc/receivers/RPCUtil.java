@@ -377,7 +377,7 @@ public class RPCUtil {
                                     method,
                                     envelope,
                                     service.isElementFormDefault(),
-                                    null,
+                                    service.getTypeTable(),
                                     partName);
                         }
                     }
