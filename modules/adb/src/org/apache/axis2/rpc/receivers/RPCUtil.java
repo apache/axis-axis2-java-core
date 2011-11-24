@@ -322,7 +322,7 @@ public class RPCUtil {
                                     ns,
                                     envelope,
                                     service.isElementFormDefault(),
-                                    null,
+                                    service.getTypeTable(),
                                     partName);
                         }
                     }
