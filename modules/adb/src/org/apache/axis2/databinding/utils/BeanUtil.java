@@ -456,8 +456,11 @@ public class BeanUtil {
             // to support polymorphism in POJO approach.
             // Retrieve the type name of the instance from the 'type' attribute
             // and retrieve the class.
-            
-            String instanceTypeName = beanElement.getAttributeValue(new QName(Constants.XSI_NAMESPACE, "type"));
+            String instanceTypeName = null;
+            if (beanClass != null && !beanClass.isArray()) {
+                instanceTypeName = beanElement.getAttributeValue(new QName(
+                        Constants.XSI_NAMESPACE, "type"));
+            }
             boolean hexBin = false;
             if (instanceTypeName != null) {
                 MessageContext messageContext = MessageContext.getCurrentMessageContext();
