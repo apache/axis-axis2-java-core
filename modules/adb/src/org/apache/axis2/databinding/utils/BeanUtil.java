@@ -389,7 +389,7 @@ public class BeanUtil {
 									.getStringValue(value)));            
 		            	}else{    
 		            		 XMLStreamReader xr = BeanUtil.getPullParser(value,
-		            				 elementName, typeTable, true, false);
+		            				 elementName, typeTable, qualified, false);
 		                     OMXMLParserWrapper stAXOMBuilder =
 		                             OMXMLBuilderFactory.createStAXOMBuilder(
 		                                     OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
