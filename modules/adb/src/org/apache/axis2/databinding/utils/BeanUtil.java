@@ -372,10 +372,17 @@ public class BeanUtil {
 								.getComplexSchemaMap().get(
 										getClassName(beanClass));
 						OMFactory fac = OMAbstractFactory.getOMFactory();
-						QName elementName = new QName(elemntNameSpace
-								.getNamespaceURI(), property.getName(),
-								qNamefortheType.getPrefix());
-						OMElement element;
+                        QName elementName;
+                        OMElement element;
+                        if (elemntNameSpace != null) {
+                            elementName = new QName(
+                                    elemntNameSpace.getNamespaceURI(),
+                                    property.getName(),
+                                    qNamefortheType.getPrefix());
+                        } else {
+                            elementName = new QName(property.getName());
+                        }					
+						
 						if(SimpleTypeMapper.isSimpleType(value)){
 							element = fac.createOMElement(elementName);
 							element.addChild(fac.createOMText(SimpleTypeMapper
