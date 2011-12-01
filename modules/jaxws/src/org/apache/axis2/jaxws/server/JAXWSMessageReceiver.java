@@ -52,8 +52,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.Binding;
 import javax.xml.ws.WebServiceException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.PrivilegedAction;
 
 /**
@@ -268,14 +266,16 @@ public class JAXWSMessageReceiver implements MessageReceiver {
      * @param service - Current AxisService instance
      */
     private void mergeDeploymentCL(AxisService service) {
-        ClassLoader deploymentClassLoader = service.getClassLoader();
-        if (deploymentClassLoader instanceof URLClassLoader) {
-            // get URLs from deployment class loader
-            URL[] deploymentClassLoaderUrls = ((URLClassLoader) deploymentClassLoader).getURLs();
-            // create a new class loader by setting the current TCCL as the parent
-            setContextClassLoader(new URLClassLoader(deploymentClassLoaderUrls,
-                    getContextClassLoader()));
-        }
+        setContextClassLoader(service.getClassLoader());
+        //TODO - need to remove
+//        ClassLoader deploymentClassLoader = service.getClassLoader();
+//        if (deploymentClassLoader instanceof URLClassLoader) {
+//            // get URLs from deployment class loader
+//            URL[] deploymentClassLoaderUrls = ((URLClassLoader) deploymentClassLoader).getURLs();
+//            // create a new class loader by setting the current TCCL as the parent
+//            setContextClassLoader(new URLClassLoader(deploymentClassLoaderUrls,
+//                    getContextClassLoader()));
+//        }
     }
 
     /**
