@@ -52,8 +52,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.Binding;
 import javax.xml.ws.WebServiceException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.PrivilegedAction;
 
 /**
@@ -85,11 +83,11 @@ public class JAXWSMessageReceiver implements MessageReceiver {
         // inside of the services.xml.
         AxisService service = axisRequestMsgCtx.getAxisService();
 
-        // we need to merge the deployment class loader to the TCCL. This is because, in JAX-WS
+        // we need to set the deployment class loader as the TCCL. This is because, in JAX-WS
         // services, there can be situations where we have to load classes from the deployment
         // artifact (JAX-WS jar file) in the message flow. Ex: Handler classes in the service
         // artifact. Adding this as a fix for AXIS2-4930.
-        mergeDeploymentCL(service);
+        setContextClassLoader(service.getClassLoader());
 
         org.apache.axis2.description.Parameter svcClassParam =
                 service.getParameter(PARAM_SERVICE_CLASS);
@@ -258,39 +256,6 @@ public class JAXWSMessageReceiver implements MessageReceiver {
         if (faultToReturn != null) {
             throw faultToReturn;
         }
-    }
-
-    /**
-     * Merges the deployment class loader to the TCCL. Deployment class loader is accessed through
-     * the AxisService and a new class loader is created by using URLs from deployment class loder
-     * and setting the current TCCL as the parent. Finally the new class loader is set as the TCCL.
-     *
-     * @param service - Current AxisService instance
-     */
-    private void mergeDeploymentCL(AxisService service) {
-        ClassLoader deploymentClassLoader = service.getClassLoader();
-        if (deploymentClassLoader instanceof URLClassLoader) {
-            // get URLs from deployment class loader
-            URL[] deploymentClassLoaderUrls = ((URLClassLoader) deploymentClassLoader).getURLs();
-            // create a new class loader by setting the current TCCL as the parent
-            setContextClassLoader(new URLClassLoader(deploymentClassLoaderUrls,
-                    getContextClassLoader()));
-        }
-    }
-
-    /**
-     * Get context class loader of the current thread.
-     *
-     * @return ClassLoader
-     */
-    private ClassLoader getContextClassLoader() {
-        return (ClassLoader) AccessController.doPrivileged(
-                new PrivilegedAction() {
-                    public Object run() {
-                        return Thread.currentThread().getContextClassLoader();
-                    }
-                }
-        );
     }
 
     /**
