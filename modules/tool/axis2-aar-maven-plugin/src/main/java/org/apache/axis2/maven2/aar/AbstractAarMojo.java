@@ -24,8 +24,6 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -242,29 +240,16 @@ public abstract class AbstractAarMojo
      *                                       TO DO: Remove this method when Maven moves to
      *                                       plexus-utils version 1.4
      */
-	private void copyFileIfModified(File source, File destination)
-			throws IOException {
-		// TO DO: Remove this method and use the method in WarFileUtils when
-		// Maven 2 changes
-		// to plexus-utils 1.2.
-		if (destination.lastModified() < source.lastModified()) {
-			if (source.isDirectory()) {
-				JarArchiver jarArchiver = new JarArchiver();
-				try {
-					jarArchiver.setDestFile(destination);
-					jarArchiver.addDirectory(source.getCanonicalFile());
-					jarArchiver.createArchive();
-				} catch (ArchiverException e) {
-					// wrap ArchiverException in IOException
-					throw new IOException(e);
-				}
-			} else {
-				FileUtils.copyFile(source.getCanonicalFile(), destination);
-				// preserve timestamp
-				destination.setLastModified(source.lastModified());
-			}
-		}
-	}
+    private void copyFileIfModified(File source, File destination)
+            throws IOException {
+        // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
+        // to plexus-utils 1.2.
+        if (destination.lastModified() < source.lastModified()) {
+            FileUtils.copyFile(source.getCanonicalFile(), destination);
+            // preserve timestamp
+            destination.setLastModified(source.lastModified());
+        }
+    }
 
     private void copyFileSet(FileSet fileSet, File targetDirectory)
             throws IOException {
