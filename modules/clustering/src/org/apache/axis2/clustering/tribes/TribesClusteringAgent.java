@@ -197,10 +197,8 @@ public class TribesClusteringAgent implements ClusteringAgent {
             channel.start(Channel.DEFAULT); // At this point, this member joins the group
             String localHost = TribesUtil.getLocalHost(channel);
             if (localHost.startsWith("127.0.")) {
-                channel.stop(Channel.DEFAULT);
-                throw new ClusteringFault("Cannot join cluster using IP " + localHost +
-                                          ". Please set an IP address other than " +
-                                          localHost + " in the axis2.xml file");
+                log.warn("Local member advertising its IP address as 127.0.0.1. " +
+                         "Remote members will not be able to connect to this member.");
             }
         } catch (ChannelException e) {
             String msg = "Error starting Tribes channel";
