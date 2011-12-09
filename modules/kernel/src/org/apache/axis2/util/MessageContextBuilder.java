@@ -264,6 +264,7 @@ public class MessageContextBuilder {
                 faultMessageContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                                                 processingContext.getProperty(
                                                         Constants.OUT_TRANSPORT_INFO));
+                faultMessageContext.setProperty(MessageContext.IN_MESSAGE_CONTEXT, processingContext);
                 faultMessageContext.setProcessingFault(true);
                 return faultMessageContext;
             }
