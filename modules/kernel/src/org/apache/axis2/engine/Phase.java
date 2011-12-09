@@ -25,7 +25,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.PhaseRule;
-import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
@@ -190,10 +189,6 @@ public class Phase implements Handler {
      * @throws AxisFault if a precondition is not met, or in case of other problem
      */
     public void checkPreconditions(MessageContext msgContext) throws AxisFault {
-        // Default version does nothing
-    }
-
-    public void cleanup() {
         // Default version does nothing
     }
 

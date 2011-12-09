@@ -33,12 +33,7 @@ import org.apache.axis2.description.Parameter;
  * their state in Context objects (see the org.apache.axis2.context package).
  */
 public interface Handler {
-
-    /**
-     * @deprecated This method will be going away after the 1.3 release, it was never used.
-     */
-    public void cleanup();
-
+    
     /**
      * Initialize a Handler.
      *
