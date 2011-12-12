@@ -117,7 +117,7 @@ public abstract class AbstractJSONOMBuilder implements Builder {
             //read the stream until we find a : symbol
             char temp = (char)reader.read();
             while (temp != ':') {
-                if (temp != ' ' && temp != '{') {
+                if (temp != ' ' && temp != '{' && temp != '\n' && temp != '\r' && temp != '\t') {
                     localName += temp;
                 }
                 temp = (char)reader.read();
