@@ -147,12 +147,12 @@ public class BeanUtil {
             PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
             for (PropertyDescriptor property : properties) {
                 String propertyName = property.getName();
+                Class<?> ptype = property.getPropertyType();
                 if (propertyName.equals("class") ||
-                    beanExcludeInfo != null && beanExcludeInfo.isExcludedProperty(propertyName)) {
+                    beanExcludeInfo != null && beanExcludeInfo.isExcludedProperty(propertyName) || ptype == null) {
                     continue;
                 }
 
-                Class<?> ptype = property.getPropertyType();
                 Method readMethod = property.getReadMethod();
                 if (readMethod == null) {
                     Class propertyType = property.getPropertyType();
