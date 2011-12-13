@@ -192,12 +192,15 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                        exceptionElement.addChild(innterExceptionElement);
                     } else {
                         // if it is a normal bussiness exception we need to generate the schema assuming it is a pojo
+                        // Ignore RuntimeException because no way to map type info. 
+                        if (!(cause instanceof RuntimeException)) {
                         QName innerElementQName = new QName(elementQName.getNamespaceURI(), getSimpleClassName(exceptionType));
                         XMLStreamReader xr = BeanUtil.getPullParser(cause,
                                 innerElementQName, typeTable, true, false);
                         StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
                         OMElement documentElement = stAXOMBuilder.getDocumentElement();
                         exceptionElement.addChild(documentElement);
+                        }
                     }
 
                     AxisFault axisFault = new AxisFault(cause.getMessage());
