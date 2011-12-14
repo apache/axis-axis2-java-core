@@ -79,10 +79,9 @@ public class SimpleTypeMapper {
     
     private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
 
-    public static Object getSimpleTypeObject(Class parameter, OMElement value) {
+    public static Object getSimpleTypeObject(Class parameter, String text) {
         String name = parameter.getName();
-        String text = value.getText();
-        
+
         if(name.equals(STRING)) {
             return text;
         } else  if (text == null || text.length() == 0) {
@@ -166,6 +165,10 @@ public class SimpleTypeMapper {
         } else {
             return null;
         }
+    }
+
+    public static Object getSimpleTypeObject(Class parameter, OMElement value) {
+        return getSimpleTypeObject(parameter, value.getText());
     }
 
     public static ArrayList getArrayList(OMElement element, String localName) {
