@@ -38,7 +38,8 @@ import org.apache.axis2.engine.AxisServer;
  * The Class MapServiceTest.
  */
 public class MapServiceTest extends TestCase {
-
+    private AxisServer server;
+    
     /** The service. */
     protected AxisService service;
 
@@ -48,8 +49,14 @@ public class MapServiceTest extends TestCase {
      * @see junit.framework.TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        new AxisServer().deployService(MapService.class.getName());
+        server = new AxisServer();
+        server.deployService(MapService.class.getName());
     }   
+
+    @Override
+    protected void tearDown() throws Exception {
+        server.stop();
+    }
 
     /**
      * Test string generics map service.
