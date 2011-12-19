@@ -112,6 +112,9 @@ public class Constants {
 
     public static final String URI_POLICY =
             "http://schemas.xmlsoap.org/ws/2004/09/policy";
+    public static final String URI_POLICY_15 =
+        "http://www.w3.org/ns/ws-policy";
+
     public static final String FORMAT_BINDING = "http://schemas.xmlsoap.org/wsdl/formatbinding/";
     public static final String JAVA_NS = "http://schemas.xmlsoap.org/wsdl/java/";
     /**

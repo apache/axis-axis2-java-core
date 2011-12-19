@@ -3114,7 +3114,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (extElement instanceof UnknownExtensibilityElement) {
                 unknown = (UnknownExtensibilityElement) extElement;
-                if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown.getElementType())) {
+                if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown.getElementType())
+                		|| WSDLConstants.WSDL11Constants.POLICY_15.equals(unknown.getElementType())) {
 
                     policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
                     String key;

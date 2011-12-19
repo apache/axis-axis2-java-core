@@ -128,6 +128,8 @@ public interface WSDLConstants {
                 Constants.URI_WSDL12_SOAP, "binding");
         QName POLICY = new QName(
                 Constants.URI_POLICY, "Policy");
+        QName POLICY_15 = new QName(
+                Constants.URI_POLICY_15, "Policy");
         QName POLICY_REFERENCE = new QName(
                 Constants.URI_POLICY, "PolicyReference");
     }
