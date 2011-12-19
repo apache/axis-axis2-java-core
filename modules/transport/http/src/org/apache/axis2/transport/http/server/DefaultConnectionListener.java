@@ -77,8 +77,11 @@ public class DefaultConnectionListener implements IOProcessor {
                         if (LOG.isInfoEnabled()) {
                             LOG.info("Listening on port " + port);
                         }
-                        serversocket = new ServerSocket(port);
-                        serversocket.setReuseAddress(true);
+                        synchronized (this) {
+                            serversocket = new ServerSocket(port);
+                            serversocket.setReuseAddress(true);
+                            notifyAll();
+                        }
                     }
                     LOG.debug("Waiting for incoming HTTP connection");
                     Socket socket = this.serversocket.accept();
@@ -106,12 +109,26 @@ public class DefaultConnectionListener implements IOProcessor {
             }
         } finally {
             destroy();
+            synchronized (this) {
+                notifyAll();
+            }
         }
     }
 
-    public void close() throws IOException {
+    public synchronized void awaitSocketOpen() throws InterruptedException {
+        while (serversocket == null) {
+            wait();
+        }
+    }
+    
+    public synchronized int getPort() {
+        return serversocket.getLocalPort();
+    }
+    
+    public synchronized void close() throws IOException {
         if (this.serversocket != null) {
             this.serversocket.close();
+            this.serversocket = null;
         }
     }
 

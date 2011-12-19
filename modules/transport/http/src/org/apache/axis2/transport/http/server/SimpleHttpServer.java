@@ -38,7 +38,7 @@ public class SimpleHttpServer {
     private static final int SHUTDOWN_GRACE_PERIOD = 3000; // ms
 
     private HttpFactory httpFactory;
-    private final int port;
+    private int port;
     private final HttpParams params;
     private final WorkerFactory workerFactory;
 
@@ -96,7 +96,14 @@ public class SimpleHttpServer {
     }
 
     public void start() {
-        this.listenerExecutor.execute(this.listener);
+        DefaultConnectionListener listener = (DefaultConnectionListener)this.listener;
+        this.listenerExecutor.execute(listener);
+        try {
+            listener.awaitSocketOpen();
+            port = listener.getPort();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public boolean isRunning() {
