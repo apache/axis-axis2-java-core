@@ -2385,7 +2385,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 QName type = unknown.getElementType();
                 
                 // <wsp:Policy>
-                if (WSDLConstants.WSDL11Constants.POLICY.equals(type)) {
+                if (Constants.isPolicyElement(type)) {
                     if (isTraceEnabled) {
                         log.trace("copyExtensibleElements:: PolicyElement found " + unknown);
                     }
@@ -2399,8 +2399,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 //                                attachmentScope, policy);
 //                    }
                     // <wsp:PolicyReference>
-                } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE
-                        .equals(type)) {
+                } else if (Constants.isPolicyRef(type)) {
                     if (isTraceEnabled) {
                         log.trace("copyExtensibleElements:: PolicyReference found " + unknown);
                     }
@@ -3114,7 +3113,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (extElement instanceof UnknownExtensibilityElement) {
                 unknown = (UnknownExtensibilityElement) extElement;
-                if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown.getElementType())) {
+                if (Constants.isPolicyElement(unknown.getElementType())) {
 
                     policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
                     String key;

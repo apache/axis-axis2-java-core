@@ -110,8 +110,13 @@ public class Constants {
             "http://www.w3.org/2001/XMLSchema-instance";
     public static final String URI_DEFAULT_SCHEMA_XSI = URI_2001_SCHEMA_XSI;
 
+    /**
+     * @deprecated Please use {@link org.apache.neethi.Constants#isPolicyNS(String)} to check for a
+     *             supported policy namespace.
+     */
     public static final String URI_POLICY =
             "http://schemas.xmlsoap.org/ws/2004/09/policy";
+    
     public static final String FORMAT_BINDING = "http://schemas.xmlsoap.org/wsdl/formatbinding/";
     public static final String JAVA_NS = "http://schemas.xmlsoap.org/wsdl/java/";
     /**

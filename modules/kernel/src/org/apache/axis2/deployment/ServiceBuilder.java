@@ -37,6 +37,7 @@ import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -300,17 +302,14 @@ public class ServiceBuilder extends DescriptionBuilder {
 			// <schema targetNamespace="http://x.y.z"/>
 			// setting the PolicyInclude
 			// processing <wsp:Policy> .. </..> elements
-			Iterator policyElements = service_element
-					.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+			Iterator policyElements = PolicyUtil.getPolicyChildren(service_element);
 
 			if (policyElements != null && policyElements.hasNext()) {
 				processPolicyElements(policyElements, service.getPolicySubject());
 			}
 
 			// processing <wsp:PolicyReference> .. </..> elements
-			Iterator policyRefElements = service_element
-					.getChildrenWithName(new QName(POLICY_NS_URI,
-							TAG_POLICY_REF));
+			Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(service_element);
 
 			if (policyRefElements != null && policyRefElements.hasNext()) {
 				processPolicyRefElements(policyRefElements, service.getPolicySubject());
@@ -628,17 +627,14 @@ public class ServiceBuilder extends DescriptionBuilder {
 					TAG_PARAMETER));
 
 			// processing <wsp:Policy> .. </..> elements
-			Iterator policyElements = messageElement
-					.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+			Iterator policyElements = PolicyUtil.getPolicyChildren(messageElement);
 
 			if (policyElements != null) {
 				processPolicyElements(policyElements, message.getPolicySubject());
 			}
 
 			// processing <wsp:PolicyReference> .. </..> elements
-			Iterator policyRefElements = messageElement
-					.getChildrenWithName(new QName(POLICY_NS_URI,
-							TAG_POLICY_REF));
+			Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(messageElement);
 
 			if (policyRefElements != null) {
 				processPolicyRefElements(policyRefElements, message.getPolicySubject());
@@ -788,17 +784,14 @@ public class ServiceBuilder extends DescriptionBuilder {
 			// setting the PolicyInclude
 
 			// processing <wsp:Policy> .. </..> elements
-			Iterator policyElements = operation.getChildrenWithName(new QName(
-					POLICY_NS_URI, TAG_POLICY));
+			Iterator policyElements = PolicyUtil.getPolicyChildren(operation);
 
 			if (policyElements != null && policyElements.hasNext()) {
 				processPolicyElements(policyElements, op_descrip.getPolicySubject());
 			}
 
 			// processing <wsp:PolicyReference> .. </..> elements
-			Iterator policyRefElements = operation
-					.getChildrenWithName(new QName(POLICY_NS_URI,
-							TAG_POLICY_REF));
+			Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(operation);
 
 			if (policyRefElements != null && policyRefElements.hasNext()) {
 				processPolicyRefElements(policyRefElements, op_descrip.getPolicySubject());
@@ -920,10 +913,16 @@ public class ServiceBuilder extends DescriptionBuilder {
 	
 	private void processPolicyAttachments(OMElement serviceElement,
                                           AxisService service) throws DeploymentException {
-		Iterator attachmentElements =
-                serviceElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_ATTACHMENT));
+		List<OMElement> attachmentElements = new ArrayList<OMElement>();
+		for (Iterator it = serviceElement.getChildElements(); it.hasNext(); ) {
+		    OMElement elem = (OMElement)it.next();
+		    if (org.apache.neethi.Constants.isPolicyNS(elem.getNamespaceURI()) &&
+		            elem.getLocalName().equals(TAG_POLICY_ATTACHMENT)) {
+		        attachmentElements.add(elem);
+		    }
+		}
 		try {
-			Utils.processPolicyAttachments(attachmentElements, service);
+			Utils.processPolicyAttachments(attachmentElements.iterator(), service);
 		} catch (Exception e) {
 			throw new DeploymentException(e);
 		}

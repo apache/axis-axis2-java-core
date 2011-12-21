@@ -48,6 +48,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.ThreadContextMigrator;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
@@ -153,8 +154,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             processModuleConfig(moduleConfigs, axisConfig, axisConfig);
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
-                                                                                   TAG_POLICY));
+            Iterator policyElements = PolicyUtil.getPolicyChildren(config_element);
 
             if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(policyElements,
@@ -162,8 +162,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
-                                                                                      TAG_POLICY_REF));
+            Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(config_element);
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(policyElements,
