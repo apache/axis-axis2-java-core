@@ -1277,18 +1277,20 @@ public class Utils {
 
         for (; attachmentElements.hasNext();) {
             attachmentElement = (OMElement)attachmentElements.next();
-            OMElement appliesToElem = attachmentElement
-                    .getFirstChildWithName(new QName(
-                            DeploymentConstants.POLICY_NS_URI,
-                            DeploymentConstants.TAG_APPLIES_TO));
+            OMElement appliesToElem = null;
+            for (Iterator it = attachmentElement.getChildElements(); it.hasNext(); ) {
+                OMElement elem = (OMElement)it.next();
+                if (org.apache.neethi.Constants.isPolicyNS(elem.getNamespaceURI())
+                        && elem.getLocalName().equals(DeploymentConstants.TAG_APPLIES_TO)) {
+                    appliesToElem = elem;
+                    break;
+                }
+            }
             ArrayList policyComponents = new ArrayList();
 
             // process <wsp:Policy> elements ..
-            for (Iterator policyElements = attachmentElement
-                    .getChildrenWithName(new QName(
-                            DeploymentConstants.POLICY_NS_URI,
-                            DeploymentConstants.TAG_POLICY)); policyElements
-                    .hasNext();) {
+            for (Iterator policyElements = PolicyUtil.getPolicyChildren(attachmentElement);
+                    policyElements.hasNext();) {
                 PolicyComponent policy = PolicyUtil
                         .getPolicyFromOMElement((OMElement)policyElements
                                 .next());
@@ -1296,11 +1298,8 @@ public class Utils {
             }
 
             // process <wsp:PolicyReference> elements ..
-            for (Iterator policyRefElements = attachmentElement
-                    .getChildrenWithName(new QName(
-                            DeploymentConstants.POLICY_NS_URI,
-                            DeploymentConstants.TAG_POLICY_REF)); policyRefElements
-                    .hasNext();) {
+            for (Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(attachmentElement);
+                    policyRefElements.hasNext();) {
                 PolicyComponent policyRef = PolicyUtil
                         .getPolicyReferenceFromOMElement((OMElement)policyRefElements
                                 .next());

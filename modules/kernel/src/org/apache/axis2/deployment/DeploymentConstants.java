@@ -159,8 +159,22 @@ public interface DeploymentConstants {
     char SEPARATOR_DOT = '.';
     char SEPARATOR_COLON = ':';
 
+    /**
+     * @deprecated Please use {@link org.apache.neethi.Constants#isPolicyNS(String)} to check for a
+     *             supported policy namespace.
+     */
     String POLICY_NS_URI = Constants.URI_POLICY;
+    
+    /**
+     * @deprecated Please use an appropriate method or constant from
+     *             {@link org.apache.neethi.Constants} instead.
+     */
     String TAG_POLICY = "Policy";
+    
+    /**
+     * @deprecated Please use an appropriate method or constant from
+     *             {@link org.apache.neethi.Constants} instead.
+     */
     String TAG_POLICY_REF = "PolicyReference";
     
     String TAG_POLICY_ATTACHMENT = "PolicyAttachment";

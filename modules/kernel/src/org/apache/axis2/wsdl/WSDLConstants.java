@@ -126,10 +126,18 @@ public interface WSDLConstants {
                 Constants.URI_WSDL11_SOAP, "binding");
         QName SOAP_12_BINDING = new QName(
                 Constants.URI_WSDL12_SOAP, "binding");
+        
+        /**
+         * @deprecated Please use {@link org.apache.neethi.Constants#isPolicyElement(QName)} to
+         *             check for Policy elements.
+         */
         QName POLICY = new QName(
                 Constants.URI_POLICY, "Policy");
-        QName POLICY_15 = new QName(
-                Constants.URI_POLICY_15, "Policy");
+        
+        /**
+         * @deprecated Please use {@link org.apache.neethi.Constants#isPolicyRef(QName)} to check
+         *             for policy references.
+         */
         QName POLICY_REFERENCE = new QName(
                 Constants.URI_POLICY, "PolicyReference");
     }

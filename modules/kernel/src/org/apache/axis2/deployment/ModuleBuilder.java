@@ -35,6 +35,7 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -166,16 +167,14 @@ public class ModuleBuilder extends DescriptionBuilder {
             // setting the PolicyInclude
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements =
-                    moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            Iterator policyElements = PolicyUtil.getPolicyChildren(moduleElement);
 
             if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(policyElements, module.getPolicySubject());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements =
-                    moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(moduleElement);
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(policyRefElements, module.getPolicySubject());
@@ -318,16 +317,14 @@ public class ModuleBuilder extends DescriptionBuilder {
             processOperationModuleRefs(modules, op_descrip);
             
 //          processing <wsp:Policy> .. </..> elements
-            Iterator policyElements =
-                    operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            Iterator policyElements = PolicyUtil.getPolicyChildren(operation);
 
             if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(policyElements, op_descrip.getPolicySubject());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements =
-                    operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(operation);
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(policyRefElements, module.getPolicySubject());

@@ -21,9 +21,11 @@ package org.apache.axis2.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -276,4 +278,28 @@ public class PolicyUtil {
 
 		return policy;
 	}
+
+    public static Iterator<OMElement> getPolicyChildren(OMElement parent) {
+        List<OMElement> policies = new ArrayList<OMElement>();
+        Iterator children = parent.getChildElements();
+        while (children.hasNext()) {
+            OMElement child = (OMElement)children.next();
+            if (Constants.isPolicyElement(child.getQName())) {
+                policies.add(child);
+            }
+        }
+        return policies.iterator();
+    }
+
+    public static Iterator<OMElement> getPolicyRefChildren(OMElement parent) {
+        List<OMElement> policyRefs = new ArrayList<OMElement>();
+        Iterator children = parent.getChildElements();
+        while (children.hasNext()) {
+            OMElement child = (OMElement)children.next();
+            if (Constants.isPolicyRef(child.getQName())) {
+                policyRefs.add(child);
+            }
+        }
+        return policyRefs.iterator();
+    }
 }
