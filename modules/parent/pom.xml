@@ -104,6 +104,8 @@
         <maven.artifact.version>2.0.8</maven.artifact.version>
         <maven.plugin.testing.version>1.1</maven.plugin.testing.version>
         <maven.version>2.0.7</maven.version>
+        <maven.plugin.descriptor.version>2.0.7</maven.plugin.descriptor.version>
+        <plexus.classworlds.version>2.4</plexus.classworlds.version>
         <plexus.utils.version>1.4.9</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
         <servlet.api.version>2.3</servlet.api.version>
@@ -143,7 +145,7 @@
             <name>Axis2 User List</name>
             <subscribe>java-user-subscribe@axis.apache.org</subscribe>
             <unsubscribe>java-user-unsubscribe@axis.apache.org</unsubscribe>
-            <post>java-user@axis.apache.org</post>
+            <post>java-user@axis.apache.ormaven.plugin.descriptor.versiong</post>
             <archive>http://mail-archives.apache.org/mod_mbox/axis-java-user/</archive>
             <otherArchives>
                 <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-user</otherArchive>
@@ -784,10 +786,20 @@
                 <version>${maven.archiver.version}</version>
             </dependency>
             <dependency>
+			    <groupId>org.apache.maven</groupId>
+			    <artifactId>maven-plugin-descriptor</artifactId>
+			    <version>${maven.plugin.descriptor.version}</version>
+		    </dependency>
+            <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>${plexus.utils.version}</version>
             </dependency>
+            <dependency>
+			    <groupId>org.codehaus.plexus</groupId>
+			    <artifactId>plexus-classworlds</artifactId>
+			    <version>${plexus.classworlds.version}</version>
+		    </dependency>
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-plugin-testing-harness</artifactId>
