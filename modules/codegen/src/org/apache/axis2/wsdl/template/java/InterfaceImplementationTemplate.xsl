@@ -1140,8 +1140,8 @@
     ////////////////////////////////////////////////////////////////////////
     
     private static org.apache.neethi.Policy getPolicy (java.lang.String policyString) {
-    	java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(policyString.getBytes());
-    	return org.apache.neethi.PolicyEngine.getPolicy(bais);
+    	return org.apache.neethi.PolicyEngine.getPolicy(org.apache.axiom.om.OMXMLBuilderFactory.createOMBuilder(
+    	        new java.io.StringReader(policyString)).getDocument().getXMLStreamReader(false));
     }
     
     /////////////////////////////////////////////////////////////////////////
