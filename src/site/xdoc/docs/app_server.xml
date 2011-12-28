@@ -109,6 +109,9 @@
                         Before deploying the Axis2 WAR, edit the <tt>axis2.xml</tt> file and set the
                         <tt>EnableChildFirstClassLoading</tt> parameter to <tt>true</tt>.
                         Please note that this parameter is only supported in Axis2 1.5.5 or higher.
+                        The parameter is already present in the default <tt>axis2.xml</tt> file included in the
+                        WAR distribution, but its value is set to <tt>false</tt>. Therefore it is enough to change
+                        the parameter value.
                     </li>
                     <li>
                         After deployment, modify the application configuration to enable parent last class loading
@@ -136,6 +139,15 @@
                     However, the directory is still under control of WebSphere and manually deployed AAR and MAR files
                     will be removed e.g. when the application is upgraded. It may therefore be a good idea to configure
                     Axis2 to use a repository location outside of the <tt>installedApps</tt> directory.
+                </p>
+            </subsection>
+            <subsection name="Deploying older Axis2 versions">
+                <p>
+                    The instructions given above apply to Axis2 1.5.5 or higher. Older versions don't support
+                    the <tt>EnableChildFirstClassLoading</tt> parameter, and we don't provide any support for
+                    deploying these versions on WAS 6.1 (with the Web Services feature pack installed) or 7.0.
+                    However, IBM has published a <a href="https://www-304.ibm.com/support/docview.wss?uid=swg21315686">technote</a>
+                    with an alternative approach that may work for older Axis2 versions.
                 </p>
             </subsection>
             <subsection name="Known issues">
