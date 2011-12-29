@@ -40,6 +40,13 @@ public interface BasicHttpServer {
     public void start() throws Exception;
 
     /**
+     * Get the port on which the HTTP server is listening.
+     * 
+     * @return the HTTP port
+     */
+    public int getPort();
+    
+    /**
      * Stop the HTTP server.
      * 
      * @throws Exception

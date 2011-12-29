@@ -73,7 +73,7 @@ import org.apache.http.util.EntityUtils;
  */
 public class BasicHttpServerImpl implements BasicHttpServer {
 
-    private Thread serverThread;
+    private RequestListenerThread serverThread;
     private Map<String, String> headers;
     private byte[] content;
     private String method;
@@ -93,11 +93,15 @@ public class BasicHttpServerImpl implements BasicHttpServer {
      * @see org.apache.axis2.transport.http.mock.server.BasicHttpServer#start()
      */
     public void start() throws Exception {
-        serverThread = new RequestListenerThread(8080, this);
+        serverThread = new RequestListenerThread(this);
         serverThread.setDaemon(false);
         serverThread.start();
     }
 
+    public int getPort() {
+        return serverThread.getServersocket().getLocalPort();
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -105,7 +109,7 @@ public class BasicHttpServerImpl implements BasicHttpServer {
      */
     public void stop() throws Exception {
         if (close) {
-            ((RequestListenerThread) serverThread).getServersocket().close();
+            serverThread.getServersocket().close();
         }
 
     }
@@ -257,8 +261,8 @@ public class BasicHttpServerImpl implements BasicHttpServer {
          * @throws IOException
          *             Signals that an I/O exception has occurred.
          */
-        public RequestListenerThread(int port, BasicHttpServer server) throws IOException {
-            this.serversocket = new ServerSocket(port);
+        public RequestListenerThread(BasicHttpServer server) throws IOException {
+            this.serversocket = new ServerSocket(0);
             this.params = new BasicHttpParams();
             // Basic configuration.
             this.params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 5000)

@@ -74,8 +74,9 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
      * @throws Exception the exception
      */
     public void testSendViaGet() throws Exception {
+        int port = getBasicHttpServer().getPort();
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_GET, "urn:getService",
-                "http://localhost:8080/getService", true);
+                "http://localhost:" + port + "/getService", true);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_GET,
                 getHTTPMethod());
         assertEquals("Not the expected content", "/getService?part=sample%20data",
@@ -85,7 +86,7 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value",
                 "application/x-www-form-urlencoded;action=\"urn:getService\";",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
@@ -98,8 +99,9 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
      */
     public void testSendViaPost() throws Exception {
         // test with REST payload
+        int port = getBasicHttpServer().getPort();
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
-                "http://localhost:8080/postService", true);
+                "http://localhost:" + port + "/postService", true);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_POST,
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
@@ -108,14 +110,14 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
 
         // test with SOAP payload.
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
-                "http://localhost:8080/postService", false);
+                "http://localhost:" + port + "/postService", false);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_POST,
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
@@ -123,7 +125,7 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
@@ -136,8 +138,9 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
      */
     public void testSendViaPut() throws Exception {
         // test with REST payload
+        int port = getBasicHttpServer().getPort();
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_PUT, "urn:putService",
-                "http://localhost:8080/putService", true);
+                "http://localhost:" + port + "/putService", true);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_PUT,
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
@@ -146,14 +149,14 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
 
         // test with SOAP payload.
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_PUT, "urn:putService",
-                "http://localhost:8080/putService", false);
+                "http://localhost:" + port + "/putService", false);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_PUT,
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
@@ -161,7 +164,7 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
@@ -174,8 +177,9 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
      */
     public void testSendViaDelete() throws Exception {
         // test with REST payload
+        int port = getBasicHttpServer().getPort();
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_DELETE, "urn:deleteService",
-                "http://localhost:8080/deleteService", true);
+                "http://localhost:" + port + "/deleteService", true);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_DELETE,
                 getHTTPMethod());
         assertEquals("Not the expected content", "/deleteService?part=sample%20data",
@@ -183,7 +187,7 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value",
                 "application/x-www-form-urlencoded;action=\"urn:deleteService\";", getHeaders()
                         .get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
@@ -197,15 +201,16 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
      */
     public void testSendViaHead() throws Exception {
 
+        int port = getBasicHttpServer().getPort();
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_HEAD, "urn:deleteService",
-                "http://localhost:8080/deleteService", true);
+                "http://localhost:" + port + "/deleteService", true);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_POST,
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
         assertEquals("Not the expected HTTP Header value", "application/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
@@ -219,7 +224,8 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
      */
     public void testSendNOHTTPMethod() throws Exception {
 
-        sendViaHTTP(null, "urn:noService", "http://localhost:8080/noService", true);
+        int port = getBasicHttpServer().getPort();
+        sendViaHTTP(null, "urn:noService", "http://localhost:" + port + "/noService", true);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_POST,
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
@@ -228,7 +234,7 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
-        assertEquals("Not the expected HTTP Header value", "localhost:8080",
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
                 getHeaders().get(HttpHeaders.HOST));
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));

@@ -22,6 +22,7 @@ import org.apache.http.message.BasicRequestLine;
 public class CommonsHTTPTransportSenderClientSideTest extends AbstractHTTPServerTest {
 
     public void testInvokeWithEPR() throws Exception {
+        int port = getBasicHttpServer().getPort();
         RequestLine line = new BasicRequestLine("", "", new ProtocolVersion("http", 1, 0));
         MockHTTPResponse httpResponse = new MockAxisHttpResponse(line);
         getBasicHttpServer().setResponseTemplate(BasicHttpServer.RESPONSE_HTTP_OK_LOOP_BACK);
@@ -30,7 +31,7 @@ public class CommonsHTTPTransportSenderClientSideTest extends AbstractHTTPServer
         // client hence ignore the processing of response at client side.
         try {
             httpResponse = (MockAxisHttpResponse) CommonsHTTPTransportSenderTest.configAndRun(
-                    httpResponse, (OutTransportInfo) httpResponse, "http://localhost:8080");
+                    httpResponse, (OutTransportInfo) httpResponse, "http://localhost:" + port);
 
         } catch (Exception e) {
         }
@@ -48,6 +49,7 @@ public class CommonsHTTPTransportSenderClientSideTest extends AbstractHTTPServer
      * a 404 error. This is a regression test for AXIS2-5093.
      */
     public void testConnectionReleaseWith404() throws Exception {
+        int port = getBasicHttpServer().getPort();
         getBasicHttpServer().setResponseTemplate(BasicHttpServer.RESPONSE_HTTP_404);
         // If connections are not properly released then we will end up with a
         // ConnectionPoolTimeoutException here.
@@ -58,7 +60,7 @@ public class CommonsHTTPTransportSenderClientSideTest extends AbstractHTTPServer
                         null);
         ServiceClient serviceClient = new ServiceClient(configurationContext, null);
         Options options = serviceClient.getOptions();
-        options.setTo(new EndpointReference("http://localhost:8080//nonexisting"));
+        options.setTo(new EndpointReference("http://localhost:" + port + "//nonexisting"));
         OMElement request = OMAbstractFactory.getOMFactory().createOMElement(
                 new QName("urn:test", "test"));
         // If connections are not properly released then we will end up with a
