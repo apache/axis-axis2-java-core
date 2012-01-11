@@ -252,8 +252,6 @@ public class RepoHelper {
          * directory mentioned copy content else copy
          * target/articaft-version.jar file to the repo.
          */
-        System.out.println("ZZZZZZZZZZZZZZZZZZZZ = " + serviceJarLocation + ":"
-                + jaxwsServiceSrcDir);
         File srcFile;
         File disFile = new File(jaxwsServiceDir
                 + serviceJarLocation.substring(serviceJarLocation.lastIndexOf(File.separator)));
