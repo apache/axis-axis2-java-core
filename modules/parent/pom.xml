@@ -105,6 +105,7 @@
         <maven.plugin.testing.version>1.1</maven.plugin.testing.version>
         <maven.version>2.0.7</maven.version>
         <maven.plugin.descriptor.version>2.0.7</maven.plugin.descriptor.version>
+        <maven.archetype.plugin.version>2.2</maven.archetype.plugin.version>
         <plexus.classworlds.version>2.4</plexus.classworlds.version>
         <plexus.utils.version>1.4.9</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
@@ -790,6 +791,11 @@
                 <artifactId>maven-plugin-descriptor</artifactId>
                 <version>${maven.plugin.descriptor.version}</version>
             </dependency>
+            <dependency>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-archetype-plugin</artifactId>
+                <version>${maven.archetype.plugin.version}</version>
+            </dependency>            
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
