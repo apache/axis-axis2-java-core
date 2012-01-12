@@ -109,16 +109,5 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
         </dependency>
-	<dependency>
-		<groupId>org.apache.httpcomponents</groupId>
-		<artifactId>httpclient</artifactId>
-		<version>4.1.2</version>
-<!-- 		<exclusions> -->
-<!-- 			<exclusion> -->
-<!-- 				<groupId>org.apache.httpcomponents</groupId> -->
-<!-- 				<artifactId>httpcore</artifactId> -->
-<!-- 			</exclusion> -->
-<!-- 		</exclusions> -->
-	</dependency>
     </dependencies>
 </project>
