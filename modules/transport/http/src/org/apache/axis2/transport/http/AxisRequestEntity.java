@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.httpclient.methods.RequestEntity;
 
 import javax.xml.stream.FactoryConfigurationError;
 import java.io.IOException;
@@ -34,7 +35,7 @@ import java.util.zip.GZIPOutputStream;
  * This Request Entity is used by the HTTPCommonsTransportSender. This wraps the
  * Axis2 message formatter object.
  */
-public abstract class AxisRequestEntity  {
+public class AxisRequestEntity implements RequestEntity {
 
     private MessageFormatter messageFormatter;
 
@@ -113,17 +114,7 @@ public abstract class AxisRequestEntity  {
         return bytes.length;
     }
 
-    public String getContentTypeAsString() {
+    public String getContentType() {
         return messageFormatter.getContentType(messageContext, format, soapAction);
     }
-
-    public boolean isChunked() {
-        return chunked;
-    }
-
-    public void setChunked(boolean chunked) {
-        this.chunked = chunked;
-    }
-    
-    
 }

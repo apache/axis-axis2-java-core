@@ -30,9 +30,9 @@
     <name>Apache Axis2 - Web Application module</name>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/webapp</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/webapp</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/AXIS2-4318/modules/webapp</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/webapp</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/webapp</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/webapp</url>
     </scm>
     <dependencies>
         <dependency>

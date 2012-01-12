@@ -47,9 +47,7 @@ import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.jaxws.utility.ClassUtils;
-import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -523,22 +521,9 @@ public class AxisInvocationController extends InvocationControllerImpl {
             catch (MalformedURLException e) {
                 throw ExceptionFactory.makeWebServiceException(e);
             }
-            
-            /*
-             * Check HTTPClient version to set HTTPAuthenticator. By default it
-             * use HTTPClient 3.x
-             */
-            HTTPAuthenticator basicAuthentication;
-            System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx");
-            String httpClientVersion = getHTTPClientVersion(mc.getAxisMessageContext());
-            if (httpClientVersion != null
-                    && HTTPTransportConstants.HTTP_CLIENT_4_X_VERSION.equals(httpClientVersion)) {
-                basicAuthentication = new org.apache.axis2.transport.http.impl.httpclient4.HttpTransportPropertiesImpl.Authenticator();
 
-            } else {
-                basicAuthentication = new org.apache.axis2.transport.http.impl.httpclient3.HttpTransportPropertiesImpl.Authenticator();
-
-            }             
+            HttpTransportProperties.Authenticator basicAuthentication =
+                    new HttpTransportProperties.Authenticator();
             basicAuthentication.setUsername(userId);
             basicAuthentication.setPassword(password);
             basicAuthentication.setHost(url.getHost());
@@ -707,16 +692,6 @@ public class AxisInvocationController extends InvocationControllerImpl {
             }
         }
         return soapFaultDisabled;
-    }
-    
-    private String getHTTPClientVersion(org.apache.axis2.context.MessageContext msgCtx) {
-        /*
-         * TODO - 
-         *  1.) Need to read HTTPClient version property value from ConfigurationContext.
-         *  2.) pre-condition, Have to set above value to ConfigurationContext
-         * 
-         */      
-        return null;
     }
 
 }

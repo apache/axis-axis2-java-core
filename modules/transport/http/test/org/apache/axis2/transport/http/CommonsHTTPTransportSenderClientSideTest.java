@@ -11,7 +11,6 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.OutTransportInfo;
-import org.apache.axis2.transport.http.impl.httpclient3.HTTPClient3TransportSender;
 import org.apache.axis2.transport.http.mock.MockAxisHttpResponse;
 import org.apache.axis2.transport.http.mock.MockHTTPResponse;
 import org.apache.axis2.transport.http.mock.server.AbstractHTTPServerTest;
@@ -32,7 +31,7 @@ public class CommonsHTTPTransportSenderClientSideTest extends AbstractHTTPServer
         // client hence ignore the processing of response at client side.
         try {
             httpResponse = (MockAxisHttpResponse) CommonsHTTPTransportSenderTest.configAndRun(
-                    httpResponse, (OutTransportInfo) httpResponse, "http://localhost:" + port,  new HTTPClient3TransportSender());
+                    httpResponse, (OutTransportInfo) httpResponse, "http://localhost:" + port);
 
         } catch (Exception e) {
         }

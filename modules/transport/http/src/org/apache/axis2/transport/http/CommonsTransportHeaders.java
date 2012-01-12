@@ -19,18 +19,30 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.commons.httpclient.Header;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class CommonsTransportHeaders implements Map {  
+public class CommonsTransportHeaders implements Map {
+    private Header[] headers;
 
     HashMap headerMap = null;
-   
-    protected abstract void init();
-    
+
+    public CommonsTransportHeaders(Header[] headers) {
+        this.headers = headers;
+    }
+
+    private void init() {
+        headerMap = new HashMap();
+
+        for (int i = 0; i < headers.length; i++) {
+            headerMap.put(headers[i].getName(), headers[i].getValue());
+        }
+    }
+
     public int size() {
         if (headerMap == null) {
             init();
@@ -113,14 +125,4 @@ public abstract class CommonsTransportHeaders implements Map {
         }
         return headerMap.put(key, value);
     }
-
-    public HashMap getHeaderMap() {
-        return headerMap;
-    }
-
-    public void setHeaderMap(HashMap headerMap) {
-        this.headerMap = headerMap;
-    }
-    
-    
 }

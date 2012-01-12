@@ -19,10 +19,12 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.commons.httpclient.methods.RequestEntity;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
-public abstract class RESTRequestEntity2 {
+public class RESTRequestEntity2 implements RequestEntity {
     private String contentType;
     private String postRequestBody;
 
@@ -39,25 +41,11 @@ public abstract class RESTRequestEntity2 {
         return this.postRequestBody.getBytes().length;
     }
 
-    public String getContentTypeAsString() {
+    public String getContentType() {
         return this.contentType;
     }
 
     public boolean isRepeatable() {
         return true;
     }
-   
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public String getPostRequestBody() {
-        return postRequestBody;
-    }
-
-    public void setPostRequestBody(String postRequestBody) {
-        this.postRequestBody = postRequestBody;
-    }
-    
 }
