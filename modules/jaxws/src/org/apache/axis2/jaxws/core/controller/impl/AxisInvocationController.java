@@ -19,7 +19,6 @@
 
 package org.apache.axis2.jaxws.core.controller.impl;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.addressing.EndpointReference;
@@ -34,11 +33,9 @@ import org.apache.axis2.jaxws.client.ClientUtils;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
-import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
@@ -47,8 +44,9 @@ import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.HttpTransportProperties;
+import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -56,10 +54,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.Service.Mode;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -521,9 +517,19 @@ public class AxisInvocationController extends InvocationControllerImpl {
             catch (MalformedURLException e) {
                 throw ExceptionFactory.makeWebServiceException(e);
             }
-
-            HttpTransportProperties.Authenticator basicAuthentication =
-                    new HttpTransportProperties.Authenticator();
+            
+            /*
+             * Check HTTPClient version to set HTTPAuthenticator. By default it
+             * use HTTPClient 3.x
+             */
+            HTTPAuthenticator basicAuthentication = null;           
+            String httpClientVersion = getHTTPClientVersion(mc.getAxisMessageContext());
+            if (httpClientVersion != null
+                    && HTTPTransportConstants.HTTP_CLIENT_4_X_VERSION.equals(httpClientVersion)) {
+                //basicAuthentication = new org.apache.axis2.transport.http.impl.httpclient4.HttpTransportPropertiesImpl.Authenticator();
+            } else {
+                basicAuthentication = new org.apache.axis2.transport.http.impl.httpclient3.HttpTransportPropertiesImpl.Authenticator();
+            }         
             basicAuthentication.setUsername(userId);
             basicAuthentication.setPassword(password);
             basicAuthentication.setHost(url.getHost());
@@ -692,6 +698,17 @@ public class AxisInvocationController extends InvocationControllerImpl {
             }
         }
         return soapFaultDisabled;
+    }
+
+    private String getHTTPClientVersion(org.apache.axis2.context.MessageContext msgCtx) {
+        /*
+         * TODO - 
+         * 1.) Need to read HTTPClient version property value from
+         *     ConfigurationContext. 
+         * 2.) pre-condition, Have to set above value to the
+         *     ConfigurationContext.
+         */
+        return null;
     }
 
 }
