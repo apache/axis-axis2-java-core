@@ -33,9 +33,9 @@
     <packaging>bundle</packaging>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/transport/http</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/transport/http</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/transport/http</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/transport/http</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/transport/http</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/AXIS2-4318/modules/transport/http</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -109,5 +109,16 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
         </dependency>
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+		<version>4.1.2</version>
+<!-- 		<exclusions> -->
+<!-- 			<exclusion> -->
+<!-- 				<groupId>org.apache.httpcomponents</groupId> -->
+<!-- 				<artifactId>httpcore</artifactId> -->
+<!-- 			</exclusion> -->
+<!-- 		</exclusions> -->
+	</dependency>
     </dependencies>
 </project>
