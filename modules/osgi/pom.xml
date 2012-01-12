@@ -35,9 +35,9 @@
     <description>Apache Axis2 OSGi Integration</description>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/osgi</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/osgi</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/osgi</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/osgi</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/osgi</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/AXIS2-4318/modules/osgi</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -117,6 +117,7 @@
                             org.apache.axiom.*,
                             org.apache.commons.fileupload.*,
                             org.apache.commons.httpclient.*,
+                            org.apache.http.auth.*;resolution:=optional,
                             org.apache.commons.lang;resolution:=optional,
                             org.apache.commons.logging,
                             org.apache.http;resolution:=optional,

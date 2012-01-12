@@ -35,9 +35,11 @@ import org.apache.axis2.transport.http.mock.server.AbstractHTTPServerTest;
 /**
  * The Class HTTPSenderTest.
  */
-public class HTTPSenderTest extends AbstractHTTPServerTest {
+public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
    
     private HTTPSender httpSender;
+    
+    protected abstract HTTPSender getHTTPSender();
 
     /**
      * Send via http.
@@ -51,7 +53,7 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
      */
     private void sendViaHTTP(String httpMethod, String soapAction, String address, boolean rest)
             throws IOException, MessagingException {
-        httpSender = new HTTPSender();
+        httpSender = getHTTPSender();
         MessageContext msgContext = new MessageContext();
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createEmptyConfigurationContext();
@@ -66,7 +68,7 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         httpSender.send(msgContext, url, soapAction);
        
 
-    }
+    }   
 
     /**
      * Test send via get.

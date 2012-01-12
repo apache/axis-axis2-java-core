@@ -54,6 +54,7 @@ import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.OnDemandLogger;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -555,7 +556,23 @@ public class AxisServlet extends HttpServlet {
         // AXIS2-4898: MultiThreadedHttpConnectionManager starts a thread that is not stopped by the
         // shutdown of the connection manager. If we want to avoid a resource leak, we need to call
         // shutdownAll here.
-        MultiThreadedHttpConnectionManager.shutdownAll();
+        // TODO - This action need be changed according to current HTTPClient.
+        String clientVersion = getHTTPClientVersion();
+        if (clientVersion != null
+                && HTTPTransportConstants.HTTP_CLIENT_4_X_VERSION.equals(clientVersion)) {
+            // TODO - Handle for HTTPClient 4
+        } else {
+            MultiThreadedHttpConnectionManager.shutdownAll();
+        }
+        
+    }
+
+    private String getHTTPClientVersion() {
+        Object version = configContext.getProperty(HTTPTransportConstants.HTTP_CLIENT_VERSION);
+        if (version != null) {
+            return String.valueOf(version);
+        }
+        return null;
     }
 
     /**
@@ -877,6 +894,7 @@ public class AxisServlet extends HttpServlet {
             }
 
         }
+        
 
     }
 }

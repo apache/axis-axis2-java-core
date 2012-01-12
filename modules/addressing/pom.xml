@@ -45,9 +45,9 @@
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/addressing</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/addressing</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/addressing</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/addressing</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/addressing</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/AXIS2-4318/modules/addressing</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>

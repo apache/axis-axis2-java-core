@@ -550,9 +550,9 @@
         </contributor>
     </contributors>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/AXIS2-4318</url>
     </scm>
     <properties>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that

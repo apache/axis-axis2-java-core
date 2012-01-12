@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.commons.httpclient.methods.RequestEntity;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -31,7 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class RESTRequestEntity implements RequestEntity {
+public abstract class RESTRequestEntity {
     private byte[] bytes;
     private String charSetEnc;
     private boolean chunked;
@@ -115,7 +114,7 @@ public class RESTRequestEntity implements RequestEntity {
         }
     }
 
-    public String getContentType() {
+    public String getContentTypeAsString() {
         String encoding = format.getCharSetEncoding();
         String contentType = format.getContentType();
         if (encoding != null) {
@@ -133,4 +132,61 @@ public class RESTRequestEntity implements RequestEntity {
     public boolean isRepeatable() {
         return true;
     }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    public String getCharSetEnc() {
+        return charSetEnc;
+    }
+
+    public void setCharSetEnc(String charSetEnc) {
+        this.charSetEnc = charSetEnc;
+    }
+
+    public boolean isChunked() {
+        return chunked;
+    }
+
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
+    }
+
+    public OMElement getElement() {
+        return element;
+    }
+
+    public void setElement(OMElement element) {
+        this.element = element;
+    }
+
+    public MessageContext getMsgCtxt() {
+        return msgCtxt;
+    }
+
+    public void setMsgCtxt(MessageContext msgCtxt) {
+        this.msgCtxt = msgCtxt;
+    }
+
+    public String getSoapActionString() {
+        return soapActionString;
+    }
+
+    public void setSoapActionString(String soapActionString) {
+        this.soapActionString = soapActionString;
+    }
+
+    public OMOutputFormat getFormat() {
+        return format;
+    }
+
+    public void setFormat(OMOutputFormat format) {
+        this.format = format;
+    }    
+    
 }

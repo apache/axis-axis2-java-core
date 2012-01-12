@@ -65,9 +65,9 @@
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/clustering</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/clustering</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/clustering</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/clustering</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/AXIS2-4318/modules/clustering</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/AXIS2-4318/modules/clustering</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>

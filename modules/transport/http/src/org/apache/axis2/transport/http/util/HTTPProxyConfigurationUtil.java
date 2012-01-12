@@ -42,6 +42,7 @@ import java.util.StringTokenizer;
 /**
  * Contains utility functions used when configuring HTTP Proxy for HTTP Sender.
  */
+@Deprecated
 public class HTTPProxyConfigurationUtil {
     private static Log log = LogFactory.getLog(HTTPProxyConfigurationUtil.class);
 
