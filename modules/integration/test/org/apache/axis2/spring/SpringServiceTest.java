@@ -41,11 +41,11 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier;
+import org.apache.axis2.extensions.spring.util.ApplicationContextUtil;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -57,8 +57,6 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
                                               "NullTransport");
     EndpointReference targetEPR = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
-//            "http://127.0.0.1:" + 5556
-                    //  + "/axis2/services/EchoXMLService/echoOMElement");
                     + "/axis2/services/SpringExample/getValue");
 
     protected AxisConfiguration engineRegistry;
@@ -79,8 +77,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
                 createSpringService(springServiceName, new RawXMLINOutMessageReceiver(),
                                     "org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier",
                                     "springAwareService",
-                                    springOperationName);
-        createSpringAppCtx(service.getClassLoader());
+                                    springOperationName);      
         UtilServer.deployService(service);
     }
 
@@ -141,6 +138,8 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
         service.addParameter(new Parameter(Constants.SERVICE_TCCL, Constants.TCCL_COMPOSITE));
         service.addParameter(new Parameter(
                 SpringAppContextAwareObjectSupplier.SERVICE_SPRING_BEANNAME, beanName));
+        service.addParameter(new Parameter(
+                ApplicationContextUtil.SPRING_APPLICATION_CONTEXT_LOCATION , "/spring/applicationContext.xml"));
 
         AxisOperation axisOp = new InOutAxisOperation(opName);
 
@@ -174,14 +173,5 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
         service.addOperation(axisOp);
 
         return service;
-    }
-
-    public void createSpringAppCtx(ClassLoader cl)
-            throws Exception {
-
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
-                new String[] { "/spring/applicationContext.xml" }, false);
-        ctx.setClassLoader(cl);
-        ctx.refresh();
-    }
+    }    
 }
