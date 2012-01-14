@@ -23,13 +23,11 @@ package userguide.clients;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
-
-import javax.xml.namespace.QName;
+import org.apache.axis2.client.async.AxisCallback;
 
 /**
  * Sample for asynchronous dual channel non-blocking service invocation.
@@ -51,40 +49,59 @@ public class EchoNonBlockingDualClient {
             options.setUseSeparateListener(true);
             options.setAction("urn:echo");  // this is the action mapping we put within the service.xml
 
-            //Callback to handle the response
-            Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
-                    System.out.println(result.getResponseEnvelope());
-                }
-
-                public void onError(Exception e) {
-                    e.printStackTrace();
-                }
-            };
-
+            TestCallback axisCallback = new TestCallback("CallBack1") ;
+                        
             //Non-Blocking Invocation
             sender = new ServiceClient();
             sender.engageModule(Constants.MODULE_ADDRESSING);
             sender.setOptions(options);
-            sender.sendReceiveNonBlocking(payload, callback);
+            sender.sendReceiveNonBlocking(payload, axisCallback);
 
             //Wait till the callback receives the response.
-            while (!callback.isComplete()) {
-                Thread.sleep(1000);
+            while ( ! axisCallback.isComplete( ) ) {
+                Thread.sleep(100);
             }
-            //Need to close the Client Side Listener.
-
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             try {
                 sender.cleanup();
             } catch (AxisFault axisFault) {
-                //have to ignore this
+                axisFault.printStackTrace();
             }
+        	
+        }
+    }
+    
+    static class TestCallback implements AxisCallback {
+
+        private String name = null;
+        private boolean complete = false;
+        
+        public TestCallback (String name) {
+                this.name = name;
         }
 
+        public void onError (Exception e) {
+                e.printStackTrace();
+        }
+
+        public void onComplete() {
+        	System.out.println( "Message transmission complete") ;
+            complete = true;
+        }
+        
+        public boolean isComplete() {
+            return complete;
+        }
+        
+        public void onMessage(org.apache.axis2.context.MessageContext arg0) {
+           System.out.println( "Call Back " + name + " got Result: " + arg0.getEnvelope() ) ;
+        }
+
+        public void onFault(org.apache.axis2.context.MessageContext arg0) {
+        	System.out.println( "Call Back " + name + " got Fault: " + arg0.getEnvelope() ) ;
+        }
     }
 }

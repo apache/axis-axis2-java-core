@@ -25,16 +25,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 
 /**
  * Sample for asynchronous single channel non-blocking service invocation.
- * Message Exchage Pattern IN-OUT
+ * Message Exchange Pattern IN-OUT
  */
 public class EchoNonBlockingClient {
     private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
-
+ 
     public static void main(String[] args) {
         ServiceClient sender = null;
         try {
@@ -43,38 +42,58 @@ public class EchoNonBlockingClient {
             options.setTo(targetEPR);
             options.setAction("urn:echo");
 
-            //Callback to handle the response
-            Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
-                    System.out.println(result.getResponseEnvelope());
-                }
-
-                public void onError(Exception e) {
-                    e.printStackTrace();
-                }
-            };
-
+            TestCallback axisCallback = new TestCallback("CallBack1") ;
+            
             //Non-Blocking Invocation
             sender = new ServiceClient();
             sender.setOptions(options);
-            sender.sendReceiveNonBlocking(payload, callback);
-
-            //Wait till the callback receives the response.
-            while (!callback.isComplete()) {
-                Thread.sleep(1000);
+            sender.sendReceiveNonBlocking(payload, axisCallback);
+            
+            while ( ! axisCallback.isComplete( ) ) {
+                Thread.sleep(100);
             }
 
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             try {
                 sender.cleanup();
             } catch (AxisFault axisFault) {
-                //
+                axisFault.printStackTrace();
             }
         }
 
     }
+    
+    static class TestCallback implements AxisCallback {
+
+        private String name = null;
+        private boolean complete = false;
+        
+        public TestCallback (String name) {
+                this.name = name;
+        }
+
+        public void onError (Exception e) {
+                e.printStackTrace();
+        }
+
+        public void onComplete() {
+        	System.out.println( "Message transmission complete") ;
+            complete = true;
+        }
+        
+        public boolean isComplete() {
+            return complete;
+        }
+        
+        public void onMessage(org.apache.axis2.context.MessageContext arg0) {
+           System.out.println( "Call Back " + name + " got Result: " + arg0.getEnvelope() ) ;
+        }
+
+        public void onFault(org.apache.axis2.context.MessageContext arg0) {
+        	System.out.println( "Call Back " + name + " got Fault: " + arg0.getEnvelope() ) ;
+        }
+    }
+  
 }
