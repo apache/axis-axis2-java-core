@@ -115,7 +115,7 @@
 	</target>
 
 	<target name="print-usage" unless="parameters.set">
-		<echo message="ant adb.client -Dwsdl='http://&lt;yourhost>:&lt;yourport>/axis2/services/AdressBookService?wsdl'" />
+		<echo message="ant adb.client -Dwsdl='http://&lt;yourhost>:&lt;yourport>/axis2/services/AddressBookService?wsdl'" />
 	</target>
 
 	<target name="adb.client" depends="check-parameters" if="parameters.set">
