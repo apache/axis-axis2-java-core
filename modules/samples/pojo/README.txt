@@ -16,6 +16,10 @@ To build the sample service you must have ant-1.6.x installed in your system.
 To set AXIS2_HOME in Unix/Linux type:
 $export AXIS2_HOME=<path to axis2 distribution>
 
+xerces.jar (Containing the intersection of the contents of xercesImpl.jar and xml-apis.jar)
+You need to have this jar in your build and runtime class path. The easiest way to do this
+is to copy it to Axis2_HOME/lib directory.
+
 Building the Service
 ====================
 
