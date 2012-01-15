@@ -22,7 +22,6 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileNotFoundException;
 

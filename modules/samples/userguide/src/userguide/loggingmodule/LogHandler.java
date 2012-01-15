@@ -26,8 +26,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-
 public class LogHandler extends AbstractHandler implements Handler {
 	private static final Log log = LogFactory.getLog(LogHandler.class);
     private String name;
