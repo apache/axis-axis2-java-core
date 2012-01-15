@@ -116,12 +116,12 @@ public class ListingAgent extends AbstractAgent {
     public void processExplicitSchemaAndWSDL(HttpServletRequest req,
                                              HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
+        HashMap<String, AxisService> services = configContext.getAxisConfiguration().getServices();
         String filePart = req.getRequestURL().toString();
         String schema = filePart.substring(filePart.lastIndexOf("/") + 1,
                                            filePart.length());
         if ((services != null) && !services.isEmpty()) {
-            Iterator i = services.values().iterator();
+            Iterator<AxisService> i = services.values().iterator();
             while (i.hasNext()) {
                 AxisService service = (AxisService) i.next();
                 InputStream stream = service.getClassLoader().getResourceAsStream("META-INF/" + schema);
@@ -167,7 +167,7 @@ public class ListingAgent extends AbstractAgent {
 
         String url = req.getRequestURL().toString();
         String serviceName = extractServiceName(url);
-        HashMap services = configContext.getAxisConfiguration().getServices();
+        HashMap<String, AxisService> services = configContext.getAxisConfiguration().getServices();
         String query = req.getQueryString();
         int wsdl2 = HttpUtils.indexOfIngnoreCase(query, "wsdl2");
         int wsdl = HttpUtils.indexOfIngnoreCase(query, "wsdl");
@@ -175,9 +175,8 @@ public class ListingAgent extends AbstractAgent {
         int policy = HttpUtils.indexOfIngnoreCase(query, "policy");
 
         if ((services != null) && !services.isEmpty()) {
-            Object serviceObj = services.get(serviceName);
-            if (serviceObj != null) {
-                AxisService axisService = (AxisService) serviceObj;
+            AxisService axisService = services.get(serviceName);
+            if (axisService != null) {              
                 if (wsdl2 >= 0) {
                     handleWSDL2Request(req, res, url, axisService);
                     return;
@@ -191,7 +190,7 @@ public class ListingAgent extends AbstractAgent {
                     handlePolicyRequest(req, res, serviceName, axisService);
                     return;
                 } else {
-                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
+                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, axisService);
                 }
             } else {
                 req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
