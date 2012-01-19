@@ -23,6 +23,12 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 
+/**
+ * The Class EJB3MessageReceiver is a MessageReceiver that should use with
+ * EJB3.
+ * 
+ * @since 1.7.0
+ */
 public class EJB3MessageReceiver extends RPCMessageReceiver {
 
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {

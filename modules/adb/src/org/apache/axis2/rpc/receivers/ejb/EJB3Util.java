@@ -33,6 +33,11 @@ import java.security.PrivilegedAction;
 import java.util.Properties;
 import java.util.concurrent.*;
 
+/**
+ * Utility class that provides EJB3 specific features.
+ * 
+ * @since 1.7.0
+ */
 public class EJB3Util {
     public static final String EJB_JNDI_NAME = "beanJndiName";
     public static final String EJB_REMOTE_INTERFACE_NAME = "remoteInterfaceName";
