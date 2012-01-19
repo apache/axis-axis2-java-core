@@ -34,7 +34,9 @@ import java.io.InputStream;
 
 /**
  * Util class of the spring module. It contains a method which is used to get
- * the spring application context for given spring web services
+ * the spring application context for given spring web services.
+ * 
+ * @since 1.7.0
  */
 public class ApplicationContextUtil {
     public static final String SPRING_APPLICATION_CONTEXT = "SpringApplicationContext";
