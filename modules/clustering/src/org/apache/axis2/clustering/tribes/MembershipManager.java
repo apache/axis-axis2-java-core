@@ -37,6 +37,10 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Responsible for managing the membership. Handles membership changes.
@@ -68,9 +72,21 @@ public class MembershipManager {
     private final List<Member> wkaMembers = new ArrayList<Member>();
 
     /**
+     * List of Well-Known members which have not responded to the MEMBER_LIST message.
+     * We need to retry sending the MEMBER_LIST message to these members until they respond,
+     * otherwise, we cannot be sure whether these WKA members added the members in the MEMBER_LIST
+     */
+    private final List<Member> nonRespondingWkaMembers = new CopyOnWriteArrayList<Member>();
+
+    /**
      * The member representing this node
      */
     private Member localMember;
+
+    /**
+     *
+     */
+    private boolean isMemberListResponseReceived;
 
     public MembershipManager(ConfigurationContext configContext) {
         this.configContext = configContext;
@@ -87,9 +103,10 @@ public class MembershipManager {
         return rpcMembershipChannel;
     }
 
-    public void setStaticMembershipInterceptor(
-            StaticMembershipInterceptor staticMembershipInterceptor) {
+    public void setupStaticMembershipManagement(StaticMembershipInterceptor staticMembershipInterceptor) {
         this.staticMembershipInterceptor = staticMembershipInterceptor;
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleWithFixedDelay(new MemberListSenderTask(), 5, 5, TimeUnit.SECONDS);
     }
 
     public void setGroupManagementAgent(GroupManagementAgent groupManagementAgent) {
@@ -157,54 +174,93 @@ public class MembershipManager {
         }
 
         if (shouldAddMember) {
+            boolean wkaMemberBelongsToLocalDomain = true;
             if (rpcMembershipChannel != null && isLocalMemberInitialized() &&
                 wkaMembers.contains(member)) { // if it is a well-known member
 
                 log.info("A WKA member " + TribesUtil.getName(member) +
                          " just joined the group. Sending MEMBER_LIST message.");
-                // send the member list to it
-                MemberListCommand memListCmd;
-                try {
-                    memListCmd = new MemberListCommand();
-                    List<Member> members = new ArrayList<Member>(this.members);
-                    members.add(localMember); // Need to set the local member too
-                    memListCmd.setMembers(members.toArray(new Member[members.size()]));
-
-                    Response[] responses =
-                            rpcMembershipChannel.send(new Member[]{member}, memListCmd,
-                                                      RpcChannel.ALL_REPLY,
-                                                      Channel.SEND_OPTIONS_ASYNCHRONOUS |
-                                                      TribesConstants.MEMBERSHIP_MSG_OPTION, 10000);
-
-                    // Once a response is received from the WKA member to the MEMBER_LIST message,
-                    // if it does not belong to this domain, simply remove it from the members
-                    if (responses != null && responses.length > 0 && responses[0] != null) {
-                        Member source = responses[0].getSource();
-                        if (!TribesUtil.areInSameDomain(source, member)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("WKA Member " + TribesUtil.getName(source) +
-                                          " does not belong to local domain " + new String(domain) +
-                                          ". Hence removing it from the list.");
-                            }
-                            members.remove(member);
-                            return false;
-                        }
-                    }
-                } catch (Exception e) {
-                    String errMsg = "Could not send MEMBER_LIST to well-known member " +
-                                    TribesUtil.getName(member);
-                    log.error(errMsg, e);
-                    throw new RemoteProcessException(errMsg, e);
+                wkaMemberBelongsToLocalDomain = sendMemberListToWellKnownMember(member);
+            }
+            if (wkaMemberBelongsToLocalDomain) {
+                members.add(member);
+                if (log.isDebugEnabled()) {
+                    log.debug("Added group member " + TribesUtil.getName(member) + " to domain " +
+                              new String(member.getDomain()));
                 }
+                return true;
             }
-            members.add(member);
-            if (log.isDebugEnabled()) {
-                log.debug("Added group member " + TribesUtil.getName(member) + " to domain " +
-                          new String(member.getDomain()));
-            }
-            return true;
         }
         return false;
+    }
+
+    /**
+     * Task which send MEMBER_LIST messages to WKA members which have not yet responded to the
+     * MEMBER_LIST message
+     */
+    private class MemberListSenderTask implements Runnable {
+        public void run() {
+            try {
+                if (nonRespondingWkaMembers != null && !nonRespondingWkaMembers.isEmpty()) {
+                    for (Member wkaMember : nonRespondingWkaMembers) {
+                        if (wkaMember != null) {
+                            sendMemberListToWellKnownMember(wkaMember);
+                        }
+                    }
+                }
+            } catch (Throwable e) {
+                log.error("Could not send MemberList to WKA Members", e);
+            }
+        }
+    }
+
+    /**
+     * Send MEMBER_LIST message to WKA member
+     *
+     * @param wkaMember The WKA member to whom the MEMBER_LIST has to be sent
+     * @return true - if the WKA member belongs to the domain of this local member
+     */
+    private boolean sendMemberListToWellKnownMember(Member wkaMember) {
+        /*if (wkaMember.isFailing() || wkaMember.isSuspect()) {
+            return false;
+        }*/
+        // send the member list to it
+        MemberListCommand memListCmd;
+        try {
+            memListCmd = new MemberListCommand();
+            List<Member> members = new ArrayList<Member>(this.members);
+            members.add(localMember); // Need to set the local member too
+            memListCmd.setMembers(members.toArray(new Member[members.size()]));
+
+            Response[] responses =
+                    rpcMembershipChannel.send(new Member[]{wkaMember}, memListCmd,
+                                              RpcChannel.ALL_REPLY,
+                                              Channel.SEND_OPTIONS_ASYNCHRONOUS |
+                                              TribesConstants.MEMBERSHIP_MSG_OPTION, 10000);
+
+            // Once a response is received from the WKA member to the MEMBER_LIST message,
+            // if it does not belong to this domain, simply remove it from the members
+            if (responses != null && responses.length > 0 && responses[0] != null) {
+                nonRespondingWkaMembers.remove(wkaMember);
+                Member source = responses[0].getSource();
+                if (!TribesUtil.areInSameDomain(source, wkaMember)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("WKA Member " + TribesUtil.getName(source) +
+                                  " does not belong to local domain " + new String(domain) +
+                                  ". Hence removing it from the list.");
+                    }
+                    return false;
+                }
+            } else { // No response from WKA member
+                nonRespondingWkaMembers.add(wkaMember);
+            }
+        } catch (Exception e) {
+            String errMsg = "Could not send MEMBER_LIST to well-known member " +
+                            TribesUtil.getName(wkaMember);
+            log.error(errMsg, e);
+            throw new RemoteProcessException(errMsg, e);
+        }
+        return true;
     }
 
     /**
@@ -278,6 +334,7 @@ public class MembershipManager {
      */
     public void memberDisappeared(Member member) {
         members.remove(member);
+        nonRespondingWkaMembers.remove(member);
 
         // Is this an application domain member?
         if (groupManagementAgent != null) {

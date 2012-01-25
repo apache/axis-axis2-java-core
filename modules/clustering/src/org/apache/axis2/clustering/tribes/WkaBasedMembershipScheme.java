@@ -1,17 +1,17 @@
-/*                                                                             
- * Copyright 2004,2005 The Apache Software Foundation.                         
- *                                                                             
- * Licensed under the Apache License, Version 2.0 (the "License");             
- * you may not use this file except in compliance with the License.            
- * You may obtain a copy of the License at                                     
- *                                                                             
- *      http://www.apache.org/licenses/LICENSE-2.0                             
- *                                                                             
- * Unless required by applicable law or agreed to in writing, software         
- * distributed under the License is distributed on an "AS IS" BASIS,           
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    
- * See the License for the specific language governing permissions and         
- * limitations under the License.                                              
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.axis2.clustering.tribes;
 
@@ -289,7 +289,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
             log.debug("Adding Interceptors...");
         }
         TcpPingInterceptor tcpPingInterceptor = new TcpPingInterceptor();
-        tcpPingInterceptor.setInterval(100);
+        tcpPingInterceptor.setInterval(10000);
         channel.addInterceptor(tcpPingInterceptor);
         if (log.isDebugEnabled()) {
             log.debug("Added TCP Ping Interceptor");
@@ -299,7 +299,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
 //        tcpFailureDetector.setPrevious(dfi); //TODO: check this
         tcpFailureDetector.setReadTestTimeout(120000);
-        tcpFailureDetector.setConnectTimeout(60000);
+        tcpFailureDetector.setConnectTimeout(180000);
         channel.addInterceptor(tcpFailureDetector);
         if (log.isDebugEnabled()) {
             log.debug("Added TCP Failure Detector");
@@ -310,7 +310,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
 
         staticMembershipInterceptor = new StaticMembershipInterceptor();
         staticMembershipInterceptor.setLocalMember(primaryMembershipManager.getLocalMember());
-        primaryMembershipManager.setStaticMembershipInterceptor(staticMembershipInterceptor);
+        primaryMembershipManager.setupStaticMembershipManagement(staticMembershipInterceptor);
         channel.addInterceptor(staticMembershipInterceptor);
         if (log.isDebugEnabled()) {
             log.debug("Added Static Membership Interceptor");
@@ -350,7 +350,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         // Have multiple RPC channels with multiple RPC request handlers for each localDomain
         // This is needed only when this member is running as a load balancer
         for (MembershipManager appDomainMembershipManager : applicationDomainMembershipManagers) {
-            appDomainMembershipManager.setStaticMembershipInterceptor(staticMembershipInterceptor);
+            appDomainMembershipManager.setupStaticMembershipManagement(staticMembershipInterceptor);
 
             // Create an RpcChannel for each localDomain
             String domain = new String(appDomainMembershipManager.getDomain());
@@ -377,7 +377,6 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
 
         // Send JOIN message to a WKA member
         if (primaryMembershipManager.getMembers().length > 0) {
-            log.info("Sending JOIN message to WKA members...");
             org.apache.catalina.tribes.Member[] wkaMembers = primaryMembershipManager.getMembers(); // The well-known members
             /*try {
                 Thread.sleep(3000); // Wait for sometime so that the WKA members can receive the MEMBER_LIST message, if they have just joined the group
@@ -386,6 +385,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
             Response[] responses = null;
             do {
                 try {
+                    log.info("Sending JOIN message to WKA members...");
                     responses = rpcMembershipChannel.send(wkaMembers,
                                                           new JoinGroupCommand(),
                                                           RpcChannel.ALL_REPLY,
@@ -394,10 +394,8 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                                                           10000);
                     if (responses.length == 0) {
                         try {
-                            if (log.isDebugEnabled()) {
-                                log.debug("No responses received");
-                            }
-                            Thread.sleep(500);
+                            log.info("No responses received from WKA members");
+                            Thread.sleep(5000);
                         } catch (InterruptedException ignored) {
                         }
                     }
