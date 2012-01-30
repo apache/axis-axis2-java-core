@@ -338,14 +338,22 @@ public class ServiceBuilder extends DescriptionBuilder {
 				while (transport_itr.hasNext()) {
 					OMElement trsEle = (OMElement) transport_itr.next();
 					String transportName = trsEle.getText().trim();
-					trs.add(transportName);
 					if (axisConfig.getTransportIn(transportName) == null) {
-						throw new AxisFault("Service [ " + service.getName()
+                        log.warn("Service [ " + service.getName()
 								+ "] is trying to expose in a transport : "
-								+ transports
+								+ transportName
 								+ " and which is not available in Axis2");
-					}
+					} else {
+                        trs.add(transportName);
+                    }
 				}
+
+                if(trs.isEmpty()){
+                    throw new AxisFault("Service [" + service.getName()
+                        + "] is trying expose in tranpsorts: "
+                        + transports
+                        + " and which is/are not available in Axis2");
+                }
 				service.setExposedTransports(trs);
 			}
 			// processing operations
