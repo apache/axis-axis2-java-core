@@ -729,8 +729,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                             if(genericFieldType != null && Map.class.isAssignableFrom((Class) genericFieldType)){
                                 generateWrappedSchemaTypeForMap(sequence, genericFieldType, propertyName);
 
-                            }
-                            if (genericFieldType != null
+                            } else if (genericFieldType != null
                                     && Collection.class
                                     .isAssignableFrom((Class) genericFieldType)) {
                                 generateWrappedSchemaTypeForCollection(
