@@ -1352,7 +1352,9 @@ public class BeanUtil {
 	 * @return the OMElement
 	 */
 	public static OMElement convertDOMtoOM(OMFactory fac, Object document) {
-	    
+	    if( document == null ) {
+	        return null;
+	    }
 	    if (document instanceof OMDocument) {
 		return ((OMDocument)document).getOMDocumentElement();
 		
