@@ -292,7 +292,7 @@ public class BeanUtil {
                             propertyQnameValueList.add(value);
                         }
                     }
-                } else  if (SimpleTypeMapper.isCollection(ptype)) { 
+                } else  if (SimpleTypeMapper.isCollection(ptype) && value != null) { 
                     if (typeTable != null) {
                 	OMFactory fac = OMAbstractFactory.getOMFactory();					
 			QName qNamefortheType = null;					
@@ -339,7 +339,7 @@ public class BeanUtil {
                     }
                           
 									
-                } else if (SimpleTypeMapper.isMap(ptype)) {
+                } else if (SimpleTypeMapper.isMap(ptype) && value != null) {
 					OMFactory fac = OMAbstractFactory.getOMFactory();
 					QName qNamefortheType = (QName) typeTable
 							.getComplexSchemaMap().get(getClassName(beanClass));
