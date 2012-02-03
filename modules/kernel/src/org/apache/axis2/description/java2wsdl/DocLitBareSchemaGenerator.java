@@ -36,11 +36,13 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,6 +189,8 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                         	    methodName);
                             parameterName = methodName;
 
+                        }  if (methodParameter != null && Document.class.isAssignableFrom(methodParameter)){                         
+                            generateBareSchemaTypeForDocument(null, parameterName);                            
                         } else {
                         	generateSchemaForType(null, methodParameter, parameterName);                        	
                         }                        
@@ -271,6 +275,9 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             generateBareSchemaTypeForCollection(sequence, genericParameterType,
         	    parameterName, jMethod.getName());
             
+        } else if (methodParameter != null && Document.class.isAssignableFrom(methodParameter)) {
+            generateBareSchemaTypeForDocument(sequence,
+                    parameterName);
         } else {
             generateSchemaForType(sequence, methodParameter, parameterName);
         }
@@ -448,5 +455,34 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 	    QName schemaTypeName = generateSchemaForCollection(sequence,
 		    genericType, partName);
 	}
+	
+    /**
+     * Generate bare schema type for document.
+     * 
+     * @param sequence
+     *            the sequence
+     * @param parameterName
+     *            the parameter name
+     */
+    private void generateBareSchemaTypeForDocument(XmlSchemaSequence sequence,
+            String parameterName) {
+        QName schemaTypeName = generateSchemaTypeForDocument(sequence,
+                parameterName);
+        if (sequence != null) {
+            return;
+        }
+        XmlSchemaElement elt1 = new XmlSchemaElement();
+        elt1.setSchemaTypeName(schemaTypeName);
+        elt1.setName(parameterName);
+        elt1.setNillable(true);
+        QName elementName = new QName(schemaTargetNameSpace, parameterName,
+                schema_namespace_prefix);
+        elt1.setQName(elementName);
+        XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+        xmlSchema.getElements().add(elementName, elt1);
+        xmlSchema.getItems().add(elt1);
+        typeTable.addComplexSchema(parameterName, elementName);
+
+    }
 
 }

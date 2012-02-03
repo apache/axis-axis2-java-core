@@ -2041,7 +2041,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
      * @param parameterName
      *            the parameter name
      */
-    protected void generateSchemaTypeForDocument(XmlSchemaSequence sequence,
+    protected QName generateSchemaTypeForDocument(XmlSchemaSequence sequence,
             String parameterName) {
 
         XmlSchema xmlSchema = getXmlSchema(targetNamespace);
@@ -2067,8 +2067,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         entryElement.setQName(schemaType.getQName());
         entryElement.setMinOccurs(0);
         entryElement.setNillable(true);
-        sequence.getItems().add(entryElement);
-
+        if (sequence != null) {
+            sequence.getItems().add(entryElement);
+            
+        }
+        return schemaType.getQName();
     }
 
 
