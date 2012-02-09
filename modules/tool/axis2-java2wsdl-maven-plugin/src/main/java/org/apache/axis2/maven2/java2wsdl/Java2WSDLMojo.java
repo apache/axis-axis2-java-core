@@ -128,7 +128,7 @@ public class Java2WSDLMojo extends AbstractMojo {
 
     /**
      * Schema Generator
-     * @parameter expression="${axis2.java2wsdl.nsGenClassName}"
+     * @parameter expression="${axis2.java2wsdl.schemaGenClassName}"
      */
     private String schemaGenClassName;
 
