@@ -607,6 +607,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         try {
                             Field field = javaType.getDeclaredField(propertyName);
                             genericFieldType = field.getGenericType();
+                        } catch (NoSuchFieldException e) {
+                            // We have to check setter/getter too.
+                            String getMethodName = "get" + propertyName.substring(0, 1).toUpperCase();
+                            if (propertyName.length() > 1) {
+                                getMethodName = getMethodName + propertyName.substring(1);
+                            }
+                            genericFieldType = javaType.getMethod(
+                                    getMethodName, null).getGenericReturnType();
                         } catch (Exception e) {
                             //log.info(e.getMessage());
                         }
