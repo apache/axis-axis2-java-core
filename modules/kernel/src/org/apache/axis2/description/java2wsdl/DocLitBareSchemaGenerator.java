@@ -42,7 +42,6 @@ import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,7 +188,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                         	    methodName);
                             parameterName = methodName;
 
-                        }  if (methodParameter != null && Document.class.isAssignableFrom(methodParameter)){                         
+                        } else if (methodParameter != null && Document.class.isAssignableFrom(methodParameter)){                         
                             generateBareSchemaTypeForDocument(null, parameterName);                            
                         } else {
                         	generateSchemaForType(null, methodParameter, parameterName);                        	
