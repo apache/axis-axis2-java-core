@@ -156,7 +156,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
         addRequestBlockingHandlerToInFlows();
         primaryMembershipManager = new MembershipManager(configurationContext);
 
-        channel = new GroupChannel();
+        channel = new Axis2GroupChannel(configurationContext);
         channel.setHeartbeat(true);
         channelSender = new ChannelSender(channel, primaryMembershipManager, synchronizeAllMembers());
         axis2ChannelListener =
@@ -225,7 +225,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
             ClusteringContextListener contextListener = new ClusteringContextListener(channelSender);
             configurationContext.addContextListener(contextListener);
         }
-
+        configurationContext.getAxisConfiguration().addObservers(new TribesAxisObserver());
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
         log.info("Cluster initialization completed.");
@@ -680,7 +680,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
                             primaryMembershipManager.getLongestLivingMember() : // First try to get from the longest member alive
                             primaryMembershipManager.getRandomMember(); // Else get from a random member
             String memberHost = TribesUtil.getName(member);
-            log.info("Trying to send intialization request to " + memberHost);
+            log.info("Trying to send initialization request to " + memberHost);
             try {
                 if (!sentMembersList.contains(memberHost)) {
                     Response[] responses;
@@ -688,7 +688,8 @@ public class TribesClusteringAgent implements ClusteringAgent {
                     responses = rpcInitChannel.send(new Member[]{member},
                                                     command,
                                                     RpcChannel.FIRST_REPLY,
-                                                    Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                    Channel.SEND_OPTIONS_ASYNCHRONOUS |
+                                                    Channel.SEND_OPTIONS_BYTE_MESSAGE,
                                                     10000);
                     if (responses.length == 0) {
                         try {

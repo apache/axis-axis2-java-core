@@ -27,9 +27,6 @@ import org.apache.axis2.clustering.management.NodeManagementCommand;
 import org.apache.axis2.clustering.state.DefaultStateManager;
 import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
@@ -40,9 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * This is the Tribes channel listener which is used for listening on the channels, receiving
@@ -93,23 +87,11 @@ public class Axis2ChannelListener implements ChannelListener {
      */
     public void messageReceived(Serializable msg, Member sender) {
         try {
-            AxisConfiguration configuration = configurationContext.getAxisConfiguration();
-            List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
-            classLoaders.add(configuration.getSystemClassLoader());
-            classLoaders.add(getClass().getClassLoader());
-            for (Iterator iter = configuration.getServiceGroups(); iter.hasNext();) {
-                AxisServiceGroup group = (AxisServiceGroup) iter.next();
-                classLoaders.add(group.getServiceGroupClassLoader());
-            }
-            for(Object obj: configuration.getModules().values()){    
-                AxisModule module = (AxisModule) obj;
-                classLoaders.add(module.getModuleClassLoader());
-            }
             byte[] message = ((ByteMessage) msg).getMessage();
             msg = XByteBuffer.deserialize(message,
                                           0,
                                           message.length,
-                                          classLoaders.toArray(new ClassLoader[classLoaders.size()]));
+                                          ClassLoaderUtil.getClassLoaders(configurationContext));
         } catch (Exception e) {
             String errMsg = "Cannot deserialize received message";
             log.error(errMsg, e);
