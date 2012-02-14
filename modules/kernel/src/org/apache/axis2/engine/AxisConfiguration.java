@@ -506,22 +506,12 @@ public class AxisConfiguration extends AxisDescription {
         Iterator<AxisService> services = axisServiceGroup.getServices();
         boolean isClientSide = false;
         while (services.hasNext()) {
-            AxisService axisService = services.next();
-            allServices.remove(axisService.getName());
-            if (!axisService.isClientSide()) {
-                notifyObservers(new AxisEvent(AxisEvent.SERVICE_REMOVE , axisService), axisService);
-            } else {
-                isClientSide = true;
-            }
+            AxisService axisService = services.next();           
+            isClientSide = axisService.isClientSide()? true : false;
 
             //removes the endpoints to this service
             String serviceName = axisService.getName();
-            String key;
-
-            for (String s : axisService.getEndpoints().keySet()) {
-                key = serviceName + "." + s;
-                this.allEndpoints.remove(key);
-            }
+            removeServiceReferences(axisService.getName());    
 
         }
         removeChild(serviceGroupName);
@@ -686,7 +676,7 @@ public class AxisConfiguration extends AxisDescription {
      * @throws AxisFault
      */
     public synchronized void removeService(String name) throws AxisFault {
-        AxisService service = allServices.remove(name);
+        AxisService service = removeServiceReferences(name);
         if (service != null) {
             AxisServiceGroup serviceGroup = service.getAxisServiceGroup();
             serviceGroup.removeService(name);
@@ -1544,5 +1534,24 @@ public class AxisConfiguration extends AxisDescription {
              childFirstClassLoading = JavaUtils.isTrueExplicitly(isChildFirstClassLoading.getValue());
         }
         return childFirstClassLoading;
+    }
+    
+    private AxisService removeServiceReferences(String serviceName) {
+
+        AxisService axisService = allServices.remove(serviceName);
+        if (axisService != null) {
+            if (!axisService.isClientSide()) {
+                notifyObservers(new AxisEvent(AxisEvent.SERVICE_REMOVE,
+                        axisService), axisService);
+            }
+
+            // removes the endpoints to this service
+            for (Iterator<String> iter = axisService.getEndpoints().keySet()
+                    .iterator(); iter.hasNext();) {
+                String key = serviceName + "." + iter.next();
+                this.allEndpoints.remove(key);
+            }
+        }
+        return axisService;
     }
 }
