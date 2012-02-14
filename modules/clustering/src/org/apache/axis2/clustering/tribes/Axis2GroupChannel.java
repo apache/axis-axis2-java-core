@@ -39,12 +39,6 @@ import java.io.Serializable;
  */
 public class Axis2GroupChannel extends GroupChannel{
 
-    private ConfigurationContext configurationContext;
-
-    public Axis2GroupChannel(ConfigurationContext configurationContext) {
-        this.configurationContext = configurationContext;
-    }
-
     @Override
     public void messageReceived(ChannelMessage msg) {
         if ( msg == null ) return;
@@ -62,7 +56,7 @@ public class Axis2GroupChannel extends GroupChannel{
                 try {
                     fwd = XByteBuffer.deserialize(msg.getMessage().getBytesDirect(), 0,
                                                   msg.getMessage().getLength(),
-                                                  ClassLoaderUtil.getClassLoaders(configurationContext));
+                                                  ClassLoaderUtil.getClassLoaders());
                 }catch (Exception sx) {
                     log.error("Unable to deserialize message:"+msg,sx);
                     return;

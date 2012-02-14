@@ -91,7 +91,7 @@ public class Axis2ChannelListener implements ChannelListener {
             msg = XByteBuffer.deserialize(message,
                                           0,
                                           message.length,
-                                          ClassLoaderUtil.getClassLoaders(configurationContext));
+                                          ClassLoaderUtil.getClassLoaders());
         } catch (Exception e) {
             String errMsg = "Cannot deserialize received message";
             log.error(errMsg, e);

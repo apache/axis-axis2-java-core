@@ -22,7 +22,14 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.clustering.*;
+import org.apache.axis2.clustering.ClusteringAgent;
+import org.apache.axis2.clustering.ClusteringCommand;
+import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.ClusteringMessage;
+import org.apache.axis2.clustering.MembershipListener;
+import org.apache.axis2.clustering.MembershipScheme;
+import org.apache.axis2.clustering.RequestBlockingHandler;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
@@ -47,7 +54,6 @@ import org.apache.catalina.tribes.ErrorHandler;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.UniqueId;
-import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.transport.MultiPointSender;
@@ -156,7 +162,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
         addRequestBlockingHandlerToInFlows();
         primaryMembershipManager = new MembershipManager(configurationContext);
 
-        channel = new Axis2GroupChannel(configurationContext);
+        channel = new Axis2GroupChannel();
         channel.setHeartbeat(true);
         channelSender = new ChannelSender(channel, primaryMembershipManager, synchronizeAllMembers());
         axis2ChannelListener =
@@ -211,6 +217,9 @@ public class TribesClusteringAgent implements ClusteringAgent {
 
         membershipScheme.joinGroup();
 
+        configurationContext.getAxisConfiguration().addObservers(new TribesAxisObserver());
+        ClassLoaderUtil.init(configurationContext.getAxisConfiguration());
+
         // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
             configurationManager.setSender(channelSender);
@@ -225,7 +234,6 @@ public class TribesClusteringAgent implements ClusteringAgent {
             ClusteringContextListener contextListener = new ClusteringContextListener(channelSender);
             configurationContext.addContextListener(contextListener);
         }
-        configurationContext.getAxisConfiguration().addObservers(new TribesAxisObserver());
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
         log.info("Cluster initialization completed.");
