@@ -156,7 +156,7 @@ public abstract class AbstractJSONOMBuilder implements Builder {
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
-        if (localName != null && !localName.isEmpty()) {
+		if (localName != null && localName.length() > 0) {
             AbstractJSONDataSource jsonDataSource = getDataSource(reader, prefix, localName);
             return factory.createOMElement(jsonDataSource, localName, ns);
         }else{
