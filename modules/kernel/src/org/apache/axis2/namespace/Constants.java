@@ -357,6 +357,7 @@ public class Constants {
     public static final String MIME_CT_IMAGE_GIF = "image/gif";
     public static final String MIME_CT_TEXT_XML = "text/xml";
     public static final String MIME_CT_APPLICATION_XML = "application/xml";
+    public static final String MIME_CT_APPLICATION_URL_ENCODED = "application/x-www-form-urlencoded";
     public static final String MIME_CT_MULTIPART_PREFIX = "multipart/";
 
     public static final QName BASE_64_CONTENT_QNAME =
