@@ -90,4 +90,22 @@ public class WSDLUtil {
         return httpMethod + httpLocation;
     }
 
+    /**
+     * This method will return the EndPointName for a service with give transport protocol
+     * ex : StudentServiceHttpEndpoint
+     *
+     * @param serviceName
+     * @param protocol transport protocol
+     * @return
+     */
+    public static String getEndpointName(String serviceName, String protocol) {
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(serviceName);
+        buffer.append(protocol.substring(0, 1).toUpperCase());
+        buffer.append(protocol.substring(1, protocol.length()).toLowerCase());
+        buffer.append("Endpoint");
+        return buffer.toString();
+    }
+
 }

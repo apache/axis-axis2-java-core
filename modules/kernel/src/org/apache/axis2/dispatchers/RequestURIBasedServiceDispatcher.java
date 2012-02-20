@@ -24,12 +24,15 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -104,9 +107,17 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
                                 messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
                                         endpoints.get(endpointName));
                             }
-            			}
-            		}
-            	}
+                            String endpointName = temp[0].substring(temp[0].indexOf(".") + 1);
+                            AxisEndpoint endpoint = (AxisEndpoint) endpoints.get(endpointName);
+                            if (endpoint != null) {
+                                messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                           endpoint);
+                            } else {
+                                inferEndpoint(messageContext, axisService);
+                            }
+                        }
+                    }
+                }
 
             	return axisService;
             } else {
@@ -127,5 +138,30 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
 
     public void initDispatcher() {
         init(new HandlerDescription(NAME));
+    }
+
+    private void inferEndpoint(MessageContext msgCtx, AxisService service) {
+        if (!msgCtx.isServerSide()) {
+            return;
+        }
+        String transport = null;
+        TransportInDescription transportIn = msgCtx.getTransportIn();
+        if (transportIn != null) {
+            transport = transportIn.getName();
+            if (transport == null) {
+                return;
+            }
+        }
+        AxisEndpoint endpoint = null;
+        Map endpointMapping = service.getEndpoints();
+        String serviceName = service.getName();
+
+        if (msgCtx.isDoingREST()) {
+            endpoint = (AxisEndpoint) endpointMapping.get(WSDLUtil.
+                    getEndpointName(serviceName, transport));
+        }
+        if (endpoint != null) {
+            msgCtx.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME, endpoint);
+        }
     }
 }

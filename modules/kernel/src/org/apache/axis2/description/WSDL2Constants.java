@@ -109,6 +109,7 @@ public interface WSDL2Constants {
     String ATTR_WHTTP_LOCATION = "whttp:location";
     String ATTR_WHTTP_HEADER = "whttp:header";
     String ATTR_WHTTP_METHOD = "whttp:method";
+    String ATTR_WHTTP_METHOD_DEFAULT = "whttp:methodDefault";
     String ATTR_WHTTP_CODE = "whttp:code";
     String ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR = "whttp:queryParameterSeparator";
     String ATTR_WHTTP_IGNORE_UNCITED = "whttp:ignoreUncited";
