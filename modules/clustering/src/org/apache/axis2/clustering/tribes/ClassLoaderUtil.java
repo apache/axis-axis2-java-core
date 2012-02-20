@@ -21,16 +21,17 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A util for manipulating classloaders to be used while serializing & deserializing Tribes messages
  */
 public class ClassLoaderUtil {
 
-    private static Map<String, ClassLoader> classLoaders = new HashMap<String, ClassLoader>();
+    private static Map<String, ClassLoader> classLoaders =
+            new ConcurrentHashMap<String, ClassLoader>();
 
     public static void init(AxisConfiguration configuration) {
         classLoaders.put("system", configuration.getSystemClassLoader());

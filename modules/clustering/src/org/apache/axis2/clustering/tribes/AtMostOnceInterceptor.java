@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Message intereceptor for handling at-most-once message processing semantics
+ * Message interceptor for handling at-most-once message processing semantics
  */
 public final class AtMostOnceInterceptor extends ChannelInterceptorBase {
 
