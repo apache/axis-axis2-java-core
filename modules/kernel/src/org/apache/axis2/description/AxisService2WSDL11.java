@@ -76,12 +76,26 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	private ExternalPolicySerializer serializer;
 
 	private HashMap messagesMap;
+	
+	private boolean checkIfEndPointActive = true;
 
     public AxisService2WSDL11(AxisService service) throws Exception {
         this.axisService = service;
         this.serviceName = service.getName();
         init();
 	}
+
+    /**
+     * Sets whether to make a check if endpoint is active before adding the endpoint 
+     * to the WSDL.  By default an endpoint is not added if a transport for the endpoint
+     * is not found. 
+     * 
+     * @param flag true=check if endpoint is active before adding endpoint.
+     *             false=add endpoint independent of whether endpoint is active. 
+     */
+    public void setCheckIfEndPointActive(boolean flag) {
+        checkIfEndPointActive = flag;
+    }
 
 	private void init() throws AxisFault {
 /*
@@ -677,7 +691,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			/*
 			 * Some transports might not be active at runtime.
 			 */
-			if (!axisEndpoint.isActive()) {
+			if (checkIfEndPointActive && !axisEndpoint.isActive()) {
 				continue;
 			}
 			axisBinding = axisEndpoint.getBinding();
@@ -719,7 +733,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			/*
 			 * 
 			 */
-			if (!axisEndpoint.isActive()) {
+			if (checkIfEndPointActive && !axisEndpoint.isActive()) {
 				continue;
 			}
 			axisBinding = axisEndpoint.getBinding();
@@ -761,7 +775,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			/*
 			 * 
 			 */
-			if (!axisEndpoint.isActive()) {
+			if (checkIfEndPointActive && !axisEndpoint.isActive()) {
 				continue;
 			}
 			axisBinding = axisEndpoint.getBinding();

@@ -340,6 +340,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 			AxisService2WSDL11 g = new AxisService2WSDL11(axisService);
 			g.setStyle(this.style);
 			g.setUse(this.use);
+			g.setCheckIfEndPointActive(false);
 			OMElement wsdlElement = g.generateOM();
 			if (!isPretty()) {
 				wsdlElement.serialize(out);
@@ -348,6 +349,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 			}
 		} else {
 			AxisService2WSDL20 g = new AxisService2WSDL20(axisService);
+	        g.setCheckIfEndPointActive(false);
 			OMElement wsdlElement = g.generateOM();
 			if (!isPretty()) {
 				wsdlElement.serialize(out);
@@ -476,16 +478,23 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		this.wsdlVersion = wsdlVersion;
 	}
 
-	private void setServiceEPR(AxisService axisService, String urlString)
-			throws Exception {
-		Utils.addSoap11Endpoint(axisService, urlString);
-		Utils.addSoap12Endpoint(axisService, urlString);
-		
-		if ("http".equals(org.apache.axis2.util.Utils.getURIScheme(urlString))) {
-			Utils.addHttpEndpoint(axisService, urlString);
-		}
-	}
+    private void setServiceEPR(AxisService axisService, String urlString) throws Exception {
+        
+        // User can pass multiple location URIs, delimited by a comma.
+        String[] urls = urlString.split(",");
 
+        for (String url : urls)
+        {
+            Utils.addSoap11Endpoint(axisService, url);
+            Utils.addSoap12Endpoint(axisService, url);
+
+            if ("http".equals(org.apache.axis2.util.Utils.getURIScheme(url))
+                    || "https".equals(org.apache.axis2.util.Utils.getURIScheme(url)))
+            {
+                Utils.addHttpEndpoint(axisService, url);
+            }
+        }
+    }
 
     public String getCustomSchemaLocation() {
         return customSchemaLocation;

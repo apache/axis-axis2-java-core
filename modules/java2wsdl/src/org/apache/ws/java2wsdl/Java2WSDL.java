@@ -54,7 +54,7 @@ public class Java2WSDL {
         System.out.println("  -o <output location>                    output directory");
         System.out.println("  -of <output file name>                  output file name for the WSDL");
         System.out.println("  -sn <service name>                      service name");
-        System.out.println("  -l <soap address>                       address of the port for the WSDL");
+        System.out.println("  -l <one or more soap addresses>         location URIs, comma-delimited");
         System.out.println("  -cp <class path uri>                    list of classpath entries - (urls)");
         System.out.println("  -tn <target namespace>                  target namespace for service");
         System.out.println("  -tp <target namespace prefix>           target namespace prefix for service");
@@ -73,8 +73,8 @@ public class Java2WSDL {
         System.out.println("  -wv <1.1/2.0>                           wsdl version - defaults to 1.1 if not specified");
         System.out.println("  -dlb                                    generate schemas conforming to doc/lit/bare style");
         System.out.println("  -dne                                    disallow nillable elements in the generated schema");
-        System.out.println("  -disableSOAP11                          disable binding generation for SOAP11");
-        System.out.println("  -disableSOAP12                          disable binding generation for SOAP12");
+        System.out.println("  -disableSOAP11                          disable binding generation for SOAP 1.1");
+        System.out.println("  -disableSOAP12                          disable binding generation for SOAP 1.2");
         System.out.println("  -disableREST                            disable binding generation for REST");
         System.out.println("  -mpn <messagePartName>                  change the part name of the generated wsdl messages");
         System.out.println("  -ptn <portTypeName>                     port Type name of the WSDL");

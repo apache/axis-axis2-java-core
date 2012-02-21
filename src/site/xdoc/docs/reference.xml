@@ -106,7 +106,7 @@ DESCRIPTION
       -o &lt;output location&gt;                    output directory
       -of &lt;output file name&gt;                  output file name for the WSDL
       -sn &lt;service name&gt;                      service name
-      -l &lt;soap address&gt;                       address of the port for the WSDL
+      -l &lt;one or more soap addresses&gt;         location URIs, comma-delimited
       -cp &lt;class path uri&gt;                    list of classpath entries - (urls)
       -tn &lt;target namespace&gt;                  target namespace for service
       -tp &lt;target namespace prefix&gt;           target namespace prefix for service
@@ -124,6 +124,10 @@ DESCRIPTION
       -xc class1 -xc class2...                extra class(es) for which schematype must be generated.
       -wv &lt;1.1/2.0&gt;                           wsdl version - defaults to 1.1 if not specified
       -dlb                                    generate schemas conforming to doc/lit/bare style
+      -dne                                    disallow nillable elements in the generated schema
+      -disableSOAP11                          disable binding generation for SOAP 1.1
+      -disableSOAP12                          disable binding generation for SOAP 1.2
+      -disableREST                            disable binding generation for REST
     
 EXAMPLES
        Java2WSDL.sh -cn ../samples/test/searchTool.Search

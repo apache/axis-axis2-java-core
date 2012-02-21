@@ -79,6 +79,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
     private HashMap policiesInDescription = new HashMap();
     private ExternalPolicySerializer filter = null;
     
+    private boolean checkIfEndPointActive = true;
+
     public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
         this.serviceName = service.getName();
@@ -89,6 +91,18 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         this.serviceName = serviceName;
     }
 
+    /**
+     * Sets whether to make a check if endpoint is active before adding the endpoint 
+     * to the WSDL.  By default an endpoint is not added if a transport for the endpoint
+     * is not found. 
+     * 
+     * @param flag true=check if endpoint is active before adding endpoint.
+     *             false=add endpoint independent of whether endpoint is active. 
+     */
+    public void setCheckIfEndPointActive(boolean flag) {
+        checkIfEndPointActive = flag;
+    }
+    
     /**
      * Generates a WSDL 2.0 document for this web service
      * @return The WSDL2 document element
@@ -272,7 +286,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 /*
 			    * Some transports might not be active at runtime.
 			    */
-                if (!isCodegen && !axisEndpoint.isActive()) {
+                if (!isCodegen && checkIfEndPointActive && !axisEndpoint.isActive()) {
                     continue;
                 }
                 AxisBinding axisBinding = axisEndpoint.getBinding();
