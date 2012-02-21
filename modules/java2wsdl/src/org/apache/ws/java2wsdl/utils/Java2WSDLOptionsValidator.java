@@ -66,6 +66,8 @@ public class Java2WSDLOptionsValidator implements Java2WSDLConstants {
                 Java2WSDLConstants.USE_OPTION.equalsIgnoreCase(optionType) ||
                 Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION.equalsIgnoreCase(optionType) ||
                 Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                Java2WSDLConstants.DISALLOW_OPTIONAL_ELEMENTS_OPTION.equalsIgnoreCase(optionType) ||
+                Java2WSDLConstants.DISALLOW_OPTIONAL_ELEMENTS_OPTION_LONG.equalsIgnoreCase(optionType) ||
                 Java2WSDLConstants.USE_OPTION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.WSDL_VERSION_OPTION.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.CUSTOM_SCHEMA_LOCATION.equalsIgnoreCase(optionType)||

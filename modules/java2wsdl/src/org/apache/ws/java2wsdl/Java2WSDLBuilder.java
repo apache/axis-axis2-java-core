@@ -69,6 +69,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 	private String locationUri;
 	private ArrayList<String> extraClasses;
     private boolean nillableElementsAllowed = true;
+    private boolean optionalElementsAllowed = true;
 
 	private String nsGenClassName = null;
 	private Map<String,String> pkg2nsMap = null;
@@ -267,6 +268,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
             service.addParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG, "true");
         }
 
+        if (!optionalElementsAllowed) {
+            service.addParameter(Java2WSDLConstants.DISALLOW_OPTIONAL_ELEMENTS_OPTION_LONG, "true");
+        }
+        
         if (messagePartName != null){
             service.addParameter(Java2WSDLConstants.MESSAGE_PART_NAME_OPTION_LONG, messagePartName);
         }
@@ -520,6 +525,14 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         this.nillableElementsAllowed = nillableElementsAllowed;
     }
 
+    public boolean isOptionalElementsAllowed() {
+        return optionalElementsAllowed;
+    }
+
+    public void setOptionalElementsAllowed(boolean optionalElementsAllowed) {
+        this.optionalElementsAllowed = optionalElementsAllowed;
+    }
+    
     public boolean isDisableREST() {
         return disableREST;
     }

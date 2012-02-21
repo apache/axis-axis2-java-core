@@ -1055,10 +1055,18 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArryType && !isBase64Binary) {
             elt1.setMaxOccurs(Long.MAX_VALUE);
         }
-        elt1.setMinOccurs(0);
+        
+        boolean disallowOptionals = false;
+        Parameter param = service.getParameter(Java2WSDLConstants.DISALLOW_OPTIONAL_ELEMENTS_OPTION_LONG);
+        if (param != null) {
+            disallowOptionals = JavaUtils.isTrueExplicitly(param.getValue());
+        }
+        if (!disallowOptionals) {
+            elt1.setMinOccurs(0);
+        }
 
         boolean disallowNillables = false;
-        Parameter param = service.getParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG);
+        param = service.getParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG);
         if (param != null) {
             disallowNillables = JavaUtils.isTrueExplicitly(param.getValue());
         }
@@ -1365,10 +1373,18 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArray) {
             elt1.setMaxOccurs(Long.MAX_VALUE);
         }
-        elt1.setMinOccurs(0);
+        
+        boolean disallowOptionals = false;
+        Parameter param = service.getParameter(Java2WSDLConstants.DISALLOW_OPTIONAL_ELEMENTS_OPTION_LONG);
+        if (param != null) {
+            disallowOptionals = JavaUtils.isTrueExplicitly(param.getValue());
+        }
+        if (!disallowOptionals) {
+            elt1.setMinOccurs(0);
+        }
 
         boolean disallowNillables = false;
-        Parameter param = service.getParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG);
+        param = service.getParameter(Java2WSDLConstants.DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG);
         if (param != null) {
             disallowNillables = JavaUtils.isTrueExplicitly(param.getValue());
         }

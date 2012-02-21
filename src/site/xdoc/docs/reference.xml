@@ -125,6 +125,7 @@ DESCRIPTION
       -wv &lt;1.1/2.0&gt;                           wsdl version - defaults to 1.1 if not specified
       -dlb                                    generate schemas conforming to doc/lit/bare style
       -dne                                    disallow nillable elements in the generated schema
+      -doe                                    disallow optional elements in the generated schema
       -disableSOAP11                          disable binding generation for SOAP 1.1
       -disableSOAP12                          disable binding generation for SOAP 1.2
       -disableREST                            disable binding generation for REST

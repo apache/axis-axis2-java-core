@@ -150,6 +150,9 @@ public interface Java2WSDLConstants {
     String DISALLOW_NILLABLE_ELEMENTS_OPTION = "dne";
     String DISALLOW_NILLABLE_ELEMENTS_OPTION_LONG = "disallowNillableElements";
 
+    String DISALLOW_OPTIONAL_ELEMENTS_OPTION = "doe";
+    String DISALLOW_OPTIONAL_ELEMENTS_OPTION_LONG = "disallowOptionalElements";
+
     String MESSAGE_PART_NAME_OPTION = "mpn";
     String MESSAGE_PART_NAME_OPTION_LONG = "messagePartName";
 

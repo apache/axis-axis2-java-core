@@ -73,14 +73,15 @@ public class Java2WSDL {
         System.out.println("  -wv <1.1/2.0>                           wsdl version - defaults to 1.1 if not specified");
         System.out.println("  -dlb                                    generate schemas conforming to doc/lit/bare style");
         System.out.println("  -dne                                    disallow nillable elements in the generated schema");
+        System.out.println("  -doe                                    disallow optional elements in the generated schema");
         System.out.println("  -disableSOAP11                          disable binding generation for SOAP 1.1");
         System.out.println("  -disableSOAP12                          disable binding generation for SOAP 1.2");
         System.out.println("  -disableREST                            disable binding generation for REST");
         System.out.println("  -mpn <messagePartName>                  change the part name of the generated wsdl messages");
         System.out.println("  -ptn <portTypeName>                     port Type name of the WSDL");
-        System.out.println("  -soap11BindingName                      soap11 binding name of the WSDL");
-        System.out.println("  -soap12BindingName                      soap 12 binding name of the WSDL");
-        System.out.println("  -restBindingName                        rest binding name of the WSDL");
+        System.out.println("  -soap11BindingName <SOAP 1.1 name>      SOAP 1.1 binding name");
+        System.out.println("  -soap12BindingName <SOAP 1.2 name>      SOAP 1.2 binding name");
+        System.out.println("  -restBindingName <REST name>            REST binding name");
         System.out.println("  -res <requestElementSuffix>             Adds a suffix to the request elemment");
         System.out.println("  -dat <disallowAnonymousTypes>           Creates a named complex type for the annonymous complex type");
         System.exit(0);
