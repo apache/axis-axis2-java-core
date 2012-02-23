@@ -243,8 +243,11 @@
         <xsl:for-each select="param[@type!='' and not(@primitive)]">
 
             if (<xsl:value-of select="@type"/>.class.equals(type)){
-            return <xsl:value-of select="@type"/>.Factory.parse(
-            param.getXMLStreamReader(false, true));
+                org.apache.axiom.om.OMXMLStreamReaderConfiguration configuration
+                    = new org.apache.axiom.om.OMXMLStreamReaderConfiguration();
+                configuration.setPreserveNamespaceContext(true);
+                return <xsl:value-of select="@type"/>.Factory.parse(
+                    param.getXMLStreamReader(false, configuration));
             }
 
         </xsl:for-each>
