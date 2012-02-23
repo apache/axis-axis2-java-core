@@ -38,17 +38,25 @@ public class ClassLoaderUtil {
         classLoaders.put("axis2", ClassLoaderUtil.class.getClassLoader());
         for (Iterator iter = configuration.getServiceGroups(); iter.hasNext(); ) {
             AxisServiceGroup group = (AxisServiceGroup) iter.next();
-            classLoaders.put(getServiceGroupMapKey(group), group.getServiceGroupClassLoader());
+            ClassLoader serviceGroupClassLoader = group.getServiceGroupClassLoader();
+            if (serviceGroupClassLoader != null) {
+                classLoaders.put(getServiceGroupMapKey(group), serviceGroupClassLoader);
+            }
         }
         for (Object obj : configuration.getModules().values()) {
             AxisModule module = (AxisModule) obj;
-            classLoaders.put(getModuleMapKey(module), module.getModuleClassLoader());
+            ClassLoader moduleClassLoader = module.getModuleClassLoader();
+            if (moduleClassLoader != null) {
+                classLoaders.put(getModuleMapKey(module), moduleClassLoader);
+            }
         }
     }
 
     public static void addServiceGroupClassLoader(AxisServiceGroup serviceGroup) {
-        classLoaders.put(getServiceGroupMapKey(serviceGroup),
-                         serviceGroup.getServiceGroupClassLoader());
+        ClassLoader serviceGroupClassLoader = serviceGroup.getServiceGroupClassLoader();
+        if (serviceGroupClassLoader != null) {
+            classLoaders.put(getServiceGroupMapKey(serviceGroup), serviceGroupClassLoader);
+        }
     }
 
     public static void removeServiceGroupClassLoader(AxisServiceGroup serviceGroup) {
@@ -60,8 +68,10 @@ public class ClassLoaderUtil {
     }
 
     public static void addModuleClassLoader(AxisModule module) {
-        classLoaders.put(getModuleMapKey(module),
-                         module.getModuleClassLoader());
+        ClassLoader moduleClassLoader = module.getModuleClassLoader();
+        if (moduleClassLoader != null) {
+            classLoaders.put(getModuleMapKey(module), moduleClassLoader);
+        }
     }
 
     public static void removeModuleClassLoader(AxisModule axisModule) {
