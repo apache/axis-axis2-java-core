@@ -153,13 +153,13 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         try {
             if (localPort != null) {
                 port = Integer.parseInt(((String) localPort.getValue()).trim());
-                port = getLocalPort(new ServerSocket(), localMember.getHostname(), port, 4000, 100);
+                port = getLocalPort(new ServerSocket(), localMember.getHostname(), port, 4000, 1000);
             } else { // In cases where the localport needs to be automatically figured out
-                port = getLocalPort(new ServerSocket(), localMember.getHostname(), -1, 4000, 100);
+                port = getLocalPort(new ServerSocket(), localMember.getHostname(), -1, 4000, 1000);
             }
         } catch (IOException e) {
             String msg =
-                    "Could not allocate the specified port or a port in the range 4000-4100 " +
+                    "Could not allocate the specified port or a port in the range 4000-5000 " +
                     "for local host " + localMember.getHostname() +
                     ". Check whether the IP address specified or inferred for the local " +
                     "member is correct.";
@@ -224,7 +224,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                 return true;
             } catch (IOException e) {
                 String msg = e.getMessage();
-                if (msg.indexOf("Connection refused") == -1 && msg.indexOf("connect timed out") == -1) {
+                if (!msg.contains("Connection refused") && !msg.contains("connect timed out")) {
                     log.error("Cannot connect to member " +
                               member.getHostName() + ":" + member.getPort(), e);
                 }
@@ -258,7 +258,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                 } catch (InterruptedException ignored) {
                     ignored.printStackTrace();
                 }
-                getLocalPort(socket, hostname, portstart, retries, -1);
+                portstart = getLocalPort(socket, hostname, portstart, retries, -1);
             }
         }
         return portstart;
