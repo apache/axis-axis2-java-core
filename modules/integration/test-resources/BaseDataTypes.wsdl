@@ -961,199 +961,199 @@
         <wsdl:operation name="retSByte">
             <http:operation location="retSByte"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retUShort">
             <http:operation location="retUShort"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retString">
             <http:operation location="retString"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retChar">
             <http:operation location="retChar"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retTimeSpan">
             <http:operation location="retTimeSpan"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retUri">
             <http:operation location="retUri"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retInt">
             <http:operation location="retInt"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retObject">
             <http:operation location="retObject"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retGuid">
             <http:operation location="retGuid"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retFloat">
             <http:operation location="retFloat"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retBool">
             <http:operation location="retBool"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retShort">
             <http:operation location="retShort"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retByteArray">
             <http:operation location="retByteArray"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retULong">
             <http:operation location="retULong"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retQName">
             <http:operation location="retQName"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retByte">
             <http:operation location="retByte"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retUInt">
             <http:operation location="retUInt"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retDouble">
             <http:operation location="retDouble"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retDecimal">
             <http:operation location="retDecimal"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retDateTime">
             <http:operation location="retDateTime"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retLong">
             <http:operation location="retLong"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retSingle">
             <http:operation location="retSingle"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="application/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
