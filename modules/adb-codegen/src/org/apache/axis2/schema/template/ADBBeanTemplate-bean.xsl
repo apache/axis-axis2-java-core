@@ -2970,6 +2970,15 @@
                                        nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
                                        if (!"true".equals(nillableValue) &amp;&amp; !"1".equals(nillableValue)){
                                     </xsl:if>
+
+                                    <!-- when the nillable = false in the element -->
+                                    <xsl:if test="not(@nillable)">
+                                    nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                    if ("true".equals(nillableValue) || "1".equals(nillableValue)){
+                                        throw new org.apache.axis2.databinding.ADBException("The element: "+"<xsl:value-of select="$propertyName"/>" +"  cannot be null");
+                                    }
+                                    </xsl:if>
+
                                     java.lang.String content = reader.getElementText();
                                     <xsl:if test="not(enumFacet)">
                                         <xsl:choose>
