@@ -1091,7 +1091,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 								mime);
 						input.addChild(inputelement);
                         String inputType=(String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION);
-                        inputelement.addAttribute("type", (inputType!=null? inputType:"text/xml"), null);
+                        inputelement.addAttribute("type", (inputType!=null? inputType:"application/xml"), null);
 						inputelement.addAttribute("part", inaxisMessage.getPartName(), null);
 						operation.addChild(input);
 					}
@@ -1116,7 +1116,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 								mime);
 						outElement.addChild(outElement);
                         String outputType=(String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION);
-                        outElement.addAttribute("type", (outputType!=null? outputType:"text/xml"), null);
+                        outElement.addAttribute("type", (outputType!=null? outputType:"application/xml"), null);
 						outElement.addAttribute("part", outAxisMessage.getPartName(), null);
 						output.addChild(outElement);
 						operation.addChild(output);
