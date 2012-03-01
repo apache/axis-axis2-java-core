@@ -61,7 +61,7 @@ public class ClusteringUtils {
                     tempDirectory + File.separator +
                     (System.currentTimeMillis() + RANDOM.nextDouble());
             if(!new File(tempDirName).mkdirs()) {
-                 throw new Exception("Could not create temp dir " + tempDirName);
+                throw new Exception("Could not create temp dir " + tempDirName);
             }
             serviceArchive = new File(tempDirName + File.separator + serviceGroupName);
             FileOutputStream out = null;

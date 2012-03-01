@@ -49,9 +49,9 @@ public class ChannelSender implements MessageSender {
         this.synchronizeAllMembers = synchronizeAllMembers;
     }
 
-    public void sendToGroup(ClusteringCommand msg,
-                            MembershipManager membershipManager,
-                            int additionalOptions) throws ClusteringFault {
+    public synchronized void sendToGroup(ClusteringCommand msg,
+                                         MembershipManager membershipManager,
+                                         int additionalOptions) throws ClusteringFault {
         if (channel == null) {
             return;
         }
@@ -65,6 +65,7 @@ public class ChannelSender implements MessageSender {
                     channel.send(members, toByteMessage(msg),
                                  Channel.SEND_OPTIONS_USE_ACK |
                                  Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
+                                 Channel.SEND_OPTIONS_BYTE_MESSAGE |
                                  TribesConstants.MSG_ORDER_OPTION |
                                  TribesConstants.AT_MOST_ONCE_OPTION |
                                  additionalOptions);
@@ -72,6 +73,7 @@ public class ChannelSender implements MessageSender {
                     channel.send(members, toByteMessage(msg),
                                  Channel.SEND_OPTIONS_ASYNCHRONOUS |
                                  TribesConstants.MSG_ORDER_OPTION |
+                                 Channel.SEND_OPTIONS_BYTE_MESSAGE |
                                  TribesConstants.AT_MOST_ONCE_OPTION |
                                  additionalOptions);
                 }
@@ -100,7 +102,7 @@ public class ChannelSender implements MessageSender {
     }
 
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
-         sendToGroup(msg, this.membershipManager, 0);
+        sendToGroup(msg, this.membershipManager, 0);
     }
 
     private ByteMessage toByteMessage(ClusteringCommand msg) throws IOException {
@@ -119,7 +121,8 @@ public class ChannelSender implements MessageSender {
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          toByteMessage(msg),
-                         Channel.SEND_OPTIONS_USE_ACK);
+                         Channel.SEND_OPTIONS_USE_ACK |
+                         Channel.SEND_OPTIONS_BYTE_MESSAGE);
             if (log.isDebugEnabled()) {
                 log.debug("Sent " + msg + " to self");
             }
@@ -134,6 +137,7 @@ public class ChannelSender implements MessageSender {
                 channel.send(new Member[]{member}, toByteMessage(cmd),
                              Channel.SEND_OPTIONS_USE_ACK |
                              Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
+                             Channel.SEND_OPTIONS_BYTE_MESSAGE |
                              TribesConstants.MSG_ORDER_OPTION |
                              TribesConstants.AT_MOST_ONCE_OPTION);
                 if (log.isDebugEnabled()) {

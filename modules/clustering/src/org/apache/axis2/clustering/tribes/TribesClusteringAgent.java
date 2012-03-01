@@ -23,8 +23,10 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusteringAgent;
+import org.apache.axis2.clustering.ClusteringCommand;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.ClusteringMessage;
 import org.apache.axis2.clustering.MembershipListener;
 import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.clustering.RequestBlockingHandler;
@@ -48,9 +50,10 @@ import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Phase;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.ErrorHandler;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.group.GroupChannel;
+import org.apache.catalina.tribes.UniqueId;
 import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.transport.MultiPointSender;
@@ -83,7 +86,14 @@ public class TribesClusteringAgent implements ClusteringAgent {
 
     private final HashMap<String, Parameter> parameters;
     private ManagedChannel channel;
+    /**
+     * RpcChannel used for cluster initialization interactions
+     */
     private RpcChannel rpcInitChannel;
+    /**
+     * RpcChannel used for RPC messaging interactions
+     */
+    private RpcChannel rpcMessagingChannel;
     private ConfigurationContext configurationContext;
     private Axis2ChannelListener axis2ChannelListener;
     private ChannelSender channelSender;
@@ -104,6 +114,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
     private final Map<String, GroupManagementAgent> groupManagementAgents =
             new HashMap<String, GroupManagementAgent>();
     private boolean clusterManagementMode;
+    private RpcMessagingHandler rpcMessagingHandler;
 
     public TribesClusteringAgent() {
         parameters = new HashMap<String, Parameter>();
@@ -151,7 +162,8 @@ public class TribesClusteringAgent implements ClusteringAgent {
         addRequestBlockingHandlerToInFlows();
         primaryMembershipManager = new MembershipManager(configurationContext);
 
-        channel = new GroupChannel();
+        channel = new Axis2GroupChannel();
+        channel.setHeartbeat(true);
         channelSender = new ChannelSender(channel, primaryMembershipManager, synchronizeAllMembers());
         axis2ChannelListener =
                 new Axis2ChannelListener(configurationContext, configurationManager, contextManager);
@@ -165,10 +177,19 @@ public class TribesClusteringAgent implements ClusteringAgent {
         // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
         rpcInitRequestHandler = new RpcInitializationRequestHandler(configurationContext);
         rpcInitChannel =
-                new RpcChannel(TribesUtil.getRpcInitChannelId(domain),
-                               channel, rpcInitRequestHandler);
+                new RpcChannel(TribesUtil.getRpcInitChannelId(domain), channel,
+                               rpcInitRequestHandler);
         if (log.isDebugEnabled()) {
-            log.debug("Created RPC Channel for domain " + new String(domain));
+            log.debug("Created RPC Init Channel for domain " + new String(domain));
+        }
+
+        // Initialize RpcChannel used for messaging
+        rpcMessagingHandler = new RpcMessagingHandler(configurationContext);
+        rpcMessagingChannel =
+                new RpcChannel(TribesUtil.getRpcMessagingChannelId(domain), channel,
+                               rpcMessagingHandler);
+        if (log.isDebugEnabled()) {
+            log.debug("Created RPC Messaging Channel for domain " + new String(domain));
         }
 
         setMaximumRetries();
@@ -182,10 +203,8 @@ public class TribesClusteringAgent implements ClusteringAgent {
             channel.start(Channel.DEFAULT); // At this point, this member joins the group
             String localHost = TribesUtil.getLocalHost(channel);
             if (localHost.startsWith("127.0.")) {
-                channel.stop(Channel.DEFAULT);
-                throw new ClusteringFault("Cannot join cluster using IP " + localHost +
-                                          ". Please set an IP address other than " +
-                                          localHost + " in the axis2.xml file");
+                log.warn("Local member advertising its IP address as 127.0.0.1. " +
+                         "Remote members will not be able to connect to this member.");
             }
         } catch (ChannelException e) {
             String msg = "Error starting Tribes channel";
@@ -197,6 +216,9 @@ public class TribesClusteringAgent implements ClusteringAgent {
         TribesUtil.printMembers(primaryMembershipManager);
 
         membershipScheme.joinGroup();
+
+        configurationContext.getAxisConfiguration().addObservers(new TribesAxisObserver());
+        ClassLoaderUtil.init(configurationContext.getAxisConfiguration());
 
         // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
@@ -212,7 +234,6 @@ public class TribesClusteringAgent implements ClusteringAgent {
             ClusteringContextListener contextListener = new ClusteringContextListener(channelSender);
             configurationContext.addContextListener(contextListener);
         }
-
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
         log.info("Cluster initialization completed.");
@@ -228,6 +249,48 @@ public class TribesClusteringAgent implements ClusteringAgent {
                 log.error(msg, e);
             }
         }
+    }
+
+    public List<ClusteringCommand> sendMessage(ClusteringMessage message,
+                                               boolean isRpcMessage) throws ClusteringFault {
+        List<ClusteringCommand> responseList = new ArrayList<ClusteringCommand>();
+        Member[] members = primaryMembershipManager.getMembers();
+        if (members.length == 0) {
+            return responseList;
+        }
+        if (isRpcMessage) {
+            try {
+                Response[] responses = rpcMessagingChannel.send(members, message, RpcChannel.ALL_REPLY,
+                                                                Channel.SEND_OPTIONS_SYNCHRONIZED_ACK,
+                                                                10000);
+                for (Response response : responses) {
+                    responseList.add((ClusteringCommand)response.getMessage());
+                }
+            } catch (ChannelException e) {
+                String msg = "Error occurred while sending RPC message to cluster.";
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
+        } else {
+            try {
+                channel.send(members, message, 10000, new ErrorHandler(){
+                    public void handleError(ChannelException e, UniqueId uniqueId) {
+                        log.error("Sending failed " + uniqueId, e );
+                    }
+
+                    public void handleCompletion(UniqueId uniqueId) {
+                        if(log.isDebugEnabled()){
+                            log.debug("Sending successful " + uniqueId);
+                        }
+                    }
+                });
+            } catch (ChannelException e) {
+                String msg = "Error occurred while sending message to cluster.";
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
+        }
+        return responseList;
     }
 
     private void setMemberInfo() throws ClusteringFault {
@@ -263,11 +326,14 @@ public class TribesClusteringAgent implements ClusteringAgent {
                 OMElement propEle = (OMElement) iter.next();
                 OMAttribute nameAttrib = propEle.getAttribute(new QName("name"));
                 if(nameAttrib != null){
+                    String attribName = nameAttrib.getAttributeValue();
+                    attribName = replaceProperty(attribName, memberInfo);
+
                     OMAttribute valueAttrib = propEle.getAttribute(new QName("value"));
                     if  (valueAttrib != null) {
                         String attribVal = valueAttrib.getAttributeValue();
                         attribVal = replaceProperty(attribVal, memberInfo);
-                        memberInfo.setProperty(nameAttrib.getAttributeValue(), attribVal);
+                        memberInfo.setProperty(attribName, attribVal);
                     }
                 }
             }
@@ -295,10 +361,13 @@ public class TribesClusteringAgent implements ClusteringAgent {
         // and are assumed to be System properties
         while (indexOfStartingChars < text.indexOf("${") &&
                (indexOfStartingChars = text.indexOf("${")) != -1 &&
-            (indexOfClosingBrace = text.indexOf("}")) != -1) { // Is a property used?
+               (indexOfClosingBrace = text.indexOf("}")) != -1) { // Is a property used?
             String sysProp = text.substring(indexOfStartingChars + 2,
                                             indexOfClosingBrace);
             String propValue = props.getProperty(sysProp);
+            if (propValue == null) {
+                propValue = System.getProperty(sysProp);
+            }
             if (propValue != null) {
                 text = text.substring(0, indexOfStartingChars) + propValue +
                        text.substring(indexOfClosingBrace + 1);
@@ -595,7 +664,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
      * Get some information from a neighbour. This information will be used by this node to
      * initialize itself
      * <p/>
-     * rpcChannel is The utility for sending RPC style messages to the channel
+     * rpcInitChannel is The utility for sending RPC style messages to the channel
      *
      * @param command The control command to send
      * @throws ClusteringFault If initialization code failed on this node
@@ -619,7 +688,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
                             primaryMembershipManager.getLongestLivingMember() : // First try to get from the longest member alive
                             primaryMembershipManager.getRandomMember(); // Else get from a random member
             String memberHost = TribesUtil.getName(member);
-            log.info("Trying to send intialization request to " + memberHost);
+            log.info("Trying to send initialization request to " + memberHost);
             try {
                 if (!sentMembersList.contains(memberHost)) {
                     Response[] responses;
@@ -627,7 +696,8 @@ public class TribesClusteringAgent implements ClusteringAgent {
                     responses = rpcInitChannel.send(new Member[]{member},
                                                     command,
                                                     RpcChannel.FIRST_REPLY,
-                                                    Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                    Channel.SEND_OPTIONS_ASYNCHRONOUS |
+                                                    Channel.SEND_OPTIONS_BYTE_MESSAGE,
                                                     10000);
                     if (responses.length == 0) {
                         try {
@@ -710,6 +780,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
         if (channel != null) {
             try {
                 channel.removeChannelListener(rpcInitChannel);
+                channel.removeChannelListener(rpcMessagingChannel);
                 channel.removeChannelListener(axis2ChannelListener);
                 channel.stop(Channel.DEFAULT);
             } catch (ChannelException e) {
@@ -728,6 +799,9 @@ public class TribesClusteringAgent implements ClusteringAgent {
         this.configurationContext = configurationContext;
         if (rpcInitRequestHandler != null) {
             rpcInitRequestHandler.setConfigurationContext(configurationContext);
+        }
+        if (rpcMessagingHandler!= null) {
+            rpcMessagingHandler.setConfigurationContext(configurationContext);
         }
         if (axis2ChannelListener != null) {
             axis2ChannelListener.setConfigurationContext(configurationContext);
