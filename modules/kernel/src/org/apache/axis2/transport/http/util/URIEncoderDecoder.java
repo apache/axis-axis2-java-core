@@ -198,6 +198,10 @@ public class URIEncoderDecoder {
                 } while (i < s.length() && s.charAt(i) == '%');
                 result.append(out.toString(encoding));
                 continue;
+            } else if (c == '+') {
+            	result.append(' ');
+            	i++;
+            	continue;
             }
             result.append(c);
             i++;
