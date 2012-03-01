@@ -1029,12 +1029,14 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      */
     protected void setClassLoaders(String axis2repoURI) throws DeploymentException {
         ClassLoader sysClassLoader =
-                Utils.getClassLoader(Thread.currentThread().getContextClassLoader(), axis2repoURI, false);
+                Utils.getClassLoader(Thread.currentThread().getContextClassLoader(), axis2repoURI,
+                        axisConfig.isChildFirstClassLoading());
 
         axisConfig.setSystemClassLoader(sysClassLoader);
         if (servicesDir.exists()) {
             axisConfig.setServiceClassLoader(
-                    Utils.getClassLoader(axisConfig.getSystemClassLoader(), servicesDir, axisConfig.isChildFirstClassLoading()));
+                    Utils.getClassLoader(axisConfig.getSystemClassLoader(), servicesDir,
+                            axisConfig.isChildFirstClassLoading()));
         } else {
             axisConfig.setServiceClassLoader(axisConfig.getSystemClassLoader());
         }
