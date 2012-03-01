@@ -54,14 +54,16 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.message.BasicRequestLine;
 
-public class CommonsHTTPTransportSenderTest extends TestCase  {
+public abstract class CommonsHTTPTransportSenderTest extends TestCase  {
+    
+    protected abstract TransportSender getTransportSender();
 
     public void testInvokeWithServletBasedOutTransportInfo() throws Exception {
         MockHTTPResponse httpResponse = new MockHttpServletResponse();
         ServletBasedOutTransportInfo info = new ServletBasedOutTransportInfo(
                 (HttpServletResponse) httpResponse);
         SOAPEnvelope envelope = getEnvelope();
-        httpResponse = configAndRun(httpResponse, info, null);
+        httpResponse = configAndRun(httpResponse, info, null, getTransportSender());
 
         assertEquals("Not the expected Header value", "application/xml", httpResponse.getHeaders()
                 .get("Content-Type"));
@@ -76,7 +78,7 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
         MockHTTPResponse httpResponse = new MockAxisHttpResponse(line);
         SOAPEnvelope envelope = getEnvelope();
         httpResponse = (MockAxisHttpResponse) configAndRun(httpResponse,
-                (OutTransportInfo) httpResponse, null);
+                (OutTransportInfo) httpResponse, null, getTransportSender());
 
         assertEquals("Not the expected Header value", "application/xml", httpResponse.getHeaders()
                 .get("Content-Type"));
@@ -87,7 +89,7 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
     }
 
     public void testCleanup() throws AxisFault {
-        TransportSender sender = new CommonsHTTPTransportSender();
+        TransportSender sender = getTransportSender();
         MessageContext msgContext = new MessageContext();
         HttpMethod httpMethod = new GetMethod();
         msgContext.setProperty(HTTPConstants.HTTP_METHOD, httpMethod);
@@ -102,13 +104,13 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
         ConfigurationContext confContext = ConfigurationContextFactory
                 .createEmptyConfigurationContext();
         TransportOutDescription transportOut = new TransportOutDescription("http");
-        TransportSender sender = new CommonsHTTPTransportSender();
+        TransportSender sender = getTransportSender();
         sender.init(confContext, transportOut);
 
     }
 
     public static MockHTTPResponse configAndRun(MockHTTPResponse outResponse,
-            OutTransportInfo outTransportInfo, String epr) throws Exception {
+            OutTransportInfo outTransportInfo, String epr, TransportSender sender) throws Exception {
         MockHTTPResponse response = outResponse;
         ConfigurationContext confContext = ConfigurationContextFactory
                 .createEmptyConfigurationContext();
@@ -116,8 +118,7 @@ public class CommonsHTTPTransportSenderTest extends TestCase  {
         Parameter param = new Parameter(HTTPConstants.OMIT_SOAP_12_ACTION, false);
         SOAPEnvelope envelope = getEnvelope();
         MessageContext msgContext = new MessageContext();
-
-        TransportSender sender = new CommonsHTTPTransportSender();
+        
         transportOut.addParameter(param);
         // create dummy SOAPEnvelope
         msgContext.setEnvelope(envelope);
