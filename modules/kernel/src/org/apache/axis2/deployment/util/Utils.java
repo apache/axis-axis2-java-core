@@ -511,7 +511,7 @@ public class Utils {
         if ("void".equals(method.getReturnType().getName())) {
             if (method.getExceptionTypes().length > 0) {
                 operation = AxisOperationFactory
-                        .getAxisOperation(WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY);
+                        .getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
             } else {
                 operation = AxisOperationFactory
                         .getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
