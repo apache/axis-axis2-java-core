@@ -81,6 +81,7 @@ public class MessageContextBuilder {
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
         newmsgCtx.setServerSide(inMessageContext.isServerSide());
+        newmsgCtx.setProperty(MessageContext.IN_MESSAGE_CONTEXT, inMessageContext);
 
         // TODO: Should this be specifying (or defaulting to) the "response" relationshipType??
         newmsgCtx.addRelatesTo(new RelatesTo(inMessageContext.getOptions().getMessageId()));
@@ -264,6 +265,7 @@ public class MessageContextBuilder {
                                                 processingContext.getProperty(
                                                         Constants.OUT_TRANSPORT_INFO));
                 faultMessageContext.setProcessingFault(true);
+                faultMessageContext.setProperty(MessageContext.IN_MESSAGE_CONTEXT, processingContext);
                 return faultMessageContext;
             }
         }
