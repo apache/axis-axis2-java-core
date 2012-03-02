@@ -296,15 +296,21 @@ public class RepositoryListener implements DeploymentConstants {
                         if (isSourceControlDir(file)) {
                             continue;
                         }
-                        if (!file.isDirectory() && extension
-                                .equals(DeploymentFileData.getFileExtension(file.getName()))) {
+                        if (extension == null && file.isDirectory()) {
                             Deployer deployer = deploymentEngine.getDeployer(dir, extension);
                             deployer.setDirectory(dir);
                             addFileToDeploy(file, deployer, WSInfo.TYPE_CUSTOM);
-                        } else if (file.isDirectory() && !file.getName().startsWith(".") &&
-                                !(dir.equals(directory.getName()) && "lib".equalsIgnoreCase(file.getName()))) {
-                            //look in the child directory also
-                            findFileForGivenDirectory(file, extension, dir);
+                        } else if (extension != null) {
+                            if (!file.isDirectory() && extension
+                                    .equals(DeploymentFileData.getFileExtension(file.getName()))) {
+                                Deployer deployer = deploymentEngine.getDeployer(dir, extension);
+                                deployer.setDirectory(dir);
+                                addFileToDeploy(file, deployer, WSInfo.TYPE_CUSTOM);
+                            } else if (file.isDirectory() && !file.getName().startsWith(".") &&
+                                    !(dir.equals(directory.getName()) && "lib".equalsIgnoreCase(file.getName()))) {
+                                //look in the child directory also
+                                findFileForGivenDirectory(file, extension, dir);
+                            }
                         }
                     }
                 }
