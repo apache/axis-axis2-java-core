@@ -57,15 +57,15 @@ public class DefaultStateManager implements StateManager {
     public void updateContext(AbstractContext context) throws ClusteringFault {
         StateClusteringCommand cmd =
                 StateClusteringCommandFactory.getUpdateCommand(context,
-                                                                 excludedReplicationPatterns,
-                                                                 false);
+                                                               excludedReplicationPatterns,
+                                                               false);
         if (cmd != null) {
             sender.sendToGroup(cmd);
         }
     }
 
     public void updateContext(AbstractContext context,
-                                String[] propertyNames) throws ClusteringFault {
+                              String[] propertyNames) throws ClusteringFault {
         StateClusteringCommand cmd =
                 StateClusteringCommandFactory.getUpdateCommand(context, propertyNames);
         if (cmd != null) {
@@ -76,8 +76,14 @@ public class DefaultStateManager implements StateManager {
     public void updateContexts(AbstractContext[] contexts) throws ClusteringFault {
         StateClusteringCommandCollection cmd =
                 StateClusteringCommandFactory.getCommandCollection(contexts,
-                                                                     excludedReplicationPatterns);
-        sender.sendToGroup(cmd);
+                                                                   excludedReplicationPatterns);
+        if (!cmd.isEmpty()) {
+            sender.sendToGroup(cmd);
+        }
+    }
+
+    public void replicateState(StateClusteringCommand command) throws ClusteringFault {
+        sender.sendToGroup(command);
     }
 
     public void removeContext(AbstractContext context) throws ClusteringFault {

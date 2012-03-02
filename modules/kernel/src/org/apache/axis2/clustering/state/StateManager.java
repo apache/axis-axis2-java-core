@@ -88,6 +88,14 @@ public interface StateManager extends ParameterInclude {
     void updateContexts(AbstractContext[] contexts) throws ClusteringFault;
 
     /**
+     * Replicate state using a custom StateClusteringCommand
+     *
+     * @param command The custom StateClusteringCommand which can be used for replicating state
+     * @throws ClusteringFault If replication fails
+     */
+    void replicateState(StateClusteringCommand command) throws ClusteringFault;
+
+    /**
      * This method is called when {@link AbstractContext} is removed from the system
      *
      * @param context The AbstractContext to be removed
