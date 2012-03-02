@@ -1413,13 +1413,12 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             return;
         }
 
-        if (extension == null) {
-            log.error("Failed to add Deployer " + deployer.getClass().getName() + ": Deployer missing 'extension' attribute");
-            return;
+        //Extention is optional if the extention is not provided deployer will deploy the directories
+        if (extension != null) {
+            // A leading dot is redundant, so strip it.  So we allow either ".foo" or "foo", either
+            // of which will result in extension="foo"
+            if (extension.charAt(0) == '.') extension = extension.substring(1);
         }
-        // A leading dot is redundant, so strip it.  So we allow either ".foo" or "foo", either
-        // of which will result in extension="foo"
-        if (extension.charAt(0) == '.') extension = extension.substring(1);
 
         // If axis2 is not initialized, Axis2 will handle the deployer init() and relavent service deployment
         // If axis2 is initialized and hotDeployment is on, Axis2 will handle the relavent service deployments.
