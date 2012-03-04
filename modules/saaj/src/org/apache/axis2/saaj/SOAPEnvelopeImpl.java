@@ -20,6 +20,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.dom.ChildNode;
 import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
@@ -201,7 +202,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
             doomText.setNextOMSibling((OMNode)firstChild);
             doomText.setPreviousOMSibling(null);
             element.setFirstChild(doomText);
-            ((NodeImpl)firstChild).setPreviousOMSibling(doomText);
+            ((ChildNode)firstChild).setPreviousOMSibling(doomText);
         }
         return this;
     }
