@@ -359,7 +359,7 @@ public class JavaBeanWriter implements BeanWriter {
         // when wrapping classes all the data binding and exception class should have
         // a unique name since package name is not being applied.
         // otherewise we can make unique with the package name
-        if (!wrapClasses){
+        if (!wrapClasses && !writeClasses){
             className = makeUniqueJavaClassName(this.nameList, originalName);
         } else {
             if (!this.packageNameToClassNamesMap.containsKey(packageName)) {
