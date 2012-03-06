@@ -19,13 +19,6 @@
 
 package org.apache.axis2.description;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -35,11 +28,13 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.*;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -66,10 +61,10 @@ public class AxisMessage extends AxisDescription {
 
     //To chcek whether the message is wrapped or unwrapped
     private boolean wrapped = true;
-    
-    private Policy effectivePolicy = null;
-    private Date lastPolicyCalcuatedTime = null;
-    
+
+    private volatile Policy effectivePolicy = null;
+    private volatile Date lastPolicyCalculatedTime = null;
+
     public String getMessagePartName() {
 		return messagePartName;
 	}
@@ -242,13 +237,18 @@ public class AxisMessage extends AxisDescription {
     public void setWrapped(boolean wrapped) {
         this.wrapped = wrapped;
     }
-    
+
     public Policy getEffectivePolicy() {
-		if (lastPolicyCalcuatedTime == null || isPolicyUpdated()) {
-			effectivePolicy = calculateEffectivePolicy();
-		}
-		return effectivePolicy;
-	}
+        if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
+            synchronized (this) {
+                if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
+                    effectivePolicy = calculateEffectivePolicy();
+                    lastPolicyCalculatedTime = new Date();
+                }
+            }
+        }
+        return effectivePolicy;
+    }
 
 	public Policy calculateEffectivePolicy() {
 		PolicySubject policySubject;
@@ -282,21 +282,20 @@ public class AxisMessage extends AxisDescription {
 		}
 
 		Policy result = PolicyUtil.getMergedPolicy(policyList, axisService);
-		lastPolicyCalcuatedTime = new Date();
 		return result;
 	}
 
 	public boolean isPolicyUpdated() {
 		// AxisMessage
 		if (getPolicySubject().getLastUpdatedTime().after(
-				lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisOperation
 		AxisOperation axisOperation = (AxisOperation) parent;
 		if (axisOperation != null
 				&& axisOperation.getPolicySubject().getLastUpdatedTime().after(
-						lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisService
@@ -304,7 +303,7 @@ public class AxisMessage extends AxisDescription {
 				: axisOperation.getAxisService();
 		if (axisService != null
 				&& axisService.getPolicySubject().getLastUpdatedTime().after(
-						lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisConfiguration
@@ -312,6 +311,6 @@ public class AxisMessage extends AxisDescription {
 				: axisService.getAxisConfiguration();
         return axisConfiguration != null
                && axisConfiguration.getPolicySubject().getLastUpdatedTime()
-                .after(lastPolicyCalcuatedTime);
+                .after(lastPolicyCalculatedTime);
     }
 }
