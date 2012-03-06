@@ -19,11 +19,6 @@
 
 package org.apache.axis2.description;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -35,6 +30,11 @@ import org.apache.axis2.util.WSDL20Util;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AxisBindingMessage extends AxisDescription {
 
@@ -50,8 +50,8 @@ public class AxisBindingMessage extends AxisDescription {
 	// WSDL 2.0 serializer
 	private boolean fault = false;
 
-	private Policy effectivePolicy = null;
-	private Date lastPolicyCalcuatedTime = null;
+    private volatile Policy effectivePolicy = null;
+    private volatile Date lastPolicyCalculatedTime = null;
 
 	public boolean isFault() {
 		return fault;
@@ -218,12 +218,17 @@ public class AxisBindingMessage extends AxisDescription {
 		return (AxisBindingOperation) parent;
 	}
 
-	public Policy getEffectivePolicy() {
-	       if (lastPolicyCalcuatedTime == null || isPolicyUpdated()) {
-			effectivePolicy = calculateEffectivePolicy();
-		}
-		return effectivePolicy;
-	}
+    public Policy getEffectivePolicy() {
+        if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
+            synchronized (this) {
+                if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
+                    effectivePolicy = calculateEffectivePolicy();
+                    lastPolicyCalculatedTime = new Date();
+                }
+            }
+        }
+        return effectivePolicy;
+    }
 
 	public Policy calculateEffectivePolicy() {
 		PolicySubject policySubject = null;
@@ -286,20 +291,19 @@ public class AxisBindingMessage extends AxisDescription {
 					.getAttachedPolicyComponents());
 		}
 
-		lastPolicyCalcuatedTime = new Date();
 		return PolicyUtil.getMergedPolicy(policyList, axisService);
 	}
 	
 	private boolean isPolicyUpdated() {
 		if (getPolicySubject().getLastUpdatedTime().after(
-				lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisBindingOperation
 		AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
 		if (axisBindingOperation != null
 				&& axisBindingOperation.getPolicySubject().getLastUpdatedTime()
-						.after(lastPolicyCalcuatedTime)) {
+						.after(lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisBinding
@@ -307,7 +311,7 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisBindingOperation.getAxisBinding();
 		if (axisBinding != null
 				&& axisBinding.getPolicySubject().getLastUpdatedTime().after(
-						lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisEndpoint
@@ -315,13 +319,13 @@ public class AxisBindingMessage extends AxisDescription {
 				.getAxisEndpoint();
 		if (axisEndpoint != null
 				&& axisEndpoint.getPolicySubject().getLastUpdatedTime().after(
-						lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisMessage
 		if (axisMessage != null
 				&& axisMessage.getPolicySubject().getLastUpdatedTime().after(
-						lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisOperation
@@ -329,7 +333,7 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisMessage.getAxisOperation();
 		if (axisOperation != null
 				&& axisOperation.getPolicySubject().getLastUpdatedTime().after(
-						lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisService
@@ -337,7 +341,7 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisOperation.getAxisService();
 		if (axisService != null
 				&& axisService.getPolicySubject().getLastUpdatedTime().after(
-						lastPolicyCalcuatedTime)) {
+                lastPolicyCalculatedTime)) {
 			return true;
 		}
 		// AxisConfiguration
@@ -345,7 +349,7 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisService.getAxisConfiguration();
 		if (axisConfiguration != null
 				&& axisConfiguration.getPolicySubject().getLastUpdatedTime()
-						.after(lastPolicyCalcuatedTime)) {
+						.after(lastPolicyCalculatedTime)) {
 			return true;
 		}
 		return false;
