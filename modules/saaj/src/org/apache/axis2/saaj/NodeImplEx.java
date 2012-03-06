@@ -293,4 +293,9 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
             return saajSOAPElement;
         }
     }
+    
+    // TODO: the existence of this method probably indicates a problem in TextImplEx
+    public org.w3c.dom.Node getParentNode() {
+        return null;
+    }
 }
