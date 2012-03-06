@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class AxisBindingMessage extends AxisDescription {
 
@@ -53,7 +52,6 @@ public class AxisBindingMessage extends AxisDescription {
 
     private volatile Policy effectivePolicy = null;
     private volatile Date lastPolicyCalculatedTime = null;
-    private final ReentrantLock reentrantLock = new ReentrantLock();
 
 	public boolean isFault() {
 		return fault;
