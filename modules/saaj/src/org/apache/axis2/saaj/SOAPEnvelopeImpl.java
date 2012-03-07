@@ -21,7 +21,6 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.dom.ChildNode;
-import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
 import org.apache.axiom.soap.SOAPFactory;
@@ -30,7 +29,6 @@ import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderImpl;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderImpl;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import javax.xml.soap.Name;
@@ -50,10 +48,6 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     public SOAPEnvelopeImpl(final org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl envelope) {
         super(envelope);
         omSOAPEnvelope = envelope;
-    }
-
-    public void setOwnerDocument(Document document) {
-        super.setOwnerDocument((DocumentImpl)document);
     }
 
     public org.apache.axiom.soap.SOAPEnvelope getOMEnvelope() {
