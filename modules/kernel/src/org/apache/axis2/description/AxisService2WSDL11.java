@@ -1262,10 +1262,10 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                 PolicyLocator locator = new PolicyLocator(axisService);
                 Policy p = locator.lookup(key);
 
-                if (p == null) {
-                    throw new Exception("Policy not found for uri : " + key);
+                if (p != null) {
+                    addPolicyToDefinitionElement(key, p);
+
                 }
-                addPolicyToDefinitionElement(key, p);
             }
         }
 	}

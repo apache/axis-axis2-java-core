@@ -19,26 +19,13 @@
 
 package org.apache.axis2.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.PolicySubject;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.namespace.Constants;
@@ -47,6 +34,9 @@ import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPModuleMessage;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
+
+import javax.xml.namespace.QName;
+import java.util.*;
 
 /**
  * Helps the AxisService to WSDL process
@@ -522,11 +512,9 @@ public class WSDLSerializationUtil {
 				PolicyLocator locator = new PolicyLocator(service);
 				Policy p = locator.lookup(key);
 
-				if (p == null) {
-					throw new RuntimeException("Policy not found for uri : "
-							+ key);
-				}
-				policies.add(p);
+                if (p != null) {
+                    policies.add(p);
+                }
 			}
 		}
 
