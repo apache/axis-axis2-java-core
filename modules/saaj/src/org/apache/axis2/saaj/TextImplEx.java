@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.TextImpl;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Text;
@@ -240,6 +241,10 @@ public class TextImplEx extends NodeImplEx implements Text {
       */
     public void setParent(OMContainer element) {
         textNode.setParent(element);
+    }
+
+    public Document getOwnerDocument() {
+        return textNode.getOwnerDocument();
     }
 
     /* (non-Javadoc)
