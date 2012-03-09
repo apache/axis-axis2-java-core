@@ -178,7 +178,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 }
 
                 for (String extraClass : extraClassesArray){
-                    this.extraClasses.add(extraClass);
+                    this.extraClasses.add(extraClass.trim());
                 }
             }
         }
