@@ -100,7 +100,9 @@ public class SimpleHttpServer {
         this.listenerExecutor.execute(listener);
         try {
             listener.awaitSocketOpen();
-            port = listener.getPort();
+            if (!listener.isDestroyed()) {
+                port = listener.getPort();
+            }
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
