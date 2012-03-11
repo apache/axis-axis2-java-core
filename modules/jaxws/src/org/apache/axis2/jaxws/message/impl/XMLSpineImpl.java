@@ -475,6 +475,9 @@ class XMLSpineImpl implements XMLSpine {
             // the requested namespace/localPart
             if (om.getNamespace().getNamespaceURI().equals(namespace) &&
                 om.getLocalName().equals(localPart)) {
+                // _getBlockFromOMElement may replace the current element; move the iterator to the
+                // next element to avoid ConcurrentModificationException
+                it.hasNext();
                 Block block = _getBlockFromOMElement(om, context, blockFactory, false);
                 blocks.add(block);
             }

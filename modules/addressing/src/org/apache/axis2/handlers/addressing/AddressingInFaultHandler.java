@@ -70,6 +70,7 @@ public class AddressingInFaultHandler extends AbstractHandler implements Address
                     Iterator i = element.getChildElements();
                     while (i.hasNext()) {
                         OMElement detailElement = (OMElement)i.next();
+                        i.remove();
                         detail.addDetailEntry(detailElement);
                     }
                 }
