@@ -116,7 +116,7 @@ public class DefaultConnectionListener implements IOProcessor {
     }
 
     public synchronized void awaitSocketOpen() throws InterruptedException {
-        while (serversocket == null) {
+        while (serversocket == null && !destroyed) {
             wait();
         }
     }
@@ -132,7 +132,7 @@ public class DefaultConnectionListener implements IOProcessor {
         }
     }
 
-    public void destroy() {
+    public synchronized void destroy() {
         this.destroyed = true;
         try {
             close();
@@ -143,7 +143,7 @@ public class DefaultConnectionListener implements IOProcessor {
         }
     }
 
-    public boolean isDestroyed() {
+    public synchronized boolean isDestroyed() {
         return this.destroyed;
     }
 
