@@ -518,10 +518,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         //We will get all the children and iteratively call the detach() on all of 'em.
         Iterator childIter = element.getChildElements();
         while (childIter.hasNext()) {
-            Object o = childIter.next();
-            if (o instanceof org.apache.axiom.om.OMNode) {
-                ((org.apache.axiom.om.OMNode)o).detach();
-            }
+            childIter.next();
+            childIter.remove();
         }
     }
 

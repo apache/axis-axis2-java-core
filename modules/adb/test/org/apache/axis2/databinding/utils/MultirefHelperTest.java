@@ -111,6 +111,7 @@ public class MultirefHelperTest extends TestCase {
             OMElement omElement = null;
             for (Iterator iter = generatedElement.getChildElements();iter.hasNext();){
                 omElement = (OMElement) iter.next();
+                iter.remove();
                 soapEnvelope.getBody().addChild(omElement);
             }
 
