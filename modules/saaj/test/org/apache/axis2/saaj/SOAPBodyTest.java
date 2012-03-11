@@ -169,36 +169,30 @@ public class SOAPBodyTest extends Assert {
         }
     }
 
-    //TODO : fix
     @Validated @Test
-    public void testExtractContentAsDocument() {
-        try {
-            MessageFactory fact = MessageFactory.newInstance();
-            SOAPMessage message = fact.createMessage();
-            SOAPBody soapBody = message.getSOAPBody();
+    public void testExtractContentAsDocument() throws Exception {
+        MessageFactory fact = MessageFactory.newInstance();
+        SOAPMessage message = fact.createMessage();
+        SOAPBody soapBody = message.getSOAPBody();
 
-            QName qname1 = new QName("http://wombat.ztrade.com",
-                                     "GetLastTradePrice", "ztrade");
-            SOAPElement child1 = soapBody.addChildElement(qname1);
-            Document document = soapBody.extractContentAsDocument();
+        QName qname1 = new QName("http://wombat.ztrade.com",
+                                 "GetLastTradePrice", "ztrade");
+        SOAPElement child1 = soapBody.addChildElement(qname1);
+        Document document = soapBody.extractContentAsDocument();
 
-            assertNotNull(document);
-            assertTrue(document instanceof Document);
-            Element element = document.getDocumentElement();
-            String elementName = element.getTagName();
+        assertNotNull(document);
+        assertTrue(document instanceof Document);
+        Element element = document.getDocumentElement();
+        String elementName = element.getTagName();
 
-            //Retreive the children of the SOAPBody (should be none)
-            Iterator childElements = soapBody.getChildElements();
-            int childCount = 0;
-            while (childElements.hasNext()) {
-                Object object = childElements.next();
-                childCount++;
-            }
-            assertEquals(childCount, 0);
+        //Retreive the children of the SOAPBody (should be none)
+        Iterator childElements = soapBody.getChildElements();
+        int childCount = 0;
+        while (childElements.hasNext()) {
+            Object object = childElements.next();
+            childCount++;
         }
-        catch (Exception e) {
-            fail("Unexpected Exception : " + e);
-        }
+        assertEquals(childCount, 0);
     }
 
     /*
