@@ -162,8 +162,8 @@ public class MultirefHelper {
             OMElement omElement = (OMElement)childs.next();
             OMAttribute id = omElement.getAttribute(new QName("id"));
             if (id != null) {
-                omElement.build();
-                elementMap.put(id.getAttributeValue(), omElement.detach());
+                childs.remove();
+                elementMap.put(id.getAttributeValue(), omElement);
             }
         }
         filledTable = true;
