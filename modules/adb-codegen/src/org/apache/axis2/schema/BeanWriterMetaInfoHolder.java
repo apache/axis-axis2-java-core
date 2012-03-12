@@ -63,6 +63,7 @@ public class BeanWriterMetaInfoHolder {
     protected long minLengthFacet = -1;
     protected ArrayList<String> enumFacet = new ArrayList<String>();
     protected String patternFacet = null;
+    protected String totalDigitsFacet = null;
     protected String maxExclusiveFacet = null;
     protected String minExclusiveFacet = null;
     protected String maxInclusiveFacet = null;
@@ -672,6 +673,22 @@ public class BeanWriterMetaInfoHolder {
         return this.lengthFacet;
     }
 
+    /**
+     * Sets the totalDigits
+     *
+     * @param totalDigitsFacet
+     */
+    public void setTotalDigitsFacet(String totalDigitsFacet) {
+        this.totalDigitsFacet = totalDigitsFacet;
+    }
+
+    /**
+     *
+     * @return Returns the totalDigits
+     */
+    public String getTotalDigitsFacet() {
+        return this.totalDigitsFacet;
+    }
     /**
      * Sets the maxExclusive.
      *

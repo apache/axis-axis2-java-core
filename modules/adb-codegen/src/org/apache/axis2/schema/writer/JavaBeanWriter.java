@@ -991,6 +991,10 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "minLenFacet", metainf.getMinLengthFacet() + "", property);
         }
 
+        if (metainf.isRestrictionBaseType(name) && metainf.getTotalDigitsFacet() != null) {
+            XSLTUtils.addAttribute(model, "totalDigitsFacet", metainf.getTotalDigitsFacet() + "", property);
+        }
+
         if (metainf.isRestrictionBaseType(name) && metainf.getMaxExclusiveFacet() != null) {
             XSLTUtils.addAttribute(model, "maxExFacet", metainf.getMaxExclusiveFacet() + "", property);
         }

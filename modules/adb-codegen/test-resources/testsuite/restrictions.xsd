@@ -120,6 +120,12 @@
            </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="RFCProbabilityCodeType4">
+           <xs:restriction base="xs:integer">
+                   <xs:totalDigits value="5"/>
+           </xs:restriction>
+    </xs:simpleType>
+
     <xsd:complexType name="Person">
         <xsd:sequence>
             <xsd:element name="name" type="xsd:string"></xsd:element>
