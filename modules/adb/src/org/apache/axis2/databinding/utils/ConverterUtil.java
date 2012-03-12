@@ -410,6 +410,16 @@ public class ConverterUtil {
         return new BigDecimal(s);
     }
 
+    public static BigDecimal convertToStandardDecimalNotation(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
+        return BigDecimal.valueOf(Math.pow(10, Integer.parseInt(s)));
+    }
+
     public static float convertToFloat(String s) {
         if ((s == null) || s.equals("")){
             return Float.NaN;

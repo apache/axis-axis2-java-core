@@ -73,6 +73,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
+import org.apache.ws.commons.schema.XmlSchemaTotalDigitsFacet;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.xml.sax.InputSource;
 
@@ -1699,6 +1700,11 @@ public class SchemaCompiler {
             else if (obj instanceof XmlSchemaLengthFacet) {
                 XmlSchemaLengthFacet length = (XmlSchemaLengthFacet) obj;
                 metaInfHolder.setLengthFacet(Integer.parseInt(length.getValue().toString()));
+            }
+
+            else if (obj instanceof XmlSchemaTotalDigitsFacet) {
+                XmlSchemaTotalDigitsFacet totalDigits = (XmlSchemaTotalDigitsFacet) obj;
+                metaInfHolder.setTotalDigitsFacet(totalDigits.getValue().toString());
             }
 
             else if (obj instanceof XmlSchemaMaxExclusiveFacet) {

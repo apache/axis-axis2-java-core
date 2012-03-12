@@ -109,6 +109,7 @@
             <xsl:variable name="lenFacet"><xsl:value-of select="@lenFacet"/></xsl:variable>
                <xsl:variable name="maxLenFacet"><xsl:value-of select="@maxLenFacet"/></xsl:variable>
                <xsl:variable name="minLenFacet"><xsl:value-of select="@minLenFacet"/></xsl:variable>
+               <xsl:variable name="totalDigitsFacet"><xsl:value-of select="@totalDigitsFacet"/></xsl:variable>
                <xsl:variable name="maxExFacet"><xsl:value-of select="@maxExFacet"/></xsl:variable>
                <xsl:variable name="minExFacet"><xsl:value-of select="@minExFacet"/></xsl:variable>
                <xsl:variable name="maxInFacet"><xsl:value-of select="@maxInFacet"/></xsl:variable>
@@ -470,6 +471,15 @@
                                             if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt;= java.lang.String.valueOf(param).length())</xsl:if>
                                               <xsl:if test="(@maxLenFacet)"> <xsl:if test="(@minLenFacet)"> &amp;&amp; </xsl:if> (java.lang.String.valueOf(param).length() &lt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if> ) {
                                                 this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new java.lang.RuntimeException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:when test="(@totalDigitsFacet)">
+                                            java.lang.String totalDigitsDecimal = org.apache.axis2.databinding.utils.ConverterUtil.convertToStandardDecimalNotation("<xsl:value-of select="$totalDigitsFacet"/>").toString();
+                                            if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, totalDigitsDecimal) &gt; 0){
+                                                    this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
                                                 throw new java.lang.RuntimeException();
