@@ -230,7 +230,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                     }
                 } else {
                     if(returnType != null && Document.class.isAssignableFrom(returnType)) {
-                        generateBareSchemaTypeForDocument(null, returnName);  
+                        generateBareSchemaTypeForDocument(null, methodTypeName);  
                         
                     } else if (returnType != null && Map.class.isAssignableFrom(returnType)){                        	
 						generateBareSchemaTypeForMap(methodTypeName, genericReturnType, null);
