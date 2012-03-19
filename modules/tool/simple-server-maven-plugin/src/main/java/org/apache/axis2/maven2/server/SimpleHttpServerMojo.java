@@ -25,9 +25,9 @@ import org.apache.axis2.maven2.server.util.RepoHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.codehaus.classworlds.ClassRealm;
-import org.codehaus.classworlds.ClassWorld;
-import org.codehaus.classworlds.DuplicateRealmException;
+import org.codehaus.plexus.classworlds.ClassWorld;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 
 /**
  * Run simple Axis 2Server.
@@ -178,8 +178,8 @@ public class SimpleHttpServerMojo extends AbstractMojo {
                     .currentThread().getContextClassLoader());
         }
         File cls = new File(buildDir + File.separator + Constants.DEFAULT_CLASSES_DIRECTORY);
-        realm.addConstituent(cls.toURL());
-        Thread.currentThread().setContextClassLoader(realm.getClassLoader());
+        realm.addURL(cls.toURI().toURL());
+        Thread.currentThread().setContextClassLoader(realm);
     }
 
     protected void waitForShutdown() {
