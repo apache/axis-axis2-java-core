@@ -47,6 +47,8 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
+import org.apache.woden.WSDLSource;
+import org.apache.woden.wsdl20.Description;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
@@ -70,6 +72,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.SocketException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.PrivilegedAction;
 import java.util.*;
@@ -2324,19 +2327,31 @@ public class AxisService extends AxisDescription {
 	public static AxisService createClientSideAxisService(URL wsdlURL,
 			QName wsdlServiceName, String portName, Options options)
 			throws AxisFault {
-		try {
-			InputStream in = wsdlURL.openConnection().getInputStream();
-			Document doc = XMLUtils.newDocument(in);
-			WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-			reader.setFeature("javax.wsdl.importDocuments", true);
-			Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL
-					.toString()), doc);
-			if (wsdlDefinition != null) {
-				wsdlDefinition.setDocumentBaseURI(getDocumentURI(wsdlURL
-						.toString()));
-			}
-			return createClientSideAxisService(wsdlDefinition, wsdlServiceName,
-					portName, options);
+        try {
+            InputStream in = wsdlURL.openConnection().getInputStream();
+            Document doc = XMLUtils.newDocument(in);
+            String namespaceURI = doc.getDocumentElement().getNamespaceURI();
+            if (Constants.NS_URI_WSDL11.equals(namespaceURI)) {
+                WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+                reader.setFeature("javax.wsdl.importDocuments", true);
+                Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
+                if (wsdlDefinition != null) {
+                    wsdlDefinition.setDocumentBaseURI(getDocumentURI(wsdlURL.toString()));
+                }
+                return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName,
+                        options);
+            } else if (Constants.NS_URI_WSDL20.equals(namespaceURI)) {
+                org.apache.woden.WSDLReader reader = org.apache.woden.WSDLFactory.newInstance()
+                        .newWSDLReader();
+                WSDLSource source = reader.createWSDLSource();
+                source.setSource(doc);
+                source.setBaseURI(wsdlURL.toURI());
+                Description description = reader.readWSDL(source);
+                return createClientSideAxisService(description, wsdlServiceName, portName, options);
+            } else {
+                throw new AxisFault("No namespace found : Invalid WSDL");
+            }
+			
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 			throw AxisFault.makeFault(e);
@@ -2349,7 +2364,13 @@ public class AxisService extends AxisDescription {
 		} catch (WSDLException e) {
 			log.error(e.getMessage(), e);
 			throw AxisFault.makeFault(e);
-		}
+        } catch (org.apache.woden.WSDLException e) {
+            log.error(e.getMessage(), e);
+            throw AxisFault.makeFault(e);
+        } catch (URISyntaxException e) {
+            log.error(e.getMessage(), e);
+            throw AxisFault.makeFault(e);
+        }
 	}
 
 	private static String getBaseURI(String currentURI) {
@@ -3342,5 +3363,32 @@ public class AxisService extends AxisDescription {
         for (int i=0; i<messageContextListeners.size(); i++) {
             messageContextListeners.get(i).attachEnvelopeEvent(mc);
         }
+    }
+
+    /**
+     * returns a axisService given a input Stream of WSDL2.0 document.
+     * 
+     * @param Description
+     *            WSDL description
+     * @param wsdlServiceName
+     * @param endPoint
+     * @param options
+     * @return
+     * @throws AxisFault
+     */
+    public static AxisService createClientSideAxisService(Description description,
+            QName wsdlServiceName, String endPoint, Options options) throws AxisFault {
+        WSDL20ToAxisServiceBuilder serviceBuilder = new WSDL20ToAxisServiceBuilder(description,
+                wsdlServiceName, endPoint);
+        serviceBuilder.setServerSide(false);
+        AxisService axisService = serviceBuilder.populateService();
+        AxisEndpoint axisEndpoint = (AxisEndpoint) axisService.getEndpoint(axisService
+                .getEndpointName());
+        if (axisEndpoint != null) {
+            options.setTo(new EndpointReference(axisEndpoint.getEndpointURL()));
+            options.setSoapVersionURI((String) axisEndpoint.getBinding().getProperty(
+                    WSDL2Constants.ATTR_WSOAP_VERSION));
+        }
+        return axisService;
     }
 }

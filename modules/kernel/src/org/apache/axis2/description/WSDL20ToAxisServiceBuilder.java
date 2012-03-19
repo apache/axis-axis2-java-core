@@ -188,7 +188,22 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         this.wsdlURI = wsdlUri;
     }
 
-    public boolean isAllPorts() {
+    public WSDL20ToAxisServiceBuilder(Description descriptionComp, QName wsdlServiceName,
+            String interfaceName) {
+        DescriptionElement descriptionElement = descriptionComp.toElement();
+        savedTargetNamespace = descriptionElement.getTargetNamespace().toString();
+        namespacemap = descriptionElement.getDeclaredNamespaces();
+        this.description = descriptionElement.toComponent();
+        this.serviceName = null;
+        if (wsdlServiceName != null) {
+            serviceName = wsdlServiceName;
+        }
+        this.interfaceName = interfaceName;
+        this.axisService = new AxisService();
+        setPolicyRegistryFromService(axisService);
+    }
+
+	public boolean isAllPorts() {
         return isAllPorts;
     }
 
