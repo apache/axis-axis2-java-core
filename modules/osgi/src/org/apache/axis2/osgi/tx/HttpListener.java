@@ -85,7 +85,7 @@ public class HttpListener implements TransportListener {
             servicePath = servicePath.substring(1);
         }
         String contextRoot = configCtx.getContextRoot();
-        if (contextRoot.equals("/") || contextRoot == null) {
+        if (contextRoot == null || contextRoot.equals("/")) {
             contextRoot = ""; 
         }
         return new EndpointReference(protocol + "://" + ip + ":" + port + contextRoot + "/" +
