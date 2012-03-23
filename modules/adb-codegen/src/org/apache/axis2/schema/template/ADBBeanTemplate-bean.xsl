@@ -2132,10 +2132,17 @@
                            </xsl:otherwise>
                        </xsl:choose>
 
-                    if ((enumeration == null) &amp;&amp; !((value == null) || (value.equals("")))) {
-                        throw new java.lang.IllegalArgumentException();
-                    }
-                    return enumeration;
+                    // handle unexpected enumeration values properly
+                    <xsl:if test="$ignoreunexpected">
+                        log.warn("Unexpected value " + value + " for enumeration <xsl:value-of select="$name"/>");
+                        return enumeration;
+                    </xsl:if>
+                    <xsl:if test="not($ignoreunexpected)">
+                        if ((enumeration == null) &amp;&amp; !((value == null) || (value.equals("")))) {
+                            throw new java.lang.IllegalArgumentException();
+                        }
+                        return enumeration;
+                    </xsl:if>
                 }
                 public static <xsl:value-of select="$name"/> fromString(java.lang.String value,java.lang.String namespaceURI)
                       throws java.lang.IllegalArgumentException {
