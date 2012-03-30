@@ -162,6 +162,17 @@ public class ConverterUtilTest extends TestCase {
         System.out.println("String   ==> " + "2007-02-15-12:30");
         System.out.println("calendar ==> " + simpleDateFormat.format(date));
         System.out.println("calendar ==> " + ConverterUtil.convertToString(date));
+        
+        //Included two new tests from here http://www.w3.org/TR/NOTE-datetime
+        date = ConverterUtil.convertToDate("2011-11-05T08:15:30-05:00");
+        System.out.println("String   ==> " + "2011-11-05T08:15:30-05:00");
+        System.out.println("calendar ==> " + simpleDateFormat.format(date));
+        System.out.println("calendar ==> " + ConverterUtil.convertToString(date));
+        
+        date = ConverterUtil.convertToDate("1994-11-05T13:15:30Z");
+        System.out.println("String   ==> " + "1994-11-05T13:15:30Z");
+        System.out.println("calendar ==> " + simpleDateFormat.format(date));
+        System.out.println("calendar ==> " + ConverterUtil.convertToString(date));
 
     }
 

@@ -587,7 +587,7 @@ public class ConverterUtil {
                 if (restpart.startsWith("Z")) {
                     // this is a gmt time zone value
                     timeZoneOffSet = 0;
-                } else if (restpart.startsWith("+") || restpart.startsWith("-")) {
+                } else if (restpart.startsWith("+") || restpart.startsWith("-") || restpart.startsWith("T")) {
                     // this is a specific time format string
                     if (restpart.charAt(3) != ':'){
                         throw new RuntimeException("invalid time zone format (" + source
