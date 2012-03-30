@@ -19,6 +19,7 @@
 
 package org.apache.axis2.tool.codegen.eclipse;
 
+import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
@@ -584,7 +585,7 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
 			out = new FileOutputStream(dst);
    
 			// Transfer bytes from in to out
-			byte[] buf = new byte[1024];
+			byte[] buf = new byte[Constants.Configuration.DEFAULT_DATA_BUFFER_SIZE];
 			int len;
 			while ((len = in.read(buf)) > 0) {
 			    out.write(buf, 0, len);

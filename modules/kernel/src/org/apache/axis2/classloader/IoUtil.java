@@ -24,6 +24,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.jar.JarFile;
 
+import org.apache.axis2.Constants;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -33,7 +35,7 @@ public final class IoUtil {
 
     public static byte[] getBytes(InputStream inputStream) throws IOException {
         try {
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[2*Constants.Configuration.DEFAULT_DATA_BUFFER_SIZE];
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             for (int count = inputStream.read(buffer); count >= 0; count = inputStream.read(buffer)) {
                 out.write(buffer, 0, count);

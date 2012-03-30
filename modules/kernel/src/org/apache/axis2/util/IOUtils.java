@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.axis2.Constants;
+
 public class IOUtils {
     
     /**
@@ -33,7 +35,7 @@ public class IOUtils {
      * @param close close input and output stream
      */
     public static void copy(InputStream in, OutputStream out, boolean close) throws IOException {
-        byte[] buffer = new byte[4096];
+        byte[] buffer = new byte[2*Constants.Configuration.DEFAULT_DATA_BUFFER_SIZE];
         int count;
         try {
             while ((count = in.read(buffer)) > 0) {

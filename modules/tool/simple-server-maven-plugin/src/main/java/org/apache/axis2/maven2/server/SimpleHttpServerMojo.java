@@ -80,6 +80,11 @@ public class SimpleHttpServerMojo extends AbstractMojo {
      * @parameter 
      */
     private String port;
+    
+    /**
+     * @parameter default-value="1024"
+     */
+    private int dataBufferSize;
 
     /*
      * Maven project parameters
@@ -139,6 +144,11 @@ public class SimpleHttpServerMojo extends AbstractMojo {
             String serviceJarFile = buildDir + File.separator + projectId + "-" + projectVersion
                     + ".jar";
             repoHelper.setServiceJarLocation(serviceJarFile);
+        }
+        if(dataBufferSize > 0){
+        	repoHelper.setDataBufferSize(dataBufferSize);
+        } else {
+        	repoHelper.setDataBufferSize(org.apache.axis2.Constants.Configuration.DEFAULT_DATA_BUFFER_SIZE);
         }
         return repoHelper;
     }

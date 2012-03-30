@@ -20,6 +20,8 @@
 package org.apache.axis2.tools.wizardframe;
 
 import com.intellij.openapi.project.Project;
+
+import org.apache.axis2.Constants;
 import org.apache.axis2.tools.bean.CodegenBean;
 import org.apache.axis2.tools.bean.SrcCompiler;
 import org.apache.axis2.tools.bean.WsdlgenBean;
@@ -325,7 +327,7 @@ public class WizardFrame extends JFrame {
         OutputStream out = new FileOutputStream(dst);
 
         // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[Constants.Configuration.DEFAULT_DATA_BUFFER_SIZE];
         int len;
         while ((len = in.read(buf)) > 0) {
             out.write(buf, 0, len);

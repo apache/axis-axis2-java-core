@@ -30,6 +30,8 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipException;
 
+import org.apache.axis2.Constants;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -48,7 +50,7 @@ public class JarResourceLocation extends AbstractUrlResourceLocation {
             try {
                 is = new FileInputStream(cacheFile);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] buffer = new byte[2048];
+                byte[] buffer = new byte[Constants.Configuration.DEFAULT_DATA_BUFFER_SIZE];
                 int bytesRead = -1;
                 while ((bytesRead = is.read(buffer)) != -1) {
                     baos.write(buffer, 0, bytesRead);

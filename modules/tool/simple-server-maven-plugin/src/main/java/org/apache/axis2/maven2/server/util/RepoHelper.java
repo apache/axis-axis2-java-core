@@ -56,8 +56,18 @@ public class RepoHelper {
 
     /** The jaxws service. */
     private boolean jaxwsService = false;
+    
+    private int dataBufferSize;
 
-    /**
+    public int getDataBufferSize() {
+		return dataBufferSize;
+	}
+
+	public void setDataBufferSize(int dataBufferSize) {
+		this.dataBufferSize = dataBufferSize;
+	}
+
+	/**
      * Gets the module src dir.
      * 
      * @return the module src dir
@@ -236,7 +246,7 @@ public class RepoHelper {
         File modsrcFile = new File(moduleSrcDir);
         File moddisFile = new File(moduleDir);
         if (modsrcFile.exists()) {
-            copyDirectory(modsrcFile, moddisFile);
+            copyDirectory(modsrcFile, moddisFile, getDataBufferSize());
         }
     }
 
@@ -265,7 +275,7 @@ public class RepoHelper {
         }
 
         if (srcFile.exists()) {
-            copyDirectory(srcFile, disFile);
+            copyDirectory(srcFile, disFile,  getDataBufferSize());
         }
     }
 
@@ -283,7 +293,7 @@ public class RepoHelper {
         File srcFile = new File(stdServiceSrcDir);
         File disFile = new File(stdServiceDir);
         if (srcFile.exists()) {
-            copyDirectory(srcFile, disFile);
+            copyDirectory(srcFile, disFile,  getDataBufferSize());
         }
     }
 
@@ -310,10 +320,11 @@ public class RepoHelper {
      *            the source location
      * @param targetLocation
      *            the target location
+     * @param bufferSize 
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
-    public static void copyDirectory(File sourceLocation, File targetLocation) throws IOException {
+    public static void copyDirectory(File sourceLocation, File targetLocation, int bufferSize) throws IOException {
 
         if (sourceLocation.isDirectory()) {
             if (!targetLocation.exists()) {
@@ -323,7 +334,7 @@ public class RepoHelper {
             String[] children = sourceLocation.list();
             for (int i = 0; i < children.length; i++) {
                 copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation,
-                        children[i]));
+                        children[i]), bufferSize);
             }
         } else {
 
@@ -331,7 +342,7 @@ public class RepoHelper {
             OutputStream out = new FileOutputStream(targetLocation);
 
             // Copy the bits from instream to outstream
-            byte[] buf = new byte[1024];
+            byte[] buf = new byte[bufferSize];
             int len;
             while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);

@@ -471,6 +471,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          */
 
         public static final String ENABLE_CHILD_FIRST_CLASS_LOADING="EnableChildFirstClassLoading";
+        
+        /**
+         * Specify buffer size to used in various data copy operations.
+         */
+        public static final String DATA_BUFFER_SIZE="DataBufferSize";
+        public static final int DEFAULT_DATA_BUFFER_SIZE=2048;        
 
     }
 }
