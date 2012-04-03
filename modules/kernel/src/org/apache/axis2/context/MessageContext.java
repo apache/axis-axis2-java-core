@@ -160,6 +160,10 @@ public class MessageContext extends AbstractContext
         return (MessageContext) currentMessageContext.get();
     }
 
+    public static void destroyCurrentMessageContext() {
+        currentMessageContext.remove();
+    }
+
     public static void setCurrentMessageContext(MessageContext ctx) {
         currentMessageContext.set(ctx);
     }
