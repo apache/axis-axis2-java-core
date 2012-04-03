@@ -30,7 +30,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.namespace.QName;
 
@@ -103,7 +105,7 @@ public class AxisConfiguration extends AxisDescription {
     private final ArrayList<QName> localPolicyAssertions = new ArrayList<QName>();
 
     // to store AxisObserver Objects
-    private ArrayList<AxisObserver> observersList = null;
+    private List<AxisObserver> observersList = null;
 
     private URL axis2Repository = null;
 
@@ -180,7 +182,7 @@ public class AxisConfiguration extends AxisDescription {
         outFaultPhases = new ArrayList<Phase>();
         faultyServices = new Hashtable<String, String>();
         faultyModules = new Hashtable<String, String>();
-        observersList = new ArrayList<AxisObserver>();
+        observersList = new CopyOnWriteArrayList<AxisObserver>();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList<Phase>();
         systemClassLoader = org.apache.axis2.java.security.AccessController
                 .doPrivileged(new PrivilegedAction<ClassLoader>() {
@@ -1274,7 +1276,9 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public ArrayList<AxisObserver> getObserversList() {
-        return observersList;
+    	ArrayList<AxisObserver> observers = new ArrayList<AxisObserver>();
+    	Collections.copy(observers, observersList);
+    	return observers;
     }
 
     public boolean isStart() {
