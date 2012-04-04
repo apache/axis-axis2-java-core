@@ -2724,7 +2724,6 @@ public class SchemaCompiler {
             } else if (availableSchemaMap.containsKey(targetNamespace)){
                 XmlSchema tempSchema = availableSchemaMap.get(targetNamespace);
                 if (isComponetExists(tempSchema,componentQName,componetType)){
-                    compile(tempSchema);
                     newParentSchema = tempSchema;
                 }
             }
