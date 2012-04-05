@@ -24,6 +24,7 @@ import java.net.URL;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -31,8 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.xml.namespace.QName;
 
@@ -105,7 +107,7 @@ public class AxisConfiguration extends AxisDescription {
     private final ArrayList<QName> localPolicyAssertions = new ArrayList<QName>();
 
     // to store AxisObserver Objects
-    private List<AxisObserver> observersList = null;
+    private Set<AxisObserver> observerSet = null;
 
     private URL axis2Repository = null;
 
@@ -182,7 +184,7 @@ public class AxisConfiguration extends AxisDescription {
         outFaultPhases = new ArrayList<Phase>();
         faultyServices = new Hashtable<String, String>();
         faultyModules = new Hashtable<String, String>();
-        observersList = new CopyOnWriteArrayList<AxisObserver>();
+        observerSet = new CopyOnWriteArraySet<AxisObserver>();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList<Phase>();
         systemClassLoader = org.apache.axis2.java.security.AccessController
                 .doPrivileged(new PrivilegedAction<ClassLoader>() {
@@ -314,7 +316,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void addObservers(AxisObserver axisObserver) {
-        observersList.add(axisObserver);
+        observerSet.add(axisObserver);
     }
 
     /**
@@ -635,7 +637,7 @@ public class AxisConfiguration extends AxisDescription {
         if (service.isClientSide())
             return;
 
-        for (AxisObserver observer : observersList) {
+        for (AxisObserver observer : observerSet) {
             try {
                 observer.serviceUpdate(event, service);
             } catch (Throwable e) {
@@ -647,7 +649,7 @@ public class AxisConfiguration extends AxisDescription {
 
     public void notifyObservers(AxisEvent event, AxisModule moule) {
 
-        for (AxisObserver anObserversList : observersList) {
+        for (AxisObserver anObserversList : observerSet) {
 
             try {
                 anObserversList.moduleUpdate(event, moule);
@@ -660,7 +662,7 @@ public class AxisConfiguration extends AxisDescription {
 
     public void notifyObservers(AxisEvent event, AxisServiceGroup serviceGroup) {
 
-        for (AxisObserver anObserversList : observersList) {
+        for (AxisObserver anObserversList : observerSet) {
 
             try {
                 anObserversList.serviceGroupUpdate(event, serviceGroup);
@@ -1276,8 +1278,9 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public ArrayList<AxisObserver> getObserversList() {
-    	ArrayList<AxisObserver> observers = new ArrayList<AxisObserver>();
-    	Collections.copy(observers, observersList);
+    	AxisObserver[] array = observerSet.toArray(new AxisObserver[observerSet.size()]);
+    	ArrayList<AxisObserver> observers = new ArrayList<AxisObserver>(array.length);
+    	observers.addAll(Arrays.asList(array));
     	return observers;
     }
 
