@@ -69,8 +69,7 @@
         <!-- Need Neethi 3.0.2 to solve the root cause of AXIS2-5145. If we go back to 3.0.1 then we need to apply a workaround. -->
         <neethi.version>3.0.2-SNAPSHOT</neethi.version>
         <woden.version>1.0M9</woden.version>
-        <!-- Need to ship Axis2 1.6.2 with Axiom 1.2.13 because of RAMPART-336 -->
-        <axiom.version>1.2.13-SNAPSHOT</axiom.version>
+        <axiom.version>1.2.13</axiom.version>
         <xmlschema.version>1.4.7</xmlschema.version>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
