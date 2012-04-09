@@ -68,8 +68,7 @@
     <properties>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
-        <!-- Need to ship Axis2 1.5.7 with Axiom 1.2.13 because of RAMPART-336 -->
-        <axiom.version>1.2.13-SNAPSHOT</axiom.version>
+        <axiom.version>1.2.13</axiom.version>
         <bsf.version>2.4.0</bsf.version>
         <commons.codec.version>1.3</commons.codec.version>
         <commons.fileupload.version>1.2</commons.fileupload.version>
