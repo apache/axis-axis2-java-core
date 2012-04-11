@@ -314,8 +314,23 @@ public class AxisConfiguration extends AxisDescription {
                             moduleConfiguration);
     }
 
+    /**
+     * Register given AxisObserver object to the {@link AxisConfiguration}.
+     * 
+     * @param axisObserver the axis observer
+     */
     public void addObservers(AxisObserver axisObserver) {
         observerSet.add(axisObserver);
+    }
+    
+    /**
+     * Unregister the given AxisObserver object if it is registered with
+     * the {@link AxisConfiguration}.
+     * 
+     * @param axisObserver the axis observer
+     */
+    public void removeObservers(AxisObserver axisObserver) {
+        observerSet.remove(axisObserver);
     }
 
     /**
@@ -1261,6 +1276,12 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
+    /**
+     * This method returns read-only list of AxisObservers registered with this
+     * {@link AxisConfiguration}.
+     * 
+     * @return ArrayList<AxisObserver>
+     */
     public ArrayList<AxisObserver> getObserversList() {
     	AxisObserver[] array = observerSet.toArray(new AxisObserver[observerSet.size()]);
     	ArrayList<AxisObserver> observers = new ArrayList<AxisObserver>(array.length);
