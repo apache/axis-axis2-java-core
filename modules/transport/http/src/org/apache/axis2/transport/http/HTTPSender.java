@@ -264,18 +264,19 @@ public class HTTPSender extends AbstractHTTPSender {
     private void handleResponse(MessageContext msgContext,
                                 HttpMethodBase method) throws IOException {
         int statusCode = method.getStatusCode();
+        HTTPStatusCodeFamily family = getHTTPStatusCodeFamily(statusCode);
         log.trace("Handling response - " + statusCode);
-        if (statusCode == HttpStatus.SC_OK) {
-            // Save the HttpMethod so that we can release the connection when cleaning up
-            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-            processResponse(method, msgContext);
-        } else if (statusCode == HttpStatus.SC_ACCEPTED) {
+        if (statusCode == HttpStatus.SC_ACCEPTED) {
         	/* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
         	 * of an in-only operation. In such a scenario, the HTTP response headers should be returned,
         	 * i.e. session cookies. */
         	obtainHTTPHeaderInformation(method, msgContext);
         	// Since we don't expect any content with a 202 response, we must release the connection
         	method.releaseConnection();
+        } else if (HTTPStatusCodeFamily.SUCCESSFUL.equals(family)) {
+            // Save the HttpMethod so that we can release the connection when cleaning up
+            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
+            processResponse(method, msgContext); 
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
                 statusCode == HttpStatus.SC_BAD_REQUEST) {
             // Save the HttpMethod so that we can release the connection when cleaning up
@@ -312,4 +313,25 @@ public class HTTPSender extends AbstractHTTPSender {
                                                     method.getStatusText()));
         }
     }
+    
+    /**
+     * Used to determine the family of HTTP status codes to which the given code belongs.
+     *
+     * @param statusCode - The HTTP status code
+     */
+    private HTTPStatusCodeFamily getHTTPStatusCodeFamily(int statusCode) {
+        switch(statusCode/100) {
+            case 1: return HTTPStatusCodeFamily.INFORMATIONAL;
+            case 2: return HTTPStatusCodeFamily.SUCCESSFUL;
+            case 3: return HTTPStatusCodeFamily.REDIRECTION;
+            case 4: return HTTPStatusCodeFamily.CLIENT_ERROR;
+            case 5: return HTTPStatusCodeFamily.SERVER_ERROR;
+            default: return HTTPStatusCodeFamily.OTHER;
+        }
+    }
+    
+    /**
+     * The set of HTTP status code families.
+     */
+    private enum HTTPStatusCodeFamily {INFORMATIONAL, SUCCESSFUL, REDIRECTION, CLIENT_ERROR, SERVER_ERROR, OTHER}
 }

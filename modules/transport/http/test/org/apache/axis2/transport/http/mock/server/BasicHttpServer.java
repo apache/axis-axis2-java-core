@@ -148,5 +148,11 @@ public interface BasicHttpServer {
     public static final String RESPONSE_HTTP_404 = "response.http.404";
     public static final String RESPONSE_HTTP_OK_XML = "response.http.ok.xml";
     public static final String RESPONSE_HTTP_OK_LOOP_BACK = "response.http.ok.loop.back";
+    public static final String RESPONSE_HTTP_200 = "response.http.200";
+    public static final String RESPONSE_HTTP_201 = "response.http.201";
+    public static final String RESPONSE_HTTP_202 = "response.http.202";
+    public static final String RESPONSE_HTTP_400 = "response.http.400";
+    public static final String RESPONSE_HTTP_500 = "response.http.500";
+
 
 }

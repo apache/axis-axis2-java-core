@@ -238,7 +238,66 @@ public class BasicHttpServerImpl implements BasicHttpServer {
                     }
 
                 });
-            }
+                
+            } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_200)) {
+                response.setStatusCode(HttpStatus.SC_OK);
+                body = new EntityTemplate(new ContentProducer() {
+
+                    public void writeTo(final OutputStream outstream) throws IOException {
+                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
+                        writer.write("<Response> SC_ACCEPTED 202 <Response>");
+                        writer.flush();
+                    }
+
+                });
+                
+            } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_201)) {
+                response.setStatusCode(HttpStatus.SC_CREATED);
+                body = new EntityTemplate(new ContentProducer() {
+
+                    public void writeTo(final OutputStream outstream) throws IOException {
+                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
+                        //writer.write("<Response> SC_ACCEPTED 202 <Response>");
+                        writer.flush();
+                    }
+
+                });
+                
+            } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_202)) {
+                response.setStatusCode(HttpStatus.SC_ACCEPTED);
+                body = new EntityTemplate(new ContentProducer() {
+                    public void writeTo(final OutputStream outstream) throws IOException {
+                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
+                        //writer.write("<Response> SC_ACCEPTED 202 <Response>");
+                        writer.flush();
+                    }
+
+                });
+                
+            } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_400)) {
+                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                body = new EntityTemplate(new ContentProducer() {
+                    public void writeTo(final OutputStream outstream) throws IOException {
+                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
+                        //writer.write("<Response> SC_ACCEPTED 202 <Response>");
+                        writer.flush();
+                    }
+
+                });
+                
+            } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_500)) {
+                response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                body = new EntityTemplate(new ContentProducer() {
+                    public void writeTo(final OutputStream outstream) throws IOException {
+                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
+                        writer.write(" Server Error");
+                        writer.flush();
+                    }
+
+                });
+                
+            }            
+            
             // TODO - customize to send content type depend on expectations.
             body.setContentType("text/html; charset=UTF-8");
             response.setEntity(body);
