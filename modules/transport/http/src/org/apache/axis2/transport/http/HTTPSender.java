@@ -121,6 +121,37 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         }
 
         this.sendViaPost(msgContext, url, soapActionString);
-    }    
-       
+    }   
+
+    /**
+     * Used to determine the family of HTTP status codes to which the given code
+     * belongs.
+     * 
+     * @param statusCode
+     *            - The HTTP status code
+     */
+    protected HTTPStatusCodeFamily getHTTPStatusCodeFamily(int statusCode) {
+        switch (statusCode / 100) {
+        case 1:
+            return HTTPStatusCodeFamily.INFORMATIONAL;
+        case 2:
+            return HTTPStatusCodeFamily.SUCCESSFUL;
+        case 3:
+            return HTTPStatusCodeFamily.REDIRECTION;
+        case 4:
+            return HTTPStatusCodeFamily.CLIENT_ERROR;
+        case 5:
+            return HTTPStatusCodeFamily.SERVER_ERROR;
+        default:
+            return HTTPStatusCodeFamily.OTHER;
+        }
+    }
+
+    /**
+     * The set of HTTP status code families.
+     */
+    protected enum HTTPStatusCodeFamily {
+        INFORMATIONAL, SUCCESSFUL, REDIRECTION, CLIENT_ERROR, SERVER_ERROR, OTHER
+    }
+
 }

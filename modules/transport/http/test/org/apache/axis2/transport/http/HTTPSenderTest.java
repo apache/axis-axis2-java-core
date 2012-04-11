@@ -31,6 +31,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.transport.http.mock.server.AbstractHTTPServerTest;
+import org.apache.axis2.transport.http.mock.server.BasicHttpServer;
 
 /**
  * The Class HTTPSenderTest.
@@ -253,5 +254,45 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get(HttpHeaders.USER_AGENT));
 
     }
+    public void testHandleResponseHTTPStatusCode200() throws Exception {
+        httpSender = getHTTPSender();
+        int port = getBasicHttpServer().getPort();
+        getBasicHttpServer().setResponseTemplate(BasicHttpServer.RESPONSE_HTTP_200);
+        sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
+                "http://localhost:" + port + "/postService", true);
+    }
+    
+    public void testHandleResponseHTTPStatusCode201() throws Exception {
+        httpSender = getHTTPSender();
+        int port = getBasicHttpServer().getPort();
+        getBasicHttpServer().setResponseTemplate(BasicHttpServer.RESPONSE_HTTP_201);
+        sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
+                "http://localhost:" + port + "/postService", true);
+    }
+    
+    public void testHandleResponseHTTPStatusCode202() throws Exception {
+        httpSender = getHTTPSender();
+        int port = getBasicHttpServer().getPort();
+        getBasicHttpServer().setResponseTemplate(BasicHttpServer.RESPONSE_HTTP_202);
+        sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
+                "http://localhost:" + port + "/postService", true);
+    }
+    
+    public void testHandleResponseHTTPStatusCode400() throws Exception {
+        httpSender = getHTTPSender();
+        int port = getBasicHttpServer().getPort();
+        getBasicHttpServer().setResponseTemplate(BasicHttpServer.RESPONSE_HTTP_400);
+        sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
+                "http://localhost:" + port + "/postService", true);
+    }
+    
+    public void testHandleResponseHTTPStatusCode500() throws Exception {
+        httpSender = getHTTPSender();
+        int port = getBasicHttpServer().getPort();
+        getBasicHttpServer().setResponseTemplate(BasicHttpServer.RESPONSE_HTTP_500);
+        sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
+                "http://localhost:" + port + "/postService", true);
+    }
+    
 
 }
