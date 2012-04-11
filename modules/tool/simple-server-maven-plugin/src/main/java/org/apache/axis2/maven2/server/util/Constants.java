@@ -50,6 +50,9 @@ public class Constants {
     /** The Constant DEFAULT_CLASSES_DIRECTOY. */
     public static final String DEFAULT_CLASSES_DIRECTORY = "classes";
     
+    /** The Constant DEFAULT_TEST_CLASSES_DIRECTOY. */
+    public static final String DEFAULT_TEST_CLASSES_DIRECTORY = "test-classes";
+    
     /** The Constant DEFAULT_PORT_PARAM. */
     public static final String DEFAULT_PORT_PARAM = "port";
     

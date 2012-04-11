@@ -82,6 +82,13 @@ public class SimpleHttpServerMojo extends AbstractMojo {
     private String port;
     
     /**
+     * Indicates whether to fork the server.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean fork;
+    
+    /**
      * @parameter default-value="1024"
      */
     private int dataBufferSize;
@@ -126,7 +133,7 @@ public class SimpleHttpServerMojo extends AbstractMojo {
     private String projectId;
 
     private Axis2Server server;
-    private boolean fork;
+   
 
     public RepoHelper getRepoHelper() {
         RepoHelper repoHelper = new RepoHelper(repoPath);
@@ -164,7 +171,7 @@ public class SimpleHttpServerMojo extends AbstractMojo {
             if (fork) {
                 new Thread(new Runnable() {
                     public void run() {
-                        getLog().info(" Starting Axis2 Simple HTTP Server..................... ");
+                        getLog().info(" Starting Axis2 Simple HTTP Server in a foke mode................. ");
                         server.startServer();
                         getLog().info(" Axis2 Simple HTTP server satreted");
                         waitForShutdown();
@@ -188,7 +195,9 @@ public class SimpleHttpServerMojo extends AbstractMojo {
                     .currentThread().getContextClassLoader());
         }
         File cls = new File(buildDir + File.separator + Constants.DEFAULT_CLASSES_DIRECTORY);
+        File testCls = new File(buildDir + File.separator + Constants.DEFAULT_TEST_CLASSES_DIRECTORY);
         realm.addURL(cls.toURI().toURL());
+        realm.addURL(testCls.toURI().toURL());
         Thread.currentThread().setContextClassLoader(realm);
     }
 
