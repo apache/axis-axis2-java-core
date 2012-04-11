@@ -329,7 +329,7 @@ public class AxisConfiguration extends AxisDescription {
      * 
      * @param axisObserver the axis observer
      */
-    public void removeObservers(AxisObserver axisObserver) {
+    public void removeObserver(AxisObserver axisObserver) {
         observerSet.remove(axisObserver);
     }
 
