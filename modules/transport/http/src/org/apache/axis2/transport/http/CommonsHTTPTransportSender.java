@@ -76,7 +76,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements HTTPT
     private int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     private int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
-
+    
+    /*
+     * It's Required to keep this method to keep backward compatibility because
+     * still it's possible to register CommonsHTTPTransportSender in the
+     * axis2.xml.
+     */
     public void cleanup(MessageContext msgContext) throws AxisFault {
         
             HttpMethod httpMethod = (HttpMethod) msgContext.getProperty(HTTPConstants.HTTP_METHOD);
