@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -513,8 +512,7 @@ public class AxisConfiguration extends AxisDescription {
             AxisService axisService = services.next();           
             isClientSide = axisService.isClientSide()? true : false;
 
-            //removes the endpoints to this service
-            String serviceName = axisService.getName();
+            //removes the endpoints to this service         
             removeServiceReferences(axisService.getName());    
 
         }
@@ -1081,21 +1079,7 @@ public class AxisConfiguration extends AxisDescription {
     public HashMap<String, TransportOutDescription> getTransportsOut() {
         return transportsOut;
     }
-
-    /**
-     * Find out whether a given module is engaged.
-     *
-     * This method needs to remain for a few Axis2 releases to support
-     * legacy apps still using it.  It will be disappearing in 1.6.
-     *
-     * @param qname QName of the module
-     * @deprecated Use {@link #isEngaged(String)}
-     * @return true if a module matching the passed QName is engaged globally
-     */
-    public boolean isEngaged(QName qname) {
-        return isEngaged(qname.getLocalPart());
-    }
-
+    
     public boolean isEngaged(String moduleId) {
         AxisModule module = getModule(moduleId);
         if (module == null) {
