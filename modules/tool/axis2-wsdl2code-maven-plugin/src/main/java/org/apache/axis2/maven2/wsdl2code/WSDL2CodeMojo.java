@@ -239,6 +239,26 @@ public class WSDL2CodeMojo extends AbstractMojo {
 
     /** @parameter */
     private NamespaceURIMapping[] namespaceURIs = null;
+    
+    /**
+     * @parameter expression="${axis2.wsdl2code.http-proxy-host}"
+     */
+    private String httpProxyHost = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.http-proxy-port}"
+     */
+    private String httpProxyPort = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.http-proxy-user}"
+     */
+    private String httpProxyUser = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.http-proxy-password}"
+     */
+    private String httpProxyPassword = null;
 
     /** Fills the option map. This map is passed onto the code generation API to generate the code. */
     private Map<String,CommandLineOption> fillOptionMap() throws MojoFailureException {
@@ -507,6 +527,39 @@ public class WSDL2CodeMojo extends AbstractMojo {
                             CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
                             new String[] { getNamespaceToPackagesMap() }));
         }
+        
+        if (httpProxyHost != null) {
+            optionMap
+                    .put(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_HOST_OPTION_LONG,
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_HOST_OPTION_LONG,
+                                    new String[] { httpProxyHost }));
+        }
+
+        if (httpProxyPort != null) {
+            optionMap
+                    .put(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_PORT_OPTION_LONG,
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_PORT_OPTION_LONG,
+                                    new String[] { httpProxyPort }));
+        }
+
+        if (httpProxyUser != null) {
+            optionMap
+                    .put(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_USER_OPTION_LONG,
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_USER_OPTION_LONG,
+                                    new String[] { httpProxyUser }));
+        }
+
+        if (httpProxyPassword != null) {
+            optionMap
+                    .put(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_PASSWORD_OPTION_LONG,
+                            new CommandLineOption(
+                                    CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_PASSWORD_OPTION_LONG,
+                                    new String[] { httpProxyPassword }));
+        }
+        
         return optionMap;
     }
 
