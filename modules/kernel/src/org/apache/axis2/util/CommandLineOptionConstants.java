@@ -84,6 +84,8 @@ public interface CommandLineOptionConstants {
         String WSDL_VERSION_OPTION_LONG = "wsdl-version";
         String HTTP_PROXY_HOST_OPTION_LONG = "http-proxy-host";
         String HTTP_PROXY_PORT_OPTION_LONG = "http-proxy-port";
+        String HTTP_PROXY_USER_OPTION_LONG = "http-proxy-user";
+        String HTTP_PROXY_PASSWORD_OPTION_LONG = "http-proxy-password";
         String EXCLUDE_PAKAGES_OPTION = "ep";
         String EXCLUDE_PAKAGES_OPTION_LONG = "exclude-packages";
         String SKELTON_INTERFACE_NAME_OPTION = "sin";

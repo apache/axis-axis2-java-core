@@ -19,6 +19,10 @@
 
 package org.apache.axis2.wsdl;
 
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
 import java.util.Map;
 
 import org.apache.axis2.util.CommandLineOption;
@@ -35,6 +39,7 @@ public class WSDL2Code {
     public static void main(String[] args) throws Exception {
         CommandLineOptionParser commandLineOptionParser = new CommandLineOptionParser(
                 args);
+       checkAuthentication(commandLineOptionParser);  
       //If it is a JAX-WS code generation request call WSimportTool.
       if (isJwsOptionEnabled(commandLineOptionParser)){
          new JAXWSCodeGenerationEngine(commandLineOptionParser, args).generate();
@@ -51,7 +56,7 @@ public class WSDL2Code {
 
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg1"));
-        for (int i = 2; i <= 50; i++) {
+        for (int i = 2; i <= 52; i++) {
             System.out.println("  " + CodegenMessages.getMessage("wsdl2code.arg" + i));
         }
     }
@@ -78,4 +83,62 @@ public class WSDL2Code {
         }
         return true;
     }
+    
+    private static void checkAuthentication(CommandLineOptionParser commandLineOptionParser) {
+        
+        String userName = null;
+        String password = null;
+        
+        Map allOptions = commandLineOptionParser.getAllOptions();        
+        CommandLineOption userOption = (CommandLineOption) allOptions
+                .get(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_USER_OPTION_LONG);
+        CommandLineOption passwordOption = (CommandLineOption) allOptions
+                .get(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_PASSWORD_OPTION_LONG);
+        CommandLineOption urlOption = (CommandLineOption) allOptions
+                .get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
+        
+        if(urlOption == null){
+            return;
+        }        
+        if (userOption != null) {
+            userName = userOption.getOptionValue();
+        }
+        if (passwordOption != null) {
+            password = passwordOption.getOptionValue();
+
+        }
+        if (userName == null) {
+            // Try to collect user name and password from UserInfo part of the URL. 
+            URL url = null;
+            try {
+                url = new URL(urlOption.getOptionValue());
+            } catch (MalformedURLException e) {
+                return;
+            }
+
+            String userInfo = url.getUserInfo();
+            if (userInfo != null) {
+                int i = userInfo.indexOf(':');
+
+                if (i >= 0) {
+                    userName = userInfo.substring(0, i);
+                    password = userInfo.substring(i + 1);
+                } else {
+                    userName = userInfo;
+                }
+            }
+
+        }
+        
+        if (userName != null) {
+            final String user = userName;
+            final String pass = password == null ? "" : password;
+            Authenticator.setDefault(new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(user, pass.toCharArray());
+                }
+            });
+        }
+    }
+   
 }
