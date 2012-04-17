@@ -28,7 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2-parent</artifactId>
-    <version>1.6.2</version>
+    <version>1.6.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Axis2 - Parent</name>
     <inceptionYear>2004</inceptionYear>
@@ -957,9 +957,9 @@
         </profile>
     </profiles>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.2/modules/parent</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.6.2/modules/parent</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.6.2/modules/parent</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/parent</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_6/modules/parent</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_6/modules/parent</url>
     </scm>
     <build>
         <pluginManagement>
