@@ -19,7 +19,9 @@
 
 package org.apache.axis2.transport.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 public abstract class RESTRequestEntity2 {
@@ -59,5 +61,9 @@ public abstract class RESTRequestEntity2 {
     public void setPostRequestBody(String postRequestBody) {
         this.postRequestBody = postRequestBody;
     }
-    
+
+    public InputStream getRequestEntityContent() {
+        return new ByteArrayInputStream(this.postRequestBody.getBytes());
+    }
+
 }
