@@ -21,12 +21,10 @@ package org.apache.axis2.rmi.receiver;
 
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.rmi.databind.JavaObjectSerializer;
 import org.apache.axis2.rmi.databind.RMIDataSource;
@@ -42,6 +40,8 @@ import org.apache.axis2.rmi.util.NamespacePrefix;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -121,7 +121,7 @@ public class RMIMessageReciever extends AbstractInOutMessageReceiver {
                                         SOAPFactory soapFactory) {
         OMDataSource omDataSource = new RMIDataSource() {
 
-            public void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException {
+            public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
                 try {
                     javaObjectSerializer.serializeOutputElement(returnObject,
                             operation.getOutPutElement(),
@@ -134,7 +134,7 @@ public class RMIMessageReciever extends AbstractInOutMessageReceiver {
         };
         XmlElement outXmlElement = operation.getOutPutElement();
         QName outElementQName = new QName(outXmlElement.getNamespace(), outXmlElement.getName());
-        return new OMSourcedElementImpl(outElementQName, soapFactory, omDataSource);
+        return soapFactory.createOMElement(omDataSource, outElementQName);
     }
 
     public OMElement getParameterOMElement(final Object exceptionObject,
@@ -143,7 +143,7 @@ public class RMIMessageReciever extends AbstractInOutMessageReceiver {
                                            SOAPFactory soapFactory){
         OMDataSource omDataSource = new RMIDataSource(){
 
-            public void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException {
+            public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
                 try {
                     javaObjectSerializer.serializeParameter(exceptionObject,parameter,xmlWriter, new NamespacePrefix());
                 } catch (XmlSerializingException e) {
@@ -152,8 +152,8 @@ public class RMIMessageReciever extends AbstractInOutMessageReceiver {
             }
         };
         XmlElement exceptionElement = parameter.getElement();
-        QName outElementQName = new QName(exceptionElement.getNamespace(), exceptionElement.getName());
-        OMElement omElement = new OMSourcedElementImpl(outElementQName, soapFactory, omDataSource);
+        QName outElementQName = new QName(exceptionElement.getNamespace(), exceptionElement.getName());      
+        OMElement omElement = soapFactory.createOMElement(omDataSource, outElementQName);
         return omElement;
     }
 

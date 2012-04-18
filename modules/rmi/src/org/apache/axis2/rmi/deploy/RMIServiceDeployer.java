@@ -25,6 +25,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.Deployer;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.AbstractDeployer;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.rmi.Configurator;
@@ -59,7 +60,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
-public class RMIServiceDeployer implements Deployer {
+public class RMIServiceDeployer extends AbstractDeployer {
 
     private static Log log = LogFactory.getLog(RMIServiceDeployer.class);
     private ConfigurationContext configurationContext;
@@ -74,9 +75,10 @@ public class RMIServiceDeployer implements Deployer {
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
         boolean isDirectory = deploymentFileData.getFile().isDirectory();
         try {
-            deploymentFileData.setClassLoader(isDirectory,
-                                              this.axisConfiguration.getServiceClassLoader(),
-                    (File)this.axisConfiguration.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+            deploymentFileData.setClassLoader(isDirectory, this.axisConfiguration
+                    .getServiceClassLoader(), (File) this.axisConfiguration
+                    .getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                    configurationContext.getAxisConfiguration().isChildFirstClassLoading());
 
             ClassLoader deploymentClassLoader = deploymentFileData.getClassLoader();
             String absolutePath = deploymentFileData.getFile().getAbsolutePath();
@@ -241,15 +243,11 @@ public class RMIServiceDeployer implements Deployer {
         return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
 
-    public void setDirectory(String directory) {
-
+    public void setDirectory(String arg0) {        
     }
 
-    public void setExtension(String extension) {
-
+    public void setExtension(String arg0) {        
     }
 
-    public void unDeploy(String fileName) throws DeploymentException {
-       //TODO: implement undeploy
-    }
+ 
 }

@@ -28,7 +28,8 @@ import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.metadata.Service;
 import org.apache.axis2.rmi.server.services.Service1;
 import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.axis2.transport.http.server.HttpFactory;
+import org.apache.axis2.transport.http.server.SimpleHttpServer;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
@@ -52,9 +53,9 @@ public class ServerTest {
 //            Configurator configurator = new Configurator();
 //            ClassDeployer classDeployer = new ClassDeployer(confContext, configurator);
 //            classDeployer.deployClass(Service2.class);
-
-            SimpleHTTPServer simpleHttpServer = new SimpleHTTPServer(confContext, 5555);
-            simpleHttpServer.start();
+            HttpFactory httpFactory = new HttpFactory(confContext, 5555);
+            SimpleHttpServer simpleHttpServer = new SimpleHttpServer(httpFactory, 5555);          
+            simpleHttpServer.start(); 
 
             System.out.println("Server started on port 5555 ");
             try {
@@ -63,6 +64,8 @@ public class ServerTest {
             }
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {           
+            e.printStackTrace();
         }
     }
 

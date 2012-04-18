@@ -22,8 +22,6 @@ package org.apache.axis2.rmi.databind;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.OMElementCreationException;
@@ -34,6 +32,8 @@ import org.apache.axis2.rmi.util.NamespacePrefix;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +60,7 @@ public class OMElementCreator {
 
             OMDataSource omDataSource = new RMIDataSource() {
 
-                public void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException {
+                public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
                     try {
                         javaObjectSerializer.serializeParameter(value, parameter, xmlWriter, new NamespacePrefix());
                     } catch (XmlSerializingException e) {
@@ -70,7 +70,7 @@ public class OMElementCreator {
             };
 
             QName qname = new QName(parameter.getNamespace(), parameter.getName());
-            returnOMElement = new OMSourcedElementImpl(qname, OMAbstractFactory.getOMFactory(), omDataSource);
+            returnOMElement = OMAbstractFactory.getOMFactory().createOMElement(omDataSource, qname);
 
         } catch (MetaDataPopulateException e) {
             throw new OMElementCreationException("Problem in meta data population", e);

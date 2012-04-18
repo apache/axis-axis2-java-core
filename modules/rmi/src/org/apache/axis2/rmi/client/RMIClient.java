@@ -23,12 +23,10 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.databind.JavaObjectSerializer;
@@ -46,6 +44,8 @@ import org.apache.axis2.rmi.metadata.xml.XmlElement;
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import java.net.URL;
 
 
@@ -149,7 +149,7 @@ public class RMIClient extends ServiceClient {
                                         OMFactory omFactory) {
         OMDataSource omDataSource = new RMIDataSource() {
 
-            public void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException {
+            public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
                 try {
                     javaObjectSerializer.serializeInputElement(inputObjects,
                             operation.getInputElement(),
@@ -162,7 +162,7 @@ public class RMIClient extends ServiceClient {
         };
         XmlElement inputXmlElement = operation.getInputElement();
         QName inputElementQName = new QName(inputXmlElement.getNamespace(), inputXmlElement.getName());
-        return new OMSourcedElementImpl(inputElementQName, omFactory, omDataSource);
+        return omFactory.createOMElement(omDataSource, inputElementQName);
     }
 
 }

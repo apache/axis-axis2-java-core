@@ -23,8 +23,7 @@ import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareOMBuilder;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -44,12 +43,7 @@ public abstract class RMIDataSource implements OMDataSource {
     public void serialize(Writer writer,
                           OMOutputFormat omOutputFormat) throws XMLStreamException {
         serialize(StAXUtils.createXMLStreamWriter(writer));
-    }
-
-    public void serialize(XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
-        MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlStreamWriter);
-        serialize(mtomAwareXMLStreamWriter);
-    }
+    }   
 
     public XMLStreamReader getReader() throws XMLStreamException {
         // since only ADBBeans related to elements can be serialized
@@ -59,5 +53,5 @@ public abstract class RMIDataSource implements OMDataSource {
         return mtomAwareOMBuilder.getOMElement().getXMLStreamReader();
     }
 
-    public abstract void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException;
+    public abstract void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException;
 }
