@@ -22,7 +22,7 @@
     <groupId>org.apache.axis2.examples</groupId>
     <artifactId>jaxws-samples</artifactId>
     <name>JAXWS Samples - Echo, Ping, MTOM</name>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.3-SNAPSHOT</version>
     <packaging>war</packaging>
     <dependencies>
         <dependency>
@@ -34,27 +34,27 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>1.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>1.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>1.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>1.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>addressing</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>1.6.3-SNAPSHOT</version>
             <type>mar</type>
         </dependency>
         <dependency>
