@@ -77,7 +77,7 @@ public class TypeTable {
         simpleTypetoxsd.put("byte",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "byte", "xs"));
         simpleTypetoxsd.put("char",
-                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "string", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "unsignedShort", "xs"));
         simpleTypetoxsd.put("java.lang.Integer",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "int", "xs"));
         simpleTypetoxsd.put("java.lang.Double",

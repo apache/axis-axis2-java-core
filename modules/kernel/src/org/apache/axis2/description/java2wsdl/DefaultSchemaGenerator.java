@@ -1246,12 +1246,25 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArray) {
             elt1.setMaxOccurs(Long.MAX_VALUE);
         }
-        elt1.setMinOccurs(0);
+
         if (!("int".equals(schemaTypeName.getLocalPart()) ||
                 "double".equals(schemaTypeName.getLocalPart()) ||
                 "long".equals(schemaTypeName.getLocalPart()) ||
                 "boolean".equals(schemaTypeName.getLocalPart()) ||
                 "short".equals(schemaTypeName.getLocalPart()) ||
+                "byte".equals(schemaTypeName.getLocalPart()) ||
+                "unsignedShort".equals(schemaTypeName.getLocalPart()) ||
+                "float".equals(schemaTypeName.getLocalPart()))) {
+            elt1.setMinOccurs(0);
+        }
+
+        if (!("int".equals(schemaTypeName.getLocalPart()) ||
+                "double".equals(schemaTypeName.getLocalPart()) ||
+                "long".equals(schemaTypeName.getLocalPart()) ||
+                "boolean".equals(schemaTypeName.getLocalPart()) ||
+                "short".equals(schemaTypeName.getLocalPart()) ||
+                "byte".equals(schemaTypeName.getLocalPart()) ||
+                "unsignedShort".equals(schemaTypeName.getLocalPart()) ||
                 "float".equals(schemaTypeName.getLocalPart()))) {
             elt1.setNillable(true);
         }
