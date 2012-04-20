@@ -1379,7 +1379,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (param != null) {
             disallowOptionals = JavaUtils.isTrueExplicitly(param.getValue());
         }
-        if (!disallowOptionals) {
+        if (!("int".equals(schemaTypeName.getLocalPart()) ||
+                "double".equals(schemaTypeName.getLocalPart()) ||
+                "long".equals(schemaTypeName.getLocalPart()) ||
+                "boolean".equals(schemaTypeName.getLocalPart()) ||
+                "short".equals(schemaTypeName.getLocalPart()) ||
+                "byte".equals(schemaTypeName.getLocalPart()) ||
+                "unsignedShort".equals(schemaTypeName.getLocalPart()) ||
+                "float".equals(schemaTypeName.getLocalPart())) && !disallowOptionals) {
             elt1.setMinOccurs(0);
         }
 
@@ -1394,6 +1401,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 "long".equals(schemaTypeName.getLocalPart()) ||
                 "boolean".equals(schemaTypeName.getLocalPart()) ||
                 "short".equals(schemaTypeName.getLocalPart()) ||
+                "byte".equals(schemaTypeName.getLocalPart()) ||  
+                "unsignedShort".equals(schemaTypeName.getLocalPart()) ||
                 "float".equals(schemaTypeName.getLocalPart())) && !disallowNillables) {
             elt1.setNillable(true);
         }
