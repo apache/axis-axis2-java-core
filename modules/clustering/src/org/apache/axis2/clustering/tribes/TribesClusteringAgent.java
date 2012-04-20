@@ -297,23 +297,24 @@ public class TribesClusteringAgent implements ClusteringAgent {
         Properties memberInfo = new Properties();
         AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
         TransportInDescription httpTransport = axisConfig.getTransportIn("http");
+        int portOffset = 0;
+        if(System.getProperty("portOffset") != null){
+            portOffset = Integer.parseInt(System.getProperty("portOffset"));
+        }
         if (httpTransport != null) {
             Parameter port = httpTransport.getParameter("port");
             if (port != null) {
-                memberInfo.put("httpPort", port.getValue());
+                memberInfo.put("httpPort",
+                               String.valueOf(Integer.valueOf((String)port.getValue()) + portOffset));
             }
         }
         TransportInDescription httpsTransport = axisConfig.getTransportIn("https");
         if (httpsTransport != null) {
             Parameter port = httpsTransport.getParameter("port");
             if (port != null) {
-                memberInfo.put("httpsPort", port.getValue());
+                memberInfo.put("httpsPort",
+                               String.valueOf(Integer.valueOf((String)port.getValue()) + portOffset));
             }
-        }
-        Parameter isActiveParam = getParameter(ClusteringConstants.Parameters.IS_ACTIVE);
-        if (isActiveParam != null) {
-            memberInfo.setProperty(ClusteringConstants.Parameters.IS_ACTIVE,
-                                   (String) isActiveParam.getValue());
         }
 
         memberInfo.setProperty("hostName",
