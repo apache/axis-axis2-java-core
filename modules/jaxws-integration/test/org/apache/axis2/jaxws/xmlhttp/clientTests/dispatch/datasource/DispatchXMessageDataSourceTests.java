@@ -25,7 +25,7 @@ import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.attachments.impl.BufferUtils;
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -121,7 +121,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
 
         requestContext.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,
                 attachments);
-        attachments.put(UUIDGenerator.getUUID(), new DataHandler(attachmentDS));
+        attachments.put(UIDGenerator.generateContentId(), new DataHandler(attachmentDS));
 
         DataSource request = txtDS;
         DataSource response = dispatch.invoke(request);
@@ -143,7 +143,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
 
         requestContext.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,
                 attachments);
-        attachments.put(UUIDGenerator.getUUID(), new DataHandler(attachmentDS));
+        attachments.put(UIDGenerator.generateContentId(), new DataHandler(attachmentDS));
         
         DataSource request = imageDS;
         DataSource response = dispatch.invoke(request);
@@ -164,8 +164,8 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
 
         requestContext.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,
                 attachments);
-        attachments.put(UUIDGenerator.getUUID(), new DataHandler(attachmentDS));
-        attachments.put(UUIDGenerator.getUUID(), new DataHandler(imageDS));
+        attachments.put(UIDGenerator.generateContentId(), new DataHandler(attachmentDS));
+        attachments.put(UIDGenerator.generateContentId(), new DataHandler(imageDS));
 
         DataSource request = txtDS;
         DataSource response = dispatch.invoke(request);

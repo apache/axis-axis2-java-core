@@ -20,7 +20,8 @@
 package org.apache.axis2.clustering;
 
 import junit.framework.TestCase;
-import org.apache.axiom.om.util.UUIDGenerator;
+
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.management.DefaultNodeManager;
 import org.apache.axis2.clustering.management.NodeManager;
@@ -56,7 +57,7 @@ public class ContextReplicationTest extends TestCase {
 
     private static final Parameter domainParam =
             new Parameter(ClusteringConstants.Parameters.DOMAIN,
-                          "axis2.domain." + UUIDGenerator.getUUID());
+                          "axis2.domain." + UIDGenerator.generateUID());
 
     // --------------- Cluster-1 ------------------------------------------------------
     private ClusteringAgent clusterManager1;
@@ -361,7 +362,7 @@ public class ContextReplicationTest extends TestCase {
             return;
         }
 
-        String sgcID = UUIDGenerator.getUUID();
+        String sgcID = UIDGenerator.generateUID();
 
         ServiceGroupContext serviceGroupContext1 =
                 configurationContext1.createServiceGroupContext(serviceGroup1);
@@ -389,7 +390,7 @@ public class ContextReplicationTest extends TestCase {
         }
 
         // Add the property
-        String sgcID = UUIDGenerator.getUUID();
+        String sgcID = UIDGenerator.generateUID();
 
         ServiceGroupContext serviceGroupContext1 =
                 configurationContext1.createServiceGroupContext(serviceGroup1);

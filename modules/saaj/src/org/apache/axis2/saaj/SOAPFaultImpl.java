@@ -19,8 +19,8 @@
 
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
@@ -715,16 +715,17 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 .equals("")) ? qname.getPrefix() : this.fault.getQName()
                 .getPrefix();
 
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        OMFactory factory = element.getOMFactory();
+        if (factory instanceof SOAP11Factory) {
             soapFaultCode.setText(prefix + ":" + qname.getLocalPart());
-            OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
+            OMNamespace omNamespace = factory.createOMNamespace(qname.getNamespaceURI(),
                                                           qname.getPrefix());
             soapFaultCode.declareNamespace(omNamespace);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (factory instanceof SOAP12Factory) {
             SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
             // don't just use the default prefix, use the passed one or the parent's
             soapFaultValue.setText(prefix + ":" + qname.getLocalPart());
-            OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
+            OMNamespace omNamespace = factory.createOMNamespace(qname.getNamespaceURI(),
                                                           qname.getPrefix());
             soapFaultValue.declareNamespace(omNamespace);
             soapFaultCode.setValue(soapFaultValue);

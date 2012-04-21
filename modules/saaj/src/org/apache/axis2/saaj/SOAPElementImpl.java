@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
@@ -491,7 +490,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
             throw new SOAPException("changing this element name is not allowed");
         }
         OMNamespace omNamespace =
-                new OMNamespaceImpl(newName.getNamespaceURI(), newName.getPrefix());
+                getOMFactory().createOMNamespace(newName.getNamespaceURI(), newName.getPrefix());
         this.element.setNamespace(omNamespace);
         this.element.setLocalName(newName.getLocalPart());
         return this;

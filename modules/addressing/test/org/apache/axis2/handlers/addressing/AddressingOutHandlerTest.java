@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
@@ -406,9 +405,10 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         
         // Need to add a SOAP Header to stop this error from XMLComparator:
         // "There is no Header element under Envelope"
-        SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
         SOAPHeaderBlock soapHeaderBlock = envelope.getHeader().addHeaderBlock(
-                "testHeader", new OMNamespaceImpl("http://test.com", "test"));
+                "testHeader", factory.createOMNamespace("http://test.com", "test"));
         msgCtxt.setEnvelope(envelope);
         
         outHandler.invoke(msgCtxt);
@@ -515,9 +515,10 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
         
         // Need to add a SOAP Header to stop this error from XMLComparator:
         // "There is no Header element under Envelope"
-        SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
         SOAPHeaderBlock soapHeaderBlock = envelope.getHeader().addHeaderBlock(
-                "testHeader", new OMNamespaceImpl("http://test.com", "test"));
+                "testHeader", factory.createOMNamespace("http://test.com", "test"));
         msgCtxt.setEnvelope(envelope);
         
         outHandler.invoke(msgCtxt);

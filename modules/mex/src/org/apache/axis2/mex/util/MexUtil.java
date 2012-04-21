@@ -22,7 +22,7 @@ package org.apache.axis2.mex.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -132,14 +132,14 @@ public class MexUtil {
 	 * @throws AxisFault
 	 */
 	
-	 public static OMNamespaceImpl getAddressingNameSpace(OMElement toAddress)
+	 public static OMNamespace getAddressingNameSpace(OMElement toAddress)
 			throws MexException {
 		OMFactory factory = OMAbstractFactory.getOMFactory();
-		OMNamespaceImpl wsa = null;
+		OMNamespace wsa = null;
 		try {
 			String prefix = toAddress.getNamespace().getPrefix();
 			String nsURI = toAddress.getNamespace().getNamespaceURI();
-			wsa = (OMNamespaceImpl) factory.createOMNamespace(nsURI, prefix);
+			wsa = factory.createOMNamespace(nsURI, prefix);
 		} catch (Exception e) {
 		    throw new MexException(e);
 		}

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
-import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -113,7 +113,7 @@ class Attachment {
      */
     public String getContentID() {
         if (cid == null) {
-            cid = UUIDGenerator.getUUID();
+            cid = UIDGenerator.generateContentId();
             // Per spec, use the partName in the content-id
             // http://www.ws-i.org/Profiles/AttachmentsProfile-1.0.html#Value-space_of_Content-Id_Header
             if (partName != null) {

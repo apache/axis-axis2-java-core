@@ -21,8 +21,8 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -315,7 +315,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         axisOperation.getRemainingPhasesInFlow().add(phase3);
 
 
-        mc.setMessageID(UUIDGenerator.getUUID());
+        mc.setMessageID(UIDGenerator.generateURNString());
 
         //operationContext.addMessageContext(mc);  gets done via the register
         axisOperation.registerOperationContext(mc, operationContext);

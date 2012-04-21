@@ -8,8 +8,9 @@ import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
@@ -27,7 +28,7 @@ import org.apache.axis2.AxisFault;
 
 
 public class MessageContextBuilderTest extends AbstractTestCase {
-    private OMNamespaceImpl nsp = new OMNamespaceImpl(Constants.URI_SOAP11_ENV, "soapenv");
+    private OMNamespace nsp = OMAbstractFactory.getOMFactory().createOMNamespace(Constants.URI_SOAP11_ENV, "soapenv");
 
     public MessageContextBuilderTest(String testName) {
         super(testName);
