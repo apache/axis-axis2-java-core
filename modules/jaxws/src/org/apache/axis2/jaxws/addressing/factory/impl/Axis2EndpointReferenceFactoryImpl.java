@@ -126,6 +126,11 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
                     // just to keep it clean:
                     if (axis2EPR.getAddress().endsWith("/") && wsdlDocumentLocation.startsWith("/")) {
                         wsdlDocumentLocation = axis2EPR.getAddress() + wsdlDocumentLocation.substring(1);
+                        
+                    } else if (axis2EPR.getAddress().endsWith("/")){
+                        String eprAddress = axis2EPR.getAddress();
+                        wsdlDocumentLocation = eprAddress.substring(0, eprAddress.length() - 1)  + wsdlDocumentLocation;
+                        
                     } else {
                         wsdlDocumentLocation = axis2EPR.getAddress() + wsdlDocumentLocation;
                     }
