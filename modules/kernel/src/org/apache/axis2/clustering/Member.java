@@ -83,7 +83,7 @@ public class Member {
 
     /**
      * Check whether this member is suspended
-     * @return true if this member is still suspended, false oterwise
+     * @return true if this member is still suspended, false otherwise
      */
     public boolean isSuspended() {
         if (suspendedTime == -1) {

@@ -185,6 +185,12 @@ public interface ClusteringAgent extends ParameterInclude {
      */
     Set<String> getDomains();
 
+    /**
+     * Checks whether this member is the coordinator for the cluster
+     *
+     * @return true if this member is the coordinator, and false otherwise
+     */
+    boolean isCoordinator();
 
     /**
      * Send a message to all members in this member's primary cluster
