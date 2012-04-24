@@ -90,6 +90,7 @@
         <geronimo.spec.saaj.version>1.0.1</geronimo.spec.saaj.version>
         <geronimo.spec.jaxws.version>1.0</geronimo.spec.jaxws.version>
         <httpcore.version>4.0</httpcore.version>
+        <httpclient.version>4.0</httpclient.version>
         <intellij.version>5.0</intellij.version>
         <jalopy.version>1.5rc3</jalopy.version>
         <jaxb.api.version>2.2.4</jaxb.api.version>
@@ -722,6 +723,11 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>${httpcore.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>

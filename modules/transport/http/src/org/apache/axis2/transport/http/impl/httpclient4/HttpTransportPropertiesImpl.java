@@ -56,7 +56,6 @@ public class HttpTransportPropertiesImpl extends HttpTransportProperties {
         public static final String NTLM = AuthPolicy.NTLM;
         public static final String DIGEST = AuthPolicy.DIGEST;
         public static final String BASIC = AuthPolicy.BASIC;
-        public static final String SPNEGO = AuthPolicy.SPNEGO;
 
         public int getPort() {
             return port;
@@ -82,8 +81,6 @@ public class HttpTransportPropertiesImpl extends HttpTransportProperties {
                 return AuthPolicy.NTLM;
             } else if (DIGEST.equals(scheme)) {
                 return AuthPolicy.DIGEST;
-            } else if (SPNEGO.equals(scheme)) {
-                return AuthPolicy.SPNEGO;
             }
             return null;
         }
