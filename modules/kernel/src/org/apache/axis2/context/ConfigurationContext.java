@@ -744,7 +744,11 @@ public class ConfigurationContext extends AbstractContext {
                     AxisModule axisModule = (AxisModule) moduleitr.next();
                     Module module = axisModule.getModule();
                     if (module != null) {
-                        module.shutdown(this);
+                        try {
+                            module.shutdown(this);
+                        } catch (Exception e) {
+                            log.warn("Could not shutdown module " + module.getClass().getName(), e);
+                        }
                     }
                 }
             }
@@ -760,7 +764,11 @@ public class ConfigurationContext extends AbstractContext {
                 AxisService axisService = (AxisService) services.next();
                 ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
                 if (serviceLifeCycle != null) {
-                    serviceLifeCycle.shutDown(this, axisService);
+                    try {
+                        serviceLifeCycle.shutDown(this, axisService);
+                    } catch (Exception e) {
+                        log.warn("Could not shutdown service " + axisService.getName(), e);
+                    }
                 }
             }
         }
