@@ -89,6 +89,9 @@ import java.util.Map;
 public class BuilderUtil {
     private static final Log log = LogFactory.getLog(BuilderUtil.class);
 
+    /**
+     * @deprecated
+     */
     public static final int BOM_SIZE = 4;
 
     public static SOAPEnvelope buildsoapMessage(MessageContext messageContext,
@@ -262,13 +265,9 @@ public class BuilderUtil {
     }
 
     /**
-     * Use the BOM Mark to identify the encoding to be used. Fall back to default encoding
-     * specified
-     *
-     * @param is              the InputStream of a message
-     * @param charSetEncoding default character set encoding
-     * @return a Reader with the correct encoding already set
-     * @throws java.io.IOException
+     * @deprecated Instead of using this method, you should probably pass the {@link InputStream}
+     *             directly to the XML parser. If the stream is not XML, you shouldn't be using this
+     *             method anyway.
      */
     public static Reader getReader(final InputStream is, final String charSetEncoding)
             throws IOException {
@@ -290,24 +289,19 @@ public class BuilderUtil {
     }
 
     /**
-     * Convenience method to get a PushbackInputStream so that we can read the BOM
-     *
-     * @param is a regular InputStream
-     * @return a PushbackInputStream wrapping the passed one
+     * @deprecated If you need a {@link PushbackInputStream} just construct one (with the
+     *             appropriate size).
      */
     public static PushbackInputStream getPushbackInputStream(InputStream is) {
         return new PushbackInputStream(is, BOM_SIZE);
     }
 
     /**
-     * Use the BOM Mark to identify the encoding to be used. Fall back to default encoding
-     * specified
-     *
-     * @param is2             PushBackInputStream (it must be a pushback input stream so that we can
-     *                        unread the BOM)
-     * @param defaultEncoding default encoding style if no BOM
-     * @return the selected character set encoding
-     * @throws java.io.IOException
+     * @deprecated It's the role of the XML parser to determine the charset encoding and/or byte
+     *             order using the algorithm described in the "Autodetection of Character Encodings"
+     *             appendix of the XML spec. If you need this method, then something is wrong:
+     *             probably you are using a {@link Reader} where you should use an
+     *             {@link InputStream}.
      */
     public static String getCharSetEncoding(PushbackInputStream is2, String defaultEncoding)
             throws IOException {
@@ -453,14 +447,7 @@ public class BuilderUtil {
         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                charSetEncoding);
 
-        try {
-            PushbackInputStream pis = getPushbackInputStream(attachments.getSOAPPartInputStream());
-            String actualCharSetEncoding = getCharSetEncoding(pis, charSetEncoding);
-
-            streamReader = StAXUtils.createXMLStreamReader(pis, actualCharSetEncoding);
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
+        streamReader = StAXUtils.createXMLStreamReader(attachments.getSOAPPartInputStream(), charSetEncoding);
 
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);

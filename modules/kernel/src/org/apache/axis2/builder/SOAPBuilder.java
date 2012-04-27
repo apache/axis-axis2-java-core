@@ -30,7 +30,6 @@ import org.apache.axis2.context.MessageContext;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 
 public class SOAPBuilder implements Builder {
 
@@ -46,14 +45,10 @@ public class SOAPBuilder implements Builder {
             DetachableInputStream is = new DetachableInputStream(inputStream);
             messageContext.setProperty(Constants.DETACHABLE_INPUT_STREAM, is);
             
-            // Get the actual encoding by looking at the BOM of the InputStream
-            PushbackInputStream pis = BuilderUtil.getPushbackInputStream(is);
-            String actualCharSetEncoding = BuilderUtil.getCharSetEncoding(pis, charSetEncoding);
-            
             // createSOAPModelBuilder takes care of configuring the underlying parser to
             // avoid the security issue described in CVE-2010-1632
-            OMXMLParserWrapper builder = OMXMLBuilderFactory.createSOAPModelBuilder(pis,
-                    actualCharSetEncoding);
+            OMXMLParserWrapper builder = OMXMLBuilderFactory.createSOAPModelBuilder(is,
+                    charSetEncoding);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
             BuilderUtil
                     .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);

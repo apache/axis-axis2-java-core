@@ -34,7 +34,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 
 public class MTOMBuilder implements Builder {
 
@@ -47,12 +46,8 @@ public class MTOMBuilder implements Builder {
             String charSetEncoding = (String) messageContext
             .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
             
-            // Get the actual encoding by looking at the BOM of the InputStream
-            PushbackInputStream pis = BuilderUtil.getPushbackInputStream(inputStream);
-            String actualCharSetEncoding = BuilderUtil.getCharSetEncoding(pis, charSetEncoding);
-            
             // Get the XMLStreamReader for this input stream
-            streamReader = StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, pis, actualCharSetEncoding);        
+            streamReader = StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, inputStream, charSetEncoding);        
             StAXBuilder builder = new MTOMStAXSOAPModelBuilder(streamReader,
                     attachments);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
