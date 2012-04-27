@@ -27,7 +27,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.context.MessageContext;
 
@@ -37,8 +36,7 @@ public class EchoService2 {
     public OMElement mtomSample(OMElement element) throws Exception {
 
         Attachments attachments = null;
-        attachments = (Attachments)MessageContext.getCurrentMessageContext()
-                .getProperty(MTOMConstants.ATTACHMENTS);
+        attachments = MessageContext.getCurrentMessageContext().getAttachmentMap();
         // Get image data
         IncomingAttachmentStreams streams = attachments.getIncomingAttachmentStreams();
         IncomingAttachmentInputStream stream = streams.getNextStream();

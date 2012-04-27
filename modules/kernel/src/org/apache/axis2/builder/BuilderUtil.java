@@ -462,10 +462,6 @@ public class BuilderUtil {
             throw new XMLStreamException(e);
         }
 
-        //  Put a reference to Attachments Map in to the message context For
-        // backword compatibility with Axis2 1.0 
-        msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
-
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);
 

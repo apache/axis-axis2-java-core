@@ -48,10 +48,6 @@ public class MIMEBuilder implements Builder {
         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                charSetEncoding);
 
-        //  Put a reference to Attachments Map in to the message context For
-        // backword compatibility with Axis2 1.0 
-        msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
-
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);
         // We set the following for all the MIME messages.. Will be overridden
