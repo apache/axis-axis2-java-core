@@ -92,11 +92,11 @@ public class SOAPMessageImpl extends SOAPMessage {
                 // the available information.
                 MimeHeaders soapPartHeaders = new MimeHeaders();
                 soapPartHeaders.addHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                        attachments.getSOAPPartContentType());
-                String soapPartContentId = attachments.getSOAPPartContentID();
+                        attachments.getRootPartContentType());
+                String soapPartContentId = attachments.getRootPartContentID();
                 soapPartHeaders.addHeader("Content-ID", "<" + soapPartContentId + ">");
                 
-                soapPart = new SOAPPartImpl(this, attachments.getSOAPPartInputStream(),
+                soapPart = new SOAPPartImpl(this, attachments.getRootPartInputStream(),
                         soapPartHeaders, processMTOM ? attachments : null);
                 
                 for (String contentId : attachments.getAllContentIDs()) {

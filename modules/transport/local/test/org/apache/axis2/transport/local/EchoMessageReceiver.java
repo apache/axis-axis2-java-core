@@ -32,7 +32,7 @@ public class EchoMessageReceiver extends AbstractInOutMessageReceiver {
         Attachments inAttachments = inMessage.getAttachmentMap();
         Attachments outAttachments = outMessage.getAttachmentMap();
         for (String contentId : inAttachments.getAllContentIDs()) {
-            if (!contentId.equals(inAttachments.getSOAPPartContentID())) {
+            if (!contentId.equals(inAttachments.getRootPartContentID())) {
                 outAttachments.addDataHandler(contentId,
                         inAttachments.getDataHandler(contentId));
             }

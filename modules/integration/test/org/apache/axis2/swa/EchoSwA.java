@@ -62,7 +62,7 @@ public class EchoSwA {
         OMElement child = (OMElement)omEle.getFirstOMChild();
         MessageContext msgCtx = MessageContext.getCurrentMessageContext();
         Attachments attachment = (msgCtx).getAttachmentMap();
-        msgCtx.removeAttachment(attachment.getSOAPPartContentID());
+        msgCtx.removeAttachment(attachment.getRootPartContentID());
         msgCtx.getOperationContext().getMessageContext(
                 WSDLConstants.MESSAGE_LABEL_OUT_VALUE).setAttachmentMap(attachment);
 

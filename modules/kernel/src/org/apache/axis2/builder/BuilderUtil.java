@@ -438,7 +438,7 @@ public class BuilderUtil {
         XMLStreamReader streamReader;
 
         Attachments attachments = createAttachmentsMap(msgContext, inStream, contentTypeString);
-        String charSetEncoding = getCharSetEncoding(attachments.getSOAPPartContentType());
+        String charSetEncoding = getCharSetEncoding(attachments.getRootPartContentType());
 
         if ((charSetEncoding == null)
             || "null".equalsIgnoreCase(charSetEncoding)) {
@@ -447,7 +447,7 @@ public class BuilderUtil {
         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                charSetEncoding);
 
-        streamReader = StAXUtils.createXMLStreamReader(attachments.getSOAPPartInputStream(), charSetEncoding);
+        streamReader = StAXUtils.createXMLStreamReader(attachments.getRootPartInputStream(), charSetEncoding);
 
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);

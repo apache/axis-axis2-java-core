@@ -38,7 +38,7 @@ public class UnknownContentBuilder implements Builder {
 		// using this to figure out whether the received is a MIME message
 		if (messageContext.isDoingSwA()) {
 			String rootPartContentID = messageContext.attachments
-					.getSOAPPartContentID();
+					.getRootPartContentID();
 			DataHandler rootPartDataHandler = messageContext.attachments
 					.getDataHandler(rootPartContentID);
 			UnknownContentOMDataSource unknownContentDataSource = new UnknownContentOMDataSource(

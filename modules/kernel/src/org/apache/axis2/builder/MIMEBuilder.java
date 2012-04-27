@@ -39,7 +39,7 @@ public class MIMEBuilder implements Builder {
         Attachments attachments =
                 BuilderUtil.createAttachmentsMap(msgContext, inputStream, contentType);
         String charSetEncoding =
-                BuilderUtil.getCharSetEncoding(attachments.getSOAPPartContentType());
+                BuilderUtil.getCharSetEncoding(attachments.getRootPartContentType());
 
         if ((charSetEncoding == null)
                 || "null".equalsIgnoreCase(charSetEncoding)) {
@@ -71,7 +71,7 @@ public class MIMEBuilder implements Builder {
                 type = startInfo;
             }
         }
-        return builder.processDocument(attachments.getSOAPPartInputStream(),
+        return builder.processDocument(attachments.getRootPartInputStream(),
                 type, msgContext);
     }
 }

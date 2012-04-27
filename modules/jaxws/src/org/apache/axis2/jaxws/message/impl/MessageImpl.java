@@ -382,7 +382,7 @@ public class MessageImpl implements Message {
             return null;  // Attachments set up programmatically...so there is no SOAPPart
         }
         try {
-            contentID = attachments.getSOAPPartContentID();
+            contentID = attachments.getRootPartContentID();
         } catch (RuntimeException e) {
             // OM will kindly throw an OMException or NPE if the attachments is set up 
             // programmatically. 
