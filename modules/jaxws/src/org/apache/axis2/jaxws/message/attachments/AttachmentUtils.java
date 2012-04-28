@@ -73,31 +73,31 @@ public class AttachmentUtils {
      * @param attachments
      */
     public static void findCachedAttachment(Attachments attachments){
-    	if(attachments == null){
-    		return;
-    	}
-    	
-    	String[] contentIds = attachments.getAllContentIDs();
-    	if(contentIds.length > 0){
+        if(attachments == null){
+            return;
+        }
+        
+        String[] contentIds = attachments.getAllContentIDs();
+        if(contentIds.length > 0){
             if (log.isDebugEnabled()) {
-            	log.debug("Attachments exist....");
+                log.debug("Attachments exist....");
             }
-        	for(int i=0; i < contentIds.length; i++){
-        		DataHandler dh = attachments.getDataHandler(contentIds[i]);
-        		if(dh != null){
-        			DataSource dataSource = dh.getDataSource();
-        			if(dh != null && dataSource instanceof CachedFileDataSource){
-        				if (log.isDebugEnabled()) {
-                        	log.debug("Attachment's DataHandler uses CachedFileDataSource...");
+            for(int i=0; i < contentIds.length; i++){
+                DataHandler dh = attachments.getDataHandler(contentIds[i]);
+                if(dh != null){
+                    DataSource dataSource = dh.getDataSource();
+                    if(dh != null && dataSource instanceof CachedFileDataSource){
+                        if (log.isDebugEnabled()) {
+                            log.debug("Attachment's DataHandler uses CachedFileDataSource...");
                         }
-                    	File file = ((CachedFileDataSource)dataSource).getFile();
-                    	if (log.isDebugEnabled()) {
-                        	log.debug(" Making file.deleteOnExit() request on "+file.getAbsolutePath());
+                        File file = ((CachedFileDataSource)dataSource).getFile();
+                        if (log.isDebugEnabled()) {
+                            log.debug(" Making file.deleteOnExit() request on "+file.getAbsolutePath());
                         }
-                    	file.deleteOnExit();
+                        file.deleteOnExit();
                     }
-        		}
-        	}
+                }
+            }
         }
     }
 
