@@ -82,19 +82,24 @@ public class AttachmentUtils {
             if (log.isDebugEnabled()) {
                 log.debug("Attachments exist....");
             }
-            for(int i=0; i < contentIds.length; i++){
-                DataHandler dh = attachments.getDataHandler(contentIds[i]);
-                if(dh != null){
-                    DataSource dataSource = dh.getDataSource();
-                    if(dh != null && dataSource instanceof CachedFileDataSource){
-                        if (log.isDebugEnabled()) {
-                            log.debug("Attachment's DataHandler uses CachedFileDataSource...");
+            String rootContentId = attachments.getRootPartContentID();
+            for (String contentId : contentIds) {
+                // Skip the SOAP part because it is never cached on file and because it may have
+                // been consumed (which would cause getDataSource() to throw an exception)
+                if (!contentId.equals(rootContentId)) {
+                    DataHandler dh = attachments.getDataHandler(contentId);
+                    if(dh != null){
+                        DataSource dataSource = dh.getDataSource();
+                        if(dh != null && dataSource instanceof CachedFileDataSource){
+                            if (log.isDebugEnabled()) {
+                                log.debug("Attachment's DataHandler uses CachedFileDataSource...");
+                            }
+                            File file = ((CachedFileDataSource)dataSource).getFile();
+                            if (log.isDebugEnabled()) {
+                                log.debug(" Making file.deleteOnExit() request on "+file.getAbsolutePath());
+                            }
+                            file.deleteOnExit();
                         }
-                        File file = ((CachedFileDataSource)dataSource).getFile();
-                        if (log.isDebugEnabled()) {
-                            log.debug(" Making file.deleteOnExit() request on "+file.getAbsolutePath());
-                        }
-                        file.deleteOnExit();
                     }
                 }
             }

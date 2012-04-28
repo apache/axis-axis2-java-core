@@ -71,7 +71,7 @@ public class MIMEBuilder implements Builder {
                 type = startInfo;
             }
         }
-        return builder.processDocument(attachments.getRootPartInputStream(),
+        return builder.processDocument(attachments.getRootPartInputStream(false),
                 type, msgContext);
     }
 }
