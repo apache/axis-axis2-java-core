@@ -482,13 +482,13 @@ public class MessageContextBuilder {
                     if (faultCodeQName.getLocalPart().indexOf(":") == -1) {
                         String prefix = faultCodeQName.getPrefix();
                         String uri = faultCodeQName.getNamespaceURI();
-                        // Get the specified prefix and uri
-                        prefix = prefix == null ? "" : prefix;
+                        // Get the specified uri
                         uri = uri == null || "" .equals(uri) ?
                                 fault.getNamespace().getNamespaceURI() : uri;
                         // Make sure the prefix and uri are declared on the fault, and 
-                        // get the resulting prefix.
-                        prefix = fault.declareNamespace(uri, prefix).getPrefix();
+                        // get the resulting prefix. If no prefix is defined, let declareNamespace
+                        // generate one.
+                        prefix = fault.declareNamespace(uri, prefix.length() == 0 ? null : prefix).getPrefix();
                         soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
                     } else {
                         soapFaultCode = faultCodeQName.getLocalPart();
