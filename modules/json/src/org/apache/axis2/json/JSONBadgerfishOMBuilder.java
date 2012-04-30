@@ -28,8 +28,7 @@ import java.io.Reader;
 
 public class JSONBadgerfishOMBuilder extends AbstractJSONOMBuilder {
     @Override
-    protected AbstractJSONDataSource getDataSource(Reader jsonReader, String prefix,
-                                           String localName) {
-        return new JSONBadgerfishDataSource(jsonReader, "\"" + prefix + localName + "\"");
+    protected AbstractJSONDataSource getDataSource(Reader jsonReader) {
+        return new JSONBadgerfishDataSource(jsonReader);
     }
 }

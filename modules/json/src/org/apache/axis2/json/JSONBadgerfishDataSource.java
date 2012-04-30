@@ -31,8 +31,8 @@ import java.io.Reader;
 
 public class JSONBadgerfishDataSource extends AbstractJSONDataSource {
 
-    public JSONBadgerfishDataSource(Reader jsonReader, String localName) {
-        super(jsonReader, localName);
+    public JSONBadgerfishDataSource(Reader jsonReader) {
+        super(jsonReader);
     }
 
     /**
@@ -48,7 +48,7 @@ public class JSONBadgerfishDataSource extends AbstractJSONDataSource {
         //input factory for "Badgerfish"
         BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
         return inputFactory.createXMLStreamReader(
-                new JSONTokener("{" + localName + ":" + this.getJSONString()));
+                new JSONTokener(getJSONString()));
 
     }
 }

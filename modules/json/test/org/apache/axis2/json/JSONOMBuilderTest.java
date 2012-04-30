@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -33,6 +34,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
@@ -40,6 +42,20 @@ import org.codehaus.jettison.json.JSONException;
 import org.xml.sax.SAXException;
 
 public class JSONOMBuilderTest extends TestCase {
+    public void testBadgerfishQName() throws Exception {
+        String jsonString = getBadgerfishJSONString();
+        ByteArrayInputStream inStream = new ByteArrayInputStream(jsonString.getBytes("utf-8"));
+
+        MessageContext msgCtx = new MessageContext();
+        Builder builder = new JSONBadgerfishOMBuilder();
+        OMElement elem = builder.processDocument(inStream,
+                JSONTestConstants.CONTENT_TYPE_BADGERFISH, msgCtx);
+        
+        QName qname = elem.getQName();
+        assertEquals("http://def.ns", qname.getNamespaceURI());
+        assertEquals("p", qname.getLocalPart());
+        assertEquals("", qname.getPrefix());
+    }
 
     public void testBadgerfishOMSerialization1() throws IOException {
 
@@ -96,7 +112,8 @@ public class JSONOMBuilderTest extends TestCase {
         JSONOMBuilder omBuilder = new JSONOMBuilder();
         OMElement elem = omBuilder.processDocument(inStream,
                 JSONTestConstants.CONTENT_TYPE_BADGERFISH, messageContext);
-        assertEquals(null ,elem);
+        // TODO: not sure why we would want to send an empty list...
+//        assertEquals(null ,elem);
     }
 
     private String getBadgerfishJSONString() {

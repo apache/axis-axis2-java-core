@@ -57,7 +57,7 @@ public class JSONMessageFormatter extends AbstractJSONMessageFormatter {
     @Override
     protected String getStringToWrite(OMDataSource dataSource) {
         if (dataSource instanceof JSONDataSource) {
-            return ((JSONDataSource)dataSource).getCompleteJOSNString();
+            return ((JSONDataSource)dataSource).getJSONString();
         } else {
             return null;
         }

@@ -31,7 +31,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.StringReader;
 
 public class JSONDataSourceTest extends XMLTestCase {
@@ -100,8 +99,7 @@ public class JSONDataSourceTest extends XMLTestCase {
     }
 
     private JSONBadgerfishDataSource getBadgerfishDataSource(String jsonString) {
-        Reader jsonReader = new StringReader(jsonString);
-        return new JSONBadgerfishDataSource(readLocalName(jsonReader), "\"p\"");
+        return new JSONBadgerfishDataSource(new StringReader(jsonString));
     }
 
     private String getBadgerfishJSONString() {
@@ -109,22 +107,10 @@ public class JSONDataSourceTest extends XMLTestCase {
     }
 
     private JSONDataSource getMappedDataSource(String jsonString) {
-        Reader jsonReader = new StringReader(jsonString);
-        return new JSONDataSource(readLocalName(jsonReader), "\"mapping\"");
+        return new JSONDataSource(new StringReader(jsonString));
     }
 
     private String getMappedJSONString() {
         return "{\"mapping\":{\"inner\":[{\"first\":\"test string one\"},\"test string two\"],\"name\":\"foo\"}}";
     }
-
-    private Reader readLocalName(Reader in) {
-        try {
-            while ((char)in.read() != ':') {
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return in;
-    }
-
 }

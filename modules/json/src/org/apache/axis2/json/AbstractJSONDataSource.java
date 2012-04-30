@@ -39,11 +39,9 @@ public abstract class AbstractJSONDataSource extends AbstractPullOMDataSource {
     private Reader jsonReader;
     private String jsonString;
     private boolean isRead = false;
-    protected String localName;
 
-    public AbstractJSONDataSource(Reader jsonReader, String localName) {
+    public AbstractJSONDataSource(Reader jsonReader) {
         this.jsonReader = jsonReader;
-        this.localName = localName;
     }
 
     /**
@@ -82,9 +80,5 @@ public abstract class AbstractJSONDataSource extends AbstractPullOMDataSource {
             isRead = true;
             return jsonString;
         }
-    }
-
-    public String getCompleteJOSNString() {
-        return "{" + localName + ":" + getJSONString();
     }
 }
