@@ -63,8 +63,6 @@ public class SOAPBuilder implements MIMEAwareBuilder {
 
     public OMElement processMIMEMessage(Attachments attachments, String contentType,
             MessageContext messageContext) throws AxisFault {
-        messageContext.setAttachmentMap(attachments);
-        
         String charSetEncoding =
                 BuilderUtil.getCharSetEncoding(attachments.getRootPartContentType());
         if (charSetEncoding == null) {
@@ -74,7 +72,12 @@ public class SOAPBuilder implements MIMEAwareBuilder {
                                    charSetEncoding);
         
         messageContext.setDoingSwA(true);
+
+        InputStream in = attachments.getRootPartInputStream(false);
+        // Only the attachment parts should be accessible; remove the root part
+        attachments.removeDataHandler(attachments.getRootPartContentID());
+        messageContext.setAttachmentMap(attachments);
         
-        return processDocument(attachments.getRootPartInputStream(false), contentType, messageContext);
+        return processDocument(in, contentType, messageContext);
     }
 }
