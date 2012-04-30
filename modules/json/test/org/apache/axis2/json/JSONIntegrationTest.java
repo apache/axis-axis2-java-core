@@ -31,11 +31,11 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.testutils.PortAllocator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 
 import java.io.File;
-import java.net.ServerSocket;
 
 public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
@@ -56,7 +56,7 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
     protected void setUp() throws Exception {
         if (count == 0) {
-            int testingPort = findAvailablePort();
+            int testingPort = PortAllocator.allocatePort();
             targetEPR = new EndpointReference(
                     "http://127.0.0.1:" + (testingPort)
                             + "/axis2/services/EchoXMLService/echoOM");
@@ -134,16 +134,5 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
     protected void compareWithCreatedOMText(String response) {
         TestCase.assertEquals(response, expectedString);
-    }
-
-    protected static int findAvailablePort() {
-        try {
-            ServerSocket ss = new ServerSocket(0);
-            int result = ss.getLocalPort();
-            ss.close();
-            return result;
-        } catch (Exception e) {
-            return 5555;
-        }
     }
 }
