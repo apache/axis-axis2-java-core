@@ -29,7 +29,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.llom.util.AXIOMUtil;
+import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
