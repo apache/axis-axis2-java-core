@@ -20,48 +20,52 @@
 package org.apache.axis2.builder;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXParserConfiguration;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
 import java.io.InputStream;
 
-public class MTOMBuilder implements Builder {
+public class MTOMBuilder implements MIMEAwareBuilder {
 
     public OMElement processDocument(InputStream inputStream, String contentType,
                                      MessageContext messageContext)
             throws AxisFault {
-        XMLStreamReader streamReader;
+        throw new AxisFault("A message with content type application/xop+xml can only appear in a MIME multipart message");
+    }
+    
+    public OMElement processMIMEMessage(Attachments attachments, String contentType,
+            MessageContext messageContext) throws AxisFault {
         try {
-            Attachments attachments = messageContext.getAttachmentMap();
-            String charSetEncoding = (String) messageContext
-            .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+            // TODO: this will be changed later (see AXIS2-5308)
+            messageContext.setAttachmentMap(attachments);
             
-            // Get the XMLStreamReader for this input stream
-            streamReader = StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, inputStream, charSetEncoding);        
-            StAXBuilder builder = new MTOMStAXSOAPModelBuilder(streamReader,
-                    attachments);
-            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
-            BuilderUtil
-                    .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);
-            BuilderUtil.validateCharSetEncoding(charSetEncoding, builder.getDocument()
-                    .getCharsetEncoding(), envelope.getNamespace().getNamespaceURI());
-            //Overriding the earlier setting by MIMEBuilder
-            messageContext.setDoingSwA(false);
+            SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
+            OMDocument document = builder.getDocument();
+            String charsetEncoding = document.getCharsetEncoding();
+            if (charsetEncoding == null) {
+                charsetEncoding = MessageContext.UTF_8;
+            }
+            messageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                                       charsetEncoding);
+            
+            SOAPEnvelope envelope = (SOAPEnvelope)document.getOMDocumentElement();
+            
+            // TODO: Axiom should take care of this, but we need to validate that
+//            BuilderUtil
+//                    .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);
+//            BuilderUtil.validateCharSetEncoding(charSetEncoding, builder.getDocument()
+//                    .getCharsetEncoding(), envelope.getNamespace().getNamespaceURI());
+            
             messageContext.setDoingMTOM(true);
             return envelope;
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
-        } catch (XMLStreamException e) {
+        } catch (OMException e) {
             throw AxisFault.makeFault(e);
         }
     }

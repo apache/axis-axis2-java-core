@@ -22,7 +22,6 @@ package org.apache.axis2.builder;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -38,22 +37,7 @@ public class MIMEBuilder implements Builder {
             throws AxisFault {
         Attachments attachments =
                 BuilderUtil.createAttachmentsMap(msgContext, inputStream, contentType);
-        String charSetEncoding =
-                BuilderUtil.getCharSetEncoding(attachments.getRootPartContentType());
 
-        if ((charSetEncoding == null)
-                || "null".equalsIgnoreCase(charSetEncoding)) {
-            charSetEncoding = MessageContext.UTF_8;
-        }
-        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                               charSetEncoding);
-
-        // Setting the Attachments map to new SwA API
-        msgContext.setAttachmentMap(attachments);
-        // We set the following for all the MIME messages.. Will be overridden
-        // by subsequent builders(eg:MTOMBuilder) if needed..
-        msgContext.setDoingSwA(true);
-        
         ContentType ct;
         try {
             ct = new ContentType(contentType);
@@ -65,13 +49,27 @@ public class MIMEBuilder implements Builder {
         String type = ct.getParameter("type");
         Builder builder =
                 BuilderUtil.getBuilderFromSelector(type, msgContext);
-        if(MTOMConstants.MTOM_TYPE.equals(type)){
-            String startInfo = ct.getParameter("start-info");
-            if(startInfo != null){
-                type = startInfo;
+        
+        if (builder instanceof MIMEAwareBuilder) {
+            return ((MIMEAwareBuilder)builder).processMIMEMessage(attachments, type, msgContext);
+        } else {
+            // For compatibility with older code
+            
+            String charSetEncoding =
+                    BuilderUtil.getCharSetEncoding(attachments.getRootPartContentType());
+
+            if ((charSetEncoding == null)
+                    || "null".equalsIgnoreCase(charSetEncoding)) {
+                charSetEncoding = MessageContext.UTF_8;
             }
+            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                                   charSetEncoding);
+
+            // Setting the Attachments map to new SwA API
+            msgContext.setAttachmentMap(attachments);
+            
+            return builder.processDocument(attachments.getRootPartInputStream(false),
+                    type, msgContext);
         }
-        return builder.processDocument(attachments.getRootPartInputStream(false),
-                type, msgContext);
     }
 }

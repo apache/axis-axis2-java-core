@@ -19,6 +19,7 @@
 
 package org.apache.axis2.builder;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
@@ -31,7 +32,7 @@ import org.apache.axis2.context.MessageContext;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SOAPBuilder implements Builder {
+public class SOAPBuilder implements MIMEAwareBuilder {
 
     public OMElement processDocument(InputStream inputStream, String contentType,
                                      MessageContext messageContext) throws AxisFault {
@@ -58,5 +59,22 @@ public class SOAPBuilder implements Builder {
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
+    }
+
+    public OMElement processMIMEMessage(Attachments attachments, String contentType,
+            MessageContext messageContext) throws AxisFault {
+        messageContext.setAttachmentMap(attachments);
+        
+        String charSetEncoding =
+                BuilderUtil.getCharSetEncoding(attachments.getRootPartContentType());
+        if (charSetEncoding == null) {
+            charSetEncoding = MessageContext.UTF_8;
+        }
+        messageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                                   charSetEncoding);
+        
+        messageContext.setDoingSwA(true);
+        
+        return processDocument(attachments.getRootPartInputStream(false), contentType, messageContext);
     }
 }
