@@ -19,6 +19,7 @@
 
 package org.apache.axis2.json;
 
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -35,53 +36,55 @@ import java.io.StringReader;
 
 public class JSONDataSourceTest extends XMLTestCase {
 
-    public void testMappedSerialize1() throws XMLStreamException {
+    public void testMappedSerialize1() throws Exception {
         String jsonString = getMappedJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         JSONDataSource source = getMappedDataSource(jsonString);
-        source.serialize(outStream, null);
-        assertEquals(jsonString, new String(outStream.toByteArray()));
+        source.serialize(outStream, new OMOutputFormat());
+        assertXMLEqual("<mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>",
+                outStream.toString("utf-8"));
     }
 
-    public void testMappedSerialize2() throws XMLStreamException, IOException {
+    public void testMappedSerialize2() throws Exception {
         String jsonString = getMappedJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(outStream);
         JSONDataSource source = getMappedDataSource(jsonString);
-        source.serialize(writer, null);
+        source.serialize(writer, new OMOutputFormat());
         writer.flush();
-        assertEquals(jsonString, new String(outStream.toByteArray()));
-
+        assertXMLEqual("<mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>",
+                outStream.toString("utf-8"));
     }
 
-    public void testMappedSerialize3() throws XMLStreamException {
+    public void testMappedSerialize3() throws Exception {
         String jsonString = getMappedJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(outStream);
         JSONDataSource source = getMappedDataSource(jsonString);
         source.serialize(writer);
         writer.flush();
-        assertEquals(
-                "<?xml version='1.0' encoding='UTF-8'?><mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>",
-                new String(outStream.toByteArray()));
+        assertXMLEqual("<mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>",
+                outStream.toString("utf-8"));
     }
 
-    public void testBadgerfishSerialize1() throws XMLStreamException {
+    public void testBadgerfishSerialize1() throws Exception {
         String jsonString = getBadgerfishJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
-        source.serialize(outStream, null);
-        assertEquals(jsonString, new String(outStream.toByteArray()));
+        source.serialize(outStream, new OMOutputFormat());
+        assertXMLEqual("<p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>",
+                outStream.toString("utf-8"));
     }
 
-    public void testBadgerfishSerialize2() throws XMLStreamException, IOException {
+    public void testBadgerfishSerialize2() throws Exception {
         String jsonString = getBadgerfishJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(outStream);
         JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
-        source.serialize(writer, null);
+        source.serialize(writer, new OMOutputFormat());
         writer.flush();
-        assertEquals(jsonString, new String(outStream.toByteArray()));
+        assertXMLEqual("<p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>",
+                outStream.toString("utf-8"));
     }
 
     public void testBadgerfishSerialize3() throws XMLStreamException, JSONException, IOException,
@@ -92,9 +95,8 @@ public class JSONDataSourceTest extends XMLTestCase {
         JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
         source.serialize(writer);
         writer.flush();
-        assertXMLEqual(
-                "<?xml version='1.0' encoding='UTF-8'?><p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>",
-                new String(outStream.toByteArray()));
+        assertXMLEqual("<p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>",
+                outStream.toString("utf-8"));
     }
 
     private JSONBadgerfishDataSource getBadgerfishDataSource(String jsonString) {
