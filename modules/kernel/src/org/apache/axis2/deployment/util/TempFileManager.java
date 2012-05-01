@@ -18,7 +18,12 @@
  */
 package org.apache.axis2.deployment.util;
 
-import java.io.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -135,16 +140,18 @@ public class TempFileManager {
             throws IOException {
         // Select all the files
         File[] files = rootDir.listFiles();
-        for (File file : files) {
-            // If the file is a directory, we will
-            // recursively call delete on it.
-            if (file.isDirectory()) {
-                recursiveDelete(file);
-            } else {
-                // It is just a file so we are safe to
-                // delete it
-                if (!file.delete()) {
-                    throw new IOException("Could not delete: " + file.getAbsolutePath());
+        if (files != null) {
+            for (File file : files) {
+                // If the file is a directory, we will
+                // recursively call delete on it.
+                if (file.isDirectory()) {
+                    recursiveDelete(file);
+                } else {
+                    // It is just a file so we are safe to
+                    // delete it
+                    if (!file.delete()) {
+                        throw new IOException("Could not delete: " + file.getAbsolutePath());
+                    }
                 }
             }
         }
