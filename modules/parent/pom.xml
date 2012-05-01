@@ -122,6 +122,7 @@
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
         <geronimo-spec.jta.version>1.1</geronimo-spec.jta.version>
+        <jsr311.api.version>1.1.1</jsr311.api.version>
     </properties>
     <mailingLists>
         <mailingList>
@@ -724,6 +725,11 @@
                 <groupId>org.apache.woden</groupId>
                 <artifactId>woden-impl-dom</artifactId>
                 <version>${woden.version}</version>
+            </dependency>
+                <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <version>${jsr311.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
