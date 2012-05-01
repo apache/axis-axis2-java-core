@@ -50,6 +50,18 @@ import java.net.URL;
 
 
 public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
+    private final Class<? extends AbstractJSONDataSource> dataSourceClass;
+
+    /**
+     * Constructor.
+     * 
+     * @param dataSourceClass
+     *            the {@link OMDataSource} class corresponding to the JSON format used by this
+     *            message formatter; this information is used for optimization (pass through)
+     */
+    public AbstractJSONMessageFormatter(Class<? extends AbstractJSONDataSource> dataSourceClass) {
+        this.dataSourceClass = dataSourceClass;
+    }
 
     public String getContentType(MessageContext msgCtxt, OMOutputFormat format,
                                  String soapActionString) {
@@ -83,9 +95,8 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
         //if the element is an OMSourcedElement and it contains a JSONDataSource with
         //correct convention, directly get the JSON string.
 
-        if (element instanceof OMSourcedElement &&
-                getStringToWrite(((OMSourcedElement)element).getDataSource()) != null) {
-            String jsonToWrite = getStringToWrite(((OMSourcedElement)element).getDataSource());
+        String jsonToWrite = getStringToWrite(element);
+        if (jsonToWrite != null) {
             return jsonToWrite.getBytes();
             //otherwise serialize the OM by expanding the tree
         } else {
@@ -128,13 +139,20 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
     protected abstract XMLStreamWriter getJSONWriter(Writer writer);
 
     /**
-     * If the data source is a "Mapped" formatted data source, gives the JSON string by directly
-     * taking from the data source.
-     *
-     * @param dataSource data source to be checked
-     * @return the JSON string to write
+     * Get the original JSON string from the given element if it is available and if the element has
+     * not been modified.
+     * 
+     * @param element
+     *            the element
+     * @return the JSON string to write, or <code>null</code> if it is not available
      */
-    protected abstract String getStringToWrite(OMDataSource dataSource);
+    private String getStringToWrite(OMElement element) {
+        if (element instanceof OMSourcedElement) {
+            return (String)((OMSourcedElement)element).getObject(dataSourceClass);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Writes the JSON message to the output stream with the correct convention. If the payload is
@@ -162,11 +180,8 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
                 element2.setText(fault.toString());
                 element = element2;
             }
-            if (element instanceof OMSourcedElement &&
-                    getStringToWrite(((OMSourcedElement)element).getDataSource()) != null) {
-                String jsonToWrite =
-                        getStringToWrite(((OMSourcedElement)element).getDataSource());
-
+            String jsonToWrite = getStringToWrite(element);
+            if (jsonToWrite != null) {
                 out.write(jsonToWrite.getBytes());
             } else {
                 XMLStreamWriter jsonWriter = getJSONWriter(out, format);
@@ -198,12 +213,8 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
         if (dataOut != null && (httpMethod != null)
                 && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
             try {
-                String jsonString;
-                if (dataOut instanceof OMSourcedElement && getStringToWrite(
-                        ((OMSourcedElement) dataOut).getDataSource()) != null) {
-                    jsonString = getStringToWrite(((OMSourcedElement)
-                            dataOut).getDataSource());
-                } else {
+                String jsonString = getStringToWrite(dataOut);
+                if (jsonString == null) {
                     StringWriter out = new StringWriter();
                     XMLStreamWriter jsonWriter = getJSONWriter(out);
                     // Jettison v1.2+ relies on writeStartDocument being called (AXIS2-5044)

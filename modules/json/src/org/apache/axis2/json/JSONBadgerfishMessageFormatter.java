@@ -19,7 +19,6 @@
 
 package org.apache.axis2.json;
 
-import org.apache.axiom.om.OMDataSource;
 import org.codehaus.jettison.badgerfish.BadgerFishXMLStreamWriter;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -33,26 +32,13 @@ import java.io.Writer;
  */
 
 public class JSONBadgerfishMessageFormatter extends AbstractJSONMessageFormatter {
-
+    public JSONBadgerfishMessageFormatter() {
+        super(JSONBadgerfishDataSource.class);
+    }
+    
     //returns the writer for the badgerfish format
     @Override
     protected XMLStreamWriter getJSONWriter(Writer writer) {
         return new BadgerFishXMLStreamWriter(writer);
-    }
-
-    /**
-     * If the data source is a "Badgerfish" formatted data source, gives the JSON string by directly
-     * taking from the data source.
-     *
-     * @param dataSource data source to be checked
-     * @return the JSON string to write
-     */
-    @Override
-    protected String getStringToWrite(OMDataSource dataSource) {
-        if (dataSource instanceof JSONBadgerfishDataSource) {
-            return ((JSONBadgerfishDataSource)dataSource).getJSONString();
-        } else {
-            return null;
-        }
     }
 }

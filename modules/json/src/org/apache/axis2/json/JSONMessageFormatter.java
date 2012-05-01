@@ -19,7 +19,6 @@
 
 package org.apache.axis2.json;
 
-import org.apache.axiom.om.OMDataSource;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
@@ -39,28 +38,14 @@ import java.io.Writer;
 
 
 public class JSONMessageFormatter extends AbstractJSONMessageFormatter {
-
+    public JSONMessageFormatter() {
+        super(JSONDataSource.class);
+    }
+    
     //returns the "Mapped" JSON writer
     @Override
     protected XMLStreamWriter getJSONWriter(Writer writer) {
         MappedNamespaceConvention mnc = new MappedNamespaceConvention();
         return new MappedXMLStreamWriter(mnc, writer);
     }
-
-    /**
-     * If the data source is a "Mapped" formatted data source, gives the JSON string by directly
-     * taking from the data source.
-     *
-     * @param dataSource data source to be checked
-     * @return the JSON string to write
-     */
-    @Override
-    protected String getStringToWrite(OMDataSource dataSource) {
-        if (dataSource instanceof JSONDataSource) {
-            return ((JSONDataSource)dataSource).getJSONString();
-        } else {
-            return null;
-        }
-    }
-
 }

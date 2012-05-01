@@ -21,6 +21,8 @@ package org.apache.axis2.json;
 
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.ds.AbstractPullOMDataSource;
+import org.codehaus.jettison.AbstractXMLInputFactory;
+import org.codehaus.jettison.json.JSONTokener;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
@@ -44,23 +46,24 @@ public abstract class AbstractJSONDataSource extends AbstractPullOMDataSource {
         this.jsonReader = jsonReader;
     }
 
-    /**
-     * Gives the StAX reader using the "Mapped" formatted input JSON String.
-     *
-     * @return The XMLStreamReader according to the JSON String.
-     * @throws javax.xml.stream.XMLStreamException
-     *          if there is an error while making the StAX reader.
-     */
+    public final XMLStreamReader getReader() throws XMLStreamException {
+        return getXMLInputFactory().createXMLStreamReader(new JSONTokener(getJSONString()));
+    }
 
-    public abstract XMLStreamReader getReader() throws XMLStreamException;
-
+    protected abstract AbstractXMLInputFactory getXMLInputFactory();
+    
     public boolean isDestructiveRead() {
         // TODO: for the moment the data source in not destructive (because it reads the entire message into memory before processing it), but this will change...
         return false;
     }
 
+    @Override
+    public Object getObject() {
+        return getJSONString();
+    }
+
     //returns the json string by consuming the JSON input stream.
-    protected String getJSONString() {
+    private String getJSONString() {
         if (isRead) {
             return jsonString;
         } else {

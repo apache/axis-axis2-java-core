@@ -19,9 +19,8 @@
 
 package org.apache.axis2.json;
 
-
+import org.codehaus.jettison.AbstractXMLInputFactory;
 import org.codehaus.jettison.badgerfish.BadgerFishXMLInputFactory;
-import org.codehaus.jettison.json.JSONTokener;
 
 import java.io.Reader;
 
@@ -35,20 +34,8 @@ public class JSONBadgerfishDataSource extends AbstractJSONDataSource {
         super(jsonReader);
     }
 
-    /**
-     * Gives the StAX reader using the "Badgerfish" formatted input JSON String.
-     *
-     * @return The XMLStreamReader according to the JSON String.
-     * @throws javax.xml.stream.XMLStreamException
-     *          if there is an error while making the StAX reader.
-     */
     @Override
-    public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
-
-        //input factory for "Badgerfish"
-        BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
-        return inputFactory.createXMLStreamReader(
-                new JSONTokener(getJSONString()));
-
+    protected AbstractXMLInputFactory getXMLInputFactory() {
+        return new BadgerFishXMLInputFactory();
     }
 }

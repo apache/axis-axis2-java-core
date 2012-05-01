@@ -19,11 +19,9 @@
 
 package org.apache.axis2.json;
 
-import org.codehaus.jettison.json.JSONTokener;
+import org.codehaus.jettison.AbstractXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
 import java.io.Reader;
 import java.util.HashMap;
 
@@ -37,21 +35,13 @@ public class JSONDataSource extends AbstractJSONDataSource {
         super(jsonReader);
     }
 
-    /**
-     * Gives the StAX reader using the "Mapped" formatted input JSON String.
-     *
-     * @return The XMLStreamReader according to the JSON String.
-     * @throws javax.xml.stream.XMLStreamException
-     *          if there is an error while making the StAX reader.
-     */
     @Override
-    public XMLStreamReader getReader() throws XMLStreamException {
+    protected AbstractXMLInputFactory getXMLInputFactory() {
 
         HashMap XMLToJSNNamespaceMap = new HashMap();
         XMLToJSNNamespaceMap.put("", "");
 
         //input factory for "Mapped" convention
-        MappedXMLInputFactory inputFactory = new MappedXMLInputFactory(XMLToJSNNamespaceMap);
-        return inputFactory.createXMLStreamReader(new JSONTokener(getJSONString()));
+        return new MappedXMLInputFactory(XMLToJSNNamespaceMap);
     }
 }
