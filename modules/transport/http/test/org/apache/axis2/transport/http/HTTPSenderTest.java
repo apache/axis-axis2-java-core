@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.mail.MessagingException;
-import javax.ws.rs.core.HttpHeaders;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -86,11 +84,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value",
                 "application/x-www-form-urlencoded;action=\"urn:getService\";",
-                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+                getHeaders().get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
     }
     
     /**
@@ -110,11 +108,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value", "urn:postService",
                 getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
-                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+                getHeaders().get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
 
         // test with SOAP payload.
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_POST, "urn:postService",
@@ -125,11 +123,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value", "urn:postService",
                 getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
-                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+                getHeaders().get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
     }
 
     /**
@@ -149,11 +147,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value", "urn:putService",
                 getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
-                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+                getHeaders().get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
 
         // test with SOAP payload.
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_PUT, "urn:putService",
@@ -164,11 +162,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value", "urn:putService",
                 getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
-                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+                getHeaders().get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
     }
 
     /**
@@ -187,11 +185,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
                 getStringContent());
         assertEquals("Not the expected HTTP Header value",
                 "application/x-www-form-urlencoded;action=\"urn:deleteService\";", getHeaders()
-                        .get(HttpHeaders.CONTENT_TYPE));
+                        .get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
 
     }
 
@@ -210,11 +208,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
         assertEquals("Not the expected HTTP Header value", "application/xml",
-                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+                getHeaders().get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
 
     }
 
@@ -234,11 +232,11 @@ public class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value", "urn:noService",
                 getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
-                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+                getHeaders().get("Content-Type"));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
-                getHeaders().get(HttpHeaders.HOST));
+                getHeaders().get("Host"));
         assertEquals("Not the expected HTTP Header value", "Axis2",
-                getHeaders().get(HttpHeaders.USER_AGENT));
+                getHeaders().get("User-Agent"));
 
     }   
     
