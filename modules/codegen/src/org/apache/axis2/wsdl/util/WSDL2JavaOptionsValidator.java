@@ -31,7 +31,8 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants, Op
         boolean invalid;
         String optionType = option.getOptionType();
 
-        if (optionType.startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)) {
+        if (optionType.startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)
+                || optionType.startsWith(WSDL2JavaConstants.SYSTEM_PROPERTY_PREFIX)) {
             invalid = false;
         } else {
             invalid = !(WSDL2JavaConstants.All_PORTS_OPTION.equalsIgnoreCase(optionType) ||

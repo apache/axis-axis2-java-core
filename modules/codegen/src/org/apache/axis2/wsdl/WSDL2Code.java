@@ -40,6 +40,7 @@ public class WSDL2Code {
         CommandLineOptionParser commandLineOptionParser = new CommandLineOptionParser(
                 args);
        checkAuthentication(commandLineOptionParser);  
+       setSystemProperties(commandLineOptionParser);
       //If it is a JAX-WS code generation request call WSimportTool.
       if (isJwsOptionEnabled(commandLineOptionParser)){
          new JAXWSCodeGenerationEngine(commandLineOptionParser, args).generate();
@@ -56,7 +57,7 @@ public class WSDL2Code {
 
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg1"));
-        for (int i = 2; i <= 52; i++) {
+        for (int i = 2; i <= 53; i++) {
             System.out.println("  " + CodegenMessages.getMessage("wsdl2code.arg" + i));
         }
     }
@@ -138,6 +139,26 @@ public class WSDL2Code {
                     return new PasswordAuthentication(user, pass.toCharArray());
                 }
             });
+        }
+    }
+    
+    private static void setSystemProperties(CommandLineOptionParser commandLineOptionParser) {
+        Map<String, CommandLineOption> allOptions = commandLineOptionParser.getAllOptions();
+        // System properties follow "-Dproperty=value" format, only key is required.
+        if (allOptions != null) {
+            for (String key : allOptions.keySet()) {
+                if (key != null
+                        && key.length() > 0
+                        && key.startsWith(CommandLineOptionConstants.WSDL2JavaConstants.SYSTEM_PROPERTY_PREFIX)
+                        && key.contains("=")) {
+                    int splitIndex = key.indexOf("=");
+                    String pKey = key.substring(1, splitIndex);
+                    String pValue = key.substring(splitIndex + 1);
+                    if (pKey != null && pValue != null) {
+                        System.setProperty(pKey, pValue);
+                    }
+                }
+            }
         }
     }
    

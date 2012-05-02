@@ -97,6 +97,7 @@ public interface CommandLineOptionConstants {
 
         String INVALID_OPTION = "INVALID_OPTION";
         String EXTRA_OPTIONTYPE_PREFIX = "E";
+        String SYSTEM_PROPERTY_PREFIX = "D";
 
         String WSDL_VERSION_2 = "2.0";
         String WSDL_VERSION_2_OPTIONAL = "2";
