@@ -63,7 +63,7 @@ public class JSONOMBuilderTest extends TestCase {
         ByteArrayInputStream inStream = new ByteArrayInputStream(jsonString.getBytes());
 
         MessageContext msgCtx = new MessageContext();
-        JSONOMBuilder omBuilder = new JSONOMBuilder();
+        Builder omBuilder = new JSONBadgerfishOMBuilder();
         OMElement elem = omBuilder.processDocument(inStream,
                 JSONTestConstants.CONTENT_TYPE_BADGERFISH, msgCtx);
 
@@ -91,7 +91,7 @@ public class JSONOMBuilderTest extends TestCase {
         ByteArrayInputStream inStream = new ByteArrayInputStream(jsonString.getBytes());
         MessageContext msgCtx = new MessageContext();
 
-        JSONOMBuilder omBuilder = new JSONOMBuilder();
+        Builder omBuilder = new JSONBadgerfishOMBuilder();
         OMElement elem = omBuilder.processDocument(inStream,
                 JSONTestConstants.CONTENT_TYPE_BADGERFISH, msgCtx);
 
