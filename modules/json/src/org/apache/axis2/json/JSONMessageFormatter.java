@@ -19,9 +19,10 @@
 
 package org.apache.axis2.json;
 
-import org.codehaus.jettison.mapped.MappedNamespaceConvention;
-import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
+import org.apache.axis2.context.MessageContext;
+import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Writer;
 
@@ -44,8 +45,8 @@ public class JSONMessageFormatter extends AbstractJSONMessageFormatter {
     
     //returns the "Mapped" JSON writer
     @Override
-    protected XMLStreamWriter getJSONWriter(Writer writer) {
-        MappedNamespaceConvention mnc = new MappedNamespaceConvention();
-        return new MappedXMLStreamWriter(mnc, writer);
+    protected XMLStreamWriter getJSONWriter(Writer writer, MessageContext messageContext) throws XMLStreamException {
+        return new MappedXMLOutputFactory(JSONUtil.getNS2JNSMap(
+                messageContext.getAxisService())).createXMLStreamWriter(writer);
     }
 }

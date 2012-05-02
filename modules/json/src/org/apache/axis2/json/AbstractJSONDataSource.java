@@ -50,7 +50,7 @@ public abstract class AbstractJSONDataSource extends AbstractPullOMDataSource {
         return getXMLInputFactory().createXMLStreamReader(new JSONTokener(getJSONString()));
     }
 
-    protected abstract AbstractXMLInputFactory getXMLInputFactory();
+    protected abstract AbstractXMLInputFactory getXMLInputFactory() throws XMLStreamException;
     
     public boolean isDestructiveRead() {
         // TODO: for the moment the data source in not destructive (because it reads the entire message into memory before processing it), but this will change...

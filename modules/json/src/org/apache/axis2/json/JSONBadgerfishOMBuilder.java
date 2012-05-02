@@ -21,6 +21,8 @@ package org.apache.axis2.json;
 
 import java.io.Reader;
 
+import org.apache.axis2.context.MessageContext;
+
 /**
  * Message builder for "Badgerfish" convention. DataSource used here is
  * JSONBadgerfishDataSource which is specific for "Badgerfish"
@@ -28,7 +30,7 @@ import java.io.Reader;
 
 public class JSONBadgerfishOMBuilder extends AbstractJSONOMBuilder {
     @Override
-    protected AbstractJSONDataSource getDataSource(Reader jsonReader) {
+    protected AbstractJSONDataSource getDataSource(Reader jsonReader, MessageContext messageContext) {
         return new JSONBadgerfishDataSource(jsonReader);
     }
 }

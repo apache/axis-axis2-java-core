@@ -103,8 +103,8 @@ public abstract class AbstractJSONOMBuilder implements Builder {
             }
         }
 
-        return factory.createOMElement(getDataSource(reader));
+        return factory.createOMElement(getDataSource(reader, messageContext));
     }
 
-    protected abstract AbstractJSONDataSource getDataSource(Reader jsonReader);
+    protected abstract AbstractJSONDataSource getDataSource(Reader jsonReader, MessageContext messageContext);
 }

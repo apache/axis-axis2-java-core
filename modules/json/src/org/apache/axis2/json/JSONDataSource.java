@@ -19,29 +19,35 @@
 
 package org.apache.axis2.json;
 
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.codehaus.jettison.AbstractXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 
 import java.io.Reader;
-import java.util.HashMap;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * JSON data source implementation for the "Mapped" convention.
  */
 
 public class JSONDataSource extends AbstractJSONDataSource {
+    private final MessageContext messageContext;
 
-    public JSONDataSource(Reader jsonReader) {
+    public JSONDataSource(Reader jsonReader, MessageContext messageContext) {
         super(jsonReader);
+        this.messageContext = messageContext;
     }
 
     @Override
-    protected AbstractXMLInputFactory getXMLInputFactory() {
-
-        HashMap XMLToJSNNamespaceMap = new HashMap();
-        XMLToJSNNamespaceMap.put("", "");
+    protected AbstractXMLInputFactory getXMLInputFactory() throws XMLStreamException {
+        AxisService service = messageContext.getAxisService();
+        if (service == null) {
+            throw new XMLStreamException("AxisService not yet set; unable to create namespace map");
+        }
 
         //input factory for "Mapped" convention
-        return new MappedXMLInputFactory(XMLToJSNNamespaceMap);
+        return new MappedXMLInputFactory(JSONUtil.getNS2JNSMap(service));
     }
 }

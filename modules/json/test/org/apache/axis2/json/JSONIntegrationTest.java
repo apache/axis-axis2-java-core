@@ -37,7 +37,6 @@ import org.apache.axis2.testutils.PortAllocator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -152,6 +151,21 @@ public class JSONIntegrationTest implements JSONTestConstants {
         assertEquals(200, conn.getResponseCode());
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
         assertTrue(in.readLine().contains("Hello Joe!"));
+        in.close();
+    }
+    
+
+    @Test
+    public void testPOJOServiceWithJSONMapped() throws Exception {
+        HttpURLConnection conn = (HttpURLConnection)new URL(pojoUri).openConnection();
+        conn.setDoOutput(true);
+        conn.addRequestProperty("Content-Type", "application/json");
+        Writer out = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+        out.write("{ \"sayHello\" : { \"myName\" : \"Joe\" } }");
+        out.close();
+        assertEquals(200, conn.getResponseCode());
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        assertEquals("{\"sayHelloResponse\":{\"return\":\"Hello Joe!\"}}", in.readLine());
         in.close();
     }
     

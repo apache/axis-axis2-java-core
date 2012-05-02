@@ -21,11 +21,13 @@ package org.apache.axis2.json;
 
 import java.io.Reader;
 
+import org.apache.axis2.context.MessageContext;
+
 /** Makes the OMSourcedElement object with the JSONDataSource inside. */
 
 public class JSONOMBuilder extends AbstractJSONOMBuilder {
     @Override
-    protected AbstractJSONDataSource getDataSource(Reader jsonReader) {
-        return new JSONDataSource(jsonReader);
+    protected AbstractJSONDataSource getDataSource(Reader jsonReader, MessageContext messageContext) {
+        return new JSONDataSource(jsonReader, messageContext);
     }
 }

@@ -21,6 +21,8 @@ package org.apache.axis2.json;
 
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.codehaus.jettison.json.JSONException;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.SAXException;
@@ -107,7 +109,9 @@ public class JSONDataSourceTest extends XMLTestCase {
     }
 
     private JSONDataSource getMappedDataSource(String jsonString) {
-        return new JSONDataSource(new StringReader(jsonString));
+        MessageContext messageContext = new MessageContext();
+        messageContext.setAxisService(new AxisService());
+        return new JSONDataSource(new StringReader(jsonString), messageContext);
     }
 
     private String getMappedJSONString() {

@@ -102,7 +102,7 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
         } else {
             try {
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-                XMLStreamWriter jsonWriter = getJSONWriter(bytesOut, format);
+                XMLStreamWriter jsonWriter = getJSONWriter(bytesOut, format, msgCtxt);
                 element.serializeAndConsume(jsonWriter);
                 jsonWriter.writeEndDocument();
 
@@ -126,17 +126,17 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
         return null;
     }
 
-    private XMLStreamWriter getJSONWriter(OutputStream outStream, OMOutputFormat format)
-            throws AxisFault {
+    private XMLStreamWriter getJSONWriter(OutputStream outStream, OMOutputFormat format, MessageContext messageContext)
+            throws AxisFault, XMLStreamException {
         try {
-            return getJSONWriter(new OutputStreamWriter(outStream, format.getCharSetEncoding()));
+            return getJSONWriter(new OutputStreamWriter(outStream, format.getCharSetEncoding()), messageContext);
         } catch (UnsupportedEncodingException ex) {
             throw AxisFault.makeFault(ex);
         }
     }
     
     //returns the "Mapped" JSON writer
-    protected abstract XMLStreamWriter getJSONWriter(Writer writer);
+    protected abstract XMLStreamWriter getJSONWriter(Writer writer, MessageContext messageContext) throws XMLStreamException;
 
     /**
      * Get the original JSON string from the given element if it is available and if the element has
@@ -184,7 +184,7 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
             if (jsonToWrite != null) {
                 out.write(jsonToWrite.getBytes());
             } else {
-                XMLStreamWriter jsonWriter = getJSONWriter(out, format);
+                XMLStreamWriter jsonWriter = getJSONWriter(out, format, msgCtxt);
                 // Jettison v1.2+ relies on writeStartDocument being called (AXIS2-5044)
                 jsonWriter.writeStartDocument();
                 element.serializeAndConsume(jsonWriter);
@@ -194,11 +194,6 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
             throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
-        } catch (IllegalStateException e) {
-            throw new AxisFault(
-                    "Mapped formatted JSON with namespaces are not supported in Axis2. " +
-                            "Make sure that your request doesn't include namespaces or " +
-                            "use the Badgerfish convention");
         }
     }
 
@@ -216,7 +211,7 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
                 String jsonString = getStringToWrite(dataOut);
                 if (jsonString == null) {
                     StringWriter out = new StringWriter();
-                    XMLStreamWriter jsonWriter = getJSONWriter(out);
+                    XMLStreamWriter jsonWriter = getJSONWriter(out, msgCtxt);
                     // Jettison v1.2+ relies on writeStartDocument being called (AXIS2-5044)
                     jsonWriter.writeStartDocument();
                     dataOut.serializeAndConsume(jsonWriter);

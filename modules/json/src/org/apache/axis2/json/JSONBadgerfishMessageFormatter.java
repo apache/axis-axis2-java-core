@@ -19,6 +19,7 @@
 
 package org.apache.axis2.json;
 
+import org.apache.axis2.context.MessageContext;
 import org.codehaus.jettison.badgerfish.BadgerFishXMLStreamWriter;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -38,7 +39,7 @@ public class JSONBadgerfishMessageFormatter extends AbstractJSONMessageFormatter
     
     //returns the writer for the badgerfish format
     @Override
-    protected XMLStreamWriter getJSONWriter(Writer writer) {
+    protected XMLStreamWriter getJSONWriter(Writer writer, MessageContext messageContext) {
         return new BadgerFishXMLStreamWriter(writer);
     }
 }
