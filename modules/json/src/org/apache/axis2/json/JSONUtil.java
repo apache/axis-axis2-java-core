@@ -33,12 +33,12 @@ public final class JSONUtil {
     
     public static Map<String,String> getNS2JNSMap(AxisService service) {
         Map<String,String> ns2jnsMap = new HashMap<String,String>();
-        Parameter param = service.getParameter("JSONNamespaceMap");
+        Parameter param = service.getParameter("xmlToJsonNamespaceMap");
         if (param != null) {
             for (Iterator it = param.getParameterElement().getChildrenWithName(new QName("mapping")); it.hasNext(); ) {
                 OMElement mapping = (OMElement)it.next();
-                ns2jnsMap.put(mapping.getAttributeValue(new QName("uri")),
-                              mapping.getAttributeValue(new QName("prefix")));
+                ns2jnsMap.put(mapping.getAttributeValue(new QName("xmlNamespace")),
+                              mapping.getAttributeValue(new QName("jsonNamespace")));
             }
         } else {
             // If no namespace map is defined, use a default map compatible with earlier Axis2 versions
