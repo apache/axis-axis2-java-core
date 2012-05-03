@@ -20,6 +20,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.SimpleAxis2Server;
+import org.apache.maven.plugin.logging.Log;
+
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_REPO_LOCATION;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_PORT_PARAM;
+
 
 /**
  * The Class Axis2Server.
@@ -29,6 +34,7 @@ import org.apache.axis2.transport.SimpleAxis2Server;
 public class Axis2Server extends SimpleAxis2Server {
 
     private static Axis2Server server;
+    private static Log log;
 
     /**
      * Create new instance of Axis2Server.
@@ -36,12 +42,14 @@ public class Axis2Server extends SimpleAxis2Server {
      * @param repoPath the repo path
      * @param confPath the conf path
      * @param port the port
+     * @param log 
      * @return the axis2 server
      */
-    public static Axis2Server newInstance(String repoPath, String confPath, String port) {
+    public static Axis2Server newInstance(String repoPath, String confPath, String port, Log mavenLog) {
         try {
+            log = mavenLog;
             if (repoPath == null) {
-                repoPath = Constants.DEFAULT_REPO_LOCATION;
+                repoPath = DEFAULT_REPO_LOCATION;
             }
             server = new Axis2Server(repoPath, confPath);
             if (confPath == null) {
@@ -50,13 +58,13 @@ public class Axis2Server extends SimpleAxis2Server {
                  * not specify any port use 8080 as HTTP port.
                  */
                 Parameter parameter = new Parameter();
-                parameter.setName(Constants.DEFAULT_PORT_PARAM);
+                parameter.setName(DEFAULT_PORT_PARAM);
                 parameter.setValue(port);
                 ((TransportInDescription) server.getConfigurationContext().getAxisConfiguration()
                         .getTransportIn("http")).addParameter(parameter);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return server;
     }
@@ -68,7 +76,7 @@ public class Axis2Server extends SimpleAxis2Server {
      * @param confPath the conf path
      * @throws Exception the exception
      */
-    private Axis2Server(String repoPath, String confPath) throws Exception {
+    private Axis2Server(String repoPath, String confPath) throws Exception {       
         super(repoPath, confPath);
         server = null;
     }
@@ -80,7 +88,7 @@ public class Axis2Server extends SimpleAxis2Server {
         try {
             server.start();
         } catch (AxisFault e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -91,7 +99,7 @@ public class Axis2Server extends SimpleAxis2Server {
         try {
             server.stop();
         } catch (AxisFault e) {
-            e.printStackTrace();
+            log.error(e);            
         }
     }
 

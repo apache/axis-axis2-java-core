@@ -58,5 +58,14 @@ public class Constants {
     
     /** The Constant DEFAULT_PORT. */
     public static final String DEFAULT_PORT = "8080";
+    
+    /** The Constant  DEFAULT_CONF_SRC_DIR. */
+    public static final String DEFAULT_CONF_SRC_DIR = "src/main/resources";
+    
+    /** The Constant  DEFAULT_CONF_DIR. */
+    public static final String DEFAULT_CONF_DIR = "conf";
+    
+    /** The Constant  DEFAULT_CONF_FILE_NAME. */
+    public static final String DEFAULT_CONF_FILE_NAME = "axis2.xml";
 
 }

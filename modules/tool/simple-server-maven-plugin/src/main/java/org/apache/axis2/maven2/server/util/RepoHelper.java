@@ -23,6 +23,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.maven.plugin.logging.Log;
+
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_REPO_LOCATION;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_STD_SERVICE_DIRECTORY;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_JAX_WS_SERVICE_DIRECTORY;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_MODULE_REPO_DIRECTORY;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_JAX_WS_SERVICE_SRC_DIRECTORY;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_STD_SERVICE_SRC_DIRECTORY;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_DIR;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_FILE_NAME;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_SRC_DIR;
+
 /**
  * The Class RepoHelper is utility that deal with repo creation.
  * 
@@ -58,6 +70,8 @@ public class RepoHelper {
     private boolean jaxwsService = false;
     
     private int dataBufferSize;
+    
+    private Log log;
 
     public int getDataBufferSize() {
 		return dataBufferSize;
@@ -186,9 +200,11 @@ public class RepoHelper {
      * 
      * @param repoLocation
      *            the repo location
+     * @param log 
      */
-    public RepoHelper(String repoLocation) {
-        this.repoLocation = repoLocation == null ? Constants.DEFAULT_REPO_LOCATION : repoLocation;
+    public RepoHelper(String repoLocation, Log log) {
+        this.repoLocation = repoLocation == null ? DEFAULT_REPO_LOCATION : repoLocation;
+        this.log = log;
         initialize();
 
     }
@@ -210,12 +226,12 @@ public class RepoHelper {
      */
     private void initialize() {
         this.stdServiceDir = repoLocation + File.separator
-                + Constants.DEFAULT_STD_SERVICE_DIRECTORY;
+                + DEFAULT_STD_SERVICE_DIRECTORY;
         this.jaxwsServiceDir = repoLocation + File.separator
-                + Constants.DEFAULT_JAX_WS_SERVICE_DIRECTORY;
-        this.moduleDir = repoLocation + File.separator + Constants.DEFAULT_MODULE_REPO_DIRECTORY;
-        this.stdServiceSrcDir = Constants.DEFAULT_STD_SERVICE_SRC_DIRECTORY;
-        this.jaxwsServiceSrcDir = Constants.DEFAULT_JAX_WS_SERVICE_SRC_DIRECTORY;
+                + DEFAULT_JAX_WS_SERVICE_DIRECTORY;
+        this.moduleDir = repoLocation + File.separator + DEFAULT_MODULE_REPO_DIRECTORY;
+        this.stdServiceSrcDir = DEFAULT_STD_SERVICE_SRC_DIRECTORY;
+        this.jaxwsServiceSrcDir = DEFAULT_JAX_WS_SERVICE_SRC_DIRECTORY;
     }
 
     /**
@@ -231,7 +247,8 @@ public class RepoHelper {
             copyStdServices();
         }
         copyModules();
-    }
+        copyConfFile();
+    }   
 
     /**
      * Copy modules.
@@ -305,11 +322,13 @@ public class RepoHelper {
         File stdServiceFile = new File(stdServiceDir);
         File jaxwsServiceFile = new File(jaxwsServiceDir);
         File moduleFile = new File(moduleDir);
+        File confDir = new File(repoLocation+ File.separator+ DEFAULT_CONF_DIR);
         boolean success = stdServiceFile.mkdirs();
         success = jaxwsServiceFile.mkdirs();
         success = moduleFile.mkdirs();
+        success = confDir.mkdir();
         if (success) {
-            System.out.println("Service directories created");
+            log.info("Service directories created");
         }
     }
 
@@ -350,6 +369,16 @@ public class RepoHelper {
             in.close();
             out.close();
         }
+    }
+    
+    private void copyConfFile() throws IOException {
+        // TODO At the moment it assume axis2.xml available on 
+        // top level of the resources directory but this should 
+        // find axis2.file any where on resource directory. 
+        File srcFile = new File(DEFAULT_CONF_SRC_DIR + File.separator + DEFAULT_CONF_FILE_NAME);
+        File desFile = new File(repoLocation + File.separator + DEFAULT_CONF_DIR + File.separator + DEFAULT_CONF_FILE_NAME);
+        copyDirectory(srcFile, desFile, getDataBufferSize());
+        
     }
 
 }

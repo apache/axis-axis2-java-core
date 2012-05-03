@@ -20,7 +20,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import org.apache.axis2.maven2.server.util.Axis2Server;
-import org.apache.axis2.maven2.server.util.Constants;
 import org.apache.axis2.maven2.server.util.RepoHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -28,6 +27,13 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
+
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_PORT;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CLASSES_DIRECTORY;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_TEST_CLASSES_DIRECTORY;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_REPO_LOCATION;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_DIR;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_FILE_NAME;
 
 /**
  * Run simple Axis 2Server.
@@ -136,7 +142,7 @@ public class SimpleHttpServerMojo extends AbstractMojo {
    
 
     public RepoHelper getRepoHelper() {
-        RepoHelper repoHelper = new RepoHelper(repoPath);
+        RepoHelper repoHelper = new RepoHelper(repoPath, getLog());
         if (stdServiceSrcDir != null) {
             repoHelper.setStdServiceSrcDir(stdServiceSrcDir);
         }
@@ -166,8 +172,8 @@ public class SimpleHttpServerMojo extends AbstractMojo {
             getLog().info("conf path : " + confPath);
             getRepoHelper().prepareRepostory();
             extendClassLoader();
-            String serverPort = port == null ? Constants.DEFAULT_PORT : port;
-            server = Axis2Server.newInstance(repoPath, confPath, serverPort );
+            String serverPort = port == null ? DEFAULT_PORT : port;            
+            server = Axis2Server.newInstance(repoPath, checkFordefaultConfFile(confPath), serverPort, getLog());
             if (fork) {
                 new Thread(new Runnable() {
                     public void run() {
@@ -194,8 +200,8 @@ public class SimpleHttpServerMojo extends AbstractMojo {
             realm = world.newRealm("maven.plugin." + getClass().getSimpleName(), Thread
                     .currentThread().getContextClassLoader());
         }
-        File cls = new File(buildDir + File.separator + Constants.DEFAULT_CLASSES_DIRECTORY);
-        File testCls = new File(buildDir + File.separator + Constants.DEFAULT_TEST_CLASSES_DIRECTORY);
+        File cls = new File(buildDir + File.separator + DEFAULT_CLASSES_DIRECTORY);
+        File testCls = new File(buildDir + File.separator + DEFAULT_TEST_CLASSES_DIRECTORY);
         realm.addURL(cls.toURI().toURL());
         realm.addURL(testCls.toURI().toURL());
         Thread.currentThread().setContextClassLoader(realm);
@@ -224,6 +230,16 @@ public class SimpleHttpServerMojo extends AbstractMojo {
         server.stopServer();
         getLog().info("Axis2 Simple HTTP server stoped ");
 
+    }
+    
+    private String checkFordefaultConfFile(String inPath) {
+        if (inPath != null) {
+            return inPath;
+        } else {
+            String path = repoPath != null ? repoPath : DEFAULT_REPO_LOCATION;
+            return path + File.separator + DEFAULT_CONF_DIR + File.separator
+                    + DEFAULT_CONF_FILE_NAME;
+        }
     }
 
 }
