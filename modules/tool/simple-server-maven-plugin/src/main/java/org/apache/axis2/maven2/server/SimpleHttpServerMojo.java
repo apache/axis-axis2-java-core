@@ -237,8 +237,13 @@ public class SimpleHttpServerMojo extends AbstractMojo {
             return inPath;
         } else {
             String path = repoPath != null ? repoPath : DEFAULT_REPO_LOCATION;
-            return path + File.separator + DEFAULT_CONF_DIR + File.separator
+            path = path + File.separator + DEFAULT_CONF_DIR + File.separator
                     + DEFAULT_CONF_FILE_NAME;
+            File confFile = new File(path);
+            if(confFile.exists()){
+                return path;
+            }
+            return null;
         }
     }
 

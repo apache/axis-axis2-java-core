@@ -377,7 +377,9 @@ public class RepoHelper {
         // find axis2.file any where on resource directory. 
         File srcFile = new File(DEFAULT_CONF_SRC_DIR + File.separator + DEFAULT_CONF_FILE_NAME);
         File desFile = new File(repoLocation + File.separator + DEFAULT_CONF_DIR + File.separator + DEFAULT_CONF_FILE_NAME);
-        copyDirectory(srcFile, desFile, getDataBufferSize());
+        if(srcFile.exists()){
+            copyDirectory(srcFile, desFile, getDataBufferSize());            
+        }
         
     }
 
