@@ -100,31 +100,6 @@ public class ClientInfo
         this.localSsn = param;
     }
 
-
-    /** databinding method to get an XML representation of this object */
-    public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
-
-
-        java.util.ArrayList elementList = new java.util.ArrayList();
-        java.util.ArrayList attribList = new java.util.ArrayList();
-
-
-        elementList.add(new javax.xml.namespace.QName("http://www.wso2.com/types",
-                                                      "name"));
-        elementList
-                .add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localName));
-
-        elementList.add(new javax.xml.namespace.QName("http://www.wso2.com/types",
-                                                      "ssn"));
-        elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSsn));
-
-
-        return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl
-                (qName, elementList.toArray(), attribList.toArray());
-
-
-    }
-
     public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
         throw new UnsupportedOperationException("Unimplemented method");
     }

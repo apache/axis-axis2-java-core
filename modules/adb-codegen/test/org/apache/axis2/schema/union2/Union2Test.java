@@ -39,7 +39,7 @@ public class Union2Test extends AbstractTestCase {
 
         testUnionElement2.setAttribute1(attribute1);
 
-        testSerializeDeserialize(testUnionElement2, false);
+        testSerializeDeserialize(testUnionElement2);
     }
 
     public void testListElement2() throws Exception {
@@ -53,7 +53,7 @@ public class Union2Test extends AbstractTestCase {
         attribute1.setString(new String[]{"attribute1","attribute2"});
         testListElement1.setAttribute1(attribute1);
 
-        testSerializeDeserialize(testListElement1, false);
+        testSerializeDeserialize(testListElement1);
     }
 
     public void testFuzzDateType() throws Exception {
@@ -73,6 +73,6 @@ public class Union2Test extends AbstractTestCase {
         expectedFuzzyDateType.setObject(cal.getTime());
         expectedResult.setTestFuzzyDateType(expectedFuzzyDateType);
         
-        testSerializeDeserialize(testFuzzyDateType, expectedResult, false);
+        testSerializeDeserialize(testFuzzyDateType, expectedResult);
     }
 }

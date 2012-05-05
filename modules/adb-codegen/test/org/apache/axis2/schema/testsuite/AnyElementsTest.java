@@ -43,13 +43,13 @@ public class AnyElementsTest extends AbstractTest {
     public void testAnyArray3() throws Exception {
         TestAny1 testAny = new TestAny1();
         testAny.setExtraElement(new OMElement[]{getOMElement()});
-        testSerializeDeserialize(testAny, false);
+        testSerializeDeserialize(testAny);
     }
     
     public void testAnyArray4() throws Exception {
         TestAny1 testAny = new TestAny1();
         testAny.setExtraElement(new OMElement[]{getOMElement(), getOMElement()});
-        testSerializeDeserialize(testAny, false);
+        testSerializeDeserialize(testAny);
     }
     
     public void testAnyArray5() throws Exception {
@@ -67,7 +67,7 @@ public class AnyElementsTest extends AbstractTest {
     public void testAnyArray7() throws Exception {
         TestAny3 testAny = new TestAny3();
         testAny.setExtraElement(new OMElement[]{getOMElement(), getOMElement()});
-        testSerializeDeserialize(testAny, false);
+        testSerializeDeserialize(testAny);
     }
     
     public void testAny1() throws Exception {

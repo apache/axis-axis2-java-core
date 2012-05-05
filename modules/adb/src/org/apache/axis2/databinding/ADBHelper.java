@@ -36,8 +36,6 @@ import org.apache.axiom.om.OMFactory;
 public interface ADBHelper<T> {
     Class<T> getBeanClass();
     
-    XMLStreamReader getPullParser(T bean, QName adbBeanQName) throws XMLStreamException;
-
     OMElement getOMElement(T bean, QName parentQName, OMFactory factory) throws ADBException;
 
     void serialize(T bean, QName parentQName, XMLStreamWriter xmlWriter) throws XMLStreamException;

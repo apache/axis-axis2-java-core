@@ -28,8 +28,6 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBBean;
-import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.utils.Constants;
 import org.apache.axis2.util.StreamWrapper;
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -66,29 +64,29 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
                 "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
                         "<Foo>Some Text</Foo>" +
                         "<Dependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</Dependent>" +
                         "<AdditionalDependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</AdditionalDependent>" +
                         "<AdditionalDependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</AdditionalDependent>" +
                         "<AdditionalDependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</AdditionalDependent>" +
                         "<AdditionalDependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</AdditionalDependent>" +
                         "<Bar>Some More Text</Bar><" +
                         "/ns1:TestComplexStringArrayScenario>";
@@ -97,16 +95,16 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         propertyList.add("Foo");
         propertyList.add("Some Text");
         propertyList.add(new QName("Dependent"));
-        DummyADBBean dummyBean = new DummyADBBean();
+        DummyBean dummyBean = new DummyBean();
         propertyList.add(dummyBean);
 
-        ADBBean[] adbBeans = new ADBBean[4];
+        DummyBean[] beans = new DummyBean[4];
         for (int i = 0; i < 4; i++) {
-            adbBeans[i] = new DummyADBBean();
+            beans[i] = new DummyBean();
         }
-        for (int i = 0; i < adbBeans.length; i++) {
+        for (int i = 0; i < beans.length; i++) {
             propertyList.add(new QName("AdditionalDependent"));
-            propertyList.add(adbBeans[i]);
+            propertyList.add(beans[i]);
 
         }
 
@@ -127,19 +125,19 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         String expectedXML =
                 "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
                         "<AdditionalDependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</AdditionalDependent>" +
                         "<AdditionalDependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</AdditionalDependent>" +
                         "<AdditionalDependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</AdditionalDependent>" +
                         "<AdditionalDependent xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
                         "</AdditionalDependent>" +
@@ -148,16 +146,16 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
 
         ArrayList propertyList = new ArrayList();
 
-        ADBBean[] adbBeans = new ADBBean[4];
+        DummyBean[] beans = new DummyBean[4];
         for (int i = 0; i < 4; i++) {
-            adbBeans[i] = new DummyADBBean();
+            beans[i] = new DummyBean();
         }
 
-        adbBeans[3] = null;
+        beans[3] = null;
 
-        for (int i = 0; i < adbBeans.length; i++) {
+        for (int i = 0; i < beans.length; i++) {
             propertyList.add(new QName("AdditionalDependent"));
-            propertyList.add(adbBeans[i]);
+            propertyList.add(beans[i]);
 
         }
 
@@ -178,9 +176,9 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
                 "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
                         "<Foo>Some Text</Foo>" +
                         "<Dependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</Dependent>" +
                         "<Bar>Some More Text</Bar><" +
                         "/ns1:TestComplexStringArrayScenario>";
@@ -189,7 +187,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         propertyList.add("Foo");
         propertyList.add("Some Text");
         propertyList.add(new QName("Dependent"));
-        DummyADBBean dummyBean = new DummyADBBean();
+        DummyBean dummyBean = new DummyBean();
         propertyList.add(dummyBean);
 
         String[] array = new String[] {};
@@ -211,12 +209,13 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
     /** test a complex array list */
     public void testComplexArrayList() throws Exception {
         String exptectedXML = "<Person><Name>FooOne</Name><Organization>Apache</Organization>" +
-                "<Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent>" +
-                "<Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent><Name>FooTwo</Name>" +
-                "<Age>25</Age><Sex>Male</Sex></Depemdent></Depemdent></Dependent>" +
-                "<test:Dependent xmlns:test=\"http://whatever.com\"><Name>FooTwo</Name><Age>25</Age>" +
-                "<Sex>Male</Sex><Depemdent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex>" +
-                "</Depemdent></test:Dependent></Person>";
+        		"<Dependent><age>25</age><dependent><age>25</age><dependent><age>25</age>" +
+        		"<name>FooTwo</name><sex>Male</sex></dependent><name>FooTwo</name><sex>Male</sex>" +
+        		"</dependent><name>FooTwo</name><sex>Male</sex></Dependent>" +
+        		"<test:Dependent xmlns:test=\"http://whatever.com\"><test:age>25</test:age>" +
+        		"<test:dependent><test:age>25</test:age><test:name>FooTwo</test:name>" +
+        		"<test:sex>Male</test:sex></test:dependent><test:name>FooTwo</test:name>" +
+        		"<test:sex>Male</test:sex></test:Dependent></Person>";
 
 
         ArrayList propertyList = new ArrayList();
@@ -227,13 +226,13 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         propertyList.add("Apache");
 
         propertyList.add(new QName("Dependent"));
-        DummyADBBean dummyBean = new DummyADBBean();
-        DummyADBBean nextdummyBean = dummyBean.addAnotherBean();
+        DummyBean dummyBean = new DummyBean();
+        DummyBean nextdummyBean = dummyBean.addAnotherBean();
         nextdummyBean.addAnotherBean();
         propertyList.add(dummyBean);
 
         propertyList.add(new QName("http://whatever.com", "Dependent", "test"));
-        dummyBean = new DummyADBBean();
+        dummyBean = new DummyBean();
         dummyBean.addAnotherBean();
         propertyList.add(dummyBean);
 
@@ -246,53 +245,12 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         assertXMLEqual(actualDom, expectedDocument);
     }
 
-    public static class DummyADBBean implements ADBBean {
-        ArrayList propertyList = new ArrayList();
-
-        public DummyADBBean() {
-            propertyList.add("Name");
-            propertyList.add("FooTwo");
-            propertyList.add("Age");
-            propertyList.add("25");
-            propertyList.add("Sex");
-            propertyList.add("Male");
-        }
-
-        public DummyADBBean addAnotherBean() {
-            propertyList.add(new QName("Depemdent"));
-            DummyADBBean dummyBean = new DummyADBBean();
-            propertyList.add(dummyBean);
-            return dummyBean;
-        }
-
-        public XMLStreamReader getPullParser(QName adbBeanQName) {
-            return new ADBXMLStreamReaderImpl(adbBeanQName, propertyList.toArray(), null);
-        }
-
-        public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
-            throw new UnsupportedOperationException("Unimplemented method");
-        }
-
-        public void serialize(final QName parentQName,
-                              XMLStreamWriter xmlWriter)
-                throws XMLStreamException, ADBException {
-            serialize(parentQName,xmlWriter,false);
-        }
-
-        public void serialize(final QName parentQName,
-                              XMLStreamWriter xmlWriter,
-                              boolean serializeType)
-                throws XMLStreamException, ADBException {
-            throw new UnsupportedOperationException("Unimplemented method");
-        }
-    }
-
     public void testWithOMElements() throws Exception {
 
         String expectedXML =
                 "<OMElementTest><axis2:FirstOMElement xmlns:axis2=\"http://ws.apache.org/namespaces/axis2\">" +
                         "<axis2:SecondOMElement></axis2:SecondOMElement></axis2:FirstOMElement><Foo>Some Text</Foo>" +
-                        "<Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex></Dependent>" +
+                        "<Dependent><age>25</age><name>FooTwo</name><sex>Male</sex></Dependent>" +
                         "<axis2:SecondOMElement xmlns:axis2=\"http://ws.apache.org/namespaces/axis2\">" +
                         "</axis2:SecondOMElement></OMElementTest>";
 
@@ -314,7 +272,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         propertyList.add("Foo");
         propertyList.add("Some Text");
         propertyList.add(new QName("Dependent"));
-        DummyADBBean dummyBean = new DummyADBBean();
+        DummyBean dummyBean = new DummyBean();
         propertyList.add(dummyBean);
 
 //         lets add one more element
@@ -423,9 +381,9 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
                 "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
                         "<Foo>Some Text</Foo>" +
                         "<Dependent>" +
-                        "<Name>FooTwo</Name>" +
-                        "<Age>25</Age>" +
-                        "<Sex>Male</Sex>" +
+                        "<age>25</age>" +
+                        "<name>FooTwo</name>" +
+                        "<sex>Male</sex>" +
                         "</Dependent>" +
                         "<StringInfo><array>Some Text 0</array>" +
                         "<array>Some Text 1</array>" +
@@ -438,7 +396,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         propertyList.add("Foo");
         propertyList.add("Some Text");
         propertyList.add(new QName("Dependent"));
-        DummyADBBean dummyBean = new DummyADBBean();
+        DummyBean dummyBean = new DummyBean();
         propertyList.add(dummyBean);
 
         String[] stringArray = new String[4];

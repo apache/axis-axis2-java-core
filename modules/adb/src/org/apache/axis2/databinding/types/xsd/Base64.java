@@ -336,28 +336,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 
   
-        /**
-        * databinding method to get an XML representation of this object
-        *
-        */
-        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName)
-                    throws org.apache.axis2.databinding.ADBException{
-
-
-        
-                
-                //We can safely assume an element has only one type associated with it
-                 return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(MY_QNAME,
-                            new java.lang.Object[]{
-                            org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localBase64)
-                            },
-                            null);
-
-        }
-
-  
-
      /**
       *  Factory class that keeps the parse method
       */

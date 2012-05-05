@@ -32,7 +32,7 @@ public class GroupTest extends AbstractTestCase {
         testSequenceGroup.setSequenceParam2("sequenceParam2");
         testGroupSequenceElement.setTestSequenceGroup(testSequenceGroup);
 
-        testSerializeDeserialize(testGroupSequenceElement, false);
+        testSerializeDeserialize(testGroupSequenceElement);
     }
 
     public void testNestedSequenceGroupElement() throws Exception {
@@ -51,7 +51,7 @@ public class GroupTest extends AbstractTestCase {
 
         testSequenceNestedGroupElement.setTestSequenceNestedGroup(testSequenceNestedGroup);
 
-        testSerializeDeserialize(testSequenceNestedGroupElement, false);
+        testSerializeDeserialize(testSequenceNestedGroupElement);
     }
 
     public void testChoiceGroupElement() throws Exception {
@@ -65,7 +65,7 @@ public class GroupTest extends AbstractTestCase {
         TestChoiceGroupElement expectedResult = new TestChoiceGroupElement();
         expectedResult.setTestChoiceGroup(testChoiceGroup);
         
-        testSerializeDeserialize(testGroupChoiceElement, expectedResult, false);
+        testSerializeDeserialize(testGroupChoiceElement, expectedResult);
     }
 
     public void testNestedChoiceGroupElement() throws Exception {
@@ -93,7 +93,7 @@ public class GroupTest extends AbstractTestCase {
 
         expectedResult.setTestChoiceNestedGroup(expectedChoiceNestedGroup);
         
-        testSerializeDeserialize(testChoiceNestedGroupElement, expectedResult, false);
+        testSerializeDeserialize(testChoiceNestedGroupElement, expectedResult);
     }
 
      public void testAttributeGroup() throws Exception {
@@ -101,7 +101,7 @@ public class GroupTest extends AbstractTestCase {
          testAttributeGroup.setAttribute1("Attribute1");
          testAttributeGroup.setParam1("Param1");
 
-         testSerializeDeserialize(testAttributeGroup, false);
+         testSerializeDeserialize(testAttributeGroup);
      }
 
     public void testNestedAttributeGroup() throws Exception {
@@ -110,7 +110,7 @@ public class GroupTest extends AbstractTestCase {
          testNestedAttributeGroupElement.setAttribute2("Attribute2");
          testNestedAttributeGroupElement.setParam1("Param1");
 
-         testSerializeDeserialize(testNestedAttributeGroupElement, false);
+         testSerializeDeserialize(testNestedAttributeGroupElement);
      }
 
 

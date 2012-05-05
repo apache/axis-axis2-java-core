@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareOMBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -99,7 +100,9 @@ public class ADBHelperDataSource<T> implements OMDataSourceExt {
      * @see org.apache.axiom.om.OMDataSource#getReader()
      */
     public XMLStreamReader getReader() throws XMLStreamException {
-        return helper.getPullParser(bean, parentQName);
+        MTOMAwareOMBuilder mtomAwareOMBuilder = new MTOMAwareOMBuilder();
+        serialize(mtomAwareOMBuilder);
+        return mtomAwareOMBuilder.getOMElement().getXMLStreamReader();
     }
 
     /**

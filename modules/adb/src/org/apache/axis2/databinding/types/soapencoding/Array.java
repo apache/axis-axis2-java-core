@@ -512,14 +512,6 @@ public class Array implements ADBBean {
 
 
     /**
-     * databinding method to get an XML representation of this object
-     */
-    public XMLStreamReader getPullParser(javax.xml.namespace.QName qName) throws ADBException {
-        return null;
-    }
-
-
-    /**
      * Factory class that keeps the parse method
      */
     public static class Factory {

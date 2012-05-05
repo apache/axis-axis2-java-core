@@ -31,6 +31,6 @@ public class ChameleonTest extends AbstractTestCase {
         supp.setParam("test");
         MainSchemaElement main = new MainSchemaElement();
         main.setParam(supp);
-        testSerializeDeserialize(main, false);
+        testSerializeDeserialize(main);
     }
 }

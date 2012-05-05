@@ -71,22 +71,6 @@ public class ADBBeanUtil {
         return getOMElement(bean, getQName(bean.getClass()), OMAbstractFactory.getOMFactory());
     }
     
-    public static XMLStreamReader getPullParser(Object bean, QName qname) throws Exception {
-        if (bean instanceof ADBBean) {
-            return ((ADBBean)bean).getPullParser(qname);
-        } else {
-            return getPullParser(bean, getHelper(bean.getClass()), qname);
-        }
-    }
-    
-    private static <T> XMLStreamReader getPullParser(Object bean, ADBHelper<T> helper, QName qname) throws XMLStreamException {
-        return helper.getPullParser(helper.getBeanClass().cast(bean), qname);
-    }
-    
-    public static XMLStreamReader getPullParser(Object bean) throws Exception {
-        return getPullParser(bean, getQName(bean.getClass()));
-    }
-    
     public static void serialize(Object bean, QName qname, XMLStreamWriter writer) throws Exception {
         if (bean instanceof ADBBean) {
             ((ADBBean)bean).serialize(qname, writer);
