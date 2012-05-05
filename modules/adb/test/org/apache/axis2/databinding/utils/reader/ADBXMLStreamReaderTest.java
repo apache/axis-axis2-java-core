@@ -61,232 +61,189 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
     }
 
     /** complex array scenario */
-    public void testComplexObjectArrayScenario() {
-        try {
-            String expectedXML =
-                    "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<Foo>Some Text</Foo>" +
-                            "<Dependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</Dependent>" +
-                            "<AdditionalDependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</AdditionalDependent>" +
-                            "<AdditionalDependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</AdditionalDependent>" +
-                            "<AdditionalDependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</AdditionalDependent>" +
-                            "<AdditionalDependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</AdditionalDependent>" +
-                            "<Bar>Some More Text</Bar><" +
-                            "/ns1:TestComplexStringArrayScenario>";
+    public void testComplexObjectArrayScenario() throws Exception {
+        String expectedXML =
+                "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                        "<Foo>Some Text</Foo>" +
+                        "<Dependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</Dependent>" +
+                        "<AdditionalDependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</AdditionalDependent>" +
+                        "<AdditionalDependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</AdditionalDependent>" +
+                        "<AdditionalDependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</AdditionalDependent>" +
+                        "<AdditionalDependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</AdditionalDependent>" +
+                        "<Bar>Some More Text</Bar><" +
+                        "/ns1:TestComplexStringArrayScenario>";
 
-            ArrayList propertyList = new ArrayList();
-            propertyList.add("Foo");
-            propertyList.add("Some Text");
-            propertyList.add(new QName("Dependent"));
-            DummyADBBean dummyBean = new DummyADBBean();
-            propertyList.add(dummyBean);
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
 
-            ADBBean[] adbBeans = new ADBBean[4];
-            for (int i = 0; i < 4; i++) {
-                adbBeans[i] = new DummyADBBean();
-            }
-            for (int i = 0; i < adbBeans.length; i++) {
-                propertyList.add(new QName("AdditionalDependent"));
-                propertyList.add(adbBeans[i]);
-
-            }
-
-            propertyList.add("Bar");
-            propertyList.add("Some More Text");
-
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(new QName(
-                    "http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario",
-                    "ns1"), propertyList.toArray(), null);
-            String actualXML = getStringXML(pullParser);
-
-
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            fail("Error has occurred " + e);
+        ADBBean[] adbBeans = new ADBBean[4];
+        for (int i = 0; i < 4; i++) {
+            adbBeans[i] = new DummyADBBean();
         }
+        for (int i = 0; i < adbBeans.length; i++) {
+            propertyList.add(new QName("AdditionalDependent"));
+            propertyList.add(adbBeans[i]);
+
+        }
+
+        propertyList.add("Bar");
+        propertyList.add("Some More Text");
+
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(new QName(
+                "http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario",
+                "ns1"), propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
+
+
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /** complex array scenario with nulls in between */
-    public void testComplexObjectArrayScenarioWithNulls() {
-        try {
-            String expectedXML =
-                    "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<AdditionalDependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</AdditionalDependent>" +
-                            "<AdditionalDependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</AdditionalDependent>" +
-                            "<AdditionalDependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</AdditionalDependent>" +
-                            "<AdditionalDependent xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-                            "</AdditionalDependent>" +
-                            "<Bar>Some More Text</Bar><" +
-                            "/ns1:TestComplexStringArrayScenario>";
+    public void testComplexObjectArrayScenarioWithNulls() throws Exception {
+        String expectedXML =
+                "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                        "<AdditionalDependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</AdditionalDependent>" +
+                        "<AdditionalDependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</AdditionalDependent>" +
+                        "<AdditionalDependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</AdditionalDependent>" +
+                        "<AdditionalDependent xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
+                        "</AdditionalDependent>" +
+                        "<Bar>Some More Text</Bar><" +
+                        "/ns1:TestComplexStringArrayScenario>";
 
-            ArrayList propertyList = new ArrayList();
+        ArrayList propertyList = new ArrayList();
 
-            ADBBean[] adbBeans = new ADBBean[4];
-            for (int i = 0; i < 4; i++) {
-                adbBeans[i] = new DummyADBBean();
-            }
-
-            adbBeans[3] = null;
-
-            for (int i = 0; i < adbBeans.length; i++) {
-                propertyList.add(new QName("AdditionalDependent"));
-                propertyList.add(adbBeans[i]);
-
-            }
-
-            propertyList.add("Bar");
-            propertyList.add("Some More Text");
-
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(new QName(
-                    "http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario",
-                    "ns1"), propertyList.toArray(), null);
-            String actualXML = getStringXML(pullParser);
-
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            fail("Error has occurred " + e);
+        ADBBean[] adbBeans = new ADBBean[4];
+        for (int i = 0; i < 4; i++) {
+            adbBeans[i] = new DummyADBBean();
         }
+
+        adbBeans[3] = null;
+
+        for (int i = 0; i < adbBeans.length; i++) {
+            propertyList.add(new QName("AdditionalDependent"));
+            propertyList.add(adbBeans[i]);
+
+        }
+
+        propertyList.add("Bar");
+        propertyList.add("Some More Text");
+
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(new QName(
+                "http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario",
+                "ns1"), propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
+
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /** Empty array */
-    public void testComplexObjectArrayScenarioEmptyArray() {
-        try {
-            String expectedXML =
-                    "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<Foo>Some Text</Foo>" +
-                            "<Dependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</Dependent>" +
-                            "<Bar>Some More Text</Bar><" +
-                            "/ns1:TestComplexStringArrayScenario>";
+    public void testComplexObjectArrayScenarioEmptyArray() throws Exception {
+        String expectedXML =
+                "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                        "<Foo>Some Text</Foo>" +
+                        "<Dependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</Dependent>" +
+                        "<Bar>Some More Text</Bar><" +
+                        "/ns1:TestComplexStringArrayScenario>";
 
-            ArrayList propertyList = new ArrayList();
-            propertyList.add("Foo");
-            propertyList.add("Some Text");
-            propertyList.add(new QName("Dependent"));
-            DummyADBBean dummyBean = new DummyADBBean();
-            propertyList.add(dummyBean);
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
 
-            String[] array = new String[] {};
-            propertyList.add(new QName("AdditionalDependent"));
-            propertyList.add(array);
+        String[] array = new String[] {};
+        propertyList.add(new QName("AdditionalDependent"));
+        propertyList.add(array);
 
-            propertyList.add("Bar");
-            propertyList.add("Some More Text");
+        propertyList.add("Bar");
+        propertyList.add("Some More Text");
 
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testComplexStringArrayScenario.org",
-                              "TestComplexStringArrayScenario", "ns1"),
-                    propertyList.toArray(),
-                    null);
-            String actualXML = getStringXML(pullParser);
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            fail("Error has occurred " + e);
-        }
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testComplexStringArrayScenario.org",
+                          "TestComplexStringArrayScenario", "ns1"),
+                propertyList.toArray(),
+                null);
+        String actualXML = getStringXML(pullParser);
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /** test a complex array list */
-    public void testComplexArrayList() {
-        try {
-
-            String exptectedXML = "<Person><Name>FooOne</Name><Organization>Apache</Organization>" +
-                    "<Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent>" +
-                    "<Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent><Name>FooTwo</Name>" +
-                    "<Age>25</Age><Sex>Male</Sex></Depemdent></Depemdent></Dependent>" +
-                    "<test:Dependent xmlns:test=\"http://whatever.com\"><Name>FooTwo</Name><Age>25</Age>" +
-                    "<Sex>Male</Sex><Depemdent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex>" +
-                    "</Depemdent></test:Dependent></Person>";
+    public void testComplexArrayList() throws Exception {
+        String exptectedXML = "<Person><Name>FooOne</Name><Organization>Apache</Organization>" +
+                "<Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent>" +
+                "<Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent><Name>FooTwo</Name>" +
+                "<Age>25</Age><Sex>Male</Sex></Depemdent></Depemdent></Dependent>" +
+                "<test:Dependent xmlns:test=\"http://whatever.com\"><Name>FooTwo</Name><Age>25</Age>" +
+                "<Sex>Male</Sex><Depemdent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex>" +
+                "</Depemdent></test:Dependent></Person>";
 
 
-            ArrayList propertyList = new ArrayList();
-            propertyList.add("Name");
-            propertyList.add("FooOne");
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Name");
+        propertyList.add("FooOne");
 
-            propertyList.add("Organization");
-            propertyList.add("Apache");
+        propertyList.add("Organization");
+        propertyList.add("Apache");
 
-            propertyList.add(new QName("Dependent"));
-            DummyADBBean dummyBean = new DummyADBBean();
-            DummyADBBean nextdummyBean = dummyBean.addAnotherBean();
-            nextdummyBean.addAnotherBean();
-            propertyList.add(dummyBean);
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        DummyADBBean nextdummyBean = dummyBean.addAnotherBean();
+        nextdummyBean.addAnotherBean();
+        propertyList.add(dummyBean);
 
-            propertyList.add(new QName("http://whatever.com", "Dependent", "test"));
-            dummyBean = new DummyADBBean();
-            dummyBean.addAnotherBean();
-            propertyList.add(dummyBean);
+        propertyList.add(new QName("http://whatever.com", "Dependent", "test"));
+        dummyBean = new DummyADBBean();
+        dummyBean.addAnotherBean();
+        propertyList.add(dummyBean);
 
-            QName projectQName = new QName("Person");
-            XMLStreamReader pullParser =
-                    new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+        QName projectQName = new QName("Person");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
 
-            Document actualDom = newDocument(getStringXML(pullParser));
-            Document expectedDocument = newDocument(exptectedXML);
-            assertXMLEqual(actualDom, expectedDocument);
-        } catch (ParserConfigurationException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (SAXException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (IOException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (XMLStreamException e) {
-            fail("Exception in parsing documents " + e);
-        }
-
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
     }
 
     public static class DummyADBBean implements ADBBean {
@@ -330,7 +287,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         }
     }
 
-    public void testWithOMElements() throws XMLStreamException {
+    public void testWithOMElements() throws Exception {
 
         String expectedXML =
                 "<OMElementTest><axis2:FirstOMElement xmlns:axis2=\"http://ws.apache.org/namespaces/axis2\">" +
@@ -368,243 +325,174 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(new QName("OMElementTest"),
                                                                 propertyList.toArray(), null);
         String stringXML = getStringXML(pullParser);
-        try {
-            Document actualDom = newDocument(stringXML);
-            Document expectedDocument = newDocument(expectedXML);
-            assertXMLEqual(actualDom, expectedDocument);
-        } catch (ParserConfigurationException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (SAXException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (IOException e) {
-            fail("Exception in parsing documents " + e);
-        }
-
+        Document actualDom = newDocument(stringXML);
+        Document expectedDocument = newDocument(expectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
     }
 
     /** Test a completely null element */
-    public void testNullableAttribute() {
-        try {
+    public void testNullableAttribute() throws Exception {
+        /*
+        This is what I expect :
 
-            /*
-            This is what I expect :
+        */
+        String exptectedXML =
+                "<Person xmlns=\"\"><Name xmlns=\"\">FooOne</Name><DependentOne xmlns=\"\" " +
+                        "xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>" +
+                        "</Person>";
 
-            */
-            String exptectedXML =
-                    "<Person xmlns=\"\"><Name xmlns=\"\">FooOne</Name><DependentOne xmlns=\"\" " +
-                            "xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>" +
-                            "</Person>";
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Name");
+        propertyList.add("FooOne");
+        propertyList.add(new QName("DependentOne"));
+        propertyList.add(null);
 
-            ArrayList propertyList = new ArrayList();
-            propertyList.add("Name");
-            propertyList.add("FooOne");
-            propertyList.add(new QName("DependentOne"));
-            propertyList.add(null);
+        QName projectQName = new QName("Person");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
 
-            QName projectQName = new QName("Person");
-            XMLStreamReader pullParser =
-                    new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
-
-            Document actualDom = newDocument(getStringXML(pullParser));
-            Document expectedDocument = newDocument(exptectedXML);
-            assertXMLEqual(actualDom, expectedDocument);
-        } catch (ParserConfigurationException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (SAXException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (IOException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (XMLStreamException e) {
-            fail("Exception in parsing documents " + e);
-        }
-
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
     }
 
     /** Test a simple array */
-    public void testSimpleStringArrayScenario() {
-        try {
-            String expectedXML =
-                    "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<StringInfo><array>Some Text 0</array>" +
-                            "<array>Some Text 1</array>" +
-                            "<array>Some Text 2</array>" +
-                            "<array>Some Text 3</array></StringInfo>" +
-                            "</ns1:TestComplexStringArrayScenario>";
+    public void testSimpleStringArrayScenario() throws Exception {
+        String expectedXML =
+                "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                        "<StringInfo><array>Some Text 0</array>" +
+                        "<array>Some Text 1</array>" +
+                        "<array>Some Text 2</array>" +
+                        "<array>Some Text 3</array></StringInfo>" +
+                        "</ns1:TestComplexStringArrayScenario>";
 
-            ArrayList propertyList = new ArrayList();
+        ArrayList propertyList = new ArrayList();
 
-            String[] stringArray = new String[4];
-            for (int i = 0; i < 4; i++) {
-                stringArray[i] = "Some Text " + i;
-            }
-            propertyList.add("StringInfo");
-            propertyList.add(stringArray);
-
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testComplexStringArrayScenario.org",
-                              "TestComplexStringArrayScenario", "ns1"),
-                    propertyList.toArray(), null);
-            String actualXML = getStringXML(pullParser);
-
-
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (XMLStreamException e) {
-            fail("Error has occurred " + e);
+        String[] stringArray = new String[4];
+        for (int i = 0; i < 4; i++) {
+            stringArray[i] = "Some Text " + i;
         }
+        propertyList.add("StringInfo");
+        propertyList.add(stringArray);
+
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testComplexStringArrayScenario.org",
+                          "TestComplexStringArrayScenario", "ns1"),
+                propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
 
 
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /** Test a simple array with null's inbetween */
-    public void testSimpleStringArrayScenarioWithNulls() {
-        try {
-            String expectedXML =
-                    "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<StringInfo><array>Some Text 0</array>" +
-                            "<array xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>" +
-                            "<array>Some Text 2</array>" +
-                            "<array>Some Text 3</array></StringInfo>" +
-                            "</ns1:TestComplexStringArrayScenario>";
+    public void testSimpleStringArrayScenarioWithNulls() throws Exception {
+        String expectedXML =
+                "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                        "<StringInfo><array>Some Text 0</array>" +
+                        "<array xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>" +
+                        "<array>Some Text 2</array>" +
+                        "<array>Some Text 3</array></StringInfo>" +
+                        "</ns1:TestComplexStringArrayScenario>";
 
-            ArrayList propertyList = new ArrayList();
+        ArrayList propertyList = new ArrayList();
 
-            String[] stringArray = new String[4];
-            for (int i = 0; i < 4; i++) {
-                stringArray[i] = "Some Text " + i;
-            }
-            stringArray[1] = null;
-
-            propertyList.add("StringInfo");
-            propertyList.add(stringArray);
-
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testComplexStringArrayScenario.org",
-                              "TestComplexStringArrayScenario", "ns1"),
-                    propertyList.toArray(), null);
-            String actualXML = getStringXML(pullParser);
-
-
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (XMLStreamException e) {
-            fail("Error has occurred " + e);
+        String[] stringArray = new String[4];
+        for (int i = 0; i < 4; i++) {
+            stringArray[i] = "Some Text " + i;
         }
+        stringArray[1] = null;
+
+        propertyList.add("StringInfo");
+        propertyList.add(stringArray);
+
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testComplexStringArrayScenario.org",
+                          "TestComplexStringArrayScenario", "ns1"),
+                propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
 
 
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
 
     /** test the mixed content */
-    public void testComplexStringArrayScenarioWithMixedContent() {
-        try {
-            String expectedXML =
-                    "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<Foo>Some Text</Foo>" +
-                            "<Dependent>" +
-                            "<Name>FooTwo</Name>" +
-                            "<Age>25</Age>" +
-                            "<Sex>Male</Sex>" +
-                            "</Dependent>" +
-                            "<StringInfo><array>Some Text 0</array>" +
-                            "<array>Some Text 1</array>" +
-                            "<array>Some Text 2</array>" +
-                            "<array>Some Text 3</array></StringInfo>" +
-                            "<Bar>Some More Text</Bar>" +
-                            "</ns1:TestComplexStringArrayScenario>";
+    public void testComplexStringArrayScenarioWithMixedContent() throws Exception {
+        String expectedXML =
+                "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                        "<Foo>Some Text</Foo>" +
+                        "<Dependent>" +
+                        "<Name>FooTwo</Name>" +
+                        "<Age>25</Age>" +
+                        "<Sex>Male</Sex>" +
+                        "</Dependent>" +
+                        "<StringInfo><array>Some Text 0</array>" +
+                        "<array>Some Text 1</array>" +
+                        "<array>Some Text 2</array>" +
+                        "<array>Some Text 3</array></StringInfo>" +
+                        "<Bar>Some More Text</Bar>" +
+                        "</ns1:TestComplexStringArrayScenario>";
 
-            ArrayList propertyList = new ArrayList();
-            propertyList.add("Foo");
-            propertyList.add("Some Text");
-            propertyList.add(new QName("Dependent"));
-            DummyADBBean dummyBean = new DummyADBBean();
-            propertyList.add(dummyBean);
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
 
-            String[] stringArray = new String[4];
-            for (int i = 0; i < 4; i++) {
-                stringArray[i] = "Some Text " + i;
-            }
-            propertyList.add("StringInfo");
-            propertyList.add(stringArray);
-
-            propertyList.add("Bar");
-            propertyList.add("Some More Text");
-
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testComplexStringArrayScenario.org",
-                              "TestComplexStringArrayScenario", "ns1"),
-                    propertyList.toArray(),
-                    null);
-            String actualXML = getStringXML(pullParser);
-
-
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            fail("Error has occurred " + e);
+        String[] stringArray = new String[4];
+        for (int i = 0; i < 4; i++) {
+            stringArray[i] = "Some Text " + i;
         }
+        propertyList.add("StringInfo");
+        propertyList.add(stringArray);
+
+        propertyList.add("Bar");
+        propertyList.add("Some More Text");
+
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testComplexStringArrayScenario.org",
+                          "TestComplexStringArrayScenario", "ns1"),
+                propertyList.toArray(),
+                null);
+        String actualXML = getStringXML(pullParser);
 
 
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /** Test a simple array with one element nil */
-    public void testComplexStringArrayScenarioWithNull() {
-        try {
-            String expectedXML = "<ns1:TestComplexStringArrayScenario " +
-                    "xmlns:ns1=\"http://testComplexStringArrayScenario.org\" " +
-                    ">" +
-                    "<StringInfo><array>Some Text 0</array>" +
-                    "<array xsi:nil=\"true\" " +
-                    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></array>" +
-                    "<array>Some Text 2</array>" +
-                    "<array>Some Text 3</array></StringInfo>" +
-                    "</ns1:TestComplexStringArrayScenario>";
+    public void testComplexStringArrayScenarioWithNull() throws Exception {
+        String expectedXML = "<ns1:TestComplexStringArrayScenario " +
+                "xmlns:ns1=\"http://testComplexStringArrayScenario.org\" " +
+                ">" +
+                "<StringInfo><array>Some Text 0</array>" +
+                "<array xsi:nil=\"true\" " +
+                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></array>" +
+                "<array>Some Text 2</array>" +
+                "<array>Some Text 3</array></StringInfo>" +
+                "</ns1:TestComplexStringArrayScenario>";
 
-            ArrayList propertyList = new ArrayList();
+        ArrayList propertyList = new ArrayList();
 
-            String[] stringArray = new String[4];
-            for (int i = 0; i < 4; i++) {
-                if (i != 1) stringArray[i] = "Some Text " + i;
-            }
-            stringArray[1] = null;
-
-            propertyList.add("StringInfo");
-            propertyList.add(stringArray);
-
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testComplexStringArrayScenario.org",
-                              "TestComplexStringArrayScenario", "ns1"),
-                    propertyList.toArray(), null);
-            String actualXML = getStringXML(pullParser);
-
-
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (XMLStreamException e) {
-            fail("Error has occurred " + e);
+        String[] stringArray = new String[4];
+        for (int i = 0; i < 4; i++) {
+            if (i != 1) stringArray[i] = "Some Text " + i;
         }
+        stringArray[1] = null;
+
+        propertyList.add("StringInfo");
+        propertyList.add(stringArray);
+
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testComplexStringArrayScenario.org",
+                          "TestComplexStringArrayScenario", "ns1"),
+                propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
 
 
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /**
@@ -612,7 +500,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
      *
      * @throws XMLStreamException
      */
-    public void testAttributes() throws XMLStreamException {
+    public void testAttributes() throws Exception {
 
         String expectedXML =
                 "<emp:Employee xmlns:emp=\"http://ec.org/software\" Attr2=\"Value 2\" " +
@@ -636,48 +524,28 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         String stringXML = getStringXML(new ADBXMLStreamReaderImpl(elementQName,
                                                                    null,
                                                                    omAttribList.toArray()));
-        try {
-            Document actualDom = newDocument(stringXML);
-            Document expectedDocument = newDocument(expectedXML);
-            assertXMLEqual(actualDom, expectedDocument);
-        } catch (ParserConfigurationException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (SAXException e) {
-            fail("Exception in parsing documents " + e);
-        } catch (IOException e) {
-            fail("Exception in parsing documents " + e);
-        }
-
-
+        Document actualDom = newDocument(stringXML);
+        Document expectedDocument = newDocument(expectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
     }
 
     /** A text only element */
-    public void testElementText() {
+    public void testElementText() throws Exception {
 
         String expectedXML = "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\">" +
                 "This is some Text for the element</ns1:testElementText>";
-        try {
-            ArrayList properties = new ArrayList();
-            properties.add(ADBXMLStreamReader.ELEMENT_TEXT);
-            properties.add("This is some Text for the element");
+        
+        ArrayList properties = new ArrayList();
+        properties.add(ADBXMLStreamReader.ELEMENT_TEXT);
+        properties.add("This is some Text for the element");
 
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testElementText.org", "testElementText", "ns1"),
-                    properties.toArray(), null);
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testElementText.org", "testElementText", "ns1"),
+                properties.toArray(), null);
 
-            String actualXML = getStringXML(pullParser);
+        String actualXML = getStringXML(pullParser);
 
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Error has occurred " + e);
-        }
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
 /// todo Fails due to a bug in WSTX writer
@@ -724,43 +592,34 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
 //    }
 
     /** test for qualified attributes */
-    public void testUnQualifiedAttributes() {
+    public void testUnQualifiedAttributes() throws Exception {
 
         String expectedXML =
                 "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\" MyUnQualifiedAttribute=\"MyAttributeValue\">" +
                         "<ns2:QualifiedElement xmlns:ns2=\"http://testQElementText.org\">" +
                         "This is some Text for the element</ns2:QualifiedElement></ns1:testElementText>";
-        try {
-            ArrayList properties = new ArrayList();
-            properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
-            properties.add("This is some Text for the element");
+        
+        ArrayList properties = new ArrayList();
+        properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
+        properties.add("This is some Text for the element");
 
-            String[] attributes = new String[2];
-            attributes[0] = "MyUnQualifiedAttribute";
-            attributes[1] = "MyAttributeValue";
+        String[] attributes = new String[2];
+        attributes[0] = "MyUnQualifiedAttribute";
+        attributes[1] = "MyAttributeValue";
 
 
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testElementText.org", "testElementText", "ns1"),
-                    properties.toArray(),
-                    attributes);
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testElementText.org", "testElementText", "ns1"),
+                properties.toArray(),
+                attributes);
 
-            String actualXML = getStringXML(pullParser);
+        String actualXML = getStringXML(pullParser);
 
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            fail("Error has occurred " + e);
-        }
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /** test for base64 */
-    public void testBase64EncodedText() {
+    public void testBase64EncodedText() throws Exception {
 
         String textTobeSent = "33344MthwrrewrIOTEN)(&**^E(W)EW";
 
@@ -768,57 +627,39 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
                 "<ns2:QualifiedElement xmlns:ns2=\"http://testQElementText.org\">" +
                 Base64.encode(textTobeSent.getBytes()) +
                 "</ns2:QualifiedElement></ns1:testElementText>";
-        try {
-            ArrayList properties = new ArrayList();
-            properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
-            properties.add(new DataHandler(new ByteArrayDataSource(textTobeSent.getBytes())));
+        
+        ArrayList properties = new ArrayList();
+        properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
+        properties.add(new DataHandler(new ByteArrayDataSource(textTobeSent.getBytes())));
 
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testElementText.org", "testElementText", "ns1"),
-                    properties.toArray(),
-                    null);
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testElementText.org", "testElementText", "ns1"),
+                properties.toArray(),
+                null);
 
-            String actualXML = getStringXML(pullParser);
+        String actualXML = getStringXML(pullParser);
 
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            fail("Error has occurred " + e);
-        }
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /** test the qualified elements A qulified element has been associated with a namespace */
-    public void testQualifiedElement() {
+    public void testQualifiedElement() throws Exception {
 
         String expectedXML = "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\">" +
                 "<ns2:QualifiedElement xmlns:ns2=\"http://testQElementText.org\">" +
                 "This is some Text for the element</ns2:QualifiedElement></ns1:testElementText>";
-        try {
-            ArrayList properties = new ArrayList();
-            properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
-            properties.add("This is some Text for the element");
+        
+        ArrayList properties = new ArrayList();
+        properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
+        properties.add("This is some Text for the element");
 
-            XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-                    new QName("http://testElementText.org", "testElementText", "ns1"),
-                    properties.toArray(),
-                    null);
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                new QName("http://testElementText.org", "testElementText", "ns1"),
+                properties.toArray(),
+                null);
 
-            String actualXML = getStringXML(pullParser);
-            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
-        } catch (ParserConfigurationException e) {
-            fail("Error has occurred " + e);
-        } catch (SAXException e) {
-            fail("Error has occurred " + e);
-        } catch (IOException e) {
-            fail("Error has occurred " + e);
-        } catch (Exception e) {
-            fail("Error has occurred " + e);
-        }
+        String actualXML = getStringXML(pullParser);
+        assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
     }
 
     /**
