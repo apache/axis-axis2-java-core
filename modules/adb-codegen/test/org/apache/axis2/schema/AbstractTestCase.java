@@ -288,12 +288,12 @@ public abstract class AbstractTestCase extends TestCase {
     public static void testSerializeDeserialize(ADBBean bean, ADBBean expectedResult) throws Exception {
         testSerializeDeserializeUsingStAX(bean, expectedResult);
         testSerializeDeserializeUsingOMStAXWrapper(bean, expectedResult);
-        
         testSerializeDeserializeWrapped(bean, expectedResult);
         testSerializeDeserializeUsingMTOM(bean, expectedResult, true);
         testSerializeDeserializeUsingMTOM(bean, expectedResult, false);
         testSerializeDeserializeUsingMTOMWithoutOptimize(bean, expectedResult);
         testSerializeDeserializePrettified(bean, expectedResult);
+        testReconstructFromGetXMLStreamReader(bean, expectedResult);
         
         try {
             Class.forName("helper." + bean.getClass().getName());
@@ -312,6 +312,7 @@ public abstract class AbstractTestCase extends TestCase {
         testSerializeDeserializeUsingMTOM(helperModeBean, helperModeExpectedResult, false);
         testSerializeDeserializeUsingMTOMWithoutOptimize(helperModeBean, helperModeExpectedResult);
         testSerializeDeserializePrettified(helperModeBean, helperModeExpectedResult);
+        testReconstructFromGetXMLStreamReader(helperModeBean, helperModeExpectedResult);
     }
     
     // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
@@ -393,6 +394,11 @@ public abstract class AbstractTestCase extends TestCase {
 //        System.out.write(baos.toByteArray());
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(),
                 StAXUtils.createXMLStreamReader(new ByteArrayInputStream(baos.toByteArray()))));
+    }
+    
+    private static void testReconstructFromGetXMLStreamReader(Object bean, Object expectedResult) throws Exception {
+        OMElement omElement = ADBBeanUtil.getOMElement(bean);
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement.getXMLStreamReader()));
     }
     
     /**
