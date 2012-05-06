@@ -35,7 +35,7 @@ public class ComplexRestrictionTest extends AbstractTestCase {
 
         getExemplarResponseTypeElement.setGetExemplarResponseTypeElement(getExemplarResponseType);
 
-        testSerializeDeserialize(getExemplarResponseTypeElement, false);
+        testSerializeDeserialize(getExemplarResponseTypeElement);
     }
 
 }

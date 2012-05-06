@@ -285,22 +285,9 @@ public abstract class AbstractTestCase extends TestCase {
         testSerializeDeserialize(bean, bean);
     }
     
-    public static void testSerializeDeserialize(ADBBean bean, boolean testGetPullParser) throws Exception {
-        testSerializeDeserialize(bean, bean, testGetPullParser);
-    }
-    
     public static void testSerializeDeserialize(ADBBean bean, ADBBean expectedResult) throws Exception {
-        testSerializeDeserialize(bean, expectedResult, true);
-    }
-    
-    public static void testSerializeDeserialize(ADBBean bean, ADBBean expectedResult, boolean testGetPullParser) throws Exception {
         testSerializeDeserializeUsingStAX(bean, expectedResult);
         testSerializeDeserializeUsingOMStAXWrapper(bean, expectedResult);
-        
-        if (testGetPullParser) {
-            // TODO: this badly fails for many of the test cases => there are still issues to solve!!!
-            testSerializeDeserializeUsingPullParser(bean, expectedResult);
-        }
         
         testSerializeDeserializeWrapped(bean, expectedResult);
         testSerializeDeserializeUsingMTOM(bean, expectedResult, true);
@@ -347,12 +334,7 @@ public abstract class AbstractTestCase extends TestCase {
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement2.getXMLStreamReader()));
     }
     
-    // Deserialization approach 3: use the pull parser produced by ADB.
-    private static void testSerializeDeserializeUsingPullParser(Object bean, Object expectedResult) throws Exception {
-        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), ADBBeanUtil.getPullParser(bean)));
-    }
-    
-    // Approach 4: Serialize the bean as the child of an element that declares a default namespace.
+    // Approach 3: Serialize the bean as the child of an element that declares a default namespace.
     // If ADB behaves correctly, this should not have any impact. A failure here may be an indication
     // of an incorrect usage of XMLStreamWriter#writeStartElement(String).
     private static void testSerializeDeserializeWrapped(Object bean, Object expectedResult) throws Exception {

@@ -16,24 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.axis2.databinding.utils.reader;
 
-package org.apache.axis2.schema.booleantest;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.axis2.schema.AbstractTestCase;
-
-public class BooleanTest extends AbstractTestCase {
-
-    public void testBooleanTest1() throws Exception {
-        TestBoolean1 testBoolean = new TestBoolean1();
-        testBoolean.setTestBoolean1(true);
-        testSerializeDeserialize(testBoolean);
+public class DummyBean {
+    private List<DummyBean> dependent = new ArrayList<DummyBean>();
+    
+    public String getName() {
+        return "FooTwo";
     }
-
-    public void testBooleanTest2() throws Exception {
-        TestBoolean2 testBoolean = new TestBoolean2();
-        testBoolean.setParam1(false);
-        testBoolean.setAttribute1(true);
-        testSerializeDeserialize(testBoolean);
+    
+    public String getAge() {
+        return "25";
     }
+    
+    public String getSex() {
+        return "Male";
+    }
+    
+    public DummyBean[] getDependent() { return dependent.toArray(new DummyBean[dependent.size()]); }
 
+    public DummyBean addAnotherBean() {
+        DummyBean dummyBean = new DummyBean();
+        dependent.add(dummyBean);
+        return dummyBean;
+    }
 }

@@ -30,7 +30,7 @@ public class UnqualifiedTest extends AbstractTestCase {
         TestElement testElement = new TestElement();
         testElement.setElement1("element1");
         testElement.setElement2("element2");
-        testSerializeDeserialize(testElement, false);
+        testSerializeDeserialize(testElement);
     }
     
     /**
@@ -59,6 +59,6 @@ public class UnqualifiedTest extends AbstractTestCase {
         GetCompanyDetailsResponse response = new GetCompanyDetailsResponse();
         response.setOut(company);
         
-        testSerializeDeserialize(response, false);
+        testSerializeDeserialize(response);
     }
 }

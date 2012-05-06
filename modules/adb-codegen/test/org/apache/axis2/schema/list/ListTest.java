@@ -33,7 +33,7 @@ public class ListTest extends AbstractTestCase {
         testListStringElement.setTestListStringElement(testListString);
         testListString.setString(new String[]{"string1","string2"});
 
-        testSerializeDeserialize(testListStringElement, false);
+        testSerializeDeserialize(testListStringElement);
     }
 
     public void testListQName() throws Exception {
@@ -45,7 +45,7 @@ public class ListTest extends AbstractTestCase {
                         new QName("http://www.google","test3")});
         testListQNameElement.setTestListQNameElement(testListQName);
 
-        testSerializeDeserialize(testListQNameElement, false);
+        testSerializeDeserialize(testListQNameElement);
     }
 
     public void testListOurs() throws Exception {
@@ -61,7 +61,7 @@ public class ListTest extends AbstractTestCase {
         testString3.setTestString("test");
         testListOurs.setTestString(new TestString[]{testString1,testString2,testString3});
 
-        testSerializeDeserialize(testListOursElement, false);
+        testSerializeDeserialize(testListOursElement);
     }
 
     public void testListSuper() throws Exception {
@@ -71,7 +71,7 @@ public class ListTest extends AbstractTestCase {
         superTestListStringElement.setSuperTestListStringElement(superTestListString);
         superTestListString.setString(new String[]{"test1","test2","test3"});
 
-        testSerializeDeserialize(superTestListStringElement, false);
+        testSerializeDeserialize(superTestListStringElement);
     }
 
     public void testInnerSimpleTypes() throws Exception {
@@ -84,6 +84,6 @@ public class ListTest extends AbstractTestCase {
 
         innerListSimpleType.setInnerListSimpleType_type0(list);
 
-        testSerializeDeserialize(testInnerListSimpleType, false);
+        testSerializeDeserialize(testInnerListSimpleType);
     }
 }

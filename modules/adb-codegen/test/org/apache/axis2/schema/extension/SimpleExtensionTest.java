@@ -34,7 +34,7 @@ public class SimpleExtensionTest extends AbstractTestCase {
 
         fullName.setAttribute2(SimpleType.Factory.fromString("ATTRIBUTE", ""));
 
-        testSerializeDeserialize(fullName, false);
+        testSerializeDeserialize(fullName);
     }
 
 

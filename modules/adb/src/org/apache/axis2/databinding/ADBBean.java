@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import java.io.Serializable;
@@ -35,15 +34,6 @@ import java.io.Serializable;
  */
 
 public interface ADBBean extends Serializable {
-    /**
-     * Serializes an ADBBean. Gets the pull parser and fetches the XML pull events to represent the
-     * bean.
-     *
-     * @param adbBeanQName the name of the element to be generated for this ADBBean.
-     * @return Returns a pull parser for this ADBBean.
-     */
-    public XMLStreamReader getPullParser(QName adbBeanQName) throws XMLStreamException;
-
     public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException;
 
     public void serialize(final QName parentQName,

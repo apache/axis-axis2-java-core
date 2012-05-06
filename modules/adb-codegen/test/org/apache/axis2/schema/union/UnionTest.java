@@ -37,7 +37,7 @@ public class UnionTest extends AbstractTestCase {
         record2.setElem1(dateOrDateTimeType);
         dateOrDateTimeType.setObject(testObject);
 
-        testSerializeDeserialize(record2, false);
+        testSerializeDeserialize(record2);
     }
 
     public void testRecord1() throws Exception {
@@ -51,7 +51,7 @@ public class UnionTest extends AbstractTestCase {
         record1.setElem1(fooOpenEnum);
         fooOpenEnum.setObject(testObject);
 
-        testSerializeDeserialize(record1, false);
+        testSerializeDeserialize(record1);
     }
 
     public void testUnionQName() throws Exception {
@@ -60,7 +60,7 @@ public class UnionTest extends AbstractTestCase {
         unionQNameTestElement.setUnionQNameTestElement(unionQNameTest);
         unionQNameTest.setObject(new QName("http://www.google.com","test"));
 
-        testSerializeDeserialize(unionQNameTestElement, false);
+        testSerializeDeserialize(unionQNameTestElement);
     }
 
     public void testInnerSimpleTypes() throws Exception {
@@ -71,7 +71,7 @@ public class UnionTest extends AbstractTestCase {
         packingType_t_type0.setPackingType_T_type0("MINOR_a");
         packingType_t.setObject(packingType_t_type0);
         
-        testSerializeDeserialize(testInnerUnionType, false);
+        testSerializeDeserialize(testInnerUnionType);
 
         testInnerUnionType = new TestInnerUnionType();
         packingType_t = new PackingType_T();
@@ -80,13 +80,13 @@ public class UnionTest extends AbstractTestCase {
         packingType_t_type1.setPackingType_T_type1("PROP_a");
         packingType_t.setObject(packingType_t_type1);
 
-        testSerializeDeserialize(testInnerUnionType, false);
+        testSerializeDeserialize(testInnerUnionType);
 
         testInnerUnionType = new TestInnerUnionType();
         packingType_t = new PackingType_T();
         testInnerUnionType.setTestInnerUnionType(packingType_t);
         packingType_t.setObject(PackingType_T_type2.TAR);
 
-        testSerializeDeserialize(testInnerUnionType, false);
+        testSerializeDeserialize(testInnerUnionType);
     }
 }

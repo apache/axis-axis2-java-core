@@ -38,7 +38,7 @@ public class DecimalTest extends AbstractTestCase {
         arrayOfDecimal.addDecimal(new BigDecimal("111.38"));
         arrayOfDecimal.addDecimal(new BigDecimal("111.54"));
 
-        testSerializeDeserialize(getHistoricNavResponse, false);
+        testSerializeDeserialize(getHistoricNavResponse);
     }
 
     // TODO: explain what this test has to do with "DecimalTest"???

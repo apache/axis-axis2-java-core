@@ -469,56 +469,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 
   
-        /**
-        * databinding method to get an XML representation of this object
-        *
-        */
-        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName)
-                    throws org.apache.axis2.databinding.ADBException{
-
-
-        
-                 java.util.ArrayList elementList = new java.util.ArrayList();
-                 java.util.ArrayList attribList = new java.util.ArrayList();
-
-                 if (localExtraElementTracker){
-                            if (localExtraElement != null) {
-                                for (int i = 0;i < localExtraElement.length;i++){
-                                    if (localExtraElement[i] != null){
-                                       elementList.add(new javax.xml.namespace.QName("",
-                                                                          "extraElement"));
-                                      elementList.add(
-                                      org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localExtraElement[i]));
-                                    } else {
-                                        
-                                                // have to do nothing
-                                            
-                                    }
-
-                                }
-                            } else {
-                               throw new org.apache.axis2.databinding.ADBException("extraElement cannot be null!!");
-                            }
-                        }
-                            attribList.add(
-                            new javax.xml.namespace.QName("","id"));
-                            
-                                      attribList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localId));
-                                
-                            attribList.add(
-                            new javax.xml.namespace.QName("","href"));
-                            
-                                      attribList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localHref));
-                                
-
-                return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
-            
-            
-
-        }
-
-  
-
      /**
       *  Factory class that keeps the parse method
       */

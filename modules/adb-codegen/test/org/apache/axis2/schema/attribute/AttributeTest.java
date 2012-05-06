@@ -78,6 +78,6 @@ public class AttributeTest extends AbstractTestCase {
         testAttributeReferenceType.setTestAttribute1("attribute1");
 
         testAttributeReferenceElement.setTestAttributeReferenceElement(testAttributeReferenceType);
-        testSerializeDeserialize(testAttributeReferenceElement, false);
+        testSerializeDeserialize(testAttributeReferenceElement);
     }
 }

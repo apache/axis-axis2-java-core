@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.util.OMSerializerUtil;
-import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.ConverterUtil;
@@ -34,7 +33,6 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.util.*;
 import java.lang.reflect.Array;
 
@@ -964,21 +962,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
                 childReader = new ADBXMLStreamReaderImpl(propertyQName,
                         objects.toArray(), new ArrayList().toArray(), typeTable, qualified);
-            }
-        } else if (propertyValue instanceof ADBBean) {
-            //ADBbean has it's own method to get a reader
-            XMLStreamReader reader = ((ADBBean)propertyValue).
-                    getPullParser(propertyQName);
-            // we know for sure that this is an ADB XMLStreamreader.
-            // However we need to make sure that it is compatible
-            if (reader instanceof ADBXMLStreamReader) {
-                childReader = (ADBXMLStreamReader)reader;
-                childReader.addNamespaceContext(this.namespaceContext);
-                childReader.init();
-            } else {
-                //wrap it to make compatible
-                childReader = new WrappingXMLStreamReader(
-                        reader);
             }
         } else if (propertyValue instanceof OMElement) {
             //OMElements do not provide the kind of parser we need
