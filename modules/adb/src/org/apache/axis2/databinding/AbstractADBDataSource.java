@@ -35,16 +35,29 @@ import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.QNameAwareOMDataSource;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareOMBuilder;
 
-public abstract class AbstractADBDataSource implements OMDataSourceExt {
+public abstract class AbstractADBDataSource implements OMDataSourceExt, QNameAwareOMDataSource {
     protected QName parentQName;
     
     HashMap map = null;  // Map of properties
 
     public AbstractADBDataSource(QName parentQName) {
         this.parentQName = parentQName;
+    }
+
+    public final String getLocalName() {
+        return parentQName.getLocalPart();
+    }
+
+    public final String getNamespaceURI() {
+        return parentQName.getNamespaceURI();
+    }
+
+    public final String getPrefix() {
+        return parentQName.getPrefix();
     }
 
     /**

@@ -642,14 +642,10 @@
 
         <xsl:choose>
             <xsl:when test="@type">
-               org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName);
-               return factory.createOMElement(dataSource,parentQName);
+               return factory.createOMElement(new org.apache.axis2.databinding.ADBDataSource(this,parentQName));
             </xsl:when>
             <xsl:otherwise>
-               org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME);
-               return factory.createOMElement(dataSource,MY_QNAME);
+               return factory.createOMElement(new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME));
             </xsl:otherwise>
         </xsl:choose>
         }

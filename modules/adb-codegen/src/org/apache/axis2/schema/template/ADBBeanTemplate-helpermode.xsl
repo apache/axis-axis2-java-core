@@ -546,14 +546,10 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
         <xsl:choose>
             <xsl:when test="@type">
-               org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,this);
-               return factory.createOMElement(dataSource,parentQName);
+               return factory.createOMElement(new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,this));
             </xsl:when>
             <xsl:otherwise>
-               org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBHelperDataSource(bean,<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,this);
-               return factory.createOMElement(dataSource,<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME);
+               return factory.createOMElement(new org.apache.axis2.databinding.ADBHelperDataSource(bean,<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,this));
             </xsl:otherwise>
         </xsl:choose>
         }
