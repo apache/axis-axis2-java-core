@@ -61,6 +61,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -250,96 +251,21 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         int lastIndex = fileName.lastIndexOf(".");
         return fileName.substring(lastIndex + 1);
     }
-
+    
+    @Deprecated
     public void loadServicesFromUrl(URL repoURL) {
-        try {
-            String path = servicesPath == null ? DeploymentConstants.SERVICE_PATH : servicesPath;
-            if (!path.endsWith("/")) {
-                path += "/";
-            }
-            String repoPath = repoURL.getPath();
-            if (!repoPath.endsWith("/")) {
-                repoPath += "/";
-                repoURL = new URL(repoURL.getProtocol() + "://" + repoPath);
-            }
-            URL servicesDir = new URL(repoURL, path);
-            URL filelisturl = new URL(servicesDir, "services.list");
-            ArrayList files = getFileList(filelisturl);
-
-            for (Object file : files) {
-                String fileUrl = (String) file;
-                if (fileUrl.endsWith(".aar")) {
-                    AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                    URL servicesURL = new URL(servicesDir, fileUrl);
-                    ArrayList servicelist =
-                            populateService(serviceGroup,
-                                    servicesURL,
-                                    fileUrl.substring(0, fileUrl.indexOf(".aar")));
-                    addServiceGroup(serviceGroup, servicelist, servicesURL, null, axisConfig);
-                    // let the system have hidden services
-                    if (!JavaUtils.isTrueExplicitly(serviceGroup.getParameterValue(
-                            Constants.HIDDEN_SERVICE_PARAM_NAME))) {
-                        log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                                serviceGroup.getServiceGroupName(),
-                                servicesURL.toString()));
-                    }
-                }
-            }
-            //Loading other type of services such as custom deployers
-            loadCustomServices(repoURL);
-        } catch (MalformedURLException e) {
-            log.error(e.getMessage(), e);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
+        repoListener.checkServices();
+        if (hotDeployment) {
+            startSearch(repoListener);
         }
     }
-
+    
+    @Deprecated
     public void loadRepositoryFromURL(URL repoURL) throws DeploymentException {
         try {
-            String path = modulesPath == null ? DeploymentConstants.MODULE_PATH : modulesPath;
-            if (!path.endsWith("/")) {
-                path = path + "/";
-            }
-            String repoPath = repoURL.getPath();
-            if (!repoPath.endsWith("/")) {
-                repoPath += "/";
-                repoURL = new URL(repoURL.getProtocol() + "://" + repoPath);
-            }
-            URL moduleDir = new URL(repoURL, path);
-            URL filelisturl = new URL(moduleDir, "modules.list");
-            ArrayList files = getFileList(filelisturl);
-            Iterator fileIterator = files.iterator();
-            while (fileIterator.hasNext()) {
-                String fileUrl = (String) fileIterator.next();
-                if (fileUrl.endsWith(".mar")) {
-                    URL moduleurl = new URL(moduleDir, fileUrl);
-                    ClassLoader deploymentClassLoader =
-                            Utils.createClassLoader(
-                                    new URL[]{moduleurl},
-                                    axisConfig.getModuleClassLoader(),
-                                    true,
-                                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
-                                    axisConfig.isChildFirstClassLoading());
-                    AxisModule module = new AxisModule();
-                    module.setModuleClassLoader(deploymentClassLoader);
-                    module.setParent(axisConfig);
-                    String moduleFile = fileUrl.substring(0, fileUrl.indexOf(".mar"));
-                    module.setArchiveName(moduleFile);
-                    populateModule(module, moduleurl);
-                    module.setFileName(moduleurl);
-                    addNewModule(module, axisConfig);
-                    log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
-                            module.getArchiveName(),
-                            moduleurl.toString()));
-                }
-            }
-            org.apache.axis2.util.Utils.
-                    calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
-            axisConfig.validateSystemPredefinedPhases();
-        } catch (MalformedURLException e) {
-            throw new DeploymentException(e);
-        } catch (IOException e) {
-            throw new DeploymentException(e);
+            loadRepository(new File(repoURL.toURI()).getPath());
+        } catch (URISyntaxException e1) {
+            e1.printStackTrace();
         }
     }
 
