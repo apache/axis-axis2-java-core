@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http.impl.httpclient4;
+package org.apache.axis2.transport.http.impl.httpclient3;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -26,21 +26,19 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.NTCredentials;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.NTCredentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.AbstractHttpClient;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
 import java.util.StringTokenizer;
-
 
 public class HTTPProxyConfigurator {
 
@@ -55,16 +53,18 @@ public class HTTPProxyConfigurator {
      * <Configuration> <ProxyHost>example.org</ProxyHost>
      * <ProxyPort>3128</ProxyPort> <ProxyUser>EXAMPLE/John</ProxyUser>
      * <ProxyPassword>password</ProxyPassword> <Configuration> <parameter>
-     *
+     * 
      * @param messageContext
      *            in message context for
      * @param httpClient
-     *            instance
-     * @throws org.apache.axis2.AxisFault
+     *            commons-httpclient instance
+     * @param config
+     *            commons-httpclient HostConfiguration
+     * @throws AxisFault
      *             if Proxy settings are invalid
      */
-    public static void configure(MessageContext messageContext, AbstractHttpClient httpClient)
-            throws AxisFault {
+    public static void configure(MessageContext messageContext, HttpClient httpClient,
+            HostConfiguration config) throws AxisFault {
 
         Credentials proxyCredentials = null;
         String proxyHost = null;
@@ -77,8 +77,7 @@ public class HTTPProxyConfigurator {
         Parameter proxySettingsFromAxisConfig = messageContext.getConfigurationContext()
                 .getAxisConfiguration().getParameter(HTTPTransportConstants.ATTR_PROXY);
         if (proxySettingsFromAxisConfig != null) {
-            OMElement proxyConfiguration =
-                    getProxyConfigurationElement(proxySettingsFromAxisConfig);
+            OMElement proxyConfiguration = getProxyConfigurationElement(proxySettingsFromAxisConfig);
             proxyHost = getProxyHost(proxyConfiguration);
             proxyPort = getProxyPort(proxyConfiguration);
             proxyUser = getProxyUser(proxyConfiguration);
@@ -95,17 +94,17 @@ public class HTTPProxyConfigurator {
                     String domain = proxyUser.substring(0, proxyUserDomainIndex);
                     if (proxyUser.length() > proxyUserDomainIndex + 1) {
                         String user = proxyUser.substring(proxyUserDomainIndex + 1);
-                        proxyCredentials = new NTCredentials(user, proxyPassword, proxyHost,
-                                                             domain);
+                        proxyCredentials = new NTCredentials(user, proxyPassword, proxyHost, domain);
                     }
                 }
+
             }
+
         }
 
         // If there is runtime proxy settings, these settings will override
         // settings from axis2.xml
-        HttpTransportProperties.ProxyProperties proxyProperties =
-                (HttpTransportProperties.ProxyProperties) messageContext
+        HttpTransportProperties.ProxyProperties proxyProperties = (HttpTransportProperties.ProxyProperties) messageContext
                 .getProperty(HTTPConstants.PROXY);
         if (proxyProperties != null) {
             String proxyHostProp = proxyProperties.getProxyHostName();
@@ -141,14 +140,15 @@ public class HTTPProxyConfigurator {
         }
 
         if (proxyCredentials != null) {
-            // TODO : Set preemptive authentication, but its not recommended in HC 4
-            httpClient.getParams().setParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
-
-            httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, proxyCredentials);
-            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-
+            httpClient.getParams().setAuthenticationPreemptive(true);
+            HttpState cachedHttpState = (HttpState) messageContext
+                    .getProperty(HTTPConstants.CACHED_HTTP_STATE);
+            if (cachedHttpState != null) {
+                httpClient.setState(cachedHttpState);
+            }
+            httpClient.getState().setProxyCredentials(AuthScope.ANY, proxyCredentials);
         }
+        config.setProxy(proxyHost, proxyPort);
     }
 
     private static OMElement getProxyConfigurationElement(Parameter proxySettingsFromAxisConfig)
@@ -225,7 +225,7 @@ public class HTTPProxyConfigurator {
     /**
      * Check whether http proxy is configured or active. This is not a deep
      * check.
-     *
+     * 
      * @param messageContext
      *            in message context
      * @param targetURL
@@ -267,7 +267,7 @@ public class HTTPProxyConfigurator {
      * <p/>
      * false : validation fail : User can use the proxy true : validation pass ;
      * User can't use the proxy
-     *
+     * 
      * @return boolean
      */
     private static boolean validateNonProxyHosts(String host) {
@@ -278,7 +278,7 @@ public class HTTPProxyConfigurator {
 
     /**
      * Check if the specified host is in the list of non proxy hosts.
-     *
+     * 
      * @param host
      *            host name
      * @param nonProxyHosts
@@ -308,7 +308,7 @@ public class HTTPProxyConfigurator {
     /**
      * Matches a string against a pattern. The pattern contains two special
      * characters: '*' which means zero or more characters,
-     *
+     * 
      * @param pattern
      *            the (non-null) pattern to match against
      * @param str

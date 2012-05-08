@@ -538,11 +538,11 @@ public class HTTPSenderImpl extends HTTPSender {
         }
         // proxy configuration
 
-        if (HTTPProxcyConfigurator.isProxyEnabled(msgCtx, targetURL)) {
+        if (HTTPProxyConfigurator.isProxyEnabled(msgCtx, targetURL)) {
             if (log.isDebugEnabled()) {
                 log.debug("Configuring HTTP proxy.");
             }
-            HTTPProxcyConfigurator.configure(msgCtx, client, config);
+            HTTPProxyConfigurator.configure(msgCtx, client, config);
         }
 
         return config;
