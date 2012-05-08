@@ -41,6 +41,10 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * @deprecated  use {@link HTTPProxyConfigurator}
+ */
+@Deprecated
 public class HTTPProxcyConfigurator {
 
     private static Log log = LogFactory.getLog(HTTPProxcyConfigurator.class);
