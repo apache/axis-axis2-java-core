@@ -19,6 +19,7 @@
 
 package org.apache.axis2.util;
 
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 
@@ -29,12 +30,12 @@ public class FaultyServiceData {
 
     private String serviceGroupName;
     private AxisServiceGroup serviceGroup;
-    private ArrayList serviceList;
+    private ArrayList<AxisService> serviceList;
     private DeploymentFileData currentDeploymentFile;
     private URL serviceLocation;
 
     public FaultyServiceData(AxisServiceGroup serviceGroup,
-                             ArrayList serviceList,
+                             ArrayList<AxisService> serviceList,
                              URL serviceLocation,
                              DeploymentFileData currentDeploymentFile) {
         serviceGroupName = serviceGroup.getServiceGroupName();
@@ -53,7 +54,7 @@ public class FaultyServiceData {
         return currentDeploymentFile;
     }
 
-    public ArrayList getServiceList() {
+    public ArrayList<AxisService> getServiceList() {
         return serviceList;
     }
 

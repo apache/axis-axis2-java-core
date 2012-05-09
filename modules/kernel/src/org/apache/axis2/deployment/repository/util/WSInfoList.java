@@ -25,6 +25,7 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,6 +80,25 @@ public class WSInfoList implements DeploymentConstants {
         } else {
             info = getFileItem(file, deployer, type);
             setLastModifiedDate(file, info);
+        }
+
+        jarList.add(info.getFileName());
+    }
+    
+    public synchronized void addWSInfoItem(URL url, Deployer deployer, int type) {
+        // There is no way to set hot-update.
+        // Here file.getAbsolutePath() = info.getFileName()
+        WSInfo info = (WSInfo) currentJars.get(url.getPath());
+        if (info != null) {
+            if (deploymentEngine.isHotUpdate()) {
+                WSInfo wsInfo = new WSInfo(info.getFileName(), info.getLastModifiedDate(),
+                        deployer, type);
+                deploymentEngine.addWSToUndeploy(wsInfo); // add entry to undeploy list
+                DeploymentFileData deploymentFileData = new DeploymentFileData(url, deployer, null);
+                deploymentEngine.addWSToDeploy(deploymentFileData); // add entry to deploylist
+            }
+        } else {
+            info = getFileItem(url, deployer, type);
         }
 
         jarList.add(info.getFileName());
@@ -156,6 +176,21 @@ public class WSInfoList implements DeploymentConstants {
             info = new WSInfo(file.getAbsolutePath(), file.lastModified(), deployer ,type);
             currentJars.put(file.getAbsolutePath(), info);
             DeploymentFileData fileData = new DeploymentFileData(file, deployer);
+            deploymentEngine.addWSToDeploy(fileData);
+        }
+        return info;
+    }
+    
+    /**
+     * Gets the WSInfo object related to a file if it exists, null otherwise.
+     * 
+     */
+    private WSInfo getFileItem(URL url, Deployer deployer, int type) {
+        WSInfo info = (WSInfo) currentJars.get(url.getPath());
+        if (info == null) {
+            info = new WSInfo(url.getPath(), 0, deployer, type);
+            currentJars.put(url.getPath(), info);
+            DeploymentFileData fileData = new DeploymentFileData(url, deployer, null);
             deploymentEngine.addWSToDeploy(fileData);
         }
         return info;

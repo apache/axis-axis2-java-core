@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -311,7 +312,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             InputStream servicexml = config.getServletContext().
                     getResourceAsStream("/WEB-INF/services.xml");
             if (servicexml != null) {
-                HashMap wsdlServices = new HashMap();
+                HashMap<String, AxisService> wsdlServices = new HashMap<String, AxisService>();
                 ArchiveReader archiveReader = new ArchiveReader();
                 String path = config.getServletContext().getRealPath("/WEB-INF");
                 if (path != null) {

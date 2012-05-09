@@ -38,6 +38,15 @@ public class DeploymentFileData {
     private File file;
     private ClassLoader classLoader;
     private Deployer deployer;
+    private URL url;
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 
     public DeploymentFileData(File file) {
         this.file = file;
@@ -45,7 +54,13 @@ public class DeploymentFileData {
 
     public DeploymentFileData(File file, Deployer deployer) {
         this(file);
+        this.deployer = deployer;        
+    }
+    
+    public DeploymentFileData(URL url, Deployer deployer, ClassLoader classLoader) {        
         this.deployer = deployer;
+        this.url = url;
+        this.classLoader = classLoader;
     }
 
     public String getAbsolutePath() {
