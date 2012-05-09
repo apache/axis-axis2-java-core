@@ -1051,7 +1051,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                        javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
             java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
             if (writerPrefix != null) {
-                xmlWriter.writeStartElement(namespace, localPart);
+                xmlWriter.writeStartElement(writerPrefix, localPart, namespace);
             } else {
                 if (namespace.length() == 0) {
                     prefix = "";
@@ -1070,11 +1070,14 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
          */
         private void writeAttribute(java.lang.String prefix,java.lang.String namespace,java.lang.String attName,
                                     java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
-            if (xmlWriter.getPrefix(namespace) == null) {
+            java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
+            if (writerPrefix != null) {
+                xmlWriter.writeAttribute(writerPrefix, namespace,attName,attValue);
+            } else {
                 xmlWriter.writeNamespace(prefix, namespace);
                 xmlWriter.setPrefix(prefix, namespace);
+                xmlWriter.writeAttribute(prefix, namespace,attName,attValue);
             }
-            xmlWriter.writeAttribute(namespace,attName,attValue);
         }
 
         /**
@@ -1085,8 +1088,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             if (namespace.equals("")) {
                 xmlWriter.writeAttribute(attName,attValue);
             } else {
-                registerPrefix(xmlWriter, namespace);
-                xmlWriter.writeAttribute(namespace,attName,attValue);
+                xmlWriter.writeAttribute(registerPrefix(xmlWriter, namespace), namespace,attName,attValue);
             }
         }
 

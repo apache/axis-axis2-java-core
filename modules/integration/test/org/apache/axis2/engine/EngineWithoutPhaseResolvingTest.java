@@ -22,7 +22,7 @@ package org.apache.axis2.engine;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
+import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -104,7 +104,7 @@ public class EngineWithoutPhaseResolvingTest extends TestCase {
         AxisEngine.receive(mc);
     }
 
-    public class NullMessageReceiver extends AbstractInOutSyncMessageReceiver {
+    public class NullMessageReceiver extends AbstractInOutMessageReceiver {
 
         public void invokeBusinessLogic(MessageContext inMessage,
                                         MessageContext outMessage)

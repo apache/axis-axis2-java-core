@@ -24,7 +24,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
+import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.scripting.convertors.ConvertorFactory;
 import org.apache.axis2.scripting.convertors.OMElementConvertor;
 import org.apache.bsf.BSFEngine;
@@ -76,7 +76,7 @@ import java.util.ArrayList;
  * The script language is determined by the file name suffix when using scripts
  * in seperate files or the script parameter name suffix when using inline scripts.
  */
-public class ScriptReceiver extends AbstractInOutSyncMessageReceiver {
+public class ScriptReceiver extends AbstractInOutMessageReceiver {
 
     public static final String SCRIPT_ATTR = "script";
     public static final String FUNCTION_ATTR = "function";
@@ -161,7 +161,7 @@ public class ScriptReceiver extends AbstractInOutSyncMessageReceiver {
             }
         } else {
             // the script is defined inline within the services.xml
-            ArrayList parameters = axisService.getParameters();
+            ArrayList<Parameter> parameters = axisService.getParameters();
             for (int i=0; scriptFileParam == null && i<parameters.size(); i++) {
                 Parameter p = (Parameter) parameters.get(i);
                 if (p.getName().startsWith("script.")) {

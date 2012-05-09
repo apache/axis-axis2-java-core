@@ -74,7 +74,10 @@ public class RepositoryListener implements DeploymentConstants {
     /** Finds a list of modules in the folder and adds to wsInfoList. */
     public void checkModules() {
         File root = deploymentEngine.getModulesDir();
-        File[] files = root.listFiles();
+        File[] files = null;
+        if(root != null){
+            files = root.listFiles();
+        }
 
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
@@ -384,5 +387,9 @@ public class RepositoryListener implements DeploymentConstants {
 
     public void addFileToDeploy(File file, Deployer deployer, int type) {
         wsInfoList.addWSInfoItem(file, deployer, type);
+    }
+    
+    public void addURLToDeploy(URL url, Deployer deployer, int type) {
+        wsInfoList.addWSInfoItem(url, deployer, type);
     }
 }

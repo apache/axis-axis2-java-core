@@ -26,7 +26,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.Pingable;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
+import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,7 +34,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class PingMessageReceiver extends AbstractInOutSyncMessageReceiver implements PingConstants {
+public class PingMessageReceiver extends AbstractInOutMessageReceiver implements PingConstants {
     private static Log log = LogFactory.getLog(PingMessageReceiver.class);
 
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
@@ -44,7 +44,7 @@ public class PingMessageReceiver extends AbstractInOutSyncMessageReceiver implem
             AxisOperation axisOperation;
             PingResponse pingResponse = new PingResponse();
             pingResponse.initPingResponse(inMessage);
-            Iterator opListIterator = getAxisOperations(inMessage);
+            Iterator<AxisOperation> opListIterator = getAxisOperations(inMessage);
 
             while (opListIterator.hasNext()) {
                 axisOperation = (AxisOperation) opListIterator.next();
@@ -75,9 +75,9 @@ public class PingMessageReceiver extends AbstractInOutSyncMessageReceiver implem
      * @return Iterator for the list of AxisOperations
      * @throws AxisFault
      */
-    private Iterator getAxisOperations(MessageContext inMessage) throws AxisFault {
+    private Iterator<AxisOperation> getAxisOperations(MessageContext inMessage) throws AxisFault {
         boolean serviceLevel = false;
-        Iterator operationsIterator;
+        Iterator<AxisOperation> operationsIterator;
 
         OMElement element = null;
         OMElement pingRequestElement = inMessage.getEnvelope().
@@ -95,8 +95,8 @@ public class PingMessageReceiver extends AbstractInOutSyncMessageReceiver implem
 
         if (!serviceLevel && element != null) {
             //Operations to be pinged has been specified in the ping request
-            Iterator elementIterator = pingRequestElement.getChildrenWithName(new QName(TAG_OPERATION));
-            ArrayList operationList = new ArrayList();
+            Iterator<?> elementIterator = pingRequestElement.getChildrenWithName(new QName(TAG_OPERATION));
+            ArrayList<AxisOperation> operationList = new ArrayList<AxisOperation>();
             AxisOperation axisOperation;
 
             while (elementIterator.hasNext()) {

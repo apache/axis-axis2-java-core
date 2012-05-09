@@ -26,8 +26,10 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.MessageContextBuilder;
 
 import java.lang.reflect.Method;
 
@@ -42,7 +44,7 @@ import java.lang.reflect.Method;
  * @see RawXMLINOnlyMessageReceiver
  * @see RawXMLINOutAsyncMessageReceiver
  */
-public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
+public class RawXMLINOutMessageReceiver extends AbstractMessageReceiver
         implements MessageReceiver {
 
     private Method findOperation(AxisOperation op, Class implClass) {
@@ -107,5 +109,15 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
+    }
+    
+    public final void invokeBusinessLogic(MessageContext msgContext) throws AxisFault {
+        MessageContext outMsgContext = MessageContextBuilder.createOutMessageContext(msgContext);
+        outMsgContext.getOperationContext().addMessageContext(outMsgContext);
+
+        invokeBusinessLogic(msgContext, outMsgContext);
+        replicateState(msgContext);
+
+        AxisEngine.send(outMsgContext);
     }
 }
