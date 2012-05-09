@@ -23,6 +23,9 @@ package org.apache.axis2.engine;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -32,6 +35,7 @@ import org.apache.axis2.dispatchers.AddressingBasedDispatcher;
 import org.apache.axis2.dispatchers.RequestURIBasedDispatcher;
 import org.apache.axis2.dispatchers.SOAPActionBasedDispatcher;
 import org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
@@ -156,4 +160,12 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
         rReader.close();
         socket.close();
     }
+    
+    class InstanceDispatcher extends AbstractHandler {
+        
+        public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+            return InvocationResponse.CONTINUE;
+        }
+    }
+
 }

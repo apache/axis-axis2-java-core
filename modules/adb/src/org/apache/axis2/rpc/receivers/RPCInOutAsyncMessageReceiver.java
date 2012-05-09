@@ -31,7 +31,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
+import org.apache.axis2.receivers.AbstractInMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
+public class RPCInOutAsyncMessageReceiver extends AbstractInMessageReceiver {
 
     private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
@@ -67,7 +67,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
 
-            Class ImplClass = obj.getClass();
+            Class<?> ImplClass = obj.getClass();
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
             AxisService service = inMessage.getAxisService();
@@ -137,7 +137,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             if (cause != null) {
                 msg = cause.getMessage();
             }
-            if (msg == null) {
+            if (msg == null && method != null) {
                 msg = "Exception occurred while trying to invoke service method " +
                         method.getName();
             }
@@ -147,10 +147,20 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             }
             throw new AxisFault(msg);
         } catch (Exception e) {
-            String msg = "Exception occurred while trying to invoke service method " +
-                    method.getName();
-            log.error(msg, e);
-            throw new AxisFault(msg, e);
+            if(method != null){
+                String msg = "Exception occurred while trying to invoke service method " +
+                method.getName(); 
+                log.error(msg, e);
+                throw new AxisFault(msg, e);
+            }            
+            
         }
+    }
+    
+    @Override
+    protected void invokeBusinessLogic(MessageContext messageCtx) throws AxisFault {
+        messageCtx.setProperty(DO_ASYNC, Boolean.TRUE);
+        super.receive(messageCtx);
+        
     }
 }

@@ -27,11 +27,11 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
+import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 
 import java.lang.reflect.Method;
 
-public class AsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
+public class AsyncMessageReceiver extends AbstractInOutMessageReceiver {
 
     public void invokeBusinessLogic(MessageContext msgContext,
                                     MessageContext newmsgContext) throws AxisFault {
@@ -40,13 +40,13 @@ public class AsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
             Object obj = getTheImplementationObject(msgContext);
 
             // find the WebService method
-            Class ImplClass = obj.getClass();
+            Class<?> ImplClass = obj.getClass();
 
             AxisOperation opDesc = msgContext.getOperationContext().getAxisOperation();
             Method method = findOperation(opDesc, ImplClass);
 
             if (method != null) {
-                Class[]  parameters = method.getParameterTypes();
+                Class<?>[]  parameters = method.getParameterTypes();
                 Object[] args;
 
                 if ((parameters == null) || (parameters.length == 0)) {
@@ -84,7 +84,7 @@ public class AsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
         }
     }
 
-    public Method findOperation(AxisOperation op, Class ImplClass) {
+    public Method findOperation(AxisOperation op, Class<?> ImplClass) {
         Method method = null;
         String methodName = op.getName().getLocalPart();
         Method[] methods = ImplClass.getMethods();

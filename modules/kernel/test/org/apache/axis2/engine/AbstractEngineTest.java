@@ -22,7 +22,8 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
+import org.apache.axis2.util.MessageContextBuilder;
 
 public class AbstractEngineTest extends TestCase {
     public AbstractEngineTest() {
@@ -32,12 +33,22 @@ public class AbstractEngineTest extends TestCase {
         super(arg0);
     }
 
-    public class NullMessageReceiver extends AbstractInOutSyncMessageReceiver {
+    public class NullMessageReceiver extends AbstractMessageReceiver {
 
         public void invokeBusinessLogic(MessageContext inMessage,
                                         MessageContext outMessage)
                 throws AxisFault {
 
+        }
+
+        public final void invokeBusinessLogic(MessageContext msgContext) throws AxisFault {
+            MessageContext outMsgContext = MessageContextBuilder.createOutMessageContext(msgContext);
+            outMsgContext.getOperationContext().addMessageContext(outMsgContext);
+
+            invokeBusinessLogic(msgContext, outMsgContext);
+            replicateState(msgContext);
+
+            AxisEngine.send(outMsgContext);
         }
     }
 }
