@@ -138,7 +138,7 @@ public class WSDL20Util {
         if (httpURLParam != null) {
             httpURLParam.detach();
 
-            if (parentElement.getFirstOMChild() == null) {
+            if (parentElement.getFirstOMChild() == null && parentElement.getParent() != null) {
                 parentElement.detach();
             }
             return httpURLParam.getText();
