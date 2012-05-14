@@ -682,7 +682,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
                 String propertyName = property.getName();
                 if (!property.getName().equals("class") && (property.getPropertyType() != null)) {
-                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
+                    if (property.getReadMethod()!= null && ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName))) {
                         Type genericFieldType = property.getReadMethod().getGenericReturnType();
                         if(genericFieldType instanceof ParameterizedType){
                             ParameterizedType aType = (ParameterizedType) genericFieldType;
