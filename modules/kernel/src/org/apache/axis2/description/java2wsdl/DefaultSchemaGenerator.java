@@ -276,7 +276,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             service.setName(Utils.getAnnotatedServiceName(serviceClass, webservice));
         }
         classModel= JAXRSUtils.getClassModel(serviceClass);
-        methods = processMethods(serviceClass.getDeclaredMethods());
+        methods = processMethods(serviceClass.getMethods());
         
         for (String extraClassName : getExtraClasses()) {
             Class<?> extraClass = Class.forName(extraClassName, true, classLoader);
@@ -300,7 +300,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         XmlSchemaSequence sequence = null;
 
         for (Method jMethod : declaredMethods) {
-            if (jMethod.isBridge()) {
+            if (jMethod.isBridge() || jMethod.getDeclaringClass().getName().equals(Object.class.getName())) {
                 continue;
             }
 
