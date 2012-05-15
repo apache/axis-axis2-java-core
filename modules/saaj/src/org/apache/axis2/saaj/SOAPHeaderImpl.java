@@ -19,6 +19,8 @@
 
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.dom.ElementImpl;
@@ -332,23 +334,12 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 
             OMNamespace namespace = new NamespaceImpl(supported, prefix + index);
 
-            if (this.element.getOMFactory() instanceof SOAP11Factory) {
-                SOAP11HeaderBlockImpl supportedEnvelop =
-                        new SOAP11HeaderBlockImpl(Constants.ELEM_SUPPORTEDENVELOPE,
-                                                  namespace,
-                                                  (SOAPFactory)this.element.getOMFactory());
-                supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix + index + ":"
-                        + Constants.ELEM_ENVELOPE, null);
-                upgrade.addChild(supportedEnvelop);
-            } else {
-                SOAP12HeaderBlockImpl supportedEnvelop =
-                        new SOAP12HeaderBlockImpl(Constants.ELEM_SUPPORTEDENVELOPE,
-                                                  namespace,
-                                                  (SOAPFactory)this.element.getOMFactory());
-                supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix + index + ":"
-                        + Constants.ELEM_ENVELOPE, null);
-                upgrade.addChild(supportedEnvelop);
-            }
+            OMElement supportedEnvelop =
+                    element.getOMFactory().createOMElement(Constants.ELEM_SUPPORTEDENVELOPE,
+                            namespace);
+            supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix + index + ":"
+                    + Constants.ELEM_ENVELOPE, null);
+            upgrade.addChild(supportedEnvelop);
         }
         SOAPHeaderElementImpl soapHeaderElementImpl = new SOAPHeaderElementImpl(upgrade);
         return soapHeaderElementImpl;
