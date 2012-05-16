@@ -58,46 +58,57 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 /**
+ * <p>
  * Standard Axis2 service Deployer which use services.xml file to build
  * services. ServiceDeployer can be used with Axis2 archive (.aar) or exploded
  * directory structure. Some of the example formats given below.
+ * </p>
+ * <p>Examples : <p>
+ *        <ul>
+ *          <li>repository/services/SimpleService.aar/meta-inf/services.xml</li>
+ *          <li>repository/services/SimpleService/meta-inf/services.xml</li>
+ *          <li>WEB-INF/services/SimpleService.aar/meta-inf/services.xml</li>
+ *          <li>WEB-INF/services/SimpleService/meta-inf/services.xml</li>
+ *       </ul>
  * 
- * Examples :
- * 
- *          repository/services/SimpleService.aar/meta-inf/services.xml
- *          repository/services/SimpleService/meta-inf/services.xml
- *          WEB-INF/services/SimpleService.aar/meta-inf/services.xml
- *          WEB-INF/services/SimpleService/meta-inf/services.xml
- * 
- * Further ServiceDeployer can be used to deploy services from a remote
- * repository or within a JAR file. In this case service files accessed through URLs.
+ * <p>Further ServiceDeployer can be used to deploy services from a remote
+ * repository or load a repository from a JAR file. In this case service files access through URLs.
  * To deploy services from a remote repository or JAR file it is expected to
- * present service/services.list file which contains names of services.
+ * present service/services.list file which contains names of services.</p>
  * 
- * Examples : jar:file:/home/resources/repo.jar!/repo/services/services.list may contains following
- * list of service.
- * 
- *          StudentService.aar 
- *          SimpleService.aar
- * 
- * There are several approaches available to set repository URL to Axis2 run
+ * <p>Example :</p> <p>jar:file:/home/resources/repo.jar!/repo/services/services.list may contains following
+ * list of service.</p>
+ *          <ul>
+ *          <li>StudentService.aar</li>
+ *          <li>SimpleService.aar</li>
+ *          </ul>
+ * <p>There are several approaches available to set repository URL to Axis2 run
  * time. As an example one can provide repository URL as a init-param of
- * AxisServlet. Some of the examples given below.
- * 
- * Example -1 : 
- *                 <init-param> 
+ * AxisServlet. Some of the examples given below.</p>
+ * <ul>
+ * <li>
+ * <p>Example -1 : </p>
+ *      <pre>
+ *                  {@code        <init-param> 
  *                      <param-name>axis2.repository.url</param-name>
  *                      <param-value>http://localhost/repo/</param-value> 
- *                 </init-param>
- * 
- * Example -2 : 
- *                 <init-param> 
+ *                 </init-param> }
+ *      </pre>
+ * </li>
+ * <li>
+ * <p>Example -2 : </p>
+ *     <pre> 
+ *                  {@code         <init-param> 
  *                      <param-name>axis2.repository.url</param-name>
- *                      <param-value>jar:file:/home/resources/repo.jar!/repo/</param-value> </init-param>
+ *                      <param-value>jar:file:/home/resources/repo.jar!/repo/</param-value> 
+ *                  </init-param>  } 
+ *    </pre>
+ * </li>
+ * </ul>
  * 
- * NOTE - It is discouraged to use above services.list based deployment approach
+ * <p><b>NOTE</b> - It is discouraged to use above services.list based deployment approach
  * because it does not support hot-deployment, hot-update and some of other
- * important deployment features as well. 
+ * important deployment features as well. </p>
  * 
  */
 public class ServiceDeployer extends AbstractDeployer {

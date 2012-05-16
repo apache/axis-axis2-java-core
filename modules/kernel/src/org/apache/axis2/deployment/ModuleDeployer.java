@@ -40,45 +40,57 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
+ * <p>
  * Standard Axis2 Module Deployer which use module.xml file to deploy
  * Modules. ModuleDeployer can be used with Axis2 Module archive (.mar) or exploded
  * directory structure. Some of the example formats given below.
- * 
- * Examples :
- * 
- *          repository/modules/LogModule.mar/meta-inf/module.xml
- *          repository/modules/LogModule/meta-inf/module.xml
- *          WEB-INF/modules/LogModule.mar/meta-inf/module.xml
- *          WEB-INF/modules/LogModule/meta-inf/module.xml
- * 
- * Further ServiceDeployer can be used to deploy Modules from a remote
- * repository or within a JAR file. In this case module files accessed through URLs.
+ * </p>
+ * <p>Examples :</p>
+ *  <ul>
+ *          <li> repository/modules/LogModule.mar/meta-inf/module.xml  </li>
+ *          <li> repository/modules/LogModule/meta-inf/module.xml </li>
+ *          <li> WEB-INF/modules/LogModule.mar/meta-inf/module.xml </li>
+ *          <li> WEB-INF/modules/LogModule/meta-inf/module.xml </li>
+ *  </ul>
+ * <p>Further ModuleDeployer can be used to deploy Modules from a remote
+ * repository or load a repository from a JAR file. In this case module files access through URLs.
  * To deploy Modules from a remote repository or JAR file it is expected to
- * present modules/modules.list file which contains names of Modules.
+ * present modules/modules.list file which contains names of Modules. </p>
  * 
- * Examples : jar:file:/home/resources/repo.jar!/repo/modules/modules.list may contains following
- * list of service.
+ * <p>Example : </p><p>jar:file:/home/resources/repo.jar!/repo/modules/modules.list may contains following
+ * list of service.</p>
+ *         <ul>
+ *            <li>LogModule.mar </li>
+ *            <li>Addressing.mar</li>
+ *          </ul>
  * 
- *          LogModule.mar 
- *          Addressing.mar
- * 
- * There are several approaches available to set repository URL to Axis2 run
+  * <p>There are several approaches available to set repository URL to Axis2 run
  * time. As an example one can provide repository URL as a init-param of
- * AxisServlet. Some of the examples given below.
- * 
- * Example -1 : 
- *                 <init-param> 
+ * AxisServlet. Some of the examples given below.</p>
+ * <ul>
+ * <li>
+ * <p>Example -1 : </p>
+ *      <pre>
+ *                  {@code        <init-param> 
  *                      <param-name>axis2.repository.url</param-name>
  *                      <param-value>http://localhost/repo/</param-value> 
- *                 </init-param>
- * 
- * Example -2 : 
- *                 <init-param> 
+ *                 </init-param> }
+ *      </pre>
+ * </li>
+ * <li>
+ * <p>Example -2 : </p>
+ *     <pre> 
+ *                  {@code         <init-param> 
  *                      <param-name>axis2.repository.url</param-name>
- *                      <param-value>jar:file:/home/resources/repo.jar!/repo/</param-value> </init-param>
+ *                      <param-value>jar:file:/home/resources/repo.jar!/repo/</param-value> 
+ *                  </init-param>  } 
+ *    </pre>
+ * </li>
+ * </ul>
  * 
- * NOTE - It is discouraged to use above modules.list based deployment approach
- * because it does not support some of the important deployment features of Axis2 runtime. 
+ * <p><b>NOTE</b> - It is discouraged to use above services.list based deployment approach
+ * because it does not support hot-deployment, hot-update and some of other
+ * important deployment features as well. </p>
  * 
  */
 
