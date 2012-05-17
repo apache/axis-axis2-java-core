@@ -421,6 +421,35 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             deployer.setDirectory(directory);
             deployer.setExtension(extension);
             
+            for (Iterator<?> itr = element.getChildrenWithName(new QName(
+                    TAG_SERVICE_BUILDER_EXTENSION)); itr.hasNext();) {
+                OMElement serviceBuilderEle = (OMElement) itr.next();
+                String serviceBuilderClass = serviceBuilderEle.getAttributeValue(new QName(
+                        TAG_CLASS_NAME));
+                String serviceBuilderName = serviceBuilderEle.getAttributeValue(new QName(
+                        ATTRIBUTE_CLASS));
+                if (serviceBuilderClass != null && serviceBuilderName != null) {
+                    ServiceBuilderExtension builderExtension;
+                    try {
+                        Class<ServiceBuilderExtension> builderExtensionClass = Loader
+                                .loadClass(serviceBuilderClass);
+                        builderExtension = builderExtensionClass.newInstance();
+                        builderExtension.setDirectory(directory);
+                    } catch (UnsupportedClassVersionError ex) {
+                        log.info("Disabled - " + deployerClassName + " - " + ex.getMessage());
+                        continue;
+                    } catch (Throwable e) {
+                        log.warn("Unable to instantiate deployer " + deployerClassName
+                                + "; see debug logs for more details");
+                        log.debug(e.getMessage(), e);
+                        continue;
+                    }
+                    if (deployer instanceof AbstractDeployer) {
+                        ((AbstractDeployer) deployer).addServiceBuilderExtensions(builderExtension);
+                    }
+                }  
+            }     
+            
             Map<String, Deployer> extensionMap = deployers.get(directory);
             if (extensionMap == null) {
                 extensionMap = new HashMap<String, Deployer>();

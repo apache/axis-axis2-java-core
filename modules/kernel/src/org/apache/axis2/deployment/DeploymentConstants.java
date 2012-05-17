@@ -20,7 +20,7 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.Constants;
+
 
 /**
  * Constants used during service/module deployment.
@@ -104,6 +104,7 @@ public interface DeploymentConstants {
     String TAG_BEFORE = "before";
     String TAG_SUPPORTED_POLICY_NAMESPACES = "supported-policy-namespaces";
     String TAG_NAMESPACES = "namespaces";
+    String TAG_SERVICE_BUILDER_EXTENSION = "serviceBuilderExtension";
 
     //ClusterBuilder
     String TAG_NODE_MANAGER = "nodeManager";

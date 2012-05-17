@@ -938,6 +938,13 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         for (Map<String, Deployer> extensionMap : deployerMap.values()) {
             for (Deployer deployer : extensionMap.values()) {
                 deployer.init(configContext);
+                if (deployer instanceof AbstractDeployer) {
+                    for (Iterator<ServiceBuilderExtension> sbeItr = ((AbstractDeployer) deployer)
+                            .getServiceBuilderExtensions().iterator(); sbeItr.hasNext();) {
+                        //init ServiceBuilderExtensions
+                        sbeItr.next().init(configContext);
+                    }
+                }
             }
         }
     }
@@ -1198,6 +1205,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         if (configContext != null) {
             // Initialize the Deployer
             deployer.init(configContext);
+            for (Iterator<ServiceBuilderExtension> sbeItr = ((AbstractDeployer) deployer)
+                    .getServiceBuilderExtensions().iterator(); sbeItr.hasNext();) {
+                //init ServiceBuilderExtensions
+                sbeItr.next().init(configContext);
+            }
             if (!hotDeployment) {
                 //TBD
             }

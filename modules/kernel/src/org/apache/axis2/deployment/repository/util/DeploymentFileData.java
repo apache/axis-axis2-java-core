@@ -39,6 +39,7 @@ public class DeploymentFileData {
     private ClassLoader classLoader;
     private Deployer deployer;
     private URL url;
+    private Object serviceMetaData;
 
     public URL getUrl() {
         return url;
@@ -150,4 +151,13 @@ public class DeploymentFileData {
     public void deploy() throws DeploymentException {
         deployer.deploy(this);
     }
+
+    public Object getServiceMetaData() {
+        return serviceMetaData;
+    }
+
+    public void setServiceMetaData(Object serviceMetaData) {
+        this.serviceMetaData = serviceMetaData;
+    }    
+    
 }

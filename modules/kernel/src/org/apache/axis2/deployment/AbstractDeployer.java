@@ -15,10 +15,16 @@
  */
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
+import org.apache.axis2.description.AxisService;
 
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * AbstractDeployer class which can be extended by all Axis2 deployers
@@ -31,6 +37,11 @@ public abstract class AbstractDeployer implements Deployer{
      */
     protected Map<String, DeploymentFileData> deploymentFileDataMap
             = new ConcurrentHashMap<String, DeploymentFileData>();
+    
+    /**
+     * Keep ServiceBuilderExtension associated with this Deployer.
+     */
+    private List<ServiceBuilderExtension> serviceBuilderExtensions = new CopyOnWriteArrayList<ServiceBuilderExtension>();
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
         deploymentFileDataMap.put(deploymentFileData.getAbsolutePath(), deploymentFileData);
@@ -43,4 +54,39 @@ public abstract class AbstractDeployer implements Deployer{
     public void cleanup() throws DeploymentException {
         // Deployers which require cleaning up should override this method
     }
+
+    public List<ServiceBuilderExtension> getServiceBuilderExtensions() {
+        return serviceBuilderExtensions;
+    }
+
+    public void addServiceBuilderExtensions(ServiceBuilderExtension serviceBuilderExtension) {
+        serviceBuilderExtensions.add(serviceBuilderExtension);
+    }
+
+    /**
+     * This method executes ServiceBuilderExtensions associated with this
+     * Deployer instance and return a list AxisService instances. It is required
+     * to explicitly call this method within the deploy() method in order to use
+     * ServiceBuilderExtension.
+     * 
+     * @param deploymentFileData
+     * @param configurationContext
+     * @return
+     * @throws DeploymentException
+     */
+    protected Map<String, AxisService> executeServiceBuilderExtensions(
+            DeploymentFileData deploymentFileData, ConfigurationContext configurationContext)
+            throws DeploymentException {
+        if (getServiceBuilderExtensions().size() > 0) {
+            for (ServiceBuilderExtension ext : getServiceBuilderExtensions()) {
+                // a Service should be build by only one ServiceBuilderExtension
+                Map<String, AxisService> serviceMap = ext.buildAxisServices(deploymentFileData);
+                if (serviceMap != null && serviceMap.size() > 0) {
+                    return serviceMap;
+                }
+            }
+        }
+        return new HashMap<String, AxisService>();
+    }
+    
 }
