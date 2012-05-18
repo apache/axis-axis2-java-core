@@ -581,7 +581,7 @@ public class BlockTests extends TestCase {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         JAXBDSContext dsContext = new JAXBDSContext(jaxbContext);
         JAXBDataSource ds = new JAXBDataSource(jaxb, dsContext);
-        OMNamespace ns = omFactory.createOMNamespace(expectedQName.getNamespaceURI(), "pre");
+        OMNamespace ns = omFactory.createOMNamespace(expectedQName.getNamespaceURI(), null);
         OMElement om = omFactory.createOMElement(ds, expectedQName.getLocalPart(), ns);
         
 

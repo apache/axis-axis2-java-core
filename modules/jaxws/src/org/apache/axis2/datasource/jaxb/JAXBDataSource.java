@@ -55,10 +55,6 @@ public class JAXBDataSource extends OMDataSourceExtBase {
         super();
         this.jaxb = jaxb;
         this.context = context;
-        
-        // Currently we cannot control how the unmarshaller will emit the prefix
-        // So if the value of the prefix is needed, full expansion is necessary.
-        setProperty(OMDataSourceExt.LOSSY_PREFIX, Boolean.TRUE);
     }
 
     public void close() {

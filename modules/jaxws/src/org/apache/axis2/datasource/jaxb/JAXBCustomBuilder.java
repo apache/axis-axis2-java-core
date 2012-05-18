@@ -78,7 +78,10 @@ public class JAXBCustomBuilder implements CustomBuilder {
         }
         try {
             // Create an OMSourcedElement backed by an unmarshalled JAXB object
-            OMNamespace ns = factory.createOMNamespace(namespace, reader.getPrefix());
+            
+            // Currently we cannot control how the unmarshaller will emit the prefix
+            // So if the value of the prefix is needed, full expansion is necessary.
+            OMNamespace ns = factory.createOMNamespace(namespace, null);
             
             Object jaxb = jdsContext.unmarshal(reader);
             if (log.isDebugEnabled()) {
