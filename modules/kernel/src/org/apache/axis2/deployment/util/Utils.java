@@ -53,6 +53,7 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.FaultyServiceData;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.PolicyComponent;
@@ -1995,25 +1996,37 @@ public class Utils {
      *             if an error occurs while scanning the file
      */
     public static List<String> getListOfClasses(DeploymentFileData deploymentFileData) throws DeploymentException {
-        try {
-            FileInputStream fin = new FileInputStream(deploymentFileData.getAbsolutePath());
-            try {
-                ZipInputStream zin = new ZipInputStream(fin);
+        try {           
+            List<String> classList = null;
+            if(DeploymentFileData.isServiceArchiveFile(deploymentFileData.getAbsolutePath())){
+                FileInputStream fin = new FileInputStream(deploymentFileData.getAbsolutePath());
                 try {
-                    ZipEntry entry;
-                    List<String> classList = new ArrayList<String>();
-                    while ((entry = zin.getNextEntry()) != null) {
-                        String name = entry.getName();
-                        if (name.endsWith(".class")) {
-                            classList.add(getClassNameFromResourceName(name));
+                    ZipInputStream zin = new ZipInputStream(fin);
+                    try {
+                        ZipEntry entry;
+                        classList = new ArrayList<String>();
+                        while ((entry = zin.getNextEntry()) != null) {
+                            String name = entry.getName();
+                            if (name.endsWith(".class")) {
+                                classList.add(getClassNameFromResourceName(name));
+                            }
                         }
+                        return classList;
+                    } finally {
+                        zin.close();
                     }
-                    return classList;
                 } finally {
-                    zin.close();
+                    fin.close();
+                }                
+            } else {
+                File directory = deploymentFileData.getFile();
+                classList = new ArrayList<String>();
+                for(Iterator<File> fileItr= FileUtils.iterateFiles(directory, new String[]{"class"}, true); fileItr.hasNext();){
+                    String fileName = fileItr.next().getPath();
+                    String className = getClassNameFromResourceName(fileName.replace(directory.getPath(), "").substring(1));                   
+                    classList.add(className);                    
                 }
-            } finally {
-                fin.close();
+                return classList;             
             }
         } catch (IOException e) {
             log.debug(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_EXCEPTION, e.getMessage()), e);

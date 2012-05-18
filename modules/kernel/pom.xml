@@ -89,8 +89,7 @@
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>test</scope>
+            <artifactId>commons-io</artifactId>           
         </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>

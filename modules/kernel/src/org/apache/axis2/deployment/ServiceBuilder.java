@@ -58,7 +58,7 @@ import java.util.Map;
 public class ServiceBuilder extends DescriptionBuilder {
 	private static final Log log = LogFactory.getLog(ServiceBuilder.class);
 	private AxisService service;
-	private HashMap<String,AxisService> wsdlServiceMap = new HashMap<String,AxisService>();
+	private Map<String,AxisService> wsdlServiceMap = new HashMap<String,AxisService>();
 
 	public ServiceBuilder(ConfigurationContext configCtx, AxisService service) {
 		this.service = service;
@@ -909,7 +909,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 	}
 
-	public void setWsdlServiceMap(HashMap<String,AxisService> wsdlServiceMap) {
+	public void setWsdlServiceMap(Map<String,AxisService> wsdlServiceMap) {
 		this.wsdlServiceMap = wsdlServiceMap;
 	}
 

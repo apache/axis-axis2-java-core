@@ -61,6 +61,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -72,9 +73,16 @@ public class ArchiveReader implements DeploymentConstants {
                                        ConfigurationContext configCtx)
             throws XMLStreamException, AxisFault {
 
-        DescriptionBuilder builder = new DescriptionBuilder(zin, configCtx);
-        OMElement rootElement = builder.buildOM();
-        String elementName = rootElement.getLocalName();
+        OMElement rootElement = buildServiceDescription(zin, configCtx);
+        return buildServiceGroup(rootElement, currentFile, axisServiceGroup, wsdlServices, configCtx);
+    }
+    
+    public ArrayList<AxisService> buildServiceGroup(OMElement serviceMetaData,
+            DeploymentFileData currentFile, AxisServiceGroup axisServiceGroup,
+            Map<String, AxisService> wsdlServices, ConfigurationContext configCtx)
+            throws XMLStreamException, AxisFault {
+
+        String elementName = serviceMetaData.getLocalName();
 
         if (TAG_SERVICE.equals(elementName)) {
             AxisService axisService = null;
@@ -98,14 +106,14 @@ public class ArchiveReader implements DeploymentConstants {
 
             ServiceBuilder serviceBuilder = new ServiceBuilder(configCtx, axisService);
             serviceBuilder.setWsdlServiceMap(wsdlServices);
-            AxisService service = serviceBuilder.populateService(rootElement);
+            AxisService service = serviceBuilder.populateService(serviceMetaData);
 
             ArrayList<AxisService> serviceList = new ArrayList<AxisService>();
             serviceList.add(service);
             return serviceList;
         } else if (TAG_SERVICE_GROUP.equals(elementName)) {
-            ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, wsdlServices,
-                                                                       configCtx);
+            ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(serviceMetaData, wsdlServices,
+                    configCtx);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
         throw new AxisFault("Invalid services.xml found");
@@ -198,6 +206,37 @@ public class ArchiveReader implements DeploymentConstants {
                         Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
             }
         }
+    }
+    
+    public ArrayList<AxisService> processServiceGroup(OMElement serviceMetaData,
+            DeploymentFileData currentFile, AxisServiceGroup axisServiceGroup,
+            boolean extractService, Map<String, AxisService> wsdlServices, 
+            ConfigurationContext configCtx)
+            throws AxisFault {
+
+        Object serviceMetaDataObject;
+        try {
+            if (serviceMetaData == null) {
+                serviceMetaDataObject = currentFile.getServiceMetaData();
+                if (serviceMetaDataObject != null && serviceMetaDataObject instanceof OMElement) {
+                    serviceMetaData = (OMElement) serviceMetaDataObject;
+                }
+            }
+            if (serviceMetaData != null) {
+                if(extractService){
+                    axisServiceGroup.setServiceGroupName(
+                            DescriptionBuilder.getShortFileName(currentFile.getName()));                    
+                } else {
+                    axisServiceGroup.setServiceGroupName(currentFile.getName());                    
+                }
+                return buildServiceGroup(serviceMetaData, currentFile, axisServiceGroup,
+                        wsdlServices, configCtx);
+            }
+            throw new DeploymentException("Can not find service meta data file");
+        } catch (XMLStreamException e) {
+            throw new DeploymentException(e);
+        }
+
     }
 
     /**
@@ -558,4 +597,65 @@ public class ArchiveReader implements DeploymentConstants {
             }
         }
     }
+    
+    public OMElement buildServiceDescription(InputStream in, ConfigurationContext configCtx)
+            throws XMLStreamException {
+        DescriptionBuilder builder = new DescriptionBuilder(in, configCtx);
+        OMElement rootElement = builder.buildOM();
+        return rootElement;
+
+    }
+
+    public OMElement buildServiceDescription(String filename, ConfigurationContext configCtx,
+            boolean extractService) throws AxisFault {
+        InputStream in = null;
+        ZipInputStream zin = null;
+        try {
+            if (!extractService) {
+                in = new FileInputStream(filename);
+                zin = new ZipInputStream(in);
+                ZipEntry entry;
+                while ((entry = zin.getNextEntry()) != null) {
+                    if (entry.getName().equalsIgnoreCase(SERVICES_XML)) {
+                        return buildServiceDescription(zin, configCtx);
+                    }
+                }
+                throw new DeploymentException(Messages.getMessage(
+                        DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND, filename));
+
+            } else {
+                File file = new File(filename, SERVICES_XML);
+                if (!file.exists()) {                   
+                    file = new File(filename, SERVICES_XML.toLowerCase());
+                }
+                if (file.exists()) {
+                    in = new FileInputStream(file);
+                    return buildServiceDescription(in, configCtx);
+                } else {
+                    throw new DeploymentException(
+                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
+                }
+            }
+
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        } finally {
+            if (zin != null) {
+                try {
+                    zin.close();
+                } catch (IOException e) {
+                    log.info(Messages.getMessage("errorininputstreamclose"));
+                }
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    log.info(Messages.getMessage("errorininputstreamclose"));
+                }
+            }
+
+        }
+    }   
+
 }

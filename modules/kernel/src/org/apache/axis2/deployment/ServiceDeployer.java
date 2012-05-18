@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -142,21 +143,17 @@ public class ServiceDeployer extends AbstractDeployer {
                                               axisConfig.getServiceClassLoader(),
                     (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                     axisConfig.isChildFirstClassLoading());
-            HashMap<String,AxisService> wsdlservice = archiveReader.processWSDLs(deploymentFileData);
-            if (wsdlservice != null && wsdlservice.size() > 0) {
-                for (AxisService service : wsdlservice.values()) {
-                    Iterator<AxisOperation> operations = service.getOperations();
-                    while (operations.hasNext()) {
-                        AxisOperation axisOperation = operations.next();
-                        axisConfig.getPhasesInfo().setOperationPhases(axisOperation);
-                    }
-                }
-            }
+            OMElement serviceMetaData = archiveReader.buildServiceDescription(
+                    deploymentFileData.getAbsolutePath(), configCtx, isDirectory);
+            deploymentFileData.setServiceMetaData(serviceMetaData);
+            Map<String, AxisService> serviceMap = executeServiceBuilderExtensions(
+                  deploymentFileData, configCtx);        
+            
             AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
             serviceGroup.setServiceGroupClassLoader(deploymentFileData.getClassLoader());
             ArrayList<AxisService> serviceList = archiveReader.processServiceGroup(
-                    deploymentFileData.getAbsolutePath(), deploymentFileData,
-                    serviceGroup, isDirectory, wsdlservice,
+                    serviceMetaData, deploymentFileData,
+                    serviceGroup, isDirectory, serviceMap,
                     configCtx);
             URL location = deploymentFileData.getFile().toURL();
 

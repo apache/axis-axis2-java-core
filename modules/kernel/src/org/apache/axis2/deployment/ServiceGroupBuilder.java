@@ -32,14 +32,14 @@ import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class ServiceGroupBuilder extends DescriptionBuilder {
     private OMElement serviceElement;
-    private HashMap<String,AxisService> wsdlServices;
+    private Map<String,AxisService> wsdlServices;
 
-    public ServiceGroupBuilder(OMElement service, HashMap<String,AxisService> wsdlServices,
+    public ServiceGroupBuilder(OMElement service, Map<String,AxisService> wsdlServices,
                                ConfigurationContext configCtx) {
         this.serviceElement = service;
         this.wsdlServices = wsdlServices;
