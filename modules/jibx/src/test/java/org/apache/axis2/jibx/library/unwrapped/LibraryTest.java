@@ -18,9 +18,13 @@
  */
 package org.apache.axis2.jibx.library.unwrapped;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jibx.UtilServer;
+import org.apache.axis2.jibx.beans.Book;
 import org.apache.axis2.jibx.library.unwrapped.client.LibraryStub;
 import org.apache.axis2.jibx.library.unwrapped.service.LibraryImpl;
 import org.junit.AfterClass;
@@ -33,6 +37,7 @@ public class LibraryTest {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/library-unwrapped");
         AxisService service = UtilServer.getConfigurationContext().getAxisConfiguration().getService("library");
         service.getParameter(Constants.SERVICE_CLASS).setValue(LibraryImpl.class.getName());
+        service.setScope(Constants.SCOPE_APPLICATION);
     }
     
     @AfterClass
@@ -44,5 +49,13 @@ public class LibraryTest {
     public void test() throws Exception {
         LibraryStub stub = new LibraryStub("http://127.0.0.1:5555/axis2/services/library");
         stub.addBook("Paperback", "0618918248", new String[] { "Richard Dawkins" }, "The God Delusion");
+        Book book = stub.getBook("0618918248");
+        assertNotNull(book);
+        assertEquals("Paperback", book.getType());
+        assertEquals("0618918248", book.getIsbn());
+        assertEquals("The God Delusion", book.getTitle());
+        String[] authors = book.getAuthors();
+        assertEquals(1, authors.length);
+        assertEquals("Richard Dawkins", authors[0]);
     }
 }

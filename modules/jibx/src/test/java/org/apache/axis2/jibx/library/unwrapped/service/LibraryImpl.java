@@ -18,18 +18,22 @@
  */
 package org.apache.axis2.jibx.library.unwrapped.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.axis2.jibx.beans.Book;
 import org.apache.axis2.jibx.beans.Type;
 
 public class LibraryImpl implements LibrarySkeletonInterface {
+    private final Map<String,Book> books = new HashMap<String,Book>();
+    
     public Type[] getTypes() {
         // TODO Auto-generated method stub
         return null;
     }
 
     public Book getBook(String isbn) {
-        // TODO Auto-generated method stub
-        return null;
+        return books.get(isbn);
     }
 
     public void addBookInstance(Book book) {
@@ -42,8 +46,8 @@ public class LibraryImpl implements LibrarySkeletonInterface {
         return null;
     }
 
-    public boolean addBook(String type, String isbn, String[] author, String title) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean addBook(String type, String isbn, String[] authors, String title) {
+        books.put(isbn, new Book(type, isbn, title, authors));
+        return true;
     }
 }
