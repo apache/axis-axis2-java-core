@@ -854,7 +854,7 @@
             org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
             return ctx.unmarshalElement(type);
         } catch (Exception e) {
-             throw new org.apache.axis2.AxisFault(e.getMessage());
+             throw org.apache.axis2.AxisFault.makeFault(e);
         }
     }
   </xsl:template>
