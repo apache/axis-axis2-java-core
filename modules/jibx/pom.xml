@@ -114,6 +114,29 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>wsdl2java</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks unless="maven.test.skip">
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-uri test-resources/wsdl/library.wsdl -o ${project.build.directory}/gen -d jibx -uw -Ebindingfile test-resources/binding/library-binding.xml -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.unwrapped" />
+                                </java>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-uri test-resources/wsdl/library.wsdl -o ${project.build.directory}/gen -d jibx -Ebindingfile test-resources/binding/library-binding.xml -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.wrapped" />
+                                </java>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-uri test-resources/wsdl/customer-echo.wsdl -o ${project.build.directory}/gen -d jibx -Ebindingfile test-resources/binding/customer-binding.xml -ns2p http://ws.apache.org/axis2/jibx/customer/wsdl=org.apache.axis2.jibx.customer" />
+                                </java>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>compile</id>
                         <phase>test-compile</phase>
                         <configuration>
@@ -131,18 +154,22 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
                     <execution>
-                        <id>gen-cp</id>
                         <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-                                <property name="cp" refid="maven.runtime.classpath" />
-                                <echo message="${cp}" file="target/cp.txt" />
-                            </tasks>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>add-test-source</goal>
                         </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/gen/src</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
