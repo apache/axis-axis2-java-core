@@ -74,25 +74,6 @@
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/jibx</url>
     </scm>
     <build>
-        <resources>
-            <resource>
-                <directory>src</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-        </resources>
-        <sourceDirectory>src</sourceDirectory>
-        <testSourceDirectory>test</testSourceDirectory>
-        <testResources>
-            <testResource>
-                <targetPath>../test-resources</targetPath>
-                <directory>test-resources</directory>
-                <includes>
-                    <include>**/**</include>
-                </includes>
-            </testResource>
-        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-remote-resources-plugin</artifactId>
@@ -123,23 +104,23 @@
                             <tasks unless="maven.test.skip">
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-uri test-resources/wsdl/library.wsdl -o ${project.build.directory}/gen/library-unwrapped -d jibx -uw -Ebindingfile test-resources/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.unwrapped.client" />
+                                    <arg line="-uri src/test/wsdl/library.wsdl -o ${project.build.directory}/gen/library-unwrapped -d jibx -uw -Ebindingfile src/test/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.unwrapped.client" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-uri test-resources/wsdl/library.wsdl -o ${project.build.directory}/gen/library-unwrapped -d jibx -ss -ssi -sd -uw -Ebindingfile test-resources/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.unwrapped.service" />
+                                    <arg line="-uri src/test/wsdl/library.wsdl -o ${project.build.directory}/gen/library-unwrapped -d jibx -ss -ssi -sd -uw -Ebindingfile src/test/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.unwrapped.service" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-uri test-resources/wsdl/library.wsdl -o ${project.build.directory}/gen/library-wrapped -d jibx -Ebindingfile test-resources/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.wrapped.client" />
+                                    <arg line="-uri src/test/wsdl/library.wsdl -o ${project.build.directory}/gen/library-wrapped -d jibx -Ebindingfile src/test/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.wrapped.client" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-uri test-resources/wsdl/library.wsdl -o ${project.build.directory}/gen/library-wrapped -d jibx -ss -ssi -sd -Ebindingfile test-resources/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.wrapped.service" />
+                                    <arg line="-uri src/test/wsdl/library.wsdl -o ${project.build.directory}/gen/library-wrapped -d jibx -ss -ssi -sd -Ebindingfile src/test/binding/library-binding.xml --noBuildXML -ns2p http://ws.sosnoski.com/library/wsdl=org.apache.axis2.jibx.library.wrapped.service" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-uri test-resources/wsdl/customer-echo.wsdl -o ${project.build.directory}/gen/customer-echo -d jibx -Ebindingfile test-resources/binding/customer-binding.xml --noBuildXML -ns2p http://ws.apache.org/axis2/jibx/customer/wsdl=org.apache.axis2.jibx.customer" />
+                                    <arg line="-uri src/test/wsdl/customer-echo.wsdl -o ${project.build.directory}/gen/customer-echo -d jibx -Ebindingfile src/test/binding/customer-binding.xml --noBuildXML -ns2p http://ws.apache.org/axis2/jibx/customer/wsdl=org.apache.axis2.jibx.customer" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -153,8 +134,8 @@
                                     <classpath refid="maven.runtime.classpath" />
                                     <classpath location="target/test-classes" />
                                     <arg value="-v" />
-                                    <arg value="test-resources/binding/customer-binding.xml" />
-                                    <arg value="test-resources/binding/library-binding.xml" />
+                                    <arg value="src/test/binding/customer-binding.xml" />
+                                    <arg value="src/test/binding/library-binding.xml" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -196,7 +177,7 @@
                             <outputDirectory>${project.build.directory}/repo/library-unwrapped</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>test-resources/repo</directory>
+                                    <directory>src/test/repo</directory>
                                 </resource>
                                 <resource>
                                     <directory>${project.build.directory}/gen/library-unwrapped/resources</directory>
@@ -215,7 +196,7 @@
                             <outputDirectory>${project.build.directory}/repo/library-wrapped</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>test-resources/repo</directory>
+                                    <directory>src/test/repo</directory>
                                 </resource>
                                 <resource>
                                     <directory>${project.build.directory}/gen/library-wrapped/resources</directory>

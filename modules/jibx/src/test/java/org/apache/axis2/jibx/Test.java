@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
  */
 public class Test extends TestCase {
     private static final String REPOSITORY_DIR =
-            System.getProperty("basedir", ".") + "/test-resources/repo/";
+            System.getProperty("basedir", ".") + "/src/test/repo/";
 
     public static final QName serviceName = new QName("EchoCustomerService");
     public static final QName operationName = new QName("echo");
