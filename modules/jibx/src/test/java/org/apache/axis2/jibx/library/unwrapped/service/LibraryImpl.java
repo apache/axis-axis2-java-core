@@ -18,7 +18,9 @@
  */
 package org.apache.axis2.jibx.library.unwrapped.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.axis2.jibx.beans.Book;
@@ -42,8 +44,13 @@ public class LibraryImpl implements LibrarySkeletonInterface {
     }
 
     public Book[] getBooksByType(String type) {
-        // TODO Auto-generated method stub
-        return null;
+        List<Book> result = new ArrayList<Book>();
+        for (Book book : books.values()) {
+            if (book.getType().equals(type)) {
+                result.add(book);
+            }
+        }
+        return result.toArray(new Book[result.size()]);
     }
 
     public boolean addBook(String type, String isbn, String[] authors, String title) {

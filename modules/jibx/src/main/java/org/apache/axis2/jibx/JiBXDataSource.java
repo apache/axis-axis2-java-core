@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jibx;
 
-import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.QNameAwareOMDataSource;
 import org.apache.axiom.om.util.StAXUtils;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallable;
@@ -40,7 +40,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 /** Data source for OM element backed by JiBX data bound object. */
-public class JiBXDataSource implements OMDataSource {
+public class JiBXDataSource implements QNameAwareOMDataSource {
     
     /** Mapping name, for when abstract mapping is used directly; <code>null</code> if not used). */
     private final String marshallerName;
@@ -143,6 +143,18 @@ public class JiBXDataSource implements OMDataSource {
         elementNamespaceIndex = nsidx;
         openNamespaceIndexes = nsindexes;
         openNamespacePrefixes = nsprefixes;
+    }
+
+    public String getLocalName() {
+        return elementName;
+    }
+
+    public String getNamespaceURI() {
+        return elementNamespace;
+    }
+
+    public String getPrefix() {
+        return elementNamespacePrefix;
     }
 
     /**

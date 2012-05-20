@@ -20,6 +20,7 @@ package org.apache.axis2.jibx.library.wrapped;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jibx.UtilServer;
 import org.apache.axis2.jibx.beans.Book;
 import org.apache.axis2.jibx.library.wrapped.client.LibraryStub;
@@ -33,8 +34,11 @@ public class LibraryTest {
     @BeforeClass
     public static void startServer() throws Exception {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/library-wrapped");
-        AxisService service = UtilServer.getConfigurationContext().getAxisConfiguration().getService("library");
+        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
+        AxisService service = axisConfiguration.getService("library");
         service.getParameter(Constants.SERVICE_CLASS).setValue(LibraryImpl.class.getName());
+        service.setScope(Constants.SCOPE_APPLICATION);
+        service.engageModule(axisConfiguration.getModule("checker"));
     }
     
     @AfterClass
@@ -44,7 +48,9 @@ public class LibraryTest {
     
     @Test
     public void test() throws Exception {
-        LibraryStub stub = new LibraryStub("http://127.0.0.1:5555/axis2/services/library");
+        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:5555/axis2/services/library");
+        stub._getServiceClient().engageModule("checker");
+        
         stub.addBook(new AddBookRequest(new Book("Paperback", "0618918248", "The God Delusion", new String[] { "Richard Dawkins" })));
     }
 }

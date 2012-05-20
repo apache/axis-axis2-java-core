@@ -202,8 +202,7 @@
               </xsl:when>
               <xsl:otherwise>
                           org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_name<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
-                          org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
-                          org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
+                          org.apache.axiom.om.OMElement child = factory.createOMElement(src);
                           wrapper.addChild(child);
               </xsl:otherwise>
             </xsl:choose>
@@ -274,8 +273,7 @@
               </xsl:when>
               <xsl:otherwise>
                   org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_name<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
-                  org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
-                  org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
+                  org.apache.axiom.om.OMElement child = factory.createOMElement(src);
                   wrapper.addChild(child);
               </xsl:otherwise>
             </xsl:choose>
