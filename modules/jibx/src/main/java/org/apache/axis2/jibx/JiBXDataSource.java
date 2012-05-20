@@ -19,9 +19,8 @@
 
 package org.apache.axis2.jibx;
 
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.QNameAwareOMDataSource;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.ds.AbstractPushOMDataSource;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallable;
 import org.jibx.runtime.IMarshaller;
@@ -31,16 +30,11 @@ import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.impl.StAXWriter;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
 
 /** Data source for OM element backed by JiBX data bound object. */
-public class JiBXDataSource implements QNameAwareOMDataSource {
+public class JiBXDataSource extends AbstractPushOMDataSource implements QNameAwareOMDataSource {
     
     /** Mapping name, for when abstract mapping is used directly; <code>null</code> if not used). */
     private final String marshallerName;
@@ -157,6 +151,10 @@ public class JiBXDataSource implements QNameAwareOMDataSource {
         return elementNamespacePrefix;
     }
 
+    public boolean isDestructiveWrite() {
+        return false;
+    }
+
     /**
      * Internal method to handle the actual marshalling. If the source object is marshallable it's
      * it's just marshalled directly, without worrying about redundant namespace declarations and
@@ -214,38 +212,6 @@ public class JiBXDataSource implements QNameAwareOMDataSource {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axiom.om.OMDataSource#serialize(java.io.OutputStream, org.apache.axiom.om.OMOutputFormat)
-     */
-    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        try {
-            
-            // marshal with all namespace declarations, since external state unknown
-            IMarshallingContext ctx = bindingFactory.createMarshallingContext();
-            ctx.setOutput(output, format == null ? null : format.getCharSetEncoding());
-            marshal(true, ctx);
-            
-        } catch (JiBXException e) {
-            throw new XMLStreamException("Error in JiBX marshalling: " + e.getMessage(), e);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axiom.om.OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
-     */
-    public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
-        try {
-            
-            // marshal with all namespace declarations, since external state unknown
-            IMarshallingContext ctx = bindingFactory.createMarshallingContext();
-            ctx.setOutput(writer);
-            marshal(true, ctx);
-            
-        } catch (JiBXException e) {
-            throw new XMLStreamException("Error in JiBX marshalling: " + e.getMessage(), e);
-        }
-    }
-
-    /* (non-Javadoc)
      * @see org.apache.axiom.om.OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
      */
     public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
@@ -278,14 +244,5 @@ public class JiBXDataSource implements QNameAwareOMDataSource {
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling: " + e.getMessage(), e);
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axiom.om.OMDataSource#getReader()
-     */
-    public XMLStreamReader getReader() throws XMLStreamException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        serialize(bos, null);
-        return StAXUtils.createXMLStreamReader(new ByteArrayInputStream(bos.toByteArray()));
     }
 }
