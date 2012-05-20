@@ -62,7 +62,7 @@ public class Test extends TestCase {
         Person person = new Person(42, "John", "Smith");
         Customer customer = new Customer("Redmond", person, "+14258858080",
                                          "WA", "14619 NE 80th Pl.", new Integer(98052));
-        EchoCustomerServiceStub stub = new EchoCustomerServiceStub(
+        EchoCustomerServiceStub stub = new EchoCustomerServiceStub(UtilServer.getConfigurationContext(),
                 "http://127.0.0.1:5555/axis2/services/EchoCustomerService/echo");
         Customer result = stub.echo(customer);
         stopServer();

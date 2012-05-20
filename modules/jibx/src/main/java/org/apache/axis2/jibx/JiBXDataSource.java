@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jibx;
 
+import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.QNameAwareOMDataSource;
 import org.apache.axiom.om.ds.AbstractPushOMDataSource;
 import org.jibx.runtime.IBindingFactory;
@@ -244,5 +245,16 @@ public class JiBXDataSource extends AbstractPushOMDataSource implements QNameAwa
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Object getObject() {
+        return dataObject;
+    }
+
+    @Override
+    public OMDataSourceExt copy() {
+        // The data source is non destructive, immutable and stateless. No need to create a new instance.
+        return this;
     }
 }

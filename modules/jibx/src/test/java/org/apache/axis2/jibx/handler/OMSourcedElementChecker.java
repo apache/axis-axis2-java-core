@@ -20,6 +20,7 @@ package org.apache.axis2.jibx.handler;
 
 import java.util.Iterator;
 
+import org.apache.axiom.om.OMCloneOptions;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axis2.AxisFault;
@@ -47,12 +48,22 @@ public class OMSourcedElementChecker extends AbstractHandler {
         return InvocationResponse.CONTINUE;
     }
     
-    private void checkOMSourcedElement(OMSourcedElement element) {
+    private void checkOMSourcedElement(OMSourcedElement element) throws AxisFault {
+        // We use a clone in order to leave the original state of the OMSourcedElements untouched.
+        // This is possible because JiBXDataSource is non destructive and implements the copy()
+        // method.
+        OMCloneOptions options = new OMCloneOptions();
+        options.setCopyOMDataSources(true);
+        boolean oldExpanded = element.isExpanded();
+        OMSourcedElement clone = (OMSourcedElement)element.cloneOMElement(options);
+        if (element.isExpanded() != oldExpanded) {
+            throw new AxisFault("Ooops! Accidentally expanded the original OMSourcedElement; this is unexpected...");
+        }
         // Force OMSourcedElement to get the element name via QNameAwareOMDataSource
-        log.info("Found OMSourcedElement: name=" + element.getLocalName()
-                + "; namespace=" + element.getNamespaceURI()
-                + "; prefix=" + element.getPrefix());
+        log.info("Found OMSourcedElement: name=" + clone.getLocalName()
+                + "; namespace=" + clone.getNamespaceURI()
+                + "; prefix=" + clone.getPrefix());
         // Now force expansion to let OMSourcedElement validate that the name is correct
-        element.getFirstOMChild();
+        clone.getFirstOMChild();
     }
 }
