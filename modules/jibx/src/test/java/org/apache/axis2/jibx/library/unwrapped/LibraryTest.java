@@ -48,7 +48,7 @@ public class LibraryTest {
     }
     
     @Test
-    public void test() throws Exception {
+    public void test1() throws Exception {
         LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:5555/axis2/services/library");
         
         stub.addBook("Paperback", "0618918248", new String[] { "Richard Dawkins" }, "The God Delusion");
@@ -65,5 +65,20 @@ public class LibraryTest {
         Book[] books = stub.getBooksByType("Paperback");
         assertEquals(1, books.length);
         assertEquals("0618918248", books[0].getIsbn());
+    }
+    
+    @Test
+    public void test2() throws Exception {
+        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:5555/axis2/services/library");
+        
+        stub.addBookInstance(new Book("Hardcover", "8854401765", "The Voyage of the Beagle", new String[] { "Charles Darwin" }));
+        Book book = stub.getBook("8854401765");
+        assertNotNull(book);
+        assertEquals("Hardcover", book.getType());
+        assertEquals("8854401765", book.getIsbn());
+        assertEquals("The Voyage of the Beagle", book.getTitle());
+        String[] authors = book.getAuthors();
+        assertEquals(1, authors.length);
+        assertEquals("Charles Darwin", authors[0]);
     }
 }

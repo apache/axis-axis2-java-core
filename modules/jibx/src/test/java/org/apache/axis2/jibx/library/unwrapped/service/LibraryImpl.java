@@ -39,8 +39,7 @@ public class LibraryImpl implements LibrarySkeletonInterface {
     }
 
     public void addBookInstance(Book book) {
-        // TODO Auto-generated method stub
-        
+        books.put(book.getIsbn(), book);
     }
 
     public Book[] getBooksByType(String type) {

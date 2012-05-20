@@ -642,8 +642,7 @@
             throw new RuntimeException(bindingErrorMessage);
         }
         org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_name<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
-        org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='@ns'/>", "");
-        child = factory.createOMElement(src, "<xsl:value-of select='@name'/>", appns);
+        child = factory.createOMElement(src);
       </xsl:when>
     </xsl:choose>
         wrapper.addChild(child);
@@ -841,9 +840,7 @@
     private org.apache.axiom.om.OMElement mappedChild(Object value, org.apache.axiom.om.OMFactory factory) {
         org.jibx.runtime.IMarshallable mrshable = (org.jibx.runtime.IMarshallable)value;
         org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(mrshable, bindingFactory);
-        int index = bindingFactory.getClassIndexMap().get(mrshable.JiBX_getName());
-        org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], "");
-        return factory.createOMElement(src, bindingFactory.getElementNames()[index], appns);
+        return factory.createOMElement(src);
     }
     
     <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->

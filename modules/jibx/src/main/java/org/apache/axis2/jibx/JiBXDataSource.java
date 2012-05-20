@@ -49,7 +49,7 @@ public class JiBXDataSource extends AbstractPushOMDataSource implements QNameAwa
     /** Element namespace prefix (only used with {@link #marshallerName}). */
     private final String elementNamespacePrefix;
     
-    /** Element namespace index (only used with {@link #marshallerName}). */
+    /** Element namespace index. */
     private final int elementNamespaceIndex;
 
     /** Indexes of namespaces to be opened (only used with {@link #marshallerName}). */
@@ -75,7 +75,7 @@ public class JiBXDataSource extends AbstractPushOMDataSource implements QNameAwa
         dataObject = obj;
         bindingFactory = factory;
         elementName = elementNamespace = elementNamespacePrefix = null;
-        elementNamespaceIndex = -1;
+        elementNamespaceIndex = bindingFactory.getClassIndexMap().get(obj.JiBX_getName());;
         openNamespaceIndexes = null;
         openNamespacePrefixes = null;
     }
@@ -141,15 +141,27 @@ public class JiBXDataSource extends AbstractPushOMDataSource implements QNameAwa
     }
 
     public String getLocalName() {
-        return elementName;
+        return marshallerName == null ? bindingFactory.getElementNames()[elementNamespaceIndex] : elementName;
     }
 
     public String getNamespaceURI() {
-        return elementNamespace;
+        return marshallerName == null ? bindingFactory.getElementNamespaces()[elementNamespaceIndex] : elementNamespace;
     }
 
     public String getPrefix() {
-        return elementNamespacePrefix;
+        if (marshallerName == null) {
+            String[] namespaces = bindingFactory.getNamespaces();
+            String uri = bindingFactory.getElementNamespaces()[elementNamespaceIndex];
+            for (int i=0; i<namespaces.length; i++) {
+                if (namespaces[i].equals(uri)) {
+                    String prefix = bindingFactory.getPrefixes()[i];
+                    return prefix == null ? "" : prefix;
+                }
+            }
+            return null;
+        } else {
+            return elementNamespacePrefix;
+        }
     }
 
     public boolean isDestructiveWrite() {

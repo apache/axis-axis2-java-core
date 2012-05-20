@@ -63,6 +63,10 @@ public class OMSourcedElementChecker extends AbstractHandler {
         log.info("Found OMSourcedElement: name=" + clone.getLocalName()
                 + "; namespace=" + clone.getNamespaceURI()
                 + "; prefix=" + clone.getPrefix());
+        // The OMSourcedElement should still be unexpanded
+        if (clone.isExpanded()) {
+            throw new AxisFault("OMSourcedElement unexpectedly expanded!");
+        }
         // Now force expansion to let OMSourcedElement validate that the name is correct
         clone.getFirstOMChild();
     }

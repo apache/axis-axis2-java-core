@@ -18,7 +18,9 @@
   -->
 
 <binding>
-  <namespace uri="http://ws.apache.org/axis2/jibx/customer/data" default="elements"/>
+  <!-- We use a prefix here to test that there are no mismatches between the prefix declared on the
+       OMSourcedElement at creation time and the actual prefix of the element -->
+  <namespace uri="http://ws.apache.org/axis2/jibx/customer/data" default="elements" prefix="p"/>
   <mapping name="customer" class="org.apache.axis2.jibx.Customer">
     <structure name="person" field="person">
       <value name="cust-num" field="customerNumber"/>
