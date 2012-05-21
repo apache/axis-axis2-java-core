@@ -58,6 +58,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerPNames;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -318,21 +320,21 @@ public class HTTPSenderImpl extends HTTPSender {
         int statusCode = response.getStatusLine().getStatusCode();
         HTTPStatusCodeFamily family = getHTTPStatusCodeFamily(statusCode);
         log.trace("Handling response - " + statusCode);
-        if (HTTPStatusCodeFamily.SUCCESSFUL.equals(family)) {
+        if (statusCode == HttpStatus.SC_ACCEPTED) {
+            /*
+            * When an HTTP 202 Accepted code has been received, this will be
+            * the case of an execution of an in-only operation. In such a
+            * scenario, the HTTP response headers should be returned, i.e.
+            * session cookies.
+            */
+            obtainHTTPHeaderInformation(response, msgContext);
+
+        } else if (HTTPStatusCodeFamily.SUCCESSFUL.equals(family)) {
             // Save the HttpMethod so that we can release the connection when
             // cleaning up
             // TODO : Do we need to save the http method
 //            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-
             processResponse(response, msgContext);
-        } else if (statusCode == HttpStatus.SC_ACCEPTED) {
-            /*
-             * When an HTTP 202 Accepted code has been received, this will be
-             * the case of an execution of an in-only operation. In such a
-             * scenario, the HTTP response headers should be returned, i.e.
-             * session cookies.
-             */
-            obtainHTTPHeaderInformation(response.getEntity(), msgContext);
 
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
                    || statusCode == HttpStatus.SC_BAD_REQUEST) {
@@ -813,7 +815,11 @@ public class HTTPSenderImpl extends HTTPSender {
                         schemeRegistry.register(
                                 new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 
-                        connManager = new ThreadSafeClientConnManager(new BasicHttpParams(),
+                        HttpParams params = new BasicHttpParams();
+                        params.setParameter(ConnManagerPNames.MAX_TOTAL_CONNECTIONS, 30);
+                        params.setParameter(ConnManagerPNames.MAX_CONNECTIONS_PER_ROUTE,
+                                            new ConnPerRouteBean(30));
+                        connManager = new ThreadSafeClientConnManager(params,
                                                                       schemeRegistry);
                         configContext.setProperty(
                                 HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, connManager);
@@ -824,7 +830,9 @@ public class HTTPSenderImpl extends HTTPSender {
              * Create a new instance of HttpClient since the way it is used here
              * it's not fully thread-safe.
              */
-            httpClient = new DefaultHttpClient(connManager, null);
+            HttpParams clientParams = new BasicHttpParams();
+            clientParams.setParameter(CoreProtocolPNames.HTTP_ELEMENT_CHARSET, "UTF-8");
+            httpClient = new DefaultHttpClient(connManager, clientParams);
 
             //We don't need to set timeout for connection manager, since we are doing it below
             // and its enough
