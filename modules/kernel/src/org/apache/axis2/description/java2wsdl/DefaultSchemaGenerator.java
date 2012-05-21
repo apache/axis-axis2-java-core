@@ -30,12 +30,30 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.jaxrs.JAXRSModel;
 import org.apache.axis2.jaxrs.JAXRSUtils;
-import org.apache.axis2.jsr181.*;
+import org.apache.axis2.jsr181.JSR181Helper;
+import org.apache.axis2.jsr181.WebMethodAnnotation;
+import org.apache.axis2.jsr181.WebParamAnnotation;
+import org.apache.axis2.jsr181.WebResultAnnotation;
+import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaAny;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaComplexContent;
+import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
+import org.apache.ws.commons.schema.XmlSchemaForm;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaObject;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
+import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.w3c.dom.Document;
@@ -46,10 +64,27 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
 
@@ -94,9 +129,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected String elementFormDefault = null;
 
-    protected ArrayList<String> excludeMethods = new ArrayList<String>();
+    protected List<String> excludeMethods = new ArrayList<String>();
 
-    protected ArrayList<String> extraClasses = null;
+    protected List<String> extraClasses = null;
 
     protected boolean useWSDLTypesNamespace = false;
 
@@ -295,7 +330,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
 
         // since we do not support overload
-        HashMap<String,Method> uniqueMethods = new LinkedHashMap<String,Method>();
+        Map<String,Method> uniqueMethods = new LinkedHashMap<String,Method>();
         XmlSchemaComplexType methodSchemaType;
         XmlSchemaSequence sequence = null;
 
@@ -1607,7 +1642,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    public ArrayList<String> getExtraClasses() {
+    public List<String> getExtraClasses() {
         if (extraClasses == null) {
             extraClasses = new ArrayList<String>();
         }
