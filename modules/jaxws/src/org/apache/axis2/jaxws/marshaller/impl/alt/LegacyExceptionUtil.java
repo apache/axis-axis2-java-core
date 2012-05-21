@@ -31,7 +31,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.WebServiceException;
+
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -70,11 +73,17 @@ class LegacyExceptionUtil {
     private static Set<String> ignore = new HashSet<String>();
 
     static {
-        // Per Chap 3.7 rule 3, ignore these properties on the exception
-        ignore.add("localizedMessage");
-        ignore.add("stackTrace");
-        ignore.add("class");
-        ignore.add("cause");
+        // Per Chap 3.7 rule 3, ignore these properties from java.lang.Throwable hierarchy except the message property
+        try {
+            for (PropertyDescriptor pd : Introspector.getBeanInfo(Throwable.class).getPropertyDescriptors()) {
+                if (pd.getName().equals("message")) {
+                    continue;
+                }
+                ignore.add(pd.getName());
+            }
+        } catch (IntrospectionException e) {
+            log.error(Messages.getMessage("faultProcessingExcludedExceptionProperties", e.getMessage()), e);
+        }
     }
 
     /** Static class.  Constructor is intentionally private */
