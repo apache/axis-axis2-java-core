@@ -1,3 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.apache.axis2.jaxws.framework;
 
 import java.net.MalformedURLException;
@@ -124,13 +143,7 @@ public class JAXWSServiceBuilderExtension extends AbstractServiceBuilderExtensio
                 // if only one <service> present.
                 return checkMessageReceivers(metaDataEle);
             } else if (DeploymentConstants.TAG_SERVICE_GROUP.equals(metaDataEle.getLocalName())) {
-                // if <serviceGroup> present.
-                OMElement groupMrs = metaDataEle.getFirstChildWithName(new QName(
-                        DeploymentConstants.TAG_MESSAGE_RECEIVERS));
-                // check MRs direct under <serviceGroup>.
-                if (groupMrs != null && !checkMessageReceivers(metaDataEle)) {
-                    return false;
-                }
+                // if <serviceGroup> present.               
                 for (Iterator<OMElement> serviceItr = metaDataEle
                         .getChildrenWithLocalName(DeploymentConstants.TAG_SERVICE); serviceItr
                         .hasNext();) {
@@ -151,18 +164,27 @@ public class JAXWSServiceBuilderExtension extends AbstractServiceBuilderExtensio
         if (mrsElement != null) {
             Iterator<OMElement> eleItr = (mrsElement)
                     .getChildrenWithLocalName(DeploymentConstants.TAG_MESSAGE_RECEIVERS);
-            for (Iterator<OMElement> mrItr = eleItr.next().getChildrenWithLocalName(
-                    DeploymentConstants.TAG_MESSAGE_RECEIVER); mrItr.hasNext();) {
-                OMElement mrEle = mrItr.next();
-                String mrCalssName = mrEle.getAttributeValue(new QName(
-                        DeploymentConstants.ATTRIBUTE_CLASS));
-                if (mrCalssName != null
-                        && !JAXWSMessageReceiver.class.getName().equals(mrCalssName)) {
+            if (eleItr != null) {
+                try {
+                    for (Iterator<OMElement> mrItr = eleItr.next().getChildrenWithLocalName(
+                            DeploymentConstants.TAG_MESSAGE_RECEIVER); mrItr.hasNext();) {
+                        OMElement mrEle = mrItr.next();
+                        String mrCalssName = mrEle.getAttributeValue(new QName(
+                                DeploymentConstants.ATTRIBUTE_CLASS));
+                        if (mrCalssName == null
+                                || !JAXWSMessageReceiver.class.getName().equals(mrCalssName)) {
+                            return false;
+                        } else {
+                            checkOK = true;
+                        }
+                    }
+
+                } catch (Exception e) {
                     return false;
-                } else {
-                    checkOK = true;
                 }
+
             }
+
         }
         return checkOK;
     }

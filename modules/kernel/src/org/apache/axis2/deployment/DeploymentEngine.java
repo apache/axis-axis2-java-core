@@ -940,9 +940,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
          *        JAXWSServiceBuilderExtension to ServiceDeployer, but 
          *        this need to be moved to axis2.xml.
          */
-        ServiceBuilderExtension wsdlExt = new WSDLServiceBuilderExtension();
-        wsdlExt.init(configContext);
-        serviceDeployer.addServiceBuilderExtensions(wsdlExt);
         String jaxwsExtClass = "org.apache.axis2.jaxws.framework.JAXWSServiceBuilderExtension";
         try {
             Class<?> clazz = Class.forName(jaxwsExtClass);
@@ -959,6 +956,9 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             log.info("Can not instantiate " + jaxwsExtClass
                     + ", not abale to use JAX-WS with ServiceDeployer");
         }
+        ServiceBuilderExtension wsdlExt = new WSDLServiceBuilderExtension();
+        wsdlExt.init(configContext);
+        serviceDeployer.addServiceBuilderExtensions(wsdlExt);
         
         for (Map<String, Deployer> extensionMap : deployerMap.values()) {
             for (Deployer deployer : extensionMap.values()) {
