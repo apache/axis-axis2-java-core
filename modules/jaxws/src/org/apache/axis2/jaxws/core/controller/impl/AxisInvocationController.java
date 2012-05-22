@@ -49,6 +49,7 @@ import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
+import org.apache.axis2.transport.http.impl.httpclient3.HttpTransportPropertiesImpl;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -522,8 +523,8 @@ public class AxisInvocationController extends InvocationControllerImpl {
                 throw ExceptionFactory.makeWebServiceException(e);
             }
 
-            HttpTransportProperties.Authenticator basicAuthentication =
-                    new HttpTransportProperties.Authenticator();
+            HttpTransportPropertiesImpl.Authenticator basicAuthentication =
+                    new HttpTransportPropertiesImpl.Authenticator();
             basicAuthentication.setUsername(userId);
             basicAuthentication.setPassword(password);
             basicAuthentication.setHost(url.getHost());

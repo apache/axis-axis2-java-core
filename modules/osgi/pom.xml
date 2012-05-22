@@ -135,6 +135,14 @@
                             org.w3c.dom;resolution:=optional,
                             org.w3c.dom.traversal;resolution:=optional,
                             org.xml.sax;resolution:=optional,
+                            org.apache.http.client.*,
+                            org.apache.http.auth;resolution:=optional,
+                            org.apache.http.conn;resolution:=optional,
+                            org.apache.http.conn.params;resolution:=optional,
+                            org.apache.http.conn.scheme;resolution:=optional,
+                            org.apache.http.conn.ssl;resolution:=optional,
+                            org.apache.http.impl.client;resolution:=optional,
+                            org.apache.http.impl.conn.tsccm;resolution:=optional
                         </Import-Package>
                         <Private-Package>
                             org.apache.axis2.osgi.internal,
