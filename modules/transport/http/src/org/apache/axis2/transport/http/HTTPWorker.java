@@ -116,12 +116,7 @@ public class HTTPWorker implements Worker {
                 }
             }
             if (HttpUtils.endsWithIgnoreCase(uri , "?wsdl2")) {
-                /**
-                 * service name can be hierarchical (axis2/services/foo/1.0.0/Version?wsdl2) or
-                 * normal (axis2/services/Version?wsdl2).
-                 */
-                String[] temp = uri.split(contextPath);
-                String serviceName = temp[1].substring(0, temp[1].length() - 6);
+                String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 6);
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
@@ -141,7 +136,7 @@ public class HTTPWorker implements Worker {
                  * service name can be hierarchical (axis2/services/foo/1.0.0/Version?wsdl) or
                  * normal (axis2/services/Version?wsdl).
                  */
-                String[] temp = uri.split(contextPath);
+                String[] temp = uri.split(configurationContext.getServiceContextPath() + "/");
                 String serviceName = temp[1].substring(0, temp[1].length() - 5);
                 
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
@@ -159,12 +154,7 @@ public class HTTPWorker implements Worker {
                 }
             }
             if (HttpUtils.endsWithIgnoreCase(uri , "?xsd")) {
-                /**
-                 * service name can be hierarchical (axis2/services/foo/bar/Version) or
-                 * normal (axis2/services/Version).
-                 */
-                String[] temp = uri.split(contextPath);
-                String serviceName = temp[1].substring(0, temp[1].length() - 4);
+                String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 4);
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
@@ -183,9 +173,8 @@ public class HTTPWorker implements Worker {
             if (HttpUtils.indexOfIngnoreCase(uri , "?xsd=") > 0) {
             	// fix for imported schemas
             	String[] uriParts = uri.split("[?]xsd=");
-                // fix for hierarchical service names
-                String[] temp = uriParts[0].split(contextPath);
-                String serviceName = temp[1];
+                String serviceName =
+                        uri.substring(uriParts[0].lastIndexOf("/") + 1, uriParts[0].length());
                 String schemaName = uri.substring(uri.lastIndexOf("=") + 1);
 
                 HashMap services = configurationContext.getAxisConfiguration().getServices();

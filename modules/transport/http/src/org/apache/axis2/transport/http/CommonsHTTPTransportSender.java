@@ -31,11 +31,10 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
-import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.impl.httpclient3.HTTPSenderImpl;
 import org.apache.axis2.transport.http.server.AxisHttpResponse;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,8 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
-public class CommonsHTTPTransportSender extends AbstractHandler implements
-        TransportSender {
+public class CommonsHTTPTransportSender extends AbstractHandler implements HTTPTransportSender {
     /**
      * The {@link TransportOutDescription} object received by the call to
      * {@link #init(ConfigurationContext, TransportOutDescription)}.
@@ -78,22 +76,29 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     private int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     private int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
-
+    
+    /*
+     * It's Required to keep this method to keep backward compatibility because
+     * still it's possible to register CommonsHTTPTransportSender in the
+     * axis2.xml.
+     */
     public void cleanup(MessageContext msgContext) throws AxisFault {
-        HttpMethod httpMethod = (HttpMethod) msgContext.getProperty(HTTPConstants.HTTP_METHOD);
+        
+            HttpMethod httpMethod = (HttpMethod) msgContext.getProperty(HTTPConstants.HTTP_METHOD);
+            if (httpMethod != null) {
+                // TODO : Don't do this if we're not on the right thread! Can we confirm?
+                log.trace("cleanup() releasing connection for " + httpMethod);
 
-        if (httpMethod != null) {
-            // TODO : Don't do this if we're not on the right thread! Can we confirm?
-            log.trace("cleanup() releasing connection for " + httpMethod);
-
-            httpMethod.releaseConnection();
-            msgContext.removeProperty(HTTPConstants.HTTP_METHOD); // guard against multiple calls
-        }
+                httpMethod.releaseConnection();
+                msgContext.removeProperty(HTTPConstants.HTTP_METHOD); // guard against multiple calls
+            }        
     }
 
     public void init(ConfigurationContext confContext,
                      TransportOutDescription transportOut) throws AxisFault {
         this.transportOut = transportOut;
+        //Set HTTP client version
+        setHTTPClientVersion(confContext);
         
         // <parameter name="PROTOCOL">HTTP/1.0</parameter> or
         // <parameter name="PROTOCOL">HTTP/1.1</parameter> is
@@ -376,7 +381,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             // select the Message Sender depending on the REST status
             AbstractHTTPSender sender;
 
-            sender = new HTTPSender();
+            sender = new HTTPSenderImpl();
 
             boolean chunked;
             if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
@@ -403,10 +408,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         } catch (MalformedURLException e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
-        } catch (HttpException e) {
-            log.debug(e);
-            throw AxisFault.makeFault(e);
-        } catch (IOException e) {
+        }  catch (IOException e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
         }
@@ -505,4 +507,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
         return soapActionString;
     }
+    
+    public void setHTTPClientVersion(ConfigurationContext configurationContext) {
+        configurationContext.setProperty(HTTPTransportConstants.HTTP_CLIENT_VERSION,
+                HTTPTransportConstants.HTTP_CLIENT_3_X_VERSION);
+    }
+    
 }
