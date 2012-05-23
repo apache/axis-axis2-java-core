@@ -553,8 +553,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                     if ((parent != null)
                             && parent.isParameterLocked(parameter.getName())) {
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.CONFIG_NOT_FOUND, parameter
-                                .getName()));
+                                DeploymentErrorMsgs.PARAMETER_LOCKED, parameter.getName()));
                     } else {
                         parameter.setLocked(true);
                     }
