@@ -882,6 +882,7 @@ public class ConverterUtil {
         int second = 0;
         long miliSecond = 0;
         int timeZoneOffSet = TimeZone.getDefault().getRawOffset();
+        boolean haveTimeZone;
 
 
         if ((source != null) && (source.length() >= 19)) {
@@ -901,18 +902,22 @@ public class ConverterUtil {
 
             int milliSecondPartLength = 0;
 
-            if (source.length() > 19)  {
+            if (source.length() == 19) {
+                haveTimeZone = false;
+            } else {
                 String rest = source.substring(19);
                 if (rest.startsWith(".")) {
                     // i.e this have the ('.'s+) part
                     if (rest.endsWith("Z")) {
                         // this is in gmt time zone
+                        haveTimeZone = true;
                         timeZoneOffSet = 0;
                         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                         miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("Z")));
                         milliSecondPartLength = rest.substring(1,rest.lastIndexOf("Z")).trim().length();
                     } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
                         // this is given in a general time zione
+                        haveTimeZone = true;
                         String timeOffSet = null;
                         if (rest.lastIndexOf("+") > 0) {
                             timeOffSet = rest.substring(rest.lastIndexOf("+") + 1);
@@ -938,6 +943,7 @@ public class ConverterUtil {
 
                     } else {
                         // i.e it does not have time zone
+                        haveTimeZone = false;
                         miliSecond = Integer.parseInt(rest.substring(1));
                         milliSecondPartLength = rest.substring(1).trim().length();
                     }
@@ -946,9 +952,11 @@ public class ConverterUtil {
                     if (rest.startsWith("Z")) {
                         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                         // this is in gmt time zone
+                        haveTimeZone = true;
                         timeZoneOffSet = 0;
                     } else if (rest.startsWith("+") || rest.startsWith("-")) {
                         // this is given in a general time zione
+                        haveTimeZone = true;
                         if (rest.charAt(3) != ':') {
                             throw new RuntimeException("invalid time zone format (" + source
                                     + ") without : at correct place");
@@ -982,12 +990,14 @@ public class ConverterUtil {
             }
             calendar.set(Calendar.MILLISECOND, (int)miliSecond);
             calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
-            calendar.set(Calendar.DST_OFFSET, 0);
-
+            // set the day light offset only if the time zone is present
+            if (haveTimeZone) {
+                calendar.set(Calendar.DST_OFFSET, 0);
+            }
 
 
         } else {
-            throw new NumberFormatException("date string can not be less than 19 charactors");
+            throw new NumberFormatException("date string can not be less than 19 characters");
         }
 
         return calendar;
