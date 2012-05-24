@@ -132,7 +132,7 @@ public class WSDL11ActionHelper {
         // wsdl4j may return a String, QName or a List of either
         // If it is a list, extract the first element
         if (attribute instanceof List) {
-            List l = (List) attribute;
+            List<Object> l = (List<Object>) attribute;
             if (l.size() > 0) {
                 attribute = l.get(0);
             } else {

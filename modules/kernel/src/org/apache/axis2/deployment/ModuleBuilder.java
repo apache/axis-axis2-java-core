@@ -25,7 +25,11 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Deployable;
 import org.apache.axis2.engine.MessageReceiver;
@@ -47,6 +51,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Builds a module description from OM
@@ -61,14 +66,15 @@ public class ModuleBuilder extends DescriptionBuilder {
         this.module = module;
     }
 
+    @SuppressWarnings("unchecked")
     private void loadModuleClass(AxisModule module, String moduleClassName)
             throws DeploymentException {
-        Class moduleClass;
+        Class<?> moduleClass;
 
         try {
             if ((moduleClassName != null) && !"".equals(moduleClassName)) {
                 moduleClass = Loader.loadClass(module.getModuleClassLoader(), moduleClassName);
-                final Class fmoduleClass = moduleClass;
+                final Class<?> fmoduleClass = moduleClass;
                 final AxisModule fmodule = module;
                 try {
                     AccessController.doPrivileged(new PrivilegedExceptionAction() {
@@ -99,7 +105,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             OMAttribute moduleClassAtt = moduleElement.getAttribute(new QName(TAG_CLASS_NAME));
             // processing Parameters
             // Processing service level parameters
-            Iterator itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
+            Iterator<?> itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, module, module.getParent());
 
@@ -161,20 +167,20 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // Processing Dynamic Phase
-            Iterator phaseItr = moduleElement.getChildrenWithName(new QName(TAG_PHASE));
+            Iterator<OMElement> phaseItr = moduleElement.getChildrenWithName(new QName(TAG_PHASE));
             processModulePhase(phaseItr);
             
             // setting the PolicyInclude
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = PolicyUtil.getPolicyChildren(moduleElement);
+            Iterator<OMElement> policyElements = PolicyUtil.getPolicyChildren(moduleElement);
 
             if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(policyElements, module.getPolicySubject());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(moduleElement);
+            Iterator<OMElement> policyRefElements = PolicyUtil.getPolicyRefChildren(moduleElement);
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(policyRefElements, module.getPolicySubject());
@@ -182,9 +188,9 @@ public class ModuleBuilder extends DescriptionBuilder {
 
             // process flows (case-insensitive)
             
-            Iterator flows = moduleElement.getChildElements();
+            Iterator<OMElement> flows = moduleElement.getChildElements();
             while (flows.hasNext()) {
-                OMElement flowElement = (OMElement)flows.next();
+                OMElement flowElement = flows.next();
                 final String flowName = flowElement.getLocalName();
                 if (flowName.compareToIgnoreCase(TAG_FLOW_IN) == 0) {
                     module.setInFlow(processFlow(flowElement, module));
@@ -216,8 +222,8 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // processing Operations
-            Iterator op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));
-            ArrayList<AxisOperation> operations = processOperations(op_itr);
+            Iterator<?> op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));
+            List<AxisOperation> operations = processOperations(op_itr);
 
             for (AxisOperation op : operations) {
                 module.addOperation(op);
@@ -234,9 +240,9 @@ public class ModuleBuilder extends DescriptionBuilder {
         }
     }
 
-    private ArrayList<AxisOperation> processOperations(Iterator operationsIterator)
+    private List<AxisOperation> processOperations(Iterator<?> operationsIterator)
             throws DeploymentException {
-        ArrayList operations = new ArrayList();
+        List<AxisOperation> operations = new ArrayList<AxisOperation>();
 
         while (operationsIterator.hasNext()) {
             OMElement operation = (OMElement) operationsIterator.next();
@@ -291,7 +297,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
             
             // Operation Parameters
-            Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
+            Iterator<OMElement> parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(parameters, op_descrip, module);
 
             //To process wsamapping;
@@ -313,18 +319,18 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // Process Module Refs
-            Iterator modules = operation.getChildrenWithName(new QName(TAG_MODULE));
+            Iterator<OMElement> modules = operation.getChildrenWithName(new QName(TAG_MODULE));
             processOperationModuleRefs(modules, op_descrip);
             
 //          processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = PolicyUtil.getPolicyChildren(operation);
+            Iterator<OMElement> policyElements = PolicyUtil.getPolicyChildren(operation);
 
             if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(policyElements, op_descrip.getPolicySubject());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(operation);
+            Iterator<OMElement> policyRefElements = PolicyUtil.getPolicyRefChildren(operation);
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(policyRefElements, module.getPolicySubject());
@@ -358,7 +364,7 @@ public class ModuleBuilder extends DescriptionBuilder {
      * @param phases : OMElement iterator
      * @throws AxisFault : If something went wrong
      */
-    private void processModulePhase(Iterator phases) throws AxisFault {
+    private void processModulePhase(Iterator<OMElement> phases) throws AxisFault {
         if (phases == null){
             return;
         }

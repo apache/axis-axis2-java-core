@@ -346,10 +346,10 @@ public class AddressingFaultsHelper {
                                                Object faultInformationValue, String faultcode,
                                                String faultSubcode, String faultReason)
             throws AxisFault {
-        Map faultInformation =
-                (Map)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        Map<String, Object> faultInformation =
+                (Map<String, Object>)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInformation == null) {
-            faultInformation = new HashMap();
+            faultInformation = new HashMap<String, Object>();
             messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
         }
 
@@ -422,12 +422,12 @@ public class AddressingFaultsHelper {
 
     public static OMElement getDetailElementForAddressingFault(MessageContext messageContext,
                                                                OMNamespace addressingNamespaceObject) {
-        Map faultInfo = (Map)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        Map<String, String> faultInfo = (Map<String, String>)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         OMElement problemDetail = null;
         if (faultInfo != null) {
-            String faultyHeaderQName = (String)faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
-            String faultyAction = (String)faultInfo.get(Final.FAULT_PROBLEM_ACTION_NAME);
-            String faultyAddress = (String)faultInfo.get(Final.FAULT_HEADER_PROB_IRI);
+            String faultyHeaderQName = faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
+            String faultyAction = faultInfo.get(Final.FAULT_PROBLEM_ACTION_NAME);
+            String faultyAddress = faultInfo.get(Final.FAULT_HEADER_PROB_IRI);
             if (faultyAddress != null && !"".equals(faultyAddress)) {
                 problemDetail = messageContext.getEnvelope().getOMFactory().createOMElement(
                         Final.FAULT_HEADER_PROB_IRI, addressingNamespaceObject);

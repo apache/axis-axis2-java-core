@@ -77,7 +77,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
 
-            Class implClass = obj.getClass();
+            Class<?> implClass = obj.getClass();
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
             method = (Method)(op.getParameterValue("myMethod"));
@@ -172,9 +172,9 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                 throw (AxisFault)cause;
             }
 
-            Class[] exceptionTypes = method.getExceptionTypes();
-            for (Class exceptionType : exceptionTypes){
-                if (exceptionType.getName().equals(cause.getClass().getName())){
+            Class<?>[] exceptionTypes = method.getExceptionTypes();
+            for (Class<?> exceptionType : exceptionTypes){
+                if (cause != null && exceptionType.getName().equals(cause.getClass().getName())){
                     // this is an bussiness logic exception so handle it properly
                     String partQName = inMessage.getAxisService().getName() + getSimpleClassName(exceptionType);
                     TypeTable typeTable = inMessage.getAxisService().getTypeTable();
@@ -222,7 +222,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
         }
     }
 
-     private String getSimpleClassName(Class type) {
+     private String getSimpleClassName(Class<?> type) {
         String simpleClassName = type.getName();
         int idx = simpleClassName.lastIndexOf('.');
         if (idx != -1 && idx < (simpleClassName.length() - 1)) {
