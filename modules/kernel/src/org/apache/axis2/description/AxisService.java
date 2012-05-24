@@ -22,8 +22,6 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.jsr181.WebMethodAnnotation;
-import org.apache.axis2.jsr181.JSR181Helper;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -2572,13 +2570,8 @@ public class AxisService extends AxisDescription {
 		for (int i = 0; i < method.length; i++) {
 			Method jmethod = method[i];
 
-            String methodName = jmethod.getName();
-            WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jmethod);
-            if (methodAnnon != null) {
-                if (methodAnnon.getOperationName() != null){
-                    methodName = methodAnnon.getOperationName();
-                }
-            }
+            String methodName = jmethod.getName();         
+            
 			AxisOperation operation = axisService.getOperation(new QName(methodName));
 
 			String mep = operation.getMessageExchangePattern();

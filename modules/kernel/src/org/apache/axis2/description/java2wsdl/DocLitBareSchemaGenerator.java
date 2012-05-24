@@ -25,9 +25,6 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.jsr181.JSR181Helper;
-import org.apache.axis2.jsr181.WebMethodAnnotation;
-import org.apache.axis2.jsr181.WebResultAnnotation;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -78,12 +75,6 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
         for (Method jMethod : declaredMethods) {
             if (jMethod.isBridge()) {
                 continue;
-            }
-            WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jMethod);
-            if (methodAnnon != null) {
-                if (methodAnnon.isExclude()) {
-                    continue;
-                }
             }
             String methodName = jMethod.getName();
             // no need to think abt this method , since that is system
@@ -216,13 +207,6 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                             createSchemaTypeForMethodPart(methodTypeName);
                     sequence = new XmlSchemaSequence();
                     methodSchemaType.setParticle(sequence);
-                    WebResultAnnotation returnAnnon = JSR181Helper.INSTANCE.getWebResultAnnotation(jMethod);                  
-                    if (returnAnnon != null) {
-                        returnName = returnAnnon.getName();
-                        if (returnName != null && !"".equals(returnName)) {
-                            returnName = "return";
-                        }
-                    }
                     if (nonRpcMethods.contains(methodName)) {
                         generateSchemaForType(sequence, null, returnName);
                     } else {

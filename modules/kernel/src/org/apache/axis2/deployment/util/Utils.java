@@ -44,9 +44,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.jsr181.JSR181Helper;
-import org.apache.axis2.jsr181.WebMethodAnnotation;
-import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.PolicyUtil;
@@ -523,16 +520,6 @@ public class Utils {
         }
         String opName = method.getName();
 
-        WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(method);
-        if (methodAnnon != null) {
-            String action = methodAnnon.getAction();
-            if (action != null && !"".equals(action)) {
-                operation.setSoapAction(action);
-            }
-            if (methodAnnon.getOperationName() != null){
-                opName = methodAnnon.getOperationName();
-            }
-        }
 
         operation.setName(new QName(opName));
         return operation;
@@ -919,32 +906,7 @@ public class Utils {
         return file.getName();
     }
 
-    /**
-     * The util method to prepare the JSR 181 annotated service name from given annotation or for
-     * defaults JSR 181 specifies that the in javax.jws.WebService the parameter serviceName
-     * contains the wsdl:service name to mapp. If its not available then the default will be Simple
-     * name of the class + "Service"
-     *
-     * @param serviceClass the service Class
-     * @param serviceAnnotation a WebService annotation, or null
-     * @return String version of the ServiceName according to the JSR 181 spec
-     */
-    public static String getAnnotatedServiceName(Class serviceClass, WebServiceAnnotation serviceAnnotation) {
-        String serviceName = "";
-        if (serviceAnnotation != null && serviceAnnotation.getServiceName() != null) {
-            serviceName = serviceAnnotation.getServiceName();
-        }
-        if (serviceName.equals("")) {
-            serviceName = serviceClass.getName();
-            int firstChar = serviceName.lastIndexOf('.') + 1;
-            if (firstChar > 0) {
-                serviceName = serviceName.substring(firstChar);
-            }
-            serviceName += "Service";
-        }
-        return serviceName;
-    }
-
+    
     public static void addEndpointsToService(AxisService axisService)
             throws AxisFault {
 

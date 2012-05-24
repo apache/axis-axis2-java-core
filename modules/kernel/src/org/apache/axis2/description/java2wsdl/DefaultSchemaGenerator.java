@@ -30,11 +30,6 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.jaxrs.JAXRSModel;
 import org.apache.axis2.jaxrs.JAXRSUtils;
-import org.apache.axis2.jsr181.JSR181Helper;
-import org.apache.axis2.jsr181.WebMethodAnnotation;
-import org.apache.axis2.jsr181.WebParamAnnotation;
-import org.apache.axis2.jsr181.WebResultAnnotation;
-import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -300,16 +295,6 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
          * nothing will happen) 2. In the next stage for all the methods
          * messages and port types will be creteated
          */
-        WebServiceAnnotation webservice =
-                JSR181Helper.INSTANCE.getWebServiceAnnotation(serviceClass);
-        if (webservice != null) {
-            String tns = webservice.getTargetNamespace();
-            if (tns != null && !"".equals(tns)) {
-                targetNamespace = tns;
-                schemaTargetNameSpace = tns;
-            }
-            service.setName(Utils.getAnnotatedServiceName(serviceClass, webservice));
-        }
         classModel= JAXRSUtils.getClassModel(serviceClass);
         methods = processMethods(serviceClass.getMethods());
         
@@ -339,17 +324,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 continue;
             }
 
-            WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jMethod);
             String methodName = jMethod.getName();
-            if (methodAnnon != null) {
-                if (methodAnnon.isExclude()) {
-                    continue;
-                }
-                if (methodAnnon.getOperationName() != null){
-                    methodName = methodAnnon.getOperationName();
-                }
-            }
-
             // no need to think abt this method , since that is system
             // config method
             if (excludeMethods.contains(methodName)) {
@@ -474,15 +449,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 methodSchemaType =
                         createSchemaTypeForMethodPart(partQname);
                 sequence = new XmlSchemaSequence();
-                methodSchemaType.setParticle(sequence);
-                WebResultAnnotation returnAnnon = JSR181Helper.INSTANCE.getWebResultAnnotation(jMethod);
-                String returnName = "return";
-                if (returnAnnon != null) {
-                    returnName = returnAnnon.getName();
-                    if (returnName == null || "".equals(returnName)) {
-                        returnName = "return";
-                    }
-                }
+                methodSchemaType.setParticle(sequence);               
+                String returnName = "return";                
                 Type genericParameterType = jMethod.getGenericReturnType();
                 if (nonRpcMethods.contains(jMethod.getName())) {
                     generateSchemaForType(sequence, null, returnName);
@@ -1750,14 +1718,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected String getParameterName(Annotation[][] parameterAnnotation,
                                       int j,
                                       String[] parameterNames) {
-        String parameterName = null;
-        if (parameterAnnotation.length > 0) {
-            WebParamAnnotation annotation =
-                    JSR181Helper.INSTANCE.getWebParamAnnotation(parameterAnnotation[j]);
-            if (annotation != null) {
-                parameterName = annotation.getName();
-            }
-        }
+        String parameterName = null;     
         if (parameterName == null || "".equals(parameterName)) {
             if(parameterNames != null && parameterNames.length > j) {
                 parameterName = parameterNames[j];

@@ -30,8 +30,6 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.jsr181.JSR181Helper;
-import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,22 +92,13 @@ public class POJODeployer extends AbstractDeployer {
                  * nothing will happen) 2. In the next stage for all the methods
                  * messages and port types will be creteated
                  */
-                WebServiceAnnotation annotation =
-                        JSR181Helper.INSTANCE.getWebServiceAnnotation(clazz);
-                AxisService axisService;
-                if (annotation != null) {
-                    // try to see whether JAX-WS jars in the class path , if so use them
-                    // to process annotated pojo else use annogen to process the pojo class
-                    axisService =
-                            createAxisService(classLoader,
-                                    className,
-                                    deploymentFileData.getFile().toURL());
-                } else {
-                    axisService =
+                
+                AxisService axisService;               
+                axisService =
                             createAxisServiceUsingAnnogen(className,
                                     classLoader,
                                     deploymentFileData.getFile().toURL());
-                }
+                
                 //add the hierarchical path to the service name
                 axisService.setName(serviceHierarchy + axisService.getName());
                 configCtx.getAxisConfiguration().addService(axisService);
@@ -142,17 +131,8 @@ public class POJODeployer extends AbstractDeployer {
                      * parameters are simple type which decribe in SimpleTypeTable
                      * nothing will happen) 2. In the next stage for all the methods
                      * messages and port types will be creteated
-                     */
-                    WebServiceAnnotation annotation =
-                            JSR181Helper.INSTANCE.getWebServiceAnnotation(clazz);
-                    if (annotation != null) {
-                        AxisService axisService;
-                        axisService =
-                                createAxisService(classLoader,
-                                                  className,
-                                                  deploymentFileData.getFile().toURL());
-                        axisServiceList.add(axisService);
-                    }
+                     */                  
+                   
                 }
 
                 if (axisServiceList.size() > 0) {
