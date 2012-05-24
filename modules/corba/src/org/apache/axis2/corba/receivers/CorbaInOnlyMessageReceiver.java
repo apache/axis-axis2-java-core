@@ -31,7 +31,7 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.receivers.AbstractInMessageReceiver;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,7 +41,7 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CorbaInOnlyMessageReceiver extends AbstractInMessageReceiver implements CorbaConstants {
+public class CorbaInOnlyMessageReceiver extends AbstractMessageReceiver implements CorbaConstants {
 
     private static Log log = LogFactory.getLog(CorbaInOnlyMessageReceiver.class);
     private ORB orb = null;

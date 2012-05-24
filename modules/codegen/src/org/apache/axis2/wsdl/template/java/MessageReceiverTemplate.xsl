@@ -311,7 +311,7 @@
     <!-- end of template for in-out message receiver -->
 
     <!-- start of in-only -->
-    <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractInMessageReceiver']">
+    <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractMessageReceiver']">
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonInterfaceName"/></xsl:variable>
 
 /**

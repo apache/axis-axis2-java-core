@@ -159,7 +159,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //populate the MEP -> class map
         mepToClassMap = new HashMap();
         mepToClassMap.put(WSDL2Constants.MEP_URI_IN_ONLY,
-                "org.apache.axis2.receivers.AbstractInMessageReceiver");
+                "org.apache.axis2.receivers.AbstractMessageReceiver");
         mepToClassMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
                 "org.apache.axis2.receivers.AbstractMessageReceiver");
         mepToClassMap.put(WSDL2Constants.MEP_URI_IN_OUT,

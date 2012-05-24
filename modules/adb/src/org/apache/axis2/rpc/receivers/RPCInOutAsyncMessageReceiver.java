@@ -31,7 +31,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.receivers.AbstractInMessageReceiver;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class RPCInOutAsyncMessageReceiver extends AbstractInMessageReceiver {
+public class RPCInOutAsyncMessageReceiver extends AbstractMessageReceiver {
 
     private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 

@@ -24,7 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.receivers.AbstractInMessageReceiver;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
+public class RPCInOnlyMessageReceiver extends AbstractMessageReceiver {
 
     private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
@@ -42,7 +42,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
 
-            Class ImplClass = obj.getClass();
+            Class<?> ImplClass = obj.getClass();
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
@@ -75,7 +75,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             Throwable cause = e.getCause();
             if (cause != null) {
                 String msg = cause.getMessage();
-                if (msg == null) {
+                if (msg == null && method != null) {
                     msg = "Exception occurred while trying to invoke service method " +
                             method.getName();
                 }
@@ -86,7 +86,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             throw AxisFault.makeFault(cause);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                    method.getName();
+                    (method != null ? method.getName() : "");
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }

@@ -40,10 +40,10 @@ import java.lang.reflect.Method;
  * @see RawXMLINOutMessageReceiver
  * @see RawXMLINOutAsyncMessageReceiver
  */
-public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
+public class RawXMLINOnlyMessageReceiver extends AbstractMessageReceiver
         implements MessageReceiver {
 
-    private Method findOperation(AxisOperation op, Class implClass) {
+    private Method findOperation(AxisOperation op, Class<?> implClass) {
         Method method = (Method)(op.getParameterValue("myMethod"));
         if (method != null && method.getDeclaringClass() == implClass) return method;
 
@@ -78,7 +78,7 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
             Object obj = getTheImplementationObject(msgContext);
 
             // find the WebService method
-            Class implClass = obj.getClass();
+            Class<?> implClass = obj.getClass();
 
             AxisOperation op = msgContext.getAxisOperation();
             Method method = findOperation(op, implClass);
