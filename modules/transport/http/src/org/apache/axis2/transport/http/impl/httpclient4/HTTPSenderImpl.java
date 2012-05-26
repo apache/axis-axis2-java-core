@@ -50,6 +50,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -58,15 +59,14 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnManagerPNames;
-import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.auth.NTLMSchemeFactory;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
@@ -75,6 +75,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -142,17 +143,15 @@ public class HTTPSenderImpl extends HTTPSender {
             log.trace("HttpResponse expected, but found - " + httpResponse);
             return;
         }
-        log.trace("Cleaning response : " + response);
-        HttpEntity entity = response.getEntity();
-        if (entity != null && entity.isStreaming()) {
-            InputStream inputStream;
-            try {
-                inputStream = entity.getContent();
-                if (inputStream != null) {
-                    inputStream.close();
+        if (msgContext.isPropertyTrue(HTTPConstants.CLEANUP_RESPONSE)) {
+            log.trace("Cleaning response : " + response);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e) {
+                    log.error("Error while cleaning response : " + response, e);
                 }
-            } catch (IOException e) {
-                log.error("Error while cleaning response : "+response, e);
             }
         }
     }
@@ -321,6 +320,7 @@ public class HTTPSenderImpl extends HTTPSender {
         HTTPStatusCodeFamily family = getHTTPStatusCodeFamily(statusCode);
         log.trace("Handling response - " + statusCode);
         if (statusCode == HttpStatus.SC_ACCEPTED) {
+            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.TRUE);
             /*
             * When an HTTP 202 Accepted code has been received, this will be
             * the case of an execution of an in-only operation. In such a
@@ -330,17 +330,13 @@ public class HTTPSenderImpl extends HTTPSender {
             obtainHTTPHeaderInformation(response, msgContext);
 
         } else if (HTTPStatusCodeFamily.SUCCESSFUL.equals(family)) {
-            // Save the HttpMethod so that we can release the connection when
-            // cleaning up
-            // TODO : Do we need to save the http method
-//            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
+            // We don't clean the response here because the response will be used afterwards
+            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.FALSE);
             processResponse(response, msgContext);
 
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
                    || statusCode == HttpStatus.SC_BAD_REQUEST) {
-            // Save the HttpMethod so that we can release the connection when
-            // cleaning up
-//            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
+            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.TRUE);
             Header contentTypeHeader = response.getFirstHeader(HTTPConstants.HEADER_CONTENT_TYPE);
             String value = null;
             if (contentTypeHeader != null) {
@@ -355,6 +351,7 @@ public class HTTPSenderImpl extends HTTPSender {
                 }
             }
             if (value != null) {
+                msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.FALSE);
                 processResponse(response, msgContext);
             }
 
@@ -365,6 +362,7 @@ public class HTTPSenderImpl extends HTTPSender {
                                    response.getStatusLine().toString()));
             }
         } else {
+            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.TRUE);
             throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
                                                     response.getStatusLine().toString()));
         }
@@ -587,8 +585,7 @@ public class HTTPSenderImpl extends HTTPSender {
                 if (host != null) {
                     if (domain != null) {
                         /* Credentials for NTLM Authentication */
-                        //TODO : To enable NTLM we have to register the scheme with client, but it is available from 4.1 only
-//                        agent.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
+                        agent.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
                         creds = new NTCredentials(username, password, host, domain);
                     } else {
                         /* Credentials for Digest and Basic Authentication */
@@ -602,7 +599,7 @@ public class HTTPSenderImpl extends HTTPSender {
                          * Credentials for NTLM Authentication when host is
                          * ANY_HOST
                          */
-                        // TODO : Enable NTLM as metioned above
+                        agent.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
                         creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
                         agent.getCredentialsProvider().
                                 setCredentials(new AuthScope(AuthScope.ANY_HOST, port, realm),
@@ -627,8 +624,7 @@ public class HTTPSenderImpl extends HTTPSender {
                         authPrefs.add(authenticator.getAuthPolicyPref(scheme));
 
                     }
-                    // TODO : This is available in 4.1 only
-//                    agent.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authPrefs);
+                    agent.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authPrefs);
                 }
 
             } else {
@@ -811,16 +807,13 @@ public class HTTPSenderImpl extends HTTPSender {
                         log.trace("Making new ConnectionManager");
                         SchemeRegistry schemeRegistry = new SchemeRegistry();
                         schemeRegistry.register(
-                                new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+                                new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
                         schemeRegistry.register(
-                                new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+                                new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
 
-                        HttpParams params = new BasicHttpParams();
-                        params.setParameter(ConnManagerPNames.MAX_TOTAL_CONNECTIONS, 30);
-                        params.setParameter(ConnManagerPNames.MAX_CONNECTIONS_PER_ROUTE,
-                                            new ConnPerRouteBean(30));
-                        connManager = new ThreadSafeClientConnManager(params,
-                                                                      schemeRegistry);
+                        connManager = new PoolingClientConnectionManager(schemeRegistry);
+                        ((PoolingClientConnectionManager)connManager).setMaxTotal(200);
+                        ((PoolingClientConnectionManager)connManager).setDefaultMaxPerRoute(200);
                         configContext.setProperty(
                                 HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, connManager);
                     }

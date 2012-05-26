@@ -124,6 +124,8 @@
                             org.apache.http.impl;resolution:=optional,
                             org.apache.http.impl.entity;resolution:=optional,
                             org.apache.http.impl.io;resolution:=optional,
+                            org.apache.http.impl.auth;resolution:=optional,
+                            org.apache.http.impl.conn;resolution:=optional,
                             org.apache.http.io;resolution:=optional,
                             org.apache.http.message;resolution:=optional,
                             org.apache.http.params;resolution:=optional,
