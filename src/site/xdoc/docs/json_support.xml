@@ -82,9 +82,6 @@
             XML or JSON? is still a hot topic,
             many people accept the fact that JSON can be passed and built more
             easily by machines than XML.</p>
-            <p>For more details of this implementation architecture, refer to
-            the article <a href="http://wso2.org/library/768">"JSON Support for
-            Apache Axis2"</a></p>
         </section>
         <section name="How to use JSON in Axis2">
             <p>At the moment JSON doesn't have a standard and unique content
@@ -195,6 +192,85 @@ HTTP/1.1</code>
     ...
 </service>
 ]]></pre>
+            </subsection>
+        </section>
+        <section name="How the JSON implementation works - Architecture">
+            <subsection name="Introduction">
+                <p>The Axis2 architecture is based on the assumption that any message flowing through
+                the Axis2 runtime is representable as a SOAP infoset, i.e. as XML wrapped in a SOAP
+                envelope. Conceptually, the two message builders <code>JSONOMBuilder</code> and
+                <code>JSONBadgerfishOMBuilder</code> convert incoming messages from JSON to XML and
+                the two message formatters <code>JSONMessageFormatter</code> and <code>JSONBadgerfishMessageFormatter</code>
+                convert outgoing messages from XML to JSON. Axis2 doesn't implement its own JSON parser and serializer, and
+                instead relies on <a href="http://jettison.codehaus.org/">Jettison</a> to do the JSON&lt;->XML conversions.</p>
+                <p>On the server side the XML for an incoming
+                message is typically converted to Java objects by a databinding (such as ADB or JAX-WS)
+                before the invocation of the service implementation. In the same way, the Java object returned by the
+                service implementation is converted to XML. In the case we are interested in, that XML is then converted
+                by the message formatters to JSON. The usage of an intermediate XML representation is the reason why
+                JSON can be enabled on any service deployed in Axis2.</p>
+                <p>It is important to note that the explanation given in the previous two paragraphs is only valid from
+                a conceptual point of view. The actual processing model is more complicated. In the next two sections
+                we will explain in detail how Axis2 processes incoming and outgoind JSON messages.</p>
+            </subsection>
+            <subsection name="Processing of incoming JSON messages">
+                <p>Axis2 relies on <a href="http://ws.apache.org/axiom/">Apache Axiom</a> as its XML object model. Although
+                Axiom has a DOM like API, it also has several advanced features that enable Axis2 to avoid
+                building a complete object model representation of the XML message. This is important for performance
+                reasons and distinguishes Axis2 from previous generation SOAP stacks. To leverage these features, the
+                JSON message builders create a SOAP envelope the body of which contains a single <code>OMSourcedElement</code>.</p>
+                <p>An <code>OMSourcedElement</code> is a special kind of <code>OMElement</code> that wraps an arbitrary
+                Java object that can be converted to XML in a well defined way. More precisely, the Java object as well as the logic
+                to convert the object to XML are encapsulated in an <code>OMDataSource</code> instance and it is that
+                <code>OMDataSource</code> instance that is used to create the <code>OMSourcedElement</code>.
+                For JSON, the <code>OMDataSource</code> implementation is <code>JSONDataSource</code> or <code>JSONBadgerfishDataSource</code>,
+                depending on the convention being used. The base class (<code>AbstractJSONDataSource</code>) of these two classes
+                actually contains the code that invokes Jettison to perform the JSON to XML conversion.</p>
+                <p>An <code>OMSourcedElement</code> still behaves like a normal <code>OMElement</code>. In particular, if the
+                element is accessed using DOM like methods, then Axiom will convert the data encapsulated by
+                the <code>OMDataSource</code> on the fly to an object model representation. This process is called <i>expansion</i> of the
+                <code>OMSourcedElement</code>. However, the <code>OMDataSource</code> API is designed such that the conversion to
+                XML is always done using a streaming API: either the <code>OMDataSource</code> produces an <code>XMLStreamReader</code>
+                instance from which the XML representation can be read (this is the case for JSON and the <code>XMLStreamReader</code> implementation
+                is actually provided by Jettison) or it serializes the XML representation to an <code>XMLStreamWriter</code>. 
+                Because of this, expansion of the <code>OMSourcedElement</code> is often not necessary, so that the overhead of
+                creating an object model representation can usually be avoided. E.g. a databinding will typically consume the message by requesting an
+                <code>XMLStreamReader</code> for the element in the SOAP body, and this doesn't require expansion of the
+                <code>OMSourcedElement</code>. In this case, the databinding pulls the XML data almost directly from the
+                underlying Jettison <code>XMLStreamReader</code> and no additional Axiom objects are created.</p>
+                <p>Actually here again, things are slightly more complicated because in order to dispatch to the right
+                operation, Axis2 needs to determine the name of the element in the body. Since the name is not known
+                in advance, that operation requires expansion of the <code>OMSourcedElement</code>. However, at this point
+                none of the children of the <code>OMSourcedElement</code> will be built. Fortunately the databindings
+                generally request the <code>XMLStreamReader</code> with caching turned off, so that the child nodes will never be
+                built. Therefore the conclusion of the previous paragraph remains valid: processing the message with a databinding
+                will not create a complete object model representation of the XML.</p>
+                <p>Usage of an <code>OMSourcedElement</code> also solves another architectural challenge posed by
+                the Mapped JSON convention: the JSON payload can only be converted to XML if the namespace mappings
+                are known. Since they are defined per service, they are only known after the incoming message has been
+                dispatched and the target service has been identified. This typically occurs
+                in <code>RequestURIBasedDispatcher</code>, which is executed after
+                the message builder. This means that <code>JSONOMBuilder</code> cannot actually perform the conversion.
+                Usage of an <code>OMSourcedElement</code> avoids this issue because the conversion is done lazily when
+                the <code>OMSourcedElement</code> is first accessed, and this occurs after <code>RequestURIBasedDispatcher</code>
+                has been executed.</p>
+                <p>Another advantage of using <code>OMSourcedElement</code> is that a JSON aware service could directly process
+                the JSON payload without going through the JSON to XML conversion. That is possible because the <code>OMDataSource</code>
+                simply keeps a reference to the JSON payload and this reference is accessible to JSON aware code.</p>
+            </subsection>
+            <subsection name="Processing of outgoing messages">
+                <p>For outgoing messages, the two JSON message formatters <code>JSONMessageFormatter</code> and
+                <code>JSONBadgerfishMessageFormatter</code> use Jettision to create an appropriate <code>XMLStreamWriter</code>
+                and then request Axiom to serialize the body element to that <code>XMLStreamWriter</code>. If a databinding
+                is used, then the body element will typically be an <code>OMSourcedElement</code> with an <code>OMDataSource</code>
+                implementation specific to that databinding. <code>OMSourcedElement</code> will delegate the serialization
+                request to the appropriate method defined by <code>OMDataSource</code>. This means that the databinding code
+                directly writes to the <code>XMLStreamWriter</code> instance provided by Jettision, without building an
+                intermediate XML object model.</p>
+                <p>Before doing this, the JSON message formatters actually check if the element is an <code>OMSourcedElement</code>
+                backed by a corresponding JSON <code>OMDataSource</code> implementation. If that is the case, then they will
+                extract the JSON payload and directly write it to the output stream. This allows JSON aware services to
+                bypass the XML to JSON conversion entirely.</p>
             </subsection>
         </section>
         <section name="Tests and Samples">
