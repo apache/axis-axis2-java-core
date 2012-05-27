@@ -299,6 +299,50 @@ HTTP/1.1</code>
                 within Axis2. By reviewing these samples, you will be able to
                 better understand Axis2's JSON support implementation.</p>
             </subsection>
+            <subsection name="Enabling mapped JSON on the ADB quickstart sample">
+                <p>To illustrate how JSON can be enabled on an existing service deployed in Axis2,
+                we will use the ADB stock quote service sample from the
+                <a href="quickstartguide.html#adb">Quick Start Guide</a>. The code for this sample
+                can be found in the <tt>samples/quickstartadb</tt> folder in the binary distribution.</p>
+                <p>Only a few steps are necessary to enable JSON (using the Mapped convention) on
+                that service:</p>
+                <ol>
+                    <li>
+                        <p>Configure the JSON message builders and formatters in <tt>conf/axis2.xml</tt>.
+                        Add the following element to the <tt>messageFormatters</tt>:</p>
+<pre><![CDATA[
+<messageFormatter contentType="application/json"
+                  class="org.apache.axis2.json.JSONMessageFormatter"/>
+]]></pre>
+                        <p>Also add the following element to the <tt>messageBuilders:</tt></p>
+<pre><![CDATA[
+<messageBuilder contentType="application/json"
+                class="org.apache.axis2.json.JSONOMBuilder"/>
+]]></pre>
+                    </li>
+                    <li>
+                        <p>Edit the <tt>services.xml</tt> for the stock quote service and add the following
+                        configuration:</p>
+<pre><![CDATA[
+<parameter name="xmlToJsonNamespaceMap">
+    <mapping xmlNamespace="http://quickstart.samples/xsd" jsonNamespace=""/>
+</parameter>
+]]></pre>
+                        <p>The <tt>services.xml</tt> file can be found under
+                        <tt>samples/quickstartadb/resources/META-INF</tt>.</p>
+                    </li>
+                    <li>
+                        <p>Build and deploy the service by executing the ant script in
+                        <tt>samples/quickstartadb</tt> and then start the Axis2 server using
+                        <tt>bin/axis2server.sh</tt> or <tt>bin/axis2server.bat</tt>.</p>
+                    </li>
+                </ol>
+                <p>That's it; the stock quote service can now be invoked using JSON. This can be tested
+                using the well known <a href="http://curl.haxx.se/">curl</a> tool:</p>
+                <pre>curl -H 'Content-Type: application/json' -d '{"getPrice":{"symbol":"IBM"}}' http://localhost:8080/axis2/services/StockQuoteService</pre>
+                <p>This will give the following result:</p>
+                <pre>{"getPriceResponse":{"return":42}}</pre>
+            </subsection>
         </section>
     </body>
 </document>
