@@ -86,16 +86,16 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             throws SOAPException {
         OMNamespace ns = new NamespaceImpl(uri, prefix);
         SOAPHeaderBlock headerBlock = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             headerBlock = new SOAP11HeaderBlockImpl(localName, ns, omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
         } else {
             headerBlock = new SOAP12HeaderBlockImpl(localName, ns, omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
         }
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
-        element.setUserData(SAAJ_NODE, this, null);
-        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        target.setUserData(SAAJ_NODE, this, null);
+        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -114,19 +114,19 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         OMNamespace ns = new NamespaceImpl(soapElement.getNamespaceURI(),
                                            soapElement.getPrefix());
         SOAPHeaderBlock headerBlock = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             headerBlock = new SOAP11HeaderBlockImpl(soapElement.getLocalName(), ns,
                                                     omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
         } else {
             headerBlock = new SOAP12HeaderBlockImpl(soapElement.getLocalName(), ns,
                                                     omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
 
         }
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
-        element.setUserData(SAAJ_NODE, this, null);
-        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        target.setUserData(SAAJ_NODE, this, null);
+        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -136,22 +136,22 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         OMNamespace ns = new NamespaceImpl(child.getNamespaceURI(),
                                            child.getPrefix());
         SOAPHeaderBlock headerBlock = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             headerBlock = new SOAP11HeaderBlockImpl(child.getLocalName(), ns,
                                                     omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
         } else {
             headerBlock = new SOAP12HeaderBlockImpl(child.getLocalName(), ns,
                                                     omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
 
         }
      
-        element.setUserData(SAAJ_NODE, this, null);
+        target.setUserData(SAAJ_NODE, this, null);
         
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         copyContents(soapHeaderElement, child);
-        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -177,17 +177,17 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         OMNamespace ns = new NamespaceImpl(name.getURI(), prefix);
 
         SOAPHeaderBlock headerBlock = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             headerBlock = new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
         } else {
             headerBlock = new SOAP12HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
-                                                    (SOAPFactory)this.element.getOMFactory());
+                                                    (SOAPFactory)this.target.getOMFactory());
         }
 
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
-        element.setUserData(SAAJ_NODE, this, null);
-        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        target.setUserData(SAAJ_NODE, this, null);
+        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -302,11 +302,11 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public SOAPHeaderElement addNotUnderstoodHeaderElement(QName qname) throws SOAPException {
         SOAPHeaderBlock soapHeaderBlock = null;
         OMNamespace ns = new NamespaceImpl(qname.getNamespaceURI(), qname.getPrefix());
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         } else {
             soapHeaderBlock = this.omSOAPHeader.addHeaderBlock(
-                    Constants.ELEM_NOTUNDERSTOOD, this.element.getNamespace());
+                    Constants.ELEM_NOTUNDERSTOOD, this.target.getNamespace());
             soapHeaderBlock.addAttribute(qname.getLocalPart(), qname.getPrefix(), ns);
         }
         SOAPHeaderElementImpl soapHeaderElementImpl = new SOAPHeaderElementImpl(soapHeaderBlock);
@@ -324,7 +324,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      */
     public SOAPHeaderElement addUpgradeHeaderElement(Iterator iterator) throws SOAPException {
         SOAPHeaderBlock upgrade = this.omSOAPHeader.addHeaderBlock(
-                Constants.ELEM_UPGRADE, this.element.getNamespace());
+                Constants.ELEM_UPGRADE, this.target.getNamespace());
 
         int index = 0;
         String prefix = "ns";
@@ -335,7 +335,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             OMNamespace namespace = new NamespaceImpl(supported, prefix + index);
 
             OMElement supportedEnvelop =
-                    element.getOMFactory().createOMElement(Constants.ELEM_SUPPORTEDENVELOPE,
+                    target.getOMFactory().createOMElement(Constants.ELEM_SUPPORTEDENVELOPE,
                             namespace);
             supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix + index + ":"
                     + Constants.ELEM_ENVELOPE, null);
@@ -367,9 +367,9 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     }
 
     public SOAPElement addTextNode(String text) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             return super.addTextNode(text);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             throw new SOAPException("Cannot add text node to SOAPHeader");
         } else {
             return null;
@@ -378,11 +378,11 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
-        return getChildren(element.getChildrenWithName(qName));
+        return getChildren(target.getChildrenWithName(qName));
     }
 
     public Iterator getChildElements() {
-        return getChildren(element.getChildren());
+        return getChildren(target.getChildren());
     }
 
     private Iterator getChildren(Iterator childIter) {

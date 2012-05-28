@@ -72,9 +72,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         }
         SOAPBodyElementImpl childEle =
                 new SOAPBodyElementImpl((ElementImpl)getOwnerDocument().createElement(localName));
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+        target.appendChild(childEle.target);
+        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
         return childEle;
     }
@@ -89,10 +89,10 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                 new SOAPBodyElementImpl(
                         (ElementImpl)getOwnerDocument().createElementNS(namespaceURI,
                                                                         localName));
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+        childEle.target.setNamespace(childEle.target.declareNamespace(namespaceURI, prefix));
+        target.appendChild(childEle.target);
+        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -104,12 +104,12 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
         SOAPBodyElementImpl childEle = new SOAPBodyElementImpl(child);
 
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
-            childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+            childEle.target.setNamespace(childEle.target.declareNamespace(namespaceURI, prefix));
         }
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        target.appendChild(childEle.target);
+        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -125,7 +125,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                 new SOAPBodyElementImpl(
                         (ElementImpl)getOwnerDocument().createElement(localName));
         } else {
-            element.declareNamespace(namespaceURI, prefix);
+            target.declareNamespace(namespaceURI, prefix);
             childEle =
                 new SOAPBodyElementImpl(
                         (ElementImpl)getOwnerDocument().createElementNS(namespaceURI,
@@ -146,12 +146,12 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             }
         }
 
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
-            childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+            childEle.target.setNamespace(childEle.target.declareNamespace(namespaceURI, prefix));
         }
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        target.appendChild(childEle.target);
+        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -180,10 +180,10 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                     (ElementImpl)getOwnerDocument().createElementNS(uri,
                                                                     prefix + ":" + localName));
         }
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(getOMFactory().createOMNamespace(uri, prefix));
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+        childEle.target.setNamespace(target.getOMFactory().createOMNamespace(uri, prefix));
+        target.appendChild(childEle.target);
+        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
         childEle.setParentElement(this);
         return childEle;
@@ -202,13 +202,13 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         }
         SOAPFaultImpl saajSOAPFault = null;
 
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             SOAP11FaultImpl fault =
-                    new SOAP11FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
+                    new SOAP11FaultImpl(omSOAPBody, (SOAPFactory)this.target.getOMFactory());
             saajSOAPFault = new SOAPFaultImpl(fault);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             SOAP12FaultImpl fault =
-                    new SOAP12FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
+                    new SOAP12FaultImpl(omSOAPBody, (SOAPFactory)this.target.getOMFactory());
             saajSOAPFault = new SOAPFaultImpl(fault);
         }
         // set default fault code and string
@@ -271,12 +271,12 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     public SOAPFault addFault(Name faultCode, String faultString, Locale locale)
             throws SOAPException {
         org.apache.axiom.soap.SOAPFault fault;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             fault = new SOAP11FaultImpl(omSOAPBody, new Exception(
-                    faultString), (SOAPFactory)this.element.getOMFactory());
+                    faultString), (SOAPFactory)this.target.getOMFactory());
         } else {
             fault = new SOAP12FaultImpl(omSOAPBody, new Exception(
-                    faultString), (SOAPFactory)this.element.getOMFactory());
+                    faultString), (SOAPFactory)this.target.getOMFactory());
         }
         SOAPFaultImpl faultImpl = new SOAPFaultImpl(fault);
         faultImpl.setFaultCode(faultCode);
@@ -324,7 +324,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
         SOAPElement saajSOAPEle = (SOAPElement)toSAAJNode(docEle, this);
         SOAPBodyElementImpl bodyEle =
-                new SOAPBodyElementImpl(((SOAPElementImpl)saajSOAPEle).element);
+                new SOAPBodyElementImpl(((SOAPElementImpl)saajSOAPEle).target);
         addChildElement(bodyEle);
         return bodyEle;
     }
@@ -364,13 +364,13 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             throws SOAPException {
         SOAPFaultImpl faultImpl = null;
 
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody, new Exception(
-                    faultString), (SOAPFactory)this.element.getOMFactory());
+                    faultString), (SOAPFactory)this.target.getOMFactory());
             faultImpl = new SOAPFaultImpl(fault);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             SOAP12FaultImpl fault = new SOAP12FaultImpl(omSOAPBody, new Exception(
-                    faultString), (SOAPFactory)this.element.getOMFactory());
+                    faultString), (SOAPFactory)this.target.getOMFactory());
             faultImpl = new SOAPFaultImpl(fault);
         }
 
@@ -468,7 +468,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         }
         ElementImpl eleImpl =
                 new ElementImpl((DocumentImpl)this.getOwnerDocument(),
-                                localName, ns, this.element.getOMFactory());
+                                localName, ns, this.target.getOMFactory());
 
         SOAPElementImpl saajEle = new SOAPElementImpl(eleImpl);
 
@@ -508,25 +508,25 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
     public OMNode detach() {
         this.parentElement = null;
-        return this.element.detach();
+        return this.target.detach();
     }
 
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
-        return getChildren(element.getChildrenWithName(qName));
+        return getChildren(target.getChildrenWithName(qName));
     }
 
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
         OMNamespace omNamespace = null;
         SOAPFactory soapFactory;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             soapFactory = new SOAP11Factory();
             omNamespace = soapFactory.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             soapFactory = new SOAP12Factory();
             omNamespace = soapFactory.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
         }
-        this.element.addAttribute(qname.getLocalPart(), value, omNamespace);
+        this.target.addAttribute(qname.getLocalPart(), value, omNamespace);
         return this;
     }
 
@@ -548,21 +548,21 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                                                                     qname.getPrefix() + ":" +
                                                                             qname.getLocalPart()));
         }
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(getOMFactory().createOMNamespace(qname.getNamespaceURI(), qname.getPrefix()));
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+        childEle.target.setNamespace(target.getOMFactory().createOMNamespace(qname.getNamespaceURI(), qname.getPrefix()));
 
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        target.appendChild(childEle.target);
+        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
         childEle.setParentElement(this);
         return childEle;
     }
 
     public QName createQName(String localName, String prefix) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             return super.createQName(localName, prefix);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
-            if (this.element.findNamespaceURI(prefix) == null) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
+            if (this.target.findNamespaceURI(prefix) == null) {
                 throw new SOAPException("Only Namespace Qualified elements are allowed");
             } else {
                 return super.createQName(localName, prefix);
@@ -598,7 +598,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     }
 
     public Iterator getChildElements() {
-        return getChildren(element.getChildren());
+        return getChildren(target.getChildren());
     }
 
     public SOAPElement addTextNode(String text) throws SOAPException {
@@ -617,7 +617,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                 if (domNode instanceof ElementImpl) {
                     if (omSOAPBody.hasFault()) {
 
-                        SOAPFactory omFactory = (SOAPFactory)this.element.getOMFactory();
+                        SOAPFactory omFactory = (SOAPFactory)this.target.getOMFactory();
                         org.apache.axiom.soap.SOAPFault fault;
                         if (omFactory instanceof SOAP11Factory) {
                             fault = new SOAP11FaultImpl(omSOAPBody, omFactory);

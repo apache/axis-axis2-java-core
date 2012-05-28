@@ -99,7 +99,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      *                       - if this message does not support the SOAP 1.2 concept of Fault Role.
      */
     public void setRole(String uri) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         } else {
             this.headerElem.setRole(uri);
@@ -107,7 +107,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
     }
 
     public String getRole() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         } else {
             return this.headerElem.getRole();
@@ -128,7 +128,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      *                       support the SOAP 1.2 concept of Relay attribute.
      */
     public void setRelay(boolean flag) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         } else {
             this.headerElem.setRelay(flag);
@@ -136,7 +136,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
     }
 
     public boolean getRelay() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         } else {
             return this.headerElem.getRelay();

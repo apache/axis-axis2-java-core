@@ -73,7 +73,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     }
 
     void setDefaults() throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             setFaultCode(SOAP11Constants.QNAME_SENDER_FAULTCODE);
         } else {
             setFaultCode(SOAP12Constants.QNAME_SENDER_FAULTCODE);
@@ -121,12 +121,12 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 //        		localName = faultCode.substring(faultCode.indexOf(":")+1);
 //        	}
 
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
-            soapFactory = (SOAP11Factory)this.element.getOMFactory();
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
+            soapFactory = (SOAP11Factory)this.target.getOMFactory();
             soapFaultCode = soapFactory.createSOAPFaultCode(fault);
             soapFaultCode.setText(faultCode);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
-            soapFactory = (SOAP12Factory)this.element.getOMFactory();
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
+            soapFactory = (SOAP12Factory)this.target.getOMFactory();
             soapFaultCode = soapFactory.createSOAPFaultCode(fault);
             SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
             soapFaultCode.setValue(soapFaultValue);
@@ -144,9 +144,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      */
     public String getFaultCode() {
         if (fault != null && fault.getCode() != null) {
-            if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            if (this.target.getOMFactory() instanceof SOAP11Factory) {
                 return fault.getCode().getText();
-            } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
                 return fault.getCode().getValue().getText();
             } else {
                 return null;
@@ -168,10 +168,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      */
     public void setFaultActor(String faultActor) throws SOAPException {
 
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             if (this.fault.getRole() == null) {
                 SOAP11FaultRoleImpl faultRoleImpl = new SOAP11FaultRoleImpl(
-                        this.fault, (SOAPFactory)this.element.getOMFactory());
+                        this.fault, (SOAPFactory)this.target.getOMFactory());
 
                 faultRoleImpl.setRoleValue(faultActor);
                 this.fault.setRole(faultRoleImpl);
@@ -179,10 +179,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 SOAPFaultRole role = this.fault.getRole();
                 role.setRoleValue(faultActor);
             }
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             if (this.fault.getRole() == null) {
                 SOAP12FaultRoleImpl faultRoleImpl = new SOAP12FaultRoleImpl(
-                        this.fault, (SOAPFactory)this.element.getOMFactory());
+                        this.fault, (SOAPFactory)this.target.getOMFactory());
 
                 faultRoleImpl.setRoleValue(faultActor);
                 this.fault.setRole(faultRoleImpl);
@@ -212,9 +212,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see #getFaultString() getFaultString()
      */
     public void setFaultString(String faultString) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             setFaultString(faultString, null);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             setFaultString(faultString, Locale.getDefault());
         }
     }
@@ -282,7 +282,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         }
 
         SOAPFaultDetail omDetail;
-        SOAPFactory factory = (SOAPFactory)this.element.getOMFactory();
+        SOAPFactory factory = (SOAPFactory)this.target.getOMFactory();
         if (factory instanceof SOAP11Factory) {
             omDetail = new SOAP11FaultDetailImpl(this.fault,
                                                  factory);
@@ -318,18 +318,18 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public void setFaultString(String faultString, Locale locale) throws SOAPException {
         if (this.fault.getReason() != null) {
             SOAPFaultReason reason = this.fault.getReason();
-            if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            if (this.target.getOMFactory() instanceof SOAP11Factory) {
                 reason.setText(faultString);
-            } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
                 addFaultReasonText(faultString, locale);
             }
         } else {
-            if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            if (this.target.getOMFactory() instanceof SOAP11Factory) {
                 SOAPFaultReason reason = new SOAP11FaultReasonImpl(this.fault,
-                                                                   (SOAPFactory)this.element
+                                                                   (SOAPFactory)this.target
                                                                            .getOMFactory());
                 reason.setText(faultString);
-            } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
                 addFaultReasonText(faultString, locale);
             }
         }
@@ -349,9 +349,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @since SAAJ 1.2
      */
     public Locale getFaultStringLocale() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             return this.faultReasonLocale;
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             Locale locale = null;
             try {
                 if (getFaultReasonLocales().hasNext()) {
@@ -384,15 +384,15 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         if (locale == null) {
             throw new SOAPException("Received null for locale");
         }
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("Not supported in SOAP 1.1");
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             removeDefaults();
             
             String existingReasonText = getFaultReasonText(locale);
             if (existingReasonText == null) {
                 org.apache.axiom.soap.SOAPFactory soapFactory = null;
-                soapFactory = (SOAP12Factory)this.element.getOMFactory();
+                soapFactory = (SOAP12Factory)this.target.getOMFactory();
                 if (this.fault.getReason() == null) {
                     SOAPFaultReason soapFaultReason = soapFactory.createSOAPFaultReason(this.fault);
                     this.fault.setReason(soapFaultReason);
@@ -436,9 +436,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         if (subcode.getNamespaceURI() == null || subcode.getNamespaceURI().trim().length() == 0) {
             throw new SOAPException("Unqualified QName object : " + subcode);
         }
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             soapFactory = DOOMAbstractFactory.getSOAP12Factory();
         }
 
@@ -480,7 +480,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public QName getFaultCodeAsQName() {
         SOAPFaultCode soapFaultCode = this.fault.getCode();
         if (soapFaultCode != null) {
-            if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            if (this.target.getOMFactory() instanceof SOAP11Factory) {
                 return soapFaultCode.getTextAsQName();
             } else {
                 return soapFaultCode.getValue().getTextAsQName();
@@ -498,7 +498,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      *          - if this message does not support the SOAP 1.2 concept of Fault Node.
      */
     public String getFaultNode() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Node");
         } else {
@@ -523,7 +523,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @since SAAJ 1.3
      */
     public Iterator getFaultReasonLocales() throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Reason");
         } else {
@@ -563,7 +563,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @since SAAJ 1.3
      */
     public String getFaultReasonText(Locale locale) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Reason");
         } else {
@@ -595,7 +595,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      */
 
     public Iterator getFaultReasonTexts() throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         }
 
@@ -618,7 +618,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @since SAAJ 1.3
      */
     public String getFaultRole() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Reason");
         } else {
@@ -640,7 +640,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      *          - if this message does not support the SOAP 1.2 concept of Subcode.
      */
     public Iterator getFaultSubcodes() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         }
         ArrayList faultSubcodes = new ArrayList();
@@ -671,7 +671,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      *          - if this message does not support the SOAP 1.2 concept of Subcode.
      */
     public void removeAllFaultSubcodes() {
-        if (factory instanceof SOAP11Factory) {
+        if (target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException();
         } else {
             fault.getCode().getSubCode().detach();
@@ -697,15 +697,15 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         }
 
         org.apache.axiom.soap.SOAPFactory soapFactory = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
-            soapFactory = (SOAPFactory)this.element.getOMFactory();
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
+            soapFactory = (SOAPFactory)this.target.getOMFactory();
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             if (!(qname.getNamespaceURI()
                     .equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE))) {
                 throw new SOAPException("Incorrect URI"
                         + qname.getNamespaceURI());
             }
-            soapFactory = (SOAPFactory)this.element.getOMFactory();
+            soapFactory = (SOAPFactory)this.target.getOMFactory();
         } else {
             throw new SOAPException("Invalid SOAP version");
         }
@@ -715,7 +715,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 .equals("")) ? qname.getPrefix() : this.fault.getQName()
                 .getPrefix();
 
-        OMFactory factory = element.getOMFactory();
+        OMFactory factory = target.getOMFactory();
         if (factory instanceof SOAP11Factory) {
             soapFaultCode.setText(prefix + ":" + qname.getLocalPart());
             OMNamespace omNamespace = factory.createOMNamespace(qname.getNamespaceURI(),
@@ -746,10 +746,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
     public void setFaultNode(String s) throws SOAPException {
         org.apache.axiom.soap.SOAPFactory soapFactory = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("message does not support " +
                     "the SOAP 1.2 concept of Fault Node");
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             soapFactory = DOOMAbstractFactory.getSOAP12Factory();
         }
         SOAPFaultNode soapFaultNode = soapFactory.createSOAPFaultNode(this.fault);
@@ -768,10 +768,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      */
     public void setFaultRole(String uri) throws SOAPException {
         org.apache.axiom.soap.SOAPFactory soapFactory = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (this.target.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("message does not support the " +
                     "SOAP 1.2 concept of Fault Role");
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP12Factory) {
             soapFactory = DOOMAbstractFactory.getSOAP12Factory();
         }
         SOAPFaultRole soapFaultRole = soapFactory.createSOAPFaultRole(this.fault);
@@ -781,11 +781,11 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
-        return getChildren(element.getChildrenWithName(qName));
+        return getChildren(target.getChildrenWithName(qName));
     }
 
     public Iterator getChildElements() {
-        return getChildren(element.getChildren());
+        return getChildren(target.getChildren());
     }
 
     private Iterator getChildren(Iterator childIter) {

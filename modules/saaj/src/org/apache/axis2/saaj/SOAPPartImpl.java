@@ -200,7 +200,7 @@ public class SOAPPartImpl extends SOAPPart {
             org.apache.axiom.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
             envelope = new SOAPEnvelopeImpl(
                     (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
-            envelope.element.build();
+            envelope.target.build();
             this.document = envelope.getOwnerDocument();
             envelope.setSOAPPartParent(this);
         } catch (Exception e) {
@@ -349,20 +349,20 @@ public class SOAPPartImpl extends SOAPPart {
             }
 
             StAXSOAPModelBuilder builder1 = null;
-            if (this.envelope.element.getOMFactory() instanceof SOAP11Factory) {
+            if (this.envelope.target.getOMFactory() instanceof SOAP11Factory) {
                 builder1 = new StAXSOAPModelBuilder(reader,
-                                                    (SOAP11Factory)this.envelope.element
+                                                    (SOAP11Factory)this.envelope.target
                                                             .getOMFactory(), null);
-            } else if (this.envelope.element.getOMFactory() instanceof SOAP12Factory) {
+            } else if (this.envelope.target.getOMFactory() instanceof SOAP12Factory) {
                 builder1 = new StAXSOAPModelBuilder(reader,
-                                                    (SOAP12Factory)this.envelope.element
+                                                    (SOAP12Factory)this.envelope.target
                                                             .getOMFactory(), null);
             }
 
             org.apache.axiom.soap.SOAPEnvelope soapEnvelope = builder1.getSOAPEnvelope();
             envelope = new SOAPEnvelopeImpl(
                     (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
-            envelope.element.build();
+            envelope.target.build();
             this.document = envelope.getOwnerDocument();
             envelope.setSOAPPartParent(this);
         } catch (TransformerFactoryConfigurationError e) {
@@ -922,7 +922,7 @@ public class SOAPPartImpl extends SOAPPart {
      */
     public Node removeChild(Node oldChild) throws DOMException {
         if (oldChild instanceof SOAPElementImpl) {
-            oldChild = ((SOAPElementImpl)oldChild).getElement();
+            oldChild = ((SOAPElementImpl)oldChild).getTarget();
         } else if (oldChild instanceof TextImplEx) {
             // TODO: handle text nodes somehow
         }
@@ -1196,6 +1196,6 @@ public class SOAPPartImpl extends SOAPPart {
     }
     
     javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode) {
-        return NodeImplEx.toSAAJNode(domNode, this);
+        return SAAJNode.toSAAJNode(domNode, this);
     }
 }

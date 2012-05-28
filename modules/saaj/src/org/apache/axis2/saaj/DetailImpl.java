@@ -73,8 +73,8 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      */
     public DetailEntry addDetailEntry(Name name) throws SOAPException {
         SOAPElementImpl childElement = (SOAPElementImpl)addChildElement(name);
-        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.element);
-        childElement.element.setUserData(SAAJ_NODE, detailEntry, null);
+        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.target);
+        childElement.target.setUserData(SAAJ_NODE, detailEntry, null);
         return detailEntry;
     }
 
@@ -85,7 +85,7 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      *         <code>Detail</code> object
      */
     public Iterator getDetailEntries() {
-        final Iterator detailEntriesIter = element.getChildElements();
+        final Iterator detailEntriesIter = target.getChildElements();
         Collection details = new ArrayList();
         while (detailEntriesIter.hasNext()) {
             details.add(new DetailEntryImpl((ElementImpl)detailEntriesIter.next()));
@@ -102,8 +102,8 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      */
     public DetailEntry addDetailEntry(QName qname) throws SOAPException {
         SOAPElementImpl childElement = (SOAPElementImpl)addChildElement(qname);
-        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.element);
-        childElement.element.setUserData(SAAJ_NODE, detailEntry, null);
+        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.target);
+        childElement.target.setUserData(SAAJ_NODE, detailEntry, null);
         return detailEntry;
     }
 

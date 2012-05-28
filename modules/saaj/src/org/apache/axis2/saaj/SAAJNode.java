@@ -22,8 +22,8 @@ package org.apache.axis2.saaj;
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.dom.DOMMessageFormatter;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.soap.impl.dom.SOAPBodyImpl;
@@ -31,8 +31,13 @@ import org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.TypeInfo;
+import org.w3c.dom.UserDataHandler;
 
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
@@ -43,15 +48,18 @@ import javax.xml.soap.SOAPException;
  * some tree manipulation methods. This interface provides methods for getting the value of a node,
  * for getting and setting the parent of a node, and for removing a node.
  */
-public abstract class NodeImplEx extends NodeImpl implements Node {
-
-    /** @param factory  */
-    protected NodeImplEx(OMFactory factory) {
-        super(factory);
-    }
-
+public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
+    protected final T target;
     protected SOAPElement parentElement;
     static final String SAAJ_NODE = "saaj.node";
+
+    public SAAJNode(T target) {
+        this.target = target;
+    }
+
+    public final T getTarget() {
+        return target;
+    }
 
     /**
      * Removes this <code>Node</code> object from the tree. Once removed, this node can be garbage
@@ -81,23 +89,6 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
     /* public OMNode getOMNode() {
         return omNode;
     }*/
-
-    /**
-     * Returns the the value of the immediate child of this <code>Node</code> object if a child
-     * exists and its valu e is text.
-     *
-     * @return a <code>String</code> with the text of the immediate child of this <code>Node</code>
-     *         object if (1) there is a child and (2) the child is a <code>Text</code> object;
-     *         <code>null</code> otherwise
-     */
-    public String getValue() {
-        if (this.getNodeType() == Node.TEXT_NODE) {
-            return this.getNodeValue();
-        } else if (this.getNodeType() == Node.ELEMENT_NODE) {
-            return ((NodeImplEx)(((OMElement)this).getFirstOMChild())).getValue();
-        }
-        return null;
-    }
 
     /**
      * Notifies the implementation that this <code>Node</code> object is no longer being used by the
@@ -297,5 +288,195 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
     // TODO: the existence of this method probably indicates a problem in TextImplEx
     public org.w3c.dom.Node getParentNode() {
         return null;
+    }
+
+    public final boolean hasAttributes() {
+        return parentElement.hasAttributes();
+    }
+
+    public final boolean isSupported(String feature, String version) {
+        return parentElement.isSupported(feature, version);
+    }
+
+    public final String getBaseURI() {
+        return parentElement.getBaseURI();
+    }
+
+    public final String getNodeValue() throws DOMException {
+        return target.getNodeValue();
+    }
+
+    public final void setNodeValue(String nodeValue) throws DOMException {
+        target.setNodeValue(nodeValue);
+    }
+
+    public final org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild, org.w3c.dom.Node refChild) throws DOMException {
+        return target.insertBefore(newChild, refChild);
+    }
+
+    public final org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild, org.w3c.dom.Node oldChild) throws DOMException {
+        return target.replaceChild(newChild, oldChild);
+    }
+
+    public final org.w3c.dom.Node cloneNode(boolean deep) {
+        return target.cloneNode(deep);
+    }
+
+    public final void normalize() {
+        target.normalize();
+    }
+
+    public final void setPrefix(String prefix) throws DOMException {
+        target.setPrefix(prefix);
+    }
+
+    public final short compareDocumentPosition(org.w3c.dom.Node other) throws DOMException {
+        return target.compareDocumentPosition(other);
+    }
+
+    public final void setTextContent(String textContent) throws DOMException {
+        target.setTextContent(textContent);
+    }
+
+    public final boolean isSameNode(org.w3c.dom.Node other) {
+        return target.isSameNode(other);
+    }
+
+    public final String lookupPrefix(String namespaceURI) {
+        return target.lookupPrefix(namespaceURI);
+    }
+
+    public final boolean isDefaultNamespace(String namespaceURI) {
+        return target.isDefaultNamespace(namespaceURI);
+    }
+
+    public final String lookupNamespaceURI(String prefix) {
+        return null;
+    }
+
+    public final boolean isEqualNode(org.w3c.dom.Node arg) {
+        return target.isEqualNode(arg);
+    }
+
+    public final Object getFeature(String feature, String version) {
+        return target.getFeature(feature, version);
+    }
+
+    public final Object setUserData(String key, Object data, UserDataHandler handler) {
+        return target.setUserData(key, data, handler);
+    }
+
+    public final Object getUserData(String key) {
+        return target.getUserData(key);
+    }
+
+    public final org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild) throws DOMException {
+        if (oldChild instanceof SAAJNode) {
+            oldChild = ((SAAJNode<?>)oldChild).getTarget();
+        }
+        return target.removeChild(oldChild);
+    }
+
+    public final String getNodeName() {
+        return target.getNodeName();
+    }
+
+    public final short getNodeType() {
+        return parentElement.getNodeType();
+    }
+
+    public final Document getOwnerDocument() {
+        return target.getOwnerDocument();
+    }
+
+    public final String getLocalName() {
+        return target.getLocalName();
+    }
+
+    public final String getNamespaceURI() {
+        return target.getNamespaceURI();
+    }
+
+    public final String getPrefix() {
+        return target.getPrefix();
+    }
+
+    public final org.w3c.dom.Node getFirstChild() {
+        return toSAAJNode(target.getFirstChild());
+    }
+
+    public final boolean hasChildNodes() {
+        return target.hasChildNodes();
+    }
+
+    public final org.w3c.dom.Node getLastChild() {
+        return toSAAJNode(target.getLastChild());
+    }
+
+    protected final NodeList toSAAJNodeList(NodeList nodes) {
+        NodeListImpl result = new NodeListImpl();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            result.addNode(toSAAJNode(nodes.item(i)));
+        }
+        return result;
+    }
+
+    public final NodeList getChildNodes() {
+        return toSAAJNodeList(target.getChildNodes());
+    }
+
+    public final org.w3c.dom.Node appendChild(org.w3c.dom.Node child) throws DOMException {        
+        if (getOwnerDocument() != child.getOwnerDocument()) {
+            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, "Wrong document");
+        }
+        try {
+            if (child instanceof Text) {
+                return appendText((Text)child);
+            } else if (child instanceof ElementImpl) {
+                return appendElement((ElementImpl)child);
+            }
+        } catch (SOAPException e) {
+            DOMException ex = 
+                new DOMException(DOMException.HIERARCHY_REQUEST_ERR, e.getMessage());
+            ex.initCause(e);
+            throw ex;
+        }
+        throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
+                DOMMessageFormatter.formatMessage(
+                        DOMMessageFormatter.DOM_DOMAIN,
+                        DOMException.HIERARCHY_REQUEST_ERR, null));
+    }
+
+    protected Text appendText(Text child) throws SOAPException {
+        String text = child.getData();
+        Text textNode = getOwnerDocument().createTextNode(text);
+        NodeImpl node = ((NodeImpl)target.appendChild(textNode));
+        TextImplEx saajTextNode = new TextImplEx(text, (SOAPElement)this);
+        node.setUserData(SAAJ_NODE, saajTextNode, null);
+        return saajTextNode;
+    }
+    
+    protected Element appendElement(ElementImpl child) throws SOAPException {
+        String namespaceURI = child.getNamespaceURI();
+        String prefix = child.getPrefix();
+
+        SOAPElementImpl childEle = new SOAPElementImpl(child);
+        
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+        if (namespaceURI != null && namespaceURI.trim().length() > 0) {
+            childEle.target.setNamespace(childEle.target.declareNamespace(namespaceURI, prefix));
+        }
+        target.appendChild(childEle.target);
+        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement((SOAPElement)this);
+        return childEle;
+    }
+
+    public final String getTextContent() throws DOMException {
+        return target.getTextContent();
+    }
+
+    public final NamedNodeMap getAttributes() {
+        return target.getAttributes();
     }
 }

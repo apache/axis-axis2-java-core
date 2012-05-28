@@ -62,9 +62,9 @@ public class SOAPMessageImpl extends SOAPMessage {
 
     public SOAPMessageImpl(SOAPEnvelopeImpl soapEnvelope) {
         this.mimeHeaders = new MimeHeaders();
-        if (soapEnvelope.getOMFactory() instanceof SOAP11Factory) {
+        if (soapEnvelope.target.getOMFactory() instanceof SOAP11Factory) {
             this.mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_TEXT_XML);
-        } else if (soapEnvelope.getOMFactory() instanceof SOAP12Factory) {
+        } else if (soapEnvelope.target.getOMFactory() instanceof SOAP12Factory) {
             this.mimeHeaders.addHeader("content-type",
                     HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
         }
@@ -400,7 +400,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 }
                 format.setRootContentId(rootContentId);
 
-                format.setSOAP11(((SOAPEnvelopeImpl) soapPart.getEnvelope()).getOMFactory() instanceof SOAP11Factory);
+                format.setSOAP11(((SOAPEnvelopeImpl) soapPart.getEnvelope()).target.getOMFactory() instanceof SOAP11Factory);
                 
                 //Double save the content-type in case anything is updated
                 mimeHeaders.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType.toString());
@@ -612,7 +612,7 @@ public class SOAPMessageImpl extends SOAPMessage {
     }
     
     private String getBaseType() throws SOAPException {
-        boolean isSOAP12 = ((SOAPEnvelopeImpl) soapPart.getEnvelope()).getOMFactory() instanceof SOAP12Factory;
+        boolean isSOAP12 = ((SOAPEnvelopeImpl) soapPart.getEnvelope()).target.getOMFactory() instanceof SOAP12Factory;
         return isSOAP12 ? HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML : HTTPConstants.MEDIA_TYPE_TEXT_XML;
     }
     

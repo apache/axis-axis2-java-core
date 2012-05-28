@@ -632,7 +632,7 @@ public class SAAJConverterImpl implements SAAJConverter {
                         Node value = se.getFirstChild();
                         if (value != null && value instanceof org.apache.axis2.saaj.SOAPElementImpl) {
                             org.apache.axis2.saaj.SOAPElementImpl valueElement = (org.apache.axis2.saaj.SOAPElementImpl) value;
-                            ElementImpl e = valueElement.getElement();
+                            ElementImpl e = valueElement.getTarget();
                             String content = e.getText();
                             
                             SOAPElement child = fault.addChildElement(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME));
@@ -657,7 +657,7 @@ public class SAAJConverterImpl implements SAAJConverter {
                         Node value = se.getFirstChild();
                         if (value != null && value instanceof org.apache.axis2.saaj.SOAPElementImpl) {
                             org.apache.axis2.saaj.SOAPElementImpl valueElement = (org.apache.axis2.saaj.SOAPElementImpl) value;
-                            ElementImpl e = valueElement.getElement();
+                            ElementImpl e = valueElement.getTarget();
                             String content = e.getText();
                            
                             SOAPElement child = fault.addChildElement(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME));

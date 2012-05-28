@@ -141,14 +141,14 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         org.apache.axiom.soap.SOAPHeader header = omSOAPEnvelope.getHeader();
         if (header == null) {
             SOAPHeaderImpl saajSOAPHeader;
-            if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            if (this.target.getOMFactory() instanceof SOAP11Factory) {
                 header = new SOAP11HeaderImpl(omSOAPEnvelope,
-                                              (SOAPFactory)this.element.getOMFactory());
+                                              (SOAPFactory)this.target.getOMFactory());
                 saajSOAPHeader = new SOAPHeaderImpl(header);
                 saajSOAPHeader.setParentElement(this);
             } else {
                 header = new SOAP12HeaderImpl(omSOAPEnvelope,
-                                              (SOAPFactory)this.element.getOMFactory());
+                                              (SOAPFactory)this.target.getOMFactory());
                 saajSOAPHeader = new SOAPHeaderImpl(header);
                 saajSOAPHeader.setParentElement(this);
             }
@@ -175,7 +175,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     public SOAPBody addBody() throws SOAPException {
         org.apache.axiom.soap.SOAPBody body = omSOAPEnvelope.getBody();
         if (body == null) {
-            body = new SOAP11BodyImpl(omSOAPEnvelope, (SOAPFactory)this.element.getOMFactory());
+            body = new SOAP11BodyImpl(omSOAPEnvelope, (SOAPFactory)this.target.getOMFactory());
             SOAPBodyImpl saajSOAPBody = new SOAPBodyImpl(body);
             saajSOAPBody.setParentElement(this);
             ((NodeImpl)omSOAPEnvelope.getBody()).setUserData(SAAJ_NODE, saajSOAPBody, null);
@@ -187,15 +187,15 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     }
 
     public SOAPElement addTextNode(String text) throws SOAPException {
-        Node firstChild = element.getFirstChild();
+        Node firstChild = target.getFirstChild();
         if (firstChild instanceof org.w3c.dom.Text) {
             ((org.w3c.dom.Text)firstChild).setData(text);
         } else {
             // Else this is a header
-            TextImpl doomText = new TextImpl(text, this.element.getOMFactory());
+            TextImpl doomText = new TextImpl(text, this.target.getOMFactory());
             doomText.setNextOMSibling((OMNode)firstChild);
             doomText.setPreviousOMSibling(null);
-            element.setFirstChild(doomText);
+            target.setFirstChild(doomText);
             ((ChildNode)firstChild).setPreviousOMSibling(doomText);
         }
         return this;
@@ -206,7 +206,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
      * on Envelop
      */
     public SOAPElement addAttribute(Name name, String value) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        if (this.target.getOMFactory() instanceof SOAP12Factory) {
             if ("encodingStyle".equals(name.getLocalName())) {
                 throw new SOAPException(
                         "SOAP1.2 does not allow encodingStyle attribute to be set " +
@@ -221,9 +221,9 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
      * element
      */
     public SOAPElement addChildElement(Name name) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        if (this.target.getOMFactory() instanceof SOAP12Factory) {
             throw new SOAPException("Cannot add elements after body element");
-        } else if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        } else if (this.target.getOMFactory() instanceof SOAP11Factory) {
             //Let elements to be added any where.
             return super.addChildElement(name);
         }
