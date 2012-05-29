@@ -333,6 +333,10 @@ public class ConverterUtil {
         return o.toString();
     }
 
+    public static String convertToString(BigDecimal o) {
+        return o.toPlainString();
+    }
+
     public static String convertToString(Double o) {
         return o.toString();
     }

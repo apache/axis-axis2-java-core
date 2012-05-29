@@ -21,6 +21,7 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +52,15 @@ public class ConverterUtilTest extends TestCase {
         assertTrue(convertedObj.getClass().isArray());
         assertTrue(convertedObj.getClass().equals(BigInteger[].class));
 
+    }
+
+    public void testBigDecimal() {
+        String inputString = "0.0000000000";
+        BigDecimal decimal = new BigDecimal(inputString);
+        String outputString = ConverterUtil.convertToString(decimal);
+        System.out.println("BigDecimal==> " + outputString);
+
+        assertEquals(inputString, outputString);
     }
 
     /** integer arrays */
