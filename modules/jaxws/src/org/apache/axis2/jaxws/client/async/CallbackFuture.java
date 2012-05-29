@@ -20,8 +20,7 @@
 package org.apache.axis2.jaxws.client.async;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -45,7 +44,7 @@ import java.util.concurrent.FutureTask;
  * to it by the JAX-WS client and using that as the thread on which to deliver the async response
  * the JAX-WS <link>javax.xml.ws.AsynchHandler</link>.
  */
-public class CallbackFuture extends Callback {
+public class CallbackFuture implements AxisCallback {
 
     private static final Log log = LogFactory.getLog(CallbackFuture.class);
     private static final boolean debug = log.isDebugEnabled();
@@ -134,15 +133,15 @@ public class CallbackFuture extends Callback {
         return (Future<?>)task;
     }
 
-    @Override
-    public void onComplete(AsyncResult result) {
+   
+    public void onComplete(org.apache.axis2.context.MessageContext mc) {
         if (debug) {
             log.debug("JAX-WS received the async response");
         }
 
         MessageContext response = null;
         try {
-            response = AsyncUtils.createJAXWSMessageContext(result);
+            response = AsyncUtils.createJAXWSMessageContext(mc);
             response.setInvocationContext(invocationCtx);
             // make sure request and response contexts share a single parent
             response.setMEPContext(invocationCtx.getRequestMessageContext().getMEPContext());
@@ -162,7 +161,7 @@ public class CallbackFuture extends Callback {
         execute();
     }
 
-    @Override
+   
     public void onError(Exception e) {
         // If a SOAPFault was returned by the AxisEngine, the AxisFault
         // that is returned should have a MessageContext with it.  Use
@@ -256,6 +255,20 @@ public class CallbackFuture extends Callback {
         if (log.isDebugEnabled()) {
             log.debug("Executor task completed");
         }
+    }
+
+    public void onMessage(org.apache.axis2.context.MessageContext msgContext) {
+        onComplete(msgContext);
+        
+    }   
+
+    public void onComplete() {     
+        
+    }
+
+    public void onFault(org.apache.axis2.context.MessageContext msgContext) {
+        onComplete(msgContext);
+        
     }
 }
 
