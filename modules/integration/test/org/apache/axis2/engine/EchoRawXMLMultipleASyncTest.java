@@ -26,8 +26,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -96,17 +95,29 @@ public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase impleme
         options.setAction("urn:echoOMElement");
         options.setTo(targetEPR);
         for (int i = 0; i < 5; i++) {
-            Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
+            
+            AxisCallback callback = new AxisCallback() {
+                
+                public void onMessage(MessageContext msgContext) {
                     TestingUtils.compareWithCreatedOMElement(
-                            result.getResponseEnvelope()
+                            msgContext.getEnvelope()
                                     .getBody().getFirstElement());
-                    finish = true;
+                    finish = true;                    
                 }
-
+                
+                public void onFault(MessageContext msgContext) {
+                    TestingUtils.compareWithCreatedOMElement(
+                            msgContext.getEnvelope()
+                                    .getBody().getFirstElement());
+                    finish = true;                     
+                }
+                
                 public void onError(Exception e) {
                     log.info(e.getMessage());
-                    finish = true;
+                    finish = true;                    
+                }
+                
+                public void onComplete() {                    
                 }
             };
             sender.sendReceiveNonBlocking(payload, callback);
@@ -140,19 +151,29 @@ public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase impleme
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
             options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
-
-
-            Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
+  
+            AxisCallback callback = new AxisCallback() {
+                
+                public void onMessage(MessageContext msgContext) {
                     TestingUtils.compareWithCreatedOMElement(
-                            result.getResponseEnvelope()
+                            msgContext.getEnvelope()
                                     .getBody().getFirstElement());
-                    finish = true;
+                    finish = true;                    
                 }
-
+                
+                public void onFault(MessageContext msgContext) {
+                    TestingUtils.compareWithCreatedOMElement(
+                            msgContext.getEnvelope()
+                                    .getBody().getFirstElement());
+                    finish = true;                     
+                }
+                
                 public void onError(Exception e) {
                     log.info(e.getMessage());
-                    finish = true;
+                    finish = true;                    
+                }
+                
+                public void onComplete() {                    
                 }
             };
 

@@ -22,9 +22,7 @@ package org.apache.axis2.util;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.AxisCallback;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.MessageReceiver;
@@ -48,10 +46,6 @@ public class CallbackReceiver implements MessageReceiver {
 
     public CallbackReceiver() {
         callbackStore = new ConcurrentHashMap();
-    }
-
-    public void addCallback(String msgID, Callback callback) throws AxisFault {
-    	putIfAbsent(msgID, callback);
     }
 
     public void addCallback(String msgID, AxisCallback callback) throws AxisFault {
@@ -107,34 +101,7 @@ public class CallbackReceiver implements MessageReceiver {
             axisCallback.onComplete();
             return;
         }
-
-        // THIS NEXT PART WILL EVENTUALLY GO AWAY WHEN Callback DOES
-
-        // OK, this must be an old-style Callback
-        Callback callback = (Callback)callbackObj;
-        AsyncResult result = new AsyncResult(msgContext);
-
-        // check whether the result is a fault.
-        try {
-            SOAPEnvelope envelope = result.getResponseEnvelope();
-
-            OperationContext opContext = msgContext.getOperationContext();
-            if (opContext != null && !opContext.isComplete()) {
-                opContext.addMessageContext(msgContext);
-            }
-
-            if (envelope.hasFault()) {
-                AxisFault axisFault =
-                        Utils.getInboundFaultFromMessageContext(msgContext);
-                callback.onError(axisFault);
-            } else {
-                callback.onComplete(result);
-            }
-        } catch (Exception e) {
-            callback.onError(e);
-        }  finally {
-            callback.setComplete(true);
-        }
+      
     }
 
     //to get the pending request

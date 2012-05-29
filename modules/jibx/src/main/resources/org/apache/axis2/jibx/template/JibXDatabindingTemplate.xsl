@@ -472,10 +472,33 @@
         }
     </xsl:if>
     <xsl:if test="$sync='false'">
-                _operationClient.setCallback(new org.apache.axis2.client.async.Callback() {
-                    public void onComplete(org.apache.axis2.client.async.AsyncResult async) {
+                _operationClient.setCallback(new org.apache.axis2.client.async.AxisCallback() {
+                    public void onMessage(org.apache.axis2.context.MessageContext  msgCtx) {
                         try {
-                            org.apache.axiom.om.OMElement result = async.getResponseEnvelope().getBody().getFirstElement();
+                            org.apache.axiom.om.OMElement result = msgCtx.getEnvelope().getBody().getFirstElement();
+                            if (result != null &amp;&amp; "<xsl:value-of select='out-wrapper/@name'/>".equals(result.getLocalName()) &amp;&amp;
+                                "<xsl:value-of select='out-wrapper/@ns'/>".equals(result.getNamespace().getNamespaceURI())) {
+                                org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(result);
+                                uctx.parsePastStartTag("<xsl:value-of select='out-wrapper/@ns'/>", "<xsl:value-of select='out-wrapper/@name'/>");
+                                int index;
+      <xsl:apply-templates select="out-wrapper/return-element" mode="interface-implementation"/>
+                                _callback.receiveResult<xsl:value-of select="@method-name"/>(<xsl:value-of select="out-wrapper/return-element/@java-name"/>);
+                            } else {
+                                throw new org.apache.axis2.AxisFault("Missing expected result wrapper element {<xsl:value-of select='out-wrapper/@ns'/>}<xsl:value-of select='out-wrapper/@name'/>");
+                            }
+                        } catch (Exception e) {
+                            onError(e);
+                        } finally {
+                            try {
+                                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                            } catch (org.apache.axis2.AxisFault axisFault) {
+                                onError(axisFault);
+                            }   
+                        }
+                    }
+                    public void onFault(org.apache.axis2.context.MessageContext  msgCtx) {
+                        try {
+                            org.apache.axiom.om.OMElement result = msgCtx.getEnvelope().getBody().getFirstElement();
                             if (result != null &amp;&amp; "<xsl:value-of select='out-wrapper/@name'/>".equals(result.getLocalName()) &amp;&amp;
                                 "<xsl:value-of select='out-wrapper/@ns'/>".equals(result.getNamespace().getNamespaceURI())) {
                                 org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(result);
@@ -500,6 +523,9 @@
                     public void onError(Exception e) {
                         _callback.receiveError<xsl:value-of select="@method-name"/>(e);
                     }
+                    
+                     public void onComplete(){
+                     }
                 });
                         
                 org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;

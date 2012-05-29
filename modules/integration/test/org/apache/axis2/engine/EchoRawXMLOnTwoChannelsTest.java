@@ -29,9 +29,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -98,17 +98,28 @@ public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase impleme
             options.setUseSeparateListener(true);
             options.setAction(operationName.getLocalPart());
 
-            Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
+            AxisCallback callback = new AxisCallback() {
+                
+                public void onMessage(MessageContext msgContext) {
                     TestingUtils.compareWithCreatedOMElement(
-                            result.getResponseEnvelope().getBody()
+                            msgContext.getEnvelope().getBody()
                                     .getFirstElement());
-                    finish = true;
+                    finish = true;                    
                 }
-
+                
+                public void onFault(MessageContext msgContext) {
+                    TestingUtils.compareWithCreatedOMElement(
+                            msgContext.getEnvelope().getBody()
+                                    .getFirstElement());
+                    finish = true;                      
+                }
+                
                 public void onError(Exception e) {
                     log.info(e.getMessage());
-                    finish = true;
+                    finish = true;                    
+                }
+                
+                public void onComplete() {                    
                 }
             };
 

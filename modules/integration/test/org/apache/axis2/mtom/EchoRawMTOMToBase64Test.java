@@ -36,10 +36,10 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.TestingUtils;
@@ -111,18 +111,31 @@ public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
         clientOptions.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
 
-        Callback callback = new Callback() {
-            public void onComplete(AsyncResult result) {
-                SOAPEnvelope envelope = result.getResponseEnvelope();
+        AxisCallback callback = new AxisCallback() {
+            
+            public void onMessage(MessageContext msgContext) {
+                SOAPEnvelope envelope = msgContext.getEnvelope();
 
                 OMElement data = (OMElement)envelope.getBody().getFirstElement().getFirstOMChild();
                 compareWithCreatedOMText(data.getText());
-                finish = true;
+                finish = true;                
             }
+            
+            public void onFault(MessageContext msgContext) {
+                SOAPEnvelope envelope = msgContext.getEnvelope();
 
+                OMElement data = (OMElement)envelope.getBody().getFirstElement().getFirstOMChild();
+                compareWithCreatedOMText(data.getText());
+                finish = true;  
+                
+            }
+            
             public void onError(Exception e) {
                 log.info(e.getMessage());
-                finish = true;
+                finish = true;                
+            }
+            
+            public void onComplete() {                
             }
         };
 

@@ -32,9 +32,7 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.AxisCallback;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -146,9 +144,7 @@ class OutInAxisOperationClient extends OperationClient {
         return oc.getMessageContext(messageLabel);
     }
 
-    public void setCallback(Callback callback) {
-        this.callback = callback;
-    }
+    
 
     /**
      * Executes the MEP. What this does depends on the specific MEP client. The
@@ -230,7 +226,7 @@ class OutInAxisOperationClient extends OperationClient {
                 completed = true;
             } else {
                 sc.getConfigurationContext().getThreadPool().execute(
-                        new NonBlockingInvocationWorker(callback, mc, axisCallback));
+                        new NonBlockingInvocationWorker(mc, axisCallback));
             }
         }
     }
@@ -264,10 +260,7 @@ class OutInAxisOperationClient extends OperationClient {
         }
 
         SyncCallBack internalCallback = null;
-        if (callback != null) {
-            callbackReceiver.addCallback(mc.getMessageID(), callback);
-			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating callback");
-        } else if (axisCallback != null) {
+        if (axisCallback != null) {
             callbackReceiver.addCallback(mc.getMessageID(), axisCallback);  
 			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating axis callback");			
         } else {
@@ -427,15 +420,11 @@ class OutInAxisOperationClient extends OperationClient {
      * way transport.
      */
     private class NonBlockingInvocationWorker implements Runnable {
-        private Callback callback;
-
         private MessageContext msgctx;
         private AxisCallback axisCallback;
 
-        public NonBlockingInvocationWorker(Callback callback,
-                                           MessageContext msgctx ,
-                                           AxisCallback axisCallback) {
-            this.callback = callback;
+        public NonBlockingInvocationWorker(MessageContext msgctx ,
+                                           AxisCallback axisCallback) {            
             this.msgctx = msgctx;
             this.axisCallback =axisCallback;
         }
@@ -453,9 +442,7 @@ class OutInAxisOperationClient extends OperationClient {
                         // If a fault was found, create an AxisFault with a MessageContext so that
                         // other programming models can deserialize the fault to an alternative form.
                         AxisFault fault = new AxisFault(body.getFault(), response);
-                        if (callback != null) {
-                            callback.onError(fault);
-                        } else if (axisCallback != null) {
+                        if (axisCallback != null) {
                             if (options.isExceptionToBeThrownOnSOAPFault()) {
                                 axisCallback.onError(fault);
                             } else {
@@ -464,10 +451,7 @@ class OutInAxisOperationClient extends OperationClient {
                         }
 
                     } else {
-                        if (callback != null) {
-                            AsyncResult asyncResult = new AsyncResult(response);
-                            callback.onComplete(asyncResult);
-                        } else if (axisCallback != null) {
+                        if (axisCallback != null) {
                             axisCallback.onMessage(response);
                         }
 
@@ -475,16 +459,12 @@ class OutInAxisOperationClient extends OperationClient {
                 }
 
             } catch (Exception e) {
-                if (callback != null) {
-                    callback.onError(e);
-                } else if (axisCallback != null) {
+                if (axisCallback != null) {
                     axisCallback.onError(e);
                 }
 
             } finally {
-                if (callback != null) {
-                    callback.setComplete(true);
-                }else if (axisCallback != null) {
+                if (axisCallback != null) {
                     axisCallback.onComplete();
                 }
             }

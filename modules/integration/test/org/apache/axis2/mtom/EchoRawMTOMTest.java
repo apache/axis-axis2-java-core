@@ -34,8 +34,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -113,21 +112,37 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, MessageContext.UTF_16);
 
-        Callback callback = new Callback() {
-            public void onComplete(AsyncResult result) {
-                SOAPEnvelope envelope = result.getResponseEnvelope();
+        AxisCallback callback = new AxisCallback() {
+            
+            public void onMessage(MessageContext msgContext) {
+                SOAPEnvelope envelope = msgContext.getEnvelope();
 
                 OMElement ele = (OMElement)envelope.getBody().getFirstElement().getFirstOMChild();
                 OMText binaryNode = (OMText)ele.getFirstOMChild();
 
                 // to the assert equal
                 compareWithCreatedOMText(binaryNode);
-                finish = true;
+                finish = true;                
             }
+            
+            public void onFault(MessageContext msgContext) {
+                SOAPEnvelope envelope = msgContext.getEnvelope();
 
+                OMElement ele = (OMElement)envelope.getBody().getFirstElement().getFirstOMChild();
+                OMText binaryNode = (OMText)ele.getFirstOMChild();
+
+                // to the assert equal
+                compareWithCreatedOMText(binaryNode);
+                finish = true;                
+            }
+            
             public void onError(Exception e) {
                 log.info(e.getMessage());
-                finish = true;
+                finish = true;                
+            }
+            
+            public void onComplete() {                
+                
             }
         };
         ConfigurationContext configContext =

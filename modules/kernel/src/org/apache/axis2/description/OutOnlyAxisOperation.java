@@ -26,7 +26,6 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -223,18 +222,7 @@ class OutOnlyAxisOperationClient extends OperationClient {
         throw new AxisFault(Messages.getMessage("unknownMsgLabel", messageLabel));
     }
 
-    /**
-     * Sets the message receiver to be executed when a message comes into the MEP
-     * and the MEP is executed. This is the way the MEP client provides
-     * notification that a message has been received by it. Exactly when its
-     * executed and under what conditions is a function of the specific MEP
-     * client.
-     */
-    public void setCallback(Callback callback) {
-        throw new UnsupportedOperationException(
-                "This feature is not supported by this MEP");
-    }
-
+    
     /**
      * Executes the MEP. What this does depends on the specific MEP client. The
      * basic idea is to have the MEP client execute and do something with the

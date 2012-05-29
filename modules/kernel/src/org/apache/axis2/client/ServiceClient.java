@@ -29,7 +29,6 @@ import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AxisCallback;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -562,24 +561,7 @@ public class ServiceClient {
         return response.getEnvelope().getBody().getFirstElement();
     }
 
-    /**
-     * Directly invoke an anonymous operation with an In-Out MEP without waiting for a response.
-     * This method sends your supplied XML with response notification to your callback handler. For
-     * more control, you can instead create a client for the operation and use that client to
-     * execute the exchange.
-     *
-     * @param elem     the data to send (becomes the content of SOAP body)
-     * @param callback a Callback which will be notified upon completion
-     * @throws AxisFault in case of error
-     * @see #createClient(QName)
-     * @deprecated Please use the AxisCallback interface rather than Callback, which has been
-     *             deprecated
-     */
-    public void sendReceiveNonBlocking(OMElement elem, Callback callback)
-            throws AxisFault {
-        sendReceiveNonBlocking(ANON_OUT_IN_OP, elem, callback);
-    }
-
+   
     /**
      * Directly invoke an anonymous operation with an In-Out MEP without waiting for a response.
      * This method sends your supplied XML with response notification to your callback handler. For
@@ -594,33 +576,7 @@ public class ServiceClient {
     public void sendReceiveNonBlocking(OMElement elem, AxisCallback callback)
             throws AxisFault {
         sendReceiveNonBlocking(ANON_OUT_IN_OP, elem, callback);
-    }
-
-    /**
-     * Directly invoke a named operation with an In-Out MEP without waiting for a response. This
-     * method sends your supplied XML with response notification to your callback handler. For more
-     * control, you can instead create a client for the operation and use that client to execute the
-     * exchange.
-     *
-     * @param operation name of operation to be invoked (non-<code>null</code>)
-     * @param elem      the data to send (becomes the content of SOAP body)
-     * @param callback  a Callback which will be notified upon completion
-     * @throws AxisFault in case of error
-     * @see #createClient(QName)
-     * @deprecated Please use the AxisCallback interface rather than Callback, which has been
-     *             deprecated
-     */
-    public void sendReceiveNonBlocking(QName operation, OMElement elem, Callback callback)
-            throws AxisFault {
-        MessageContext mc = new MessageContext();
-        fillSOAPEnvelope(mc, elem);
-        OperationClient mepClient = createClient(operation);
-        // here a blocking invocation happens in a new thread, so the
-        // progamming model is non blocking
-        mepClient.setCallback(callback);
-        mepClient.addMessageContext(mc);
-        mepClient.execute(false);
-    }
+    }    
 
     /**
      * Directly invoke a named operation with an In-Out MEP without waiting for a response. This

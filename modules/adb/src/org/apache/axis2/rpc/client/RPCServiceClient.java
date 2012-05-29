@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AxisCallback;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
@@ -105,28 +104,7 @@ public class RPCServiceClient extends ServiceClient {
                                     new DefaultObjectSupplier());
     }
 
-    /**
-     * Invoke the nonblocking/Asynchronous call
-     *
-     * @param opName Operation QName (to get the body wrapper element)
-     * @param args an array of argument Objects
-     * @param callback object extending Callback which will receive notifications
-     * @throws AxisFault in case of a local processing error
-     * @deprecated Please use the AxisCallback interface rather than Callback, which has been deprecated
-     */
-    public void invokeNonBlocking(QName opName,
-                                  Object [] args,
-                                  Callback callback)
-            throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null);
-        // call the underlying implementation
-        if (notNullService) {
-            super.sendReceiveNonBlocking(opName, omElement, callback);
-        } else {
-            super.sendReceiveNonBlocking(omElement, callback);
-        }
-    }
-
+    
     /**
      * Invoke the nonblocking/Asynchronous call
      *
