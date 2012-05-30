@@ -38,7 +38,7 @@
         <url>http://issues.apache.org/jira/browse/AXIS2</url>
     </issueManagement>
     <modules>
-        <module>modules/resource-bundle</module> <!--  Must be first in the list! -->
+        <module>modules/resource-bundle</module> <!-- Must be first in the list! -->
         <module>modules/adb</module>
         <module>modules/adb-codegen</module>
         <module>modules/addressing</module>
