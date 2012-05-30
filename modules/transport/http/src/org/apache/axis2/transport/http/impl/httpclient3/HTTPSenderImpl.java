@@ -516,7 +516,10 @@ public class HTTPSenderImpl extends HTTPSender {
 
         // to see the host is a proxy and in the proxy list - available in
         // axis2.xml
-        HostConfiguration config = new HostConfiguration();
+        HostConfiguration config = client.getHostConfiguration();
+        if (config == null) {
+            config = new HostConfiguration();
+        }
 
         // one might need to set his own socket factory. Let's allow that case
         // as well.
