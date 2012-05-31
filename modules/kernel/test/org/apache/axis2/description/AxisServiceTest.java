@@ -19,21 +19,26 @@
 
 package org.apache.axis2.description;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.description.java2wsdl.XMLSchemaTest;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.ws.commons.schema.XmlSchema;
 
-import javax.xml.namespace.QName;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-
-public class AxisServiceTest extends TestCase {
+public class AxisServiceTest extends XMLSchemaTest {
     public static final String PARAM_NAME = "CustomParameter";
     public static final Object PARAM_VALUE = new Object();
+    private AxisService service;
+    private ArrayList<XmlSchema> sampleSchemas;
 
     class MyObserver implements ParameterObserver {
         public boolean gotIt = false;
@@ -45,9 +50,26 @@ public class AxisServiceTest extends TestCase {
             }
         }
     }
+    
+    
+
+    @Override
+    protected void setUp() throws Exception {
+        service = new AxisService();
+        sampleSchemas=new ArrayList<XmlSchema>();
+        super.setUp();
+    }
+    
+    @Override
+    protected void tearDown() throws Exception {
+        service=null;
+        sampleSchemas=null;
+        super.tearDown();
+    }
+
+
 
     public void testAddMessageElementQNameToOperationMappingBasic() {
-        AxisService service = new AxisService();
         
         AxisOperation op1 = new InOnlyAxisOperation();
         QName opName = new QName("foo");
@@ -70,7 +92,6 @@ public class AxisServiceTest extends TestCase {
     }
     
     public void testAddMessageElementQNameToOperationMappingOverloading() {
-        AxisService service = new AxisService();
         
         AxisOperation op1 = new InOnlyAxisOperation();
         AxisOperation op2 = new InOnlyAxisOperation();
@@ -95,7 +116,6 @@ public class AxisServiceTest extends TestCase {
     }
 
     public void testParameterObserver() throws Exception {
-        AxisService service = new AxisService();
 
         MyObserver observer = new MyObserver();
         service.addParameterObserver(observer);
@@ -176,9 +196,7 @@ public class AxisServiceTest extends TestCase {
         assertTrue("SUCCESSFUL".equals(mc.getProperty("MESSAGE_PROPERTY")));
     }
     
-    public void testOperationActionMapping() throws Exception {
-        AxisService service = new AxisService();
-                
+    public void testOperationActionMapping() throws Exception {                
         AxisOperation op1 = new InOutAxisOperation();
         AxisOperation op2 = new InOutAxisOperation();
         op2.addParameter(DeploymentConstants.TAG_ALLOWOVERRIDE, "true");

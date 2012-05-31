@@ -91,6 +91,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>           
         </dependency>
+	    <dependency>
+	        <groupId>xmlunit</groupId>
+	        <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+	    </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>

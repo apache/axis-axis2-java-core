@@ -1,0 +1,154 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://example.org">
+    <xs:element name="setS">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="s" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setL">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="l" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setI">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="i" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setD">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="d" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setC">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="c" type="xs:unsignedShort"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setBool">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="bool" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setB">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="b" type="xs:byte"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isBool">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="isBoolResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getS">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getSResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getL">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getLResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getI">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getIResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getD">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getDResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getC">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getCResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:unsignedShort"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getB">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getBResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:byte"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
