@@ -20,12 +20,18 @@
 package org.apache.axis2.description;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.stream.StreamSource;
 
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -33,6 +39,8 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.java2wsdl.XMLSchemaTest;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 
 public class AxisServiceTest extends XMLSchemaTest {
     public static final String PARAM_NAME = "CustomParameter";
@@ -56,14 +64,14 @@ public class AxisServiceTest extends XMLSchemaTest {
     @Override
     protected void setUp() throws Exception {
         service = new AxisService();
-        sampleSchemas=new ArrayList<XmlSchema>();
+        sampleSchemas = new ArrayList<XmlSchema>();
         super.setUp();
     }
     
     @Override
     protected void tearDown() throws Exception {
-        service=null;
-        sampleSchemas=null;
+        service = null;
+        sampleSchemas = null;
         super.tearDown();
     }
 
@@ -219,7 +227,80 @@ public class AxisServiceTest extends XMLSchemaTest {
         assertNull(service.getOperationByAction("testaction1"));
         assertEquals(service.getOperationByAction("testaction2"), op2);
     }
-    
+
+    public void testReleaseSchemaList() throws Exception {
+        loadSampleSchemaFile(sampleSchemas);
+        service.addSchema(sampleSchemas);
+        assertTrue(service.getSchema().size() != 0);
+        service.releaseSchemaList();
+        assertTrue(service.getSchema().size() == 0);
+    }
+
+    public void testPrintSchema() throws Exception {
+        loadSampleSchemaFile(sampleSchemas);
+        service.addSchema(sampleSchemas);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        service.printSchema(stream);
+        String a = stream.toString();
+        stream.reset();
+        for (XmlSchema schema : sampleSchemas) {
+            schema.write(stream);
+        }
+        String b = stream.toString();
+        stream.close();
+        assertEquals(a, b);
+    }
+
+    public void testPrintXSD() throws Exception {
+        InputStream is = new FileInputStream(SampleSchemasDirectory + "sampleSchema1.xsd");
+        XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ArrayList<XmlSchema> xmlSchemas = new ArrayList<XmlSchema>();
+        xmlSchemas.add(schema);
+        service.addSchema(xmlSchemas);
+        service.printXSD(stream, "");
+        // service has a single schema and it is printed. The it is compared
+        // with the saved file
+        assertSimilarXML(stream.toString(), readFile(SampleSchemasDirectory
+                + "printXSDReference.xsd"));
+    }
+
+    public void testPrintWSDL() throws Exception {
+        // create a test service
+        // if MessageTestService is changed somehow printWSDLreference.wsdl file
+        // must changed according to it. Otherwise the test will fail
+        String filename = AbstractTestCase.basedir
+                + "/test-resources/deployment/AxisMessageTestRepo";
+        AxisConfiguration er = ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
+                .getAxisConfiguration();
+
+        assertNotNull(er);
+        service = er.getService("MessagetestService");
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        service.printWSDL(stream, null);
+        // printed WSDL value is compared with saved value
+        assertSimilarXML(stream.toString(), readFile("test-resources" + File.separator + "wsdl"
+                + File.separator + "printWSDLreference.wsdl"));
+    }
+
+    public void testGetSchema() throws Exception {
+        loadSampleSchemaFile(sampleSchemas);
+        service.addSchema(sampleSchemas);
+        assertEquals(service.getSchema(0), sampleSchemas.get(0));
+    }
+
+    public void testGetSchemaElement() throws Exception {
+        loadSampleSchemaFile(sampleSchemas);
+        service.addSchema(sampleSchemas);
+        XmlSchemaElement schemaElement1 = service.getSchemaElement(new QName(
+                "http://www.w3schools.com", "note"));
+        XmlSchemaElement schemaElement2 = sampleSchemas.get(0).getElementByName(
+                new QName("http://www.w3schools.com", "note"));
+        assertEquals(schemaElement1, schemaElement2);
+    }
+
     /**
      * Sameple MessageContextListener which sets a property 
      * on the MessageContext when the SerivceContext is attached.

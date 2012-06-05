@@ -19,30 +19,40 @@
 
 package org.apache.axis2.description.java2wsdl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
+
+import junit.framework.TestCase;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.custommonkey.xmlunit.Diff;
-import org.w3c.dom.Document;
-
-import junit.framework.TestCase;
 
 public abstract class XMLSchemaTest extends TestCase {
 
     public final String XMLSchemaNameSpace = "xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"";
 
-    public final String CustomSchemaLocation = "test-resources" + File.separator + "schemas"
-            + File.separator + "custom_schemas" + File.separator + "note.xsd";
+    public final String CustomSchemaLocation = "test-resources"
+            + File.separator + "schemas" + File.separator + "custom_schemas"
+            + File.separator + "note.xsd";
+    
+    public final String customDirectoryLocation = "test-resources"
+            + File.separator + "schemas" + File.separator + "custom_schemas"
+            + File.separator;
 
-    public final String SampleSchemasDirectory = "test-resources" + File.separator + "schemas"
-            + File.separator + "custom_schemas" + File.separator;
+    public final String SampleSchemasDirectory = "test-resources"
+            + File.separator + "schemas" + File.separator + "custom_schemas"
+            + File.separator;
 
-    public final String MappingFileLocation = "test-resources" + File.separator + "schemas"
-            + File.separator + "mapping_files" + File.separator + "mapping1.txt";
+    public final String MappingFileLocation = "test-resources" + File.separator
+            + "schemas" + File.separator + "mapping_files" + File.separator
+            + "mapping1.txt";
 
     public void assertSimilarXML(String XML1, String XML2) throws Exception {
         Diff myDiff = new Diff(XML1, XML2);
@@ -56,21 +66,46 @@ public abstract class XMLSchemaTest extends TestCase {
 
     }
 
-    public void loadSampleSchemaFile(ArrayList<XmlSchema> schemas) throws Exception {
+    public void loadSampleSchemaFile(ArrayList<XmlSchema> schemas) throws Exception{
         XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
         File file = null;
         int i = 1;
-
-        file = new File(SampleSchemasDirectory + "sampleSchema" + i + ".xsd");
-        while (file.exists()) {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
-            Document doc = documentBuilderFactory.newDocumentBuilder().parse(file);
-            schemas.add(xmlSchemaCollection.read(doc, null));
-            i++;
-            file = new File(SampleSchemasDirectory + "sampleSchema" + i + ".xsd");
+       
+            file = new File(SampleSchemasDirectory + "sampleSchema" + i
+                    + ".xsd");
+            while (file.exists()) {
+                InputStream is = new FileInputStream(file);
+                XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+                XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+                schemas.add(schema);
+                i++;
+                file = new File(SampleSchemasDirectory + "sampleSchema" + i
+                        + ".xsd");
+            }
+       
+    }
+    
+    public XmlSchema loadSingleSchemaFile(int i) throws Exception{
+        File file = new File(SampleSchemasDirectory + "sampleSchema" + i
+                + ".xsd");
+        InputStream is = new FileInputStream(file);
+        XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        return schema;
+    }
+    
+    public String readFile(String fileName) throws Exception {
+        File file = new File(fileName);
+        char[] buffer = null;
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        buffer = new char[(int) file.length()];
+        int i = 0;
+        int c = bufferedReader.read();
+        while (c != -1) {
+            buffer[i++] = (char) c;
+            c = bufferedReader.read();
         }
-
+        return new String(buffer);
     }
 
 }

@@ -21,6 +21,7 @@ package org.apache.axis2.description.java2wsdl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -114,6 +115,46 @@ public class TypeTableTest extends TestCase {
         className = TestCalendarImpl.class.getName();
         assertNull("Not the expected value",
                 typeTable.getSchemaTypeName(className));
+    }
+    
+    
+    //Following test is relted to apache XMLSchema libaray usage
+    public void testXMLSchemaConstantsUsage(){
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_STRING), String.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_INT), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_INTEGER), BigInteger.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_LONG), Long.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_SHORT), Short.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_DECIMAL), BigDecimal.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_FLOAT), Float.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_DOUBLE), Double.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_BOOLEAN), Boolean.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_BYTE), Byte.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_QNAME), QName.class.getName());         
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_UNSIGNEDINT), Long.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_UNSIGNEDSHORT), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_UNSIGNEDBYTE), Short.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_UNSIGNEDLONG), BigInteger.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_TIME), XMLGregorianCalendar.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_DATE), XMLGregorianCalendar.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_DATETIME), XMLGregorianCalendar.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_DURATION), Duration.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_NOTATION), QName.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_ANYURI), URI.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_ANY), Object.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_ANYSIMPLETYPE), Object.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_ANYTYPE), Object.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_NONNEGATIVEINTEGER), BigInteger.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_NONPOSITIVEINTEGER), BigInteger.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_NEGATIVEINTEGER), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_POSITIVEINTEGER), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_NORMALIZEDSTRING),String.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_POSITIVEINTEGER), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_POSITIVEINTEGER), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_POSITIVEINTEGER), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_POSITIVEINTEGER), Integer.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_BASE64), DataHandler.class.getName());
+        assertEquals(typeTable.getClassNameForQName(Constants.XSD_HEXBIN), DataHandler.class.getName());
     }
 
     class TestXMLGregorianCalendarImpl extends XMLGregorianCalendar {

@@ -1,0 +1,49 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<wsdl2:description xmlns:wsdl2="http://www.w3.org/ns/wsdl" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://echo.sample.axis2.apache.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wrpc="http://www.w3.org/ns/wsdl/rpc" xmlns:tns="http://echo.sample.axis2.apache.org" xmlns:wsoap="http://www.w3.org/ns/wsdl/soap" xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:whttp="http://www.w3.org/ns/wsdl/http" targetNamespace="http://echo.sample.axis2.apache.org"><wsdl2:types><xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://echo.sample.axis2.apache.org">
+    <xs:element name="echoStringArray">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="in" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoStringArrayResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoString">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="in" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoStringResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema></wsdl2:types><wsdl2:interface name="ServiceInterface"><wsdl2:operation name="echoStringArray" style="http://www.w3.org/ns/wsdl/style/rpc" wrpc:signature="in #in return #return " pattern="http://www.w3.org/ns/wsdl/in-out"><wsdl2:input element="ns:echoStringArray" wsaw:Action="urn:echoStringArray"/><wsdl2:output element="ns:echoStringArrayResponse" wsaw:Action="urn:echoStringArrayResponse"/></wsdl2:operation><wsdl2:operation name="echoString" style="http://www.w3.org/ns/wsdl/style/rpc" wrpc:signature="in #in return #return " pattern="http://www.w3.org/ns/wsdl/in-out"><wsdl2:input element="ns:echoString" wsaw:Action="urn:echoString"/><wsdl2:output element="ns:echoStringResponse" wsaw:Action="urn:echoStringResponse"/></wsdl2:operation></wsdl2:interface><wsdl2:binding name="MessagetestServiceSOAP11Binding" interface="tns:ServiceInterface" type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.1" wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP"><wsdl2:operation ref="tns:echoStringArray" wsoap:action="urn:echoStringArray"/><wsdl2:operation ref="tns:echoString" wsoap:action="urn:echoString"/></wsdl2:binding><wsdl2:binding name="MessagetestServiceSOAP12Binding" interface="tns:ServiceInterface" type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2" wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP"><wsdl2:operation ref="tns:echoStringArray" wsoap:action="urn:echoStringArray"/><wsdl2:operation ref="tns:echoString" wsoap:action="urn:echoString"/></wsdl2:binding><wsdl2:binding name="MessagetestServiceSOAP11Binding" interface="tns:ServiceInterface" type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.1" wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP"><wsdl2:operation ref="tns:echoStringArray" wsoap:action="urn:echoStringArray"/><wsdl2:operation ref="tns:echoString" wsoap:action="urn:echoString"/></wsdl2:binding><wsdl2:binding name="MessagetestServiceHttpBinding" interface="tns:ServiceInterface" type="http://www.w3.org/ns/wsdl/http"><wsdl2:operation ref="tns:creatSeq" whttp:location="creatSeq"/><wsdl2:operation ref="tns:echoStringArray" whttp:location="echoStringArray"/><wsdl2:operation ref="tns:echoString" whttp:location="echoString"/></wsdl2:binding><wsdl2:service name="MessagetestService" interface="tns:ServiceInterface"/></wsdl2:description>
