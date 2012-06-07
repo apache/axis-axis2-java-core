@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -16,36 +17,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
-
-
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://echo.sample.axis2.apache.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://echo.sample.axis2.apache.org"><wsdl:types><xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://echo.sample.axis2.apache.org">
-    <xs:element name="echoStringArray">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" name="in" nillable="true" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="echoStringArrayResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="echoString">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element minOccurs="0" name="in" nillable="true" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="echoStringResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-</xs:schema></wsdl:types><wsdl:message name="echoStringArrayRequest"><wsdl:part name="parameters" element="ns:echoStringArray"/></wsdl:message><wsdl:message name="echoStringArrayResponse"><wsdl:part name="parameters" element="ns:echoStringArrayResponse"/></wsdl:message><wsdl:message name="echoStringRequest"><wsdl:part name="parameters" element="ns:echoString"/></wsdl:message><wsdl:message name="echoStringResponse"><wsdl:part name="parameters" element="ns:echoStringResponse"/></wsdl:message><wsdl:portType name="MessagetestServicePortType"><wsdl:operation name="echoStringArray"><wsdl:input message="ns:echoStringArrayRequest" wsaw:Action="urn:echoStringArray"/><wsdl:output message="ns:echoStringArrayResponse" wsaw:Action="urn:echoStringArrayResponse"/></wsdl:operation><wsdl:operation name="echoString"><wsdl:input message="ns:echoStringRequest" wsaw:Action="urn:echoString"/><wsdl:output message="ns:echoStringResponse" wsaw:Action="urn:echoStringResponse"/></wsdl:operation></wsdl:portType><wsdl:service name="MessagetestService"/></wsdl:definitions>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://ws.apache.org/axis2" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://ws.apache.org/axis2">
+    <wsdl:types/>
+    <wsdl:portType name="testPortType">
+        <wsdl:operation name="test">
+            <wsdl:input message="tns:null" wsaw:Action="urn:test"/>
+            <wsdl:output message="tns:null" wsaw:Action="urn:testResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:service name="test"/>
+</wsdl:definitions>

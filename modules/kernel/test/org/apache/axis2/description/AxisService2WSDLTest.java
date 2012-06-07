@@ -19,32 +19,64 @@
 
 package org.apache.axis2.description;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintWriter;
+
+import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.description.java2wsdl.XMLSchemaTest;
+import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.XMLPrettyPrinter;
 
+public class AxisService2WSDLTest extends XMLSchemaTest {
 
-public class AxisService2WSDLTest extends AxisMessageTest{
-    
-    //This test implicitly test the checkStyle(axisOperation); method
-    //This test belongs to AxisService2WSDL20 class
-    public void testGenerateInterfaceOperationElement20() throws Exception{
-        assertNull(service.getParameterValue(WSDL2Constants.OPERATION_STYLE));
-        AxisService2WSDL20 service2wsdl20=new AxisService2WSDL20(service);
-        OMElement element=service2wsdl20.generateOM();
-        String s=readFile("test-resources"+ File.separator + "wsdl" + File.separator +"testGenerateInterfaceOperationElement_WSDL.wsdl");
-        assertSimilarXML(s, element.toString());
-        
+    private AxisService service;
+    private ByteArrayOutputStream stream;
+
+    @Override
+    protected void setUp() throws Exception {
+        service = Utils.createSimpleService(new QName("test"), "", new QName("test"));
+        stream = new ByteArrayOutputStream();
     }
-    
-    //This test belongs to AxisService2WSDL11 class
-    public void testGenerateInterfaceOperationElement11() throws Exception {
+
+    @Override
+    protected void tearDown() throws Exception {
+        service = null;
+        stream = null;
+        super.tearDown();
+    }
+
+    // This test implicitly test the checkStyle(axisOperation); method
+    // This test belongs to AxisService2WSDL20 class
+    public void testGenerateInterfaceOperationElement20() throws Exception {
+        // if this not null test becomes useless
         assertNull(service.getParameterValue(WSDL2Constants.OPERATION_STYLE));
-        AxisService2WSDL11 service2wsdl11=new AxisService2WSDL11(service);
-        OMElement element=service2wsdl11.generateOM();
-        String s=readFile("test-resources"+ File.separator + "wsdl" + File.separator +"testGenerateInterfaceOperationElement11_WSDL.wsdl");
-        assertSimilarXML(s, element.toString());
+        AxisService2WSDL20 service2wsdl20 = new AxisService2WSDL20(service);
+        OMElement element = service2wsdl20.generateOM();
+        // writeToFile("test-resources" + File.separator + "wsdl" +
+        // File.separator
+        // + "testGenerateInterfaceOperationElement_WSDL.wsdl",
+        // element.toString());
+        XMLPrettyPrinter.prettify(element, stream);
+        assertSimilarXML(stream.toString(), readWSDLFromFile("test-resources" + File.separator
+                + "wsdl" + File.separator + "testGenerateInterfaceOperationElement_WSDL.wsdl"));
+
+    }
+
+    // This test belongs to AxisService2WSDL11 class
+    public void testGenerateInterfaceOperationElement11() throws Exception {
+        // if this not null test becomes useless
+        assertNull(service.getParameterValue(WSDL2Constants.OPERATION_STYLE));
+        AxisService2WSDL11 service2wsdl11 = new AxisService2WSDL11(service);
+        OMElement element = service2wsdl11.generateOM();
+        // writeToFile("test-resources" + File.separator + "wsdl" +
+        // File.separator
+        // +
+        // "testGenerateInterfaceOperationElement11_WSDL.wsdl",element.toString());
+        XMLPrettyPrinter.prettify(element, stream);
+        assertSimilarXML(stream.toString(), readWSDLFromFile("test-resources" + File.separator
+                + "wsdl" + File.separator + "testGenerateInterfaceOperationElement11_WSDL.wsdl"));
     }
     
     

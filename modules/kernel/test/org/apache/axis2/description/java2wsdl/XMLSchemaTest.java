@@ -20,9 +20,11 @@
 package org.apache.axis2.description.java2wsdl;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -30,6 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
 
+import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.custommonkey.xmlunit.Diff;
@@ -103,9 +106,32 @@ public abstract class XMLSchemaTest extends TestCase {
         int c = bufferedReader.read();
         while (c != -1) {
             buffer[i++] = (char) c;
-            c = bufferedReader.read();
+            c = bufferedReader.read(); 
         }
         return new String(buffer);
+    }
+
+    public String readXMLfromSchemaFile(String path) throws Exception {
+        InputStream is = new FileInputStream(path);
+        XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        schema.write(stream);
+        return stream.toString();
+    }
+    
+   
+    public String readWSDLFromFile(String path) throws Exception {
+        File file=new File(path);
+        XMLPrettyPrinter.prettify(file);    //this is used to correct unnecessary formatting in the file
+        return readFile(path);
+    }
+    
+    public void writeToFile(String path,String data) throws Exception{
+        FileWriter fileWriter=new FileWriter(new File(path));
+        fileWriter.write(data);
+        fileWriter.flush();
+        fileWriter.close();        
     }
 
 }

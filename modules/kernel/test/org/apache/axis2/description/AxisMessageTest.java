@@ -19,50 +19,140 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.java2wsdl.XMLSchemaTest;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 
 public class AxisMessageTest extends XMLSchemaTest {
 
     private AxisMessage axisMessage;
     protected AxisService service;
-
+    private ArrayList<XmlSchema> schemas;
     private XmlSchemaElement element;
 
     @Override
     public void setUp() throws Exception {
-        String filename = AbstractTestCase.basedir
-                + "/test-resources/deployment/AxisMessageTestRepo";
-        AxisConfiguration er = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(filename,
-                        filename + "/axis2.xml").getAxisConfiguration();
+        service=new AxisService();
+        schemas=new ArrayList<XmlSchema>();
+        loadSampleSchemaFile(schemas);
+        service.addSchema(schemas);
+        AxisOperation axisOperation=new AxisOperation() {
+            
+            @Override
+            public void setRemainingPhasesInFlow(ArrayList list) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void setPhasesOutFlow(ArrayList list) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public AxisService getAxisService() {
+                // TODO Auto-generated method stub
+                return service;
+            }
 
-        assertNotNull(er);
-        service = er.getService("MessagetestService");
-        assertNotNull(service);
-        AxisOperation op = service.getOperation(new QName("echoString"));
-        assertNotNull(op);
-        axisMessage = op.getMessage("In");
+            @Override
+            public void setPhasesOutFaultFlow(ArrayList list) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void setPhasesInFaultFlow(ArrayList list) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public ArrayList getRemainingPhasesInFlow() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+            @Override
+            public ArrayList getPhasesOutFlow() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+            @Override
+            public ArrayList getPhasesOutFaultFlow() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+            @Override
+            public ArrayList getPhasesInFaultFlow() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+            @Override
+            public AxisMessage getMessage(String label) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+            @Override
+            public OperationClient createClient(ServiceContext sc, Options options) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+            @Override
+            public void addMessageContext(MessageContext msgContext, OperationContext opContext)
+                    throws AxisFault {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void addMessage(AxisMessage message, String label) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
+                    throws AxisFault {
+                // TODO Auto-generated method stub
+                
+            }
+        };
+        axisMessage = new AxisMessage();
+        axisMessage.setParent(axisOperation);
+        axisMessage.setElementQName(new QName("http://www.w3schools.com", "note"));
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
         axisMessage = null;
+        service=null;
+        schemas=null;
         super.tearDown();
     }
 
     public void testGetSchemaElement() throws Exception {
         element = axisMessage.getSchemaElement();
-        assertEquals(element.getName(), "echoString");
-        assertEquals(element.getQName(), new QName(
-                "http://echo.sample.axis2.apache.org", "echoString"));
+        assertNotNull(element);
+        assertEquals(element.getName(), "note");
+        
     }
 
 }

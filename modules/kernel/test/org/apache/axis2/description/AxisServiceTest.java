@@ -27,20 +27,22 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.java2wsdl.XMLSchemaTest;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.Utils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 public class AxisServiceTest extends XMLSchemaTest {
     public static final String PARAM_NAME = "CustomParameter";
@@ -262,27 +264,33 @@ public class AxisServiceTest extends XMLSchemaTest {
         service.printXSD(stream, "");
         // service has a single schema and it is printed. The it is compared
         // with the saved file
-        assertSimilarXML(stream.toString(), readFile(SampleSchemasDirectory
+        assertSimilarXML(stream.toString(), readXMLfromSchemaFile(SampleSchemasDirectory
                 + "printXSDReference.xsd"));
     }
 
     public void testPrintWSDL() throws Exception {
-        // create a test service
-        // if MessageTestService is changed somehow printWSDLreference.wsdl file
-        // must changed according to it. Otherwise the test will fail
-        String filename = AbstractTestCase.basedir
-                + "/test-resources/deployment/AxisMessageTestRepo";
-        AxisConfiguration er = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
-                .getAxisConfiguration();
-
-        assertNotNull(er);
-        service = er.getService("MessagetestService");
+        service = Utils.createSimpleService(new QName("test"), "", new QName("test"));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        service.printWSDL(stream, null);
-        // printed WSDL value is compared with saved value
-        assertSimilarXML(stream.toString(), readFile("test-resources" + File.separator + "wsdl"
-                + File.separator + "printWSDLreference.wsdl"));
+        service.printWSDL(stream);
+
+        String s = readWSDLFromFile("test-resources" + File.separator + "wsdl" + File.separator
+                + "printWSDLreference.wsdl");
+        assertSimilarXML(stream.toString(), s);
+    }
+
+    public String convertXMLFileToString(String fileName) {
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            InputStream inputStream = new FileInputStream(new File(fileName));
+            org.w3c.dom.Document doc = documentBuilderFactory.newDocumentBuilder().parse(
+                    inputStream);
+            DOMImplementationLS domImplementation = (DOMImplementationLS) doc.getImplementation();
+            LSSerializer lsSerializer = domImplementation.createLSSerializer();
+            return lsSerializer.writeToString(doc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void testGetSchema() throws Exception {
