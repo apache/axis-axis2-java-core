@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.sample.faultsservice;
 
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.saaj.SOAPEnvelopeImpl;
 import org.test.polymorphicfaults.BaseFault;
@@ -183,7 +183,7 @@ public class FaultsServiceSoapBindingImpl implements FaultsServicePortType {
         // SOAPFault soapFault = soapFactory.createFault();
         
         // Alternate Approach
-        org.apache.axiom.soap.SOAPFactory asf = DOOMAbstractFactory.getSOAP11Factory();
+        org.apache.axiom.soap.SOAPFactory asf = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getSOAP11Factory();
         org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl axiomEnv = (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl) asf.createSOAPEnvelope();
         javax.xml.soap.SOAPEnvelope env = new SOAPEnvelopeImpl(axiomEnv);
         SOAPBody body = env.addBody();
