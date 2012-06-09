@@ -23,9 +23,10 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.OMMultipartWriter;
+import org.apache.axiom.soap.SOAP11Version;
+import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -62,9 +63,9 @@ public class SOAPMessageImpl extends SOAPMessage {
 
     public SOAPMessageImpl(SOAPEnvelopeImpl soapEnvelope) {
         this.mimeHeaders = new MimeHeaders();
-        if (soapEnvelope.target.getOMFactory() instanceof SOAP11Factory) {
+        if (((SOAPFactory)soapEnvelope.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
             this.mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_TEXT_XML);
-        } else if (soapEnvelope.target.getOMFactory() instanceof SOAP12Factory) {
+        } else if (((SOAPFactory)soapEnvelope.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
             this.mimeHeaders.addHeader("content-type",
                     HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
         }
@@ -377,7 +378,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 format.setIgnoreXMLDeclaration(true);
             }
             
-            SOAPEnvelope envelope = ((SOAPEnvelopeImpl) soapPart.getEnvelope()).getOMEnvelope();
+            SOAPEnvelope envelope = ((SOAPEnvelopeImpl) soapPart.getEnvelope()).getOMTarget();
             if (attachmentParts.isEmpty()) {
                 envelope.serialize(out, format);
             } else {
@@ -400,7 +401,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 }
                 format.setRootContentId(rootContentId);
 
-                format.setSOAP11(((SOAPEnvelopeImpl) soapPart.getEnvelope()).target.getOMFactory() instanceof SOAP11Factory);
+                format.setSOAP11(((SOAPFactory)((SOAPEnvelopeImpl) soapPart.getEnvelope()).omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton());
                 
                 //Double save the content-type in case anything is updated
                 mimeHeaders.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType.toString());
@@ -612,7 +613,7 @@ public class SOAPMessageImpl extends SOAPMessage {
     }
     
     private String getBaseType() throws SOAPException {
-        boolean isSOAP12 = ((SOAPEnvelopeImpl) soapPart.getEnvelope()).target.getOMFactory() instanceof SOAP12Factory;
+        boolean isSOAP12 = ((SOAPFactory)((SOAPEnvelopeImpl) soapPart.getEnvelope()).omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton();
         return isSOAP12 ? HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML : HTTPConstants.MEDIA_TYPE_TEXT_XML;
     }
     

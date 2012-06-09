@@ -21,10 +21,8 @@ package org.apache.axis2.jaxws.message.util.impl;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -631,8 +629,8 @@ public class SAAJConverterImpl implements SAAJConverter {
                         // get that and add it as a text node under the original element.
                         Node value = se.getFirstChild();
                         if (value != null && value instanceof org.apache.axis2.saaj.SOAPElementImpl) {
-                            org.apache.axis2.saaj.SOAPElementImpl valueElement = (org.apache.axis2.saaj.SOAPElementImpl) value;
-                            ElementImpl e = valueElement.getTarget();
+                            org.apache.axis2.saaj.SOAPElementImpl<?> valueElement = (org.apache.axis2.saaj.SOAPElementImpl<?>) value;
+                            OMElement e = valueElement.getOMTarget();
                             String content = e.getText();
                             
                             SOAPElement child = fault.addChildElement(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME));
@@ -656,8 +654,8 @@ public class SAAJConverterImpl implements SAAJConverter {
                         // get that and add it as a text node under the original element.
                         Node value = se.getFirstChild();
                         if (value != null && value instanceof org.apache.axis2.saaj.SOAPElementImpl) {
-                            org.apache.axis2.saaj.SOAPElementImpl valueElement = (org.apache.axis2.saaj.SOAPElementImpl) value;
-                            ElementImpl e = valueElement.getTarget();
+                            org.apache.axis2.saaj.SOAPElementImpl<?> valueElement = (org.apache.axis2.saaj.SOAPElementImpl<?>) value;
+                            OMElement e = valueElement.getOMTarget();
                             String content = e.getText();
                            
                             SOAPElement child = fault.addChildElement(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME));

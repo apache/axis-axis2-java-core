@@ -19,31 +19,29 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMText;
 import org.w3c.dom.DOMException;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Text;
 
-public class TextImplEx extends SAAJNode<TextImpl> implements Text {
+public class TextImplEx extends SAAJNode<org.w3c.dom.Text,OMText> implements Text {
     private org.w3c.dom.Node previousSibling;
     private org.w3c.dom.Node nextSibling;
 
     public TextImplEx(String data, SOAPElement parent) {
-        super((TextImpl)DOOMAbstractFactory.getOMFactory().createOMText(data));
-        this.parentElement = parent;
+        this(OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getOMFactory().createOMText(data), parent);
     }
 
-    public TextImplEx(TextImpl textNode, SOAPElement parent) {
-        super(textNode);
+    public TextImplEx(OMText textNode, SOAPElement parent) {
+        super((org.w3c.dom.Text)textNode, textNode);
         this.parentElement = parent;
     }
 
     public TextImplEx(String data, SOAPElement parent,
                       org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
-        super((TextImpl)DOOMAbstractFactory.getOMFactory().createOMText(data));
-        this.parentElement = parent;
+        this(data, parent);
         this.previousSibling = prevSibling;
         this.nextSibling = nextSibling;
     }
@@ -63,7 +61,7 @@ public class TextImplEx extends SAAJNode<TextImpl> implements Text {
      *         otherwise
      */
     public boolean isComment() {
-        String value = target.getText();
+        String value = omTarget.getText();
         return value.startsWith("<!--") && value.endsWith("-->");
     }
 

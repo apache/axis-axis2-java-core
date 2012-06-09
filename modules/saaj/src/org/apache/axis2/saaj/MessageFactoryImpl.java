@@ -19,8 +19,10 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMMetaFactory;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.w3c.dom.Element;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -96,19 +98,19 @@ public class MessageFactoryImpl extends MessageFactory {
      *                       protocol of this MessageFactory instance is DYNAMIC_SOAP_PROTOCOL
      */
     public SOAPMessage createMessage() throws SOAPException {
-        org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl soapEnvelope;
+        OMMetaFactory metaFactory = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM);
+        SOAPEnvelope soapEnvelope;
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
-            soapEnvelope = (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
-                            new SOAP12Factory().getDefaultEnvelope();
+            soapEnvelope = metaFactory.getSOAP12Factory().getDefaultEnvelope();
         } else if (soapVersion.equals(SOAPConstants.DYNAMIC_SOAP_PROTOCOL)) {
             throw new UnsupportedOperationException("createMessage() is not supported for " +
                     "DYNAMIC_SOAP_PROTOCOL");
         } else {
             //SOAP 1.1
-            soapEnvelope = (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
-                            new SOAP11Factory().getDefaultEnvelope();
+            soapEnvelope = metaFactory.getSOAP11Factory().getDefaultEnvelope();
         }
-        soapEnvelope.getOwnerDocument().appendChild(soapEnvelope);
+        Element domSoapEnvelope = (Element)soapEnvelope;
+        domSoapEnvelope.getOwnerDocument().appendChild(domSoapEnvelope);
         SOAPMessageImpl soapMessage = new SOAPMessageImpl(new SOAPEnvelopeImpl(soapEnvelope));
         soapMessage.setSaveRequired();
         return soapMessage;

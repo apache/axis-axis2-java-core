@@ -23,11 +23,13 @@ import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.dom.DOMMessageFormatter;
-import org.apache.axiom.om.impl.dom.ElementImpl;
-import org.apache.axiom.om.impl.dom.NodeImpl;
-import org.apache.axiom.soap.impl.dom.SOAPBodyImpl;
-import org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultNode;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
@@ -48,17 +50,23 @@ import javax.xml.soap.SOAPException;
  * some tree manipulation methods. This interface provides methods for getting the value of a node,
  * for getting and setting the parent of a node, and for removing a node.
  */
-public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
+public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> implements Node {
     protected final T target;
+    protected final S omTarget;
     protected SOAPElement parentElement;
     static final String SAAJ_NODE = "saaj.node";
 
-    public SAAJNode(T target) {
+    public SAAJNode(T target, S omTarget) {
         this.target = target;
+        this.omTarget = omTarget;
     }
 
     public final T getTarget() {
         return target;
+    }
+
+    public final S getOMTarget() {
+        return omTarget;
     }
 
     /**
@@ -165,7 +173,7 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
         if (domNode == null) {
             return null;
         }
-        Node saajNode = (Node)((NodeImpl)domNode).getUserData(SAAJ_NODE);
+        Node saajNode = (Node)domNode.getUserData(SAAJ_NODE);
         if (saajNode == null) {  // if SAAJ node has not been set in userData, try to construct it
             return toSAAJNode2(domNode, parentNode);
         }
@@ -190,77 +198,62 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
             Text text = (Text)domNode;
             org.w3c.dom.Node prevSiblingDOMNode = text.getPreviousSibling();
             org.w3c.dom.Node nextSiblingDOMNode = text.getNextSibling();
-            SOAPElementImpl parent = new SOAPElementImpl((ElementImpl)domNode.getParentNode());
+            SOAPElementImpl<OMElement> parent = new SOAPElementImpl<OMElement>((OMElement)domNode.getParentNode());
             TextImplEx saajTextNode =
                     new TextImplEx(text.getData(), parent, prevSiblingDOMNode, nextSiblingDOMNode);
-            ((NodeImpl)domNode).setUserData(SAAJ_NODE, saajTextNode, null);
+            domNode.setUserData(SAAJ_NODE, saajTextNode, null);
             return saajTextNode;
         } else if (domNode instanceof org.w3c.dom.Comment) {
             Comment comment = (Comment)domNode;
             org.w3c.dom.Node prevSiblingDOMNode = comment.getPreviousSibling();
             org.w3c.dom.Node nextSiblingDOMNode = comment.getNextSibling();
-            SOAPElementImpl parent = new SOAPElementImpl((ElementImpl)domNode.getParentNode());
+            SOAPElementImpl<OMElement> parent = new SOAPElementImpl<OMElement>((OMElement)domNode.getParentNode());
             CommentImpl saajTextNode = new CommentImpl(comment.getData(),
                                                      parent, prevSiblingDOMNode,
                                                      nextSiblingDOMNode);
-            ((NodeImpl)domNode).setUserData(SAAJ_NODE, saajTextNode, null);
+            domNode.setUserData(SAAJ_NODE, saajTextNode, null);
             return saajTextNode;
-        } else if (domNode instanceof org.apache.axiom.soap.impl.dom.SOAPBodyImpl) {
-            org.apache.axiom.soap.impl.dom.SOAPBodyImpl doomSOAPBody = (SOAPBodyImpl)domNode;
+        } else if (domNode instanceof SOAPBody) {
             javax.xml.soap.SOAPBody saajSOAPBody =
-                    new org.apache.axis2.saaj.SOAPBodyImpl(doomSOAPBody);
-            doomSOAPBody.setUserData(SAAJ_NODE, saajSOAPBody, null);
+                    new org.apache.axis2.saaj.SOAPBodyImpl((SOAPBody)domNode);
+            domNode.setUserData(SAAJ_NODE, saajSOAPBody, null);
             return saajSOAPBody;
-        } else if (domNode instanceof org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl) {
-            org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl doomSOAPEnv
-                    = (SOAPEnvelopeImpl)domNode;
+        } else if (domNode instanceof SOAPEnvelope) {
             javax.xml.soap.SOAPEnvelope saajEnvelope
-                    = new org.apache.axis2.saaj.SOAPEnvelopeImpl(doomSOAPEnv);
-            doomSOAPEnv.setUserData(SAAJ_NODE, saajEnvelope, null);
+                    = new org.apache.axis2.saaj.SOAPEnvelopeImpl((SOAPEnvelope)domNode);
+            domNode.setUserData(SAAJ_NODE, saajEnvelope, null);
             return saajEnvelope;
-        } else if (domNode instanceof org.apache.axiom.soap.impl.dom.SOAPFaultNodeImpl) {
-            org.apache.axiom.soap.impl.dom.SOAPFaultNodeImpl doomSOAPFaultNode
-                    = (org.apache.axiom.soap.impl.dom.SOAPFaultNodeImpl)domNode;
+        } else if (domNode instanceof SOAPFaultNode) {
             javax.xml.soap.SOAPFaultElement saajSOAPFaultEle
-                    = new org.apache.axis2.saaj.SOAPFaultElementImpl(doomSOAPFaultNode);
-            doomSOAPFaultNode.setUserData(SAAJ_NODE, saajSOAPFaultEle, null);
+                    = new org.apache.axis2.saaj.SOAPFaultElementImpl<SOAPFaultNode>((SOAPFaultNode)domNode);
+            domNode.setUserData(SAAJ_NODE, saajSOAPFaultEle, null);
             return saajSOAPFaultEle;
-        } else if (domNode instanceof org.apache.axiom.soap.impl.dom.SOAPFaultDetailImpl) {
-            org.apache.axiom.soap.impl.dom.SOAPFaultDetailImpl doomSOAPFaultDetail
-                    = (org.apache.axiom.soap.impl.dom.SOAPFaultDetailImpl)domNode;
+        } else if (domNode instanceof SOAPFaultDetail) {
             javax.xml.soap.Detail saajDetail
-                    = new org.apache.axis2.saaj.DetailImpl(doomSOAPFaultDetail);
-            doomSOAPFaultDetail.setUserData(SAAJ_NODE, saajDetail, null);
+                    = new org.apache.axis2.saaj.DetailImpl((SOAPFaultDetail)domNode);
+            domNode.setUserData(SAAJ_NODE, saajDetail, null);
             return saajDetail;
-        } else if (domNode instanceof org.apache.axiom.soap.impl.dom.SOAPFaultImpl) {
-            org.apache.axiom.soap.impl.dom.SOAPFaultImpl doomSOAPFault
-                    = (org.apache.axiom.soap.impl.dom.SOAPFaultImpl)domNode;
+        } else if (domNode instanceof SOAPFault) {
             javax.xml.soap.SOAPFault saajSOAPFault
-                    = new org.apache.axis2.saaj.SOAPFaultImpl(doomSOAPFault);
-            doomSOAPFault.setUserData(SAAJ_NODE, saajSOAPFault, null);
+                    = new org.apache.axis2.saaj.SOAPFaultImpl((SOAPFault)domNode);
+            domNode.setUserData(SAAJ_NODE, saajSOAPFault, null);
             return saajSOAPFault;
-        } else if (domNode instanceof org.apache.axiom.soap.impl.dom.SOAPHeaderBlockImpl) {
-            org.apache.axiom.soap.impl.dom.SOAPHeaderBlockImpl doomSOAPHeaderBlock
-                    = (org.apache.axiom.soap.impl.dom.SOAPHeaderBlockImpl)domNode;
+        } else if (domNode instanceof SOAPHeaderBlock) {
             javax.xml.soap.SOAPHeaderElement saajSOAPHeaderEle
-                    = new org.apache.axis2.saaj.SOAPHeaderElementImpl(doomSOAPHeaderBlock);
-            doomSOAPHeaderBlock.setUserData(SAAJ_NODE, saajSOAPHeaderEle, null);
+                    = new org.apache.axis2.saaj.SOAPHeaderElementImpl((SOAPHeaderBlock)domNode);
+            domNode.setUserData(SAAJ_NODE, saajSOAPHeaderEle, null);
             return saajSOAPHeaderEle;
-        } else if (domNode instanceof org.apache.axiom.soap.impl.dom.SOAPHeaderImpl) {
-            org.apache.axiom.soap.impl.dom.SOAPHeaderImpl doomSOAPHeader
-                    = (org.apache.axiom.soap.impl.dom.SOAPHeaderImpl)domNode;
+        } else if (domNode instanceof SOAPHeader) {
             javax.xml.soap.SOAPHeader saajSOAPHeader
-                    = new org.apache.axis2.saaj.SOAPHeaderImpl(doomSOAPHeader);
-            doomSOAPHeader.setUserData(SAAJ_NODE, saajSOAPHeader, null);
+                    = new org.apache.axis2.saaj.SOAPHeaderImpl((SOAPHeader)domNode);
+            domNode.setUserData(SAAJ_NODE, saajSOAPHeader, null);
             return saajSOAPHeader;
-        } else if (domNode instanceof org.apache.axiom.om.impl.dom.DocumentImpl) {
+        } else if (domNode instanceof Document) {
             
             // Must be a SOAPEnvelope
             if (!(parentNode instanceof org.apache.axis2.saaj.SOAPEnvelopeImpl)) {
                 return null;
             }
-            org.apache.axiom.om.impl.dom.DocumentImpl doomDocument
-                = (org.apache.axiom.om.impl.dom.DocumentImpl)domNode;
             org.apache.axis2.saaj.SOAPEnvelopeImpl saajEnv = 
                 (org.apache.axis2.saaj.SOAPEnvelopeImpl) parentNode;
             javax.xml.soap.SOAPPart saajSOAPPart = null;
@@ -278,9 +271,8 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
             domNode.setUserData(SAAJ_NODE, saajSOAPPart, null);
             return saajSOAPPart;
         } else { // instanceof org.apache.axis2.om.impl.dom.ElementImpl
-            ElementImpl doomElement = (ElementImpl)domNode;
-            SOAPElementImpl saajSOAPElement = new SOAPElementImpl(doomElement);
-            doomElement.setUserData(SAAJ_NODE, saajSOAPElement, null);
+            SOAPElementImpl<OMElement> saajSOAPElement = new SOAPElementImpl<OMElement>((OMElement)domNode);
+            domNode.setUserData(SAAJ_NODE, saajSOAPElement, null);
             return saajSOAPElement;
         }
     }
@@ -372,7 +364,7 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
 
     public final org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild) throws DOMException {
         if (oldChild instanceof SAAJNode) {
-            oldChild = ((SAAJNode<?>)oldChild).getTarget();
+            oldChild = ((SAAJNode<?,?>)oldChild).getTarget();
         }
         return target.removeChild(oldChild);
     }
@@ -432,8 +424,8 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
         try {
             if (child instanceof Text) {
                 return appendText((Text)child);
-            } else if (child instanceof ElementImpl) {
-                return appendElement((ElementImpl)child);
+            } else if (child instanceof Element) {
+                return appendElement((Element)child);
             }
         } catch (SOAPException e) {
             DOMException ex = 
@@ -442,32 +434,30 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node> implements Node {
             throw ex;
         }
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                DOMMessageFormatter.formatMessage(
-                        DOMMessageFormatter.DOM_DOMAIN,
-                        DOMException.HIERARCHY_REQUEST_ERR, null));
+                "An attempt was made to insert a node where it is not permitted.");
     }
 
     protected Text appendText(Text child) throws SOAPException {
         String text = child.getData();
         Text textNode = getOwnerDocument().createTextNode(text);
-        NodeImpl node = ((NodeImpl)target.appendChild(textNode));
+        target.appendChild(textNode);
         TextImplEx saajTextNode = new TextImplEx(text, (SOAPElement)this);
-        node.setUserData(SAAJ_NODE, saajTextNode, null);
+        textNode.setUserData(SAAJ_NODE, saajTextNode, null);
         return saajTextNode;
     }
     
-    protected Element appendElement(ElementImpl child) throws SOAPException {
+    protected Element appendElement(Element child) throws SOAPException {
         String namespaceURI = child.getNamespaceURI();
         String prefix = child.getPrefix();
 
-        SOAPElementImpl childEle = new SOAPElementImpl(child);
+        SOAPElementImpl<OMElement> childEle = new SOAPElementImpl<OMElement>((OMElement)child);
         
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
-            childEle.target.setNamespace(childEle.target.declareNamespace(namespaceURI, prefix));
+            childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
         }
         target.appendChild(childEle.target);
-        ((NodeImpl)childEle.target.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement((SOAPElement)this);
         return childEle;
     }

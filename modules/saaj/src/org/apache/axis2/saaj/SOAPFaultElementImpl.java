@@ -19,15 +19,15 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.soap.SOAPFaultElement;
 
-public class SOAPFaultElementImpl extends SOAPElementImpl implements
+public class SOAPFaultElementImpl<T extends OMElement> extends SOAPElementImpl<T> implements
         SOAPFaultElement {
 
     /** @param element  */
-    public SOAPFaultElementImpl(ElementImpl element) {
+    public SOAPFaultElementImpl(T element) {
         super(element);
     }
 

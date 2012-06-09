@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.DetailEntry;
@@ -32,10 +32,10 @@ import java.util.Iterator;
  * which carries information about errors related to the SOAPBody  object that contains it, is
  * application-specific.
  */
-public class DetailEntryImpl extends SOAPElementImpl implements DetailEntry {
+public class DetailEntryImpl extends SOAPElementImpl<OMElement> implements DetailEntry {
 
     /** @param element  */
-    public DetailEntryImpl(ElementImpl element) {
+    public DetailEntryImpl(OMElement element) {
         super(element);
     }
 

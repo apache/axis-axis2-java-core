@@ -19,10 +19,8 @@
 
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.impl.dom.DocumentImpl;
-import org.apache.axiom.om.impl.dom.TextImpl;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.saaj.util.SAAJDataSource;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -284,7 +282,7 @@ public class AttachmentPartImpl extends AttachmentPart {
         if (datahandler != null) {
             this.dataHandler = datahandler;
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
-            omText = DOOMAbstractFactory.getOMFactory().createOMText(datahandler, true);
+            omText = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getOMFactory().createOMText(datahandler, true);
         } else {
             throw new IllegalArgumentException("Cannot set null DataHandler");
         }
@@ -526,10 +524,6 @@ public class AttachmentPartImpl extends AttachmentPart {
             throw new SOAPException("OMText set to null");
         }
         return omText;
-    }
-
-    public TextImpl getText(DocumentImpl doc) {
-        return new TextImpl(doc, omText.getText(), doc.getOMFactory());
     }
 
     /**
