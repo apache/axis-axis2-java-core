@@ -33,6 +33,16 @@
         <ip>127.0.0.1</ip>
         <port>5555</port>
     </hostConfiguration>
+    
+    <!-- ================================================= -->
+    <!-- Deployers -->
+    <!-- ================================================= -->
+
+    <!--Service deployer , this will alow users to deploy AAR or exploded AAR as axis2 services-->
+    <deployer extension=".aar" directory="services" class="org.apache.axis2.deployment.ServiceDeployer">
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.jaxws.framework.JAXWSServiceBuilderExtension"/>
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.deployment.WSDLServiceBuilderExtension"/>
+    </deployer>
 
 
     <!--if you want to extract the service archive file and work with that please uncomment this-->

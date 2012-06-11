@@ -19,6 +19,16 @@
 
 <axisconfig name="AxisJava2.0">
 
+    <!-- ================================================= -->
+    <!-- Deployers -->
+    <!-- ================================================= -->
+
+    <!--Service deployer , this will alow users to deploy AAR or exploded AAR as axis2 services-->
+    <deployer extension=".aar" directory="services" class="org.apache.axis2.deployment.ServiceDeployer">
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.jaxws.framework.JAXWSServiceBuilderExtension"/>
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.deployment.WSDLServiceBuilderExtension"/>
+    </deployer>
+
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
     <parameter name="ServicePara1">true</parameter>

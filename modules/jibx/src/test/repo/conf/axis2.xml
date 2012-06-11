@@ -38,6 +38,16 @@
     <!--    <listener class="org.apache.axis2.ObserverIMPL">-->
     <!--        <parameter name="RSS_URL">http://127.0.0.1/rss</parameter>-->
     <!--    </listener>-->
+    
+    <!-- ================================================= -->
+    <!-- Deployers -->
+    <!-- ================================================= -->
+
+    <!--Service deployer , this will alow users to deploy AAR or exploded AAR as axis2 services-->
+    <deployer extension=".aar" directory="services" class="org.apache.axis2.deployment.ServiceDeployer">
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.jaxws.framework.JAXWSServiceBuilderExtension"/>
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.deployment.WSDLServiceBuilderExtension"/>
+    </deployer>    
 
     <!-- ================================================= -->
     <!-- Message Receivers -->

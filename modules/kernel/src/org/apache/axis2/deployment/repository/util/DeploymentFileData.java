@@ -149,7 +149,9 @@ public class DeploymentFileData {
     }
 
     public void deploy() throws DeploymentException {
-        deployer.deploy(this);
+        if( deployer != null){
+            deployer.deploy(this);            
+        }
     }
 
     public Object getServiceMetaData() {

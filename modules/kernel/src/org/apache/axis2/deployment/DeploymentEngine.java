@@ -930,35 +930,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     private void initializeDeployers(ConfigurationContext configContext) {
-        serviceDeployer = new ServiceDeployer();
-        serviceDeployer.init(configContext);
-        if (this.servicesDir != null) {
-            serviceDeployer.setDirectory(this.servicesDir.getName());
-        }
-        /*
-         * TODO - For the moment we set WSDLServiceBuilderExtension and
-         *        JAXWSServiceBuilderExtension to ServiceDeployer, but 
-         *        this need to be moved to axis2.xml.
-         */
-        String jaxwsExtClass = "org.apache.axis2.jaxws.framework.JAXWSServiceBuilderExtension";
-        try {
-            Class<?> clazz = Class.forName(jaxwsExtClass);
-            ServiceBuilderExtension jaxwsExt = (ServiceBuilderExtension) clazz.newInstance();
-            jaxwsExt.init(configContext);
-            serviceDeployer.addServiceBuilderExtensions(jaxwsExt);
-        } catch (ClassNotFoundException e) {
-            log.info("Can not instantiate " + jaxwsExtClass
-                    + ", not abale to use JAX-WS with ServiceDeployer");
-        } catch (InstantiationException e) { 
-            log.info("Can not instantiate " + jaxwsExtClass
-                    + ", not abale to use JAX-WS with ServiceDeployer");
-        } catch (IllegalAccessException e) {         
-            log.info("Can not instantiate " + jaxwsExtClass
-                    + ", not abale to use JAX-WS with ServiceDeployer");
-        }
-        ServiceBuilderExtension wsdlExt = new WSDLServiceBuilderExtension();
-        wsdlExt.init(configContext);
-        serviceDeployer.addServiceBuilderExtensions(wsdlExt);
         
         for (Map<String, Deployer> extensionMap : deployerMap.values()) {
             for (Deployer deployer : extensionMap.values()) {
@@ -966,8 +937,20 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 if (deployer instanceof AbstractDeployer) {
                     for (Iterator<ServiceBuilderExtension> sbeItr = ((AbstractDeployer) deployer)
                             .getServiceBuilderExtensions().iterator(); sbeItr.hasNext();) {
-                        //init ServiceBuilderExtensions
-                        sbeItr.next().init(configContext);
+                        // init ServiceBuilderExtensions
+                        ServiceBuilderExtension builderExtension = sbeItr.next();
+                        builderExtension.init(configContext);
+                        ((AbstractDeployer) deployer).addServiceBuilderExtensions(builderExtension);
+                        /*
+                         * URL based deployment does not fully based on standard
+                         * deployment architecture hence it's require to set
+                         * serviceDeployer variable. serviceDeployer variable
+                         * set only if the ServiceDeployer has been registered
+                         * on axis2.xml file.
+                         */
+                        if (deployer instanceof ServiceDeployer) {
+                            serviceDeployer = (ServiceDeployer) deployer;
+                        }
                     }
                 }
             }

@@ -37,6 +37,16 @@
     <parameter name="sendStacktraceDetailsWithFaults">true</parameter>
 
     <!-- ================================================= -->
+    <!-- Deployers -->
+    <!-- ================================================= -->
+
+    <!--Service deployer , this will alow users to deploy AAR or exploded AAR as axis2 services-->
+    <deployer extension=".aar" directory="services" class="org.apache.axis2.deployment.ServiceDeployer">
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.jaxws.framework.JAXWSServiceBuilderExtension"/>
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.deployment.WSDLServiceBuilderExtension"/>
+    </deployer>
+    
+    <!-- ================================================= -->
     <!-- Message Receivers -->
     <!-- ================================================= -->
     <!-- This is the Deafult Message Receiver for the Request Response style Operations -->

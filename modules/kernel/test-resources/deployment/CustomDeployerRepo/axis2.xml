@@ -109,6 +109,16 @@
                          class="org.apache.axis2.transport.http.ApplicationXMLFormatter"/>
     </messageFormatters>
 
+    <!-- ================================================= -->
+    <!-- Deployers -->
+    <!-- ================================================= -->
+
+    <!--Service deployer , this will alow users to deploy AAR or exploded AAR as axis2 services-->
+    <deployer extension=".aar" directory="services" class="org.apache.axis2.deployment.ServiceDeployer">
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.jaxws.framework.JAXWSServiceBuilderExtension"/>
+        <serviceBuilderExtension name ="jwsbuilderExt" class="org.apache.axis2.deployment.WSDLServiceBuilderExtension"/>
+    </deployer>
+    
     <!-- Test custom deployment by registering for "svc" files, and the "widgets" dir -->
     <deployer extension=".svc" directory="widgets"
             class="org.apache.axis2.deployment.deployers.CustomDeployer"/>
