@@ -25,7 +25,7 @@
         The Listner Service 2 of the Axis2 Eventing sample.
     </description>
 
-    <operation name="publish" mep="http://www.w3.org/2004/08/wsdl/in-only">  
+    <operation name="publish" mep="http://www.w3.org/ns/wsdl/in-only">  
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver" />
     </operation>
            

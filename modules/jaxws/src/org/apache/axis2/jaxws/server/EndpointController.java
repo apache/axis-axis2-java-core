@@ -51,8 +51,6 @@ import org.apache.axis2.jaxws.server.dispatcher.ProviderDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.endpoint.Utils;
 import org.apache.axis2.jaxws.spi.Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -610,10 +608,10 @@ public class EndpointController {
             AxisOperation op = mc.getAxisOperation();
             String mep = op.getMessageExchangePattern();
 
-            if (mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) ||
-                    mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) ||
-                    mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) ||
-                    mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)||
+            if (mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY) ||
+                    mep.equals(WSDL2Constants.MEP_URI_IN_ONLY) ||
+                    mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY) ||
+                    mep.equals(WSDL2Constants.MEP_URI_IN_ONLY)||
                     mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY)||
                     mep.equals(WSDL2Constants.MEP_URI_IN_ONLY)) {
                 return true;

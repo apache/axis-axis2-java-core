@@ -85,9 +85,9 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
 
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
         config.addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         config.addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-out", new RawXMLINOutMessageReceiver());
 
         DispatchPhase dispatchPhase = new DispatchPhase();
 

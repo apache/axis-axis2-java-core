@@ -23,10 +23,10 @@
     </description>
     <messageReceivers>
         <messageReceiver
-            mep="http://www.w3.org/2004/08/wsdl/in-only"
+            mep="http://www.w3.org/ns/wsdl/in-only"
     class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"/>
         <messageReceiver
-            mep="http://www.w3.org/2004/08/wsdl/in-out"
+            mep="http://www.w3.org/ns/wsdl/in-out"
     class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
     </messageReceivers>
     <parameter name="ServiceClass">

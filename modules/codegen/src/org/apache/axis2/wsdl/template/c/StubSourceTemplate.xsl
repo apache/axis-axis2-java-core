@@ -621,7 +621,7 @@
             </xsl:choose>
         }
         </xsl:if>  <!--close for  test="$isSync='1'-->
-       </xsl:if> <!-- close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out' -->
+       </xsl:if> <!-- close for  test="$mep='http://www.w3.org/ns/wsdl/in-out' -->
 
   </xsl:for-each>
 
@@ -1128,7 +1128,7 @@
 
          </xsl:if>  <!--close for  test="$isASync='1'-->
        <!-- End of in-out mep -->
-       </xsl:if> <!-- close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out' -->
+       </xsl:if> <!-- close for  test="$mep='http://www.w3.org/ns/wsdl/in-out' -->
 
        <xsl:if test="$mep='10'">
          /**
@@ -1264,7 +1264,7 @@
             return status;
 
         }
-       </xsl:if> <!-- close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-only' -->
+       </xsl:if> <!-- close for  test="$mep='http://www.w3.org/ns/wsdl/in-only' -->
      </xsl:for-each>   <!-- close of for-each select = "method" -->
 
 

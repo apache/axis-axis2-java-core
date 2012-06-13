@@ -453,49 +453,49 @@ public class Utils {
         int mepConstant = WSDLConstants.MEP_CONSTANT_INVALID;
 
         if (WSDL2Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) ||
-            WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) ||
-            WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
+            WSDL2Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) ||
+            WSDL2Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_IN_OUT;
         } else if (
                 WSDL2Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY
+                WSDL2Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) ||
+                WSDL2Constants.MEP_URI_IN_ONLY
                         .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_IN_ONLY;
         } else if (WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
                 .equals(messageExchangePattern) ||
-                                                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
+                                                WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
                                                         .equals(messageExchangePattern) ||
-                                                                                        WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT
+                                                                                        WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
                                                                                                 .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT;
         } else if (WSDL2Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) ||
-                   WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) ||
-                   WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN
+                   WSDL2Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) ||
+                   WSDL2Constants.MEP_URI_OUT_IN
                            .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_OUT_IN;
         } else if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern) ||
-                   WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY
+                   WSDL2Constants.MEP_URI_OUT_ONLY
                            .equals(messageExchangePattern) ||
-                                                           WSDLConstants.WSDL20_2004_Constants
+                                                           WSDL2Constants
                                                                    .MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_OUT_ONLY;
         } else if (WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern) ||
-                   WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
+                WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN
                            .equals(messageExchangePattern) ||
-                                                           WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN
+                           WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN
                                                                    .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN;
         } else if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern) ||
-                   WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
+                WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
                            .equals(messageExchangePattern) ||
-                                                           WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY
+                           WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
                                                                    .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY;
         } else if (WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern) ||
-                   WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
+                WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
                            .equals(messageExchangePattern) ||
-                                                           WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY
+                                                           WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
                                                                    .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY;
         }

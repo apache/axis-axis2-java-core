@@ -20,13 +20,13 @@
 <serviceGroup>
  <service name="AddNumbersService">
   <messageReceivers>
-   <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
+   <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
   </messageReceivers>
   <parameter name="ServiceClass">org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortTypeImpl</parameter>
-  <operation name="addNumbers" mep="http://www.w3.org/2004/08/wsdl/in-out">
+  <operation name="addNumbers" mep="http://www.w3.org/ns/wsdl/in-out">
     <actionMapping/>
   </operation>
-  <operation name="oneWayInt" mep="http://www.w3.org/2004/08/wsdl/in-only">
+  <operation name="oneWayInt" mep="http://www.w3.org/ns/wsdl/in-only">
     <actionMapping/>
   </operation>
  </service>

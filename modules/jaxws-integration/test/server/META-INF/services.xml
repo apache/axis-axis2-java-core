@@ -20,10 +20,10 @@
 <serviceGroup>
  <service name="EchoService">
   <messageReceivers>
-   <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="server.EchoServiceMessageReceiverInOut"/>
+   <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="server.EchoServiceMessageReceiverInOut"/>
   </messageReceivers>
   <parameter name="ServiceClass">server.EchoServiceImpl</parameter>
-  <operation name="echoString" mep="http://www.w3.org/2004/08/wsdl/in-out">
+  <operation name="echoString" mep="http://www.w3.org/ns/wsdl/in-out">
     <actionMapping/>
   </operation>
  </service>

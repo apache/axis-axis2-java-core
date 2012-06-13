@@ -62,7 +62,7 @@
             element = "ghns:invalidDataError"/>
 
     <operation name="opCheckAvailability"
-            pattern="http://www.w3.org/2006/01/wsdl/in-out" >
+            pattern="http://www.w3.org/ns/wsdl/in-out" >
         <input messageLabel="In"
               element="ghns:checkAvailability" />
         <output messageLabel="Out"

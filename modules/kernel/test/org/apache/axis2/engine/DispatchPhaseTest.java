@@ -21,8 +21,6 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 
 public class DispatchPhaseTest extends TestCase {
     
@@ -35,10 +33,10 @@ public class DispatchPhaseTest extends TestCase {
         DispatchPhase phase = new DispatchPhase();
         boolean oneway = phase.isOneway(mep);
         assertTrue(oneway);
-        mep = WSDL20_2004_Constants.MEP_URI_IN_ONLY;
+        mep = WSDL2Constants.MEP_URI_IN_ONLY;
         oneway = phase.isOneway(mep);
         assertTrue(oneway);
-        mep = WSDL20_2006Constants.MEP_URI_IN_ONLY;
+        mep = WSDL2Constants.MEP_URI_IN_ONLY;
         oneway = phase.isOneway(mep);
         assertTrue(oneway);
         mep = WSDL2Constants.MEP_URI_IN_OUT;

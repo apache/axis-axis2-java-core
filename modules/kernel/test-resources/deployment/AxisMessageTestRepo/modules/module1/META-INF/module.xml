@@ -44,7 +44,7 @@
         </handler>
     </InFaultFlow>
 
-    <operation name="creatSeq" mep="http://www.w3.org/2004/08/wsdl/in-out">
+    <operation name="creatSeq" mep="http://www.w3.org/ns/wsdl/in-out">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
         <parameter name="para1" locked="xsd:true">10</parameter>
     </operation>

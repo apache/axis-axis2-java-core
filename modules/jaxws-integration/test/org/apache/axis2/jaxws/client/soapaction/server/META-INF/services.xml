@@ -20,7 +20,7 @@
 <serviceGroup>
  <service name="BookStoreService">
   <messageReceivers>
-   <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" 
+   <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" 
        class="org.apache.axis2.jaxws.client.soapaction.server.SOAPActionTestsMessageReceiver"/>
   </messageReceivers>
  </service>

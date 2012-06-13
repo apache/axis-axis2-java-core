@@ -50,8 +50,8 @@ public class ServiceXMLCreater {
         "\t\tPlease Type your service description here\n" +
         "\t</description>\n" +
         "\t<messageReceivers>\n" +
-        "\t\t<messageReceiver mep=\"http://www.w3.org/2004/08/wsdl/in-only\" class=\"org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver\" />\n" +
-        "\t\t<messageReceiver  mep=\"http://www.w3.org/2004/08/wsdl/in-out\"  class=\"org.apache.axis2.rpc.receivers.RPCMessageReceiver\"/>\n" +
+        "\t\t<messageReceiver mep=\"http://www.w3.org/ns/wsdl/in-only\" class=\"org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver\" />\n" +
+        "\t\t<messageReceiver  mep=\"http://www.w3.org/ns/wsdl/in-out\"  class=\"org.apache.axis2.rpc.receivers.RPCMessageReceiver\"/>\n" +
         "\t</messageReceivers>\n" + 
         "\t<parameter name=\"ServiceClass\">" + serviceClass + "</parameter>\n" ; 
         serviceXML = serviceXML + "</service>\n";

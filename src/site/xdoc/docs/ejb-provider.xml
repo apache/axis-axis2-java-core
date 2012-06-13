@@ -193,9 +193,9 @@ application server.</p>
     &lt;service name="HelloBeanService"&gt;
         &lt;description&gt;Hello! web service&lt;/description&gt;
         &lt;messageReceivers&gt;
-            &lt;messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only"
+            &lt;messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
                 class="org.apache.axis2.rpc.receivers.ejb.EJBInOnlyMessageReceiver"/&gt;
-        &lt;messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
+        &lt;messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
                 class="org.apache.axis2.rpc.receivers.ejb.EJBMessageReceiver"/&gt;
         &lt;/messageReceivers&gt;
         &lt;parameter name="ServiceClass"&gt;my.ejb.HelloBusiness&lt;/parameter&gt;

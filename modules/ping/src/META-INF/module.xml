@@ -18,7 +18,7 @@
   -->
 
 <module name="ping">
-   <operation name="pingService" mep="http://www.w3.org/2004/08/wsdl/in-out">
+   <operation name="pingService" mep="http://www.w3.org/ns/wsdl/in-out">
         <actionMapping>http://ws.apache.org/axis2/modules/ping</actionMapping>
         <messageReceiver class="org.apache.axis2.ping.PingMessageReceiver"/>
     </operation>

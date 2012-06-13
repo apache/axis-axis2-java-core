@@ -781,7 +781,7 @@ public class Utils {
      *
      * @param excludeList an ArrayList containing method names - we'll add ours to this.
      */
-    public static void addExcludeMethods(ArrayList<String> excludeList) {
+    public static void addExcludeMethods(List<String> excludeList) {
         excludeList.add("init");
         excludeList.add("setOperationContext");
         excludeList.add("startUp");

@@ -19,17 +19,17 @@
 
 <service name="StockQuoteService" scope="application">
     <messageReceivers>
-        <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
+        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
                          class="samples.quickstart.service.adb.StockQuoteServiceMessageReceiverInOut"/>
-        <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only"
+        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
                          class="samples.quickstart.service.adb.StockQuoteServiceMessageReceiverInOnly"/>
     </messageReceivers>
     <parameter name="ServiceClass">samples.quickstart.service.adb.StockQuoteServiceSkeleton
     </parameter>
-    <operation name="update" mep="http://www.w3.org/2004/08/wsdl/in-only">
+    <operation name="update" mep="http://www.w3.org/ns/wsdl/in-only">
         <actionMapping>urn:update</actionMapping>
     </operation>
-    <operation name="getPrice" mep="http://www.w3.org/2004/08/wsdl/in-out">
+    <operation name="getPrice" mep="http://www.w3.org/ns/wsdl/in-out">
         <actionMapping>urn:getPrice</actionMapping>
         <outputActionMapping>http://quickstart.samples/StockQuoteServicePortType/getPriceResponse</outputActionMapping>
     </operation>

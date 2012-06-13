@@ -227,7 +227,7 @@
                                                         axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data),
                                                   axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data) );
 
-        </xsl:if>  <!--close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out'"-->
+        </xsl:if>  <!--close for  test="$mep='http://www.w3.org/ns/wsdl/in-out'"-->
         </xsl:for-each>
         </xsl:if>  <!--close for  test="$isAsync='1'-->
 

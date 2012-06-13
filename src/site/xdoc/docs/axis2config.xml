@@ -310,7 +310,7 @@ inside the servlet container. A very simple services.xml is shown below:</font><
     &lt;schema schemaNamespace="schema namespace"/&gt; 
      
     &lt;messageReceivers&gt;
-            &lt;messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
+            &lt;messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
                              class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/&gt;
     &lt;/messageReceivers&gt;
      

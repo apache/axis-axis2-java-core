@@ -212,7 +212,7 @@ public class ScriptDeploymentEngine extends DeploymentEngine {
             axisService.addParameter(scriptSrc);
 
             ScriptReceiver scriptReceiver = new ScriptReceiver();
-            axisService.addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-out", scriptReceiver);
+            axisService.addMessageReceiver("http://www.w3.org/ns/wsdl/in-out", scriptReceiver);
 
             // TODO: Shouldn't this be done by WSDLToAxisServiceBuilder.populateService?
             for (Iterator it = axisService.getOperations(); it.hasNext();) {

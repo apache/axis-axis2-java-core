@@ -223,10 +223,10 @@ itself and links the Java class to it (See Code Listing 3).</p>
     &lt;/description&gt;
     &lt;messageReceivers&gt;
         &lt;messageReceiver 
-            mep="http://www.w3.org/2004/08/wsdl/in-only"
+            mep="http://www.w3.org/ns/wsdl/in-only"
     class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"/&gt;
         &lt;messageReceiver
-            mep="http://www.w3.org/2004/08/wsdl/in-out"
+            mep="http://www.w3.org/ns/wsdl/in-out"
     class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/&gt;
     &lt;/messageReceivers&gt;
     &lt;parameter name="ServiceClass"&gt;

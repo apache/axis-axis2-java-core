@@ -18,7 +18,7 @@
   -->
 
 <module name="metadataExchange" class="org.apache.axis2.mex.MetadataExchangeModule">
-   <operation name="getMetadata" mep="http://www.w3.org/2004/08/wsdl/in-out">
+   <operation name="getMetadata" mep="http://www.w3.org/ns/wsdl/in-out">
          <messageReceiver class="org.apache.axis2.mex.MexMessageReceiver"/>
 
         <!-- namespaces for the 2004-09 spec -->

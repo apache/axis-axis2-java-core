@@ -29,10 +29,9 @@ import org.apache.axis2.context.externalize.SafeObjectOutputStream;
 import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.MetaDataEntry;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -738,10 +737,10 @@ public class OperationContext extends AbstractContext
         if (key != null) {
             // We only want to (re)register this if it's an outbound message
             String mepString = getAxisOperation().getMessageExchangePattern();
-            if (mepString.equals(WSDL20_2006Constants.MEP_URI_OUT_ONLY)
-                || mepString.equals(WSDL20_2004_Constants.MEP_URI_OUT_ONLY)
-                || ((mepString.equals(WSDL20_2006Constants.MEP_URI_OUT_IN)
-                    || mepString.equals(WSDL20_2004_Constants.MEP_URI_OUT_IN))
+            if (mepString.equals(WSDL2Constants.MEP_URI_OUT_ONLY)
+                || mepString.equals(WSDL2Constants.MEP_URI_OUT_ONLY)
+                || ((mepString.equals(WSDL2Constants.MEP_URI_OUT_IN)
+                    || mepString.equals(WSDL2Constants.MEP_URI_OUT_IN))
                     && !isComplete)) {
                     
                 // make sure this OperationContext object is registered in the 

@@ -136,7 +136,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected String targetNamespace = null;
     //to keep the list of operations which use other MR not RPC MR
-    protected ArrayList<String> nonRpcMethods = new ArrayList<String>();
+    protected List<String> nonRpcMethods = new ArrayList<String>();
 
     protected Class<?> serviceClass = null;
     protected AxisService service;
@@ -1552,7 +1552,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return NAME_SPACE_PREFIX + prefixCount++;
     }
 
-    public void setExcludeMethods(ArrayList<String> excludeMethods) {
+    public void setExcludeMethods(List<String> excludeMethods) {
         if (excludeMethods == null) excludeMethods = new ArrayList<String>();
         this.excludeMethods = excludeMethods;
     }
@@ -1617,7 +1617,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return extraClasses;
     }
 
-    public void setExtraClasses(ArrayList<String> extraClasses) {
+    public void setExtraClasses(List<String> extraClasses) {
         this.extraClasses = extraClasses;
     }
 
@@ -1688,7 +1688,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    public void setNonRpcMethods(ArrayList<String> nonRpcMethods) {
+    public void setNonRpcMethods(List<String> nonRpcMethods) {
         if (nonRpcMethods != null) {
             this.nonRpcMethods = nonRpcMethods;
         }

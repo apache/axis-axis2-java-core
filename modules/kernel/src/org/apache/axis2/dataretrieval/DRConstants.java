@@ -52,9 +52,6 @@ public interface DRConstants {
 
         String NS_PREFIX = "mex";
         String GET_METADATA = "GetMetadata";
-
-        /** @deprecated Please use DIALECT instead.  todo: delete me after 1.5 */
-        String DIALET = "Dialect";
         
         String DIALECT = "Dialect";
         String IDENTIFIER = "Identifier";

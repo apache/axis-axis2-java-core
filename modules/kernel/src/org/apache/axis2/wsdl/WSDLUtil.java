@@ -35,7 +35,7 @@ public class WSDLUtil {
      * @param mep
      */
     public static boolean isInputPresentForMEP(String mep) {
-        return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep) ||
+        return WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep) ||
                 WSDL2Constants.MEP_URI_IN_ONLY.equals(mep) ||
                 WSDL2Constants.MEP_URI_IN_OUT.equals(mep) ||
                 WSDL2Constants.MEP_URI_OUT_IN.equals(mep) ||

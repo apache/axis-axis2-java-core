@@ -160,15 +160,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String SINGLE_SERVICE = "singleservice";
 
-    /**
-     * @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETCONTEXT
-     */
-    public static final String SERVLET_CONTEXT = "transport.http.servletContext";
-    /**
-     * @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETREQUEST
-     */
-    public static final String HTTP_SERVLET_REQUEST = "transport.http.servletRequest";
-
     public static final String SERVICE_MAP = "servicemap";
     public static final String SERVICE_ROOT = "serviceRoot";
     public static final String SERVICE_PATH = "servicePath";
@@ -229,11 +220,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String CONTAINER_MANAGED = "ContainerManaged";
 
     public static final String FAULT_INFORMATION_FOR_HEADERS = "FaultHeaders";
-
-    /**
-     * @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING
-     */
-    public static final String COOKIE_STRING = "Cookie";
+    
     public static final String SESSION_COOKIE = "axis_session";
     public static final String SESSION_COOKIE_JSESSIONID = "JSESSIONID";
     public static final String CUSTOM_COOKIE_ID = "customCookieID";
@@ -368,9 +355,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         public static final String CONFIG_CONTEXT_TIMEOUT_INTERVAL = "ConfigContextTimeoutInterval";
 
-        /** @deprecated MISSPELLING */
-        public static final String CONFIG_CONTEXT_TIMOUT_INTERVAL = "ConfigContextTimeoutInterval";
-
         public static final String TRANSPORT_IN_URL = "TransportInURL";
 
         public static final String URL_PARAMETER_LIST = "URLParameterList";
@@ -387,13 +371,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String DISABLE_SOAP12 = "disableSOAP12";
 
         // this will contain the keys of all the properties that will be in the message context
-        public static final String TRANSPORT_URL = "TransportURL";
-
-        /**
-         * @deprecated please use org.apache.axis2.addressing.AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES
-         */
-        public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES =
-                "disableAddressingForOutMessages";
+        public static final String TRANSPORT_URL = "TransportURL";        
 
         // if this property is set to Boolean.TRUE then the SOAPAction header, if present,
         // will NOT be set to the value of Options.getAction(). The empty value, "", will

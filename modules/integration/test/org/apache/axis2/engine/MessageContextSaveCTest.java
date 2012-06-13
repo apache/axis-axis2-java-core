@@ -233,25 +233,25 @@ public class MessageContextSaveCTest extends TestCase {
         saveAxisConfiguration = new AxisConfiguration();
         saveConfigurationContext = new ConfigurationContext(saveAxisConfiguration);
         saveConfigurationContext.getAxisConfiguration().addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         saveConfigurationContext.getAxisConfiguration().addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-out", new RawXMLINOutMessageReceiver());
         saveConfigurationContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         restoreAxisConfiguration = new AxisConfiguration();
         restoreConfigurationContext = new ConfigurationContext(restoreAxisConfiguration);
         restoreConfigurationContext.getAxisConfiguration().addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         restoreConfigurationContext.getAxisConfiguration().addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-out", new RawXMLINOutMessageReceiver());
         restoreConfigurationContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         equivAxisConfiguration = new AxisConfiguration();
         equivConfigurationContext = new ConfigurationContext(equivAxisConfiguration);
         equivConfigurationContext.getAxisConfiguration().addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         equivConfigurationContext.getAxisConfiguration().addMessageReceiver(
-                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
+                "http://www.w3.org/ns/wsdl/in-out", new RawXMLINOutMessageReceiver());
         equivConfigurationContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         //----------------------------

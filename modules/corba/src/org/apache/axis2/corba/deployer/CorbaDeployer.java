@@ -266,13 +266,13 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
             ClassLoader loader = service.getClassLoader();
 
             // Set default message recievers
-            service.addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-only",
+            service.addMessageReceiver("http://www.w3.org/ns/wsdl/in-only",
                     loadMessageReceiver(loader, "org.apache.axis2.corba.receivers.CorbaInOnlyMessageReceiver"));
-            service.addMessageReceiver("http://www.w3.org/2004/08/wsdl/robust-in-only",
+            service.addMessageReceiver("http://www.w3.org/ns/wsdl/robust-in-only",
                     loadMessageReceiver(loader, "org.apache.axis2.corba.receivers.CorbaInOnlyMessageReceiver"));
-            service.addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-out",
+            service.addMessageReceiver("http://www.w3.org/ns/wsdl/in-out",
                     loadMessageReceiver(loader, "org.apache.axis2.corba.receivers.CorbaMessageReceiver"));
-            service.addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-opt-out",
+            service.addMessageReceiver("http://www.w3.org/ns/wsdl/in-opt-out",
                     loadMessageReceiver(loader, "org.apache.axis2.corba.receivers.CorbaInOutAsyncMessageReceiver"));
 
             if (messageReceiver != null) {

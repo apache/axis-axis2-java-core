@@ -65,8 +65,8 @@ import org.apache.commons.logging.LogFactory;
  * <pre>
  * {@code
  *  <messageReceivers>
- *         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
- *         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
+ *         <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
+ *         <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
  *     </messageReceivers>
  * 
  * }

@@ -29,17 +29,38 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.dataretrieval.*;
+import org.apache.axis2.dataretrieval.AxisDataLocator;
+import org.apache.axis2.dataretrieval.AxisDataLocatorImpl;
+import org.apache.axis2.dataretrieval.DRConstants;
+import org.apache.axis2.dataretrieval.Data;
+import org.apache.axis2.dataretrieval.DataRetrievalException;
+import org.apache.axis2.dataretrieval.DataRetrievalRequest;
+import org.apache.axis2.dataretrieval.LocatorType;
+import org.apache.axis2.dataretrieval.OutputForm;
+import org.apache.axis2.dataretrieval.SchemaSupplier;
+import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.java2wsdl.*;
-import org.apache.axis2.engine.*;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DefaultObjectSupplier;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.ObjectSupplier;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.util.*;
+import org.apache.axis2.util.IOUtils;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.LoggingControl;
+import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -53,10 +74,21 @@ import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
-import org.w3c.dom.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+
+import javax.wsdl.Definition;
+import javax.wsdl.Import;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
@@ -67,7 +99,13 @@ import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.URISyntaxException;
@@ -406,111 +444,111 @@ public class AxisService extends AxisDescription {
     public void addMessageReceiver(String mepURI,
 			MessageReceiver messageReceiver) {
 		if (WSDL2Constants.MEP_URI_IN_ONLY.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY
+				|| WSDL2Constants.MEP_URI_IN_ONLY
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY
+				|| WSDL2Constants.MEP_URI_IN_ONLY
 						.equals(mepURI)) {
 			messageReceivers.put(WSDL2Constants.MEP_URI_IN_ONLY,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
+			        WSDL2Constants.MEP_URI_IN_ONLY,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY,
+			        WSDL2Constants.MEP_URI_IN_ONLY,
 					messageReceiver);
 		} else if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY
+				|| WSDL2Constants.MEP_URI_OUT_ONLY
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_ONLY
+				|| WSDL2Constants.MEP_URI_OUT_ONLY
 						.equals(mepURI)) {
 			messageReceivers.put(WSDL2Constants.MEP_URI_OUT_ONLY,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY,
+			        WSDL2Constants.MEP_URI_OUT_ONLY,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_ONLY,
+			        WSDL2Constants.MEP_URI_OUT_ONLY,
 					messageReceiver);
 		} else if (WSDL2Constants.MEP_URI_IN_OUT.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
+				|| WSDL2Constants.MEP_URI_IN_OUT
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT
+				|| WSDL2Constants.MEP_URI_IN_OUT
 						.equals(mepURI)) {
 			messageReceivers
 					.put(WSDL2Constants.MEP_URI_IN_OUT, messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
+			        WSDL2Constants.MEP_URI_IN_OUT,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT,
+			        WSDL2Constants.MEP_URI_IN_OUT,
 					messageReceiver);
 		} else if (WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
+				|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT
+				|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
 						.equals(mepURI)) {
 			messageReceivers.put(WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT,
+			        WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT,
 					messageReceiver);
 			messageReceivers
 					.put(
-							WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT,
+					        WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT,
 							messageReceiver);
 		} else if (WSDL2Constants.MEP_URI_OUT_IN.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN
+				|| WSDL2Constants.MEP_URI_OUT_IN
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN
+				|| WSDL2Constants.MEP_URI_OUT_IN
 						.equals(mepURI)) {
 			messageReceivers
 					.put(WSDL2Constants.MEP_URI_OUT_IN, messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN,
+			        WSDL2Constants.MEP_URI_OUT_IN,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN,
+			        WSDL2Constants.MEP_URI_OUT_IN,
 					messageReceiver);
 		} else if (WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
+				|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN
+				|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN
 						.equals(mepURI)) {
 			messageReceivers.put(WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN,
+			        WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN,
 					messageReceiver);
 			messageReceivers
 					.put(
-							WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN,
+					        WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN,
 							messageReceiver);
 		} else if (WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
+				|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY
+				|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
 						.equals(mepURI)) {
 			messageReceivers.put(WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY,
+			        WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY,
 					messageReceiver);
 			messageReceivers
 					.put(
-							WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY,
+					        WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY,
 							messageReceiver);
 		} else if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)
-				|| WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
+				|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
 						.equals(mepURI)
-				|| WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY
+				|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
 						.equals(mepURI)) {
 			messageReceivers.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY,
+			        WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
 					messageReceiver);
 			messageReceivers.put(
-					WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY,
+			        WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
 					messageReceiver);
 		} else {
 			messageReceivers.put(mepURI, messageReceiver);
@@ -2459,9 +2497,9 @@ public class AxisService extends AxisDescription {
 	 * messageReceiverClassMap will hold the MessageReceivers for given meps.
 	 * Key will be the mep and value will be the instance of the MessageReceiver
 	 * class. Ex: Map mrMap = new HashMap();
-	 * mrMap.put("http://www.w3.org/2004/08/wsdl/in-only",
+	 * mrMap.put("http://www.w3.org/ns/wsdl/in-only",
 	 * RPCInOnlyMessageReceiver.class.newInstance());
-	 * mrMap.put("http://www.w3.org/2004/08/wsdl/in-out",
+	 * mrMap.put("http://www.w3.org/ns/wsdl/in-out",
 	 * RPCMessageReceiver.class.newInstance());
 	 * 
 	 * @param implClass
@@ -2518,9 +2556,9 @@ public class AxisService extends AxisDescription {
 	 * messageReceiverClassMap will hold the MessageReceivers for given meps.
 	 * Key will be the mep and value will be the instance of the MessageReceiver
 	 * class. Ex: Map mrMap = new HashMap();
-	 * mrMap.put("http://www.w3.org/2004/08/wsdl/in-only",
+	 * mrMap.put("http://www.w3.org/ns/wsdl/in-only",
 	 * RPCInOnlyMessageReceiver.class.newInstance());
-	 * mrMap.put("http://www.w3.org/2004/08/wsdl/in-out",
+	 * mrMap.put("http://www.w3.org/ns/wsdl/in-out",
 	 * RPCMessageReceiver.class.newInstance());
 	 * 
 	 * @param implClass

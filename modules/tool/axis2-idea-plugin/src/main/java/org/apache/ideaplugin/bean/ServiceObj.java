@@ -50,9 +50,9 @@ public class ServiceObj {
                 "       Please Type your service description here\n" +
                 "   </description>\n" +
                 "   <messageReceivers>\n"+
-                "       <messageReceiver mep=\"http://www.w3.org/2004/08/wsdl/in-only\" \n"+
+                "       <messageReceiver mep=\"http://www.w3.org/ns/wsdl/in-only\" \n"+
                 "       class=\"org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver\" />\n "+
-                "       <messageReceiver mep=\"http://www.w3.org/2004/08/wsdl/in-out\"\n " +
+                "       <messageReceiver mep=\"http://www.w3.org/ns/wsdl/in-out\"\n " +
                 "       class=\"org.apache.axis2.rpc.receivers.RPCMessageReceiver\" /> \n" +
                 "   </messageReceivers>\n "+
                 "   <parameter name=\"ServiceClass\" locked=\"false\">" + serviceClass + "</parameter>\n";

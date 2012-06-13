@@ -28,7 +28,7 @@
     <module ref="savan" />
     <module ref="addressing" />
 	      
-    <operation name="dummyMethod" mep="http://www.w3.org/2004/08/wsdl/in-only">  
+    <operation name="dummyMethod" mep="http://www.w3.org/ns/wsdl/in-only">  
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver" />
 		<actionMapping>uuid:DummyMethodAction</actionMapping>
     </operation>

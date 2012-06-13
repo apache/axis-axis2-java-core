@@ -443,11 +443,6 @@ public class HTTPConstants {
      */
     public static final String CACHED_HTTP_STATE = "CACHED_HTTP_STATE";    
 
-    /**
-     * @deprecated please use MULTITHREAD_HTTP_CONNECTION_MANAGER
-     */
-    public static final String MUTTITHREAD_HTTP_CONNECTION_MANAGER = "MUTTITHREAD_HTTP_CONNECTION_MANAGER";
-
     public static final String MULTITHREAD_HTTP_CONNECTION_MANAGER = "MULTITHREAD_HTTP_CONNECTION_MANAGER";
 
     /**
@@ -504,11 +499,6 @@ public class HTTPConstants {
     public static final String HTTP_METHOD_GET = "GET";
     public static final String HTTP_METHOD_POST = "POST";
 
-    // FIXME: the comment below is incorrect (or at least misleading)
-    //        since Constants.Configuration.CONTENT_TYPE has a different value!!!
-    /**
-     * @deprecated Please use Constants.Configuration.CONTENT_TYPE
-     */
     public static final String CONTENT_TYPE = "Content-Type";
 
     public static final String OMIT_SOAP_12_ACTION = "OmitSOAP12Action";

@@ -41,8 +41,6 @@ import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -160,8 +158,8 @@ public class DispatchPhase extends Phase {
         } else if (AddressingHelper.isReplyRedirected(msgContext) && AddressingHelper.isFaultRedirected(msgContext)) {
 
 
-            if (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_OUT)
-                    || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_OUT)
+            if (mepString.equals(WSDL2Constants.MEP_URI_IN_OUT)
+                    || mepString.equals(WSDL2Constants.MEP_URI_IN_OUT)
                     || mepString.equals(WSDL2Constants.MEP_URI_IN_OUT)) { 
                 // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
                 // then we don't need to keep the transport waiting.
@@ -393,8 +391,8 @@ public class DispatchPhase extends Phase {
      */
     @SuppressWarnings("deprecation")
     boolean isOneway(String mepString) {
-        return (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)
-                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)
+        return (mepString.equals(WSDL2Constants.MEP_URI_IN_ONLY)
+                || mepString.equals(WSDL2Constants.MEP_URI_IN_ONLY)
                 || mepString.equals(WSDL2Constants.MEP_URI_IN_ONLY));
     }
 

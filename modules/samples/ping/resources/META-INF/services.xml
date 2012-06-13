@@ -22,11 +22,11 @@
     <module ref="ping"/>
 
     <operation name="getPrice">
-        <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only" class="samples.ping.receivers.RawXMLINOutMessageReceiver"/>
+        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only" class="samples.ping.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
 
     <operation name="update">
-        <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="samples.ping.receivers.RawXMLINOnlyMessageReceiver"/>
+        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="samples.ping.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     
     <parameter name="ServiceClass">samples.ping.service.PingService</parameter>

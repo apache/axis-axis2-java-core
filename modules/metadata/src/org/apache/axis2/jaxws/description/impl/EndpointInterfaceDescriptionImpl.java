@@ -43,6 +43,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -189,7 +190,7 @@ public class EndpointInterfaceDescriptionImpl
         AxisOperation genericProviderAxisOp = null;
         try {
             genericProviderAxisOp = 
-                AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT);
+                AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_IN_OUT);
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("eiDescrImplErr"),e);
         }
