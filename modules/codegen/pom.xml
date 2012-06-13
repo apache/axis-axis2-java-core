@@ -77,11 +77,6 @@
              <artifactId>jaxws-rt</artifactId>            
              <scope>test</scope>
         </dependency>
-	    <dependency>
-	         <groupId>xmlunit</groupId>
-	         <artifactId>xmlunit</artifactId>
-             <scope>test</scope>
-	    </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
