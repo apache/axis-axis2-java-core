@@ -166,7 +166,7 @@ public class HTTPTransportReceiver {
             Iterator iterator = axisService.getOperations();
             temp += "<h3>" + axisService.getName() + "</h3>";
             temp += "<a href=\"" + axisService.getName() + "?wsdl\">wsdl</a> <br/> ";
-            temp += "<i>Service Description :  " + axisService.getServiceDescription() +
+            temp += "<i>Service Description :  " + axisService.getDocumentation() +
                     "</i><br/><br/>";
             if (iterator.hasNext()) {
                 temp += "Available operations <ul>";

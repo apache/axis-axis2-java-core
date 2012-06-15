@@ -48,7 +48,7 @@ public class JAXWSModule implements Module {
     }
 
     private void registerGlobalModule(AxisConfiguration axisConfiguration, String moduleName) {
-        if (!axisConfiguration.getGlobalModules().contains(moduleName)) {
+        if (!axisConfiguration.isGlobalModulesRegistered(moduleName)) {
             axisConfiguration.addGlobalModuleRef(moduleName);
         }
     }

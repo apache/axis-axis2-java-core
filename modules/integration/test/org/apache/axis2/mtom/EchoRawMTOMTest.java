@@ -207,7 +207,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
                         TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
 
         ServiceClient sender = new ServiceClient(configContext, null);
-        sender.engageModule(new QName("addressing"));
+        sender.engageModule("addressing");
         options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
         sender.setOptions(options);
         options.setUseSeparateListener(true);

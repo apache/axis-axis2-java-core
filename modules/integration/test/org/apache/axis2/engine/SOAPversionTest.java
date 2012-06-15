@@ -39,7 +39,6 @@ public class SOAPversionTest extends LocalTestCase {
         ServiceClient serviceClient = getClient(Echo.SERVICE_NAME, Echo.ECHO_OM_ELEMENT_OP_NAME);
         serviceClient.getOptions().setSoapVersionURI(
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        serviceClient.setCachingOperationContext(true);
         serviceClient.sendReceive(TestingUtils.createDummyOMElement());
         SOAPEnvelope result = serviceClient.getLastOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
 
@@ -51,8 +50,7 @@ public class SOAPversionTest extends LocalTestCase {
     public void testSOAP12() throws AxisFault {
         ServiceClient serviceClient = getClient(Echo.SERVICE_NAME, Echo.ECHO_OM_ELEMENT_OP_NAME);
         serviceClient.getOptions().setSoapVersionURI(
-        		SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        serviceClient.setCachingOperationContext(true);
+        		SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);   
         serviceClient.sendReceive(TestingUtils.createDummyOMElement());
         SOAPEnvelope result = serviceClient.getLastOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
         

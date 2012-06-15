@@ -37,8 +37,7 @@ public class UsingTransportTest extends LocalTestCase {
 
     public void testSOAPVersioning() throws Exception{
     	ServiceClient sender = getClient(Echo.SERVICE_NAME, Echo.ECHO_OM_ELEMENT_OP_NAME);
-    	sender.getOptions().setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-    	sender.setCachingOperationContext(true);
+    	sender.getOptions().setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);    	
     	OMElement response = sender.sendReceive(TestingUtils.createDummyOMElement());
     	TestingUtils.compareWithCreatedOMElement(response);
     	SOAPEnvelope result =
