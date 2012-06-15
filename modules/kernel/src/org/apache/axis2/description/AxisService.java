@@ -314,20 +314,6 @@ public class AxisService extends AxisDescription {
 		this.endpointMap.put(key, axisEndpoint);
 	}
 
-	/**
-	 * @deprecated Use AddressingHelper.getAddressingRequirementParemeterValue
-	 */
-	public String getWSAddressingFlag() {
-		return AddressingHelper.getAddressingRequirementParemeterValue(this);
-	}
-
-	/**
-	 * @deprecated Use AddressingHelper.setAddressingRequirementParemeterValue
-	 */
-	public void setWSAddressingFlag(String ar) {
-		AddressingHelper.setAddressingRequirementParemeterValue(this, ar);
-	}
-
 	public boolean isSchemaLocationsAdjusted() {
 		return schemaLocationsAdjusted;
 	}
@@ -384,22 +370,6 @@ public class AxisService extends AxisDescription {
 		objectSupplier = new DefaultObjectSupplier();
 		dataLocators = new HashMap();
 		dataLocatorClassNames = new HashMap();
-	}
-
-	/**
-	 * @return name of the port type
-	 * @deprecated use AxisService#getEndpointName() instead.
-	 */
-	public String getPortTypeName() {
-		return endpointName;
-	}
-
-	/**
-	 * @param portTypeName
-	 * @deprecated use AxisService#setEndpointName() instead
-	 */
-	public void setPortTypeName(String portTypeName) {
-		this.endpointName = portTypeName;
 	}
 
 	public String getBindingName() {
@@ -1839,16 +1809,6 @@ public class AxisService extends AxisDescription {
         return 1;
     }
     
-	/**
-	 * Gets the description about the service which is specified in
-	 * services.xml.
-	 * 
-	 * @return Returns String.
-	 * @deprecated Use getDocumentation() instead
-	 */
-	public String getServiceDescription() {
-		return getDocumentation();
-	}
 
 	/**
 	 * Method getClassLoader.
@@ -1879,14 +1839,6 @@ public class AxisService extends AxisDescription {
 
 	public URL getFileName() {
 		return fileName;
-	}
-
-    /**
-     * @deprecated please use getLastUpdate
-     * @return
-     */
-    public long getLastupdate() {
-		return lastupdate;
 	}
 
     public long getLastUpdate() {
@@ -2081,17 +2033,7 @@ public class AxisService extends AxisDescription {
 		}
 
 		return operationList;
-	}
-
-	/**
-	 * Sets the description about the service which is specified in services.xml
-	 * 
-	 * @param documentation
-	 * @deprecated Use setDocumentation() instead
-	 */
-	public void setServiceDescription(String documentation) {
-		setDocumentation(documentation);
-	}
+	}	
 
 	/**
 	 * Method setClassLoader.
@@ -2104,14 +2046,6 @@ public class AxisService extends AxisDescription {
 
 	public void setFileName(URL fileName) {
 		this.fileName = fileName;
-	}
-
-	/**
-	 * Sets the current time as last update time of the service.
-     * @deprecated please use setLastUpdate
-	 */
-	public void setLastupdate() {
-		lastupdate = new Date().getTime();
 	}
 
     /**
@@ -2193,14 +2127,6 @@ public class AxisService extends AxisDescription {
 		this.active = active;
 	}
 
-    /**
-     * @deprecated please use getSchemaTargetNamespace
-     * @return
-     */
-    public String getSchematargetNamespace() {
-        return schematargetNamespace;
-    }
-
 	public String getSchemaTargetNamespace() {
 		return schematargetNamespace;
 	}
@@ -2212,15 +2138,6 @@ public class AxisService extends AxisDescription {
 	public String getSchemaTargetNamespacePrefix() {
 		return schematargetNamespacePrefix;
 	}
-
-    /**
-     * @deprecated please use setSchemaTargetNamespacePrefix
-     * @param schematargetNamespacePrefix
-     */
-    public void setSchematargetNamespacePrefix(
-            String schematargetNamespacePrefix) {
-        this.schematargetNamespacePrefix = schematargetNamespacePrefix;
-    }
 
 	public void setSchemaTargetNamespacePrefix(
 			String schematargetNamespacePrefix) {
@@ -2677,16 +2594,6 @@ public class AxisService extends AxisDescription {
 	 * Get the namespace map for this service.
 	 * 
 	 * @return a Map of prefix (String) to namespace URI (String)
-	 * @deprecated please use getNamespaceMap()
-	 */
-	public Map<String, String> getNameSpacesMap() {
-		return namespaceMap;
-	}
-
-	/**
-	 * Get the namespace map for this service.
-	 * 
-	 * @return a Map of prefix (String) to namespace URI (String)
 	 */
 	public Map getNamespaceMap() {
 		return namespaceMap;
@@ -2710,13 +2617,6 @@ public class AxisService extends AxisDescription {
         this.importedNamespaces = importedNamespaces;
     }
     
-    /**
-     * @deprecated please use setNamespaceMap
-     * @param nameSpacesMap
-     */
-    public void setNameSpacesMap(NamespaceMap nameSpacesMap) {
-		this.namespaceMap = nameSpacesMap;
-	}
 
 	public void setNamespaceMap(NamespaceMap namespaceMap) {
 		this.namespaceMap = namespaceMap;

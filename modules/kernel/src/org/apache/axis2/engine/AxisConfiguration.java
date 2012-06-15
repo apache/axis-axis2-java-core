@@ -269,17 +269,6 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * To remove a given module from the system
-     *
-     * @param module name of module to remove
-     * @deprecated Use {@link #removeModule(String,String)}
-     */
-    public void removeModule(String module) {
-        allModules.remove(module);
-        // TODO disengage has to be done here
-    }
-
-    /**
      * Remove a module with moduleName & moduleVersion
      *
      * @param moduleName the name of the module to remove
@@ -568,20 +557,6 @@ public class AxisConfiguration extends AxisDescription {
                     + transport.getName());
         }
         transportsOut.put(transport.getName(), transport);
-    }
-
-    /**
-     * Engages the default module version corresponding to the given module name,
-     * or if the module name contains version number in it then it will engage
-     * the correct module. Both the below cases are valid : -
-     * 1. engageModule("addressing"); 2. engageModule("addressing-1.23");
-     *
-     * @param moduleref QName of module to engage
-     * @throws AxisFault
-     * @deprecated Please use the String version instead
-     */
-    public void engageModule(QName moduleref) throws AxisFault {
-        engageModule(moduleref.getLocalPart());
     }
 
     /**
@@ -972,17 +947,7 @@ public class AxisConfiguration extends AxisDescription {
      */
     public HashMap<String, AxisModule> getModules() {
         return allModules;
-    }
-
-    /**
-     * Get a list of the global modules
-     *
-     * @return the global module list.  BE CAREFUL, this list is mutable.
-     * @deprecated please use addGlobalModule()
-     */
-    public List<String> getGlobalModules() {
-        return globalModuleList;
-    }
+    }   
 
     /**
      * @return Returns ArrayList.
@@ -1565,5 +1530,12 @@ public class AxisConfiguration extends AxisDescription {
             }
         }
         return axisService;
+    }
+    
+    public boolean isGlobalModulesRegistered(String moduleName) {
+        if (globalModuleList.contains(moduleName)) {
+            return true;
+        }
+        return false;
     }
 }

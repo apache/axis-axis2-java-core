@@ -259,14 +259,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         this(in, null, null);
     }
 
-    /**
-     * @deprecated
-     * @see setCustomWSDLResolver
-     */
-    public void setCustomWSLD4JResolver(WSDLLocator customResolver) {
-        setCustomWSDLResolver(customResolver);
-    }
-
 
     /**
      * sets a custom WSDL locator

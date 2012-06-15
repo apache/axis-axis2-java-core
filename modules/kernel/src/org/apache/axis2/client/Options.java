@@ -967,60 +967,7 @@ public class Options implements Externalizable, SafeSerializable {
      */
     public void setTo(EndpointReference to) {
         this.to = to;
-    }
-
-    /**
-     * Sets transport information to the call. The scenarios supported are as
-     * follows: <blockquote>
-     * <p/>
-     * <pre>
-     *  [senderTransport, listenerTransport, useSeparateListener]
-     *  http, http, true
-     *  http, http, false
-     *  http, smtp, true
-     *  smtp, http, true
-     *  smtp, smtp, true
-     *  tcp,  tcp,  true
-     *  tcp,  tcp,  false
-     *  etc.
-     * </pre>
-     * <p/>
-     * </blockquote>
-     *
-     * @param senderTransport
-     * @param listenerTransport
-     * @param useSeparateListener
-     * @throws AxisFault
-     * @deprecated Use setTransportInProtocol(String) and
-     *             useSeparateListener(boolean) instead. You do not need to
-     *             setSenderTransportProtocol(String) as sender transport can be
-     *             inferred from the to EPR. But still you can
-     *             setTransportOut(TransportOutDescription).
-     */
-    public void setTransportInfo(String senderTransport,
-                                 String listenerTransport, boolean useSeparateListener)
-            throws AxisFault {
-
-        // here we check for a legal combination, for and example if the
-        // sendertransport is http and listener
-        // transport is smtp the invocation must using separate transport
-        if (!useSeparateListener) {
-            boolean isTransportsEqual = senderTransport
-                    .equals(listenerTransport);
-            boolean isATwoWaytransport = Constants.TRANSPORT_HTTP
-                    .equals(senderTransport)
-                    || Constants.TRANSPORT_TCP.equals(senderTransport);
-
-            if ((!isTransportsEqual || !isATwoWaytransport)) {
-                throw new AxisFault(Messages
-                        .getMessage("useSeparateListenerLimited", senderTransport, listenerTransport));
-            }
-        } else {
-            setUseSeparateListener(useSeparateListener);
-        }
-
-        setTransportInProtocol(listenerTransport);
-    }
+    }    
 
     /**
      * Used to specify whether the two SOAP Messages are be sent over same
@@ -1033,23 +980,7 @@ public class Options implements Externalizable, SafeSerializable {
      */
     public void setUseSeparateListener(boolean useSeparateListener) {
         this.useSeparateListener = Boolean.valueOf(useSeparateListener);
-    }
-
-    /**
-     * Add WS-Addressing ReferenceParameter child element. Multiple child
-     * may be used.
-     * TODO Add get method, implement handling.
-     *
-     * @param referenceParameter
-     * @deprecated
-     */
-    public void addReferenceParameter(OMElement referenceParameter) {
-        if (referenceParameters == null) {
-            referenceParameters = new ArrayList<OMElement>(5);
-        }
-
-        referenceParameters.add(referenceParameter);
-    }
+    }   
 
     /**
      * Check if session management is enabled.

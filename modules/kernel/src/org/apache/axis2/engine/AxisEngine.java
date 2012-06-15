@@ -122,17 +122,6 @@ public class AxisEngine {
         }
         return (receiver!=null && receiver.getClass().getName().endsWith("JAXWSMessageReceiver"));
     }
-    /**
-     * This method is called to handle any error that occurs at inflow or outflow. But if the
-     * method is called twice, it implies that sending the error handling has failed, in which case
-     * the method logs the error and exists.
-     *
-     * @deprecated (post 1.1 branch)
-     */
-    public static MessageContext createFaultMessageContext(MessageContext processingContext, Throwable e)
-            throws AxisFault {
-        return MessageContextBuilder.createFaultMessageContext(processingContext, e);
-    }
 
     /**
      * This methods represents the inflow of the Axis, this could be either at the server side or the client side.

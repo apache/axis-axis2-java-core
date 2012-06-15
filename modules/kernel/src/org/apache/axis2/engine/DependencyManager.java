@@ -43,22 +43,7 @@ import java.util.Iterator;
 public class DependencyManager {
     private static final Log log = LogFactory.getLog(DependencyManager.class);
     public final static String SERVICE_INIT_METHOD = "init";
-    public final static String SERVICE_DESTROY_METHOD = "destroy";
-
-    /**
-     * Initialize a new service object.  Essentially, check to see if the object wants to receive
-     * an init() call - if so, call it.
-     *
-     * @param obj the service object
-     * @param serviceContext the active ServiceContext
-     * @throws AxisFault if there's a problem initializing
-     * 
-     * @deprecated please use initServiceObject()
-     */
-    public static void initServiceClass(Object obj, ServiceContext serviceContext)
-            throws AxisFault {
-        initServiceObject(obj, serviceContext);
-    }
+    public final static String SERVICE_DESTROY_METHOD = "destroy";   
 
     /**
      * Initialize a new service object.  Essentially, check to see if the object wants to receive

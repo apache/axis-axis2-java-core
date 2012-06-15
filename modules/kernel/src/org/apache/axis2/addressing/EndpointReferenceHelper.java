@@ -124,22 +124,7 @@ public class EndpointReferenceHelper {
             fromOM(epr, eprOMElement, map, isFinalAddressingNamespace);
 
         return ((QName) map.get(AddressingConstants.EPR_ADDRESS)).getNamespaceURI();
-    }
-
-    /**
-     * Populates an endpoint reference based on the <code>String</code> that is
-     * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
-     * is in effect then any reference properties will be saved as reference parameters.
-     * Regardless of the addressing namespace in effect, any elements present in the
-     * <code>String</code> that are not recognised are saved as extensibility elements.
-     *
-     * @param eprString string from the element of endpoint reference type
-     * @throws AxisFault if unable to locate an address element
-     * @deprecated use {@link #fromString(String)} instead.
-     */
-    public static EndpointReference fromOM(String eprString) throws AxisFault {
-        return fromString(eprString);
-    }
+    }    
 
     /**
      * Populates an endpoint reference based on the <code>String</code> that is

@@ -175,20 +175,6 @@ public abstract class AxisOperation extends AxisDescription
         }
     }
 
-    /**
-     * To remove module from engage  module list
-     *
-     * @param module module to remove
-     * @deprecated please use disengageModule(), this method will disappear after 1.3
-     */
-    public void removeFromEngagedModuleList(AxisModule module) {
-        try {
-            disengageModule(module);
-        } catch (AxisFault axisFault) {
-            // Can't do much here...
-            log.error(axisFault.getMessage(), axisFault);
-        }
-    }
 
 //  Note - removed this method which was dead code.
 //    private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {

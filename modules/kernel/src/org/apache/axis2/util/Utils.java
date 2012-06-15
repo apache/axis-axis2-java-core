@@ -20,6 +20,23 @@
 
 package org.apache.axis2.util;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
@@ -27,8 +44,6 @@ import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.ServiceObjectSupplier;
-import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -52,26 +67,11 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.lang.reflect.Modifier;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Enumeration;
-import java.util.Map;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.SocketException;
-import java.net.NetworkInterface;
-import java.net.InetAddress;
 
 public class Utils {
     private static final Log log = LogFactory.getLog(Utils.class);
@@ -85,16 +85,6 @@ public class Utils {
         handlerDesc.setHandler(handler);
         flow.addHandler(handlerDesc);
     }
-
-    /**
-     * @see org.apache.axis2.util.MessageContextBuilder:createOutMessageContext()
-     * @deprecated (post1.1branch)
-     */
-    public static MessageContext createOutMessageContext(MessageContext inMessageContext)
-            throws AxisFault {
-        return MessageContextBuilder.createOutMessageContext(inMessageContext);
-    }
-
     public static AxisService createSimpleService(QName serviceName, String className, QName opName)
             throws AxisFault {
         return createSimpleService(serviceName, new RawXMLINOutMessageReceiver(), className,
@@ -428,18 +418,6 @@ public class Utils {
         }
     }
 
-    /**
-     * Check if a MessageContext property is true.
-     *
-     * @param messageContext the MessageContext
-     * @param propertyName   the property name
-     * @return true if the property is Boolean.TRUE, "true", 1, etc. or false otherwise
-     * @deprecated please use MessageContext.isTrue(propertyName) instead
-     */
-    public static boolean isExplicitlyTrue(MessageContext messageContext, String propertyName) {
-        Object flag = messageContext.getProperty(propertyName);
-        return JavaUtils.isTrueExplicitly(flag);
-    }
 
     /**
      * Maps the String URI of the Message exchange pattern to a integer.

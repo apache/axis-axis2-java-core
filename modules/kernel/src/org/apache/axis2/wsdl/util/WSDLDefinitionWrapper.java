@@ -92,19 +92,6 @@ public class WSDLDefinitionWrapper implements Definition {
     // constructors
     //-------------------------------------------------------------------------
 
-    /**
-     * Constructor
-     * 
-     * @param def    The WSDL Definition
-     * @deprecated because this constructor does not provide any guidance for 
-     * memory usage
-     */
-    public WSDLDefinitionWrapper(Definition def) {
-        if (log.isDebugEnabled() ) {
-            log.debug("WSDLDefinitionWrapper(Definition) entry");
-        }
-        prepare(def, null);
-    }
     
     /**
      * @param def
@@ -130,21 +117,6 @@ public class WSDLDefinitionWrapper implements Definition {
         setupMemoryParms(axisConfig);
         prepare(def, null);
     }
-
-    /**
-     * Constructor
-     * 
-     * @param def    The WSDL Definition
-     * @param wURL   The URL for the wsdl
-     * @deprecated use a constructor with a AxisConfiguration or memory limit parameter
-     */
-    public WSDLDefinitionWrapper(Definition def, URL wURL) {
-        if (log.isDebugEnabled() ) {
-            log.debug("WSDLDefinitionWrapper(Definition,URL) entry");
-        }
-        prepare(def, wURL);
-    }
-
 
     /**
      * Constructor

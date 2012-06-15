@@ -112,16 +112,6 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     /**
-     *
-     * @param service
-     * @throws Exception
-     * @deprecated please use addService() instead
-     */
-    public void addToGroup(AxisService service) throws Exception {
-        addService(service);
-    }
-
-    /**
      * When a module gets engaged on a ServiceGroup, we have to engage it for each Service.
      *
      * @param module the newly-engaged AxisModule

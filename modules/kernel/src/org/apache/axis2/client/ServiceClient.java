@@ -334,18 +334,7 @@ public class ServiceClient {
      */
     public Options getOverrideOptions() {
         return overrideOptions;
-    }
-
-    /**
-     * Engage a module for this service client.
-     *
-     * @param moduleName name of the module to engage
-     * @throws AxisFault if something goes wrong
-     * @deprecated Please use String version instead
-     */
-    public void engageModule(QName moduleName) throws AxisFault {
-        engageModule(moduleName.getLocalPart());
-    }
+    }    
 
     /**
      * Engage a module for this service client.
@@ -362,16 +351,6 @@ public class ServiceClient {
                 throw new AxisFault("Unable to engage module : " + moduleName);
             }
         }
-    }
-
-    /**
-     * Disengage a module for this service client
-     *
-     * @param moduleName name of Module to disengage
-     * @deprecated Please use String version instead
-     */
-    public void disengageModule(QName moduleName) {
-        disengageModule(moduleName.getLocalPart());
     }
 
     /**
@@ -734,17 +713,7 @@ public class ServiceClient {
      */
     public OperationContext getLastOperationContext() {
         return serviceContext.getLastOperationContext();
-    }
-
-    /**
-     * Sets whether or not to cache the last OperationContext
-     *
-     * @param cachingOpContext true if we should hold onto the last active OperationContext
-     * @deprecated
-     */
-    public void setCachingOperationContext(boolean cachingOpContext) {
-        serviceContext.setCachingOperationContext(cachingOpContext);
-    }
+    }    
 
 
     /**
