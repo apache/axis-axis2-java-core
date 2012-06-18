@@ -33,8 +33,9 @@ public class XSD2JavaTest extends XMLSchemaTest {
            
             if (file.exists()) {
                 XSD2Java.main(new String[] { SampleSchemasDirectory + "sampleSchema" + i + ".xsd",
-                        SampleSchemasDirectory+"XSD2JAVA" + i });
-                File temp=new File(SampleSchemasDirectory+"XSD2JAVA" + i );
+                        "target" + File.separator + "generated" + File.separator + "XSD2JAVA" + i });
+                File temp = new File("target" + File.separator + "generated" + File.separator
+                        + "XSD2JAVA" + i);
                 //checks whether XSD2Java executed successfully
                 assertTrue(temp.exists());
             }
