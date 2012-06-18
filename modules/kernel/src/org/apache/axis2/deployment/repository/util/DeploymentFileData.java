@@ -85,15 +85,6 @@ public class DeploymentFileData {
         return file.getName(); // No need to check for null due to constructor check
     }
 
-    /**
-     * Get the name of the file.
-     *
-     * @return the name of the referenced file
-     * @deprecated please use getName() instead - this will disappear after 1.3.
-     */
-    public String getServiceName() {
-        return getName();
-    }
 
     public static boolean isModuleArchiveFile(String filename) {
         return (filename.endsWith(".mar"));

@@ -588,13 +588,6 @@ public class ConfigurationContext extends AbstractContext {
         return ids;
     }
 
-    /**
-     * @return The ServiceGroupContexts
-     * @deprecated Use {@link #getServiceGroupContextIDs} & {@link #getServiceGroupContext(String)}
-     */
-    public Hashtable<String, ServiceGroupContext> getServiceGroupContexts() {
-        return serviceGroupContextMap;
-    }
 
     /**
      * Returns the thread factory.
@@ -912,14 +905,6 @@ public class ConfigurationContext extends AbstractContext {
             this.contextRoot = contextRoot.trim();  // Trim before storing away for good hygiene
             cachedServicePath = internalGetServiceContextPath();
         }
-    }
-
-    /**
-     * @deprecated MISSPELLING - Please use getServiceGroupContextTimeoutInterval()
-     * @return the service group context timeout interval
-     */
-    public long getServiceGroupContextTimoutInterval() {
-        return getServiceGroupContextTimeoutInterval();
     }
 
     /**
