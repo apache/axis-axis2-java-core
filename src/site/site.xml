@@ -67,7 +67,7 @@
             <item name="Reference Library" href="refLib.html" />
             <item name="Online Java Docs" href="api/index.html" />
         </menu>
-        <menu name="Get Involved" href="overview.html">
+        <menu name="Get Involved">
             <item name="Overview" href="overview.html" />
             <item name="Checkout the Source" href="svn.html" />
             <item name="Mailing Lists" href="mail-lists.html" />
