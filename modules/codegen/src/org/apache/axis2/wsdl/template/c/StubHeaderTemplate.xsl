@@ -39,6 +39,9 @@
         * by the Apache Axis2/Java version: #axisVersion# #today#
         */
 
+        #ifndef <xsl:value-of select="$caps_name"/>_H
+        #define <xsl:value-of select="$caps_name"/>_H
+
         #include &lt;stdio.h&gt;
         #include &lt;axiom.h&gt;
         #include &lt;axutil_utils.h&gt;
@@ -283,5 +286,7 @@
 	#ifdef __cplusplus
 	}
 	#endif
+
+    #endif
    </xsl:template>
 </xsl:stylesheet>
