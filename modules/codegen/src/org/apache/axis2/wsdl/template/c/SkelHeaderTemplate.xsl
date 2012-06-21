@@ -32,6 +32,8 @@
      * <xsl:value-of select="@name"/> Axis2/C skeleton for the axisService- Header file
      */
 
+    #ifndef <xsl:value-of select="$caps_svc_name"/>_H
+    #define <xsl:value-of select="$caps_svc_name"/>_H
 
 	#include &lt;axis2_svc_skeleton.h&gt;
 	#include &lt;axutil_log_default.h&gt;
@@ -115,5 +117,7 @@
 	#ifdef __cplusplus
 	}
 	#endif
+
+    #endif
     </xsl:template>
  </xsl:stylesheet>
