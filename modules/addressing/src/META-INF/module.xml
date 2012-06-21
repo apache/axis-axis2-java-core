@@ -17,7 +17,7 @@
   ~ under the License.
   -->
 
-<module name="addressing">
+<module name="addressing" class="org.apache.axis2.handlers.addressing.Addressing">
     <Description>This is the WS-Addressing implementation on Axis2, supporting the WS-Addressing 1.0 Recommendation, as well as the Submission version (2004/08).</Description>
     <InFlow>
         <handler name="AddressingInHandler" class="org.apache.axis2.handlers.addressing.AddressingInHandler">
@@ -50,4 +50,7 @@
         </handler>
         <!-- AddressingValidationHandler not present on the INfaultflow so that we don't get faults bouncing around forever -->
     </InFaultFlow>
+    
+    <supported-policy-namespaces namespaces="http://www.w3.org/2007/05/addressing/metadata"/>
+     
 </module>
