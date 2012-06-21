@@ -34,7 +34,7 @@ import java.util.jar.JarFile;
  */
 public class JarFileUrlStreamHandler extends URLStreamHandler {
     public static URL createUrl(JarFile jarFile, JarEntry jarEntry) throws MalformedURLException {
-        return createUrl(jarFile, jarEntry, new File(jarFile.getName()).toURL());
+        return createUrl(jarFile, jarEntry, new File(jarFile.getName()).toURI().toURL());
     }
 
     public static URL createUrl(JarFile jarFile, JarEntry jarEntry, URL codeSource) throws MalformedURLException {

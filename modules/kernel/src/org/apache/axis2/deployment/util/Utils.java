@@ -171,7 +171,7 @@ public class Utils {
                             return new FileInputStream(f);
                         }
                     });
-            array.add(f.toURL());
+            array.add(f.toURI().toURL());
             zin = new ZipInputStream(fin);
 
             ZipEntry entry;
@@ -187,7 +187,7 @@ public class Utils {
                     && entryName.toLowerCase().endsWith(".jar")) {
                     String suffix = entryName.substring(4);
                     File f2 = createTempFile(suffix, zin, tmpDir);
-                    array.add(f2.toURL());
+                    array.add(f2.toURI().toURL());
                 }
             }
             return (URL[])array.toArray(new URL[array.size()]);
@@ -328,7 +328,7 @@ public class Utils {
 
         try {
             ArrayList urls = new ArrayList();
-            urls.add(file.toURL());
+            urls.add(file.toURI().toURL());
 
             // lower case directory name
             File libfiles = new File(file, "lib");
@@ -381,7 +381,7 @@ public class Utils {
                     }
                 });
         if (exists) {
-            urls.add(libfiles.toURL());
+            urls.add(libfiles.toURI().toURL());
             File jarfiles[] = (File[])org.apache.axis2.java.security.AccessController
                     .doPrivileged(new PrivilegedAction() {
                         public Object run() {
@@ -392,7 +392,7 @@ public class Utils {
             while (i < jarfiles.length) {
                 File jarfile = jarfiles[i];
                 if (jarfile.getName().endsWith(".jar")) {
-                    urls.add(jarfile.toURL());
+                    urls.add(jarfile.toURI().toURL());
                 }
                 i++;
             }
@@ -798,7 +798,7 @@ public class Utils {
                                 return Thread.currentThread().getContextClassLoader();
                             }
                         });
-        return createDeploymentClassLoader(new URL[]{serviceFile.toURL()},
+        return createDeploymentClassLoader(new URL[]{serviceFile.toURI().toURL()},
                                            contextClassLoader, new ArrayList(), isChildFirstClassLoading);
     }
 

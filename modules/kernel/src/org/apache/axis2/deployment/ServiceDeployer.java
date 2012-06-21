@@ -155,7 +155,7 @@ public class ServiceDeployer extends AbstractDeployer {
                     serviceMetaData, deploymentFileData,
                     serviceGroup, isDirectory, serviceMap,
                     configCtx);
-            URL location = deploymentFileData.getFile().toURL();
+            URL location = deploymentFileData.getFile().toURI().toURL();
 
             // Add the hierarchical path to the service group
             if (location != null) {

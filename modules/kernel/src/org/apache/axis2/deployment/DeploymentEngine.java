@@ -154,7 +154,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 .calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
         try {
             try {
-                axisConfig.setRepository(axisRepo.toURL());
+                axisConfig.setRepository(axisRepo.toURI().toURL());
             } catch (MalformedURLException e) {
                 log.info(e.getMessage());
             }

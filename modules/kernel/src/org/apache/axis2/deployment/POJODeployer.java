@@ -95,7 +95,7 @@ public class POJODeployer extends AbstractDeployer {
                 axisService =
                             createAxisServiceUsingAnnogen(className,
                                     classLoader,
-                                    deploymentFileData.getFile().toURL());
+                                    deploymentFileData.getFile().toURI().toURL());
                 
                 //add the hierarchical path to the service name
                 axisService.setName(serviceHierarchy + axisService.getName());
@@ -106,11 +106,11 @@ public class POJODeployer extends AbstractDeployer {
                 ArrayList<AxisService> axisServiceList = new ArrayList<AxisService>();
                 for (String className : classList) {
                     ArrayList<URL> urls = new ArrayList<URL>();
-                    urls.add(deploymentFileData.getFile().toURL());
+                    urls.add(deploymentFileData.getFile().toURI().toURL());
                     urls.add(configCtx.getAxisConfiguration().getRepository());
                     String webLocation = DeploymentEngine.getWebLocationString();
                     if (webLocation != null) {
-                        urls.add(new File(webLocation).toURL());
+                        urls.add(new File(webLocation).toURI().toURL());
                     }
                     ClassLoader classLoader = Utils.createClassLoader(
                             urls,

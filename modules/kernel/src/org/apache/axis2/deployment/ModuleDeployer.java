@@ -138,7 +138,7 @@ public class ModuleDeployer extends AbstractDeployer {
             metaData.setModuleClassLoader(deploymentFileData.getClassLoader());
             metaData.setParent(axisConfig);
             archiveReader.readModuleArchive(deploymentFileData, metaData, isDirectory, axisConfig);
-            URL url = deploymentFile.toURL();
+            URL url = deploymentFile.toURI().toURL();
             metaData.setFileName(url);
             DeploymentEngine.addNewModule(metaData, axisConfig);
             super.deploy(deploymentFileData);

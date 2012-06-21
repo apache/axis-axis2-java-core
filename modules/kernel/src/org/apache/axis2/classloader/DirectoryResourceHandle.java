@@ -39,9 +39,9 @@ public class DirectoryResourceHandle extends AbstractResourceHandle {
     public DirectoryResourceHandle(String name, File file, File codeSource, Manifest manifest) throws MalformedURLException {
         this.name = name;
         this.file = file;
-        this.codeSource = codeSource.toURL();
+        this.codeSource = codeSource.toURI().toURL();
         this.manifest = manifest;
-        url = file.toURL();
+        url = file.toURI().toURL();
     }
 
     public String getName() {
