@@ -34,6 +34,7 @@ import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_STD_SERVICE_
 import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_DIR;
 import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_FILE_NAME;
 import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_SRC_DIR;
+import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_MODULE_SRC_DIRECTORY;
 
 /**
  * The Class RepoHelper is utility that deal with repo creation.
@@ -232,6 +233,7 @@ public class RepoHelper {
         this.moduleDir = repoLocation + File.separator + DEFAULT_MODULE_REPO_DIRECTORY;
         this.stdServiceSrcDir = DEFAULT_STD_SERVICE_SRC_DIRECTORY;
         this.jaxwsServiceSrcDir = DEFAULT_JAX_WS_SERVICE_SRC_DIRECTORY;
+        this.moduleSrcDir = DEFAULT_MODULE_SRC_DIRECTORY;
     }
 
     /**
