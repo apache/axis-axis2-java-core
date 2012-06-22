@@ -266,19 +266,15 @@ public class AxisBindingOperation extends AxisDescription {
 	}
 
 	public Policy getEffectivePolicy() {
-		ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
+	    
+        Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
 
-		PolicyInclude policyInclude;
-
-		// AxisBindingOperation policies
-		policyInclude = getPolicyInclude();
-		policyList.addAll(policyInclude.getAttachedPolicies());
-
+        policyList.addAll(getPolicySubject().getAttachedPolicyComponents());
+		
 		// AxisBinding
 		AxisBinding axisBinding = getAxisBinding();
 		if (axisBinding != null) {
-			policyList.addAll(axisBinding.getPolicyInclude()
-					.getAttachedPolicies());
+            policyList.addAll(axisBinding.getPolicySubject().getAttachedPolicyComponents());
 		}
 
 		// AxisEndpoint
@@ -288,16 +284,12 @@ public class AxisBindingOperation extends AxisDescription {
 		}
 
 		if (axisEndpoint != null) {
-			policyList.addAll(axisEndpoint.getPolicyInclude()
-					.getAttachedPolicies());
+            policyList.addAll(axisEndpoint.getPolicySubject().getAttachedPolicyComponents());
 		}
 
-		// AxisOperation
-		Policy axisOperationPolicy = axisOperation.getPolicyInclude()
-				.getEffectivePolicy();
-
-		if (axisOperationPolicy != null) {
-			policyList.add(axisOperationPolicy);
+		
+		if (axisOperation != null) {
+            policyList.addAll(axisOperation.getPolicySubject().getAttachedPolicyComponents());
 		}
 
 		return PolicyUtil.getMergedPolicy(policyList, this);

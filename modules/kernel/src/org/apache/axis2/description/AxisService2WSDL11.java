@@ -36,6 +36,7 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
 import org.apache.neethi.PolicyRegistry;
+import org.apache.neethi.PolicyRegistryImpl;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.QName;
@@ -530,7 +531,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		}
 
 
-        addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService.getPolicyInclude(),
+        addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService.getPolicySubject(),
                               service);
 		// addPolicyAsExtElement(PolicyInclude.AXIS_SERVICE_POLICY, axisService.
 		// getPolicyInclude(), service);
@@ -588,9 +589,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		}
 	}
 
-	private void addPolicyAsExtElement(int type, PolicyInclude policyInclude,
+	private void addPolicyAsExtElement(int type, PolicySubject policySubject,
 			OMElement parentElement) throws Exception {
-		ArrayList elementList = policyInclude.getPolicyElements(type);
+	    Collection<PolicyComponent> elementList = policySubject.getAttachedPolicyComponents();
 
         for (Object policyElement : elementList) {
             if (policyElement instanceof Policy) {
@@ -624,7 +625,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     firstChildElem.insertSiblingBefore(child);
                 }
 
-                PolicyRegistry reg = policyInclude.getPolicyRegistry();
+                PolicyRegistry reg = new PolicyRegistryImpl();
                 String key = ((PolicyReference)policyElement).getURI();
 
                 if (key.startsWith("#")) {

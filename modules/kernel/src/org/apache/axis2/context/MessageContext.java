@@ -76,6 +76,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1627,7 +1628,7 @@ public class MessageContext extends AbstractContext
         		return axisMessage.getEffectivePolicy();
         } else {
             if (axisService != null){
-                List<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
+                Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
                 policyList.addAll(axisService.getPolicySubject().getAttachedPolicyComponents());
                 AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
                 policyList.addAll(axisConfiguration.getPolicySubject().getAttachedPolicyComponents());

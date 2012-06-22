@@ -30,8 +30,10 @@ import org.apache.axis2.util.WSDL20Util;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyComponent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -232,7 +234,7 @@ public class AxisBindingMessage extends AxisDescription {
 
 	public Policy calculateEffectivePolicy() {
 		PolicySubject policySubject = null;
-		ArrayList policyList = new ArrayList();
+		Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
 
 		// AxisBindingMessage
 		policySubject = getPolicySubject();

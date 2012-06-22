@@ -32,6 +32,7 @@ import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -252,7 +253,7 @@ public class AxisMessage extends AxisDescription {
 
 	public Policy calculateEffectivePolicy() {
 		PolicySubject policySubject;
-		ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
+		Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
 
 		// AxisMessage
 		policySubject = getPolicySubject();
