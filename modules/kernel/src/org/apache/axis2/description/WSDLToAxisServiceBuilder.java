@@ -306,9 +306,9 @@ public abstract class WSDLToAxisServiceBuilder {
         this.axisConfig = axisConfig;
     }
     
-    protected Map createHttpLocationTable() {
+    protected Map<String, AxisOperation> createHttpLocationTable() {
        // Set a comparator so the httpLocations are stored in decending order
-       Map httpLocationTable = new TreeMap(new Comparator(){
+       Map httpLocationTable = new TreeMap<String, AxisOperation>(new Comparator(){
           public int compare(Object o1, Object o2) {
              return (-1 * ((Comparable)o1).compareTo(o2));
           }

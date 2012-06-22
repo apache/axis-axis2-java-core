@@ -32,7 +32,9 @@ import org.apache.axis2.util.IOUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.OnDemandLogger;
 import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyRegistry;
+import org.apache.neethi.PolicyRegistryImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -392,8 +395,9 @@ public class ListingAgent extends AbstractAgent {
 
     private Policy findPolicy(String id, AxisDescription des) {
 
-        List policyElements = des.getPolicyInclude().getPolicyElements();
-        PolicyRegistry registry = des.getPolicyInclude().getPolicyRegistry();
+       
+        Collection<PolicyComponent> policyElements = des.getPolicySubject().getAttachedPolicyComponents();
+        PolicyRegistry registry = new PolicyRegistryImpl();
 
         Object policyComponent;
 
@@ -403,7 +407,7 @@ public class ListingAgent extends AbstractAgent {
             return policy;
         }
 
-        for (Iterator iterator = policyElements.iterator(); iterator.hasNext();) {
+        for (Iterator<PolicyComponent> iterator = policyElements.iterator(); iterator.hasNext();) {
             policyComponent = iterator.next();
 
             if (policyComponent instanceof Policy) {
@@ -417,7 +421,7 @@ public class ListingAgent extends AbstractAgent {
 
         AxisDescription child;
 
-        for (Iterator iterator = des.getChildren(); iterator.hasNext();) {
+        for (Iterator<? extends AxisDescription> iterator = des.getChildren(); iterator.hasNext();) {
             child = (AxisDescription) iterator.next();
             policy = findPolicy(id, child);
 

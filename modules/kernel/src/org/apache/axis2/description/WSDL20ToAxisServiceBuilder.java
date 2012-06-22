@@ -25,20 +25,18 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.wsdl.*;
+import org.apache.axis2.wsdl.HTTPHeaderMessage;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.SOAPModuleMessage;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.woden.WSDLException;
+import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
 import org.apache.woden.XMLElement;
-import org.apache.woden.internal.DOMWSDLFactory;
-import org.apache.woden.internal.wsdl20.BindingFaultImpl;
-import org.apache.woden.internal.wsdl20.BindingOperationImpl;
-import org.apache.woden.internal.wsdl20.extensions.InterfaceOperationExtensionsImpl;
-import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
-import org.apache.woden.internal.wsdl20.extensions.http.HTTPHeaderImpl;
-import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
 import org.apache.woden.resolver.URIResolver;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.types.NamespaceDeclaration;
@@ -58,11 +56,14 @@ import org.apache.woden.wsdl20.InterfaceMessageReference;
 import org.apache.woden.wsdl20.InterfaceOperation;
 import org.apache.woden.wsdl20.Service;
 import org.apache.woden.wsdl20.enumeration.MessageLabel;
+import org.apache.woden.wsdl20.extensions.InterfaceOperationExtensions;
+import org.apache.woden.wsdl20.extensions.http.HTTPBindingExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPEndpointExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPHeader;
+import org.apache.woden.wsdl20.extensions.http.HTTPHeaderElement;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
 import org.apache.woden.wsdl20.extensions.rpc.Argument;
 import org.apache.woden.wsdl20.extensions.rpc.RPCInterfaceOperationExtensions;
@@ -74,6 +75,8 @@ import org.apache.woden.wsdl20.extensions.soap.SOAPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPEndpointExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPHeaderBlock;
 import org.apache.woden.wsdl20.extensions.soap.SOAPModule;
+import org.apache.woden.wsdl20.xml.BindingFaultElement;
+import org.apache.woden.wsdl20.xml.BindingOperationElement;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.apache.woden.wsdl20.xml.DocumentableElement;
 import org.apache.woden.wsdl20.xml.DocumentationElement;
@@ -118,7 +121,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private NamespaceDeclaration[] namespacemap;
 
-    private List operationNames = new ArrayList();
+    private List<QName> operationNames = new ArrayList<QName>();
 
     private NamespaceMap stringBasedNamespaceMap;
 
@@ -351,7 +354,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (WSDL2Constants.URI_WSDL2_SOAP.equals(binding.getType().toString())) {
                     SOAPBindingExtensions soapBindingExtensions;
                     try {
-                        soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
+                        soapBindingExtensions = (SOAPBindingExtensions) binding
                                 .getComponentExtensionContext(
                                         new URI(WSDL2Constants.URI_WSDL2_SOAP));
                     } catch (URISyntaxException e) {
@@ -599,7 +602,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         });
         SOAPBindingExtensions soapBindingExtensions;
         try {
-            soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
+            soapBindingExtensions = (SOAPBindingExtensions) binding
                     .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_SOAP));
         } catch (URISyntaxException e) {
             throw new AxisFault("Soap Binding Extention not found");
@@ -642,8 +645,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingFault[] bindingFaults = binding.getBindingFaults();
         for (int i = 0; i < bindingFaults.length; i++) {
-            BindingFaultImpl bindingFault = (BindingFaultImpl) bindingFaults[i];
-            InterfaceFault interfaceFault = serviceInterface.getFromAllInterfaceFaults(bindingFault.getRef());
+            BindingFault bindingFault = bindingFaults[i];
+            InterfaceFault interfaceFault = serviceInterface.getFromAllInterfaceFaults(((BindingFaultElement)bindingFault).getRef());
             AxisBindingMessage axisBindingFault = new AxisBindingMessage();
             axisBindingFault.setFault(true);
             axisBindingFault.setName(interfaceFault.getName().getLocalPart());
@@ -683,10 +686,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingOperation[] bindingOperations = binding.getBindingOperations();
         for (int i = 0; i < bindingOperations.length; i++) {
-            BindingOperationImpl bindingOperation = (BindingOperationImpl) bindingOperations[i];
+            BindingOperation bindingOperation = bindingOperations[i];
 
             AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
-            InterfaceOperation interfaceOperation = serviceInterface.getFromAllInterfaceOperations(bindingOperation.getRef());
+            InterfaceOperation interfaceOperation = serviceInterface.getFromAllInterfaceOperations(((BindingOperationElement)bindingOperation).getRef());
             AxisOperation axisOperation =
                     axisService.getOperation(interfaceOperation.getName());
 
@@ -819,12 +822,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void processHTTPBindingExtention(Binding binding, AxisBinding axisBinding, Interface serviceInterface)
             throws AxisFault {
 
-        Map httpLocationTable = createHttpLocationTable();
+        Map<String, AxisOperation> httpLocationTable = createHttpLocationTable();
         // Capture all the binding specific properties
 
-        HTTPBindingExtensionsImpl httpBindingExtensions;
+        HTTPBindingExtensions httpBindingExtensions;
         try {
-            httpBindingExtensions = (HTTPBindingExtensionsImpl) binding
+            httpBindingExtensions = (HTTPBindingExtensions) binding
                     .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_HTTP));
         } catch (URISyntaxException e) {
             throw new AxisFault("HTTP Binding Extention not found");
@@ -842,9 +845,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingFault[] bindingFaults = binding.getBindingFaults();
         for (int i = 0; i < bindingFaults.length; i++) {
-            BindingFaultImpl bindingFault = (BindingFaultImpl) bindingFaults[i];
+            BindingFault bindingFault = bindingFaults[i];
             InterfaceFault interfaceFault =
-                    serviceInterface.getFromAllInterfaceFaults(bindingFault.getRef());
+                    serviceInterface.getFromAllInterfaceFaults(((BindingFaultElement)bindingFault).getRef());
             AxisBindingMessage axisBindingFault = new AxisBindingMessage();
             axisBindingFault.setFault(true);
             axisBindingFault.setName(interfaceFault.getName().getLocalPart());
@@ -876,10 +879,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingOperation[] bindingOperations = binding.getBindingOperations();
         for (int i = 0; i < bindingOperations.length; i++) {
-            BindingOperationImpl bindingOperation = (BindingOperationImpl) bindingOperations[i];
+            BindingOperation bindingOperation = bindingOperations[i];
 
             AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
-            InterfaceOperation interfaceOperation = serviceInterface.getFromAllInterfaceOperations(bindingOperation.getRef());
+            InterfaceOperation interfaceOperation = serviceInterface.getFromAllInterfaceOperations(((BindingOperationElement)bindingOperation).getRef());
             AxisOperation axisOperation =
                     axisService.getOperation(interfaceOperation.getName());
 
@@ -1063,9 +1066,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // assuming the style of the operations of WSDL 2.0 is always document, for the time being :)
         // The following can be used to capture the wsdlx:safe attribute
 
-        InterfaceOperationExtensionsImpl interfaceOperationExtensions;
+        InterfaceOperationExtensions interfaceOperationExtensions;
         try {
-            interfaceOperationExtensions = (InterfaceOperationExtensionsImpl) operation
+            interfaceOperationExtensions = (InterfaceOperationExtensions) operation
                     .getComponentExtensionContext(
                             new URI(WSDL2Constants.URI_WSDL2_EXTENSIONS));
         } catch (URISyntaxException e) {
@@ -1196,9 +1199,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         	if(xa!=null){
         		String value = (String)xa.getContent();
         		if(value != null){
-        			ArrayList al = axisOperation.getWSAMappingList();
+        			ArrayList<String> al = axisOperation.getWSAMappingList();
         			if(al == null){
-        				al = new ArrayList();
+        				al = new ArrayList<String>();
         				axisOperation.setWsamappingList(al);
         			}
         			al.add(value);
@@ -1261,7 +1264,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private Description readInTheWSDLFile(Document document) throws WSDLException {
-        WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
+        WSDLFactory factory = WSDLFactory.newInstance();
+        WSDLReader reader = factory.newWSDLReader();
         if (customWSDLResolver != null) {
             reader.setURIResolver(customWSDLResolver);
         }
@@ -1293,14 +1297,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Convert woden dependent SOAPHeaderBlock objects to SOAPHeaderMessage objects
      *
      * @param soapHeaderBlocks - An array of SOAPHeaderBlock objects
-     * @return ArrayList - An ArrayList of SOAPHeaderMessage objects
+     * @return List<SOAPHeaderMessage - An List of SOAPHeaderMessage objects
      */
-    private ArrayList createSoapHeaders(SOAPHeaderBlock soapHeaderBlocks[]) {
+    private List<SOAPHeaderMessage> createSoapHeaders(SOAPHeaderBlock soapHeaderBlocks[]) {
 
         if (soapHeaderBlocks.length == 0) {
             return null;
         }
-        ArrayList soapHeaderMessages = new ArrayList();
+        List<SOAPHeaderMessage> soapHeaderMessages = new ArrayList<SOAPHeaderMessage>();
 
         for (int i = 0; i < soapHeaderBlocks.length; i++) {
             SOAPHeaderBlock soapHeaderBlock = soapHeaderBlocks[i];
@@ -1323,14 +1327,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Convert woden dependent SOAPHeaderBlock objects to SOAPHeaderMessage objects
      *
      * @param soapModules - An array of SOAPModule objects
-     * @return ArrayList - An ArrayList of SOAPHeaderMessage objects
+     * @return List<SOAPModuleMessage> - An List of SOAPHeaderMessage objects
      */
-    private ArrayList createSoapModules(SOAPModule soapModules[]) {
+    private List<SOAPModuleMessage> createSoapModules(SOAPModule soapModules[]) {
 
         if (soapModules.length == 0) {
             return null;
         }
-        ArrayList soapModuleMessages = new ArrayList();
+        List<SOAPModuleMessage> soapModuleMessages = new ArrayList<SOAPModuleMessage>();
 
         for (int i = 0; i < soapModules.length; i++) {
             SOAPModule soapModule = soapModules[i];
@@ -1345,19 +1349,19 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Convert woden dependent HTTPHeader objects to Header objects
      *
      * @param httpHeaders - An array of HTTPHeader objects
-     * @return ArrayList - An ArrayList of Header objects
+     * @return List<HTTPHeaderMessage> - An List of Header objects
      */
-    private ArrayList createHttpHeaders(HTTPHeader httpHeaders[]) {
+    private List<HTTPHeaderMessage>  createHttpHeaders(HTTPHeader httpHeaders[]) {
 
         if (httpHeaders.length == 0) {
             return null;
         }
-        ArrayList httpHeaderMessages = new ArrayList();
+        List<HTTPHeaderMessage> httpHeaderMessages = new ArrayList<HTTPHeaderMessage>();
 
         for (int i = 0; i < httpHeaders.length; i++) {
-            HTTPHeaderImpl httpHeader = (HTTPHeaderImpl) httpHeaders[i];
+            HTTPHeader httpHeader = (HTTPHeader) httpHeaders[i];
             HTTPHeaderMessage httpHeaderMessage = new HTTPHeaderMessage();
-            httpHeaderMessage.setqName(httpHeader.getTypeName());
+            httpHeaderMessage.setqName(((HTTPHeaderElement)httpHeader).getTypeName());
             httpHeaderMessage.setName(httpHeader.getName());
             httpHeaderMessage.setRequired(httpHeader.isRequired().booleanValue());
             httpHeaderMessages.add(httpHeaderMessage);
