@@ -63,7 +63,7 @@ public class Test extends TestCase {
         Customer customer = new Customer("Redmond", person, "+14258858080",
                                          "WA", "14619 NE 80th Pl.", new Integer(98052));
         EchoCustomerServiceStub stub = new EchoCustomerServiceStub(UtilServer.getConfigurationContext(),
-                "http://127.0.0.1:5555/axis2/services/EchoCustomerService/echo");
+                "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/EchoCustomerService/echo");
         Customer result = stub.echo(customer);
         stopServer();
         assertEquals("Result object does not match request object",

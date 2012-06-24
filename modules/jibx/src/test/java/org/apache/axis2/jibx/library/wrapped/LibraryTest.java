@@ -47,7 +47,7 @@ public class LibraryTest {
     
     @Test
     public void test() throws Exception {
-        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:5555/axis2/services/library");
+        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/library");
         
         stub.addBook(new AddBookRequest(new Book("Paperback", "0618918248", "The God Delusion", new String[] { "Richard Dawkins" })));
     }

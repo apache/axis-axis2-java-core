@@ -49,7 +49,7 @@ public class LibraryTest {
     
     @Test
     public void test1() throws Exception {
-        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:5555/axis2/services/library");
+        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/library");
         
         stub.addBook("Paperback", "0618918248", new String[] { "Richard Dawkins" }, "The God Delusion");
         
@@ -69,7 +69,7 @@ public class LibraryTest {
     
     @Test
     public void test2() throws Exception {
-        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:5555/axis2/services/library");
+        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/library");
         
         stub.addBookInstance(new Book("Hardcover", "8854401765", "The Voyage of the Beagle", new String[] { "Charles Darwin" }));
         Book book = stub.getBook("8854401765");
