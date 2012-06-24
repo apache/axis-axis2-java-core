@@ -78,11 +78,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jaxbri</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
             <version>${project.version}</version>
             <artifactId>axis2-jaxws</artifactId>
         </dependency>
