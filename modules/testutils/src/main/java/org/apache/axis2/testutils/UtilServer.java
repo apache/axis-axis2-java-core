@@ -17,14 +17,13 @@
  * under the License.
  */
 
-package org.apache.axis2.jibx;
+package org.apache.axis2.testutils;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.testutils.PortAllocator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;

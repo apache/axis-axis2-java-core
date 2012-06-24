@@ -63,6 +63,12 @@
             <artifactId>xmlunit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-testutils</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -126,9 +132,12 @@
                                 </java>
                                 <echo>Generating Service / Service Client for Test01 test</echo>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d jaxbri -ss -sd -t -o ${project.build.directory}/gen/Test01 -u -uri ${wsdl.source.dir}/Test01.wsdl" />
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-d jaxbri -ss -ssi -sd -t -o ${project.build.directory}/gen/Test01 -u -uri ${wsdl.source.dir}/Test01.wsdl" />
+                                </java>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-d jaxbri -t -o ${project.build.directory}/gen/Test01 -u -uri ${wsdl.source.dir}/Test01.wsdl" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -164,6 +173,30 @@
                                 <source>${project.build.directory}/schema/src</source>
                                 <source>${project.build.directory}/gen/Test01/src</source>
                             </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-repo</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/Test01</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/repo</directory>
+                                </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/gen/Test01/resources</directory>
+                                    <targetPath>services/Test01.aar/META-INF</targetPath>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

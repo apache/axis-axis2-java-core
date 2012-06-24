@@ -16,28 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jibx.library.wrapped;
+package org.apache.axis2.jaxbri;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.jibx.beans.Book;
-import org.apache.axis2.jibx.library.wrapped.client.LibraryStub;
-import org.apache.axis2.jibx.library.wrapped.service.LibraryImpl;
-import org.apache.axis2.jibx.wrappers.AddBookRequest;
 import org.apache.axis2.testutils.UtilServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class LibraryTest {
+import com.foo.wsns.axis2.test01.Test01;
+import com.foo.wsns.axis2.test01.Test01Stub;
+import com.foo.xmlns.axis2.test01.Add;
+
+public class Test01Test {
     @BeforeClass
     public static void startServer() throws Exception {
-        UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/library-wrapped");
+        UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/Test01");
         AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("library");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(LibraryImpl.class.getName());
-        service.setScope(Constants.SCOPE_APPLICATION);
+        AxisService service = axisConfiguration.getService("Test01");
+        service.getParameter(Constants.SERVICE_CLASS).setValue(Test01Impl.class.getName());
     }
     
     @AfterClass
@@ -46,9 +47,11 @@ public class LibraryTest {
     }
     
     @Test
-    public void test() throws Exception {
-        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/library");
-        
-        stub.addBook(new AddBookRequest(new Book("Paperback", "0618918248", "The God Delusion", new String[] { "Richard Dawkins" })));
+    public void test1() throws Exception {
+        Test01 stub = new Test01Stub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/Test01");
+        Add add = new Add();
+        add.setArg1(3);
+        add.setArg2(4);
+        assertEquals(7, stub.add(add));
     }
 }

@@ -22,6 +22,7 @@ package org.apache.axis2.jibx;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jibx.customer.EchoCustomerServiceStub;
+import org.apache.axis2.testutils.UtilServer;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
