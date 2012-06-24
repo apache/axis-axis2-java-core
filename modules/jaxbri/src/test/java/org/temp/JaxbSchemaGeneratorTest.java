@@ -151,18 +151,18 @@ public class JaxbSchemaGeneratorTest extends XMLSchemaTest {
     }
 
     public String readSchema(Class<?> c, int i) throws Exception {
-        return readFile("test-resources" + File.separator + "schemas" + File.separator
+        return readFile("src" + File.separator + "test" + File.separator + "schemas" + File.separator
                 + "default_generator" + File.separator + c.getSimpleName() + "-" + i + ".xml");
     }
 
     public String readSchemaWithCustomSchema(Class<?> c, int i) throws Exception {
-        return readFile("test-resources" + File.separator + "schemas" + File.separator
+        return readFile("src" + File.separator + "test" + File.separator + "schemas" + File.separator
                 + "default_generator" + File.separator + c.getSimpleName() + "with_custom_schema-"
                 + i + ".xml");
     }
 
     public String readSchemaWithMappingSchema(Class<?> c, int i) throws Exception {
-        return readFile("test-resources" + File.separator + "schemas" + File.separator
+        return readFile("src" + File.separator + "test" + File.separator + "schemas" + File.separator
                 + "default_generator" + File.separator + c.getSimpleName() + "with_custom_mapping-"
                 + i + ".xml");
     }
