@@ -45,11 +45,6 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
     private final Class outClazz;
 
     /**
-     * Marshaller.
-     */
-    private final Marshaller marshaller;
-
-    /**
      * Namespace
      */
     private String nsuri;
@@ -65,17 +60,18 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
      * @param obj
      * @param marshaller
      */
-    public JaxbRIDataSource(JAXBContext context, Class clazz, Object obj, Marshaller marshaller, String nsuri, String name) {
+    public JaxbRIDataSource(JAXBContext context, Class clazz, Object obj, String nsuri, String name) {
         this.context = context;
         this.outClazz = clazz;
         this.outObject = obj;
-        this.marshaller = marshaller;
         this.nsuri = nsuri;
         this.name = name;
     }
 
     public void serialize(java.io.OutputStream output, org.apache.axiom.om.OMOutputFormat format) throws XMLStreamException {
         try {
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             marshaller.marshal(new JAXBElement(
                     new QName(nsuri, name), outObject.getClass(), outObject), output);
         } catch (JAXBException e) {
@@ -85,6 +81,8 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
 
     public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
         try {
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             marshaller.marshal(new JAXBElement(
                     new QName(nsuri, name), outObject.getClass(), outObject), writer);
         } catch (JAXBException e) {
@@ -94,6 +92,8 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
 
     public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
         try {
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             marshaller.marshal(new JAXBElement(
                     new QName(nsuri, name), outObject.getClass(), outObject), xmlWriter);
         } catch (JAXBException e) {
