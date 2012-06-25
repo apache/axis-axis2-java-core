@@ -65,11 +65,10 @@
                     throws org.apache.axis2.AxisFault {
                         org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
 
+                        java.lang.Object object = param; <!-- This is necessary to convert primitive types to their corresponding wrapper types (so that we can call getClass()) -->
                         org.apache.axis2.jaxbri.JaxbRIDataSource source = new org.apache.axis2.jaxbri.JaxbRIDataSource( wsContext,
-                                                                        <xsl:value-of select="@type"/>.class,
-                                                                        param,
-                                                                        "<xsl:value-of select="qname/@nsuri"/>",
-                                                                        "<xsl:value-of select="qname/@localname"/>");
+                                new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("<xsl:value-of select="qname/@nsuri"/>", "<xsl:value-of select="qname/@localname"/>"),
+                                                               object.getClass(), object));
                         org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace("<xsl:value-of select="qname/@nsuri"/>", null);
                         return factory.createOMElement(source, "<xsl:value-of select="qname/@localname"/>", namespace);
                     }

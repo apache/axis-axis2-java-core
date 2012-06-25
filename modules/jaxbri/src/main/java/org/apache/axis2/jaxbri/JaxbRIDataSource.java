@@ -21,10 +21,8 @@ package org.apache.axis2.jaxbri;
 import java.io.Writer;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -41,40 +39,21 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
     private final Object outObject;
 
     /**
-     * Bound class for output.
-     */
-    private final Class outClazz;
-
-    /**
-     * Namespace
-     */
-    private String nsuri;
-
-    /**
-     * Local name
-     */
-    private String name;
-
-    /**
-     * Constructor from object and marshaller.
+     * Constructor from context and object.
      *
+     * @param context
      * @param obj
-     * @param marshaller
      */
-    public JaxbRIDataSource(JAXBContext context, Class clazz, Object obj, String nsuri, String name) {
+    public JaxbRIDataSource(JAXBContext context, Object obj) {
         this.context = context;
-        this.outClazz = clazz;
         this.outObject = obj;
-        this.nsuri = nsuri;
-        this.name = name;
     }
 
     public void serialize(java.io.OutputStream output, org.apache.axiom.om.OMOutputFormat format) throws XMLStreamException {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            marshaller.marshal(new JAXBElement(
-                    new QName(nsuri, name), outObject.getClass(), outObject), output);
+            marshaller.marshal(outObject, output);
         } catch (JAXBException e) {
             throw new XMLStreamException("Error in JAXB marshalling", e);
         }
@@ -84,8 +63,7 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            marshaller.marshal(new JAXBElement(
-                    new QName(nsuri, name), outObject.getClass(), outObject), writer);
+            marshaller.marshal(outObject, writer);
         } catch (JAXBException e) {
             throw new XMLStreamException("Error in JAXB marshalling", e);
         }
@@ -95,8 +73,7 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            marshaller.marshal(new JAXBElement(
-                    new QName(nsuri, name), outObject.getClass(), outObject), xmlWriter);
+            marshaller.marshal(outObject, xmlWriter);
         } catch (JAXBException e) {
             throw new XMLStreamException("Error in JAXB marshalling", e);
         }
@@ -106,8 +83,7 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
         try {
             SAXOMBuilder builder = new SAXOMBuilder();
             Marshaller marshaller = context.createMarshaller();
-            marshaller.marshal(new JAXBElement(
-                    new QName(nsuri, name), outObject.getClass(), outObject), builder);
+            marshaller.marshal(outObject, builder);
 
             return builder.getRootElement().getXMLStreamReader();
         } catch (JAXBException e) {
