@@ -47,7 +47,7 @@ public class Test01Test {
     }
     
     @Test
-    public void test1() throws Exception {
+    public void test() throws Exception {
         Test01 stub = new Test01Stub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/Test01");
         Add add = new Add();
         add.setArg1(3);
