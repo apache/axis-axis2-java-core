@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMOutputFormat;
@@ -101,7 +102,7 @@ public class JaxbRIDataSource implements org.apache.axiom.om.OMDataSource {
         }
     }
 
-    public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
+    public XMLStreamReader getReader() throws XMLStreamException {
         try {
             SAXOMBuilder builder = new SAXOMBuilder();
             Marshaller marshaller = context.createMarshaller();
