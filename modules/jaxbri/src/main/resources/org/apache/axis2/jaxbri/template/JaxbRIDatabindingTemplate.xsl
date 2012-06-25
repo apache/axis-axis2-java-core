@@ -61,20 +61,6 @@
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
 
-                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName methodQName)
-                throws org.apache.axis2.AxisFault {
-                    org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
-
-                    org.apache.axis2.jaxbri.JaxbRIDataSource source = new org.apache.axis2.jaxbri.JaxbRIDataSource( wsContext,
-                                                                    <xsl:value-of select="@type"/>.class,
-                                                                    param,
-                                                                    methodQName.getNamespaceURI(),
-                                                                    methodQName.getLocalPart());
-                    org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(methodQName.getNamespaceURI(),
-                                                                       null);
-                    return factory.createOMElement(source, methodQName.getLocalPart(), namespace);
-                }
-
                 private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent)
                     throws org.apache.axis2.AxisFault {
                         org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
@@ -91,7 +77,7 @@
                 private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName methodQName)
                 throws org.apache.axis2.AxisFault {
                     org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-                    envelope.getBody().addChild(toOM(param, optimizeContent, methodQName));
+                    envelope.getBody().addChild(toOM(param, optimizeContent));
                     return envelope;
                 }
 

@@ -43,7 +43,6 @@ import org.apache.axis2.testutils.UtilServer;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -77,7 +76,6 @@ public class ProcessorTest {
         assertEquals("PROCESSED", reply.getReplyData());
     }
     
-    @Ignore
     @Test
     public void testServiceClient() throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

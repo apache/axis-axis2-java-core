@@ -17,7 +17,4 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<replyMessage xmlns="http://www.example.org/data">
-    <replyID>00I64913.1</replyID>
-    <replyData>PROCESSED</replyData>
-</replyMessage>
+<replyMessage xmlns="http://www.example.org/data"><replyID>00I64913.1</replyID><replyData>PROCESSED</replyData></replyMessage>
