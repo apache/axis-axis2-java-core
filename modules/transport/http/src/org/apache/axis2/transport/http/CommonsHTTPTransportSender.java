@@ -168,21 +168,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 format.setMimeBoundary((String) mimeBoundaryProperty);
             }
 
-             // set the timeout properties
-            Parameter soTimeoutParam = transportOut.getParameter(HTTPConstants.SO_TIMEOUT);
-            Parameter connTimeoutParam = transportOut.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
-
             // set the property values only if they are not set by the user explicitly
-            if ((soTimeoutParam != null) &&
-                    (msgContext.getProperty(HTTPConstants.SO_TIMEOUT) == null)) {
-                msgContext.setProperty(HTTPConstants.SO_TIMEOUT,
-                        new Integer((String) soTimeoutParam.getValue()));
+            if (msgContext.getProperty(HTTPConstants.SO_TIMEOUT) == null) {
+                msgContext.setProperty(HTTPConstants.SO_TIMEOUT, soTimeout);
             }
 
-            if ((connTimeoutParam != null) &&
-                    (msgContext.getProperty(HTTPConstants.CONNECTION_TIMEOUT) == null)) {
-                msgContext.setProperty(HTTPConstants.CONNECTION_TIMEOUT, 
-                        new Integer((String) connTimeoutParam.getValue()));
+            if (msgContext.getProperty(HTTPConstants.CONNECTION_TIMEOUT) == null) {
+                msgContext.setProperty(HTTPConstants.CONNECTION_TIMEOUT, connectionTimeout);
             }
 
             //if a parameter has set been set, we will omit the SOAP action for SOAP 1.2
