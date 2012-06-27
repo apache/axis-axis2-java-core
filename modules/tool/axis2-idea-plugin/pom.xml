@@ -118,11 +118,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.woden</groupId>
-            <artifactId>woden-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.woden</groupId>
-            <artifactId>woden-impl-dom</artifactId>
+            <artifactId>woden-core</artifactId>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

@@ -742,15 +742,10 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.woden</groupId>
-                <artifactId>woden-api</artifactId>
+                <artifactId>woden-core</artifactId>
                 <version>${woden.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.woden</groupId>
-                <artifactId>woden-impl-dom</artifactId>
-                <version>${woden.version}</version>
-            </dependency>
-                <dependency>
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>jsr311-api</artifactId>
                 <version>${jsr311.api.version}</version>

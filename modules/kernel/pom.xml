@@ -71,12 +71,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.woden</groupId>
-            <artifactId>woden-api</artifactId>
-            <version>${woden.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.woden</groupId>
-            <artifactId>woden-impl-dom</artifactId>
+            <artifactId>woden-core</artifactId>
             <version>${woden.version}</version>
         </dependency>
         <dependency>
