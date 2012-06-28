@@ -17,10 +17,6 @@
   ~ under the License.
   -->
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:DOM="http://java2wsdl.description.axis2.apache.org" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://java2wsdl.description.axis2.apache.org">
-    <xs:complexType name="document">
-        <xs:sequence>
-            <xs:any/>
-        </xs:sequence>
-    </xs:complexType>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org" xmlns:DOM="http://java2wsdl.description.axis2.apache.org" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://example.org">
+    <xs:element name="testDOMResult" nillable="true" type="ns0:document"/>
 </xs:schema>

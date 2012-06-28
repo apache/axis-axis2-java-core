@@ -296,7 +296,13 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
          * messages and port types will be creteated
          */
         classModel= JAXRSUtils.getClassModel(serviceClass);
-        methods = processMethods(serviceClass.getMethods());
+        List<Method> serviceMethods = new ArrayList<Method>();
+        for (Method method : serviceClass.getMethods()) {
+            if (method.getDeclaringClass() != Object.class) {
+                serviceMethods.add(method);
+            }
+        }
+        methods = processMethods(serviceMethods.toArray(new Method[serviceMethods.size()]));
         
         for (String extraClassName : getExtraClasses()) {
             Class<?> extraClass = Class.forName(extraClassName, true, classLoader);

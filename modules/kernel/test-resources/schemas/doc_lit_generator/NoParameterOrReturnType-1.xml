@@ -18,16 +18,4 @@
   -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://example.org">
-    <xs:element name="nullInterruptedException">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element minOccurs="0" name="InterruptedException" nillable="true" type="xs:anyType"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="toStringResult" nillable="true" type="xs:string"/>
-    <xs:element name="hashCodeResult" nillable="true" type="xs:int"/>
-    <xs:element name="getClassResult" nillable="true" type="xs:anyType"/>
-    <xs:element name="args0" nillable="true" type="xs:anyType"/>
-    <xs:element name="equalsResult" nillable="true" type="xs:boolean"/>
 </xs:schema>
