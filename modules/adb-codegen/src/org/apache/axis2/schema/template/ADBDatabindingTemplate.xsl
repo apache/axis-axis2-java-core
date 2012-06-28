@@ -402,21 +402,24 @@
 
         try {
         <xsl:for-each select="param[not(@primitive) and @type!='']">
+            <xsl:sort select="@type" order="ascending" data-type="text"/>
+            <xsl:if test="not(@type=preceding-sibling::param/@type)">
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
                 <xsl:choose>
                     <xsl:when test="$helpermode">
-                           return <xsl:value-of select="@type"/>Helper.INSTANCE.parse(param.getXMLStreamReaderWithoutCaching());
+                        return <xsl:value-of select="@type"/>Helper.INSTANCE.parse(param.getXMLStreamReaderWithoutCaching());
                     </xsl:when>
                     <xsl:when test="@type = 'org.apache.axiom.om.OMElement'">
-                           return param;
+                        return param;
                     </xsl:when>
                     <xsl:otherwise>
-                           return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                        return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     </xsl:otherwise>
                 </xsl:choose>
 
                 }
-           </xsl:for-each>
+            </xsl:if>
+        </xsl:for-each>
         } catch (java.lang.Exception e) {
         throw org.apache.axis2.AxisFault.makeFault(e);
         }
