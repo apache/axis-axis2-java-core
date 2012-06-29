@@ -374,8 +374,7 @@
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                     <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                    "<xsl:value-of select="$method-name"/>")), new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                    "<xsl:value-of select="$method-name"/>"));
+                                                    "<xsl:value-of select="$method-name"/>")));
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                         </xsl:when>
@@ -655,8 +654,7 @@
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                     <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                    "<xsl:value-of select="$method-name"/>")), new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                    "<xsl:value-of select="$method-name"/>"));
+                                                    "<xsl:value-of select="$method-name"/>")));
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                         </xsl:when>
@@ -969,8 +967,7 @@
                                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                                     <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
                                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                                    "<xsl:value-of select="$method-name"/>")),new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                                    "<xsl:value-of select="$method-name"/>"));
+                                                                    "<xsl:value-of select="$method-name"/>")));
                                                                 </xsl:otherwise>
                                                             </xsl:choose>
                                                         </xsl:when>
