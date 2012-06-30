@@ -63,68 +63,56 @@ public class ParserInputStreamCustomBuilderTests extends TestCase {
         
 	String mockPayload = "<invokeOp>Hello Provider OM</invokeOp>";
 	
-	public void testCustomBuilder(){
-	    try{
-	        SOAPEnvelope env = getMockEnvelope();
-	        SOAPHeader header = env.getHeader();
-	        SOAPBody body = env.getBody();
-	        ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
-	        InputStream payload = new ByteArrayInputStream(mockPayload.getBytes());
-	        OMElement om= customBuilder.create("urn:sample", "invokeOp",(OMContainer) body, parser, OMAbstractFactory.getOMFactory(), payload);
-	        assertTrue(om!=null);
-	        assertTrue(om instanceof OMSourcedElement);
-	        OMSourcedElement ose = (OMSourcedElement)om;
-	        assertNotNull(ose.getDataSource());
-	        assertTrue((ose.getDataSource()) instanceof ParserInputStreamDataSource);
-	    }catch(Exception e){
-	        fail(e.getMessage());
-	    }
+	public void testCustomBuilder() throws Exception {
+        SOAPEnvelope env = getMockEnvelope();
+        SOAPHeader header = env.getHeader();
+        SOAPBody body = env.getBody();
+        ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
+        InputStream payload = new ByteArrayInputStream(mockPayload.getBytes());
+        OMElement om= customBuilder.create("urn:sample", "invokeOp",(OMContainer) body, parser, OMAbstractFactory.getOMFactory(), payload);
+        assertTrue(om!=null);
+        assertTrue(om instanceof OMSourcedElement);
+        OMSourcedElement ose = (OMSourcedElement)om;
+        assertNotNull(ose.getDataSource());
+        assertTrue((ose.getDataSource()) instanceof ParserInputStreamDataSource);
 	}
 	
-    public void testCustomBuilderSOAPENVNamespace(){
-        try{
-            SOAPEnvelope env = getMockEnvelope();
-            SOAPHeader header = env.getHeader();
-            SOAPBody body = env.getBody();
-            ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
-            InputStream payload = new ByteArrayInputStream(mockPayload.getBytes());
+    public void testCustomBuilderSOAPENVNamespace() throws Exception {
+        SOAPEnvelope env = getMockEnvelope();
+        SOAPHeader header = env.getHeader();
+        SOAPBody body = env.getBody();
+        ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
+        InputStream payload = new ByteArrayInputStream(mockPayload.getBytes());
 
-            // If there is no namespace, the customer building should not occur.
-            OMElement om= customBuilder.create("http://www.w3.org/2003/05/soap-envelope", "Fault",(OMContainer) body, parser, OMAbstractFactory.getOMFactory(), payload);
-            assertTrue(om==null);
-        }catch(Exception e){
-            fail(e.getMessage());
-        }
+        // If there is no namespace, the customer building should not occur.
+        OMElement om= customBuilder.create("http://www.w3.org/2003/05/soap-envelope", "Fault",(OMContainer) body, parser, OMAbstractFactory.getOMFactory(), payload);
+        assertTrue(om==null);
     }
 
 	/**
      * Tests that ParsedEntityCustomBuilder.convertEntityReferences works as expected.
      */
-    public void testConvertEntityReferences(){
-        try{
-            ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
-            // test that all expected chars are converted
-            String expectedString1 = "&lt;,&gt;,&quot;,&apos;,&amp;";
-            String convertedString = customBuilder.convertEntityReferences("<,>,\",',&");
-            assertTrue("Special chars didn't get converted!  " +
-                    "Expected: \""+expectedString1+"\" but received: \""+convertedString+"\"", 
-                    convertedString.equals(expectedString1));
-            // test that a string with no special chars is unchanged
-            String simpleString = "This is a simple string";
-            convertedString = customBuilder.convertEntityReferences(simpleString);
-            assertTrue("Simple string was changed unexpectedly.  " +
-                    "Expected: \""+simpleString+"\" but received: \""+convertedString+"\"", 
-                    convertedString.equals(simpleString));
-            
-            // test that the mockenvelope gets converted correctly
-            String expectedString2 = "&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;invokeOp&gt;Hello Provider OM&lt;/invokeOp&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;";
-            convertedString = customBuilder.convertEntityReferences(ENVELOPE);
-            assertTrue("mockenvelope was not converted as expected.  " +
-                    "Expected: \""+expectedString2+"\" but received: \""+convertedString+"\"", 
-                    convertedString.equals(expectedString2));
-        }catch(Exception e){
-            fail(e.getMessage());
-        }
+    public void testConvertEntityReferences() throws Exception {
+        ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
+        // test that all expected chars are converted
+        String expectedString1 = "&lt;,&gt;,&quot;,&apos;,&amp;";
+        String convertedString = customBuilder.convertEntityReferences("<,>,\",',&");
+        assertTrue("Special chars didn't get converted!  " +
+                "Expected: \""+expectedString1+"\" but received: \""+convertedString+"\"", 
+                convertedString.equals(expectedString1));
+        // test that a string with no special chars is unchanged
+        String simpleString = "This is a simple string";
+        convertedString = customBuilder.convertEntityReferences(simpleString);
+        assertTrue("Simple string was changed unexpectedly.  " +
+                "Expected: \""+simpleString+"\" but received: \""+convertedString+"\"", 
+                convertedString.equals(simpleString));
+        
+        // test that the mockenvelope gets converted correctly
+        String expectedString2 = "&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;invokeOp&gt;Hello Provider OM&lt;/invokeOp&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;";
+        convertedString = customBuilder.convertEntityReferences(ENVELOPE);
+        assertTrue("mockenvelope was not converted as expected.  " +
+                "Expected: \""+expectedString2+"\" but received: \""+convertedString+"\"", 
+                convertedString.equals(expectedString2));
     }
 	private SOAPEnvelope getMockEnvelope() throws Exception{
 		SOAPEnvelope env = (SOAPEnvelope)getOMBuilder().getDocumentElement();
