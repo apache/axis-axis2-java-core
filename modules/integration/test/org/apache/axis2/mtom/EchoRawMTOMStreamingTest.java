@@ -28,7 +28,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -94,7 +93,7 @@ public class EchoRawMTOMStreamingTest extends UtilServerBasedTestCase implements
                 new ByteArrayDataSource(new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
                         98 }));
         OMElement subData = fac.createOMElement("subData", omNs);
-        OMText textData = new OMTextImpl(expectedDH, fac);
+        OMText textData = fac.createOMText(expectedDH, true);
         subData.addChild(textData);
         data.addChild(subData);
         rpcWrapEle.addChild(data);

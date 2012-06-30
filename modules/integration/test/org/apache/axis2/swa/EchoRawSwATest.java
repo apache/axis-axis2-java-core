@@ -23,9 +23,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -132,8 +132,9 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
     }
 
     protected void compareDataHandlers(DataHandler dataHandler, DataHandler dataHandler2) {
-        String originalTextValue = new OMTextImpl(dataHandler, true, null).getText();
-        String returnedTextValue = new OMTextImpl(dataHandler2, true, null).getText();
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        String originalTextValue = factory.createOMText(dataHandler, true).getText();
+        String returnedTextValue = factory.createOMText(dataHandler2, true).getText();
         assertEquals(returnedTextValue, originalTextValue);
     }
 }

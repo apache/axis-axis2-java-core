@@ -27,7 +27,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -69,7 +68,7 @@ import java.util.ArrayList;
  */
 public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
         implements TestConstants {
-    private OMTextImpl expectedTextData = null;
+    private OMText expectedTextData = null;
 
     public MessageSaveAndRestoreWithMTOMTest() {
         super(MessageSaveAndRestoreWithMTOMTest.class.getName());
@@ -165,7 +164,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
 
         FileDataSource fileDataSource = new FileDataSource(TestingUtils.prefixBaseDirectory("test-resources/mtom/test.jpg"));
         DataHandler expectedDataHandler = new DataHandler(fileDataSource);
-        expectedTextData = new OMTextImpl(expectedDataHandler, true, omFactory);
+        expectedTextData = omFactory.createOMText(expectedDataHandler, true);
         data.addChild(expectedTextData);
         rpcWrapperElement.addChild(data);
         return rpcWrapperElement;

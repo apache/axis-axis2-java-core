@@ -28,7 +28,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -98,7 +97,7 @@ public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
         OMElement data = fac.createOMElement("data", omNs);
         byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, 98 };
         DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
-        expectedTextData = new OMTextImpl(dataHandler, true, fac);
+        expectedTextData = fac.createOMText(dataHandler, true);
         data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
         return rpcWrapEle;
