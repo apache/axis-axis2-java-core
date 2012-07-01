@@ -4300,12 +4300,7 @@ public class MessageContext extends AbstractContext
     }
 
     public boolean isFault() {
-        try {
-            return getEnvelope().hasFault();
-        } catch (Exception e) {
-            // TODO: What should we be doing here?  No envelope certainly seems bad....
-            return false;
-        }
+        return getEnvelope().hasFault();
     }
 
 
