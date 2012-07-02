@@ -1260,9 +1260,10 @@ public class AxisService extends AxisDescription {
         if ((xsd != null) && (!"".equals(xsd))) {
             XmlSchema schema = (XmlSchema) schemaMappingtable.get(xsd);
             if (schema == null) {
-                int dotIndex = xsd.indexOf('.');
+                int dotIndex = xsd.lastIndexOf('.');
                 if (dotIndex > 0) {
                     String schemaKey = xsd.substring(0, dotIndex);
+                    schemaKey = schemaKey.replace("./" , "");
                     schema = (XmlSchema) schemaMappingtable.get(schemaKey);
                 }
             }
