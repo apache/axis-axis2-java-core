@@ -202,9 +202,10 @@ public class HTTPWorker implements Worker {
                     Map schemaTable = service.getSchemaMappingTable();
                     XmlSchema schema = (XmlSchema) schemaTable.get(schemaName);
                     if (schema == null) {
-                        int dotIndex = schemaName.indexOf('.');
+                        int dotIndex = schemaName.lastIndexOf('.');
                         if (dotIndex > 0) {
                             String schemaKey = schemaName.substring(0,dotIndex);
+                            schemaKey = schemaKey.replace("./", "");
                             schema = (XmlSchema) schemaTable.get(schemaKey);
                         }
                     }
