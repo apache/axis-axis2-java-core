@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://www.example.org/identity"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://www.example.org/identity">
+    <wsdl:types>
+        <xs:schema>
+            <xs:import namespace="http://www.example.org/identity" schemaLocation="identity.xsd"/>
+        </xs:schema>
+    </wsdl:types>
+
+	<wsdl:message name="linkIdentitiesRequest">
+	<wsdl:part name="parameters" element="LinkIdentities" />
+	</wsdl:message>
+
+	<wsdl:message name="linkIdentitiesResponse">
+		<wsdl:part name="parameters" element="LinkIdentitiesResponse" />
+	</wsdl:message>
+	
+	<wsdl:message name="removeLinkRequest">
+		<wsdl:part name="parameters" element="RemoveLink" />
+	</wsdl:message>
+	
+	<wsdl:message name="removeLinkResponse">
+		<wsdl:part name="parameters" element="RemoveLinkResponse" />
+	</wsdl:message>
+	
+	<wsdl:message name="modifyLinkRequest">
+		<wsdl:part name="parameters" element="ModifyLink" />
+	</wsdl:message>
+	
+	<wsdl:message name="modifyLinkResponse">
+		<wsdl:part name="parameters" element="ModifyLinkResponse" />
+	</wsdl:message>
+	
+	<wsdl:portType name="identityLinking">
+		<wsdl:operation name="CreateLinkedIdentities">
+			<wsdl:input message="linkIdentitiesRequest" />
+			<wsdl:output message="linkIdentitiesResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="ModifyLink">
+			<wsdl:input message="modifyLinkRequest" />
+			<wsdl:output message="modifyLinkResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="RemoveLink">
+			<wsdl:input message="removeLinkRequest" />
+			<wsdl:output message="removeLinkResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="IdentityLinkingBinding" type="identityLinking">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="CreateLinkedIdentities">
+			<soap:operation />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="ModifyLink">
+			<soap:operation />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="RemoveLink">
+			<soap:operation />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="IdentityLinkingService">
+		<!-- connect it to the binding "IdentityLinkingBinding" above -->
+		<wsdl:port name="IdentityLinkingPort" binding="IdentityLinkingBinding">
+			<soap:address location="http://localhost:8080/services/IdentityLinkingPort" />
+			<!-- give the binding an network address -->
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

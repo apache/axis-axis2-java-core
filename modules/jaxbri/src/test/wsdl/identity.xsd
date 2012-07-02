@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	xmlns="http://www.example.org/identity" targetNamespace="http://www.example.org/identity">
+
+	<xs:complexType name="linkIdentitiesResponseType">
+		<xs:sequence>
+			<xs:element name="owningPlatform" type="xs:string"
+				minOccurs="1" maxOccurs="1" nillable="false" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="modifyLinkResponseType">
+		<xs:complexContent>
+			<xs:extension base="linkIdentitiesResponseType">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="removeLinkResponseType">
+		<xs:complexContent>
+			<xs:extension base="linkIdentitiesResponseType">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="removeIdentityResponseType">
+		<xs:sequence>
+			<xs:element name="owningPlatform" type="xs:string"
+				minOccurs="1" maxOccurs="1" nillable="false" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="linkIdentitiesType">
+		<xs:sequence>
+			<xs:element name="owningPlatform" type="xs:string"
+				minOccurs="1" maxOccurs="1" nillable="false" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="linkIdentitiesGuidResponseType">
+		<xs:sequence>
+			<xs:element name="owningPlatform" type="xs:string"
+				minOccurs="1" maxOccurs="1" nillable="false" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="multipleLinkIdentitiesType">
+		<xs:sequence>
+			<xs:element name="multipleIdentityLink" type="linkIdentitiesType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="multipleLinkIdentitiesGuidResponseType">
+		<xs:sequence>
+			<xs:element name="multipleLinkIdentitiesGuidResponse"
+				type="linkIdentitiesGuidResponseType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:element name="LinkIdentities" type="linkIdentitiesType" />
+	<xs:element name="LinkIdentitiesResponse" type="linkIdentitiesResponseType" />
+	<xs:element name="ModifyLink" type="linkIdentitiesType" />
+	<xs:element name="ModifyLinkResponse" type="modifyLinkResponseType" />
+
+	<xs:element name="RemoveLink" type="linkIdentitiesType" />
+	<xs:element name="RemoveLinkResponse" type="removeLinkResponseType" />
+
+</xs:schema>

@@ -348,22 +348,19 @@
                                                 wrapped parameters -->
                                             <!-- unwrapping takes place only if the back word compatiblity is off. if -b on
                                              then we do not unwrapp and only remove the top element -->
-                                           <xsl:variable name="inputElementType" select="input/param[@location='body' and @type!='']/@type"></xsl:variable>
-                                           <xsl:variable name="inputElementComplexType" select="input/param[@location='body' and @type!='']/@complextype"></xsl:variable>
-                                           <xsl:variable name="opName" select="input/param[@location='body' and @type!='']/@opname"></xsl:variable>
-
+                                            <xsl:variable name="param" select="input/param[@location='body' and @type!='']"/>
                                             <xsl:choose>
-                                                <xsl:when test="(($isbackcompatible='true') and (string-length(normalize-space($inputElementComplexType)) > 0))">
+                                                <xsl:when test="(($isbackcompatible='true') and (string-length(normalize-space($param/@complextype)) > 0))">
                                                      <!-- there are no unwrapped parameters - go ahead and use the normal wrapped codegen-->
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                    wrap<xsl:value-of select="$opName"/>(<xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>),
+                                                    wrap<xsl:value-of select="$param/@opname"/>(<xsl:value-of select="$param/@name"/>),
                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
                                                     "<xsl:value-of select="$method-name"/>")));
                                                 </xsl:when>
                                                 <xsl:when test="($isUnwrapParameters) and not($isbackcompatible='true')">
-                                                    <xsl:value-of select="$inputElementType"/><xsl:text> </xsl:text>dummyWrappedType = null;
+                                                    <xsl:value-of select="$param/@type"/><xsl:text> </xsl:text>dummyWrappedType = null;
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                    <xsl:for-each select="$param/param">
                                                         <xsl:value-of select="@name"/>,
                                                     </xsl:for-each>dummyWrappedType,
                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
@@ -372,9 +369,12 @@
                                                 <xsl:otherwise>
                                                     <!-- there are no unwrapped parameters - go ahead and use the normal wrapped codegen-->
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
-                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                    "<xsl:value-of select="$method-name"/>")));
+                                                    <xsl:value-of select="$param/@name"/>,
+                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")),
+                                                    <xsl:choose>
+                                                        <xsl:when test="$param/qname">new javax.xml.namespace.QName("<xsl:value-of select="$param/qname/@nsuri"/>", "<xsl:value-of select="$param/qname/@localname"/>")</xsl:when>
+                                                        <xsl:otherwise>null</xsl:otherwise>
+                                                    </xsl:choose>);
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                         </xsl:when>
@@ -637,13 +637,13 @@
                                         <xsl:when test="$inputcount=1">
                                             <!-- Even when the parameters are 1 we have to see whether we have the
                                                 wrapped parameters -->
-                                            <xsl:variable name="inputElementType" select="input/param[@location='body' and @type!='']/@type"></xsl:variable>
+                                            <xsl:variable name="param" select="input/param[@location='body' and @type!='']"></xsl:variable>
 
                                             <xsl:choose>
                                                 <xsl:when test="$isUnwrapParameters">
-                                                    <xsl:value-of select="$inputElementType"/><xsl:text> </xsl:text>dummyWrappedType = null;
+                                                    <xsl:value-of select="$param/@type"/><xsl:text> </xsl:text>dummyWrappedType = null;
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                    <xsl:for-each select="$param/param">
                                                         <xsl:value-of select="@name"/>,
                                                     </xsl:for-each> dummyWrappedType,
                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
@@ -652,9 +652,12 @@
                                                 <xsl:otherwise>
                                                     <!-- there are no unwrapped parameters - go ahead and use the normal wrapped codegen-->
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
-                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                    "<xsl:value-of select="$method-name"/>")));
+                                                    <xsl:value-of select="$param/@name"/>,
+                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")),
+                                                    <xsl:choose>
+                                                        <xsl:when test="$param/qname">new javax.xml.namespace.QName("<xsl:value-of select="$param/qname/@nsuri"/>", "<xsl:value-of select="$param/qname/@localname"/>")</xsl:when>
+                                                        <xsl:otherwise>null</xsl:otherwise>
+                                                    </xsl:choose>);
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                         </xsl:when>
@@ -950,13 +953,13 @@
                                                         <xsl:when test="$inputcount=1">
                                                             <!-- Even when the parameters are 1 we have to see whether we have the
                                                                 wrapped parameters -->
-                                                            <xsl:variable name="inputElementType" select="input/param[@location='body' and @type!='']/@type"></xsl:variable>
+                                                            <xsl:variable name="param" select="input/param[@location='body' and @type!='']"></xsl:variable>
 
                                                             <xsl:choose>
                                                                 <xsl:when test="$isUnwrapParameters">
-                                                                    <xsl:value-of select="$inputElementType"/><xsl:text> </xsl:text>dummyWrappedType = null;
+                                                                    <xsl:value-of select="$param/@type"/><xsl:text> </xsl:text>dummyWrappedType = null;
                                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                                    <xsl:for-each select="$param/param">
                                                                         <xsl:value-of select="@name"/>,
                                                                     </xsl:for-each>dummyWrappedType,
                                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
@@ -965,9 +968,12 @@
                                                                 <xsl:otherwise>
                                                                     <!-- there are no unwrapped parameters - go ahead and use the normal wrapped codegen-->
                                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
-                                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                                    "<xsl:value-of select="$method-name"/>")));
+                                                                    <xsl:value-of select="$param/@name"/>,
+                                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")),
+                                                                    <xsl:choose>
+                                                                        <xsl:when test="$param/qname">new javax.xml.namespace.QName("<xsl:value-of select="$param/qname/@nsuri"/>", "<xsl:value-of select="$param/qname/@localname"/>")</xsl:when>
+                                                                        <xsl:otherwise>null</xsl:otherwise>
+                                                                    </xsl:choose>);
                                                                 </xsl:otherwise>
                                                             </xsl:choose>
                                                         </xsl:when>

@@ -61,22 +61,21 @@
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
 
-                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent)
+                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName elementQName)
                     throws org.apache.axis2.AxisFault {
                         org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
 
                         java.lang.Object object = param; <!-- This is necessary to convert primitive types to their corresponding wrapper types (so that we can call getClass()) -->
                         org.apache.axis2.jaxbri.JaxbRIDataSource source = new org.apache.axis2.jaxbri.JaxbRIDataSource( wsContext,
-                                new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("<xsl:value-of select="qname/@nsuri"/>", "<xsl:value-of select="qname/@localname"/>"),
-                                                               object.getClass(), object));
-                        org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace("<xsl:value-of select="qname/@nsuri"/>", null);
-                        return factory.createOMElement(source, "<xsl:value-of select="qname/@localname"/>", namespace);
+                                new javax.xml.bind.JAXBElement(elementQName, object.getClass(), object));
+                        org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(elementQName.getNamespaceURI(), null);
+                        return factory.createOMElement(source, elementQName.getLocalPart(), namespace);
                     }
 
-                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent)
+                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName elementQName)
                 throws org.apache.axis2.AxisFault {
                     org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-                    envelope.getBody().addChild(toOM(param, optimizeContent));
+                    envelope.getBody().addChild(toOM(param, optimizeContent, elementQName));
                     return envelope;
                 }
 

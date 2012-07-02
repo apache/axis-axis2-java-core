@@ -153,7 +153,7 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 <!-- Assumption - the parameter is always an XMLBeans -->
-                                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent)
+                                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent, javax.xml.namespace.QName elementQName)
                                 throws org.apache.axis2.AxisFault{
                                 org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                                 if (param != null){
@@ -182,7 +182,7 @@
 
                         <!-- Assumption - This is an XMLBeans element-->
                         <xsl:if test="generate-id($outElement) = generate-id(key('paramsOut', $outElementType)[1])">
-                            private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent)
+                            private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent, javax.xml.namespace.QName elementQName)
                             throws org.apache.axis2.AxisFault {
                             org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                             if (param != null){

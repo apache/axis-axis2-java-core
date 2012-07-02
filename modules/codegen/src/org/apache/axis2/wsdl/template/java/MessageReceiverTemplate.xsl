@@ -84,12 +84,13 @@
                         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
                         <xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
 
-                        <xsl:variable name="returntype" select="output/param[@location='body']/@type"/>
-                        <xsl:variable name="returnvariable" select="output/param[@location='body']/@name"/>
-                        <xsl:variable name="returncomplextype"><xsl:value-of select="output/param[@location='body']/@complextype"/></xsl:variable>
-                        <xsl:variable name="returnparamcount"><xsl:value-of select="count(output/param[@location='body']/param)"/></xsl:variable>
-                        <xsl:variable name="returnshorttype"><xsl:value-of select="output/param[@location='body']/@shorttype"/></xsl:variable>
-                        <xsl:variable name="returnpartname"><xsl:value-of select="output/param[@location='body']/param/@partname"/></xsl:variable>
+                        <xsl:variable name="return" select="output/param[@location='body']"/>
+                        <xsl:variable name="returntype" select="$return/@type"/>
+                        <xsl:variable name="returnvariable" select="$return/@name"/>
+                        <xsl:variable name="returncomplextype"><xsl:value-of select="$return/@complextype"/></xsl:variable>
+                        <xsl:variable name="returnparamcount"><xsl:value-of select="count($return/param)"/></xsl:variable>
+                        <xsl:variable name="returnshorttype"><xsl:value-of select="$return/@shorttype"/></xsl:variable>
+                        <xsl:variable name="returnpartname"><xsl:value-of select="$return/param/@partname"/></xsl:variable>
 
 						<xsl:choose>
 	                        <xsl:when test="$returntype = 'byte' or $returntype = 'short' or $returntype = 'int' or $returntype = 'long' or $returntype = 'float' or $returntype = 'double'">
@@ -243,7 +244,11 @@
 
                                 <xsl:choose>
                                     <xsl:when test="string-length(normalize-space($returntype)) &gt; 0">
-                                        envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>, false);
+                                        envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>, false,
+                                                    <xsl:choose>
+                                                        <xsl:when test="$return/qname">new javax.xml.namespace.QName("<xsl:value-of select="$return/qname/@nsuri"/>", "<xsl:value-of select="$return/qname/@localname"/>")</xsl:when>
+                                                        <xsl:otherwise>null</xsl:otherwise>
+                                                    </xsl:choose>);
                                     </xsl:when>
                                     <xsl:otherwise>
                                         envelope = getSOAPFactory(msgContext).getDefaultEnvelope();

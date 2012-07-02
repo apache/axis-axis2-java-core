@@ -142,19 +142,23 @@
                             <tasks unless="maven.test.skip">
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -ss -ssi -sd -t -o ${project.build.directory}/gen/Test01 -u -uri src/test/wsdl/Test01.wsdl" />
+                                    <arg line="-d jaxbri -ss -ssi -sd -o ${project.build.directory}/gen/Test01 -u -uri src/test/wsdl/Test01.wsdl" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -t -o ${project.build.directory}/gen/Test01 -u -uri src/test/wsdl/Test01.wsdl" />
+                                    <arg line="-d jaxbri -o ${project.build.directory}/gen/Test01 -u -uri src/test/wsdl/Test01.wsdl" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -ss -ssi -sd -t -o ${project.build.directory}/gen/processor -u -uri src/test/wsdl/processor.wsdl -ns2p http://www.example.org/data=org.apache.axis2.jaxbri.processor.data,http://www.example.org/ws=org.apache.axis2.jaxbri.processor.service" />
+                                    <arg line="-d jaxbri -ss -ssi -sd -o ${project.build.directory}/gen/processor -u -uri src/test/wsdl/processor.wsdl -ns2p http://www.example.org/data=org.apache.axis2.jaxbri.processor.data,http://www.example.org/ws=org.apache.axis2.jaxbri.processor.service" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -t -o ${project.build.directory}/gen/processor -u -uri src/test/wsdl/processor.wsdl -ns2p http://www.example.org/data=org.apache.axis2.jaxbri.processor.data,http://www.example.org/ws=org.apache.axis2.jaxbri.processor.client" />
+                                    <arg line="-d jaxbri -o ${project.build.directory}/gen/processor -u -uri src/test/wsdl/processor.wsdl -ns2p http://www.example.org/data=org.apache.axis2.jaxbri.processor.data,http://www.example.org/ws=org.apache.axis2.jaxbri.processor.client" />
+                                </java>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-d jaxbri -ss -ssi -sd -g -o ${project.build.directory}/gen/identityservice -u -uri src/test/wsdl/identityService.wsdl -p org.apache.axis2.jaxbri.identityservice -ns2p http://www.example.org/identity=org.apache.axis2.jaxbri.identityservice" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -190,6 +194,7 @@
                                 <source>${project.build.directory}/schema/src</source>
                                 <source>${project.build.directory}/gen/Test01/src</source>
                                 <source>${project.build.directory}/gen/processor/src</source>
+                                <source>${project.build.directory}/gen/identityservice/src</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -232,6 +237,25 @@
                                 <resource>
                                     <directory>${project.build.directory}/gen/processor/resources</directory>
                                     <targetPath>services/processor.aar/META-INF</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>identityservice-repo</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/identityservice</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/repo</directory>
+                                </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/gen/identityservice/resources</directory>
+                                    <targetPath>services/identityservice.aar/META-INF</targetPath>
                                 </resource>
                             </resources>
                         </configuration>

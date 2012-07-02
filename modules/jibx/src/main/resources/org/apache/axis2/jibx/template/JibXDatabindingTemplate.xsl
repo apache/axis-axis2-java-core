@@ -116,7 +116,7 @@
   
   <xsl:template name="toEnvelope-method">
         
-        private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent) {
+        private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName elementQName) {
             org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
             if (param != null){
                 envelope.getBody().addChild(toOM(param, factory, optimizeContent));
