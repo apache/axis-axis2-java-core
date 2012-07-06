@@ -617,53 +617,56 @@ class XMLSpineImpl implements XMLSpine {
             // Get the business object to force a parse
             block.getBusinessObject(false);
 
-            // Replace the OMElement with the OMSourcedElement that delegates to the block
-            OMElement newOM = _createOMElementFromBlock(qName.getLocalPart(), ns, block, soapFactory, 
-                                                            (om.getParent() instanceof SOAPHeader));
-            om.insertSiblingBefore(newOM);
-
-            // We want to set the om element and its parents to complete to 
-            // shutdown the parsing.  
-            if (setComplete) {
-                
-                // Get the root of the document
-                OMElement root = om;
-                while(root.getParent() instanceof OMElement) {
-                    root = (OMElement) root.getParent();
-                }
-                
-                try {   
-                    if (!root.isComplete() && root.getBuilder() != null && 
-                            !root.getBuilder().isCompleted()) {
-                        // Forward the parser to the end so it will close
-                        while (root.getBuilder().next() != XMLStreamConstants.END_DOCUMENT) {
-                            //do nothing
-                        }                    
-                    }
-                } catch (Exception e) {
-                    // Log and continue
-                    if (log.isDebugEnabled()) {
-                        log.debug("Builder next error:" + e.getMessage());
-                        log.trace(JavaUtils.stackToString(e));
+            if (!(om instanceof SOAPFault)) {
+                // Replace the OMElement with the OMSourcedElement that delegates to the block. Note that
+                // this can be done for plain OMElements and SOAPHeaderBlocks, but not SOAPFaults.
+                OMElement newOM = _createOMElementFromBlock(qName.getLocalPart(), ns, block, soapFactory, 
+                                                                (om.getParent() instanceof SOAPHeader));
+                om.insertSiblingBefore(newOM);
+    
+                // We want to set the om element and its parents to complete to 
+                // shutdown the parsing.  
+                if (setComplete) {
+                    
+                    // Get the root of the document
+                    OMElement root = om;
+                    while(root.getParent() instanceof OMElement) {
+                        root = (OMElement) root.getParent();
                     }
                     
-                }
-                
-
-                OMContainer o = om;
-                while (o != null && o instanceof OMContainerEx) {
-                    ((OMContainerEx)o).setComplete(true);
-                    if ((o instanceof OMNode) &&
-                            (((OMNode)o).getParent()) instanceof OMContainer) {
-                        o = ((OMNode)o).getParent();
-                    } else {
-                        o = null;
+                    try {   
+                        if (!root.isComplete() && root.getBuilder() != null && 
+                                !root.getBuilder().isCompleted()) {
+                            // Forward the parser to the end so it will close
+                            while (root.getBuilder().next() != XMLStreamConstants.END_DOCUMENT) {
+                                //do nothing
+                            }                    
+                        }
+                    } catch (Exception e) {
+                        // Log and continue
+                        if (log.isDebugEnabled()) {
+                            log.debug("Builder next error:" + e.getMessage());
+                            log.trace(JavaUtils.stackToString(e));
+                        }
+                        
+                    }
+                    
+    
+                    OMContainer o = om;
+                    while (o != null && o instanceof OMContainerEx) {
+                        ((OMContainerEx)o).setComplete(true);
+                        if ((o instanceof OMNode) &&
+                                (((OMNode)o).getParent()) instanceof OMContainer) {
+                            o = ((OMNode)o).getParent();
+                        } else {
+                            o = null;
+                        }
                     }
                 }
+    
+    
+                om.detach();
             }
-
-
-            om.detach();
             return block;
         } catch (XMLStreamException xse) {
             throw ExceptionFactory.makeWebServiceException(xse);
