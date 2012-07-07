@@ -1410,8 +1410,27 @@ public class SchemaCompiler {
                             }
 
                         } else if (content instanceof XmlSchemaSimpleContent) {
-                            throw new SchemaCompilationException(
-                                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror", "Simple Content"));
+
+                            XmlSchemaSimpleContent simpleContent = (XmlSchemaSimpleContent) content;
+                            if (simpleContent.getContent() instanceof XmlSchemaSimpleContentExtension) {
+                                XmlSchemaSimpleContentExtension extension = (XmlSchemaSimpleContentExtension) simpleContent
+                                        .getContent();
+                                // recursively call the copyMetaInfoHierarchy
+                                // method
+                                copyMetaInfoHierarchy(baseMetaInfoHolder,
+                                        extension.getBaseTypeName(), resolvedSchema);
+
+                            } else if (simpleContent.getContent() instanceof XmlSchemaSimpleContentRestriction) {
+
+                                XmlSchemaSimpleContentRestriction restriction = (XmlSchemaSimpleContentRestriction) simpleContent
+                                        .getContent();
+                                // recursively call the copyMetaInfoHierarchy
+                                // method
+                                copyMetaInfoHierarchy(baseMetaInfoHolder,
+                                        restriction.getBaseTypeName(), resolvedSchema);
+
+                            }
+                        
                         } else {
                             throw new SchemaCompilationException(
                                     SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
@@ -1539,6 +1558,10 @@ public class SchemaCompiler {
                     metaInfHolder,
                     parentSchema);
             metaInfHolder.setSimple(true);
+            
+            if (!SchemaConstants.XSD_BOOLEAN.equals(restriction.getBaseTypeName())){
+                processFacets(restriction.getFacets(), restriction.getBaseTypeName(), metaInfHolder, parentSchema);
+            }
         }
     }
 
@@ -1653,12 +1676,12 @@ public class SchemaCompiler {
      * Process Facets.
      *
      * @param metaInfHolder
+     * @param facets 
      */
-    private void processFacets(XmlSchemaSimpleTypeRestriction restriction,
+    private void processFacets( XmlSchemaObjectCollection facets,QName restrictionName,
                                BeanWriterMetaInfoHolder metaInfHolder,
                                XmlSchema parentSchema) {
-
-        XmlSchemaObjectCollection facets = restriction.getFacets();
+        
         Iterator facetIterator = facets.getIterator();
 
         while (facetIterator.hasNext()) {
@@ -1681,7 +1704,7 @@ public class SchemaCompiler {
 
             else if (obj instanceof XmlSchemaEnumerationFacet) {
                 XmlSchemaEnumerationFacet enumeration = (XmlSchemaEnumerationFacet) obj;
-                if (restriction.getBaseTypeName().equals(SchemaConstants.XSD_QNAME)) {
+                if (restrictionName.equals(SchemaConstants.XSD_QNAME)) {
                     // we have to process the qname here and shoud find the local part and namespace uri
                     String value = enumeration.getValue().toString();
                     String prefix = value.substring(0, value.indexOf(":"));
@@ -2535,7 +2558,7 @@ public class SchemaCompiler {
                     processSimpleRestrictionBaseType(parentSimpleTypeQname, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     //process facets
                     if (!SchemaConstants.XSD_BOOLEAN.equals(baseTypeName)){
-                        processFacets(restriction, metaInfHolder, parentSchema);
+                        processFacets(restriction.getFacets(), restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     }
                 } else {
                     //recurse

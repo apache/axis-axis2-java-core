@@ -691,10 +691,26 @@ public class JavaBeanWriter implements BeanWriter {
         // we should add parent class details only if it is
         // an extension or simple restriction
         // should not in complex restrictions
-        if (metainf.getParent() != null && (!metainf.isRestriction() || (metainf.isRestriction() && metainf.isSimple())))
-        {
-            populateInfo(metainf.getParent(), model, rootElt, propertyNames,
-                    typeMap, groupTypeMap, true);
+        if (metainf.getParent() != null
+                && (!metainf.isRestriction() || (metainf.isRestriction() && metainf.isSimple()))) {
+
+            BeanWriterMetaInfoHolder parent = metainf.getParent();
+
+            /**
+             * Before we recursively call populateInfo() with parent (base)
+             * BeanWriterMetaInfoHolder we need to apply restrictions on current
+             * BeanWriterMetaInfoHolder to parent BeanWriterMetaInfoHolder.
+             * Otherwise those restrictions not available on generated code. see
+             * Axis2-
+             * 
+             * TODO - Here just copy restrictions to parent
+             * BeanWriterMetaInfoHolder object, but may be the correct way to do
+             * this is create a new BeanWriterMetaInfoHolder with merging
+             * current and parent BeanWriterMetaInfoHolders.Decide best approach
+             * ?
+             */
+            mergeBeanWriterMetaInfoHolderForRestriction(metainf, parent);
+            populateInfo(parent, model, rootElt, propertyNames, typeMap, groupTypeMap, true);
         }
         addPropertyEntries(metainf, model, rootElt, propertyNames, typeMap, groupTypeMap,
                 isInherited);
@@ -1534,6 +1550,54 @@ public class JavaBeanWriter implements BeanWriter {
 			count++;
 		}
     	return xmlName;
+    }
+    
+    private void mergeBeanWriterMetaInfoHolderForRestriction(BeanWriterMetaInfoHolder metainf,
+            BeanWriterMetaInfoHolder parent) {
+        parent.setRestriction(true);
+        if (metainf.getPatternFacet() != null) {
+            parent.setPatternFacet(metainf.getPatternFacet());
+        }
+        if (metainf.getMaxExclusiveFacet() != null) {
+            parent.setMaxExclusiveFacet(metainf.getMaxExclusiveFacet());
+        }
+        if (metainf.getMinExclusiveFacet() != null) {
+            parent.setMinExclusiveFacet(metainf.getMinExclusiveFacet());
+        }
+        if (metainf.getMinInclusiveFacet() != null) {
+            parent.setMinInclusiveFacet(metainf.getMinInclusiveFacet());
+        }
+        if (metainf.getMaxInclusiveFacet() != null) {
+            parent.setMaxInclusiveFacet(metainf.getMaxInclusiveFacet());
+        }
+        if (metainf.getLengthFacet() != -1) {
+            parent.setLengthFacet(metainf.getLengthFacet());
+
+        }
+        if (metainf.getMaxLengthFacet() != -1) {
+            parent.setMaxLengthFacet(metainf.getMaxLengthFacet());
+
+        }
+        if (metainf.getMinLengthFacet() != -1) {
+            parent.setMinLengthFacet(metainf.getMinLengthFacet());
+
+        }
+
+        if (metainf.getTotalDigitsFacet() != null) {
+            parent.setTotalDigitsFacet(metainf.getTotalDigitsFacet());
+
+        }
+
+        if (metainf.getTotalDigitsFacet() != null) {
+            parent.setTotalDigitsFacet(metainf.getTotalDigitsFacet());
+
+        }
+
+        if (metainf.getEnumFacet() != null && metainf.getEnumFacet().size() > 0) {
+            parent.getEnumFacet().addAll(metainf.getEnumFacet());
+
+        }
+
     }
 
 }
