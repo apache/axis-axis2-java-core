@@ -47,7 +47,7 @@ public class PrettyPrinter {
         // If the user has set "axis2.jalopy=false" on the system property,
         // then just return back to caller
         String property = System.getProperty("axis2.jalopy");
-        if((property == null) || !JavaUtils.isTrueExplicitly(property)){
+        if((property != null) && !JavaUtils.isTrueExplicitly(property)){
             return;
         }
         PrintStream backupOutputStream = System.out;
@@ -55,7 +55,7 @@ public class PrettyPrinter {
         System.setOut(new PrintStream(new ByteArrayOutputStream()));
         System.setErr(new PrintStream(new ByteArrayOutputStream()));
         try {
-            Class clazzConfigurator = Loader.loadClass("org.apache.log4j.PropertyConfigurator");
+            Class<?> clazzConfigurator = Loader.loadClass("org.apache.log4j.PropertyConfigurator");
             Method configure = clazzConfigurator.getMethod("configure", new Class[]{Properties.class});
             Properties properties = new Properties();
             properties.setProperty("log4j.logger.de.hunsicker.jalopy.io",
@@ -63,7 +63,7 @@ public class PrettyPrinter {
             configure.invoke(null, new Object[]{properties});
 
             // Create an instance of the Jalopy bean
-            Class clazz = Loader.loadClass("de.hunsicker.jalopy.Jalopy");
+            Class<?> clazz = Loader.loadClass("de.hunsicker.jalopy.Jalopy");
             Object prettifier = clazz.newInstance();
 
             // Set the input file
@@ -74,11 +74,11 @@ public class PrettyPrinter {
             Method output = clazz.getMethod("setOutput", new Class[]{File.class});
             output.invoke(prettifier, new Object[]{file});
 
-            Class clazz2 = Loader.loadClass("de.hunsicker.jalopy.storage.Convention");
+            Class<?> clazz2 = Loader.loadClass("de.hunsicker.jalopy.storage.Convention");
             Method instance = clazz2.getMethod("getInstance", new Class[]{});
             Object settings = instance.invoke(null, new Object[]{});
 
-            Class clazz3 = Loader.loadClass("de.hunsicker.jalopy.storage.ConventionKeys");
+            Class<?> clazz3 = Loader.loadClass("de.hunsicker.jalopy.storage.ConventionKeys");
             Field field = clazz3.getField("COMMENT_FORMAT_MULTI_LINE");
             Object key = field.get(null);
             Method put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
