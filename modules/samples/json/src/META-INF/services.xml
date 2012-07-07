@@ -1,0 +1,12 @@
+<service name="JsonService">
+    <Description>
+        This is a sample service to test json implementation
+    </Description>
+    <messageReceivers>
+        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
+        class="org.apache.axis2.json.impl.rpc.JsonRpcMessageReceiver"  />
+        <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
+                         class="org.apache.axis2.json.impl.rpc.JsonInOnlyRPCMessageReceiver"/>
+    </messageReceivers>
+    <parameter name="ServiceClass" locked="false">sample.json.service.JsonService</parameter>
+</service>

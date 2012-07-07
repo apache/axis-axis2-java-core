@@ -133,6 +133,7 @@
                 <include>jaxws-interop/**/*</include>
                 <include>jaxws-dynamic/**/*</include>
                 <include>jaxws-version/**/*</include>
+                <include>json/**/*</include>
                 <include>mtom/**/*</include>
                 <include>pojo/**/*</include>
                 <include>pojoguide/**/*</include>
