@@ -31,6 +31,10 @@ Running the Client
 
 Type ant run.client in the AXIS2_HOME/samples/quickstartaxiom directory
 
+You will get following response
+[java] price updated
+[java] Current price of WSO: 123.42
+
 Help
 ====
 Please contact axis-user list (axis-user@ws.apache.org) if you have

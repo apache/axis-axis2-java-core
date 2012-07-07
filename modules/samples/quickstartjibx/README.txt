@@ -1,5 +1,8 @@
 Axis2 Quick Start Guide- (JiBX)
 ======================================
+This sample contains source code for the xdocs/1_1/quickstartguide.html document found in 
+the extracted Axis2 Documents Distribution. For a more detailed description on the 
+source code kindly see this 'Axis2 Quick Start Guide' document.
 
 Introduction
 ============
@@ -22,6 +25,12 @@ Running the Client
 ==================
 
 type ant run.client in the Axis2_HOME/samples/quickstartadb directory
+
+You will get following response
+[java] 42.0
+[java] price updated
+[java] 42.35
+
 
 Help
 ====

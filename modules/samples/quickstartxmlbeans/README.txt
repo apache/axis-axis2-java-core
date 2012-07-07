@@ -29,6 +29,12 @@ Running the Client
 
 type ant run.client in the AXIS2_HOME/samples/quickstartxmlbeans directory
 
+You will get following response
+[java] 42.0
+[java] price updated
+[java] 42.32
+
+
 Help
 ====
 Please contact axis-user list (axis-user@ws.apache.org) if you have

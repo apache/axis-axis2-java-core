@@ -28,6 +28,12 @@ Running the Client
 
 type ant run.client in the Axis2_HOME/samples/quickstartadb directory
 
+You will get the following response
+[java] 42.0
+[java] price updated
+[java] 42.35
+
+
 Help
 ====
 Please contact axis-user list (axis-user@ws.apache.org) if you
