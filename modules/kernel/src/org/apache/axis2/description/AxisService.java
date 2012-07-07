@@ -1166,6 +1166,23 @@ public class AxisService extends AxisDescription {
 		}
 
 	}
+	
+    public void printUserWSDL2(OutputStream out, String wsdlName, String ip) throws AxisFault {
+        Description description = null;
+        // first find the correct wsdl definition
+        Parameter wsdlParameter = getParameter(WSDLConstants.WSDL_20_DESCRIPTION);
+        if (wsdlParameter != null) {
+            description = (Description) wsdlParameter.getValue();
+            try {
+                org.apache.woden.WSDLFactory factory = org.apache.woden.WSDLFactory.newInstance();
+                org.apache.woden.WSDLWriter writer = factory.newWSDLWriter();
+                writer.writeWSDL(description.toElement(), out);
+            } catch (org.apache.woden.WSDLException e) {
+                throw AxisFault.makeFault(e);
+            }
+        }
+
+}
 
 	/**
 	 * find the defintion object for given name
@@ -1784,6 +1801,11 @@ public class AxisService extends AxisDescription {
 	 * @throws AxisFault
 	 */
 	public void printWSDL2(OutputStream out, String requestIP) throws AxisFault {
+	 // If we're looking for pre-existing WSDL, use that.
+        if (isUseUserWSDL()) {
+            printUserWSDL2(out, null, requestIP);
+            return;
+        }
 		AxisService2WSDL20 axisService2WSDL2 = new AxisService2WSDL20(this);
 		
 		// If we find a WSDLSupplier with WSDL 2.0 content, use that
