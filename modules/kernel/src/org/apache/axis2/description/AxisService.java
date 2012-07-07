@@ -38,6 +38,7 @@ import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
+import org.apache.axis2.dataretrieval.WSDL11SupplierTemplate;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.ExcludeInfo;
@@ -106,6 +107,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.URISyntaxException;
@@ -1433,18 +1435,43 @@ public class AxisService extends AxisDescription {
 			return;
 		}
 
-		// If we find a WSDLSupplier, use that
-		WSDLSupplier supplier = (WSDLSupplier) getParameterValue("WSDLSupplier");
+		// If we find a WSDLSupplier with WSDL 1.1 content, use that
+		WSDLSupplier supplier = getUserDefinedWSDLSupplier("wsdl");
+		if(supplier == null){
+			supplier = (WSDLSupplier) getParameterValue(Constants.WSDL_SUPPLIER_PARAM);	
+			if(supplier instanceof WSDL11SupplierTemplate){
+			    ((WSDL11SupplierTemplate)supplier).init(this);
+			}
+		}			
 		if (supplier != null) {
-			try {
-				Definition definition = supplier.getWSDL(this);
-				if (definition != null) {
-				    changeImportAndIncludeLocations(definition);
-                    printDefinitionObject(getWSDLDefinition(definition, null),
-							out, requestIP);
+			Object wsdlContent = supplier.getWSDL(this);
+			if( wsdlContent instanceof Definition){
+				try {
+					Definition definition = (Definition) wsdlContent;
+					if (definition != null) {
+					    changeImportAndIncludeLocations(definition);
+	                    printDefinitionObject(getWSDLDefinition(definition, null),
+								out, requestIP);
+					}
+				} catch (Exception e) {
+					printWSDLError(out, e);
 				}
-			} catch (Exception e) {
-				printWSDLError(out, e);
+			// wsdlContent can be a OMElement			
+			} else if (wsdlContent instanceof OMElement) {
+				OMElement wsdlElement = (OMElement) wsdlContent;
+				QName wsdlName = wsdlElement.getQName();
+				if (wsdlName != null
+						&& wsdlName.getLocalPart().equals("definitions")
+						&& wsdlName.getNamespaceURI().equals("http://schemas.xmlsoap.org/wsdl/")) {
+					// TODO How to address port number/ ip name customization
+					// here ?
+					try {
+						XMLPrettyPrinter.prettify(wsdlElement, out);
+						out.flush();
+					} catch (Exception e) {
+						throw AxisFault.makeFault(e);
+					}
+				}
 			}
 			return;
 		}
@@ -1758,6 +1785,46 @@ public class AxisService extends AxisDescription {
 	 */
 	public void printWSDL2(OutputStream out, String requestIP) throws AxisFault {
 		AxisService2WSDL20 axisService2WSDL2 = new AxisService2WSDL20(this);
+		
+		// If we find a WSDLSupplier with WSDL 2.0 content, use that
+		WSDLSupplier supplier = getUserDefinedWSDLSupplier("wsdl2");
+		if(supplier == null){
+			supplier = (WSDLSupplier) getParameterValue(Constants.WSDL_SUPPLIER_PARAM);			
+		}				
+		if (supplier != null) {
+			Object wsdlContent = supplier.getWSDL(this);
+			if( wsdlContent instanceof Description){
+				try {
+					Description definition = (Description) wsdlContent;
+					if (definition != null) {
+						//TODO  -- Need to implement this method for WSDL 2.0
+					    //changeImportAndIncludeLocations(definition);
+	                    printDescriptionObject(definition, out, requestIP);
+					}
+				} catch (Exception e) {
+					printWSDLError(out, e);
+				}
+				
+		    // wsdlContent can be a OMElement           
+            } else if (wsdlContent instanceof OMElement) {
+                OMElement wsdlElement = (OMElement) wsdlContent;
+                QName wsdlName = wsdlElement.getQName();
+                if (wsdlName != null
+                        && wsdlName.getLocalPart().equals("definitions")
+                        && wsdlName.getNamespaceURI().equals("http://schemas.xmlsoap.org/wsdl/")) {
+                    // TODO How to address port number/ ip name customization
+                    // here ?
+                    try {
+                        XMLPrettyPrinter.prettify(wsdlElement, out);
+                        out.flush();
+                    } catch (Exception e) {
+                        throw AxisFault.makeFault(e);
+                    }
+                }
+            }			
+			return;
+		}
+		
 		try {
 			if (requestIP != null) {
 				axisService2WSDL2.setEPRs(calculateEPRs(requestIP));
@@ -3322,5 +3389,54 @@ public class AxisService extends AxisDescription {
                     WSDL2Constants.ATTR_WSOAP_VERSION));
         }
         return axisService;
+    }    
+    private void printDescriptionObject(Description definition,
+			OutputStream out, String requestIP) {
+		//TODO - complete this method
+    	org.apache.woden.WSDLFactory fac;
+		try {
+			fac = org.apache.woden.WSDLFactory.newInstance();
+			org.apache.woden.WSDLWriter writer = fac.newWSDLWriter();
+	    	writer.writeWSDL(definition.toElement(), out);
+		} catch (org.apache.woden.WSDLException e) {
+			e.printStackTrace();
+		}
+    	
+		
+	}
+    
+    private WSDLSupplier getUserDefinedWSDLSupplier(String wsdlVersion){
+    	WSDLSupplier wsdlSupplier = null;
+    	if("wsdl".equals(wsdlVersion)){
+    		Parameter para = getParameter(Constants.WSDL_11_SUPPLIER_CLASS_PARAM);
+            if (para != null) {
+                try {
+                    wsdlSupplier = (WSDLSupplier) Class.forName((String) para.getValue()).newInstance();
+                    if( wsdlSupplier instanceof WSDL11SupplierTemplate){
+                        ((WSDL11SupplierTemplate)wsdlSupplier).init(this);                       
+                    }
+                } catch (Exception e) {
+                    System.err.println("Following exception occurred when generating WSDL using "
+                            + para);
+                    e.printStackTrace();
+                }
+            }
+    	} else if("wsdl2".equals(wsdlVersion)){
+    		Parameter para = getParameter(Constants.WSDL_20_SUPPLIER_CLASS_PARAM);
+    		if(para != null){    		
+        		try {
+					wsdlSupplier = (WSDLSupplier) Class.forName((String) para.getValue()).newInstance() ;
+					//TODO
+//					if( wsdlSupplier instanceof WSDL20SupplierTemplate){
+//                        ((WSDL20SupplierTemplate)wsdlSupplier).init(this);                       
+//                    }
+				} catch (Exception e) {	
+					System.err.println("Following exception occurred when generating WSDL using "+ para );
+					e.printStackTrace();
+				} 	    			
+    		}
+    		
+    	}
+    	return wsdlSupplier;    	
     }
 }

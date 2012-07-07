@@ -477,15 +477,23 @@ public class WSDLSerializationUtil {
     }
 
     public static void addWSDLDocumentationElement(AxisDescription axisDescription,
-                                                   OMElement omElement, OMFactory omFactory,
-                                                   OMNamespace wsdl) {
+            OMElement omElement, OMFactory omFactory, OMNamespace wsdl) {
+        OMElement documentation = generateDocumentationElement(axisDescription, omFactory, wsdl);
+        if (documentation != null) {
+            omElement.addChild(documentation);
+        }
+    }
+    
+    public static OMElement generateDocumentationElement(AxisDescription axisDescription,
+            OMFactory omFactory, OMNamespace wsdl) {
         OMNode documentationNode = axisDescription.getDocumentationNode();
         OMElement documentation;
         if (documentationNode != null) {
             documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
             documentation.addChild(documentationNode);
-            omElement.addChild(documentation);
+            return documentation;
         }
+        return null;
     }
     
     public static void addPoliciesAsExtensibleElement(

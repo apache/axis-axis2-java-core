@@ -22,8 +22,6 @@ package org.apache.axis2.dataretrieval;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 
-import javax.wsdl.Definition;
-
 /**
  * Return a WSDL as an OMElement.  This is used by any AxisService that wishes
  * to override the standard AxisService2WSDL (see the org.apache.axis2.description
@@ -31,5 +29,5 @@ import javax.wsdl.Definition;
  * Parameters under the name "WSDLSupplier", it will be queried.
  */
 public interface WSDLSupplier {
-    Definition getWSDL(AxisService service) throws AxisFault;
+    Object getWSDL(AxisService service) throws AxisFault;
 }

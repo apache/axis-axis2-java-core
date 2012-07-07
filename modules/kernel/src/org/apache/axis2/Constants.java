@@ -321,6 +321,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String AXIS2_ENUM_NAMESPACE_URI = "http://ws.apache.org/namespaces/axis2/enum";
     public static final String ENUM_ELEMENT_NAME = "enum";
 
+    public static final String WSDL_11_SUPPLIER_CLASS_PARAM ="WSDL1SupplierClass";
+    
+    public static final String WSDL_20_SUPPLIER_CLASS_PARAM ="WSDL2SupplierClass";
+    
+    public static final String WSDL_SUPPLIER_PARAM ="WSDLSupplier";
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_HTTP_CONTENT_NEGOTIATION = "httpContentNegotiation";
