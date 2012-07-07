@@ -223,7 +223,7 @@ public class ArchiveReader implements DeploymentConstants {
                 }
             }
             if (serviceMetaData != null) {
-                if(extractService){
+                if(!extractService){
                     axisServiceGroup.setServiceGroupName(
                             DescriptionBuilder.getShortFileName(currentFile.getName()));                    
                 } else {
