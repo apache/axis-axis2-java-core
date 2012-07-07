@@ -159,12 +159,12 @@
                          protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                          <xsl:if test="not(@unbound) and @array">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                               }
                          </xsl:if>
                          <xsl:if test="$min!=0 and @array">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                               }
                          </xsl:if>
                          }
@@ -331,12 +331,12 @@
                               protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                              <xsl:if test="not(@unbound)">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                               }
                               </xsl:if>
                               <xsl:if test="$min!=0">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                               }
                               </xsl:if>
                               }
@@ -456,7 +456,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException();
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@lenFacet)">
@@ -464,7 +464,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException();
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
@@ -473,7 +473,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException();
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@totalDigitsFacet)">
@@ -482,7 +482,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException();
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                             }
                                         </xsl:when>
                                         <xsl:when test="@maxExFacet or @minExFacet or @maxInFacet or @minInFacet">
@@ -491,7 +491,7 @@
                                                         this.<xsl:value-of select="$varName"/>=param;
                                                     }
                                                     else {
-                                                        throw new java.lang.RuntimeException();
+                                                        throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                                     }
                                             </xsl:if>
                                             <xsl:if test="@minExFacet">
@@ -499,7 +499,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
-                                                    throw new java.lang.RuntimeException();
+                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                                 }
                                             </xsl:if>
                                             <xsl:if test="@maxInFacet">
@@ -507,7 +507,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
-                                                    throw new java.lang.RuntimeException();
+                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                                 }
                                             </xsl:if>
                                             <xsl:if test="@minInFacet">
@@ -515,7 +515,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
-                                                    throw new java.lang.RuntimeException();
+                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                                 }
                                             </xsl:if>
                                         </xsl:when>

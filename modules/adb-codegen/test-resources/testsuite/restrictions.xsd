@@ -213,4 +213,29 @@
         <xsd:attribute name="responseMessage" type="xsd:string" use="optional"/>
     </xsd:attributeGroup>
 
+    <xsd:element name="LimitedString" type="tns:limitedString" />
+    <xsd:complexType name="limitedString">
+        <xsd:simpleContent>
+            <xsd:restriction base="tns:rating">
+                <xsd:minLength value="2" />
+                <xsd:maxLength value="4" />
+                <xsd:pattern value="([a-d])*" />
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="rating">
+        <xsd:simpleContent>
+            <xsd:restriction base="tns:anyString">
+                <xsd:minLength value="2" />
+                <xsd:maxLength value="8" />
+                <xsd:pattern value="([a-z])*" />
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="anyString">
+        <xsd:simpleContent>
+            <xsd:extension base="xs:string" />
+        </xsd:simpleContent>
+    </xsd:complexType>
+
 </xsd:schema>
