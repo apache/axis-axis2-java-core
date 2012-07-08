@@ -1155,6 +1155,10 @@ public class SchemaCompiler {
             //Process the particle
             processParticle(parentElementQName, particle, metaInfHolder, parentSchema);
         }
+        
+        if(complexType.isMixed()){
+            throw new SchemaCompilationException("XSD complexType with mix content not supported in ADB");
+        }
 
         //process attributes - first look for the explicit attributes
         processAttributes(complexType.getAttributes(),metaInfHolder,parentSchema);
