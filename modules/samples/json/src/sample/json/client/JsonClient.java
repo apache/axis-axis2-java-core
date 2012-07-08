@@ -40,7 +40,7 @@ public class JsonClient{
             "\"My_Street\",\"building\":\"My_Building\",\"flat\":\"My_Flat\",\"zipCode\":\"My_ZipCode\"}}}}";
 
         JsonClient jsonClient = new JsonClient();
-        jsonClient.post(sampleString);
+        jsonClient.post(echoUser);
     }
 
     public boolean post(String message) throws UnsupportedEncodingException {
