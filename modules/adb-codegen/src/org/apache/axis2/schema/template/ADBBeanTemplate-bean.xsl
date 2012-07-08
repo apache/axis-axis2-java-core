@@ -477,8 +477,8 @@
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@totalDigitsFacet)">
-                                            java.lang.String totalDigitsDecimal = org.apache.axis2.databinding.utils.ConverterUtil.convertToStandardDecimalNotation("<xsl:value-of select="$totalDigitsFacet"/>").toString();
-                                            if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, totalDigitsDecimal) &gt; 0){
+                                            java.lang.String totalDigitsDecimal = org.apache.axis2.databinding.utils.ConverterUtil.convertToStandardDecimalNotation("<xsl:value-of select="$totalDigitsFacet"/>").toPlainString();
+                                            if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, totalDigitsDecimal) &lt; 0){
                                                     this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
