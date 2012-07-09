@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -70,22 +71,35 @@ public abstract class XMLSchemaTest extends TestCase {
     }
 
     public void loadSampleSchemaFile(ArrayList<XmlSchema> schemas) throws Exception{
-        XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
+        loadSampleSchemaFile(schemas, null);
+    }
+    
+    public void loadSampleSchemaFile(ArrayList<XmlSchema> schemas, List<Integer> excludeList)
+            throws Exception {
         File file = null;
-        int i = 1;
-       
-            file = new File(SampleSchemasDirectory + "sampleSchema" + i
-                    + ".xsd");
-            while (file.exists()) {
-                InputStream is = new FileInputStream(file);
-                XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-                XmlSchema schema = schemaCol.read(new StreamSource(is), null);
-                schemas.add(schema);
-                i++;
-                file = new File(SampleSchemasDirectory + "sampleSchema" + i
-                        + ".xsd");
+        int i = 0;
+        while (true) {
+            i++;
+            file = new File(SampleSchemasDirectory + "sampleSchema" + i + ".xsd");
+            if (file.exists()) {
+                if (excludeList == null || !excludeList.contains(i)) {
+                    InputStream is = new FileInputStream(file);
+                    XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+                    XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+                    schemas.add(schema);
+                }
+            } else {
+                break;
             }
-       
+        }
+    }
+    
+    public XmlSchema loadSampleSchemaFile(String id) throws Exception {
+        File file = new File(SampleSchemasDirectory + "sampleSchema" + id + ".xsd");
+        InputStream is = new FileInputStream(file);
+        XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        return schema;
     }
     
     public XmlSchema loadSingleSchemaFile(int i) throws Exception{

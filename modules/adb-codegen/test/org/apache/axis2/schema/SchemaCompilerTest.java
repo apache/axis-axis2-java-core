@@ -23,13 +23,13 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.junit.Test;
 import org.w3c.dom.Document;
 
 public class SchemaCompilerTest extends XMLSchemaTest{
@@ -41,8 +41,7 @@ public class SchemaCompilerTest extends XMLSchemaTest{
 
     @Override
     protected void setUp() throws Exception {
-        schemas=new ArrayList<XmlSchema>();
-        loadSampleSchemaFile(schemas);
+        schemas=new ArrayList<XmlSchema>();       
         schemaCompiler=new SchemaCompiler(null);
     }
 
@@ -52,8 +51,11 @@ public class SchemaCompilerTest extends XMLSchemaTest{
         super.tearDown();
     }
     
-    @Test
+    
     public void testCompileSchema() throws Exception{
+        List<Integer> excludes = new ArrayList<Integer>();
+        excludes.add(6);
+        loadSampleSchemaFile(schemas, excludes);        
         Map map=schemaCompiler.getProcessedModelMap();
         schemaCompiler.compile(schemas);
         processedElementMap=schemaCompiler.getProcessedElementMap();
@@ -73,9 +75,17 @@ public class SchemaCompilerTest extends XMLSchemaTest{
         
     }
     
-   
-    
-    
-    
+    public void testCompileSchemaForMixContent() throws Exception {
+        schemas.add(loadSampleSchemaFile(String.valueOf(6)));
+        Map map = schemaCompiler.getProcessedModelMap();
+        try {
+            schemaCompiler.compile(schemas);
+            fail("Compiling sampleSchema6.xsd should throw SchemaCompilationException");
+        } catch (SchemaCompilationException e) {
+            assertTrue(e.getMessage().contains(
+                    "SD complexType with mix content not supported in ADB"));
+        }
+
+    }
 
 }
