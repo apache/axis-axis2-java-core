@@ -75,7 +75,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             }
 
         } catch (IOException e) {
-            throw new AxisFault(e.getMessage());
+            throw AxisFault.makeFault(e);
         }
         axisConfig.setConfigurator(this);
         return axisConfig;
