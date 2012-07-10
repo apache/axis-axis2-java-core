@@ -78,7 +78,7 @@ public abstract class AbstractAarMojo
      * src/main/resources with that name then it will automatically be included. Otherwise this
      * parameter must be set.
      *
-     * @parameter
+     * @parameter default-value="src/main/resources/META-INF/services.xml"
      */
     private File servicesXmlFile;
 
