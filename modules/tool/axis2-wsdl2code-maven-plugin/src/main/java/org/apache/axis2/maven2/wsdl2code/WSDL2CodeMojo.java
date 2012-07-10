@@ -57,7 +57,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
     /**
      * The WSDL file, which is being read.
      *
-     * @parameter expression="${axis2.wsdl2code.wsdlFile}" default-value="src/main/axis2/service.wsdl"
+     * @parameter expression="${axis2.wsdl2code.wsdlFile}" default-value="src/main/resources/service.wsdl"
      */
     private String wsdlFile;
 
