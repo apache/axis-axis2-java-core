@@ -80,7 +80,14 @@
             <artifactId>axis2-xmlbeans</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>jalopy</groupId>
+            <artifactId>jalopy</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
