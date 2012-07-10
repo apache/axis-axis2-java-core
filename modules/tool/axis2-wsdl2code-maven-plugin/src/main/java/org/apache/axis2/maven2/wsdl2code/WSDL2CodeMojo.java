@@ -72,8 +72,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
      * Package name of the generated sources; will be used to create a package structure below the
      * output directory.
      *
-     * @parameter expression="${axis2.wsdl2code.package}"
-     * @required
+     * @parameter expression="${axis2.wsdl2code.package}"     * 
      */
     private String packageName;
 
