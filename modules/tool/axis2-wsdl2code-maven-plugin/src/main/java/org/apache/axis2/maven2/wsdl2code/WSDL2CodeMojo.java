@@ -91,6 +91,13 @@ public class WSDL2CodeMojo extends AbstractMojo {
     private String databindingName;
 
     /**
+     * The binding file for JiBX databinding.
+     *
+     * @parameter expression="${axis2.wsdl2code.jibxBindingFile}"
+     */
+    private String jibxBindingFile;
+
+    /**
      * Port name, for which to generate sources. By default, sources will be generated for all
      * ports.
      *
@@ -292,6 +299,12 @@ public class WSDL2CodeMojo extends AbstractMojo {
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
                         getStringArray(databindingName)));
+
+        if ("jibx".equals(databindingName)) {
+            String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX
+                             + org.apache.axis2.wsdl.codegen.extension.JiBXExtension.BINDING_PATH_OPTION;
+            optionMap.put(key, new CommandLineOption(key, getStringArray(jibxBindingFile)));
+        }
 
         if ("async".equals(syncMode)) {
             // Async only option - forcing to generate async methods only
