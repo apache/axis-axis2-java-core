@@ -68,6 +68,12 @@
                     </filesets>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <configuration>
+                    <goalPrefix>axis2</goalPrefix>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
