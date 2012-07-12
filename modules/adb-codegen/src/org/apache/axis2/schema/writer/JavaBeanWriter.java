@@ -879,6 +879,10 @@ public class JavaBeanWriter implements BeanWriter {
             if (metainf.getInnerChoiceStatusForQName(name)){
                 XSLTUtils.addAttribute(model, "innerchoice", "yes", property);
             }
+            
+            if (metainf.isFixed()){
+                XSLTUtils.addAttribute(model, "fixed", "yes", property);
+            }
 
 
 

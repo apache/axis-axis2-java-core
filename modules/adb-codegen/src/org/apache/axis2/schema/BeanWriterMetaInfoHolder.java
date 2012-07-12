@@ -80,6 +80,7 @@ public class BeanWriterMetaInfoHolder {
     protected String itemTypeClassName;
     protected boolean isUnion;
     protected boolean isList;
+    protected boolean fixed = false;
 
     protected boolean isParticleClass;
     // keep whether this class has a partical class type variable
@@ -941,6 +942,14 @@ public class BeanWriterMetaInfoHolder {
 
     public QName getRestrictionBaseType() {
         return restrictionBaseType;
+    }    
+
+    public boolean isFixed() {
+        return fixed;
+    }
+
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
     }
 
     @Override
@@ -966,7 +975,7 @@ public class BeanWriterMetaInfoHolder {
                 + restrictionBaseType + ", restrictionClassName=" + restrictionClassName
                 + ", simple=" + simple + ", specialTypeFlagMap=" + specialTypeFlagMap
                 + ", totalDigitsFacet=" + totalDigitsFacet + ", xmlNameJavaNameMap="
-                + xmlNameJavaNameMap + "]";
+                + xmlNameJavaNameMap + ", xmlNameJavaNameMap=" + fixed + "]";
     }
     
 }
