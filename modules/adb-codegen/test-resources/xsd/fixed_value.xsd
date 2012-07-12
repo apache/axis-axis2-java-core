@@ -12,9 +12,16 @@
     ~ under the License. -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="fixedStringElement" type="fixedString" />
+    <xs:element name="defaultStringElement" type="defaultString" />
     <xs:complexType name="fixedString">
         <xs:sequence>
             <xs:element minOccurs="0" name="msg" fixed="ABC"
+                type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="defaultString">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="msg" default="ABC"
                 type="xs:string" />
         </xs:sequence>
     </xs:complexType>
