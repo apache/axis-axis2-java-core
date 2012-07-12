@@ -115,6 +115,7 @@
                <xsl:variable name="maxInFacet"><xsl:value-of select="@maxInFacet"/></xsl:variable>
                <xsl:variable name="minInFacet"><xsl:value-of select="@minInFacet"/></xsl:variable>
                <xsl:variable name="patternFacet"><xsl:value-of select="@patternFacet"/></xsl:variable>
+               <xsl:variable name="fixed" select="@fixed"/>
             <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
             <xsl:variable name="shortTypeName"
                select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
@@ -526,7 +527,9 @@
                                     </xsl:when>
 
                                     <xsl:otherwise>
+                                       <xsl:if test="not($fixed)">
                                             this.<xsl:value-of select="$varName"/>=param;
+                                       </xsl:if>
                                     </xsl:otherwise>
                                 </xsl:choose>
 

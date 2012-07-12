@@ -547,6 +547,12 @@ public class SchemaCompiler {
                 metainf.registerDefaultValue(xsElt.getQName(),xsElt.getDefaultValue());
             }
 
+            // register the fixed value if present
+            if (xsElt.getFixedValue() != null){
+                metainf.registerDefaultValue(xsElt.getQName(),xsElt.getFixedValue());
+                metainf.setFixed(true);
+            }
+            
             if (isBinary(xsElt)) {
                 metainf.addtStatus(xsElt.getQName(),
                             SchemaConstants.BINARY_TYPE);
@@ -1815,6 +1821,10 @@ public class SchemaCompiler {
                     // set the default value
                     if (att.getDefaultValue() != null){
                         metainf.registerDefaultValue(att.getQName(),att.getDefaultValue());
+                    }                 
+                    if(att.getFixedValue() != null){
+                        metainf.registerDefaultValue(att.getQName(), att.getFixedValue());
+                        metainf.setFixed(true);
                     }
                     // after
                 } else {
@@ -2222,7 +2232,11 @@ public class SchemaCompiler {
                         if (elt.getDefaultValue() != null){
                            metainfHolder.registerDefaultValue(referencedQName,elt.getDefaultValue());
                         }
-
+                     // register the default value as well
+                        if (elt.getFixedValue() != null){
+                           metainfHolder.registerDefaultValue(referencedQName,elt.getFixedValue());
+                           metainfHolder.setFixed(true);
+                        }
                     }
                 }
 
