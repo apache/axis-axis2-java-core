@@ -2195,7 +2195,7 @@
                                     <!-- We must be a named type or element with anonymous type. -->
                                     <!-- Elements with a named type have a single simple (non-array) property for their type -->
                                     // Process the array and step past its final element's end.
-                                    <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
+                                    
                                     <xsl:choose>
                                         <xsl:when test="@ours">
                                              <xsl:choose>
@@ -2739,12 +2739,6 @@
                                         }
                                         <!-- set the attribute values here since onbject is not initalized yet -->
                                         <xsl:for-each select="../property[@attribute]">
-                                            <xsl:variable name="propertyName" select="@name"/>
-                                            <xsl:variable name="propertyType" select="@type"/>
-                                            <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
-                                            <xsl:variable name="shortTypeName"
-                                            select="concat(translate(substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
-                                            <xsl:variable name="javaName" select="@javaname"/>
                                             <xsl:variable name="attribName">tempObjectAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
 
                                             <xsl:if test="$propertyName != 'extraAttributes'">
