@@ -1622,13 +1622,16 @@ public class SchemaCompiler {
                     copyMetaInfoHierarchy(metaInfHolder, extBaseType, resolvedSchema);
                 } else if (type instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
-                    if (complexType.getContentModel() == null) {
                         // do not set as a simple type since we want to
                         // print the element names
                         metaInfHolder.setExtension(true);
                         metaInfHolder.setExtensionClassName(className);
                         copyMetaInfoHierarchy(metaInfHolder, extBaseType, resolvedSchema);
-                    }
+                        XmlSchemaContentModel typeContent =complexType.getContentModel();
+                        if(typeContent != null && typeContent instanceof XmlSchemaSimpleContent){
+                            metaInfHolder.setSimple(true);                            
+                        } 
+                        
                 }
             }
 

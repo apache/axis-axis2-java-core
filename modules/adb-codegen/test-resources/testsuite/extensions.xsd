@@ -85,6 +85,51 @@
             <xs:element minOccurs="0" name="SORT_DESCENDING" type="xs:int"/>
         </xs:sequence>
     </xs:complexType>
-    
+
+    <xs:element name="SimpleAmmountElement" type="tns:SimpleAmmount" />
+    <xs:complexType name="SimpleAmmount">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="currency" type="xs:string"
+                    use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- complexType having simpleContent extension -->
+    <xs:element name="PaymentAmountElement" type="tns:PaymentAmount" />
+    <xs:complexType name="PaymentAmount">
+        <xs:simpleContent>
+            <xs:extension base="tns:Amount" />
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="Amount">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="currency" type="xs:string"
+                    use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- complexType having complexContent extension -->
+    <xs:element name="fullpersoninfoElement" type="tns:fullpersoninfo" />
+    <xs:complexType name="fullpersoninfo">
+        <xs:complexContent>
+            <xs:extension base="tns:personinfo">
+                <xs:sequence>
+                    <xs:element name="address" type="xs:string" />
+                    <xs:element name="city" type="xs:string" />
+                    <xs:element name="country" type="xs:string" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="personinfo">
+        <xs:sequence>
+            <xs:element name="firstname" type="xs:string" />
+            <xs:element name="lastname" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
 
 </schema>
