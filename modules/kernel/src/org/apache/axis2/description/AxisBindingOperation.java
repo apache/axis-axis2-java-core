@@ -298,4 +298,9 @@ public class AxisBindingOperation extends AxisDescription {
 	public AxisBinding getAxisBinding() {
 		return (AxisBinding) parent;
 	}
+	
+	@Override
+    public void applyPolicy() throws AxisFault {
+	    getAxisOperation().applyPolicy();
+    }
 }

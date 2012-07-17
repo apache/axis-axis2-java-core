@@ -276,4 +276,9 @@ public class AxisBinding extends AxisDescription {
     public Iterator<AxisBindingOperation> getChildren(){
     	return (Iterator<AxisBindingOperation>) super.getChildren();
     }
+    
+    @Override
+    public void applyPolicy() throws AxisFault {
+        getAxisEndpoint().getAxisService().applyPolicy();
+    }
 }

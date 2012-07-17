@@ -225,4 +225,9 @@ public class AxisEndpoint extends AxisDescription {
         }
         return false;
     }
+
+    @Override
+    public void applyPolicy() throws AxisFault {
+        getAxisService().applyPolicy();
+    }
 }
