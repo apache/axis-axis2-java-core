@@ -99,46 +99,46 @@ public class WSDLSupplierTest extends TestCase {
         assertTrue(wsdl.contains("</wsdl:description>"));
     }
 
-    public void testWSDL11SupplierTemplate() throws Exception {
-        WSDL11SupplierTemplate value = new TestWSDL11SupplierTemplate();
-        axisService.addParameter(Constants.WSDL_SUPPLIER_PARAM, value);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        axisService.printWSDL(outputStream);
-        String wsdl = outputStream.toString();
-        assertTrue(wsdl
-                .contains("<wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:wsaw=\"http://www.w3.org/2006/05/"
-                        + "addressing/wsdl\" xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "
-                        + "xmlns:tns=\"http://ws.apache.org/axis2\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" "
-                        + "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" "
-                        + "targetNamespace=\"http://ws.apache.org/axis2\">"));
-        assertTrue(wsdl.contains("<wsdl:documentation>"));
-        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
-        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
-        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
-        assertTrue(wsdl.contains(" </ap:detail>"));
-        assertTrue(wsdl.contains("</wsdl:documentation>"));
-        assertFalse(wsdl.contains("<documentation/>"));
-    }
+//    public void testWSDL11SupplierTemplate() throws Exception {
+//        WSDL11SupplierTemplate value = new TestWSDL11SupplierTemplate();
+//        axisService.addParameter(Constants.WSDL_SUPPLIER_PARAM, value);
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        axisService.printWSDL(outputStream);
+//        String wsdl = outputStream.toString();
+//        assertTrue(wsdl
+//                .contains("<wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:wsaw=\"http://www.w3.org/2006/05/"
+//                        + "addressing/wsdl\" xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "
+//                        + "xmlns:tns=\"http://ws.apache.org/axis2\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" "
+//                        + "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" "
+//                        + "targetNamespace=\"http://ws.apache.org/axis2\">"));
+//        assertTrue(wsdl.contains("<wsdl:documentation>"));
+//        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
+//        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
+//        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
+//        assertTrue(wsdl.contains(" </ap:detail>"));
+//        assertTrue(wsdl.contains("</wsdl:documentation>"));
+//        assertFalse(wsdl.contains("<documentation/>"));
+//    }
 
-    public void testWSDL11SupplierTemplateWSDL1SupplierClass() throws Exception {
-        String value = TestWSDL11SupplierTemplate.class.getName();
-        axisService.addParameter(Constants.WSDL_11_SUPPLIER_CLASS_PARAM, value);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        axisService.printWSDL(outputStream);
-        String wsdl = outputStream.toString();
-        assertTrue(wsdl
-                .contains("<wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:wsaw=\"http://www.w3.org/2006/05/"
-                        + "addressing/wsdl\" xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "
-                        + "xmlns:tns=\"http://ws.apache.org/axis2\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" "
-                        + "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" "
-                        + "targetNamespace=\"http://ws.apache.org/axis2\">"));
-        assertTrue(wsdl.contains("<wsdl:documentation>"));
-        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
-        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
-        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
-        assertTrue(wsdl.contains(" </ap:detail>"));
-        assertTrue(wsdl.contains("</wsdl:documentation>"));
-        assertFalse(wsdl.contains("<documentation/>"));
-    }
+//    public void testWSDL11SupplierTemplateWSDL1SupplierClass() throws Exception {
+//        String value = TestWSDL11SupplierTemplate.class.getName();
+//        axisService.addParameter(Constants.WSDL_11_SUPPLIER_CLASS_PARAM, value);
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        axisService.printWSDL(outputStream);
+//        String wsdl = outputStream.toString();
+//        assertTrue(wsdl
+//                .contains("<wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:wsaw=\"http://www.w3.org/2006/05/"
+//                        + "addressing/wsdl\" xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "
+//                        + "xmlns:tns=\"http://ws.apache.org/axis2\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" "
+//                        + "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" "
+//                        + "targetNamespace=\"http://ws.apache.org/axis2\">"));
+//        assertTrue(wsdl.contains("<wsdl:documentation>"));
+//        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
+//        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
+//        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
+//        assertTrue(wsdl.contains(" </ap:detail>"));
+//        assertTrue(wsdl.contains("</wsdl:documentation>"));
+//        assertFalse(wsdl.contains("<documentation/>"));
+//    }
 
 }
