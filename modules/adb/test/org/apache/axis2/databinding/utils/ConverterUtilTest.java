@@ -35,6 +35,7 @@ import javax.activation.DataSource;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.util.Base64;
+import org.apache.axis2.databinding.types.NormalizedString;
 
 public class ConverterUtilTest extends TestCase {
 
@@ -547,6 +548,16 @@ public class ConverterUtilTest extends TestCase {
         assertEquals("should be in UTC",
                      0,
                      calendar.get(Calendar.ZONE_OFFSET)+calendar.get(Calendar.DST_OFFSET));        
+    }
+    
+    public void testConvertToNormalizedString() {
+        NormalizedString str = ConverterUtil.convertToNormalizedString("abc");
+        assertNotNull(str);      
+        str = ConverterUtil.convertToNormalizedString("");
+        assertNotNull(str);
+        str = ConverterUtil.convertToNormalizedString(null);
+        assertNull(str);      
+
     }
 
 

@@ -676,7 +676,7 @@ public class ConverterUtil {
 
 
     public static NormalizedString convertToNormalizedString(String s) {
-        if ((s == null) || s.equals("")){
+        if ((s == null)){
             return null;
         }
         return new NormalizedString(s);
