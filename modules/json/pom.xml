@@ -65,10 +65,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
