@@ -702,7 +702,9 @@ public class JavaBeanWriter implements BeanWriter {
              * current and parent BeanWriterMetaInfoHolders.Decide best approach
              * ?
              */
-            mergeBeanWriterMetaInfoHolderForRestriction(metainf, parent);
+            if(metainf.isRestriction()){
+                mergeBeanWriterMetaInfoHolderForRestriction(metainf, parent);                
+            }            
             populateInfo(parent, model, rootElt, propertyNames, typeMap, groupTypeMap, true);
         }
         addPropertyEntries(metainf, model, rootElt, propertyNames, typeMap, groupTypeMap,
