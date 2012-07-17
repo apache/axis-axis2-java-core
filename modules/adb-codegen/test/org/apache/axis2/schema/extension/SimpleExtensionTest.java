@@ -138,4 +138,34 @@ public class SimpleExtensionTest extends AbstractTestCase {
         assertEquals("Sri Lanka", fullpersoninfoElement.getFullpersoninfoElement().getCountry());
 
     }
+    
+    public void testReproStringTypeElementGetOMElement() throws Exception {
+        ReproStringTypeElement reproStringTypeElement = new ReproStringTypeElement();   
+        Language lang = new Language();
+        lang.setValue("EN");
+        reproStringTypeElement.setLang(lang );
+        reproStringTypeElement.setReproStringType("Value");
+        OMElement omElement = reproStringTypeElement.getOMElement(ReproStringTypeElement.MY_QNAME,
+                OMAbstractFactory.getSOAP11Factory());
+        omElement.serialize(System.out);
+    }
+
+    public void testReproStringTypeElementParse() throws Exception {
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMElement element = factory.createOMElement(new QName(
+                "http://apache.org/axis2/schema/extension", "ReproStringTypeElement"));
+        element.addAttribute("lang", "EN", null);
+        element.setText("Value");
+       
+        ReproStringTypeElement reproStringTypeElement = ReproStringTypeElement.Factory.parse(element
+                .getXMLStreamReader());
+        assertNotNull(reproStringTypeElement);
+        assertEquals("EN", reproStringTypeElement.getLang().toString());
+        assertEquals("Value", reproStringTypeElement.getReproStringType());
+       
+
+    }
+    
+    
+    
 }

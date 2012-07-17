@@ -132,4 +132,20 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="ReproStringType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1024" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="ReproStringTypeElement">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="tns:ReproStringType">
+                    <xs:attribute name="lang" type="xs:language">
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
 </schema>
