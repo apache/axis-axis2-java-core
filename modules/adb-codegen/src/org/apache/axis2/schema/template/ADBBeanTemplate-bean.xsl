@@ -1815,7 +1815,7 @@
                         return enumeration;
                     </xsl:if>
                     <xsl:if test="not($ignoreunexpected)">
-                        if ((enumeration == null) &amp;&amp; !((value == null) || (value.equals("")))) {
+                        if (enumeration == null  <xsl:if test="$propertyType='string'">&amp;&amp; !((value == null) || (value.equals("")))</xsl:if>) {
                             throw new java.lang.IllegalArgumentException();
                         }
                         return enumeration;
