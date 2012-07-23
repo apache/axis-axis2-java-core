@@ -73,7 +73,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
         XmlSchemaSequence sequence;
 
         for (Method jMethod : declaredMethods) {
-            if (jMethod.isBridge()) {
+            if (jMethod.isBridge() || jMethod.getDeclaringClass().getName().equals(Object.class.getName())) {
                 continue;
             }
             String methodName = jMethod.getName();
