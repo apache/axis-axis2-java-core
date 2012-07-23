@@ -177,7 +177,7 @@ public abstract class AbstractAarMojo
                     // TODO: utilise appropriate methods from project builder
                     ScopeArtifactFilter filter = new ScopeArtifactFilter(
                             Artifact.SCOPE_RUNTIME);
-                    if (!artifact.isOptional() && filter.include(artifact)) {
+                    if (filter.include(artifact)) {
                         String type = artifact.getType();
                         if ("jar".equals(type)) {
                             copyFileIfModified(artifact.getFile(), new File(
