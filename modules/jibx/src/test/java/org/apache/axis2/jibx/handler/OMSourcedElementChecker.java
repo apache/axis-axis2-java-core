@@ -55,7 +55,7 @@ public class OMSourcedElementChecker extends AbstractHandler {
         OMCloneOptions options = new OMCloneOptions();
         options.setCopyOMDataSources(true);
         boolean oldExpanded = element.isExpanded();
-        OMSourcedElement clone = (OMSourcedElement)element.cloneOMElement(options);
+        OMSourcedElement clone = (OMSourcedElement)element.clone(options);
         if (element.isExpanded() != oldExpanded) {
             throw new AxisFault("Ooops! Accidentally expanded the original OMSourcedElement; this is unexpected...");
         }
