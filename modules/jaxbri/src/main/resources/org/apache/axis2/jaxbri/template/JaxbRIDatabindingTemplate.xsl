@@ -66,7 +66,7 @@
                         org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
 
                         java.lang.Object object = param; <!-- This is necessary to convert primitive types to their corresponding wrapper types (so that we can call getClass()) -->
-                        org.apache.axis2.jaxbri.JaxbRIDataSource source = new org.apache.axis2.jaxbri.JaxbRIDataSource( wsContext,
+                        org.apache.axiom.om.ds.jaxb.JAXBOMDataSource source = new org.apache.axiom.om.ds.jaxb.JAXBOMDataSource( wsContext,
                                 new javax.xml.bind.JAXBElement(elementQName, object.getClass(), object));
                         org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(elementQName.getNamespaceURI(), null);
                         return factory.createOMElement(source, elementQName.getLocalPart(), namespace);
