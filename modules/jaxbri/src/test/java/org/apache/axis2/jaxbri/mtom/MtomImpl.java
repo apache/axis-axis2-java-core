@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.axiom.attachments.lifecycle.DataHandlerExt;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +47,7 @@ public class MtomImpl implements MtomSkeletonInterface {
 
     public RetrieveDocumentResponse retrieveDocument(RetrieveDocument retrieveDocument) {
         RetrieveDocumentResponse response = new RetrieveDocumentResponse();
-        response.setContent(new DataHandler(documents.get(retrieveDocument.getId()), "application/octet-stream"));
+        response.setContent(new DataHandler(new ByteArrayDataSource(documents.get(retrieveDocument.getId()), "application/octet-stream")));
         return response;
     }
 }
