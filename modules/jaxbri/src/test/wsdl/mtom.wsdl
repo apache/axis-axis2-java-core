@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://www.example.org/mtom/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+                  name="mtom"
+                  targetNamespace="http://www.example.org/mtom/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://www.example.org/mtom/">
+            <xsd:element name="uploadDocument">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="content" type="xsd:base64Binary" xmime:expectedContentTypes="application/octet-stream" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="uploadDocumentResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="id" type="xsd:string" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="retrieveDocument">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="id" type="xsd:string" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="retrieveDocumentResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="content" type="xsd:base64Binary" xmime:expectedContentTypes="application/octet-stream" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="uploadDocumentRequest">
+        <wsdl:part name="parameters" element="tns:uploadDocument" />
+    </wsdl:message>
+    <wsdl:message name="uploadDocumentResponse">
+        <wsdl:part name="parameters" element="tns:uploadDocumentResponse" />
+    </wsdl:message>
+    <wsdl:message name="retrieveDocumentRequest">
+        <wsdl:part name="parameters" element="tns:retrieveDocument" />
+    </wsdl:message>
+    <wsdl:message name="retrieveDocumentResponse">
+        <wsdl:part name="parameters" element="tns:retrieveDocumentResponse" />
+    </wsdl:message>
+    <wsdl:portType name="mtom">
+        <wsdl:operation name="uploadDocument">
+            <wsdl:input message="tns:uploadDocumentRequest" />
+            <wsdl:output message="tns:uploadDocumentResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="retrieveDocument">
+            <wsdl:input message="tns:retrieveDocumentRequest" />
+            <wsdl:output message="tns:retrieveDocumentResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="mtomSOAP" type="tns:mtom">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="uploadDocument">
+            <soap:operation soapAction="http://www.example.org/mtom/uploadDocument" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retrieveDocument">
+            <soap:operation soapAction="http://www.example.org/mtom/retrieveDocument" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="mtom">
+        <wsdl:port binding="tns:mtomSOAP" name="mtomSOAP">
+            <soap:address location="http://www.example.org/" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

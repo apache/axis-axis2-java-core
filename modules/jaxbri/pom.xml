@@ -73,6 +73,11 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-testutils</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -164,6 +169,10 @@
                                     <classpath refid="maven.test.classpath" />
                                     <arg line="-d jaxbri -ss -ssi -sd -g -o ${project.build.directory}/gen/identityservice -u -uri src/test/wsdl/identityService.wsdl -p org.apache.axis2.jaxbri.identityservice -ns2p http://www.example.org/identity=org.apache.axis2.jaxbri.identityservice" />
                                 </java>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-d jaxbri -ss -ssi -sd -g -o ${project.build.directory}/gen/mtom -u -uri src/test/wsdl/mtom.wsdl -p org.apache.axis2.jaxbri.mtom -ns2p http://www.example.org/mtom/=org.apache.axis2.jaxbri.mtom -EbindingFileName " />
+                                </java>
                             </tasks>
                         </configuration>
                     </execution>
@@ -199,6 +208,7 @@
                                 <source>${project.build.directory}/gen/Test01/src</source>
                                 <source>${project.build.directory}/gen/processor/src</source>
                                 <source>${project.build.directory}/gen/identityservice/src</source>
+                                <source>${project.build.directory}/gen/mtom/src</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -260,6 +270,25 @@
                                 <resource>
                                     <directory>${project.build.directory}/gen/identityservice/resources</directory>
                                     <targetPath>services/identityservice.aar/META-INF</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>mtom-repo</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/mtom</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/repo</directory>
+                                </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/gen/mtom/resources</directory>
+                                    <targetPath>services/mtom.aar/META-INF</targetPath>
                                 </resource>
                             </resources>
                         </configuration>

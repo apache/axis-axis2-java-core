@@ -638,6 +638,11 @@
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>axiom-testutils</artifactId>
+                <version>${axiom.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ws.commons.schema</groupId>
                 <artifactId>XmlSchema</artifactId>
                 <version>${xmlschema.version}</version>
