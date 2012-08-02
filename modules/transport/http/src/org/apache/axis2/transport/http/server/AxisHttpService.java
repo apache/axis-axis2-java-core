@@ -286,6 +286,7 @@ public class AxisHttpService {
             // HTTP protocol violation. Transport is unreliable
             throw ex;
         } catch (Throwable e) {
+            LOG.debug("Processing exception", e);
 
             msgContext.setProperty(MessageContext.TRANSPORT_OUT,
                                    response.getOutputStream());
