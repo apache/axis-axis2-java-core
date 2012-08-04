@@ -160,23 +160,48 @@ public interface ClusteringAgent extends ParameterInclude {
     List<Member> getMembers();
 
     /**
+     * Get the number of members alive.
+     *
+     * @return the number of members alive.
+     */
+    int getAliveMemberCount();
+
+    /**
      * Set the load balance event handler which will be notified when load balance events occur.
      * This will be valid only when this node is running in loadBalance mode
      *
-     * @param agent      The load balance event handler
-     * @param applicationDomain The application domain which is handled by the eventHandler
+     * @param agent      The GroupManagementAgent to be added
+     * @param applicationDomain The application domain which is handled by the GroupManagementAgent
      */
     void addGroupManagementAgent(GroupManagementAgent agent, String applicationDomain);
 
     /**
-     * Get the LoadBalanceEventHandler which corresponds to the <code>applicationDomain</code>
-     * This will be valid only when this node is running in loadBalance mode
+     * Add a GroupManagementAgent to an application domain + sub-domain
+     * @param agent  The GroupManagementAgent to be added
+     * @param applicationDomain  The application domain which is handled by the GroupManagementAgent
+     * @param applicationSubDomain The application sub-domain which is handled by the GroupManagementAgent
+     */
+    void addGroupManagementAgent(GroupManagementAgent agent, String applicationDomain,
+                                 String applicationSubDomain);
+
+    /**
+     * Get the GroupManagementAgent which corresponds to the <code>applicationDomain</code>
+     * This will be valid only when this node is running in groupManagement
      *
      * @param applicationDomain The application domain to which the application nodes being
      *                          load balanced belong to
-     * @return LoadBalanceEventHandler which corresponds to the <code>applicationDomain</code>
+     * @return GroupManagementAgent which corresponds to the <code>applicationDomain</code>
      */
     GroupManagementAgent getGroupManagementAgent(String applicationDomain);
+
+    /**
+     * Get the GroupManagementAgent which corresponds to the <code>applicationDomain + sub-domain</code>
+     * @param applicationDomain  The application domain which is handled by the GroupManagementAgent
+     * @param applicationSubDomain The application sub-domain which is handled by the GroupManagementAgent
+     * @return  GroupManagementAgent which corresponds to the <code>applicationDomain + sub-domain</code>
+     */
+    GroupManagementAgent getGroupManagementAgent(String applicationDomain,
+                                                 String applicationSubDomain);
 
     /**
      * Get all the domains that this ClusteringAgent belongs to
@@ -191,6 +216,7 @@ public interface ClusteringAgent extends ParameterInclude {
      * @return true if this member is the coordinator, and false otherwise
      */
     boolean isCoordinator();
+
 
     /**
      * Send a message to all members in this member's primary cluster

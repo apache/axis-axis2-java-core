@@ -170,6 +170,8 @@ public class Member {
 
     public String toString() {
         return "Host:" + hostName + ", Port: " + port +
-               ", HTTP:" + httpPort + ", HTTPS:" + httpsPort +", ACTIVE:" + isActive;
+               ", HTTP:" + httpPort + ", HTTPS:" + httpsPort +
+               ", Domain: " + domain + ", Sub-domain:" + properties.getProperty("subDomain") +
+               ", Active:" + isActive;
     }
 }
