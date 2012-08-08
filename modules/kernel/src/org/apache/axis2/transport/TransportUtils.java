@@ -371,7 +371,10 @@ public class TransportUtils {
         if (messageFormatString != null) {
             messageFormatter = msgContext.getConfigurationContext()
                     .getAxisConfiguration().getMessageFormatter(messageFormatString);
-
+            if (log.isDebugEnabled()) {
+                log.debug("Message format is: " + messageFormatString
+                        + "; message builder returned by AxisConfiguration: " + messageFormatter);
+            }
         }
         if (messageFormatter == null) {
             messageFormatter = (MessageFormatter) msgContext.getProperty(Constants.Configuration.MESSAGE_FORMATTER);
