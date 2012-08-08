@@ -104,9 +104,9 @@
         <messageFormatter contentType="application/json"
                           class="org.apache.axis2.json.JSONMessageFormatter"/>
         <!-- more message formatters -->
-    </messageFormatters>;   
+    </messageFormatters>   
 
-    <messageBuilders>;
+    <messageBuilders>
         <messageBuilder contentType="application/json"
                         class="org.apache.axis2.json.JSONOMBuilder"/>
         <!-- more message builders -->
