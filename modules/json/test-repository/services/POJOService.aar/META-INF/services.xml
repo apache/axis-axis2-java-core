@@ -26,6 +26,8 @@
     </messageReceivers>
     <parameter name="ServiceClass">org.apache.axis2.json.POJOService</parameter>
     <parameter name="xmlToJsonNamespaceMap">
-        <mapping xmlNamespace="http://example.org" jsonNamespace=""/>
+        <mappings>
+            <mapping xmlNamespace="http://example.org" jsonNamespace=""/>
+        </mappings>
     </parameter>
 </service>

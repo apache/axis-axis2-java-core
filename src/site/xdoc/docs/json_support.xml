@@ -186,8 +186,10 @@ HTTP/1.1</code>
 <service name="...">
     ...
     <parameter name="xmlToJsonNamespaceMap">
-        <mapping xmlNamespace="http://example.org/foo" jsonNamespace=""/>
-        <mapping xmlNamespace="http://example.org/bar" jsonNamespace="bar"/>
+        <mappings>
+            <mapping xmlNamespace="http://example.org/foo" jsonNamespace=""/>
+            <mapping xmlNamespace="http://example.org/bar" jsonNamespace="bar"/>
+        </mappings>
     </parameter>
     ...
 </service>
@@ -325,7 +327,9 @@ HTTP/1.1</code>
                         configuration:</p>
 <pre><![CDATA[
 <parameter name="xmlToJsonNamespaceMap">
-    <mapping xmlNamespace="http://quickstart.samples/xsd" jsonNamespace=""/>
+    <mappings>
+        <mapping xmlNamespace="http://quickstart.samples/xsd" jsonNamespace=""/>
+    </mappings>
 </parameter>
 ]]></pre>
                         <p>The <tt>services.xml</tt> file can be found under
