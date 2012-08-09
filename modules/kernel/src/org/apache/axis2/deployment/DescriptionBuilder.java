@@ -530,7 +530,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             // setting parameter Value (the child element of the parameter)
             OMElement paramValue = parameterElement.getFirstElement();
             if (paramValue != null) {
-                parameter.setValue(parameterElement);
+                parameter.setValue(paramValue);
                 parameter.setParameterType(Parameter.OM_PARAMETER);
             } else {
                 String paratextValue = parameterElement.getText();
