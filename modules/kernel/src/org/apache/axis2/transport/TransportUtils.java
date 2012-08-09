@@ -373,7 +373,7 @@ public class TransportUtils {
                     .getAxisConfiguration().getMessageFormatter(messageFormatString);
             if (log.isDebugEnabled()) {
                 log.debug("Message format is: " + messageFormatString
-                        + "; message builder returned by AxisConfiguration: " + messageFormatter);
+                        + "; message formatter returned by AxisConfiguration: " + messageFormatter);
             }
         }
         if (messageFormatter == null) {
