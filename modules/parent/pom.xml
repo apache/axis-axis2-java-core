@@ -1143,6 +1143,30 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireNoRepositories>
+                                    <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
+                                    <banRepositories>true</banRepositories>
+                                    <banPluginRepositories>true</banPluginRepositories>
+                                    <!-- We still need to allow the Apache snapshot repository -->
+                                    <allowSnapshotRepositories>true</allowSnapshotRepositories>
+                                    <allowSnapshotPluginRepositories>true</allowSnapshotPluginRepositories>
+                                </requireNoRepositories>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
