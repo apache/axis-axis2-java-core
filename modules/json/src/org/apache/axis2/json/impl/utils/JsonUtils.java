@@ -31,19 +31,16 @@ import java.lang.reflect.Method;
 
 public class JsonUtils {
 
-    public static Object invokeServiceClass(InputStream inputStream ,
+    public static Object invokeServiceClass(JsonReader jsonReader,
                                             Object service,
                                             Method operation ,
                                             Class[] paramClasses ,
-                                            int paramCount , String charSetEncoding ) throws InvocationTargetException,
+                                            int paramCount ) throws InvocationTargetException,
             IllegalAccessException, IOException  {
 
         Object[] methodParam = new Object[paramCount];
         Gson gson = new Gson();
         String[] argNames = new String[paramCount];
-        JsonReader jsonReader = null;
-
-        jsonReader = new JsonReader(new InputStreamReader(inputStream,charSetEncoding));
 
         if( ! jsonReader.isLenient()){
             jsonReader.setLenient(true);

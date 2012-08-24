@@ -21,21 +21,28 @@ package org.apache.axis2.json.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.impl.utils.JsonConstant;
 import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.XmlSchema;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class JsonFormatter implements MessageFormatter {
@@ -46,28 +53,76 @@ public class JsonFormatter implements MessageFormatter {
     }
 
     public void writeTo(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat, OutputStream outputStream, boolean b) throws AxisFault {
-        JsonWriter writer = null;
+        String charSetEncoding = (String) outMsgCtxt.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+        JsonWriter jsonWriter = null;
         String msg;
 
         try {
-            String charSetEncoding = (String) outMsgCtxt.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-            writer = new JsonWriter(new OutputStreamWriter(outputStream, charSetEncoding ));
-            Gson gson = new Gson();
+            jsonWriter = new JsonWriter(new OutputStreamWriter(outputStream, charSetEncoding));
             Object retObj = outMsgCtxt.getProperty(JsonConstant.RETURN_OBJECT);
-            writer.beginObject();
-            writer.name(JsonConstant.RESPONSE);
-            Type returnType = (Type) outMsgCtxt.getProperty(JsonConstant.RETURN_TYPE);
 
-            gson.toJson(retObj, returnType, writer);
-            writer.endObject();
-            writer.flush();
+            if (outMsgCtxt.isProcessingFault()) {
+                OMElement element = outMsgCtxt.getEnvelope().getBody().getFirstElement();
+                try {
+                    jsonWriter.beginObject();
+                    jsonWriter.name(element.getLocalName());
+                    jsonWriter.beginObject();
+                    Iterator childrenIterator = element.getChildElements();
+                    while (childrenIterator.hasNext()) {
+                        Object next = childrenIterator.next();
+                        OMElement omElement = (OMElement) next;
+                        jsonWriter.name(omElement.getLocalName());
+                        jsonWriter.value(omElement.getText());
+                    }
+                    jsonWriter.endObject();
+                    jsonWriter.endObject();
+                    jsonWriter.flush();
+                    jsonWriter.close();
+                } catch (IOException e) {
+                    throw new AxisFault("Error while processing fault code in JsonWriter");
+                }
+
+            } else if (retObj == null) {
+                OMElement element = outMsgCtxt.getEnvelope().getBody().getFirstElement();
+                QName elementQname = outMsgCtxt.getAxisOperation().getMessage
+                        (WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getElementQName();
+
+                ArrayList<XmlSchema> schemas = outMsgCtxt.getAxisService().getSchema();
+                GsonXMLStreamWriter xmlsw = new GsonXMLStreamWriter(jsonWriter,
+                                                                    elementQname,
+                                                                    schemas,
+                                                                    outMsgCtxt.getConfigurationContext());
+                try {
+                    xmlsw.writeStartDocument();
+                    if (b) {
+                        element.serialize(xmlsw);
+                    } else {
+                        element.serializeAndConsume(xmlsw);
+                    }
+                    xmlsw.writeEndDocument();
+                } catch (XMLStreamException e) {
+                    throw new AxisFault("Error while writing to the output stream using JsonWriter");
+                }
+
+            } else {
+                try {
+                    Gson gson = new Gson();
+                    jsonWriter.beginObject();
+                    jsonWriter.name(JsonConstant.RESPONSE);
+                    Type returnType = (Type) outMsgCtxt.getProperty(JsonConstant.RETURN_TYPE);
+                    gson.toJson(retObj, returnType, jsonWriter);
+                    jsonWriter.endObject();
+                    jsonWriter.flush();
+
+                } catch (IOException e) {
+                    msg = "Exception occur while writting to JsonWriter at the JsonFormatter ";
+                    log.error(msg, e);
+                    throw AxisFault.makeFault(e);
+                }
+            }
         } catch (UnsupportedEncodingException e) {
             msg = "Exception occur when try to encode output stream usig  " +
                     Constants.Configuration.CHARACTER_SET_ENCODING + " charset";
-            log.error(msg , e);
-            throw AxisFault.makeFault(e);
-        } catch (IOException e) {
-            msg = "Exception occur while writting to JsonWriter at the JsonFormatter ";
             log.error(msg, e);
             throw AxisFault.makeFault(e);
         }
@@ -75,8 +130,7 @@ public class JsonFormatter implements MessageFormatter {
 
     public String getContentType(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat, String s) {
         String contentType = (String)outMsgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
-        outMsgCtxt.setProperty(Constants.Configuration.CONTENT_TYPE , "application/json-impl");
-        return "application/json-impl";
+        return contentType;
     }
 
     public URL getTargetAddress(MessageContext messageContext, OMOutputFormat omOutputFormat, URL url) throws AxisFault {

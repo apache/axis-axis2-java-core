@@ -19,10 +19,12 @@
 
 package org.apache.axis2.json.impl.rpc;
 
+import com.google.gson.stream.JsonReader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.json.impl.GsonXMLStreamReader;
 import org.apache.axis2.json.impl.utils.JsonConstant;
 import org.apache.axis2.json.impl.utils.JsonUtils;
 import org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver;
@@ -39,7 +41,59 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
     private static Log log = LogFactory.getLog(JsonInOnlyRPCMessageReceiver.class);
     @Override
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
-        InputStream inputStream = (InputStream)inMessage.getProperty(JsonConstant.INPUT_STREAM);
+
+        Object tempObj = inMessage.getProperty(JsonConstant.IS_JSON_STREAM);
+        boolean isJsonStream;
+
+        if (tempObj != null) {
+            isJsonStream = Boolean.valueOf(tempObj.toString());
+        } else {
+            // if IS_JSON_STREAM property  is not set then it is not a JSON request
+            isJsonStream = false;
+        }
+
+        if (isJsonStream) {
+            Object o = inMessage.getProperty(JsonConstant.GSON_XML_STREAM_READER);
+            if (o != null) {
+                GsonXMLStreamReader gsonXMLStreamReader = (GsonXMLStreamReader)o;
+                JsonReader jsonReader = gsonXMLStreamReader.getJsonReader();
+                if (jsonReader == null) {
+                    throw new AxisFault("JsonReader should not be null");
+                }
+                Method method = null;
+                String msg;
+                Object serviceObj = getTheImplementationObject(inMessage);
+                Class implClass = serviceObj.getClass();
+                Method[] allMethods = implClass.getDeclaredMethods();
+                AxisOperation op = inMessage.getOperationContext().getAxisOperation();
+                String operation = op.getName().getLocalPart();
+                method = JsonUtils.getOpMethod(operation, allMethods);
+                Class[] paramClasses = method.getParameterTypes();
+                try {
+                    int paramCount = paramClasses.length;
+                    JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount);
+                } catch (IllegalAccessException e) {
+                    msg = "Does not have access to " +
+                            "the definition of the specified class, field, method or constructor";
+                    log.error(msg, e);
+                    throw AxisFault.makeFault(e);
+
+                } catch (InvocationTargetException e) {
+                    msg = "Exception occurred while trying to invoke service method " +
+                            (method != null ? method.getName() : "null");
+                    log.error(msg, e);
+                    throw AxisFault.makeFault(e);
+                } catch (IOException e) {
+                    msg = "Exception occur while encording or " +
+                            "access to the input string at the JsonRpcMessageReceiver";
+                    log.error(msg, e);
+                    throw AxisFault.makeFault(e);
+                }
+            } else {
+                throw new AxisFault("GsonXMLStreamReader should have put as a property of messageContext " +
+                        "to evaluate JSON message");
+            }
+/*        InputStream inputStream = (InputStream)inMessage.getProperty(JsonConstant.INPUT_STREAM);
         if (inputStream != null) {
             Method method = null;
             String msg;
@@ -74,8 +128,8 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
                         "access to the input string at the JsonRpcMessageReceiver";
                 log.error(msg, e);
                 throw AxisFault.makeFault(e);
-            }
-        } else{
+            }*/
+    } else{
             super.invokeBusinessLogic(inMessage);   // call RPCMessageReceiver if inputstream is null
         }
     }

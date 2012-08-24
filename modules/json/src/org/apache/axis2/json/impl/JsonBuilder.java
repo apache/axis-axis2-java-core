@@ -19,26 +19,41 @@
 
 package org.apache.axis2.json.impl;
 
+import com.google.gson.stream.JsonReader;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.impl.utils.JsonConstant;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 public class JsonBuilder implements Builder {
     public OMElement processDocument(InputStream inputStream, String s, MessageContext messageContext) throws AxisFault {
-        messageContext.setProperty(JsonConstant.INPUT_STREAM ,inputStream);
         messageContext.setProperty(JsonConstant.IS_JSON_STREAM , true);
-        // dummy envelop
-        SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
-
-        return soapEnvelope;
+        JsonReader jsonReader = null;
+        String charSetEncoding=null;
+           try {
+               charSetEncoding = (String) messageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+               jsonReader = new JsonReader(new InputStreamReader(inputStream , charSetEncoding));
+               GsonXMLStreamReader gsonXMLStreamReader = new GsonXMLStreamReader(jsonReader);
+               messageContext.setProperty(JsonConstant.GSON_XML_STREAM_READER , gsonXMLStreamReader);
+               // dummy envelop
+               SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
+               SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
+               return soapEnvelope;
+           } catch (UnsupportedEncodingException e) {
+               throw new AxisFault(charSetEncoding + " encoding is may not supported by json inputStream ", e);
+           } catch (IOException e) {
+               throw new AxisFault("IOException while processing JsonReader ", e);
+           }
     }
 
 }
