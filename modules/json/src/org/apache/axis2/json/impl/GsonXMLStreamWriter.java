@@ -300,7 +300,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      */
 
     public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
-        throw new UnsupportedOperationException("Method is not implemented");
+        writeStartElement(localName);
     }
 
     /**
@@ -532,7 +532,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      */
 
     public void writeDefaultNamespace(String namespaceURI) throws XMLStreamException {
-        throw new UnsupportedOperationException("Method is not implemented");
+        // do nothing
     }
 
     /**
@@ -752,7 +752,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      */
 
     public void setDefaultNamespace(String uri) throws XMLStreamException {
-        throw new UnsupportedOperationException("Method is not implemented");
+        //do nothing. 
     }
 
     /**
@@ -783,7 +783,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      */
 
     public NamespaceContext getNamespaceContext() {
-        return null;
+        return new GsonNamespaceConext();
     }
 
     /**

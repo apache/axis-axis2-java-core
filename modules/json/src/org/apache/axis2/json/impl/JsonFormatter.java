@@ -101,7 +101,7 @@ public class JsonFormatter implements MessageFormatter {
                     }
                     xmlsw.writeEndDocument();
                 } catch (XMLStreamException e) {
-                    throw new AxisFault("Error while writing to the output stream using JsonWriter");
+                    throw new AxisFault("Error while writing to the output stream using JsonWriter", e);
                 }
 
             } else {
