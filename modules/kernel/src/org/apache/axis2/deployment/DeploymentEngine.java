@@ -940,17 +940,17 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                         // init ServiceBuilderExtensions
                         ServiceBuilderExtension builderExtension = sbeItr.next();
                         builderExtension.init(configContext);
-                        ((AbstractDeployer) deployer).addServiceBuilderExtensions(builderExtension);
-                        /*
-                         * URL based deployment does not fully based on standard
-                         * deployment architecture hence it's require to set
-                         * serviceDeployer variable. serviceDeployer variable
-                         * set only if the ServiceDeployer has been registered
-                         * on axis2.xml file.
-                         */
-                        if (deployer instanceof ServiceDeployer) {
-                            serviceDeployer = (ServiceDeployer) deployer;
-                        }
+                        ((AbstractDeployer) deployer).addServiceBuilderExtensions(builderExtension);                        
+                    }
+                    /*
+                     * URL based deployment does not fully based on standard
+                     * deployment architecture hence it's require to set
+                     * serviceDeployer variable. serviceDeployer variable
+                     * set only if the ServiceDeployer has been registered
+                     * on axis2.xml file.
+                     */
+                    if (deployer instanceof ServiceDeployer) {
+                        serviceDeployer = (ServiceDeployer) deployer;
                     }
                 }
             }
