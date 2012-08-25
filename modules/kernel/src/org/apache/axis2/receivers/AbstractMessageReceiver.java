@@ -27,12 +27,11 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.classloader.MultiParentClassLoader;
+import org.apache.axis2.classloader.ThreadContextDescriptor;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.state.Replicator;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisEngine;
@@ -46,8 +45,6 @@ import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.net.URL;
-import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
@@ -58,12 +55,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SAVED_TCCL = "_SAVED_TCCL_";
     public static final String SAVED_MC = "_SAVED_MC_";
     public static final String DO_ASYNC = "messageReceiver.invokeOnSeparateThread";
-
-    // Place to store previous values
-    public static class ThreadContextDescriptor {
-        public ClassLoader oldClassLoader;
-        public MessageContext oldMessageContext;
-    }
+    
 
     protected void replicateState(MessageContext messageContext) throws ClusteringFault {
         Replicator.replicate(messageContext);
@@ -109,7 +101,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
         }
 
-        ThreadContextDescriptor tc = setThreadContext(messageCtx);
+        ThreadContextDescriptor tc = ThreadContextDescriptor.setThreadContext(messageCtx);
         try {
             invokeBusinessLogic(messageCtx);
         } catch (AxisFault fault) {
@@ -154,83 +146,19 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 worker);
     }
 
-    /**
-     * Several pieces of information need to be available to the service
-     * implementation class.  For one, the ThreadContextClassLoader needs
-     * to be correct, and for another we need to give the service code
-     * access to the MessageContext (getCurrentContext()).  So we toss these
-     * things in TLS.
-     *
-     * @param msgContext the current MessageContext
-     * @return a ThreadContextDescriptor containing the old values
-     */
-    protected ThreadContextDescriptor setThreadContext(final MessageContext msgContext) {
-        ThreadContextDescriptor tc = new ThreadContextDescriptor();
-        tc.oldMessageContext = (MessageContext) MessageContext.currentMessageContext.get();
-        final ClassLoader contextClassLoader = getContextClassLoader_doPriv();
-        tc.oldClassLoader = contextClassLoader;
+    
 
-        AxisService service = msgContext.getAxisService();
-        String serviceTCCL = (String) service.getParameterValue(Constants.SERVICE_TCCL);
-        if (serviceTCCL != null) {
-            serviceTCCL = serviceTCCL.trim().toLowerCase();
-
-            if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
-                final ClassLoader loader = (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
-                    public Object run() {
-                        return new MultiParentClassLoader(new URL[]{},
-                                new ClassLoader[]{
-                                        msgContext.getAxisService().getClassLoader(),
-                                        contextClassLoader
-                                });
-                    }
-                });
-                org.apache.axis2.java.security.AccessController.doPrivileged(
-                        new PrivilegedAction() {
-                            public Object run() {
-                                Thread.currentThread().setContextClassLoader(
-                                        loader);
-                                return null;
-                            }
-                        }
-                );
-            } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
-                org.apache.axis2.java.security.AccessController.doPrivileged(
-                        new PrivilegedAction() {
-                            public Object run() {
-                                Thread.currentThread().setContextClassLoader(
-                                        msgContext.getAxisService().getClassLoader()
-                                );
-                                return null;
-                            }
-                        }
-                );
-            }
-        }
-        MessageContext.setCurrentMessageContext(msgContext);
-        return tc;
-    }
-
-    private ClassLoader getContextClassLoader_doPriv() {
-        return (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(
-                new PrivilegedAction() {
-                    public Object run() {
-                        return Thread.currentThread().getContextClassLoader();
-                    }
-                }
-        );
-    }
-
+   
     protected void restoreThreadContext(final ThreadContextDescriptor tc) {
         org.apache.axis2.java.security.AccessController.doPrivileged(
                 new PrivilegedAction() {
                     public Object run() {
-                        Thread.currentThread().setContextClassLoader(tc.oldClassLoader);
+                        Thread.currentThread().setContextClassLoader(tc.getOldClassLoader());
                         return null;
                     }
                 }
         );
-        MessageContext.currentMessageContext.set(tc.oldMessageContext);
+        MessageContext.currentMessageContext.set(tc.getOldMessageContext());
     }
 
     /**
@@ -296,7 +224,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
         public void run() {
             try {
-                ThreadContextDescriptor tc = setThreadContext(messageCtx);
+                ThreadContextDescriptor tc = ThreadContextDescriptor.setThreadContext(messageCtx);
                 try {
                     invokeBusinessLogic(messageCtx);
                 } finally {

@@ -22,6 +22,8 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.classloader.ThreadContextDescriptor;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
@@ -34,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.PrivilegedAction;
 import java.util.Iterator;
 
 /**
@@ -64,7 +67,7 @@ public class DependencyManager {
         // ...however, we also still support the old way for now.  Note that introspecting for
         // a method like this is something like 10 times slower than the above instanceof check.
 
-        Class classToLoad = obj.getClass();
+        Class<?> classToLoad = obj.getClass();
         // We can not call classToLoad.getDeclaredMethed() , since there
         //  can be insatnce where mutiple services extends using one class
         // just for init and other reflection methods
@@ -109,12 +112,14 @@ public class DependencyManager {
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
             if (implInfoParam != null) {
                 try {
-                    Class implClass = Loader.loadClass(
+                    ThreadContextDescriptor tc = ThreadContextDescriptor.setThreadContext(axisService);
+                    Class<?> implClass = Loader.loadClass(
                             classLoader,
                             ((String) implInfoParam.getValue()).trim());
                     Object serviceImpl = implClass.newInstance();
                     serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceImpl);
                     initServiceObject(serviceImpl, serviceContext);
+                    restoreThreadContext(tc);
                 } catch (Exception e) {
                     throw AxisFault.makeFault(e);
                 }
@@ -137,7 +142,7 @@ public class DependencyManager {
 
             // For now, we also use "raw" introspection to try and find the destroy method.
 
-            Class classToLoad = obj.getClass();
+            Class<?> classToLoad = obj.getClass();
             Method method =
                     null;
             try {
@@ -159,5 +164,15 @@ public class DependencyManager {
             }
 
         }
+    }
+
+    protected static void restoreThreadContext(final ThreadContextDescriptor tc) {
+        org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                Thread.currentThread().setContextClassLoader(tc.getOldClassLoader());
+                return null;
+            }
+        });
+        MessageContext.currentMessageContext.set(tc.getOldMessageContext());
     }
 }
