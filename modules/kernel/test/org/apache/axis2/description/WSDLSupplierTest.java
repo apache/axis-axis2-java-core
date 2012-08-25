@@ -28,7 +28,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.Constants;
 import org.apache.axis2.dataretrieval.WSDL11SupplierTemplate;
-import org.apache.axis2.engine.AxisConfiguration;
 
 import junit.framework.TestCase;
 
@@ -136,6 +135,46 @@ public class WSDLSupplierTest extends TestCase {
         assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
         assertTrue(wsdl.contains(" </ap:detail>"));
         assertTrue(wsdl.contains("</wsdl:documentation>"));
+        assertFalse(wsdl.contains("<documentation/>"));
+    }
+
+    public void testWSDL20SupplierTemplate() throws Exception {
+        TestWSDL20SupplierTemplate value = new TestWSDL20SupplierTemplate();
+        axisService.addParameter(Constants.WSDL_SUPPLIER_PARAM, value);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        axisService.printWSDL2(outputStream);
+        String wsdl = outputStream.toString();
+        assertTrue(wsdl.contains("<wsdl2:description"));
+        assertTrue(wsdl.contains("xmlns:wsdl2=\"http://www.w3.org/ns/wsdl\""));
+        assertTrue(wsdl.contains("xmlns:wsaw=\"http://www.w3.org/2006/05/addressing/wsd"));
+        assertTrue(wsdl.contains("xmlns:tns=\"http://ws.apache.org/axis2\""));
+        assertTrue(wsdl.contains("xmlns:wsoap=\"http://www.w3.org/ns/wsdl/soap\" "));
+        assertTrue(wsdl.contains("<wsdl2:documentation>"));
+        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
+        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
+        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
+        assertTrue(wsdl.contains(" </ap:detail>"));
+        assertTrue(wsdl.contains("</wsdl2:documentation>"));
+        assertFalse(wsdl.contains("<documentation/>"));
+    }
+
+    public void testWSDL11SupplierTemplateWSDL20SupplierClass() throws Exception {
+        String value = TestWSDL20SupplierTemplate.class.getName();
+        axisService.addParameter(Constants.WSDL_20_SUPPLIER_CLASS_PARAM, value);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        axisService.printWSDL2(outputStream);
+        String wsdl = outputStream.toString();
+        assertTrue(wsdl.contains("<wsdl2:description"));
+        assertTrue(wsdl.contains("xmlns:wsdl2=\"http://www.w3.org/ns/wsdl\""));
+        assertTrue(wsdl.contains("xmlns:wsaw=\"http://www.w3.org/2006/05/addressing/wsd"));
+        assertTrue(wsdl.contains("xmlns:tns=\"http://ws.apache.org/axis2\""));
+        assertTrue(wsdl.contains("xmlns:wsoap=\"http://www.w3.org/ns/wsdl/soap\" "));
+        assertTrue(wsdl.contains("<wsdl2:documentation>"));
+        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
+        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
+        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
+        assertTrue(wsdl.contains(" </ap:detail>"));
+        assertTrue(wsdl.contains("</wsdl2:documentation>"));
         assertFalse(wsdl.contains("<documentation/>"));
     }
 

@@ -71,15 +71,28 @@ import java.util.Set;
 
 public class AxisService2WSDL20 implements WSDL2Constants {
 
-    private AxisService axisService;
-    private String serviceName;
+    protected AxisService axisService;
+    protected String serviceName;
     private String[] eprs = null;
     private OMNamespace wsaw;
+    private OMNamespace wsdl;
+    private OMNamespace wsoap;
+    private OMNamespace whttp;
+    private OMNamespace wsdlx;
+    private OMNamespace wrpc;
+    private OMNamespace tns; 
+    private String interfaceName;
 
     private HashMap policiesInDescription = new HashMap();
     private ExternalPolicySerializer filter = null;
     
     private boolean checkIfEndPointActive = true;
+    
+    public AxisService2WSDL20() { }
+    
+    protected void init() throws AxisFault {
+        
+    }
 
     public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
@@ -110,296 +123,33 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      */
     public OMElement generateOM() throws Exception {
 
-        Map nameSpacesMap = axisService.getNamespaceMap();
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
-        OMNamespace wsdl;
-        
-        //
-        filter = new ExternalPolicySerializer();
-		AxisConfiguration axisConfiguration = axisService
-				.getAxisConfiguration();
-		if (axisConfiguration != null) {
-			filter.setAssertionsToFilter(axisConfiguration
-					.getLocalPolicyAssertions());
-		}
-		//
-
-        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
-            wsdl = omFactory
-                    .createOMNamespace(WSDL2Constants.WSDL_NAMESPACE,
-                                       WSDLSerializationUtil.getPrefix(
-                                               WSDL2Constants.WSDL_NAMESPACE, nameSpacesMap));
-        } else {
-            wsdl = omFactory
-                    .createOMNamespace(WSDL2Constants.WSDL_NAMESPACE,
-                                       WSDL2Constants.DEFAULT_WSDL_NAMESPACE_PREFIX);
-        }
-
-        OMElement descriptionElement = omFactory.createOMElement(WSDL2Constants.DESCRIPTION, wsdl);
-
-        // Declare all the defined namespaces in the document
-        WSDLSerializationUtil.populateNamespaces(descriptionElement, nameSpacesMap);
-
-        descriptionElement.declareNamespace(axisService.getTargetNamespace(),
-                                            axisService.getTargetNamespacePrefix());
-        wsaw = descriptionElement.declareNamespace(AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
-        // Need to add the targetnamespace as an attribute according to the wsdl 2.0 spec
-        OMAttribute targetNamespace = omFactory
-                .createOMAttribute(WSDL2Constants.TARGET_NAMESPACE, null,
-                                   axisService.getTargetNamespace());
-        descriptionElement.addAttribute(targetNamespace);
-
-        // Check whether the required namespaces are already in namespaceMap, if they are not
-        // present declare them.
-        OMNamespace wsoap;
-        OMNamespace whttp;
-        OMNamespace wsdlx;
-        OMNamespace wrpc;
-
-        OMNamespace tns = omFactory
-                .createOMNamespace(axisService.getTargetNamespace(),
-                                   axisService.getTargetNamespacePrefix());
-        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
-            wsoap = omFactory
-                    .createOMNamespace(WSDL2Constants.URI_WSDL2_SOAP,
-                                       WSDLSerializationUtil.getPrefix(
-                                               WSDL2Constants.URI_WSDL2_SOAP, nameSpacesMap));
-        } else {
-            wsoap = descriptionElement
-                    .declareNamespace(WSDL2Constants.URI_WSDL2_SOAP, WSDL2Constants.SOAP_PREFIX);
-        }
-        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_HTTP)) {
-            whttp = omFactory
-                    .createOMNamespace(WSDL2Constants.URI_WSDL2_HTTP,
-                                       WSDLSerializationUtil.getPrefix(
-                                               WSDL2Constants.URI_WSDL2_HTTP, nameSpacesMap));
-        } else {
-            whttp = descriptionElement
-                    .declareNamespace(WSDL2Constants.URI_WSDL2_HTTP, WSDL2Constants.HTTP_PREFIX);
-        }
-        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_EXTENSIONS)) {
-            wsdlx = omFactory
-                    .createOMNamespace(WSDL2Constants.URI_WSDL2_EXTENSIONS,
-                                       WSDLSerializationUtil.getPrefix(
-                                               WSDL2Constants.URI_WSDL2_EXTENSIONS, nameSpacesMap));
-        } else {
-            wsdlx = descriptionElement.declareNamespace(WSDL2Constants.URI_WSDL2_EXTENSIONS,
-                                                        WSDL2Constants.WSDL_EXTENTION_PREFIX);
-        }
-        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_RPC)) {
-            wrpc = omFactory
-                    .createOMNamespace(WSDL2Constants.URI_WSDL2_RPC,
-                                       WSDLSerializationUtil.getPrefix(
-                                               WSDL2Constants.URI_WSDL2_RPC, nameSpacesMap));
-        } else {
-            wrpc = descriptionElement.declareNamespace(WSDL2Constants.URI_WSDL2_RPC,
-                                                        WSDL2Constants.WSDL_RPC_PREFIX);
-        }
+        OMElement descriptionElement = generateDescription(omFactory);
 
         // Add the documentation element
-        WSDLSerializationUtil
-                .addWSDLDocumentationElement(axisService, descriptionElement, omFactory, wsdl);
-
-        // Add types element
-        OMElement typesElement = omFactory.createOMElement(WSDL2Constants.TYPES_LOCAL_NALE, wsdl);
-        axisService.populateSchemaMappings();
-        ArrayList schemas = axisService.getSchema();
-        for (int i = 0; i < schemas.size(); i++) {
-            StringWriter writer = new StringWriter();
-            XmlSchema schema = axisService.getSchema(i);
-
-            if (!org.apache.axis2.namespace.Constants.URI_2001_SCHEMA_XSD
-                    .equals(schema.getTargetNamespace())) {
-                schema.write(writer);
-                String schemaString = writer.toString();
-
-                if (!"".equals(schemaString)) {
-                    try {
-                        typesElement.addChild(
-                                XMLUtils.toOM(new ByteArrayInputStream(schemaString.getBytes())));
-                    } catch (XMLStreamException e) {
-                        throw AxisFault.makeFault(e);
-                    }
-                }
-            }
-        }
-        descriptionElement.addChild(typesElement);
-
-        Parameter parameter = axisService.getParameter(WSDL2Constants.INTERFACE_LOCAL_NAME);
-        String interfaceName;
-        if (parameter != null) {
-            interfaceName = (String) parameter.getValue();
-        } else {
-            interfaceName = WSDL2Constants.DEFAULT_INTERFACE_NAME;
+        OMElement documentation = generateDocumentation(omFactory);
+        if (documentation != null) {
+            descriptionElement.addChild(documentation);
         }
 
-        // Add the interface element
-        descriptionElement.addChild(getInterfaceElement(wsdl, tns, wsdlx, wrpc, omFactory,
-                                                        interfaceName));
-
-        // axis2.xml indicated no HTTP binding?
-        boolean disableREST = false;
-        Parameter disableRESTParameter =
-                axisService.getParameter(Constants.Configuration.DISABLE_REST);
-        if (disableRESTParameter != null &&
-                JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
-            disableREST = true;
+        OMElement types = generateTypes(omFactory);
+        if (types != null) {
+            descriptionElement.addChild(types);
         }
 
-        boolean disableSOAP11 = false;
-        Parameter disableSOAP11Parameter = axisService
-                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP11);
-        if (disableSOAP11Parameter != null
-                && JavaUtils.isTrueExplicitly(disableSOAP11Parameter.getValue())) {
-            disableSOAP11 = true;
+        OMElement interfaces = generateInterface(omFactory);
+        if (interfaces != null) {
+            descriptionElement.addChild(interfaces);
         }
 
-        // axis2.xml indicated no SOAP 1.2 binding?
-        boolean disableSOAP12 = false;
-        Parameter disableSOAP12Parameter =
-        axisService.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
-        if (disableSOAP12Parameter != null &&
-                JavaUtils.isTrueExplicitly(disableSOAP12Parameter.getValue())) {
-            disableSOAP12 = true;
-        }        
-        
-        // Check whether the axisService has any endpoints. If they exists serialize them else
-        // generate default endpoint elements.
-        Set bindings = new HashSet();
-        Map endpointMap = axisService.getEndpoints();
-        Object value = axisService.getParameterValue("isCodegen");
-        boolean isCodegen = false;
-        if (JavaUtils.isTrueExplicitly(value)) {
-           isCodegen = true;
-        }
-        if (endpointMap != null && endpointMap.size() > 0) {
+        generateService(omFactory, descriptionElement, isDisableREST(), isDisableSOAP12(),
+                isDisableSOAP11());
 
-            OMElement serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
-            Iterator iterator = endpointMap.values().iterator();
-            while (iterator.hasNext()) {
-                // With the new binding hierachy in place we need to do some extra checking here.
-                // If a service has both http and https listners up we should show two separate eprs
-                // If the service was deployed with a WSDL and it had two endpoints for http and
-                // https then we have two endpoints populated so we should serialize them instead
-                // of updating the endpoints.
-                AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
-                /*
-			    * Some transports might not be active at runtime.
-			    */
-                if (!isCodegen && checkIfEndPointActive && !axisEndpoint.isActive()) {
-                    continue;
-                }
-                AxisBinding axisBinding = axisEndpoint.getBinding();
-                String type = axisBinding.getType();
-                
-                // If HTTP binding is disabled, do not add.
-                if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
-                    if (disableREST) {
-                        continue;
-                    }
-                }
-                
-                // If SOAP 1.2 binding is disabled, do not add.
-                String propertySOAPVersion =
-                        (String) axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
-                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
-                    if (disableSOAP12) {
-                        continue;
-                    }
-                }
-
-                if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
-                    if (disableSOAP11) {
-                        continue;
-                    }
-                }
-
-
-
-                bindings.add(axisBinding);
-                OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp);
-                boolean endpointAlreadyAdded = false;
-                Iterator endpointsAdded = serviceElement.getChildren();
-                while (endpointsAdded.hasNext()) {
-                    OMElement endpoint = (OMElement) endpointsAdded.next();
-                    // Checking whether a endpoint with the same binding and address exists.
-                    if (endpoint.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME))
-                            .getAttributeValue().equals(endpointElement.getAttribute(
-                            new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue())
-                            && endpoint
-                            .getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS))
-                            .getAttributeValue().equals(endpointElement.getAttribute(
-                            new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue())) {
-                        endpointAlreadyAdded = true;
-                    }
-
-                }
-                if (!endpointAlreadyAdded) {
-//                	addPolicyAsExtensibleElement(axisEndpoint, endpointElement);
-                	Parameter modifyAddressParam = axisService
-							.getParameter("modifyUserWSDLPortAddress");
-					if (modifyAddressParam != null) {
-						if (Boolean.parseBoolean((String) modifyAddressParam
-								.getValue())) {
-							String endpointURL = axisEndpoint
-									.calculateEndpointURL();
-							endpointElement
-									.getAttribute(
-											new QName(
-													WSDL2Constants.ATTRIBUTE_ADDRESS))
-									.setAttributeValue(endpointURL);
-						}
-					}
-                	serviceElement.addChild(endpointElement);
-                }
-            }
-            Iterator iter = bindings.iterator();
-            while (iter.hasNext()) {
-                AxisBinding binding = (AxisBinding) iter.next();
-                OMElement bindingElement = binding.toWSDL20(wsdl, tns, wsoap, whttp,
-                        interfaceName,
-                        axisService.getNamespaceMap(),
-                        AddressingHelper.getAddressingRequirementParemeterValue(axisService),
-                        serviceName,wsaw);
-                descriptionElement
-                        .addChild(bindingElement);
-            }
-
-            descriptionElement.addChild(serviceElement);
-        } else {
-
-            // There are no andpoints defined hence generate default bindings and endpoints
-            descriptionElement.addChild(
-                    WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
-                                                                tns, serviceName));
-            if (!disableSOAP12) {
-                descriptionElement.addChild(
-                        WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
-                                tns, serviceName));
-            }
-            if (!disableSOAP11) {
-                descriptionElement.addChild(
-                        WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
-                                tns, serviceName));
-            }
-            if (!disableREST) {
-                descriptionElement.addChild(
-                        WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl,
-                                                                  whttp,
-                                                                  tns, serviceName));
-            }
-            descriptionElement
-                    .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
-                                                                           axisService, disableREST,
-                                                                           disableSOAP12,disableSOAP11, eprs,
-                                                                          serviceName));
-        }
-        
-        ArrayList policies = new ArrayList(policiesInDescription.values());
-        addPoliciesToDescriptionElement(policies, descriptionElement);
+        addPoliciesToDescriptionElement(getPoliciesInDefinitions(),
+                descriptionElement);
 
         return descriptionElement;
-    }
+    }  
 
     /**
      * Generates the interface element for the service
@@ -866,7 +616,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
 		}
 	}
 	
-	private void addPoliciesToDescriptionElement(List policies,
+	protected void addPoliciesToDescriptionElement(List policies,
 			OMElement descriptionElement) throws XMLStreamException,
 			FactoryConfigurationError {
 
@@ -882,4 +632,464 @@ public class AxisService2WSDL20 implements WSDL2Constants {
 			}
 		}
 	}
+	
+	protected OMElement generateDescription(OMFactory omFactory) {
+
+	        
+            Map nameSpacesMap = axisService.getNamespaceMap();
+            filter = new ExternalPolicySerializer();
+	        AxisConfiguration axisConfiguration = axisService
+	                .getAxisConfiguration();
+	        if (axisConfiguration != null) {
+	            filter.setAssertionsToFilter(axisConfiguration
+	                    .getLocalPolicyAssertions());
+	        }
+	        //
+
+	        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
+	            wsdl = omFactory
+	                    .createOMNamespace(WSDL2Constants.WSDL_NAMESPACE,
+	                                       WSDLSerializationUtil.getPrefix(
+	                                               WSDL2Constants.WSDL_NAMESPACE, nameSpacesMap));
+	        } else {
+	            wsdl = omFactory
+	                    .createOMNamespace(WSDL2Constants.WSDL_NAMESPACE,
+	                                       WSDL2Constants.DEFAULT_WSDL_NAMESPACE_PREFIX);
+	        }
+
+	        OMElement descriptionElement = omFactory.createOMElement(WSDL2Constants.DESCRIPTION, wsdl);
+
+	        // Declare all the defined namespaces in the document
+	        WSDLSerializationUtil.populateNamespaces(descriptionElement, nameSpacesMap);
+
+	        descriptionElement.declareNamespace(axisService.getTargetNamespace(),
+	                                            axisService.getTargetNamespacePrefix());
+	        wsaw = descriptionElement.declareNamespace(AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
+	        // Need to add the targetnamespace as an attribute according to the wsdl 2.0 spec
+	        OMAttribute targetNamespace = omFactory
+	                .createOMAttribute(WSDL2Constants.TARGET_NAMESPACE, null,
+	                                   axisService.getTargetNamespace());
+	        descriptionElement.addAttribute(targetNamespace);
+
+	        // Check whether the required namespaces are already in namespaceMap, if they are not
+	        // present declare them.
+	        
+
+	        tns = omFactory
+	                .createOMNamespace(axisService.getTargetNamespace(),
+	                                   axisService.getTargetNamespacePrefix());
+	        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
+	            wsoap = omFactory
+	                    .createOMNamespace(WSDL2Constants.URI_WSDL2_SOAP,
+	                                       WSDLSerializationUtil.getPrefix(
+	                                               WSDL2Constants.URI_WSDL2_SOAP, nameSpacesMap));
+	        } else {
+	            wsoap = descriptionElement
+	                    .declareNamespace(WSDL2Constants.URI_WSDL2_SOAP, WSDL2Constants.SOAP_PREFIX);
+	        }
+	        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_HTTP)) {
+	            whttp = omFactory
+	                    .createOMNamespace(WSDL2Constants.URI_WSDL2_HTTP,
+	                                       WSDLSerializationUtil.getPrefix(
+	                                               WSDL2Constants.URI_WSDL2_HTTP, nameSpacesMap));
+	        } else {
+	            whttp = descriptionElement
+	                    .declareNamespace(WSDL2Constants.URI_WSDL2_HTTP, WSDL2Constants.HTTP_PREFIX);
+	        }
+	        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_EXTENSIONS)) {
+	            wsdlx = omFactory
+	                    .createOMNamespace(WSDL2Constants.URI_WSDL2_EXTENSIONS,
+	                                       WSDLSerializationUtil.getPrefix(
+	                                               WSDL2Constants.URI_WSDL2_EXTENSIONS, nameSpacesMap));
+	        } else {
+	            wsdlx = descriptionElement.declareNamespace(WSDL2Constants.URI_WSDL2_EXTENSIONS,
+	                                                        WSDL2Constants.WSDL_EXTENTION_PREFIX);
+	        }
+	        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_RPC)) {
+	            wrpc = omFactory
+	                    .createOMNamespace(WSDL2Constants.URI_WSDL2_RPC,
+	                                       WSDLSerializationUtil.getPrefix(
+	                                               WSDL2Constants.URI_WSDL2_RPC, nameSpacesMap));
+	        } else {
+	            wrpc = descriptionElement.declareNamespace(WSDL2Constants.URI_WSDL2_RPC,
+	                                                        WSDL2Constants.WSDL_RPC_PREFIX);
+	        }
+            return descriptionElement;
+	    }
+
+	 protected OMElement generateDocumentation(OMFactory omFactory) {
+        return WSDLSerializationUtil.generateDocumentationElement(axisService, 
+                omFactory, wsdl);
+
+    }
+    
+    protected OMElement generateTypes(OMFactory omFactory) throws AxisFault {
+        // Add types element
+        OMElement typesElement = omFactory.createOMElement(WSDL2Constants.TYPES_LOCAL_NALE, wsdl);
+        axisService.populateSchemaMappings();
+        ArrayList schemas = axisService.getSchema();
+        for (int i = 0; i < schemas.size(); i++) {
+            StringWriter writer = new StringWriter();
+            XmlSchema schema = axisService.getSchema(i);
+
+            if (!org.apache.axis2.namespace.Constants.URI_2001_SCHEMA_XSD
+                    .equals(schema.getTargetNamespace())) {
+                schema.write(writer);
+                String schemaString = writer.toString();
+
+                if (!"".equals(schemaString)) {
+                    try {
+                        typesElement.addChild(
+                                XMLUtils.toOM(new ByteArrayInputStream(schemaString.getBytes())));
+                    } catch (XMLStreamException e) {
+                        throw AxisFault.makeFault(e);
+                    }
+                }
+            }
+        }
+        return typesElement;
+    }
+    
+    protected OMElement generateInterface(OMFactory omFactory) throws AxisFault, URISyntaxException, XMLStreamException, FactoryConfigurationError {
+        Parameter parameter = axisService.getParameter(WSDL2Constants.INTERFACE_LOCAL_NAME);
+       
+        if (parameter != null) {
+            interfaceName = (String) parameter.getValue();
+        } else {
+            interfaceName = WSDL2Constants.DEFAULT_INTERFACE_NAME;
+        }
+
+        // Add the interface element
+         return getInterfaceElement(wsdl, tns, wsdlx, wrpc, omFactory,
+                                                        interfaceName);
+    }
+    
+    protected OMElement generateService(OMFactory omFactory, OMElement descriptionElement,
+            boolean disableREST, boolean disableSOAP12, boolean disableSOAP11) throws AxisFault {
+        // Check whether the axisService has any endpoints. If they exists serialize them else
+        // generate default endpoint elements.
+        OMElement serviceElement;
+        Set bindings = new HashSet();
+        Map endpointMap = axisService.getEndpoints();
+        Object value = axisService.getParameterValue("isCodegen");
+        boolean isCodegen = false;
+        if (JavaUtils.isTrueExplicitly(value)) {
+           isCodegen = true;
+        }
+        if (endpointMap != null && endpointMap.size() > 0) {
+
+            serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
+            Iterator iterator = endpointMap.values().iterator();
+            while (iterator.hasNext()) {
+                // With the new binding hierachy in place we need to do some extra checking here.
+                // If a service has both http and https listners up we should show two separate eprs
+                // If the service was deployed with a WSDL and it had two endpoints for http and
+                // https then we have two endpoints populated so we should serialize them instead
+                // of updating the endpoints.
+                AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
+                /*
+                * Some transports might not be active at runtime.
+                */
+                if (!isCodegen && checkIfEndPointActive && !axisEndpoint.isActive()) {
+                    continue;
+                }
+                AxisBinding axisBinding = axisEndpoint.getBinding();
+                String type = axisBinding.getType();
+                
+                // If HTTP binding is disabled, do not add.
+                if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
+                    if (isDisableREST()) {
+                        continue;
+                    }
+                }
+                
+                // If SOAP 1.2 binding is disabled, do not add.
+                String propertySOAPVersion =
+                        (String) axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                    if (isDisableSOAP12()) {
+                        continue;
+                    }
+                }
+
+                if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                    if (isDisableSOAP11()) {
+                        continue;
+                    }
+                }
+
+
+
+                bindings.add(axisBinding);
+                OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp);
+                boolean endpointAlreadyAdded = false;
+                Iterator endpointsAdded = serviceElement.getChildren();
+                while (endpointsAdded.hasNext()) {
+                    OMElement endpoint = (OMElement) endpointsAdded.next();
+                    // Checking whether a endpoint with the same binding and address exists.
+                    if (endpoint.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME))
+                            .getAttributeValue().equals(endpointElement.getAttribute(
+                            new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue())
+                            && endpoint
+                            .getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS))
+                            .getAttributeValue().equals(endpointElement.getAttribute(
+                            new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue())) {
+                        endpointAlreadyAdded = true;
+                    }
+
+                }
+                if (!endpointAlreadyAdded) {
+//                  addPolicyAsExtensibleElement(axisEndpoint, endpointElement);
+                    Parameter modifyAddressParam = axisService
+                            .getParameter("modifyUserWSDLPortAddress");
+                    if (modifyAddressParam != null) {
+                        if (Boolean.parseBoolean((String) modifyAddressParam
+                                .getValue())) {
+                            String endpointURL = axisEndpoint
+                                    .calculateEndpointURL();
+                            endpointElement
+                                    .getAttribute(
+                                            new QName(
+                                                    WSDL2Constants.ATTRIBUTE_ADDRESS))
+                                    .setAttributeValue(endpointURL);
+                        }
+                    }
+                    serviceElement.addChild(modifyEndpoint(endpointElement));
+                }
+            }
+            Iterator iter = bindings.iterator();
+            while (iter.hasNext()) {
+                AxisBinding binding = (AxisBinding) iter.next();
+                OMElement bindingElement = binding.toWSDL20(wsdl, tns, wsoap, whttp,
+                        interfaceName,
+                        axisService.getNamespaceMap(),
+                        AddressingHelper.getAddressingRequirementParemeterValue(axisService),
+                        serviceName,wsaw);
+                descriptionElement
+                        .addChild(modifyBinding(bindingElement));
+            }
+
+            descriptionElement.addChild(serviceElement);
+        } else {
+
+            // There are no andpoints defined hence generate default bindings and endpoints
+            descriptionElement.addChild(
+                    WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
+                                                                tns, serviceName));
+            if (!isDisableSOAP12()) {
+                descriptionElement.addChild(modifyBinding(
+                        WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
+                                tns, serviceName)));
+            }
+            if (!isDisableSOAP11()) {
+                descriptionElement.addChild(modifyBinding(
+                        WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
+                                tns, serviceName)));
+            }
+            if (!isDisableREST()) {
+                descriptionElement.addChild(modifyBinding(
+                        WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl,
+                                                                  whttp,
+                                                                  tns, serviceName)));
+            }
+            
+            serviceElement = generateServiceElement(omFactory, wsdl, tns, axisService,
+                    isDisableREST(), isDisableSOAP12(), isDisableSOAP11(), eprs, serviceName);
+            descriptionElement.addChild(serviceElement);
+        }
+        return serviceElement;
+        
+    }
+    
+    protected boolean isDisableREST() {
+        // axis2.xml indicated no HTTP binding?
+        boolean disableREST = false;
+        Parameter disableRESTParameter = axisService
+                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
+        if (disableRESTParameter != null
+                && JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+            disableREST = true;
+        }
+        return disableREST;
+    }
+
+    protected boolean isDisableSOAP11() {
+        boolean disableSOAP11 = false;
+        Parameter disableSOAP11Parameter = axisService
+                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP11);
+        if (disableSOAP11Parameter != null
+                && JavaUtils.isTrueExplicitly(disableSOAP11Parameter.getValue())) {
+            disableSOAP11 = true;
+        }
+        return disableSOAP11;
+    }
+
+    protected boolean isDisableSOAP12() {
+        // axis2.xml indicated no SOAP 1.2 binding?
+        boolean disableSOAP12 = false;
+        Parameter disableSOAP12Parameter = axisService
+                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
+        if (disableSOAP12Parameter != null
+                && JavaUtils.isTrueExplicitly(disableSOAP12Parameter.getValue())) {
+            disableSOAP12 = true;
+        }
+        return disableSOAP12;
+    }
+    
+    protected List getPoliciesInDefinitions() {
+        return new ArrayList(policiesInDescription.values());
+    }
+
+    protected OMElement modifyEndpoint(OMElement endpoint) {
+        return endpoint;
+    }
+    
+    protected OMElement modifyBinding(OMElement binding) {
+        return binding;
+    }
+    
+    /**
+     * Generates a default service element
+     * @param omFactory - The OMFactory
+     * @param wsdl the WSDL namespace
+     * @param tns - The targetnamespace
+     * @param axisService - The AxisService
+     * @param disableREST only generate REST endpoint if this is false
+     * @param disableSOAP12 only generate SOAP 1.2 endpoint if this is false
+     * @return - The generated service element
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    public OMElement generateServiceElement(OMFactory omFactory, OMNamespace wsdl,
+                                                   OMNamespace tns, AxisService axisService,
+                                                   boolean disableREST, boolean disableSOAP12,  boolean disableSOAP11,
+                                                   String serviceName)
+            throws AxisFault {
+        return generateServiceElement(omFactory, wsdl, tns, axisService, disableREST, disableSOAP12,disableSOAP11,
+                                      null, serviceName);
+    }
+    
+    /**
+     * Generates a default service element
+     * @param omFactory - The OMFactory
+     * @param wsdl the WSDL namespace
+     * @param tns - The targetnamespace
+     * @param axisService - The AxisService
+     * @param disableREST only generate REST endpoint if this is false
+     * @param disableSOAP12 only generate SOAP 1.2 endpoint if this is false
+     * @return - The generated service element
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    public OMElement generateServiceElement(OMFactory omFactory, OMNamespace wsdl,
+                                                   OMNamespace tns, AxisService axisService,
+                                                   boolean disableREST, boolean disableSOAP12, boolean disableSOAP11,
+                                                   String[] eprs, String serviceName)
+            throws AxisFault {
+        if(eprs == null){
+            eprs = axisService.getEPRs();
+            if (eprs == null) {
+                eprs = new String[]{serviceName};
+            }
+        }
+        OMElement serviceElement;
+        serviceElement = omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);
+                    serviceElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
+                                                                            null, serviceName));
+                    serviceElement.addAttribute(omFactory.createOMAttribute(
+                            WSDL2Constants.INTERFACE_LOCAL_NAME, null,
+                            tns.getPrefix() + ":" + WSDL2Constants.DEFAULT_INTERFACE_NAME));
+        for (int i = 0; i < eprs.length; i++) {
+            String name = "";
+            String epr = eprs[i];
+            if (epr.startsWith("https://")) {
+                name = WSDL2Constants.DEFAULT_HTTPS_PREFIX;
+            }
+
+            OMElement soap11EndpointElement =
+                    null;
+            if (!disableSOAP11) {
+                soap11EndpointElement = omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
+                soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_NAME, null,
+                        name + WSDL2Constants.DEFAULT_SOAP11_ENDPOINT_NAME));
+                soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.BINDING_LOCAL_NAME, null,
+                        tns.getPrefix() + ":" + serviceName +
+                                Java2WSDLConstants.BINDING_NAME_SUFFIX));
+                soap11EndpointElement.addAttribute(
+                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
+                serviceElement.addChild(modifyEndpoint(soap11EndpointElement));
+            }
+
+            OMElement soap12EndpointElement = null;
+            if (!disableSOAP12) {
+                soap12EndpointElement =
+                        omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
+                soap12EndpointElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.ATTRIBUTE_NAME, null,
+                        name + WSDL2Constants.DEFAULT_SOAP12_ENDPOINT_NAME));
+                soap12EndpointElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.BINDING_LOCAL_NAME, null,
+                        tns.getPrefix() + ":" + serviceName +
+                                Java2WSDLConstants.SOAP12BINDING_NAME_SUFFIX));
+                soap12EndpointElement.addAttribute(
+                        omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
+                serviceElement.addChild(modifyEndpoint(soap12EndpointElement));
+            }
+            
+            OMElement httpEndpointElement = null;
+            if (!disableREST) {
+                httpEndpointElement =
+                        omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
+                httpEndpointElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.ATTRIBUTE_NAME, null,
+                        name + WSDL2Constants.DEFAULT_HTTP_ENDPOINT_NAME));
+                httpEndpointElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.BINDING_LOCAL_NAME, null,
+                        tns.getPrefix() + ":" + serviceName + Java2WSDLConstants
+                                .HTTP_BINDING));
+                httpEndpointElement.addAttribute(
+                        omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
+                serviceElement.addChild(modifyEndpoint(httpEndpointElement));
+            }
+            
+            if (epr.startsWith("https://")) {
+                if (!disableSOAP11) {
+                    OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTPS");
+                    soap11EndpointElement.addChild(soap11Documentation);
+                }
+                if (!disableSOAP12) {
+                    OMElement soap12Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    soap12Documentation.setText("This endpoint exposes a SOAP 12 binding over a HTTPS");
+                    soap12EndpointElement.addChild(soap12Documentation);
+                }
+                if (!disableREST) {
+                    OMElement httpDocumentation =
+                            omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    httpDocumentation.setText("This endpoint exposes a HTTP binding over a HTTPS");
+                    httpEndpointElement.addChild(httpDocumentation);
+                }
+            } else if (epr.startsWith("http://")) {
+                if (!disableSOAP11) {
+                    OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTP");
+                    soap11EndpointElement.addChild(soap11Documentation);
+                }
+                if (!disableSOAP12) {
+                    OMElement soap12Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    soap12Documentation.setText("This endpoint exposes a SOAP 12 binding over a HTTP");
+                    soap12EndpointElement.addChild(soap12Documentation);
+                }
+                if (!disableREST) {
+                    OMElement httpDocumentation =
+                            omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    httpDocumentation.setText("This endpoint exposes a HTTP binding over a HTTP");
+                    httpEndpointElement.addChild(httpDocumentation);
+                }
+            }
+        }
+        return serviceElement;
+    }
+
+   
 }

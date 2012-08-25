@@ -38,6 +38,7 @@ import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
 import org.apache.axis2.dataretrieval.WSDL11SupplierTemplate;
+import org.apache.axis2.dataretrieval.WSDL20SupplierTemplate;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.ExcludeInfo;
@@ -1819,7 +1820,10 @@ public class AxisService extends AxisDescription {
 		// If we find a WSDLSupplier with WSDL 2.0 content, use that
 		WSDLSupplier supplier = getUserDefinedWSDLSupplier("wsdl2");
 		if(supplier == null){
-			supplier = (WSDLSupplier) getParameterValue(Constants.WSDL_SUPPLIER_PARAM);			
+			supplier = (WSDLSupplier) getParameterValue(Constants.WSDL_SUPPLIER_PARAM);	
+			if(supplier instanceof WSDL20SupplierTemplate){
+                ((WSDL20SupplierTemplate)supplier).init(this);
+            }
 		}				
 		if (supplier != null) {
 			Object wsdlContent = supplier.getWSDL(this);
@@ -1840,8 +1844,8 @@ public class AxisService extends AxisDescription {
                 OMElement wsdlElement = (OMElement) wsdlContent;
                 QName wsdlName = wsdlElement.getQName();
                 if (wsdlName != null
-                        && wsdlName.getLocalPart().equals("definitions")
-                        && wsdlName.getNamespaceURI().equals("http://schemas.xmlsoap.org/wsdl/")) {
+                        && wsdlName.getLocalPart().equals("description")
+                        && wsdlName.getNamespaceURI().equals("http://www.w3.org/ns/wsdl")) {
                     // TODO How to address port number/ ip name customization
                     // here ?
                     try {
@@ -3456,10 +3460,9 @@ public class AxisService extends AxisDescription {
     		if(para != null){    		
         		try {
 					wsdlSupplier = (WSDLSupplier) Class.forName((String) para.getValue()).newInstance() ;
-					//TODO
-//					if( wsdlSupplier instanceof WSDL20SupplierTemplate){
-//                        ((WSDL20SupplierTemplate)wsdlSupplier).init(this);                       
-//                    }
+					if( wsdlSupplier instanceof WSDL20SupplierTemplate){
+                        ((WSDL20SupplierTemplate)wsdlSupplier).init(this);                       
+                    }
 				} catch (Exception e) {	
 					System.err.println("Following exception occurred when generating WSDL using "+ para );
 					e.printStackTrace();
