@@ -136,12 +136,12 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         isProcessed = true;
     }
 
-    @Override
+
     public Object getProperty(String name) throws IllegalArgumentException {
         return null;
     }
 
-    @Override
+
     public int next() throws XMLStreamException {
         if (hasNext()) {
             try {
@@ -155,22 +155,22 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public void require(int type, String namespaceURI, String localName) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getElementText() throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public int nextTag() throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public boolean hasNext() throws XMLStreamException {
         try {
             tokenType = jsonReader.peek();
@@ -184,12 +184,12 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public void close() throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getNamespaceURI(String prefix) {
         if (isStartElement() || isEndElement()) {
             return namespace;
@@ -198,7 +198,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public boolean isStartElement() {
         if (state == JsonState.NameName
                 || state == JsonState.NameValue
@@ -210,7 +210,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public boolean isEndElement() {
         if (state == JsonState.ValueValue_START
                 || state == JsonState.EndArrayName
@@ -226,7 +226,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public boolean isCharacters() {
         if (state == JsonState.ValueValue_END
                 || state == JsonState.ValueEndArray
@@ -239,17 +239,17 @@ public class GsonXMLStreamReader implements XMLStreamReader {
 
     }
 
-    @Override
+
     public boolean isWhiteSpace() {
         return false;
     }
 
-    @Override
+
     public String getAttributeValue(String namespaceURI, String localName) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public int getAttributeCount() {
         if (isStartElement()) {
             return 0; // don't support attributes on tags  in JSON convention
@@ -258,42 +258,42 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public QName getAttributeName(int index) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getAttributeNamespace(int index) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getAttributeLocalName(int index) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getAttributePrefix(int index) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getAttributeType(int index) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getAttributeValue(int index) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public boolean isAttributeSpecified(int index) {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public int getNamespaceCount() {
         if (isStartElement() || isEndElement()) {
             return 1; // we have one default namesapce
@@ -302,7 +302,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public String getNamespacePrefix(int index) {
         if (isStartElement() || isEndElement()) {
             return null;
@@ -311,7 +311,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public String getNamespaceURI(int index) {
         if (isStartElement() || isEndElement()) {
             return namespace;
@@ -320,12 +320,12 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public NamespaceContext getNamespaceContext() {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public int getEventType() {
         if (state == JsonState.StartState) {
             return START_DOCUMENT;
@@ -343,7 +343,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
 
     }
 
-    @Override
+
     public String getText() {
         if (isCharacters()) {
             return value;
@@ -352,7 +352,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public char[] getTextCharacters() {
         if (isCharacters()) {
             if (value == null) {
@@ -365,27 +365,27 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public int getTextStart() {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public int getTextLength() {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getEncoding() {
         return null;
     }
 
-    @Override
+
     public boolean hasText() {
         if (isCharacters()) {
             return true;
@@ -394,37 +394,37 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public Location getLocation() {
         return new Location() {          // Location is unKnown
-            @Override
+
             public int getLineNumber() {
                 return -1;
             }
 
-            @Override
+
             public int getColumnNumber() {
                 return -1;
             }
 
-            @Override
+
             public int getCharacterOffset() {
                 return 0;  //To change body of implemented methods use File | Settings | File Templates.
             }
 
-            @Override
+
             public String getPublicId() {
                 return null;  //To change body of implemented methods use File | Settings | File Templates.
             }
 
-            @Override
+
             public String getSystemId() {
                 return null;  //To change body of implemented methods use File | Settings | File Templates.
             }
         };
     }
 
-    @Override
+
     public QName getName() {
         if (isStartElement() || isEndElement()) {
             return new QName(namespace, localName);
@@ -434,7 +434,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
 
     }
 
-    @Override
+
     public String getLocalName() {
         int i = getEventType();
         if (i == XMLStreamReader.START_ELEMENT || i == XMLStreamReader.END_ELEMENT) {
@@ -444,12 +444,12 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public boolean hasName() {
         return (isStartElement() || isEndElement());
     }
 
-    @Override
+
     public String getNamespaceURI() {
         if (isStartElement() || isEndElement()) {
             return namespace;
@@ -458,37 +458,37 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    @Override
+
     public String getPrefix() {
         return null;
     }
 
-    @Override
+
     public String getVersion() {
         return null;
     }
 
-    @Override
+
     public boolean isStandalone() {
         return false;
     }
 
-    @Override
+
     public boolean standaloneSet() {
         return false;
     }
 
-    @Override
+
     public String getCharacterEncodingScheme() {
         return null;
     }
 
-    @Override
+
     public String getPITarget() {
         throw new UnsupportedOperationException("Method is not implemented");
     }
 
-    @Override
+
     public String getPIData() {
         throw new UnsupportedOperationException("Method is not implemented");
     }

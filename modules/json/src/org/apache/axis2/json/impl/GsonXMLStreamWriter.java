@@ -194,7 +194,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeStartElement(String localName) throws XMLStreamException {
         if (!isProcessed) {
             try {
@@ -298,7 +298,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      *          if the namespace URI has not been bound to a prefix and
      *          javax.xml.stream.isRepairingNamespaces has not been set to true
      */
-    @Override
+
     public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -312,7 +312,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
         writeStartElement(localName);
     }
@@ -326,7 +326,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      *          if the namespace URI has not been bound to a prefix and
      *          javax.xml.stream.isRepairingNamespaces has not been set to true
      */
-    @Override
+
     public void writeEmptyElement(String namespaceURI, String localName) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -340,7 +340,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeEmptyElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -352,7 +352,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeEmptyElement(String localName) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -365,7 +365,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeEndElement() throws XMLStreamException {
         if (!isProcessed) {
             try {
@@ -408,7 +408,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeEndDocument() throws XMLStreamException {
         if (!isProcessed) {
             try {
@@ -440,7 +440,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void close() throws XMLStreamException {
         try {
             jsonWriter.close();
@@ -455,7 +455,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+    
     public void flush() throws XMLStreamException {
     }
 
@@ -469,7 +469,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeAttribute(String localName, String value) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -486,7 +486,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      *                               if the namespace URI has not been bound to a prefix and
      *                               javax.xml.stream.isRepairingNamespaces has not been set to true
      */
-    @Override
+
     public void writeAttribute(String prefix, String namespaceURI, String localName, String value) throws XMLStreamException {
         // GsonXMLStreamReader doesn't write Attributes
     }
@@ -502,7 +502,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      *                               if the namespace URI has not been bound to a prefix and
      *                               javax.xml.stream.isRepairingNamespaces has not been set to true
      */
-    @Override
+
     public void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -518,7 +518,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException {
     }
 
@@ -530,7 +530,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeDefaultNamespace(String namespaceURI) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -542,7 +542,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeComment(String data) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -554,7 +554,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeProcessingInstruction(String target) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -567,7 +567,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeProcessingInstruction(String target, String data) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -579,7 +579,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeCData(String data) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -592,7 +592,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeDTD(String dtd) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -604,7 +604,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeEntityRef(String name) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -615,7 +615,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeStartDocument() throws XMLStreamException {
         if (!isProcessed) {
             try {
@@ -633,7 +633,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeStartDocument(String version) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -650,7 +650,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      *          If given encoding does not match encoding
      *          of the underlying stream
      */
-    @Override
+
     public void writeStartDocument(String encoding, String version) throws XMLStreamException {
         if (!isProcessed) {
             xmlNodeGenerator.getMainXmlNode();
@@ -666,7 +666,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeCharacters(String text) throws XMLStreamException {
         if (!isProcessed) {
             try {
@@ -706,7 +706,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void writeCharacters(char[] text, int start, int len) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -718,7 +718,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public String getPrefix(String uri) throws XMLStreamException {
         return uriPrefixMap.get(uri);
     }
@@ -734,7 +734,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void setPrefix(String prefix, String uri) throws XMLStreamException {
         uriPrefixMap.put(uri, prefix);
     }
@@ -750,7 +750,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void setDefaultNamespace(String uri) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -771,7 +771,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    @Override
+
     public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {
         throw new UnsupportedOperationException("Method is not implemented");
     }
@@ -781,7 +781,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      *
      * @return the current NamespaceContext
      */
-    @Override
+
     public NamespaceContext getNamespaceContext() {
         return null;
     }
@@ -794,7 +794,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
      * @throws IllegalArgumentException if the property is not supported
      * @throws NullPointerException     if the name is null
      */
-    @Override
+
     public Object getProperty(String name) throws IllegalArgumentException {
         return null;
     }

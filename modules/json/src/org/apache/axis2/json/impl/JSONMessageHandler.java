@@ -55,7 +55,7 @@ public class JSONMessageHandler extends AbstractHandler {
      *         the next step in the message processing should be.
      * @throws org.apache.axis2.AxisFault if the handler encounters an error
      */
-    @Override
+
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         MessageReceiver messageReceiver = msgContext.getAxisOperation().getMessageReceiver();
         if (messageReceiver instanceof JsonRpcMessageReceiver) {
