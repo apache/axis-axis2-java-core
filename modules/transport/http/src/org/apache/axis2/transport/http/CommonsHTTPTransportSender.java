@@ -50,6 +50,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * The Class CommonsHTTPTransportSender use Commons-HTTPclient 3.1. Functionality
+ * of this class is identical to HTTPClient4TransportSender and users are highly
+ * encouraged to use HTTPClient4TransportSender instead of this.
+ */
 public class CommonsHTTPTransportSender extends AbstractHandler implements HTTPTransportSender {
     /**
      * The {@link TransportOutDescription} object received by the call to

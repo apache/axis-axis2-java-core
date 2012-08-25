@@ -29,7 +29,9 @@ import org.apache.axis2.transport.http.HTTPTransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
+/**
+ * The Class HTTPClient4TransportSender use HC HTTPClient 4.X. 
+ */
 public class HTTPClient4TransportSender extends CommonsHTTPTransportSender implements
                                                                            HTTPTransportSender {
 

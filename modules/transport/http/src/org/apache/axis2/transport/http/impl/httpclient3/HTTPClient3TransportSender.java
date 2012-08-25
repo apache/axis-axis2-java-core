@@ -26,6 +26,10 @@ import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.HTTPTransportSender;
 
+/**
+ * The Class HTTPClient4TransportSender use Commons-HTTPclient 3.1. Users are highly
+ * encouraged to use HTTPClient4TransportSender instead of CommonsHTTPTransportSender.
+ */
 public class HTTPClient3TransportSender extends CommonsHTTPTransportSender implements
         HTTPTransportSender {
 
