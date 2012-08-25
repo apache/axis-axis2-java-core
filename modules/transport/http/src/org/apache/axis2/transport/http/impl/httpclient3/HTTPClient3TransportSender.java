@@ -22,6 +22,7 @@ package org.apache.axis2.transport.http.impl.httpclient3;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.http.AbstractHTTPSender;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.HTTPTransportSender;
@@ -41,6 +42,11 @@ public class HTTPClient3TransportSender extends CommonsHTTPTransportSender imple
     @Override
     public void cleanup(MessageContext msgContext) throws AxisFault {
         super.cleanup(msgContext);
+    }
+
+    @Override
+    protected AbstractHTTPSender createHTTPSender() {
+        return new HTTPSenderImpl();
     }
 
 }

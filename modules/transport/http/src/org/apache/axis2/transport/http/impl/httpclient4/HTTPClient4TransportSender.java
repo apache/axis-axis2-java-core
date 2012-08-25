@@ -22,6 +22,7 @@ package org.apache.axis2.transport.http.impl.httpclient4;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.http.AbstractHTTPSender;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
@@ -53,5 +54,10 @@ public class HTTPClient4TransportSender extends CommonsHTTPTransportSender imple
                                          HTTPTransportConstants.HTTP_CLIENT_4_X_VERSION);
     }
 
+
+    @Override
+    protected AbstractHTTPSender createHTTPSender() {
+        return new HTTPSenderImpl();
+    }
 
 }

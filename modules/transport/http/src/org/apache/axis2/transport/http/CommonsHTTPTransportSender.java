@@ -376,9 +376,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements HTTPT
             URL url = new URL(toEPR.getAddress());
 
             // select the Message Sender depending on the REST status
-            AbstractHTTPSender sender;
-
-            sender = new HTTPSenderImpl();
+            AbstractHTTPSender sender = createHTTPSender();
 
             boolean chunked;
             if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
@@ -409,6 +407,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements HTTPT
             log.debug(e);
             throw AxisFault.makeFault(e);
         }
+    }
+
+    protected AbstractHTTPSender createHTTPSender() {
+        return new HTTPSenderImpl();
     }
 
     /**
