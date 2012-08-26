@@ -19,23 +19,20 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.soap.SOAP11Version;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
-public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeaderElement {
-
-    private SOAPHeaderBlock headerElem;
+public class SOAPHeaderElementImpl extends SOAPElementImpl<SOAPHeaderBlock> implements SOAPHeaderElement {
 
     /** @param element  */
     public SOAPHeaderElementImpl(SOAPHeaderBlock element) {
-        super((ElementImpl)element);
-        this.headerElem = element;
+        super(element);
     }
 
     /**
@@ -48,7 +45,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      * @see #getActor() getActor()
      */
     public void setActor(String actorURI) {
-        this.headerElem.setRole(actorURI);
+        this.omTarget.setRole(actorURI);
     }
 
     /**
@@ -58,7 +55,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      * @see #setActor(String) setActor(java.lang.String)
      */
     public String getActor() {
-        return this.headerElem.getRole();
+        return this.omTarget.getRole();
     }
 
     /**
@@ -77,7 +74,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public void setMustUnderstand(boolean mustUnderstand) {
-        this.headerElem.setMustUnderstand(mustUnderstand);
+        this.omTarget.setMustUnderstand(mustUnderstand);
     }
 
     /**
@@ -88,7 +85,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      *         <CODE>SOAPHeaderElement</CODE> object is turned on; <CODE>false</CODE> otherwise
      */
     public boolean getMustUnderstand() {
-        return this.headerElem.getMustUnderstand();
+        return this.omTarget.getMustUnderstand();
     }
 
     /**
@@ -99,18 +96,18 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      *                       - if this message does not support the SOAP 1.2 concept of Fault Role.
      */
     public void setRole(String uri) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
             throw new UnsupportedOperationException();
         } else {
-            this.headerElem.setRole(uri);
+            this.omTarget.setRole(uri);
         }
     }
 
     public String getRole() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
             throw new UnsupportedOperationException();
         } else {
-            return this.headerElem.getRole();
+            return this.omTarget.getRole();
         }
     }
 
@@ -128,18 +125,18 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
      *                       support the SOAP 1.2 concept of Relay attribute.
      */
     public void setRelay(boolean flag) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
             throw new UnsupportedOperationException();
         } else {
-            this.headerElem.setRelay(flag);
+            this.omTarget.setRelay(flag);
         }
     }
 
     public boolean getRelay() {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
             throw new UnsupportedOperationException();
         } else {
-            return this.headerElem.getRelay();
+            return this.omTarget.getRelay();
         }
     }
 

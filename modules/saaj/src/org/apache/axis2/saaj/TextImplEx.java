@@ -19,51 +19,33 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMContainer;
-import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMText;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Text;
-import javax.xml.stream.XMLStreamException;
 
-public class TextImplEx extends NodeImplEx implements Text {
-
-    //TODO: assign textNode
-
-    private TextImpl textNode;
-
+public class TextImplEx extends SAAJNode<org.w3c.dom.Text,OMText> implements Text {
     private org.w3c.dom.Node previousSibling;
     private org.w3c.dom.Node nextSibling;
 
     public TextImplEx(String data, SOAPElement parent) {
-        super(((SOAPElementImpl)parent).getOMFactory());
-        textNode = (TextImpl)DOOMAbstractFactory.getOMFactory().createOMText(data);
-        this.parentElement = parent;
+        this(OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getOMFactory().createOMText(data), parent);
     }
 
-    public TextImplEx(TextImpl textNode, SOAPElement parent) {
-        super(((SOAPElementImpl)parent).getOMFactory());
-        this.textNode = textNode;
+    public TextImplEx(OMText textNode, SOAPElement parent) {
+        super((org.w3c.dom.Text)textNode, textNode);
         this.parentElement = parent;
     }
 
     public TextImplEx(String data, SOAPElement parent,
                       org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
-        super(((SOAPElementImpl)parent).getOMFactory());
-        textNode = (TextImpl)DOOMAbstractFactory.getOMFactory().createOMText(data);
-        this.parentElement = parent;
+        this(data, parent);
         this.previousSibling = prevSibling;
         this.nextSibling = nextSibling;
     }
 
-    TextImpl getTextNode() {
-        return textNode;
-    }
-    
     public void setNextSibling(org.w3c.dom.Node nextSibling) {
         this.nextSibling = nextSibling;
     }
@@ -79,18 +61,8 @@ public class TextImplEx extends NodeImplEx implements Text {
      *         otherwise
      */
     public boolean isComment() {
-        String value = textNode.getText();
+        String value = omTarget.getText();
         return value.startsWith("<!--") && value.endsWith("-->");
-    }
-
-    /** The name of this node, depending on its type; see the table above. */
-    public String getNodeName() {
-        return textNode.getNodeName();
-    }
-
-    /** A code representing the type of the underlying object, as defined above. */
-    public short getNodeType() {
-        return textNode.getNodeType();
     }
 
     /**
@@ -108,7 +80,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                      <br>NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
      */
     public org.w3c.dom.Text splitText(int offset) throws DOMException {
-        return textNode.splitText(offset);
+        return target.splitText(offset);
     }
 
     public boolean isElementContentWhitespace() {
@@ -138,7 +110,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                      in a <code>DOMString</code> variable on the implementation platform.
      */
     public String getData() throws DOMException {
-        return textNode.getData();
+        return target.getData();
     }
 
     /**
@@ -153,7 +125,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                      in a <code>DOMString</code> variable on the implementation platform.
      */
     public void setData(String data) throws DOMException {
-        textNode.setData(data);
+        target.setData(data);
     }
 
     /**
@@ -171,7 +143,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                      <code>DOMString</code>.
      */
     public String substringData(int offset, int count) throws DOMException {
-        return textNode.substringData(offset, count);
+        return target.substringData(offset, count);
     }
 
     /**
@@ -183,7 +155,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      * @throws DOMException NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
      */
     public void appendData(String value) throws DOMException {
-        textNode.appendData(value);
+        target.appendData(value);
     }
 
     /**
@@ -196,7 +168,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                      <br>NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
      */
     public void insertData(int offset, String data) throws DOMException {
-        textNode.insertData(offset, data);
+        target.insertData(offset, data);
     }
 
     /**
@@ -213,7 +185,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                      Raised if this node is readonly.
      */
     public void deleteData(int offset, int count) throws DOMException {
-        textNode.deleteData(offset, count);
+        target.deleteData(offset, count);
     }
 
     /**
@@ -233,37 +205,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                      Raised if this node is readonly.
      */
     public void replaceData(int offset, int count, String data) throws DOMException {
-        textNode.replaceData(offset, count, data);
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.impl.OMNodeEx#setParent(org.apache.axiom.om.OMContainer)
-      */
-    public void setParent(OMContainer element) {
-        textNode.setParent(element);
-    }
-
-    public Document getOwnerDocument() {
-        return textNode.getOwnerDocument();
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMNode#getParent()
-      */
-    public OMContainer getParent() {
-        return textNode.getParent();
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMNode#discard()
-      */
-    public void discard() throws OMException {
-        textNode.discard();
-    }
-
-    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer, boolean cache)
-            throws XMLStreamException {
-        textNode.internalSerialize(writer, cache);
+        target.replaceData(offset, count, data);
     }
 
     /**
@@ -272,11 +214,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      * @return The text value (data) of this
      */
     public String getValue() {
-        return textNode.getData();
-    }
-
-    public String getNodeValue() {
-        return textNode.getData();
+        return target.getData();
     }
 
     /**
@@ -290,11 +228,7 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                               child node or has a child node that is not a Text node
      */
     public void setValue(String value) {
-        textNode.setData(value);
-    }
-
-    public void setNodeValue(String value) {
-        textNode.setData(value);
+        target.setData(value);
     }
 
     public String toString() {
@@ -309,5 +243,9 @@ public class TextImplEx extends NodeImplEx implements Text {
 
     public org.w3c.dom.Node getPreviousSibling() {
         return toSAAJNode(previousSibling);
+    }
+
+    public int getLength() {
+        return target.getLength();
     }
 }

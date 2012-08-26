@@ -224,10 +224,10 @@ public class SOAPPartTest extends Assert {
 
         SOAP11Factory axiomSF = new SOAP11Factory();
         org.apache.axiom.soap.SOAPEnvelope axiomSE = axiomSF.createSOAPEnvelope();
-        org.apache.axiom.soap.SOAPMessage axiomSM = axiomSF.createSOAPMessage(axiomSE, null);
+        org.apache.axiom.soap.SOAPMessage axiomSM = axiomSF.createSOAPMessage();
+        axiomSM.setSOAPEnvelope(axiomSE);
         
-        SOAPEnvelopeImpl se = 
-            new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)axiomSE);
+        SOAPEnvelopeImpl se = new SOAPEnvelopeImpl(axiomSE);
         SOAPMessageImpl sm = new SOAPMessageImpl(se);
         SOAPPartImpl sp = new SOAPPartImpl(sm, se);
         

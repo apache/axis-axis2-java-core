@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
@@ -28,10 +28,10 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import java.util.Iterator;
 
-public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElement {
+public class SOAPBodyElementImpl<T extends OMElement> extends SOAPElementImpl<T> implements SOAPBodyElement {
 
     /** @param element  */
-    public SOAPBodyElementImpl(ElementImpl element) {
+    public SOAPBodyElementImpl(T element) {
         super(element);
     }
 

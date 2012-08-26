@@ -21,20 +21,17 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
-import org.apache.axiom.om.impl.dom.ElementImpl;
-import org.apache.axiom.om.impl.dom.NodeImpl;
-import org.apache.axiom.om.impl.dom.TextImpl;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.OMElementEx;
+import org.apache.axiom.soap.SOAP11Version;
+import org.apache.axiom.soap.SOAP12Version;
+import org.apache.axiom.soap.SOAPFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -59,30 +56,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
-
-    /**
-     * Using a delegate because we can't extend from org.apache.axiom.om.impl.dom.ElementImpl since
-     * this class must extend SNodeImpl
-     */
-    protected ElementImpl element;
+public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> implements SOAPElement {
     private String encodingStyle;
 
-    public SOAPElementImpl(ElementImpl element) {
-        super(element.getOMFactory());
-        this.element = element;
+    public SOAPElementImpl(T element) {
+        super((Element)element, element);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMNode#discard()
       */
     public void discard() throws OMException {
-        element.discard();
+        omTarget.discard();
     }
 
     public void internalSerialize(javax.xml.stream.XMLStreamWriter writer, boolean cache)
             throws XMLStreamException {
-        element.internalSerialize(writer, cache);
+        ((OMElementEx)omTarget).internalSerialize(writer, cache);
     }
 
     /**
@@ -96,9 +86,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      */
     public SOAPElement addAttribute(Name name, String value) throws SOAPException {
         if (name.getURI() == null || name.getURI().trim().length() == 0) {
-            element.setAttribute(name.getLocalName(), value);
+            target.setAttribute(name.getLocalName(), value);
         } else {
-            element.setAttributeNS(name.getURI(), name.getPrefix() + ":" + name.getLocalName(),
+            target.setAttributeNS(name.getURI(), name.getPrefix() + ":" + name.getLocalName(),
                                    value);
         }
         return this;
@@ -121,13 +111,13 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         String prefix = soapElement.getPrefix();
         String localName = soapElement.getLocalName();
 
-        SOAPElementImpl childEle;        
+        SOAPElementImpl<OMElement> childEle;        
         if (namespaceURI == null || namespaceURI.trim().length() == 0) {
-            childEle =  new SOAPElementImpl((ElementImpl)getOwnerDocument().createElement(localName));
+            childEle =  new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElement(localName));
         } else {
-            element.declareNamespace(namespaceURI, prefix);
+            omTarget.declareNamespace(namespaceURI, prefix);
             childEle =
-                new SOAPElementImpl((ElementImpl)getOwnerDocument().createElementNS(namespaceURI,
+                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElementNS(namespaceURI,
                                                                                     localName));
         }
         
@@ -145,29 +135,14 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
             }
         }
 
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
-            childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+            childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
         }
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        target.appendChild(childEle.target);
+        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
-    }
-
-    public String getLocalName() {
-        return element.getLocalName();
-    }
-
-    public String getNamespaceURI() {
-        return element.getNamespaceURI();
-    }
-
-    /*
-    * Overidden in ElementImpl and AttrImpl.
-    */
-    public String getPrefix() {
-        return element.getPrefix();
     }
 
     /* (non-Javadoc)
@@ -178,16 +153,16 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         if (prefix == null) {
             prefix = "";
         }
-        SOAPElementImpl childEle =
-                new SOAPElementImpl((ElementImpl)getOwnerDocument().
+        SOAPElementImpl<OMElement> childEle =
+                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().
                         createElementNS(namespaceURI, prefix.length() == 0 ? localName : prefix + ":" + localName));
     
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(prefix.length() == 0
-                ? childEle.element.declareDefaultNamespace(namespaceURI)
-                : childEle.element.declareNamespace(namespaceURI, prefix));
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+        childEle.omTarget.setNamespace(prefix.length() == 0
+                ? childEle.omTarget.declareDefaultNamespace(namespaceURI)
+                : childEle.omTarget.declareNamespace(namespaceURI, prefix));
+        target.appendChild(childEle.target);
+        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -209,11 +184,11 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
       */
     public SOAPElement addChildElement(String localName) throws SOAPException {
-        SOAPElementImpl childEle =
-                new SOAPElementImpl((ElementImpl)getOwnerDocument().createElement(localName));
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        SOAPElementImpl<OMElement> childEle =
+                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElement(localName));
+        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+        target.appendChild(childEle.target);
+        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -223,9 +198,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException {
         if (prefix == null || prefix.length() == 0) {
-            element.declareDefaultNamespace(uri);
+            omTarget.declareDefaultNamespace(uri);
         } else {
-            element.declareNamespace(uri, prefix);
+            omTarget.declareNamespace(uri, prefix);
         }
         return this;
     }
@@ -244,9 +219,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         //Therefore create a text node and add it
         //TODO: May need to address the situation where the prev sibling of the textnode itself is a textnode
         Text textNode = getOwnerDocument().createTextNode(text);
-        NodeImpl node = ((NodeImpl)element.appendChild(textNode));
-        TextImplEx saajTextNode = new TextImplEx((TextImpl)textNode, this);
-        node.setUserData(SAAJ_NODE, saajTextNode, null);
+        target.appendChild(textNode);
+        TextImplEx saajTextNode = new TextImplEx((OMText)textNode, this);
+        textNode.setUserData(SAAJ_NODE, saajTextNode, null);
         return this;
     }
 
@@ -258,7 +233,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      * @return an iterator over the names of the attributes
      */
     public Iterator getAllAttributes() {
-        final Iterator attribIter = element.getAllAttributes();
+        final Iterator attribIter = omTarget.getAllAttributes();
         Collection attribName = new ArrayList();
         Attr attr;
         while (attribIter.hasNext()) {
@@ -284,7 +259,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     public String getAttributeValue(Name name) {
         //This method is waiting on the finalization of the name for a method
         //in OMElement that returns a OMAttribute from an input QName
-        final OMAttribute attribute = element.getAttribute(new QName(name.getURI(),
+        final OMAttribute attribute = omTarget.getAttribute(new QName(name.getURI(),
                                                                      name.getLocalName(),
                                                                      name.getPrefix()));
         if (attribute == null) {
@@ -301,7 +276,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      *         <CODE>SOAPElement</CODE> object
      */
     public Iterator getChildElements() {
-        Iterator childIter = element.getChildren();
+        Iterator childIter = omTarget.getChildren();
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
@@ -314,7 +289,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
-        Iterator childIter = element.getChildrenWithName(qName);
+        Iterator childIter = omTarget.getChildrenWithName(qName);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
@@ -326,7 +301,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#getElementName()
       */
     public Name getElementName() {
-        QName qName = element.getQName();
+        QName qName = omTarget.getQName();
         return new PrefixedQName(qName.getNamespaceURI(),
                                  qName.getLocalPart(),
                                  qName.getPrefix());
@@ -345,7 +320,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     public Iterator getNamespacePrefixes() {
         //Get all declared namespace, make a list of their prefixes and return an iterator over that list
         ArrayList prefixList = new ArrayList();
-        Iterator nsIter = element.getAllDeclaredNamespaces();
+        Iterator nsIter = omTarget.getAllDeclaredNamespaces();
         while (nsIter.hasNext()) {
             Object o = nsIter.next();
             if (o instanceof org.apache.axiom.om.OMNamespace) {
@@ -360,7 +335,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#getNamespaceURI(java.lang.String)
       */
     public String getNamespaceURI(String prefix) {
-        return element.getNamespaceURI(prefix);
+        OMNamespace ns = omTarget.findNamespaceURI(prefix);
+        return ns != null ? ns.getNamespaceURI() : null;
     }
 
     /* (non-Javadoc)
@@ -368,7 +344,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public Iterator getVisibleNamespacePrefixes() {
         //I'll recursively return all the declared namespaces till this node, including its parents etc.
-        Iterator namespacesIter = element.getAllDeclaredNamespaces();
+        Iterator namespacesIter = omTarget.getAllDeclaredNamespaces();
         ArrayList returnList = new ArrayList();
         while (namespacesIter.hasNext()) {
             Object o = namespacesIter.next();
@@ -382,7 +358,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         //taken care of adding namespaces of this node.
         //now we have to take care of adding the namespaces that are in the scope till the level of
         //this nodes' parent.
-        org.apache.axiom.om.OMContainer parent = element.getParent();
+        org.apache.axiom.om.OMContainer parent = omTarget.getParent();
         if (parent != null && parent instanceof org.apache.axiom.om.OMElement) {
             Iterator parentScopeNamespacesIter =
                     ((org.apache.axiom.om.OMElement)parent).getAllDeclaredNamespaces();
@@ -402,9 +378,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
         if (qname.getNamespaceURI() == null || qname.getNamespaceURI().trim().length() == 0) {
-            element.setAttribute(qname.getLocalPart(), value);
+            target.setAttribute(qname.getLocalPart(), value);
         } else {
-            element.setAttributeNS(qname.getNamespaceURI(), qname.getPrefix() + ":" +
+            target.setAttributeNS(qname.getNamespaceURI(), qname.getPrefix() + ":" +
                     qname.getLocalPart(), value);
         }
         return this;
@@ -431,7 +407,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      * @since SAAJ 1.3
      */
     public QName createQName(String localName, String prefix) throws SOAPException {
-        String namespaceURI = element.getNamespaceURI(prefix);
+        String namespaceURI = getNamespaceURI(prefix);
         if (namespaceURI == null) {
             throw new SOAPException("Invalid prefix");
         } else {
@@ -440,7 +416,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public Iterator getAllAttributesAsQNames() {
-        final Iterator attribIter = element.getAllAttributes();
+        final Iterator attribIter = omTarget.getAllAttributes();
         Collection attributesAsQNames = new ArrayList();
         Attr attr;
         QName qname;
@@ -454,7 +430,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public String getAttributeValue(QName qname) {
-        final OMAttribute attribute = element.getAttribute(qname);
+        final OMAttribute attribute = omTarget.getAttribute(qname);
         if (attribute == null) {
             return null;
         }
@@ -462,7 +438,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public Iterator getChildElements(QName qname) {
-        Iterator childIter = element.getChildrenWithName(qname);
+        Iterator childIter = omTarget.getChildrenWithName(qname);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
@@ -471,29 +447,29 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public QName getElementQName() {
-        return element.getQName();
+        return omTarget.getQName();
     }
 
     public boolean removeAttribute(QName qname) {
-        org.apache.axiom.om.OMAttribute attr = element.getAttribute(qname);
+        org.apache.axiom.om.OMAttribute attr = omTarget.getAttribute(qname);
         if (attr != null) {
-            element.removeAttribute(attr);
+            omTarget.removeAttribute(attr);
             return true;
         }
         return false;
     }
 
     public SOAPElement setElementQName(QName newName) throws SOAPException {
-        String localName = this.element.getLocalName();
+        String localName = this.target.getLocalName();
         if (org.apache.axiom.soap.SOAPConstants.BODY_LOCAL_NAME.equals(localName)
                 || org.apache.axiom.soap.SOAPConstants.HEADER_LOCAL_NAME.equals(localName)
                 || org.apache.axiom.soap.SOAPConstants.SOAPENVELOPE_LOCAL_NAME .equals(localName)) {
             throw new SOAPException("changing this element name is not allowed");
         }
         OMNamespace omNamespace =
-                new OMNamespaceImpl(newName.getNamespaceURI(), newName.getPrefix());
-        this.element.setNamespace(omNamespace);
-        this.element.setLocalName(newName.getLocalPart());
+                omTarget.getOMFactory().createOMNamespace(newName.getNamespaceURI(), newName.getPrefix());
+        this.omTarget.setNamespace(omNamespace);
+        this.omTarget.setLocalName(newName.getLocalPart());
         return this;
     }
 
@@ -501,11 +477,11 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#removeAttribute(javax.xml.soap.Name)
       */
     public boolean removeAttribute(Name name) {
-        org.apache.axiom.om.OMAttribute attr = element.getAttribute(new QName(name.getURI(),
+        org.apache.axiom.om.OMAttribute attr = omTarget.getAttribute(new QName(name.getURI(),
                                                                               name.getLocalName(),
                                                                               name.getPrefix()));
         if (attr != null) {
-            element.removeAttribute(attr);
+            omTarget.removeAttribute(attr);
             return true;
         }
         return false;
@@ -516,7 +492,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public void removeContents() {
         //We will get all the children and iteratively call the detach() on all of 'em.
-        Iterator childIter = element.getChildElements();
+        Iterator childIter = omTarget.getChildElements();
         while (childIter.hasNext()) {
             childIter.next();
             childIter.remove();
@@ -527,7 +503,13 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#removeNamespaceDeclaration(java.lang.String)
       */
     public boolean removeNamespaceDeclaration(String prefix) {
-        return element.removeNamespace(prefix);
+        for (Iterator<OMNamespace> it = omTarget.getAllDeclaredNamespaces(); it.hasNext(); ) {
+            if (it.next().getPrefix().equals(prefix)) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -540,7 +522,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      *          the encodingStyle is invalid for this SOAPElement.
      */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
             try {
                 URI uri = new URI(encodingStyle);
                 if (!(this instanceof SOAPEnvelope)) {
@@ -554,7 +536,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
                 throw new IllegalArgumentException("Invalid Encoding style : "
                         + encodingStyle + ":" + e);
             }
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
             if (this instanceof SOAPHeader || this instanceof SOAPBody ||
                     this instanceof SOAPFault ||
                     this instanceof SOAPFaultElement || this instanceof SOAPEnvelope ||
@@ -568,112 +550,112 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see org.apache.axiom.om.impl.OMNodeEx#setParent(org.apache.axiom.om.OMContainer)
       */
     public void setParent(OMContainer parentElement) {
-        element.setParent(parentElement);
+        ((OMElementEx)omTarget).setParent(parentElement);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getAttribute(java.lang.String)
       */
     public String getAttribute(String name) {
-        return element.getAttribute(name);
+        return target.getAttribute(name);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getAttributeNode(java.lang.String)
       */
     public Attr getAttributeNode(String name) {
-        return element.getAttributeNode(name);
+        return target.getAttributeNode(name);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
       */
     public Attr getAttributeNodeNS(String namespaceURI, String localName) {
-        return element.getAttributeNodeNS(namespaceURI, localName);
+        return target.getAttributeNodeNS(namespaceURI, localName);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
       */
     public String getAttributeNS(String namespaceURI, String localName) {
-        return element.getAttributeNS(namespaceURI, localName);
+        return target.getAttributeNS(namespaceURI, localName);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getElementsByTagName(java.lang.String)
       */
     public NodeList getElementsByTagName(String name) {
-        return toSAAJNodeList(element.getElementsByTagName(name));
+        return toSAAJNodeList(target.getElementsByTagName(name));
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
       */
     public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
-        return toSAAJNodeList(element.getElementsByTagNameNS(namespaceURI, localName));
+        return toSAAJNodeList(target.getElementsByTagNameNS(namespaceURI, localName));
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getTagName()
       */
     public String getTagName() {
-        return element.getTagName();
+        return target.getTagName();
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#hasAttribute(java.lang.String)
       */
     public boolean hasAttribute(String name) {
-        return element.hasAttribute(name);
+        return target.hasAttribute(name);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
       */
     public boolean hasAttributeNS(String namespaceURI, String localName) {
-        return element.hasAttributeNS(namespaceURI, localName);
+        return target.hasAttributeNS(namespaceURI, localName);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#removeAttribute(java.lang.String)
       */
     public void removeAttribute(String name) throws DOMException {
-        element.removeAttribute(name);
+        target.removeAttribute(name);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#removeAttributeNode(org.w3c.dom.Attr)
       */
     public Attr removeAttributeNode(Attr attr) throws DOMException {
-        return element.removeAttributeNode(attr);
+        return target.removeAttributeNode(attr);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#removeAttributeNS(java.lang.String, java.lang.String)
       */
     public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
-        element.removeAttributeNS(namespaceURI, localName);
+        target.removeAttributeNS(namespaceURI, localName);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#setAttribute(java.lang.String, java.lang.String)
       */
     public void setAttribute(String name, String value) throws DOMException {
-        element.setAttribute(name, value);
+        target.setAttribute(name, value);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#setAttributeNode(org.w3c.dom.Attr)
       */
     public Attr setAttributeNode(Attr attr) throws DOMException {
-        return element.setAttributeNode(attr);
+        return target.setAttributeNode(attr);
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
       */
     public Attr setAttributeNodeNS(Attr attr) throws DOMException {
-        return element.setAttributeNodeNS(attr);
+        return target.setAttributeNodeNS(attr);
     }
 
     /* (non-Javadoc)
@@ -681,25 +663,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public void setAttributeNS(String namespaceURI,
                                String qualifiedName, String value) throws DOMException {
-        element.setAttributeNS(namespaceURI, qualifiedName, value);
-    }
-
-    /* (non-Javadoc)
-      * @see org.w3c.dom.Node#getNodeName()
-      */
-    public String getNodeName() {
-        return element.getNodeName();
-    }
-
-    /* (non-Javadoc)
-      * @see org.w3c.dom.Node#getNodeType()
-      */
-    public short getNodeType() {
-        return Node.ELEMENT_NODE;
-    }
-
-    public ElementImpl getElement() {
-        return element;
+        target.setAttributeNS(namespaceURI, qualifiedName, value);
     }
 
     /**
@@ -713,7 +677,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      */
     public SOAPElement getParentElement() {
         if (this.parentElement == null) {
-            javax.xml.soap.Node parentNode = toSAAJNode(element.getParentNode());
+            javax.xml.soap.Node parentNode = toSAAJNode(target.getParentNode());
             if (parentNode instanceof SOAPElement) {
                 this.parentElement = (SOAPElement) parentNode;
             }
@@ -723,15 +687,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
         this.parentElement = parent;
-        this.element.setParent(((SOAPElementImpl)parent).element);
-    }
-
-    /**
-     * Find the Document that this Node belongs to (the document in whose context the Node was
-     * created). The Node may or may not
-     */
-    public Document getOwnerDocument() {
-        return element.getOwnerDocument();
+        ((OMElementEx)this.omTarget).setParent(((SOAPElementImpl<? extends OMElement>)parent).omTarget);
     }
 
     /**
@@ -743,21 +699,17 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      *         <code>null</code> otherwise
      */
     public String getValue() {
-        if (element.getType() == OMNode.TEXT_NODE) {
-            return element.getText();
-        } else if (element.getType() == OMNode.ELEMENT_NODE) {
-            final OMNode firstOMChild = element.getFirstOMChild();
-            if (firstOMChild instanceof TextImpl) {
-                return ((TextImpl)firstOMChild).getData();
+        if (omTarget.getType() == OMNode.TEXT_NODE) {
+            return omTarget.getText();
+        } else if (omTarget.getType() == OMNode.ELEMENT_NODE) {
+            final OMNode firstOMChild = omTarget.getFirstOMChild();
+            if (firstOMChild instanceof Text) {
+                return ((Text)firstOMChild).getData();
             } else if (firstOMChild instanceof SOAPElementImpl) {
-                return ((SOAPElementImpl)firstOMChild).getValue();
+                return ((SOAPElement)firstOMChild).getValue();
             }
         }
         return null;
-    }
-
-    public String getTextContent() throws DOMException {
-        return element.getTextContent();
     }
 
     @Override
@@ -766,23 +718,10 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return super.clone();
     }
 
-    public org.w3c.dom.Node getFirstChild() {
-        return toSAAJNode(element.getFirstChild());
-    }
-
-    /**
-     * Method getLastChild
-     *
-     * @see org.w3c.dom.Node#getLastChild()
-     */
-    public org.w3c.dom.Node getLastChild() {
-        return toSAAJNode(element.getLastChild());
-    }
-
     public Node getParentNode() {
         Node parentNode = null;
         if (this.parentElement == null) {
-            parentNode = toSAAJNode(element.getParentNode());
+            parentNode = toSAAJNode(target.getParentNode());
             if (parentNode instanceof SOAPElement) {
                 this.parentElement = (SOAPElement) parentNode;
             }
@@ -794,27 +733,11 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     /** dom Node method */
     public org.w3c.dom.Node getNextSibling() {
-        return toSAAJNode(element.getNextSibling());
+        return toSAAJNode(target.getNextSibling());
     }
 
     public Node getPreviousSibling() {
-        return toSAAJNode(element.getPreviousSibling());
-    }
-
-    private NodeList toSAAJNodeList(NodeList nodes) {
-        NodeListImpl result = new NodeListImpl();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            result.addNode(toSAAJNode(nodes.item(i)));
-        }
-        return result;
-    }
-
-    public NodeList getChildNodes() {
-        return toSAAJNodeList(element.getChildNodes());
-    }
-
-    public boolean hasChildNodes() {
-        return element.hasChildNodes();
+        return toSAAJNode(target.getPreviousSibling());
     }
 
     /**
@@ -828,7 +751,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      *                               child node or has a child node that is not a Text node
      */
     public void setValue(String value) {
-        OMNode firstChild = element.getFirstOMChild();
+        OMNode firstChild = omTarget.getFirstOMChild();
         if (firstChild == null) {
             try {
                 this.addTextNode(value);
@@ -850,79 +773,15 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public OMNode detach() {
-        OMNode omNode = this.element.detach();
+        OMNode omNode = this.omTarget.detach();
         this.parentElement = null;
         return omNode;
     }
 
-    /**
-     * Returns the collection of attributes associated with this node, or null if none. At this
-     * writing, Element is the only type of node which will ever have attributes.
-     *
-     * @see org.apache.axiom.om.impl.dom.ElementImpl
-     */
-    public NamedNodeMap getAttributes() {
-        return element.getAttributes();
-    }
-    
     public String toString() {
-        return element.toString();
+        return target.toString();
     }
         
-    public Node removeChild(Node oldChild) throws DOMException {
-        if (oldChild instanceof SOAPElementImpl) {
-            oldChild = ((SOAPElementImpl)oldChild).getElement();
-        } else if (oldChild instanceof TextImplEx) {
-            oldChild = ((TextImplEx)oldChild).getTextNode();
-        }
-        return element.removeChild(oldChild);
-    }
-    
-    public Node appendChild(Node child) throws DOMException {        
-        if (getOwnerDocument() != child.getOwnerDocument()) {
-            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, "Wrong document");
-        }
-        try {
-            if (child instanceof Text) {
-                return appendText((Text)child);
-            } else if (child instanceof ElementImpl) {
-                return appendElement((ElementImpl)child);
-            }
-        } catch (SOAPException e) {
-            DOMException ex = 
-                new DOMException(DOMException.HIERARCHY_REQUEST_ERR, e.getMessage());
-            ex.initCause(e);
-            throw ex;
-        }
-        
-        return super.appendChild(child);        
-    }
-    
-    protected Text appendText(Text child) throws SOAPException {
-        String text = child.getData();
-        Text textNode = getOwnerDocument().createTextNode(text);
-        NodeImpl node = ((NodeImpl)element.appendChild(textNode));
-        TextImplEx saajTextNode = new TextImplEx(text, this);
-        node.setUserData(SAAJ_NODE, saajTextNode, null);
-        return saajTextNode;
-    }
-    
-    protected Element appendElement(ElementImpl child) throws SOAPException {
-        String namespaceURI = child.getNamespaceURI();
-        String prefix = child.getPrefix();
-
-        SOAPElementImpl childEle = new SOAPElementImpl(child);
-        
-        childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        if (namespaceURI != null && namespaceURI.trim().length() > 0) {
-            childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
-        }
-        element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
-        childEle.setParentElement(this);
-        return childEle;
-    }
-    
     protected void copyContents(SOAPElementImpl childEle, Node child) throws SOAPException {
         NamedNodeMap attributes = child.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {

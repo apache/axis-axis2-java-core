@@ -20,8 +20,9 @@
 package org.apache.axis2.saaj.util;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.OMMetaFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -56,14 +57,15 @@ public class SAAJUtil {
 
         //Check the namespace and find SOAP version and factory
         String nsURI;
+        OMMetaFactory metaFactory = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM);
         SOAPFactory factory;
         if (env.getNamespace().getNamespaceURI()
                 .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
             nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = DOOMAbstractFactory.getSOAP11Factory();
+            factory = metaFactory.getSOAP11Factory();
         } else {
             nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = DOOMAbstractFactory.getSOAP12Factory();
+            factory = metaFactory.getSOAP12Factory();
         }
 
         StAXSOAPModelBuilder stAXSOAPModelBuilder =
@@ -81,20 +83,20 @@ public class SAAJUtil {
      * @param env An org.apache.axiom.soap.SOAPEnvelope instance
      * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
      */
-    public static org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl
-            toDOOMSOAPEnvelope(org.apache.axiom.soap.SOAPEnvelope env) {
+    public static Element toDOOMSOAPEnvelope(org.apache.axiom.soap.SOAPEnvelope env) {
         env.build();
 
         //Check the namespace and find SOAP version and factory
         String nsURI;
+        OMMetaFactory metaFactory = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM);
         SOAPFactory factory;
         if (env.getNamespace().getNamespaceURI()
                 .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
             nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = DOOMAbstractFactory.getSOAP11Factory();
+            factory = metaFactory.getSOAP11Factory();
         } else {
             nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = DOOMAbstractFactory.getSOAP11Factory();
+            factory = metaFactory.getSOAP11Factory();
         }
 
         StAXSOAPModelBuilder stAXSOAPModelBuilder =
@@ -102,7 +104,7 @@ public class SAAJUtil {
         SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
         envelope.build();
 
-        return (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)envelope;
+        return (Element)envelope;
     }
 
     public static org.apache.axiom.soap.SOAPEnvelope

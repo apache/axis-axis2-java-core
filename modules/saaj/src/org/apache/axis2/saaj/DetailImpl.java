@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPFaultDetail;
 
 import javax.xml.namespace.QName;
@@ -52,14 +52,11 @@ import java.util.Iterator;
  * "http://www.wombat.org/trader"); d.addDetailEntry(name); Iterator it = d.getDetailEntries();
  * </PRE>
  */
-public class DetailImpl extends SOAPFaultElementImpl implements Detail {
-
-//    private SOAPFaultDetail faultDetail;
+public class DetailImpl extends SOAPFaultElementImpl<SOAPFaultDetail> implements Detail {
 
     /** @param element  */
     public DetailImpl(SOAPFaultDetail element) {
-        super((ElementImpl)element);
-//        faultDetail = element;
+        super(element);
     }
 
     /**
@@ -72,9 +69,9 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      *                       Detail object.
      */
     public DetailEntry addDetailEntry(Name name) throws SOAPException {
-        SOAPElementImpl childElement = (SOAPElementImpl)addChildElement(name);
-        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.element);
-        childElement.element.setUserData(SAAJ_NODE, detailEntry, null);
+        SOAPElementImpl<?> childElement = (SOAPElementImpl<?>)addChildElement(name);
+        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.omTarget);
+        childElement.target.setUserData(SAAJ_NODE, detailEntry, null);
         return detailEntry;
     }
 
@@ -85,10 +82,10 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      *         <code>Detail</code> object
      */
     public Iterator getDetailEntries() {
-        final Iterator detailEntriesIter = element.getChildElements();
+        final Iterator detailEntriesIter = omTarget.getChildElements();
         Collection details = new ArrayList();
         while (detailEntriesIter.hasNext()) {
-            details.add(new DetailEntryImpl((ElementImpl)detailEntriesIter.next()));
+            details.add(new DetailEntryImpl((OMElement)detailEntriesIter.next()));
         }
         return details.iterator();
     }
@@ -101,9 +98,9 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      *                       Detail object.
      */
     public DetailEntry addDetailEntry(QName qname) throws SOAPException {
-        SOAPElementImpl childElement = (SOAPElementImpl)addChildElement(qname);
-        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.element);
-        childElement.element.setUserData(SAAJ_NODE, detailEntry, null);
+        SOAPElementImpl<?> childElement = (SOAPElementImpl<?>)addChildElement(qname);
+        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.omTarget);
+        childElement.target.setUserData(SAAJ_NODE, detailEntry, null);
         return detailEntry;
     }
 

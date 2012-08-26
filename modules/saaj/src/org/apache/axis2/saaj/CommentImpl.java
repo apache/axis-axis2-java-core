@@ -19,7 +19,6 @@
 package org.apache.axis2.saaj;
 
 import javax.xml.soap.SOAPElement;
-import javax.xml.soap.Text;
 
 import org.w3c.dom.Comment;
 
@@ -36,13 +35,5 @@ public class CommentImpl extends TextImplEx implements Comment {
 
     public boolean isComment() {
         return true;
-    }
-
-    public String getNodeName() {
-        return "#comment";
-    }
-
-    public short getNodeType() {
-        return Text.COMMENT_NODE;
     }
 }

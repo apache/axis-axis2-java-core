@@ -212,7 +212,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
             SOAPMessage response = getSOAPMessage(responseMsgCtx.getEnvelope());
             Attachments attachments = responseMsgCtx.getAttachmentMap();
             for (String contentId : attachments.getAllContentIDs()) {
-                if (!contentId.equals(attachments.getSOAPPartContentID())) {
+                if (!contentId.equals(attachments.getRootPartContentID())) {
                     AttachmentPart ap = response.createAttachmentPart(
                             attachments.getDataHandler(contentId));
                     ap.setContentId(contentId);
