@@ -46,21 +46,19 @@ public class JsonUtils {
             jsonReader.setLenient(true);
         }
         jsonReader.beginObject();
-        String requestMethodName=jsonReader.nextName();     // get request method name from input json stream
-        if (paramCount > 1) {
-            jsonReader.beginArray();
-        }
+        String messageName=jsonReader.nextName();     // get message name from input json stream
+        jsonReader.beginArray();
+
         int i = 0;
         for (Class paramType : paramClasses) {
             jsonReader.beginObject();
             argNames[i] = jsonReader.nextName();
-            methodParam[i] = gson.fromJson(jsonReader, paramType);   // gson handle all types well and retuen an object from it
+            methodParam[i] = gson.fromJson(jsonReader, paramType);   // gson handle all types well and return an object from it
             jsonReader.endObject();
             i++;
         }
-        if (paramCount > 1) {
-            jsonReader.endArray();
-        }
+
+        jsonReader.endArray();
         jsonReader.endObject();
 
         return  operation.invoke(service, methodParam);

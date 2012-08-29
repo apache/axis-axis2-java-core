@@ -82,11 +82,6 @@ public class GsonXMLStreamReader implements XMLStreamReader {
     private String namespace;
 
 
-    // Default namespace
-    final static private String DEFAULT_NAMESPACE = "http://axis2.apache.org/axis/json";
-
-    final static private String DEFAULT_NAMESPACE_PREFIX = "ns";
-
     public GsonXMLStreamReader(JsonReader jsonReader) {
         this.jsonReader = jsonReader;
     }
@@ -653,7 +648,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
                 namespace = jsonObj.getNamespaceUri();
                 stackObj.push(miniStack.pop());
             } else {
-                throw new XMLStreamException(JsonConstant.IN_JSON_MESSAGE_NOT_VALID + "required : " + jsonObj.getName() + " but get : " + name);
+                throw new XMLStreamException(JsonConstant.IN_JSON_MESSAGE_NOT_VALID + "expected : " + jsonObj.getName() + " but found : " + name);
             }
         } else if (!queue.isEmpty()) {
             JsonObject jsonObj = queue.peek();
@@ -661,7 +656,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
                 namespace = jsonObj.getNamespaceUri();
                 stackObj.push(queue.poll());
             } else {
-                throw new XMLStreamException(JsonConstant.IN_JSON_MESSAGE_NOT_VALID + "required : " + jsonObj.getName() + " but get : " + name);
+                throw new XMLStreamException(JsonConstant.IN_JSON_MESSAGE_NOT_VALID + "expected : " + jsonObj.getName() + " but found : " + name);
             }
         } else {
             throw new XMLStreamException(JsonConstant.IN_JSON_MESSAGE_NOT_VALID);
@@ -692,6 +687,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
                     value = String.valueOf(jsonReader.nextDouble());
                 }
             } else if (tokenType == JsonToken.NULL) {
+                jsonReader.nextNull();
                 value = null;
             } else {
                 log.error("Couldn't read the value, Illegal state exception");

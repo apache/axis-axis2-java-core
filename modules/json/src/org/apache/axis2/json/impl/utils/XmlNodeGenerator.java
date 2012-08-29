@@ -57,56 +57,58 @@ public class XmlNodeGenerator {
     private void processSchemaList() {
         // get the operation schema and process.
         XmlSchema operationSchema = getXmlSchema(elementQname);
-        XmlSchemaElement methodElement = operationSchema.getElementByName(elementQname.getLocalPart());
-        mainXmlNode = new XmlNode(elementQname.getLocalPart(), elementQname.getNamespaceURI() , false, (methodElement.getMaxOccurs() == 1 ? false : true) , "");
-        QName methodSchemaTypeName = methodElement.getSchemaTypeName();
+        XmlSchemaElement messageElement = operationSchema.getElementByName(elementQname.getLocalPart());
+        mainXmlNode = new XmlNode(elementQname.getLocalPart(), elementQname.getNamespaceURI() , false, (messageElement.getMaxOccurs() == 1 ? false : true) , "");
+
+        QName messageSchemaTypeName = messageElement.getSchemaTypeName();
         XmlSchemaType schemaType = null;
-        if (methodSchemaTypeName != null){
-            schemaType = getXmlSchema(methodSchemaTypeName).getTypeByName(methodSchemaTypeName.getLocalPart());
+        XmlSchema schemaOfType = null;
+        if (messageSchemaTypeName != null) {
+            schemaType = operationSchema.getTypeByName(messageSchemaTypeName);
+            if (schemaType == null) {
+                schemaOfType = getXmlSchema(messageSchemaTypeName);
+                schemaType = schemaOfType.getTypeByName(messageSchemaTypeName.getLocalPart());
+            } else {
+                schemaOfType = operationSchema;
+            }
         } else {
-            schemaType = methodElement.getSchemaType();
+            schemaType = messageElement.getSchemaType();
+            schemaOfType = operationSchema;
         }
 
         if (schemaType != null) {
-            processSchemaType(schemaType, mainXmlNode , operationSchema);
+            processSchemaType(schemaType, mainXmlNode, schemaOfType);
         } else {
             // nothing to do
         }
     }
 
     private void processElement(XmlSchemaElement element, XmlNode parentNode , XmlSchema schema) {
+        String targetNamespace = schema.getTargetNamespace();
+        XmlNode xmlNode;
         QName schemaTypeName = element.getSchemaTypeName();
-        QName qName = element.getQName();
-        String pref = schemaTypeName.getPrefix();
-        XmlNode tempNode;
-        if (qName == null) {
-            tempNode = new XmlNode(element.getName(), parentNode.getNamespaceUri(), false, (element.getMaxOccurs() == 1 ? false : true), schemaTypeName.getLocalPart());
-
-        } else {
-            tempNode = new XmlNode(qName.getLocalPart(), qName.getNamespaceURI(), false, (element.getMaxOccurs() == 1 ? false : true), schemaTypeName.getLocalPart());
-        }
-        parentNode.addChildtoList(tempNode);
-        if (("xs").equals(pref)) {
-            // this element doesn't has child elements
-        } else {
-            XmlSchema childSchema = null;
-            XmlSchemaElement childEle = schema.getElementByName(schemaTypeName);
-            XmlSchemaType childType = schema.getTypeByName(schemaTypeName);
-            if (childEle == null && childType == null) {
-                childSchema = getXmlSchema(schemaTypeName);
-                childEle = childSchema.getElementByName(schemaTypeName);
-                childType = childSchema.getTypeByName(schemaTypeName);
+        XmlSchemaType schemaType = element.getSchemaType();
+        if (schemaTypeName != null) {
+            xmlNode = new XmlNode(element.getName(), targetNamespace, false, (element.getMaxOccurs() == 1 ? false : true), schemaTypeName.getLocalPart());
+            parentNode.addChildtoList(xmlNode);
+            if (("http://www.w3.org/2001/XMLSchema").equals(schemaTypeName.getNamespaceURI())) {
             } else {
-                childSchema = schema;
+                XmlSchema schemaOfType;
+                // see whether Schema type is in the same schema
+                XmlSchemaType childSchemaType = schema.getTypeByName(schemaTypeName.getLocalPart());
+                if (childSchemaType == null) {
+                    schemaOfType = getXmlSchema(schemaTypeName);
+                    childSchemaType = schemaOfType.getTypeByName(schemaTypeName.getLocalPart());
+                }else{
+                    schemaOfType = schema;
+                }
+                processSchemaType(childSchemaType, xmlNode, schemaOfType);
             }
-
-            if (childEle == null) {
-                processSchemaType(childType, tempNode, childSchema);
-            } else {
-                processElement(childEle, tempNode, childSchema);
-            }
+        }else if (schemaType != null) {
+            xmlNode = new XmlNode(element.getName(), targetNamespace, false, (element.getMaxOccurs() == 1 ? false : true), schemaType.getQName().getLocalPart());
+            parentNode.addChildtoList(xmlNode);
+            processSchemaType(schemaType, xmlNode, schema);
         }
-
     }
 
 
@@ -122,9 +124,6 @@ public class XmlNodeGenerator {
                     Object obj = objectIterator.next();
                     if (obj instanceof XmlSchemaElement) {
                         processElement((XmlSchemaElement)obj , parentNode , schema);
-                    }else if (obj instanceof XmlSchemaComplexType || obj instanceof  XmlSchemaSimpleType) {     // never come to this
-                        XmlSchemaType schemaType = (XmlSchemaType)obj;
-                        processSchemaType(schemaType , parentNode , schema);
                     }
                 }
             }
