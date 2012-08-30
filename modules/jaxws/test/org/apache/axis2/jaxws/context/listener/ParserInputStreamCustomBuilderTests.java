@@ -50,7 +50,7 @@ public class ParserInputStreamCustomBuilderTests extends TestCase {
 	private String mockenvelope= "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"+
 	"<soapenv:Header/>"+
 	"<soapenv:Body>"+
-	"<ns:invokeOp xmlns:=\"urn:sample\">Hello Provider OM</ns:invokeOp>"+
+	"<ns:invokeOp xmlns:ns=\"urn:sample\">Hello Provider OM</ns:invokeOp>"+
 	"</soapenv:Body>"+
 	"</soapenv:Envelope>";
 	

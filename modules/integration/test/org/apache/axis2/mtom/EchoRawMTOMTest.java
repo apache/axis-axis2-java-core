@@ -27,7 +27,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -62,7 +61,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
 
     private AxisService service;
 
-    private OMTextImpl expectedTextData;
+    private OMText expectedTextData;
 
     private boolean finish = false;
 
@@ -99,7 +98,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         OMElement data = fac.createOMElement("data", omNs);
         FileDataSource fileDataSource = new FileDataSource(TestingUtils.prefixBaseDirectory("test-resources/mtom/test.jpg"));
         expectedDH = new DataHandler(fileDataSource);
-        expectedTextData = new OMTextImpl(expectedDH, true, fac);
+        expectedTextData = fac.createOMText(expectedDH, true);
         data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
         return rpcWrapEle;
