@@ -40,8 +40,7 @@ public class HTTPClient4SenderTest extends HTTPSenderTest {
                      getHTTPMethod());
         assertEquals("Not the expected content", "/getService?part=sample%20data",
                      getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:getService",
-                     getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value",
                      "application/x-www-form-urlencoded;action=\"urn:getService\";",
                      getHeaders().get(HttpHeaders.CONTENT_TYPE));
@@ -61,8 +60,7 @@ public class HTTPClient4SenderTest extends HTTPSenderTest {
                      getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:postService",
-                     getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                      getHeaders().get(HttpHeaders.CONTENT_TYPE));
         assertEquals("Not the expected HTTP Header value", "localhost",
@@ -96,8 +94,7 @@ public class HTTPClient4SenderTest extends HTTPSenderTest {
                      getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:putService",
-                     getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                      getHeaders().get(HttpHeaders.CONTENT_TYPE));
         assertEquals("Not the expected HTTP Header value", "localhost",
@@ -166,8 +163,7 @@ public class HTTPClient4SenderTest extends HTTPSenderTest {
                      getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:noService",
-                     getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                      getHeaders().get(HttpHeaders.CONTENT_TYPE));
         assertEquals("Not the expected HTTP Header value", "localhost",

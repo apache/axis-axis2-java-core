@@ -115,7 +115,7 @@ public class HTTPSenderImpl extends HTTPSender {
         String soapAction = messageFormatter
                 .formatSOAPAction(msgContext, format, soapActionString);
 
-        if (soapAction != null) {
+        if (soapAction != null && !msgContext.isDoingREST()) {
             httpGet.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 
@@ -226,7 +226,7 @@ public class HTTPSenderImpl extends HTTPSender {
 
         String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
 
-        if (soapAction != null) {
+        if (soapAction != null && !msgContext.isDoingREST()) {
             postMethod.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 
@@ -281,7 +281,7 @@ public class HTTPSenderImpl extends HTTPSender {
         }
 
         String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
-        if (soapAction != null) {
+        if (soapAction != null && !msgContext.isDoingREST()) {
             putMethod.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 

@@ -89,8 +89,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHTTPMethod());
         assertEquals("Not the expected content", "/getService?part=sample%20data",
                 getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:getService",
-                getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value",
                 "application/x-www-form-urlencoded;action=\"urn:getService\";",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
@@ -115,8 +114,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:postService",
-                getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
@@ -140,6 +138,9 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get(HttpHeaders.USER_AGENT));
     }
 
+
+
+
     /**
      * Test send via put.
      * 
@@ -155,8 +156,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:putService",
-                getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
@@ -243,8 +243,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHTTPMethod());
         assertEquals("Not the expected content", getEnvelope().getFirstElement().getFirstElement()
                 .toString(), getStringContent());
-        assertEquals("Not the expected HTTP Header value", "urn:noService",
-                getHeaders().get("SOAPAction"));
+        assertNull("Not the expected HTTP Header value", getHeaders().get("SOAPAction"));
         assertEquals("Not the expected HTTP Header value", "application/xml",
                 getHeaders().get(HttpHeaders.CONTENT_TYPE));
         assertEquals("Not the expected HTTP Header value", "localhost:" + port,
@@ -252,6 +251,16 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
         assertEquals("Not the expected HTTP Header value", "Axis2",
                 getHeaders().get(HttpHeaders.USER_AGENT));
 
+        sendViaHTTP(null, "urn:noService", "http://localhost:" + port + "/noService", false);
+        assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
+        assertEquals("Not the expected HTTP Header value", "urn:noService",
+                getHeaders().get("SOAPAction").replace("\"", ""));
+        assertEquals("Not the expected HTTP Header value", "text/xml",
+                getHeaders().get(HttpHeaders.CONTENT_TYPE));
+        assertEquals("Not the expected HTTP Header value", "localhost:" + port,
+                getHeaders().get(HttpHeaders.HOST));
+        assertEquals("Not the expected HTTP Header value", "Axis2",
+                getHeaders().get(HttpHeaders.USER_AGENT));
     }
     public void testHandleResponseHTTPStatusCode200() throws Exception {
         httpSender = getHTTPSender();
