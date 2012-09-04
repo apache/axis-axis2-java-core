@@ -364,7 +364,7 @@ public class Utils {
     }
 
     public static String getModuleName(String moduleName, String moduleVersion) {
-        if (moduleVersion != null && moduleVersion.length() != 0) {
+        if (moduleVersion != null && !moduleVersion.isEmpty()) {
             moduleName = moduleName + "-" + moduleVersion;
         }
         return moduleName;
