@@ -122,15 +122,24 @@ public class AxisModule implements ParameterInclude {
         this.name = name;
     }
 
+    private String archiveName;
+
     /**
      * Get the archive name of this module. The archive name is the combination
      * of the module name and version (if available). In general it is equal to the
      * name of the module archive file without the suffix.
-     * 
+     *
      * @return the archive name of the module
      */
     public String getArchiveName() {
-        return version == null ? name : (name + "-" + version);
+        if (archiveName == null){
+            if(version == null){
+                archiveName = name;
+            } else {
+                archiveName = name + "-" + version;
+            }
+        }
+        return archiveName;
     }
 
     /**
