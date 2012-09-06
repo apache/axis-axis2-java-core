@@ -17,11 +17,35 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl.utils;
+package org.apache.axis2.json.gson.factory;
 
-public enum JSONType {
-    ARRAY,
-    NESTED_ARRAY,
-    NESTED_OBJECT,
-    OBJECT,
+
+public class JsonObject {
+    private String name;
+    private JSONType type;
+    private String valueType;
+    private String namespaceUri;
+
+    public JsonObject(String name, JSONType type, String valueType , String namespaceUri) {
+        this.name = name;
+        this.type = type;
+        this.valueType = valueType;
+        this.namespaceUri = namespaceUri;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public JSONType getType() {
+        return type;
+    }
+
+    public String getValueType() {
+        return valueType;
+    }
+
+    public String getNamespaceUri() {
+        return namespaceUri;
+    }
 }

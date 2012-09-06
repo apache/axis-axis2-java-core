@@ -30,10 +30,10 @@ First of all add following message builder and message formatter to axis2.xml co
 configuration file in AXIS2_HOME/conf/ directory.
 
 <messageBuilder contentType="application/json-impl"
-			class="org.apache.axis2.json.impl.JsonBuilder" />
+			class="org.apache.axis2.json.gson.JsonBuilder" />
 
 <messageFormatter contentType="application/json-impl"
-			class="org.apache.axis2.json.impl.JsonFormatter" />
+			class="org.apache.axis2.json.gson.JsonFormatter" />
 
 Goto AXIS2_HOME/sample/json/ directory and
 

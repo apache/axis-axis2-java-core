@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.json.impl;
+package org.apache.axis2.json.gson;
 
 import javax.xml.namespace.NamespaceContext;
 import java.util.Iterator;

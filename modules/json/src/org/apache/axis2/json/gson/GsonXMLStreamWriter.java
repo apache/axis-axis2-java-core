@@ -17,15 +17,15 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl;
+package org.apache.axis2.json.gson;
 
 import com.google.gson.stream.JsonWriter;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.json.impl.utils.JSONType;
-import org.apache.axis2.json.impl.utils.JsonConstant;
-import org.apache.axis2.json.impl.utils.JsonObject;
-import org.apache.axis2.json.impl.utils.XmlNode;
-import org.apache.axis2.json.impl.utils.XmlNodeGenerator;
+import org.apache.axis2.json.gson.factory.JSONType;
+import org.apache.axis2.json.gson.factory.JsonConstant;
+import org.apache.axis2.json.gson.factory.JsonObject;
+import org.apache.axis2.json.gson.factory.XmlNode;
+import org.apache.axis2.json.gson.factory.XmlNodeGenerator;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.NamespaceContext;

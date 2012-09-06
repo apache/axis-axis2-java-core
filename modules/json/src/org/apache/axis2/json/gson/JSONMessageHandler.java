@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl;
+package org.apache.axis2.json.gson;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -25,8 +25,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.json.impl.rpc.JsonRpcMessageReceiver;
-import org.apache.axis2.json.impl.utils.JsonConstant;
+import org.apache.axis2.json.gson.rpc.JsonRpcMessageReceiver;
+import org.apache.axis2.json.gson.factory.JsonConstant;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 

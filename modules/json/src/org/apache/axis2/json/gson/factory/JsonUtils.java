@@ -17,14 +17,12 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl.utils;
+package org.apache.axis2.json.gson.factory;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

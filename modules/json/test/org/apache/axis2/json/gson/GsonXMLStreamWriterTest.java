@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl;
+package org.apache.axis2.json.gson;
 
 import com.google.gson.stream.JsonWriter;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -28,9 +28,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.xml.namespace.QName;

@@ -17,35 +17,26 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl.utils;
+package org.apache.axis2.json.gson.factory;
 
 
-public class JsonObject {
-    private String name;
-    private JSONType type;
-    private String valueType;
-    private String namespaceUri;
+public class JsonConstant {
 
-    public JsonObject(String name, JSONType type, String valueType , String namespaceUri) {
-        this.name = name;
-        this.type = type;
-        this.valueType = valueType;
-        this.namespaceUri = namespaceUri;
-    }
 
-    public String getName() {
-        return name;
-    }
+    public static final String RESPONSE = "response";
 
-    public JSONType getType() {
-        return type;
-    }
+    public static final String RETURN_OBJECT = "returnObject";
+    public static final String RETURN_TYPE = "returnType";
 
-    public String getValueType() {
-        return valueType;
-    }
+    public static final String IS_JSON_STREAM = "isJsonStream";
 
-    public String getNamespaceUri() {
-        return namespaceUri;
-    }
+    public static final String GSON_XML_STREAM_READER = "GsonXMLStreamReader";
+
+    public static final String XMLNODES = "xmlnodes";
+
+
+//    error messages
+
+    public static final String IN_JSON_MESSAGE_NOT_VALID = "Input JSON message is not valid ";
+
 }

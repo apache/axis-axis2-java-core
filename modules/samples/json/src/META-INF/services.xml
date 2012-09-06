@@ -4,9 +4,9 @@
     </Description>
     <messageReceivers>
         <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
-        class="org.apache.axis2.json.impl.rpc.JsonRpcMessageReceiver"  />
+        class="org.apache.axis2.json.gson.rpc.JsonRpcMessageReceiver"  />
         <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
-                         class="org.apache.axis2.json.impl.rpc.JsonInOnlyRPCMessageReceiver"/>
+                         class="org.apache.axis2.json.gson.rpc.JsonInOnlyRPCMessageReceiver"/>
     </messageReceivers>
     <parameter name="ServiceClass" locked="false">sample.json.service.JsonService</parameter>
 </service>

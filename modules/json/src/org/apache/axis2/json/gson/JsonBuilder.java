@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl;
+package org.apache.axis2.json.gson;
 
 import com.google.gson.stream.JsonReader;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -28,7 +28,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.json.impl.utils.JsonConstant;
+import org.apache.axis2.json.gson.factory.JsonConstant;
 
 import java.io.IOException;
 import java.io.InputStream;

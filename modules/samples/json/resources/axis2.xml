@@ -176,7 +176,7 @@
                           class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
 
 	<messageFormatter contentType="application/json-impl"
-			class="org.apache.axis2.json.impl.JsonFormatter" />
+			class="org.apache.axis2.json.gson.JsonFormatter" />
     </messageFormatters>
 
     <!-- ================================================= -->
@@ -193,7 +193,7 @@
                         class="org.apache.axis2.builder.MultipartFormDataBuilder"/>
 
 	<messageBuilder contentType="application/json-impl"
-			class="org.apache.axis2.json.impl.JsonBuilder" />
+			class="org.apache.axis2.json.gson.JsonBuilder" />
     </messageBuilders>
 
     <!-- ================================================= -->

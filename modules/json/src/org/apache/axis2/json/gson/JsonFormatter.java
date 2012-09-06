@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl;
+package org.apache.axis2.json.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
@@ -26,7 +26,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.json.impl.utils.JsonConstant;
+import org.apache.axis2.json.gson.factory.JsonConstant;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl;
+package org.apache.axis2.json.gson;
 
 import com.google.gson.Gson;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -35,7 +35,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.json.impl.utils.JsonConstant;
+import org.apache.axis2.json.gson.factory.JsonConstant;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;

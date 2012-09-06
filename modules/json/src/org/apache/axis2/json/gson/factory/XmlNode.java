@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.impl.utils;
+package org.apache.axis2.json.gson.factory;
 
 import java.util.ArrayList;
 import java.util.List;
