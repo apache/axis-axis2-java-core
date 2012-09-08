@@ -381,7 +381,11 @@ public class JavaClassToDBCConverter {
             webFaultAnnot.setFaultBean(webFault.faultBean());
             webFaultAnnot.setName(webFault.name());
             webFaultAnnot.setTargetNamespace(webFault.targetNamespace());
-            webFaultAnnot.setMessageName(webFault.messageName());
+            try {
+                webFaultAnnot.setMessageName(webFault.messageName());
+            } catch (NoSuchMethodError ex) {
+                // Ignore: we are running on Java 1.6 and the JAX-WS 2.2 libs have not been endorsed
+            }
             composite.setWebFaultAnnot(webFaultAnnot);
         }
     }
