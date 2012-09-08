@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+   <properties>
+       <title>How to configure Native approach and XML Stream API base approach</title>
+   </properties>
+
+    <body>
+        <h1>How to configure Native approach and XML Stream API base approach</h1>
+
+        <section name="How to use Native JSON support" id="native_approach" >
+            <p>If you need to expose your POJO services to support pure JSON requests as well as SOAP requests, then you
+                need to go through the following process to do that with this new feature introduced into Axis2 JSON
+                support.</p>
+
+            <p>Step 1 : Set in-out message receiver and in-only message receiver</p>
+
+            <p>You need to set <code>org.apache.axis2.json.gson.rpc.JsonRpcMessageReceiver</code> with
+                <code>http://www.w3.org/ns/wsdl/in-out</code> message exchange pattern. Also with <code>http://www.w3.org/ns/wsdl/in-only</code>
+                message exchange pattern, set <code>org.apache.axis2.json.gson.rpc.JsonInOnlyRPCMessageReceiver</code>.  </p>
+
+            <p>eg.</p>
+            <pre><![CDATA[
+            <messageReceivers>
+                <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
+                                 class="org.apache.axis2.json.gson.rpc.JsonRpcMessageReceiver"/>
+                <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
+                                 class="org.apache.axis2.json.gson.rpc.JsonInOnlyRPCMessageReceiver"/>
+            </messageReceivers>
+            ]]></pre>
+            <p>Step 2: Set message builder and message formatter</p>
+
+            <p>you need to edit axis2.xml in <code>[AXIS2_HOME]/conf/ </code>directory, to set <code>org.apache.axis2.json.gson.JsonBuilder</code>
+                as message builder with application/json contentType to handle JSON requests and
+                <code>org.apache.axis2.json.gson.JsonFormatter</code> as message formatter with application/json
+                contentType to write response to wire as JSON format.</p>
+
+            <p>eg.</p>
+            <pre><![CDATA[
+                  <messageBuilder contentType="application/json"
+                                  class="org.apache.axis2.json.gson.JsonBuilder" />
+
+                  <messageFormatter contentType="application/json"
+                                    class="org.apache.axis2.json.gson.JsonFormatter" />
+           ]]></pre>
+        </section>
+
+        <section name="How to use XML stream API based approach" id="xml_stream_api_base_approach" >
+
+            <p>You can use this XML Stream API based approach with databinding services like ADB and xmlbeans as well
+                as with normal POJO services. Follow the steps mentioned below to use this new feature introduced into
+                Axis2 JSON support.</p>
+
+            <p>Step 1 : Set message builder and message formatter</p>
+
+            <p>You need to edit axis2.xml in <code>[AXIS2_HOME]/conf/</code> directory, to set <code>org.apache.axis2.json.gson.JsonBuilder</code>
+                as message builder with <code>application/json</code> contentType to handle JSON requests and,
+                <code>org.apache.axis2.json.gson.JsonFormatter</code> as message formatter with <code>application/json</code> contentType to
+                write response to wire as JSON format.</p>
+
+            <p>eg.</p>
+            <pre><![CDATA[
+                <messageBuilder contentType="application/json"
+                                class="org.apache.axis2.json.gson.JsonBuilder" />
+
+                <messageFormatter contentType="application/json"
+                                  class="org.apache.axis2.json.gson.JsonFormatter" />
+                        ]]>
+            </pre>
+
+            <p>Step 2: Set inflow handlers</p>
+
+            <p>Remove RequestURIOperationDispatcher handler from dispatch phase and place it as the last handler in
+                transport phase. Now add new JSONMessageHandler after the RequestURIOperationDispatcher. Finally
+                transport phase would be like following,</p>
+
+            <pre><![CDATA[
+            <phaseOrder type="InFlow">
+                <!--  System predefined phases  -->
+                <phase name="Transport">
+                    -------------
+                    <handler name="RequestURIOperationDispatcher"
+                             class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher"/>
+                    <handler name="JSONMessageHandler"
+                             class="org.apache.axis2.json.gson.JSONMessageHandler" />
+                </phase>
+                ------------
+            </phaseOrder>
+                    ]]>
+            </pre>
+
+        </section>
+
+    </body>
+</document>

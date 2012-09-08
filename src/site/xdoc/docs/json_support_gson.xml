@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+   <properties>
+       <title>New JSON support in Apache Axis2</title>
+   </properties>
+
+    <body>
+        <h1>New JSON support in Apache Axis2</h1>
+        <p>This documentation explains how the existing JSON support in Apache Axis2 have been improved with two new
+            methods named, Native approach and XML stream API based approach. Here it initially explains about the
+            drawbacks of the old JSON support, how to overcome those drawbacks with the new approaches and, how to use
+            those approaches to send pure JSON objects without converting it to any XML representations. XML Stream API
+            based approach addresses the namespace problem with pure JSON support, and provides a good solution for
+            that.</p>
+
+        <section name="Introduction">
+
+            <p>Apache Axis2 is an efficient third generation SOAP processing web services engine. JSON (JavaScript
+                Object Notation) is a lightweight data-interchange format and, an alternative for XML which is easily
+                human readable and writable as well as it can be parsed and generated easily for machines.</p>
+
+            <p>The existing JSON implementation in Apache Axis2/Java supports badgerfish format of the JSON object,
+                which is an XML representation of JSON object. With this approach, it first completely converts the
+                badgerfish JSON string to the relevant XML format in the server side and, treats it as a normal SOAP
+                message. The current JSON implementation also supports Mapped JSON, which is another XML representation
+                of the JSON object, if we set xmlToJsonNamespaceMap parameter in the services.xml file of the service.
+                The main problem with Mapped JSON format is, at the client side it is not aware of the namespaces which
+                is used in server side to validate the request. Therefore with current implementation, it is required
+                to do modifications to the existing services to use this mapped format support. The current JSON
+                implementations of Axis2 are slower than the existing SOAP support too. Therefore the existing JSON
+                support doesn't expose its advantages at all.</p>
+
+            <p>However this JSON support can be improved to support pure JSON objects without using any format to
+                convert it into a XML, as JSON is a light weighted alternative to XML. Thre are two new approaches
+                have been used with google-gson library, a rich library to convert a JSON string to a Java object
+                and vice-versa, in order to improve the existing JSON support in Apache Axis2/java.</p>
+
+            <p>Gson[1] is a Java library that can be used to convert Java Objects into their JSON representation.
+                It can be also used to convert a JSON string to an equivalent Java object. Gson can work with arbitrary
+                Java objects including pre-existing objects for which you do not have the source code.</p>
+
+            <p>There are a few open source projects, capable of converting Java objects into JSON. However, most of
+                them require to place Java annotations in all classes; something that cannot be done if we do not have
+                access to the source code. Most of them also do not fully support the use of Java Generics. Gson has
+                considered both of these facts as very important design goals and, the following are some of the
+                advantages of using Gson to convert JSON into Java objects and vice-versa.</p>
+
+            <ul>
+                <li>It provides simple toJSON() and fromJSON() methods to convert Java objects into JSON objects and
+                    vice-versa.</li>
+                <li>It allows pre-existing unmodifiable objects to be converted into/from JSON objects.</li>
+                <li>It has the extensive support of Java Generics.</li>
+                <li>It allows custom representations for objects.</li>
+                <li>It supports arbitrarily complex objects (with deep inheritance hierarchies and extensive use of
+                    generic types).</li>
+            </ul>
+
+            <p>As mentioned above, these two new approaches have been introduced to overcome the above explained
+                problems in the existing JSON implementation (Badgerfish and Mapped) of Axis2. The first one, the
+                Native approach, has been implemented with completely pure JSON support throughout the axis2 message
+                processing process while with the second approach which is XML stream API based approach, an
+                XMLStreamReader/XMLStreamWriter implementation using google-gson with the help of XMLSchema is being
+                implemented. The detailed description on the two approaches is given out in the next sections of the
+                documentation.</p>
+        </section>
+
+        <section name="Native Approach" id="native_approach" >
+
+            <p>With this approach you can expose your POJO service to accept pure JSON request other than converting to
+                any representation or format. You just need to send a valid JSON string request to the service url and,
+                in the url you should have addressed the operation as well as the service. Because in this scenario Axis2
+                uses URI based operation dispatcher to dispatch the correct operation. in
+                <a href="json_gson_user_guide.html#native_approach">here</a> you can
+                find the complete user guide for this native approach.</p>
+
+            <p>The Native approach is being implemented to use pure JSON throughout the axis2 message processing
+                process. In Axis2 as the content-type header is used to specify the type of data in the message body,
+                and depending on the content type, the wire format varies. Therefore, we need to have a mechanism to
+                format the message depending on content type. We know that any kind of message is represented in Axis2
+                using AXIOM, and when we serialize the message, it needs to be formatted based on content type.
+                MessageFormatters exist to do that job for us. We can specify MessageFormatters along with the content
+                type in axis2.xml. On the other hand, a message coming into Axis2 may or may not be XML, but for it to
+                go through Axis2, an AXIOM element needs to be created. As a result, MessageBuilders are employed to
+                construct the message depending on the content type.</p>
+
+            <p>After building the message it gets pass through AXIS2 execution chain to execute the message. If the
+                message has gone through the execution chain without having any problem, then the engine will hand over
+                the message to the message receiver in order to do the business logic invocation. After this, it is up
+                to the message receiver to invoke the service and send the response. So according to the Axis2
+                architecture to accomplish this approach it is required to implement three main components, a
+                MessageBuilder, a MessageReceiver and a MessageFormatter, where in this Native implementation those are
+                JSONBuilder, JSONRPCMessageReceiver and JSONFomatter, to handle the pure JSON request and invoke the
+                service and return a completely pure JSON string as a response. In the builder, it creates and returns
+                a dummy SOAP envelop to process over execution chain, while storing input json stream and a boolean
+                flag IS_JSON_STREAM as a property of input MessageContext. The next one is JSONRPCMessageReceiver which
+                is an extended subclass of RPCMessageReceiver. In here it checks IS_JSON_STREAM property value, if it is
+                'true' then it processes InputStream stored in input MessageContext, using JsonReader in google-gson API.
+                Then it invokes request service operation by Gson in google-gson API which uses Java reflection to invoke
+                the service. To write the response to wire, it stores the returned object and return java bean type, as
+                properties of output MessageContext. If IS_JSON_STREAM is 'false' or null then it is handed over to its
+                super class RPCMessageReceiver, in order to handle the request. This means, using JSONRPCMessageReceiver
+                as the message receiver of your service you can send pure JSON messages as well as SOAP requests too.
+                There is a JSONRPCInOnly-MessageReceiver which extends RPCInOnlyMessageReceiver class, to handle In-Only
+                JSON requests too. In JSONformatter it gets return object and the java bean type, and writes response as
+                a pure JSON string to the wire using JsonWriter in google-gson API. The native approach doesn’t support
+                namespaces. If you need namespace support with JSON then go through XML Stream API based approach.</p>
+
+
+        </section>
+
+        <section name="XML Stream API Base Approach" id="xml_stream_api_base_approach" >
+
+
+            <p> As you can see the native approach can only be used with POJO services but if you need to expose your
+                services which is generated by using ADB or xmlbeans databinding then you need to use this XML Stream
+                API based approach. With this approach you can send pure JSON requests to the relevant services.
+                Similar to the native approach you need to add operation name after the service name to use uri based
+                operation dispatch to dispatch the request operation.
+                <a href="json_gson_user_guide.html#xml_stream_api_base_approach">Here</a> you can see the user guide
+                for this XML Stream API based approach.</p>
+
+            <p>As mentioned in Native approach, Apache Axis2 uses AXIOM to process XML. If it can be implement a way to
+                represent JSON stream as an AXIOM object which provides relevant XML infoset while processing JSON
+                stream on fly, that would be make JSON, in line with Axis2 architecture and will support the services
+                which have written on top of xmlstream API too.</p>
+
+            <p>There are a few libraries like jettison , Json-lib etc. which already provide this
+                XMLStreaReader/XMLStreamWriter interfaces for JSON. There is no issue in converting JSON to XML, as we
+                can use jettison for that, but when it comes to XML to JSON there is a problem. How could we identify
+                the XML element which represent JSON array type? Yes we can identify it if there is two or more
+                consecutive XML elements as jettison does, but what happen if the expected JSON array type has only one
+                value? Then there is only one XML element. If we use Json-lib then xml element should have an attribute
+                name called "class" value to identify the type of JSON. As you can see this is not a standard way and
+                we cannot use this with Axis2 as well. Hence we can't use above libraries to convert XML to JSON
+                accurately without distort expected JSON string even it has one value JSON array type.</p>
+
+            <p>Therefore with this new improvement Axis2 have it's own way to handle incoming JSON requests and
+                outgoing JSON responses. It uses GsonXMLStreamReader and GsonXMLStreamWriter which are implementations
+                of XMLStreamReader/XMLStreamWriter, to handle this requests and responses. To identify expected request
+                OMElement structure and namespace uri, it uses XmlSchema of the request and response operations. With
+                the XmlSchema it can provide accurate XML infoset of the JSON message. To get the relevant XMLSchema
+                for the operation, it uses element qname of the message. At the MessageBuilder level Axis2 doesn't know
+                the element qname hence it can't get the XmlSchema of the operation. To solve this issue Axis2 uses a
+                new handler call JSONMessageHandler, which executes after the RequestURIOperationDispatcher handler.
+                In the MessageBuilder it creates GsonXMLStreamReader parsing JsonReader instance which is created using
+                inputStream and stores it in input MessageContext as a message property and returns a default SOAP
+                envelop. Inside the JSONMessageHandler it checks for this GsonXMLStreamReader property, if it is not
+                null and messageReceiver of the operation is not an instance of JSONRPCMessageReceiver, it gets the
+                element qname and relevant XMLSchema list from the input MessageContext and pass it to
+                GsonXMLStreamReader. After that it creates StAXOMBuilder passing this GsonXMLStreamReader as the
+                XMLStreamReader and get the document element. Finally set this document element as child of default
+                SOAP body. If Axis2 going to process XMLSchema for every request this would be a performance issue.
+                To solve this, Axis2 uses an intermediate representation(XmlNode) of operation XmlSchema list and store
+                it inside the ConfigurationContext with element qname as a property to use it for a next request
+                which will come to the same operation. Hence it only processes XmlSchema only once for each operation.</p>
+
+            <p>Same thing happens in the JsonFormatter, as it uses GsonXMLStreamWriter to write response to wire and
+                uses intermediate representation to identify the structure of outgoing OMElement. As we know the
+                structure here we can clearly identify expected JSON response. Even expected JSON string have a JSON
+                Array type which has only one value. </p>
+
+            <p>In addition, XML Stream API based approach supports namespace uri where it get namespaces from the
+                operation XMLSchema and provides it when it is asked. </p>
+
+
+
+        </section>
+
+
+    </body>
+</document>

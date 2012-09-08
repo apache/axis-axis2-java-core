@@ -102,8 +102,18 @@ Transport</a></li>
 <li><a href="WS_policy.html">WS-Policy
 Support</a></li>
 <li><a href="rest-ws.html">REST Support</a></li>
-<li><a href="json_support.html">JSON
-Support</a></li>
+<li>JSON support
+    <ul>
+    <li>23.1<a href="json_support.html">JSON support with Mapped/Badgerfish formats</a></li>
+    <li>23.2<a href="json_support_gson.html">Pure JSON Support</a>
+    <ul>
+        <li><a href="json_support_gson.html#native_approach">Native Approach</a></li>
+        <li><a href="json_support_gson.html#xml_stream_api_base_approach">XML Stream API Base Approach</a></li>
+        <li><a href="json_gson_user_guide.html">User Guide</a></li>
+    </ul>
+    </li>
+</ul>
+</li>
 <li><a href="corba-deployer.html">Exposing CORBA Services as Web Services</a></li>
 <li><a href="ejb-provider.html">Guide to using
 EJB Provider in Axis2</a></li>
