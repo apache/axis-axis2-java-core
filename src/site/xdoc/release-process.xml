@@ -204,17 +204,14 @@
                     folder and you only need to copy the <tt>X.Y.Z</tt> folder to the right location. Please execute the
                     copy with umask 0002 and check that the files and directories have the right permissions (write access for the
                     <tt>axis</tt> group).</li>
-                    <li>Check out the current Axis2 site from <a href="https://svn.apache.org/repos/asf/axis/axis2/java/core/site/">https://svn.apache.org/repos/asf/axis/axis2/java/core/site/</a>
+                    <li>Check out the current Axis2 site from <a href="https://svn.apache.org/repos/asf/axis/site/axis2/java/core/">https://svn.apache.org/repos/asf/axis/site/axis2/java/core/</a>
                     and synchronize it with the site for the new release. The site should have been generated during the
                     release build and can be found in the <tt>target/checkout/target/site</tt>. Alternatively you can
                     check out the release tag and rebuild the site using <tt>mvn site</tt>, or extract it from the
                     documents distribution. Axiom has a script (see <tt>etc/syncsite.py</tt>) that can be used to
                     synchronize the site in Subversion. It takes care of executing the relevant <tt>svn add</tt>
-                    and <tt>svn remove</tt> commands on the local working copy of the site.</li>
-                    <li>Login to <tt>people.apache.org</tt> and update the local working copy of the site:
-<pre>umask 0002
-cd /www/axis.apache.org/axis2/java/core
-svn update</pre></li>
+                    and <tt>svn remove</tt> commands on the local working copy of the site.
+                    The live Web site is updated automatically by svnpubsub once the changes have been committed to SVN.</li>
                 </ol>
                 <p>It may take several hours before everything has been synchronized. Before proceeding, check that</p>
                 <ul>
