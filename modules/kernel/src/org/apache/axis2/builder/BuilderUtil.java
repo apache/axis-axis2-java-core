@@ -57,6 +57,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.util.MultipleEntryHashMap;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -454,37 +455,8 @@ public class BuilderUtil {
 
         String soapEnvelopeNamespaceURI = getEnvelopeNamespace(contentTypeString);
 
-        if (isSOAP) {
-            if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.MTOM_TYPE)) {
-                //Creates the MTOM specific MTOMStAXSOAPModelBuilder
-                builder = new MTOMStAXSOAPModelBuilder(streamReader,
-                                                       attachments, soapEnvelopeNamespaceURI);
-                msgContext.setDoingMTOM(true);
-            } else if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.SWA_TYPE)) {
-                builder = new StAXSOAPModelBuilder(streamReader,
-                                                   soapEnvelopeNamespaceURI);
-            } else if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.SWA_TYPE_12)) {
-                builder = new StAXSOAPModelBuilder(streamReader,
-                                                   soapEnvelopeNamespaceURI);
-            }
+        return MessageProcessorSelector.getAttachmentBuilder(msgContext, attachments, streamReader, soapEnvelopeNamespaceURI, isSOAP);
 
-        }
-        // To handle REST XOP case
-        else {
-            if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
-                builder = new XOPAwareStAXOMBuilder(streamReader, attachments);
-
-            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
-                builder = new StAXOMBuilder(streamReader);
-            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE_12)) {
-                builder = new StAXOMBuilder(streamReader);
-            }
-        }
-
-        return builder;
     }
 
     protected static Attachments createAttachmentsMap(MessageContext msgContext,

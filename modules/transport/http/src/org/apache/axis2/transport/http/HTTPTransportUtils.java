@@ -273,10 +273,10 @@ public class HTTPTransportUtils {
             if (soapVersion == VERSION_SOAP11) {
                 // TODO Keith : Do we need this anymore
                 // Deployment configuration parameter
-                Parameter enableREST = msgContext
-                        .getParameter(Constants.Configuration.ENABLE_REST);
-                if ((soapActionHeader == null) && (enableREST != null)) {
-                    if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
+                Parameter disableREST = msgContext
+                        .getParameter(Constants.Configuration.DISABLE_REST);
+                if (soapActionHeader == null && disableREST != null) {
+                    if (Constants.VALUE_FALSE.equals(disableREST.getValue())) {
                         // If the content Type is text/xml (BTW which is the
                         // SOAP 1.1 Content type ) and the SOAP Action is
                         // absent it is rest !!

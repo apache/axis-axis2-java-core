@@ -35,6 +35,7 @@ import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.impl.httpclient3.HTTPSenderImpl;
 import org.apache.axis2.transport.http.server.AxisHttpResponse;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -336,7 +337,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements HTTPT
             }
         }
 
-        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
+        MessageFormatter messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);
         if (messageFormatter == null) throw new AxisFault("No MessageFormatter in MessageContext");
 
         // Once we get to this point, exceptions should NOT be turned into faults and sent,

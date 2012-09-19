@@ -30,11 +30,11 @@ import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -656,7 +656,7 @@ public class HTTPSenderImpl extends HTTPSender {
             httpMethod.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
         }
 
-        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
+        MessageFormatter messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);
 
         url = messageFormatter.getTargetAddress(msgContext, format, url);
 

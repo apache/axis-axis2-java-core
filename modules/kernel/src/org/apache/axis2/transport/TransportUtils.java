@@ -43,11 +43,9 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.SOAPMessageFormatter;
-import org.apache.axis2.transport.http.XFormURLEncodedFormatter;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -196,7 +194,7 @@ public class TransportUtils {
         String type = null;
         if (contentType != null) {
             type = getContentType(contentType, msgContext);
-            Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
+            Builder builder = MessageProcessorSelector.getMessageBuilder(type, msgContext);
             if (builder != null) {
 	            if (log.isDebugEnabled()) {
 	                log.debug("createSOAPEnvelope using Builder (" +
@@ -271,7 +269,8 @@ public class TransportUtils {
         if (msgContext.isDoingREST() && HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(type)) {
             if (msgContext.isServerSide()) {
                 if (msgContext.getSoapAction() == null) {
-                    type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+                    // TODO - remove this logic. 
+                    //type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
                 }
             } else if (!msgContext.isPropertyTrue(Constants.Configuration.SOAP_RESPONSE_MEP)) {
                 type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
@@ -356,50 +355,7 @@ public class TransportUtils {
         }
     }
 
-    /**
-     * Initial work for a builder selector which selects the builder for a given message format based on the the content type of the recieved message.
-     * content-type to builder mapping can be specified through the Axis2.xml.
-     *
-     * @param msgContext
-     * @return the builder registered against the given content-type
-     * @throws AxisFault
-     */
-    public static MessageFormatter getMessageFormatter(MessageContext msgContext)
-            throws AxisFault {
-        MessageFormatter messageFormatter = null;
-        String messageFormatString = getMessageFormatterProperty(msgContext);
-        if (messageFormatString != null) {
-            messageFormatter = msgContext.getConfigurationContext()
-                    .getAxisConfiguration().getMessageFormatter(messageFormatString);
-            if (log.isDebugEnabled()) {
-                log.debug("Message format is: " + messageFormatString
-                        + "; message formatter returned by AxisConfiguration: " + messageFormatter);
-            }
-        }
-        if (messageFormatter == null) {
-            messageFormatter = (MessageFormatter) msgContext.getProperty(Constants.Configuration.MESSAGE_FORMATTER);
-            if(messageFormatter != null) {
-                return messageFormatter;
-            }
-        }
-        if (messageFormatter == null) {
 
-            // If we are doing rest better default to Application/xml formatter
-            if (msgContext.isDoingREST()) {
-                String httpMethod = (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
-                if (Constants.Configuration.HTTP_METHOD_GET.equals(httpMethod) ||
-                        Constants.Configuration.HTTP_METHOD_DELETE.equals(httpMethod)) {
-                    return new XFormURLEncodedFormatter();
-                }
-                return new ApplicationXMLFormatter();
-            } else {
-                // Lets default to SOAP formatter
-                //TODO need to improve this to use the stateless nature
-                messageFormatter = new SOAPMessageFormatter();
-            }
-        }
-        return messageFormatter;
-    }
 
 
     /**
@@ -483,22 +439,7 @@ public class TransportUtils {
     }
 
 
-    private static String getMessageFormatterProperty(MessageContext msgContext) {
-        String messageFormatterProperty = null;
-        Object property = msgContext
-                .getProperty(Constants.Configuration.MESSAGE_TYPE);
-        if (property != null) {
-            messageFormatterProperty = (String) property;
-        }
-        if (messageFormatterProperty == null) {
-            Parameter parameter = msgContext
-                    .getParameter(Constants.Configuration.MESSAGE_TYPE);
-            if (parameter != null) {
-                messageFormatterProperty = (String) parameter.getValue();
-            }
-        }
-        return messageFormatterProperty;
-    }
+
 
 
         /**

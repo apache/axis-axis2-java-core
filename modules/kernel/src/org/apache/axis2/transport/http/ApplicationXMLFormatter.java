@@ -21,7 +21,6 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultDetail;
@@ -211,11 +210,13 @@ public class ApplicationXMLFormatter implements MessageFormatter {
         if (JavaUtils.indexOfIgnoreCase(contentType, SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
             return true;
         }
+        // 'text/xml' can be a POX (REST) content type too
+        // TODO - Remove 
         // search for "type=text/xml"
-        else if (JavaUtils.indexOfIgnoreCase(contentType, 
+        /*else if (JavaUtils.indexOfIgnoreCase(contentType,
                                              SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
             return true;
-        }
+        }  */
         return false;
     }
 }

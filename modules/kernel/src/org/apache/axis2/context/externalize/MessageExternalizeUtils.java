@@ -27,7 +27,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -145,7 +145,7 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         try { 
             // Write out the message using the same logic as the 
             // transport layer.
-            MessageFormatter msgFormatter = TransportUtils.getMessageFormatter(mc);
+            MessageFormatter msgFormatter = MessageProcessorSelector.getMessageFormatter(mc);
             msgFormatter.writeTo(mc, outputFormat, bos, 
                                  true); // Preserve the original message
             

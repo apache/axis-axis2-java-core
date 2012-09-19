@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.util.MessageProcessorSelector;
 
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
@@ -48,7 +49,7 @@ public class MIMEBuilder implements Builder {
         
         String type = ct.getParameter("type");
         Builder builder =
-                BuilderUtil.getBuilderFromSelector(type, msgContext);
+                MessageProcessorSelector.getMessageBuilder(type, msgContext);
         
         if (builder instanceof MIMEAwareBuilder) {
             return ((MIMEAwareBuilder)builder).processMIMEMessage(attachments, type, msgContext);
