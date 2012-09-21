@@ -638,6 +638,10 @@ public class SchemaCompiler {
                     SchemaCompilerMessages.getMessage("schema.elementNull"));
         }
 
+        if (xsElt.getName().equals("getUserClaimValuesResponse")){
+            System.out.println("Found");
+        }
+
 
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
@@ -2833,30 +2837,36 @@ public class SchemaCompiler {
     private boolean isComponetExists(XmlSchema schema,
                                      QName componentQName,
                                      int componetType) {
+        //first we need to check whether we checking the correct schema.
+        if ((schema.getTargetNamespace() != null)
+                && (!schema.getTargetNamespace().equals(componentQName.getNamespaceURI()))) {
+            return false;
+        }
+
         boolean isExists = false;
         switch (componetType) {
-            case COMPONENT_TYPE : {
+            case COMPONENT_TYPE: {
                 isExists = (schema.getTypeByName(componentQName.getLocalPart()) != null);
                 break;
             }
-            case COMPONENT_ELEMENT : {
+            case COMPONENT_ELEMENT: {
                 isExists = (schema.getElementByName(componentQName.getLocalPart()) != null);
                 break;
             }
-            case COMPONENT_ATTRIBUTE : {
+            case COMPONENT_ATTRIBUTE: {
                 isExists = (schema.getAttributes().getItem(componentQName) != null);
                 break;
             }
-            case COMPONENT_ATTRIBUTE_GROUP : {
+            case COMPONENT_ATTRIBUTE_GROUP: {
                 isExists = (schema.getAttributeGroups().getItem(componentQName) != null);
                 break;
             }
-            case COMPONENT_GROUP : {
+            case COMPONENT_GROUP: {
                 isExists = (schema.getGroups().getItem(componentQName) != null);
                 break;
             }
         }
-       return isExists;
+        return isExists;
     }
 
     public Map<String, XmlSchema> getLoadedSchemaMap(){
