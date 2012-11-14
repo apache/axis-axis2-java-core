@@ -33,8 +33,8 @@ import java.util.HashMap;
 
 public class JSONDataSource extends AbstractJSONDataSource {
 
-    public JSONDataSource(Reader jsonReader, String localName) {
-        super(jsonReader, localName);
+    public JSONDataSource(Reader jsonReader) {
+        super(jsonReader);
     }
 
     /**
@@ -52,7 +52,6 @@ public class JSONDataSource extends AbstractJSONDataSource {
 
         //input factory for "Mapped" convention
         MappedXMLInputFactory inputFactory = new MappedXMLInputFactory(XMLToJSNNamespaceMap);
-        String jsonString = "{" + localName + ":" + this.getJSONString();
-        return inputFactory.createXMLStreamReader(new JSONTokener(jsonString));
+        return inputFactory.createXMLStreamReader(new JSONTokener(getJSONString()));
     }
 }

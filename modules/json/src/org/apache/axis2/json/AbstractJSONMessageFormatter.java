@@ -170,6 +170,8 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
                 out.write(jsonToWrite.getBytes());
             } else {
                 XMLStreamWriter jsonWriter = getJSONWriter(out, format);
+                // Jettison v1.2+ relies on writeStartDocument being called (AXIS2-5044)
+                jsonWriter.writeStartDocument();
                 element.serializeAndConsume(jsonWriter);
                 jsonWriter.writeEndDocument();
             }
@@ -204,6 +206,8 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
                 } else {
                     StringWriter out = new StringWriter();
                     XMLStreamWriter jsonWriter = getJSONWriter(out);
+                    // Jettison v1.2+ relies on writeStartDocument being called (AXIS2-5044)
+                    jsonWriter.writeStartDocument();
                     dataOut.serializeAndConsume(jsonWriter);
                     jsonWriter.writeEndDocument();
                     jsonString = out.toString();

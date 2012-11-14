@@ -22,7 +22,6 @@ package org.apache.axis2.json;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -30,7 +29,6 @@ import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.util.URIEncoderDecoder;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -58,9 +56,6 @@ public abstract class AbstractJSONOMBuilder implements Builder {
     public OMElement processDocument(InputStream inputStream, String contentType,
                                      MessageContext messageContext) throws AxisFault {
         OMFactory factory = OMAbstractFactory.getOMFactory();
-        String localName = "";
-        String prefix = "";
-        OMNamespace ns = factory.createOMNamespace("", "");
 
         //sets DoingREST to true because, security scenarios needs to handle in REST way
         messageContext.setDoingREST(true);
@@ -108,46 +103,8 @@ public abstract class AbstractJSONOMBuilder implements Builder {
             }
         }
 
-        /*
-        Now we have to read the localname and prefix from the input stream
-        if there is not prefix, message starts like {"foo":
-        if there is a prefix, message starts like {"prefix:foo":
-         */
-        try {
-            //read the stream until we find a : symbol
-            char temp = (char)reader.read();
-            while (temp != ':') {
-                if (temp != ' ' && temp != '{' && temp != '\n' && temp != '\r' && temp != '\t') {
-                    localName += temp;
-                }
-                temp = (char)reader.read();
-            }
-
-            //if the part we read ends with ", there is no prefix, otherwise it has a prefix
-            if (localName.charAt(0) == '"') {
-                if (localName.charAt(localName.length() - 1) == '"') {
-                    localName = localName.substring(1, localName.length() - 1);
-                } else {
-                    prefix = localName.substring(1, localName.length()) + ":";
-                    localName = "";
-                    //so far we have read only the prefix, now lets read the localname
-                    temp = (char)reader.read();
-                    while (temp != ':') {
-                        if (temp != ' ') {
-                            localName += temp;
-                        }
-                        temp = (char)reader.read();
-                    }
-                    localName = localName.substring(0, localName.length() - 1);
-                }
-            }
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
-        }
-        AbstractJSONDataSource jsonDataSource = getDataSource(reader, prefix, localName);
-        return factory.createOMElement(jsonDataSource, localName, ns);
+        return factory.createOMElement(getDataSource(reader));
     }
 
-    protected abstract AbstractJSONDataSource getDataSource(Reader
-            jsonReader, String prefix, String localName);
+    protected abstract AbstractJSONDataSource getDataSource(Reader jsonReader);
 }

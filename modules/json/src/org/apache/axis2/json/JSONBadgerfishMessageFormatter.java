@@ -50,7 +50,7 @@ public class JSONBadgerfishMessageFormatter extends AbstractJSONMessageFormatter
     @Override
     protected String getStringToWrite(OMDataSource dataSource) {
         if (dataSource instanceof JSONBadgerfishDataSource) {
-            return ((JSONBadgerfishDataSource)dataSource).getCompleteJOSNString();
+            return ((JSONBadgerfishDataSource)dataSource).getJSONString();
         } else {
             return null;
         }

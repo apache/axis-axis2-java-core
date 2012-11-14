@@ -25,8 +25,7 @@ import java.io.Reader;
 
 public class JSONOMBuilder extends AbstractJSONOMBuilder {
     @Override
-    protected AbstractJSONDataSource getDataSource(Reader
-            jsonReader, String prefix, String localName) {
-        return new JSONDataSource(jsonReader, "\"" + prefix + localName + "\"");
+    protected AbstractJSONDataSource getDataSource(Reader jsonReader) {
+        return new JSONDataSource(jsonReader);
     }
 }
