@@ -24,7 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -473,7 +473,7 @@ public class XMLUtils {
     }
 
     public static String base64encode(byte[] bytes) {
-        return Base64.encode(bytes);
+        return Base64Utils.encode(bytes);
     }
 
     public static InputSource getEmptyInputSource() {
