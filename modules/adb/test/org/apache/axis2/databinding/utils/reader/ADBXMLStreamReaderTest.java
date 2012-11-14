@@ -26,8 +26,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
-import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.databinding.utils.Constants;
 import org.apache.axis2.util.StreamWrapper;
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -583,7 +583,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
 
         String expectedXML = "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\">" +
                 "<ns2:QualifiedElement xmlns:ns2=\"http://testQElementText.org\">" +
-                Base64.encode(textTobeSent.getBytes()) +
+                Base64Utils.encode(textTobeSent.getBytes()) +
                 "</ns2:QualifiedElement></ns1:testElementText>";
         
         ArrayList properties = new ArrayList();

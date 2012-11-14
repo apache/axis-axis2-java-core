@@ -23,7 +23,7 @@ import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
-import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axiom.util.stax.XMLStreamWriterUtils;
 import org.apache.axis2.databinding.ADBBean;
@@ -354,7 +354,7 @@ public class ConverterUtil {
     }
 
     public static String convertToString(byte[] bytes) {
-        return Base64.encode(bytes);
+        return Base64Utils.encode(bytes);
     }
 
     public static String convertToString(javax.activation.DataHandler handler) {
@@ -547,7 +547,7 @@ public class ConverterUtil {
             return null;
         }
         ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
-                Base64.decode(s)
+                Base64Utils.decode(s)
         );
         return new DataHandler(byteArrayDataSource);
     }
@@ -1391,7 +1391,7 @@ public class ConverterUtil {
 			}
 			inStream = dataHandler.getDataSource().getInputStream();
 			byte[] data = IOUtils.getStreamAsByteArray(inStream);
-			return Base64.encode(data);
+			return Base64Utils.encode(data);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 

@@ -27,7 +27,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.context.MessageContext;
 
 public class EchoService2 {
@@ -51,7 +51,7 @@ public class EchoService2 {
         response = fac.createOMElement("response", ns);
 
         elem = fac.createOMElement("data", ns);
-        elem.setText(Base64.encode(data));
+        elem.setText(Base64Utils.encode(data));
         response.addChild(elem);
 
         return response;

@@ -56,7 +56,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.classloader.BeanInfoCache;
 import org.apache.axis2.context.MessageContext;
@@ -220,7 +220,7 @@ public class BeanUtil {
                             if (Byte.TYPE.equals(ptype.getComponentType())) {
                                 addTypeQname(elemntNameSpace, propertyQnameValueList,
                                              property, beanName, processingDocLitBare);
-                                propertyQnameValueList.add(Base64.encode((byte[]) value));
+                                propertyQnameValueList.add(Base64Utils.encode((byte[]) value));
                             } else {
                                 int i1 = Array.getLength(value);
                                 for (int j = 0; j < i1; j++) {
@@ -518,7 +518,7 @@ public class BeanUtil {
                             break;
                         }
                     }
-                    return Base64.decode(partElement.getText());
+                    return Base64Utils.decode(partElement.getText());
                 } else {
                     Iterator parts = beanElement.getChildElements();
                     OMElement omElement;
@@ -1055,7 +1055,7 @@ public class BeanUtil {
                 if (SimpleTypeMapper.isSimpleType(classType)) {
                     if (isArrayType && "byte".equals(classType.getName())) {
                         String value = omElement.getText();
-                        return Base64.decode(value);
+                        return Base64Utils.decode(value);
                     } else {
                         return getSimpleTypeObjectChecked(classType, omElement);
                     }
@@ -1218,7 +1218,7 @@ public class BeanUtil {
                         }
                         objects.add(wrappingElement);
                     } else if (arg instanceof byte[]) {
-                        objects.add(Base64.encode((byte[]) arg));
+                        objects.add(Base64Utils.encode((byte[]) arg));
                     } else if (SimpleTypeMapper.isDataHandler(arg.getClass())) {
                         OMFactory fac = OMAbstractFactory.getOMFactory();
                         OMElement wrappingElement;

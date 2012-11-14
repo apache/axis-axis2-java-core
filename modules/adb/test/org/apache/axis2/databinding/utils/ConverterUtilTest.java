@@ -34,7 +34,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.databinding.types.NormalizedString;
 
 public class ConverterUtilTest extends TestCase {
@@ -276,7 +276,7 @@ public class ConverterUtilTest extends TestCase {
 		DataSource ds = new ByteArrayDataSource(inStr.getBytes());
 		DataHandler dh = new DataHandler(ds);
 		String rawOutStr = ConverterUtil.convertToString(dh);
-		String outStr = new String(Base64.decode(rawOutStr));
+		String outStr = new String(Base64Utils.decode(rawOutStr));
 		assertEquals("Not expected content", inStr, outStr);
 	}
 	

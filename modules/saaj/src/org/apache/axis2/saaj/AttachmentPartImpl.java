@@ -21,7 +21,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.saaj.util.SAAJDataSource;
 import org.apache.axis2.transport.http.HTTPConstants;
 
@@ -385,7 +385,7 @@ public class AttachmentPartImpl extends AttachmentPart {
         byte[] rawData = getRawContentBytes();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            Base64.encode(rawData, 0, rawData.length, out);
+            Base64Utils.encode(rawData, 0, rawData.length, out);
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
             throw new SOAPException(e);
@@ -465,8 +465,8 @@ public class AttachmentPartImpl extends AttachmentPart {
                 outputStream.write(buffer, 0, read);
             }
             String contentString = outputStream.toString();
-            if (Base64.isValidBase64Encoding(contentString)) {
-                setContent(Base64.decode(contentString), contentType);
+            if (Base64Utils.isValidBase64Encoding(contentString)) {
+                setContent(Base64Utils.decode(contentString), contentType);
             } else {
                 throw new SOAPException("Not a valid Base64 encoding");
             }

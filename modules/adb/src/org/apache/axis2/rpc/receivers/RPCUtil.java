@@ -25,9 +25,9 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
@@ -305,7 +305,7 @@ public class RPCUtil {
                     Object objArray[];
                     if (resObject instanceof byte[]) {
                         objArray = new Object[1];
-                        objArray[0] = Base64.encode((byte[]) resObject);
+                        objArray[0] = Base64Utils.encode((byte[]) resObject);
                     } else {
                         objArray = new Object[length];
                         for (int i = 0; i < length; i++) {
@@ -468,7 +468,7 @@ public class RPCUtil {
                     Object objArray[];
                     if (resObject instanceof byte[]) {
                         objArray = new Object[1];
-                        objArray[0] = Base64.encode((byte[]) resObject);
+                        objArray[0] = Base64Utils.encode((byte[]) resObject);
                     } else {
                         objArray = new Object[length];
                         for (int i = 0; i < length; i++) {
