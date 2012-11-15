@@ -725,6 +725,10 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         }
     }
 
+    public boolean isProcessed() {
+        return isProcessed;
+    }
+
     public enum JsonState {
         StartState,
         NameValue,

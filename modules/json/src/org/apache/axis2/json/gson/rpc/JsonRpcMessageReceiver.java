@@ -92,7 +92,7 @@ public class JsonRpcMessageReceiver extends RPCMessageReceiver {
                     throw AxisFault.makeFault(e);
                 }
             } else {
-                throw new AxisFault("GsonXMLStreamReader should have put as a property of messageContext " +
+                throw new AxisFault("GsonXMLStreamReader should be put as a property of messageContext " +
                         "to evaluate JSON message");
             }
         } else {
