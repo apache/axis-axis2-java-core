@@ -73,11 +73,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-json</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -588,62 +583,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>json_adb</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-
-                                <property name="generated.dir" value="target/gen"/>
-                                <property name="repository" value="target/json_repo"/>
-                                <property name="generated.src.dir" value="${generated.dir}/src"/>
-                                <property name="generated.build.dir" value="${generated.dir}/target"/>
-                                <property name="service.dir" value="${repository}/services"/>
-                                <property name="meta-inf.dir" value="${generated.build.dir}/META-INF"/>
-                                <property name="wsdl.dir" value="test-resources/json/wsdl"/>
-                                <property name="conf.dir" value="test-resources/json/conf"/>
-                                <property name="package.struct" value="org/apache/axis2/json/adb"/>
-
-
-                                <mkdir dir="${generated.dir}"/>
-                                <mkdir dir="${generated.src.dir}"/>
-                                <mkdir dir="${generated.build.dir}"/>
-                                <mkdir dir="${repository}"/>
-                                <mkdir dir="${service.dir}"/>
-                                <mkdir dir="${meta-inf.dir}"/>
-
-
-                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.test.classpath"/>
-                                    <arg line="-ss -sd -u -or -o ${generated.dir} -uri test-resources/json/wsdl/LibraryService.wsdl"/>
-                                </java>
-
-                                <copy todir="test">
-                                    <fileset dir="${generated.src.dir}"
-                                             excludes="${package.struct}/LibraryServiceSkeleton.java"/>
-                                </copy>
-
-                                <copy todir="${meta-inf.dir}">
-                                    <fileset dir="${generated.dir}/resources"/>
-                                </copy>
-                                <javac srcdir="test" destdir="${generated.build.dir}" fork="true"
-                                       includes="${package.struct}/**">
-                                    <classpath refid="maven.test.classpath"/>
-                                </javac>
-
-                                <delete dir="${service.dir}/json_adb_test.aar"/>
-
-                                <jar basedir="${generated.build.dir}" destfile="${service.dir}/json_adb_test.aar"
-                                     excludes="**/*Test.class"/>
-
-                                <delete dir="${generated.dir}"/>
-
-                            </tasks>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

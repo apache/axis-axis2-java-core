@@ -17,13 +17,9 @@
  * under the License.
  */
 
-package org.apache.axis2.json;
+package org.apache.axis2.json.gson;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.json.adb.LibraryServiceSkeleton;
+import org.apache.axis2.testutils.UtilServer;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -42,7 +38,7 @@ public class JSONXMLStreamAPITest {
     public void setUp()throws Exception {
         String baseDir = System.getProperty("basedir" , ".").toString();
 //        UtilServer.start((baseDir + "target/repo"), (baseDir + "test-resources/json/conf/axis2_json.xml"));
-        UtilServer.start(("target/json_repo"),("test-resources/json/conf/axis2_json.xml"));
+        UtilServer.start("target/repo", "test-conf/axis2_json.xml");
 
     }
 
