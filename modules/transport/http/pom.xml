@@ -127,5 +127,11 @@
 	        <artifactId>xmlunit</artifactId>
             <scope>test</scope>
 	 </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-testkit</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
