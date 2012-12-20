@@ -293,15 +293,15 @@ public class Utils {
         if (path == null || serviceName == null) {
             return null;
         }
-        String[] temp = path.split(serviceName + "/");
+        int idx = path.lastIndexOf(serviceName + "/");
         String operationName = null;
-        if (temp.length > 1) {
-            operationName = temp[temp.length - 1];
+        if (idx != -1) {
+            operationName = path.substring(idx + serviceName.length() + 1);
         } else {
             //this scenario occurs if the endpoint name is there in the URL after service name
-            temp = path.split(serviceName + ".");
-            if (temp.length > 1) {
-                operationName = temp[temp.length - 1];
+            idx = path.lastIndexOf(serviceName + ".");
+            if (idx != -1) {
+                operationName = path.substring(idx + serviceName.length() + 1);
                 operationName = operationName.substring(operationName.indexOf('/') + 1);
             }
         }
