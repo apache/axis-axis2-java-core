@@ -540,8 +540,8 @@
                         {
                             /* node value contain the prefix */
                             char *prefix_value = AXIS2_MALLOC(env->allocator, (cp_ro - node_value - 1) + 1);
-                            strncpy(prefix, node_value, (cp_ro - node_value - 1));
-                            prefix[cp_ro - node_value - 1] = '\0';
+                            strncpy(prefix_value, node_value, (cp_ro - node_value - 1));
+                            prefix_value[cp_ro - node_value - 1] = '\0';
                             qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, prefix_value, parent);
                             AXIS2_FREE(env->allocator, prefix_value);
                         }
