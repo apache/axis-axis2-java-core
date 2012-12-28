@@ -478,7 +478,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions"/>");
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
