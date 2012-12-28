@@ -28,10 +28,12 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
+import java.util.Map;
 
 public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
 
@@ -77,7 +79,7 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
                 // set the variable
                 InputStream inStream = (InputStream) responseMessageContext.
                         getProperty(MessageContext.TRANSPORT_IN);
-                if (inStream != null) {
+                if (inStream != null && checkContentLength(responseMessageContext)) {
                     envelope = TransportUtils.createSOAPMessage(
                             responseMessageContext);
                     responseMessageContext.setEnvelope(envelope);
@@ -92,5 +94,36 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
                 }
             }
         }
-    }
+
+
+        private boolean checkContentLength(MessageContext responseMessageContext) {
+
+            Map<String, String> transportHeaders = (Map<String, String>) responseMessageContext
+                    .getProperty(MessageContext.TRANSPORT_HEADERS);
+
+            if (transportHeaders == null) {
+                // transportHeaders = null , we can't check this further and
+                // allow to try with message building.
+                return true;
+            }
+
+            String contentLengthStr = contentLengthStr = (String) transportHeaders
+                    .get(HTTPConstants.HEADER_CONTENT_LENGTH);
+
+            if (contentLengthStr == null) {
+                // contentLengthStr = null we can't check this further and allow
+                // to try with message building.
+                return true;
+            }
+
+            int contentLength = -1;
+            contentLength = Integer.parseInt(contentLengthStr);
+            if (contentLength > 0) {
+                // We have valid Content-Length no issue with message building.
+                return true;
+            }
+
+            return false;
+        }
+	}
 }
