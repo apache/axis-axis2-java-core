@@ -939,6 +939,19 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                                                   (String)propertyValue);
             childReader.addNamespaceContext(this.namespaceContext);
             childReader.init();
+        } else if (propertyValue instanceof Integer
+                || propertyValue instanceof Long
+                || propertyValue instanceof Double
+                || propertyValue instanceof Float
+                || propertyValue instanceof Character
+                || propertyValue instanceof Short) {
+            //all primitive wrapped generic type instances are converted to Strings and  handled by the
+            // NameValuePairStreamReader
+            childReader =
+                    new NameValuePairStreamReader(propertyQName,
+                            String.valueOf(propertyValue));
+            childReader.addNamespaceContext(this.namespaceContext);
+            childReader.init();
         } else if (propertyValue.getClass().isArray()) {
             // this is an arrary object and we need to get the pull parser for that
             int length = Array.getLength(propertyValue);

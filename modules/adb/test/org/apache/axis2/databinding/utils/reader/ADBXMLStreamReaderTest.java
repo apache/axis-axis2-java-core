@@ -245,6 +245,202 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         assertXMLEqual(actualDom, expectedDocument);
     }
 
+        /** test List<java.lang.Integer> list */
+    public void testGenericWrapperArrayList() throws Exception {
+        String exptectedXML = " <genericIntegerList>" +
+                                    "<genericInt>123</genericInt>" +
+                                    "<genericInt>1234</genericInt>" +
+                                    "<genericInt>12345</genericInt>" +
+                                "</genericIntegerList>";
+
+        List propertyList = new ArrayList();
+
+        propertyList.add("genericInt");
+        propertyList.add(new Integer(123));
+
+        propertyList.add("genericInt");
+        propertyList.add(new Integer(1234));
+
+        propertyList.add("genericInt");
+        propertyList.add(new Integer(12345));
+
+        QName projectQName = new QName("genericIntegerList");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
+    }
+
+    /** test List<java.lang.String> list */
+    public void testGenericWrapperArrayList2() throws Exception {
+        String exptectedXML = " <genericStringList>" +
+                                    "<genericString>test1</genericString>" +
+                                    "<genericString>test2</genericString>" +
+                                    "<genericString>test3</genericString>" +
+                                "</genericStringList>";
+
+        List propertyList = new ArrayList();
+
+        propertyList.add("genericString");
+        propertyList.add(new String("test1"));
+
+        propertyList.add("genericString");
+        propertyList.add(new String("test2"));
+
+        propertyList.add("genericString");
+        propertyList.add(new String("test3"));
+
+        QName projectQName = new QName("genericStringList");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
+    }
+
+    /** test List<java.lang.Long> list */
+    public void testGenericWrapperArrayList3() throws Exception {
+        String exptectedXML = " <genericLongList>" +
+                                    "<genericLong>12345678910</genericLong>" +
+                                    "<genericLong>-12345678910</genericLong>" +
+                                    "<genericLong>1234567891011</genericLong>" +
+                                "</genericLongList>";
+
+        List propertyList = new ArrayList();
+
+        propertyList.add("genericLong");
+        propertyList.add(new Long(12345678910L));
+
+        propertyList.add("genericLong");
+        propertyList.add(new Long(-12345678910L));
+
+        propertyList.add("genericLong");
+        propertyList.add(new Long(1234567891011L));
+
+        QName projectQName = new QName("genericLongList");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
+    }
+
+    /** test List<java.lang.Float> list */
+    public void testGenericWrapperArrayList4() throws Exception {
+        String exptectedXML = " <genericFloatList>" +
+                                    "<genericFloat>123.0</genericFloat>" +
+                                    "<genericFloat>-123.55</genericFloat>" +
+                                    "<genericFloat>12345.99</genericFloat>" +
+                                "</genericFloatList>";
+
+        List propertyList = new ArrayList();
+
+        propertyList.add("genericFloat");
+        propertyList.add(new Float(123.0f));
+
+        propertyList.add("genericFloat");
+        propertyList.add(new Float(-123.55f));
+
+        propertyList.add("genericFloat");
+        propertyList.add(new Float(12345.99f));
+
+        QName projectQName = new QName("genericFloatList");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
+    }
+
+    /** test List<java.lang.Double> list */
+    public void testGenericWrapperArrayList5() throws Exception {
+        String exptectedXML = " <genericDoubleList>" +
+                                    "<genericDouble>3456.12345</genericDouble>" +
+                                    "<genericDouble>-3456.12345</genericDouble>" +
+                                    "<genericDouble>123456.12345</genericDouble>" +
+                                "</genericDoubleList>";
+
+        List propertyList = new ArrayList();
+
+        propertyList.add("genericDouble");
+        propertyList.add(new Double(3456.12345d));
+
+        propertyList.add("genericDouble");
+        propertyList.add(new Double(-3456.12345d));
+
+        propertyList.add("genericDouble");
+        propertyList.add(new Double(123456.12345d));
+
+        QName projectQName = new QName("genericDoubleList");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
+    }
+
+/** test List<java.lang.Character> list */
+    public void testGenericWrapperArrayList6() throws Exception {
+        String exptectedXML = " <genericCharacterList>" +
+                                    "<genericCharacter>A</genericCharacter>" +
+                                    "<genericCharacter>B</genericCharacter>" +
+                                    "<genericCharacter>C</genericCharacter>" +
+                                "</genericCharacterList>";
+
+        List propertyList = new ArrayList();
+
+        propertyList.add("genericCharacter");
+        propertyList.add(new Character('A'));
+
+        propertyList.add("genericCharacter");
+        propertyList.add(new Character('B'));
+
+        propertyList.add("genericCharacter");
+        propertyList.add(new Character('C'));
+
+        QName projectQName = new QName("genericCharacterList");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
+    }
+
+/** test List<java.lang.Short> list */
+    public void testGenericWrapperArrayList7() throws Exception {
+        String exptectedXML = " <genericShortList>" +
+                                    "<genericShort>10</genericShort>" +
+                                    "<genericShort>20</genericShort>" +
+                                    "<genericShort>30</genericShort>" +
+                                "</genericShortList>";
+
+        List propertyList = new ArrayList();
+
+        propertyList.add("genericShort");
+        propertyList.add(new Short((short) 10));
+
+        propertyList.add("genericShort");
+        propertyList.add(new Short((short) 20));
+
+        propertyList.add("genericShort");
+        propertyList.add(new Short((short) 30));
+
+        QName projectQName = new QName("genericShortList");
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+
+        Document actualDom = newDocument(getStringXML(pullParser));
+        Document expectedDocument = newDocument(exptectedXML);
+        assertXMLEqual(actualDom, expectedDocument);
+    }
+
     public void testWithOMElements() throws Exception {
 
         String expectedXML =
