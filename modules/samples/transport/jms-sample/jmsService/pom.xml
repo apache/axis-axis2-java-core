@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>jms-sample</artifactId>
+        <groupId>org.apache.axis2.examples</groupId>
+        <version>1.7.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.apache.axis2.examples</groupId>
+    <artifactId>jmsService</artifactId>
+    <version>1.7.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.activemq.tooling</groupId>
+                <artifactId>maven-activemq-plugin</artifactId>
+                <version>5.1.0</version>
+                <configuration>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>simple-server-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-transport-jms</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.activemq</groupId>
+                        <artifactId>activemq-core</artifactId>
+                        <version>5.1.0</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>javax.activation</groupId>
+                                <artifactId>activation</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <!-- <dependency> -->
+                    <!-- <groupId>org.apache.geronimo.specs</groupId> -->
+                    <!-- <artifactId>geronimo-jms_1.1_spec</artifactId> -->
+                    <!-- <version>1.1</version> -->
+                    <!-- </dependency> -->
+
+                    <!-- <dependency> -->
+                    <!-- <groupId>org.apache.geronimo.specs</groupId> -->
+                    <!-- <artifactId>geronimo-jta_1.0.1B_spec</artifactId> -->
+                    <!-- <version>1.0</version> -->
+                    <!-- </dependency> -->
+                    <dependency>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                        <version>2.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-aar-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <servicesXmlFile>src/main/resources/services/SimpleService/META-INF/services.xml</servicesXmlFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generates aar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>aar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
