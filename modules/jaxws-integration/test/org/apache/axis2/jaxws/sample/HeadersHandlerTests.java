@@ -80,288 +80,273 @@ public class HeadersHandlerTests extends AbstractTestCase {
 
 
 
-    public void testHeadersHandler() {
-        try {
-            TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
+    public void testHeadersHandler() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 
-            HeadersHandlerService service = new HeadersHandlerService();
-            HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
-            BindingProvider p = (BindingProvider) proxy;
-            Map<String, Object> requestCtx = p.getRequestContext();
-            
-            requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
-            
-            /*
-             * add several headers by way of HeadersAdapter property
-             */
-            String acoh1, acoh2, acoh3, acoh4, acoh5, acoh6;
-            SOAPFactory sf = SOAPFactory.newInstance();
-        	try {
-            	Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
-            	
-            	// QName used here should match the key for the list set on the requestCtx
-            	acoh1 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL1);
-            	
-            	// QName used here should match the key for the list set on the requestCtx
-            	acoh2 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL2);
-            	
-            	// QName used here should match the key for the list set on the requestCtx
-            	acoh3 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL3);
-            	
-            	// QName used here should match the key for the list set on the requestCtx
-            	acoh4 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
-            	
-            	// create additional header strings that will need to be checked:
-        		acoh5 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH3_HEADER_QNAME, TestHeaders.CONTENT_LARGE);
-        		acoh6 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH4_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
-            	
-            	List<String> list1 = new ArrayList<String>();
-            	list1.add(acoh1);
-            	list1.add(acoh2);
-            	
-            	List<String> list2 = new ArrayList<String>();
-            	list2.add(acoh3);
-            	list2.add(acoh4);
-            	
-            	requestHeaders.put(TestHeaders.ACOH1_HEADER_QNAME, list1);
-            	requestHeaders.put(TestHeaders.ACOH2_HEADER_QNAME, list2);
-            	requestCtx.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
-        	} catch (Throwable e) {
-        		fail(e.getMessage());
-        		return;
-        	}
+        HeadersHandlerService service = new HeadersHandlerService();
+        HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
+        BindingProvider p = (BindingProvider) proxy;
+        Map<String, Object> requestCtx = p.getRequestContext();
+        
+        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        
+        /*
+         * add several headers by way of HeadersAdapter property
+         */
+        String acoh1, acoh2, acoh3, acoh4, acoh5, acoh6;
+        SOAPFactory sf = SOAPFactory.newInstance();
+    	try {
+        	Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
         	
-        	// some handlers decrement the value, so we can confirm SOAP body manipulation does not corrupt the headers
-        	int numOfHandlerHitsInFlow = 3;
+        	// QName used here should match the key for the list set on the requestCtx
+        	acoh1 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL1);
+        	
+        	// QName used here should match the key for the list set on the requestCtx
+        	acoh2 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL2);
+        	
+        	// QName used here should match the key for the list set on the requestCtx
+        	acoh3 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL3);
+        	
+        	// QName used here should match the key for the list set on the requestCtx
+        	acoh4 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
+        	
+        	// create additional header strings that will need to be checked:
+    		acoh5 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH3_HEADER_QNAME, TestHeaders.CONTENT_LARGE);
+    		acoh6 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH4_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
+        	
+        	List<String> list1 = new ArrayList<String>();
+        	list1.add(acoh1);
+        	list1.add(acoh2);
+        	
+        	List<String> list2 = new ArrayList<String>();
+        	list2.add(acoh3);
+        	list2.add(acoh4);
+        	
+        	requestHeaders.put(TestHeaders.ACOH1_HEADER_QNAME, list1);
+        	requestHeaders.put(TestHeaders.ACOH2_HEADER_QNAME, list2);
+        	requestCtx.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
+    	} catch (Throwable e) {
+    		fail(e.getMessage());
+    		return;
+    	}
+    	
+    	// some handlers decrement the value, so we can confirm SOAP body manipulation does not corrupt the headers
+    	int numOfHandlerHitsInFlow = 3;
+        
+        int intParam1 = 10;
+        int intParam2 = 10;
+        int total = proxy.headersHandler(intParam1, intParam2);
+        
+        assertEquals("Return value should be " + (intParam1 + intParam2 - numOfHandlerHitsInFlow) + " but was " + total ,
+                     (intParam1 + intParam2 - numOfHandlerHitsInFlow),
+                     total);
+        TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+        
+        /*
+         * I tried to give enough info below in the expected_calls list so you can tell what's
+         * being tested without having to look at handler code.  All header manipulation is
+         * done by SOAPHeadersAdapter.
+         * 
+         * TODO: I would very much like to have done some other means of
+         * header manipulation, but the Axis2 SAAJ module is lacking necessary implementation
+         * to do this with any reliability.
+         */
+        
+        String log = readLogFile();
+        String expected_calls =
+        		// client outbound
+                  "HeadersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh1+"\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh2+"\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh3+"\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh4+"\n"
+                + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh1+"\n"
+                + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh3+"\n"
+                + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh4+"\n"   // message manipulated after this action
+                + "HeadersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh2+"\n"                   
+                + "HeadersClientProtocolHandler ADDED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh2+"\n"
+                + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler GET_HEADERS\n"
+                + "HeadersClientProtocolHandler2 GET_HEADERS\n"
+                // server inbound
+                + "HeadersServerProtocolHandler GET_HEADERS\n"
+                + "HeadersServerProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh2+"\n"
+                + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh2+"\n"
+                + "HeadersServerProtocolHandler ADDED_HEADER "+acoh6+"\n"
+                + "HeadersServerLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh6+"\n"
+                + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh5+"\n"   // message manipulated after this action
+                + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh6+"\n"
+                // server outbound
+                + "HeadersServerLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersServerLogicalHandler ADDED_HEADER "+acoh1+"\n"   // message manipulated after this action
+                + "HeadersServerProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh1+"\n"
+                + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh1+"\n"
+                + "HeadersServerProtocolHandler ADDED_HEADER "+acoh5+"\n"
+                + "HeadersServerLogicalHandler CLOSE\n"
+                + "HeadersServerProtocolHandler CLOSE\n"
+                // client inbound
+                + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler2 ADDED_HEADER "+acoh3+"\n"
+                + "HeadersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh3+"\n"
+                + "HeadersClientProtocolHandler REMOVED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler ADDED_HEADER "+acoh4+"\n"
+                + "HeadersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersClientProtocolHandler2 CLOSE\n"
+                + "HeadersClientProtocolHandler CLOSE\n"
+                + "HeadersClientLogicalHandler CLOSE\n";
+        
+        assertEquals(expected_calls, log);
             
-            int intParam1 = 10;
-            int intParam2 = 10;
-            int total = proxy.headersHandler(intParam1, intParam2);
-            
-            assertEquals("Return value should be " + (intParam1 + intParam2 - numOfHandlerHitsInFlow) + " but was " + total ,
-                         (intParam1 + intParam2 - numOfHandlerHitsInFlow),
-                         total);
-            TestLogger.logger.debug("Total (after handler manipulation) = " + total);
-            
-            /*
-             * I tried to give enough info below in the expected_calls list so you can tell what's
-             * being tested without having to look at handler code.  All header manipulation is
-             * done by SOAPHeadersAdapter.
-             * 
-             * TODO: I would very much like to have done some other means of
-             * header manipulation, but the Axis2 SAAJ module is lacking necessary implementation
-             * to do this with any reliability.
-             */
-            
-            String log = readLogFile();
-            String expected_calls =
-            		// client outbound
-                      "HeadersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh1+"\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh2+"\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh3+"\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh4+"\n"
-                    + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh1+"\n"
-                    + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh3+"\n"
-                    + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh4+"\n"   // message manipulated after this action
-                    + "HeadersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh2+"\n"                   
-                    + "HeadersClientProtocolHandler ADDED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh2+"\n"
-                    + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler GET_HEADERS\n"
-                    + "HeadersClientProtocolHandler2 GET_HEADERS\n"
-                    // server inbound
-                    + "HeadersServerProtocolHandler GET_HEADERS\n"
-                    + "HeadersServerProtocolHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh2+"\n"
-                    + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh2+"\n"
-                    + "HeadersServerProtocolHandler ADDED_HEADER "+acoh6+"\n"
-                    + "HeadersServerLogicalHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh6+"\n"
-                    + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh5+"\n"   // message manipulated after this action
-                    + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh6+"\n"
-                    // server outbound
-                    + "HeadersServerLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersServerLogicalHandler ADDED_HEADER "+acoh1+"\n"   // message manipulated after this action
-                    + "HeadersServerProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh1+"\n"
-                    + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh1+"\n"
-                    + "HeadersServerProtocolHandler ADDED_HEADER "+acoh5+"\n"
-                    + "HeadersServerLogicalHandler CLOSE\n"
-                    + "HeadersServerProtocolHandler CLOSE\n"
-                    // client inbound
-                    + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler2 ADDED_HEADER "+acoh3+"\n"
-                    + "HeadersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh3+"\n"
-                    + "HeadersClientProtocolHandler REMOVED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler ADDED_HEADER "+acoh4+"\n"
-                    + "HeadersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersClientProtocolHandler2 CLOSE\n"
-                    + "HeadersClientProtocolHandler CLOSE\n"
-                    + "HeadersClientLogicalHandler CLOSE\n";
-            
-            assertEquals(expected_calls, log);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            TestLogger.logger.debug("ERROR", e);
-            fail(e.getMessage());
-        }
         TestLogger.logger.debug("----------------------------------");
     }
     
-    public void testHeadersHandlerAsyncCallback() {
-        try {
-            TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
+    public void testHeadersHandlerAsyncCallback() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 
-            HeadersHandlerService service = new HeadersHandlerService();
-            HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
-            BindingProvider p = (BindingProvider) proxy;
-            Map<String, Object> requestCtx = p.getRequestContext();
-            
-            requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
-            
-            /*
-             * add several headers by way of HeadersAdapter property
-             */
-            String acoh1, acoh2, acoh3, acoh4, acoh5, acoh6;
-            SOAPFactory sf = SOAPFactory.newInstance();
-            try {
-                Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
-                
-                // QName used here should match the key for the list set on the requestCtx
-                acoh1 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL1);
-                
-                // QName used here should match the key for the list set on the requestCtx
-                acoh2 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL2);
-                
-                // QName used here should match the key for the list set on the requestCtx
-                acoh3 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL3);
-                
-                // QName used here should match the key for the list set on the requestCtx
-                acoh4 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
-                
-                // create additional header strings that will need to be checked:
-                acoh5 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH3_HEADER_QNAME, TestHeaders.CONTENT_LARGE);
-                acoh6 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH4_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
-                
-                List<String> list1 = new ArrayList<String>();
-                list1.add(acoh1);
-                list1.add(acoh2);
-                
-                List<String> list2 = new ArrayList<String>();
-                list2.add(acoh3);
-                list2.add(acoh4);
-                
-                requestHeaders.put(TestHeaders.ACOH1_HEADER_QNAME, list1);
-                requestHeaders.put(TestHeaders.ACOH2_HEADER_QNAME, list2);
-                requestCtx.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
-            } catch (Throwable e) {
-                fail(e.getMessage());
-                return;
-            }
-            
-            // some handlers decrement the value, so we can confirm SOAP body manipulation does not corrupt the headers
-            int numOfHandlerHitsInFlow = 3;
-            
-            int intParam1 = 10;
-            int intParam2 = 10;
-            
-            HeadersHandlerAsyncCallback callback = new HeadersHandlerAsyncCallback();
-            Future<?> future = proxy.headersHandlerAsync(intParam1, intParam2, callback);
+        HeadersHandlerService service = new HeadersHandlerService();
+        HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
+        BindingProvider p = (BindingProvider) proxy;
+        Map<String, Object> requestCtx = p.getRequestContext();
+        
+        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        
+        /*
+         * add several headers by way of HeadersAdapter property
+         */
+        String acoh1, acoh2, acoh3, acoh4, acoh5, acoh6;
+        SOAPFactory sf = SOAPFactory.newInstance();
+        
+        Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
+        
+        // QName used here should match the key for the list set on the requestCtx
+        acoh1 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL1);
+        
+        // QName used here should match the key for the list set on the requestCtx
+        acoh2 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL2);
+        
+        // QName used here should match the key for the list set on the requestCtx
+        acoh3 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL3);
+        
+        // QName used here should match the key for the list set on the requestCtx
+        acoh4 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
+        
+        // create additional header strings that will need to be checked:
+        acoh5 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH3_HEADER_QNAME, TestHeaders.CONTENT_LARGE);
+        acoh6 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH4_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
+        
+        List<String> list1 = new ArrayList<String>();
+        list1.add(acoh1);
+        list1.add(acoh2);
+        
+        List<String> list2 = new ArrayList<String>();
+        list2.add(acoh3);
+        list2.add(acoh4);
+        
+        requestHeaders.put(TestHeaders.ACOH1_HEADER_QNAME, list1);
+        requestHeaders.put(TestHeaders.ACOH2_HEADER_QNAME, list2);
+        requestCtx.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
+        
+        // some handlers decrement the value, so we can confirm SOAP body manipulation does not corrupt the headers
+        int numOfHandlerHitsInFlow = 3;
+        
+        int intParam1 = 10;
+        int intParam2 = 10;
+        
+        HeadersHandlerAsyncCallback callback = new HeadersHandlerAsyncCallback();
+        Future<?> future = proxy.headersHandlerAsync(intParam1, intParam2, callback);
 
-            while (!future.isDone()) {
-                Thread.sleep(1000);
-                TestLogger.logger.debug("Async invocation incomplete");
-            }
-
-            int total = callback.getResponseValue();
-            
-            
-            assertEquals("Return value should be " + (intParam1 + intParam2 - numOfHandlerHitsInFlow) + " but was " + total ,
-                         (intParam1 + intParam2 - numOfHandlerHitsInFlow),
-                         total);
-            TestLogger.logger.debug("Total (after handler manipulation) = " + total);
-            
-            /*
-             * I tried to give enough info below in the expected_calls list so you can tell what's
-             * being tested without having to look at handler code.  All header manipulation is
-             * done by SOAPHeadersAdapter.
-             * 
-             * TODO: I would very much like to have done some other means of
-             * header manipulation, but the Axis2 SAAJ module is lacking necessary implementation
-             * to do this with any reliability.
-             */
-            
-            String log = readLogFile();
-            String expected_calls =
-                    // client outbound
-                      "HeadersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh1+"\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh2+"\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh3+"\n"
-                    + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh4+"\n"
-                    + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh1+"\n"
-                    + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh3+"\n"
-                    + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh4+"\n"   // message manipulated after this action
-                    + "HeadersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh2+"\n"                   
-                    + "HeadersClientProtocolHandler ADDED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh2+"\n"
-                    + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler GET_HEADERS\n"
-                    + "HeadersClientProtocolHandler2 GET_HEADERS\n"
-                    // server inbound
-                    + "HeadersServerProtocolHandler GET_HEADERS\n"
-                    + "HeadersServerProtocolHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh2+"\n"
-                    + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh2+"\n"
-                    + "HeadersServerProtocolHandler ADDED_HEADER "+acoh6+"\n"
-                    + "HeadersServerLogicalHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh6+"\n"
-                    + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh5+"\n"   // message manipulated after this action
-                    + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh6+"\n"
-                    // server outbound
-                    + "HeadersServerLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersServerLogicalHandler ADDED_HEADER "+acoh1+"\n"   // message manipulated after this action
-                    + "HeadersServerProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
-                    + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh1+"\n"
-                    + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh1+"\n"
-                    + "HeadersServerProtocolHandler ADDED_HEADER "+acoh5+"\n"
-                    + "HeadersServerLogicalHandler CLOSE\n"
-                    + "HeadersServerProtocolHandler CLOSE\n"
-                    // client inbound
-                    + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler2 ADDED_HEADER "+acoh3+"\n"
-                    + "HeadersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh3+"\n"
-                    + "HeadersClientProtocolHandler REMOVED_HEADER "+acoh5+"\n"
-                    + "HeadersClientProtocolHandler ADDED_HEADER "+acoh4+"\n"
-                    + "HeadersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
-                    + "HeadersClientProtocolHandler2 CLOSE\n"
-                    + "HeadersClientProtocolHandler CLOSE\n"
-                    + "HeadersClientLogicalHandler CLOSE\n";
-            
-            assertEquals(expected_calls, log);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
+        while (!future.isDone()) {
+            Thread.sleep(1000);
+            TestLogger.logger.debug("Async invocation incomplete");
         }
+
+        int total = callback.getResponseValue();
+        
+        
+        assertEquals("Return value should be " + (intParam1 + intParam2 - numOfHandlerHitsInFlow) + " but was " + total ,
+                     (intParam1 + intParam2 - numOfHandlerHitsInFlow),
+                     total);
+        TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+        
+        /*
+         * I tried to give enough info below in the expected_calls list so you can tell what's
+         * being tested without having to look at handler code.  All header manipulation is
+         * done by SOAPHeadersAdapter.
+         * 
+         * TODO: I would very much like to have done some other means of
+         * header manipulation, but the Axis2 SAAJ module is lacking necessary implementation
+         * to do this with any reliability.
+         */
+        
+        String log = readLogFile();
+        String expected_calls =
+                // client outbound
+                  "HeadersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh1+"\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh2+"\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh3+"\n"
+                + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh4+"\n"
+                + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh1+"\n"
+                + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh3+"\n"
+                + "HeadersClientLogicalHandler REMOVED_HEADER "+acoh4+"\n"   // message manipulated after this action
+                + "HeadersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh2+"\n"                   
+                + "HeadersClientProtocolHandler ADDED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh2+"\n"
+                + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler GET_HEADERS\n"
+                + "HeadersClientProtocolHandler2 GET_HEADERS\n"
+                // server inbound
+                + "HeadersServerProtocolHandler GET_HEADERS\n"
+                + "HeadersServerProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh2+"\n"
+                + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh2+"\n"
+                + "HeadersServerProtocolHandler ADDED_HEADER "+acoh6+"\n"
+                + "HeadersServerLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersServerLogicalHandler CHECKED_HEADER "+acoh6+"\n"
+                + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh5+"\n"   // message manipulated after this action
+                + "HeadersServerLogicalHandler REMOVED_HEADER "+acoh6+"\n"
+                // server outbound
+                + "HeadersServerLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersServerLogicalHandler ADDED_HEADER "+acoh1+"\n"   // message manipulated after this action
+                + "HeadersServerProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "HeadersServerProtocolHandler CHECKED_HEADER "+acoh1+"\n"
+                + "HeadersServerProtocolHandler REMOVED_HEADER "+acoh1+"\n"
+                + "HeadersServerProtocolHandler ADDED_HEADER "+acoh5+"\n"
+                + "HeadersServerLogicalHandler CLOSE\n"
+                + "HeadersServerProtocolHandler CLOSE\n"
+                // client inbound
+                + "HeadersClientProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersClientProtocolHandler2 CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler2 ADDED_HEADER "+acoh3+"\n"
+                + "HeadersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler CHECKED_HEADER "+acoh3+"\n"
+                + "HeadersClientProtocolHandler REMOVED_HEADER "+acoh5+"\n"
+                + "HeadersClientProtocolHandler ADDED_HEADER "+acoh4+"\n"
+                + "HeadersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "HeadersClientProtocolHandler2 CLOSE\n"
+                + "HeadersClientProtocolHandler CLOSE\n"
+                + "HeadersClientLogicalHandler CLOSE\n";
+        
+        assertEquals(expected_calls, log);
+            
         TestLogger.logger.debug("----------------------------------");
     }
     
