@@ -141,7 +141,9 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
     }
 
     public boolean isDestructiveRead() {
-        return false;
+//        return false;
+        // TODO: XMLStringBlock should actually be non destructive, but getReader() throws an exception when it is invoked the second time
+        return true;
     }
 
     public boolean isDestructiveWrite() {
