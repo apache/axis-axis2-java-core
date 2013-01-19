@@ -19,15 +19,7 @@
 
 package org.apache.axis2.jaxws.message.util;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMDocument;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
@@ -65,45 +57,6 @@ import java.util.Map;
 public class MessageUtils {
 
     private static final Log log = LogFactory.getLog(MessageUtils.class);
-
-    /**
-     * Get an axiom SOAPFactory for the specified element
-     *
-     * @param e OMElement
-     * @return SOAPFactory
-     */
-    public static SOAPFactory getSOAPFactory(OMElement e) {
-        // Getting a factory from a SOAPEnvelope is not straight-forward.
-        // Please change this code if an easier mechanism is discovered.
-
-        OMXMLParserWrapper builder = e.getBuilder();
-        if (builder instanceof StAXBuilder) {
-            StAXBuilder staxBuilder = (StAXBuilder)builder;
-            OMDocument document = staxBuilder.getDocument();
-            if (document != null) {
-                OMFactory factory = document.getOMFactory();
-                if (factory instanceof SOAPFactory) {
-                    return (SOAPFactory)factory;
-                }
-            }
-        }
-        // Flow to here indicates that the envelope does not have
-        // an accessible factory.  Create a new factory based on the 
-        // protocol.
-
-        while (e != null && !(e instanceof SOAPEnvelope)) {
-            e = (OMElement)e.getParent();
-        }
-        if (e instanceof SOAPEnvelope) {
-            if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.
-                    equals(e.getNamespace().getNamespaceURI())) {
-                return OMAbstractFactory.getSOAP11Factory();
-            } else {
-                return OMAbstractFactory.getSOAP12Factory();
-            }
-        }
-        return null;
-    }
 
     /**
      * Create an SAAJ AttachmentPart from a JAXWS Attachment

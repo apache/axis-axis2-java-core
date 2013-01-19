@@ -43,7 +43,6 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
-import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -141,7 +140,7 @@ class XMLSpineImpl implements XMLSpine {
      */
     private void init(SOAPEnvelope envelope) throws WebServiceException {
         root = envelope;
-        soapFactory = MessageUtils.getSOAPFactory(root);
+        soapFactory = (SOAPFactory)envelope.getOMFactory();
 
         // Advance past the header
         SOAPHeader header = root.getHeader();

@@ -448,7 +448,7 @@ public class XMLFaultUtils {
                                             boolean ignoreDetailBlocks) throws WebServiceException {
 
         // Get the factory and create the soapFault
-        SOAPFactory factory = MessageUtils.getSOAPFactory(body);
+        SOAPFactory factory = (SOAPFactory)body.getOMFactory();
         SOAPFault soapFault = factory.createSOAPFault(body);
         OMNamespace ns = body.getNamespace();
 
