@@ -143,10 +143,7 @@ class XMLSpineImpl implements XMLSpine {
         soapFactory = (SOAPFactory)envelope.getOMFactory();
 
         // Advance past the header
-        SOAPHeader header = root.getHeader();
-        if (header == null) {
-            header = soapFactory.createSOAPHeader(root);
-        }
+        root.getOrCreateHeader();
 
         // Now advance the parser to the body element
         SOAPBody body = root.getBody();
@@ -507,10 +504,7 @@ class XMLSpineImpl implements XMLSpine {
                 _createOMElementFromBlock(localPart, ns, block, soapFactory, true);
         OMElement om = this._getChildOMElement(root.getHeader(), namespace, localPart);
         if (om == null) {
-            if (root.getHeader() == null) {
-                soapFactory.createSOAPHeader(root);
-            }
-            root.getHeader().addChild(newOM);
+            root.getOrCreateHeader().addChild(newOM);
         } else {
             om.insertSiblingBefore(newOM);
             om.detach();
@@ -523,10 +517,7 @@ class XMLSpineImpl implements XMLSpine {
         OMNamespace ns = soapFactory.createOMNamespace(namespace, null);
         OMElement newOM =
             _createOMElementFromBlock(localPart, ns, block, soapFactory, true);
-        if (root.getHeader() == null) {
-            soapFactory.createSOAPHeader(root);
-        }
-        root.getHeader().addChild(newOM);
+        root.getOrCreateHeader().addChild(newOM);
     }
 
 
