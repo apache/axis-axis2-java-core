@@ -20,9 +20,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
@@ -49,7 +47,6 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPFaultElement;
 import javax.xml.soap.SOAPHeader;
-import javax.xml.stream.XMLStreamException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -61,18 +58,6 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
 
     public SOAPElementImpl(T element) {
         super((Element)element, element);
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMNode#discard()
-      */
-    public void discard() throws OMException {
-        omTarget.discard();
-    }
-
-    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer, boolean cache)
-            throws XMLStreamException {
-        ((OMElementEx)omTarget).internalSerialize(writer, cache);
     }
 
     /**
@@ -544,13 +529,6 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
                 throw new SOAPException("EncodingStyle attribute cannot appear in : " + this);
             }
         }
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.impl.OMNodeEx#setParent(org.apache.axiom.om.OMContainer)
-      */
-    public void setParent(OMContainer parentElement) {
-        ((OMElementEx)omTarget).setParent(parentElement);
     }
 
     /* (non-Javadoc)
