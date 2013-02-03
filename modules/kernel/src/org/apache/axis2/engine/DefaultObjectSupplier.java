@@ -20,6 +20,7 @@
 package org.apache.axis2.engine;
 
 import java.lang.reflect.Modifier;
+import java.lang.Enum;
 
 import org.apache.axis2.AxisFault;
 
@@ -38,6 +39,14 @@ public class DefaultObjectSupplier implements ObjectSupplier {
 				// those classes have to be instantiated in a different way than a normal initialization.
 				instance = clazz.getConstructor(new Class[] { parent })
 						.newInstance(new Object[] { getObject(parent) });
+			} else if (clazz.isEnum()) {
+				// enum just can create a new instance, so we have to resort
+				// to a default value, obviously many options are possible.
+				try {
+					instance = Enum.valueOf(clazz, "NULL");
+				} catch (IllegalArgumentException iae) {
+					throw AxisFault.makeFault(new Exception("Cannot create an enum object of type ("+clazz.getName()+") without a default value, please add a 'NULL' value to the enum that can be used as default."));
+				}	
 			} else {
 				instance = clazz.newInstance();
 			}
