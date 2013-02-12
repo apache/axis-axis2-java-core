@@ -41,9 +41,9 @@ public class LifecycleFixTransportListenerProxy implements TransportListener {
     }
 
     @SuppressWarnings("deprecation")
-    public EndpointReference[] getEPRForService(String arg0, String arg1)
+    public EndpointReference getEPRForService(String arg0, String arg1)
             throws AxisFault {
-        return target.getEPRsForService(arg0, arg1);
+        return target.getEPRForService(arg0, arg1);
     }
 
     public EndpointReference[] getEPRsForService(String arg0, String arg1)
