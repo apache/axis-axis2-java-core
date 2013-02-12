@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.AxisFault;
+import org.apache.axiom.om.OMElement;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -75,7 +76,7 @@ public class JMSConnectionFactory {
         ParameterIncludeImpl pi = new ParameterIncludeImpl();
 
         try {
-            pi.deserializeParameters(parameter.getParameterElement());
+            pi.deserializeParameters((OMElement) parameter.getValue());
         } catch (AxisFault axisFault) {
             handleException("Error reading parameters for JMS connection factory" + name, axisFault);
         }

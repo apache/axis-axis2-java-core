@@ -51,6 +51,14 @@ public class ContentTypeRuleFactory {
         Object value = param.getValue();
         if (value instanceof OMElement) {
             OMElement element = (OMElement)value;
+            
+            // DescriptionBuilder#processParameters actually sets the parameter element
+            // itself as the value. We need to support this case.
+            // TODO: seems like a bug in Axis2 and is inconsistent with Synapse's way of parsing parameter in proxy definitions
+            if (element == param.getParameterElement()) {
+                element = element.getFirstElement();
+            }
+            
             if (element.getLocalName().equals("rules")) {
                 for (Iterator it = element.getChildElements(); it.hasNext(); ) {
                     ruleSet.addRule(parse((OMElement)it.next()));
