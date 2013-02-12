@@ -31,7 +31,6 @@ import org.apache.axis2.transport.base.AbstractTransportSender;
 import org.apache.axis2.transport.base.BaseUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axis2.util.MessageProcessorSelector;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -85,7 +84,7 @@ public class TCPTransportSender extends AbstractTransportSender {
 
     private void writeOut(MessageContext msgContext, Socket socket,
                           String contentType) throws IOException {
-        MessageFormatter messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);
+        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
         OMOutputFormat format = BaseUtils.getOMOutputFormat(msgContext);
         format.setContentType(contentType);
         byte[] payload = messageFormatter.getBytes(msgContext, format);

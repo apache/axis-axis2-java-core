@@ -37,7 +37,6 @@ import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.base.AbstractTransportSender;
 import org.apache.axis2.transport.base.BaseUtils;
-import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
@@ -68,7 +67,7 @@ public class UDPSender extends AbstractTransportSender {
         } else {
             udpOutInfo = new UDPOutTransportInfo(targetEPR);
         }
-        MessageFormatter messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);
+        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
         OMOutputFormat format = BaseUtils.getOMOutputFormat(msgContext);
         format.setContentType(udpOutInfo.getContentType());
         byte[] payload = messageFormatter.getBytes(msgContext, format);

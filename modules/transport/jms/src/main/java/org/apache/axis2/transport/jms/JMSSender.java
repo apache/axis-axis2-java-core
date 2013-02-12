@@ -19,12 +19,12 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.OMNode;
-import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.base.*;
@@ -343,7 +343,7 @@ public class JMSSender extends AbstractTransportSender implements ManagementSupp
             OMOutputFormat format = BaseUtils.getOMOutputFormat(msgContext);
             MessageFormatter messageFormatter = null;
             try {
-                messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);
+                messageFormatter = TransportUtils.getMessageFormatter(msgContext);
             } catch (AxisFault axisFault) {
                 throw new JMSException("Unable to get the message formatter to use");
             }

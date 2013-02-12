@@ -34,7 +34,6 @@ import org.apache.axis2.format.BinaryFormatter;
 import org.apache.axis2.format.PlainTextFormatter;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -157,7 +156,7 @@ public class BaseUtils {
         
         // ... otherwise, let Axis choose the right message formatter:
         try {
-            return MessageProcessorSelector.getMessageFormatter(msgContext);
+            return TransportUtils.getMessageFormatter(msgContext);
         } catch (AxisFault axisFault) {
             throw new BaseTransportException("Unable to get the message formatter to use");
         }

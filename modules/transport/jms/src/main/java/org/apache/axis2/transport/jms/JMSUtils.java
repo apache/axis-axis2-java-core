@@ -22,7 +22,6 @@ import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.builder.SOAPBuilder;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.format.DataSourceMessageBuilder;
 import org.apache.axis2.format.TextMessageBuilder;
@@ -131,7 +130,7 @@ public class JMSUtils extends BaseUtils {
         
         int index = contentType.indexOf(';');
         String type = index > 0 ? contentType.substring(0, index) : contentType;
-        Builder builder = MessageProcessorSelector.getMessageBuilder(type, msgContext);
+        Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
         if (builder == null) {
             if (log.isDebugEnabled()) {
                 log.debug("No message builder found for type '" + type + "'. Falling back to SOAP.");
