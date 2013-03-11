@@ -28,7 +28,6 @@ package org.apache.axis2.rpc.complex;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -38,6 +37,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.commons.io.IOUtils;
 import org.tempuri.complex.data.arrays.xsd.ArrayOfArrayOfstring;
 import org.tempuri.complex.data.arrays.xsd.ArrayOfNullableOfdateTime;
 import org.tempuri.complex.data.arrays.xsd.ArrayOfNullableOfdecimal;
@@ -377,7 +377,7 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
 
         byte[] input = new byte[]{(byte) 0xDE, (byte) 0xAD, (byte) 0xBE, (byte) 0xEF};
         DataHandler ret = stub.retByteArray(new DataHandler(new ByteArrayDataSource(input)));
-        byte[] bytes = IOUtils.getStreamAsByteArray(ret.getInputStream());
+        byte[] bytes = IOUtils.toByteArray(ret.getInputStream());
         assertTrue(Arrays.equals(bytes, input));
     }
 

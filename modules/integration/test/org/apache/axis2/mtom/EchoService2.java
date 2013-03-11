@@ -22,13 +22,13 @@ package org.apache.axis2.mtom;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.IncomingAttachmentInputStream;
 import org.apache.axiom.attachments.IncomingAttachmentStreams;
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.context.MessageContext;
+import org.apache.commons.io.IOUtils;
 
 public class EchoService2 {
 
@@ -41,7 +41,7 @@ public class EchoService2 {
         IncomingAttachmentStreams streams = attachments.getIncomingAttachmentStreams();
         IncomingAttachmentInputStream stream = streams.getNextStream();
 
-        byte[] data = IOUtils.getStreamAsByteArray(stream);
+        byte[] data = IOUtils.toByteArray(stream);
 
         //setting response
         OMFactory fac = OMAbstractFactory.getOMFactory();

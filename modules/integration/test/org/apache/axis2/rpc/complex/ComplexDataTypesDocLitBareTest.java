@@ -22,7 +22,6 @@ package org.apache.axis2.rpc.complex;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -34,6 +33,7 @@ import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.commons.io.IOUtils;
 import org.tempuri.complex.ComplexDataTypesDocLitBareStub;
 import org.tempuri.complex.ComplexDataTypesDocLitBareStub.RetArrayString2DResult;
 
@@ -388,7 +388,7 @@ public class ComplexDataTypesDocLitBareTest extends
         ComplexDataTypesDocLitBareStub.RetByteArray req = new ComplexDataTypesDocLitBareStub.RetByteArray();
         req.setInByteArray(new DataHandler(new ByteArrayDataSource(input)));
         DataHandler ret = stub.retByteArray(req).get_return();
-        byte[] bytes = IOUtils.getStreamAsByteArray(ret.getInputStream());
+        byte[] bytes = IOUtils.toByteArray(ret.getInputStream());
         assertTrue(Arrays.equals(bytes, input));
     }
 
