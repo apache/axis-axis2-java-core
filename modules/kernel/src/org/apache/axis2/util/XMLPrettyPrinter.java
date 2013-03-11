@@ -19,8 +19,8 @@
 
 package org.apache.axis2.util;
 
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMElement;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,7 +59,7 @@ public class XMLPrettyPrinter {
         byte[] byteArray = null;
         try {
             FileInputStream fin = new FileInputStream(file);
-            byteArray = IOUtils.getStreamAsByteArray(fin);
+            byteArray = IOUtils.toByteArray(fin);
             fin.close();
             inputStream = new ByteArrayInputStream(byteArray);
             outputStream = new FileOutputStream(file);

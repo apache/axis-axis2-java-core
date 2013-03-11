@@ -19,9 +19,9 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axis2.classloader.BeanInfoCache;
 import org.apache.axis2.classloader.BeanInfoCachingClassLoader;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -122,7 +122,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
                         entryName = entry.getName();
                         if (entryName != null &&
                                 entryName.endsWith(resource)) {
-                            byte[] raw = IOUtils.getStreamAsByteArray(zin);
+                            byte[] raw = IOUtils.toByteArray(zin);
                             return new URL("jar", "", -1, urls[0] + "!/" + libjar_name + "!/" + entryName,
                                     new ByteUrlStreamHandler(raw));
                         }
@@ -160,7 +160,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
                     entryName = entry.getName();
                     if (entryName != null &&
                             entryName.endsWith(resource)) {
-                        byte[] raw = IOUtils.getStreamAsByteArray(zin);
+                        byte[] raw = IOUtils.toByteArray(zin);
                         resources.add(new URL("jar", "", -1, urls[0] + "!/" + libjar_name + "!/" + entryName,
                                 new ByteUrlStreamHandler(raw)));
                     }
@@ -209,7 +209,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
             entryName = entry.getName();
             if (entryName != null &&
                     entryName.endsWith(resource)) {
-                byte[] raw = IOUtils.getStreamAsByteArray(zin);
+                byte[] raw = IOUtils.toByteArray(zin);
                 zin.close();
                 return raw;
             }
