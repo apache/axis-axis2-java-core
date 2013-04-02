@@ -25,6 +25,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.json.gson.rpc.JsonInOnlyRPCMessageReceiver;
 import org.apache.axis2.json.gson.rpc.JsonRpcMessageReceiver;
 import org.apache.axis2.json.gson.factory.JsonConstant;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -58,7 +59,7 @@ public class JSONMessageHandler extends AbstractHandler {
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         MessageReceiver messageReceiver = msgContext.getAxisOperation().getMessageReceiver();
-        if (messageReceiver instanceof JsonRpcMessageReceiver) {
+        if (messageReceiver instanceof JsonRpcMessageReceiver || messageReceiver instanceof JsonInOnlyRPCMessageReceiver) {
             // do not need to parse XMLSchema list, as  this message receiver will not use GsonXMLStreamReader  to read the inputStream.
         } else {
             Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
