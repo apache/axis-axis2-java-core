@@ -34,8 +34,8 @@ import java.lang.reflect.Method;
 
 
 public class JsonRpcMessageReceiver extends RPCMessageReceiver {
-
-    private static Log log = LogFactory.getLog(RPCMessageReceiver.class);
+    private static final Log log = LogFactory.getLog(RPCMessageReceiver.class);
+    
     @Override
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
         Object tempObj = inMessage.getProperty(JsonConstant.IS_JSON_STREAM);

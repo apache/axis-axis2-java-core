@@ -34,8 +34,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
-
-    private static Log log = LogFactory.getLog(JsonInOnlyRPCMessageReceiver.class);
+    private static final Log log = LogFactory.getLog(JsonInOnlyRPCMessageReceiver.class);
+    
     @Override
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
         Object tempObj = inMessage.getProperty(JsonConstant.IS_JSON_STREAM);
