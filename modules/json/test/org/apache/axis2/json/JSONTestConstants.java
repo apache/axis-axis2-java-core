@@ -19,16 +19,8 @@
 
 package org.apache.axis2.json;
 
-import javax.xml.namespace.QName;
-
 public interface JSONTestConstants {
 
-    public static final QName serviceName = new QName("EchoXMLService");
-
-    public static final QName operationName = new QName("echoOM");
-
-    public static final QName swaServiceName = new QName("EchoSwAService");
-    
     public static final String CONTENT_TYPE_BADGERFISH = "application/json/badgerfish";
     
     public static final String CONTENT_TYPE_MAPPED = "application/json";
