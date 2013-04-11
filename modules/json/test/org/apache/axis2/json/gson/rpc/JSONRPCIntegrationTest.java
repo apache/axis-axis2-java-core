@@ -32,7 +32,7 @@ public class JSONRPCIntegrationTest {
 
     @BeforeClass
     public static void startTestServer() throws Exception {
-        UtilServer.start("test-repository", "test-conf/axis2_json.xml");
+        UtilServer.start("test-repository/gson", "test-repository/gson/axis2.xml");
     }
 
     @AfterClass

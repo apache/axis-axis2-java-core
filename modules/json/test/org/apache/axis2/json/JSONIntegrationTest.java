@@ -70,9 +70,9 @@ public class JSONIntegrationTest implements JSONTestConstants {
         pojoUri = "http://127.0.0.1:" + testingPort + "/axis2/services/POJOService";
 
         File configFile =
-                new File(System.getProperty("basedir", ".") + "/test-resources/axis2.xml");
+                new File(System.getProperty("basedir", ".") + "/test-repository/json/axis2.xml");
         configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                System.getProperty("basedir", ".") + "/test-repository",
+                System.getProperty("basedir", ".") + "/test-repository/json",
                 configFile.getAbsolutePath());
         server = new SimpleHTTPServer(configurationContext, testingPort);
         try {

@@ -36,9 +36,7 @@ public class JSONXMLStreamAPITest {
 
     @Before
     public void setUp()throws Exception {
-        String baseDir = System.getProperty("basedir" , ".").toString();
-//        UtilServer.start((baseDir + "target/repo"), (baseDir + "test-resources/json/conf/axis2_json.xml"));
-        UtilServer.start("target/repo", "test-conf/axis2_json.xml");
+        UtilServer.start("target/repo", "test-repository/gson/axis2.xml");
 
     }
 
