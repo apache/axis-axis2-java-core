@@ -32,10 +32,8 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.testutils.PortAllocator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.Utils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,8 +47,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class JSONIntegrationTest implements JSONTestConstants {
-
-    private static AxisService service;
 
     private String expectedString;
 
@@ -80,11 +76,6 @@ public class JSONIntegrationTest implements JSONTestConstants {
         } finally {
 
         }
-        service = Utils.createSimpleService(serviceName,
-                                            org.apache.axis2.json.Echo.class.getName(),
-                                            operationName);
-        server.getConfigurationContext().getAxisConfiguration().addService(
-                service);
     }
 
     @AfterClass
