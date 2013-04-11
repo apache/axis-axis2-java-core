@@ -62,7 +62,7 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
                 throw new AxisFault("GsonXMLStreamReader should have put as a property of messageContext " +
                         "to evaluate JSON message");
             }
-    } else{
+        } else {
             super.invokeBusinessLogic(inMessage);   // call RPCMessageReceiver if inputstream is null
         }
     }
