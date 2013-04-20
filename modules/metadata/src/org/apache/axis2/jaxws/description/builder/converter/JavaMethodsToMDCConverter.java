@@ -200,7 +200,11 @@ public class JavaMethodsToMDCConverter {
             rwAnnot.setClassName(requestWrapper.className());
             rwAnnot.setLocalName(requestWrapper.localName());
             rwAnnot.setTargetNamespace(requestWrapper.targetNamespace());
-            rwAnnot.setPartName(requestWrapper.partName());
+            try {
+                rwAnnot.setPartName(requestWrapper.partName());
+            } catch (NoSuchMethodError ex) {
+                // Ignore: we are running on Java 1.6 and the JAX-WS 2.2 libs have not been endorsed
+            }
             mdc.setRequestWrapperAnnot(rwAnnot);
         }
     }
@@ -221,7 +225,11 @@ public class JavaMethodsToMDCConverter {
             rwAnnot.setClassName(responseWrapper.className());
             rwAnnot.setLocalName(responseWrapper.localName());
             rwAnnot.setTargetNamespace(responseWrapper.targetNamespace());
-            rwAnnot.setPartName(responseWrapper.partName());
+            try {
+                rwAnnot.setPartName(responseWrapper.partName());
+            } catch (NoSuchMethodError ex) {
+                // Ignore: we are running on Java 1.6 and the JAX-WS 2.2 libs have not been endorsed
+            }
             mdc.setResponseWrapperAnnot(rwAnnot);
         }
     }
