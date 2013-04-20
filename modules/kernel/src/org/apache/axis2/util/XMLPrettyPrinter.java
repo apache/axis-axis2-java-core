@@ -58,7 +58,9 @@ public class XMLPrettyPrinter {
         FileOutputStream outputStream = null;
         byte[] byteArray = null;
         try {
-            byteArray = IOUtils.getStreamAsByteArray(new FileInputStream(file));
+            FileInputStream fin = new FileInputStream(file);
+            byteArray = IOUtils.getStreamAsByteArray(fin);
+            fin.close();
             inputStream = new ByteArrayInputStream(byteArray);
             outputStream = new FileOutputStream(file);
 
@@ -88,6 +90,18 @@ public class XMLPrettyPrinter {
             log.debug("Pretty printed file : " + file);
         } catch (Throwable t) {
             log.debug("Exception occurred while trying to pretty print file " + file, t);
+            
+            /* if outputStream is already created, close them, because we are going reassign
+             * different value to that. It will leak the file handle (specially in windows, since
+             * deleting is going to be an issue)
+             */
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    log.debug(e.getMessage(), e);
+                }
+            }
             try {
                 if (byteArray != null) {
                     outputStream = new FileOutputStream(file);
