@@ -169,7 +169,7 @@ public class TransportUtils {
         return createSOAPEnvelope(documentElement);
     }
 
-    public static SOAPEnvelope createSOAPEnvelope(OMElement documentElement) throws AxisFault {
+    public static SOAPEnvelope createSOAPEnvelope(OMElement documentElement) {
         SOAPEnvelope envelope;
         // Check whether we have received a SOAPEnvelope or not
         if (documentElement instanceof SOAPEnvelope) {
@@ -182,10 +182,6 @@ public class TransportUtils {
             if (documentElement != null) {
                 envelope.getBody().addChild(documentElement);
             }
-        }
-        //According to both SOAP 1.1 and 1.2 specification SOAP body is mandatory element for a valid soap envelop
-        if (envelope.getBody() == null) {
-            throw new AxisFault("soap body element is null, but it is mandatory for a valid soap envelop");
         }
         return envelope;
     }
