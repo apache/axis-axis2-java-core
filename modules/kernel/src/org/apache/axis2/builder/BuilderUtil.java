@@ -193,6 +193,9 @@ public class BuilderUtil {
                             }
                         }
                     }
+                }else {
+                    throw new AxisFault(xmlSchemaElement.getName() + " message element in schema should follow the " +
+                            "(Internationalized Resource Identifier)IRI ) style to process request in REST style");
                 }
             }
         }
