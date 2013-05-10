@@ -229,8 +229,8 @@
             <type>war</type>
         </dependency>
         
-         <!-- These are needed to run JAX-WS tools -->
-          <dependency>
+        <!-- These are needed to run JAX-WS tools -->
+        <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <exclusions>
@@ -244,12 +244,12 @@
                 </exclusion>
             </exclusions>           
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.jvnet.staxex</groupId>
             <artifactId>stax-ex</artifactId>
             <version>1.4</version>           
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.sun.xml.stream.buffer</groupId>
             <artifactId>streambuffer</artifactId>
             <version>1.2</version>           
