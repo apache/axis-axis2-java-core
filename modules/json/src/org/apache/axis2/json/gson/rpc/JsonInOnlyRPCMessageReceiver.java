@@ -68,11 +68,10 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
     }
 
     public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name) throws AxisFault {
-        Method method = null;
         String msg;
         Class implClass = serviceObj.getClass();
         Method[] allMethods = implClass.getDeclaredMethods();
-        method = JsonUtils.getOpMethod(operation_name, allMethods);
+        Method method = JsonUtils.getOpMethod(operation_name, allMethods);
         Class[] paramClasses = method.getParameterTypes();
         try {
             int paramCount = paramClasses.length;

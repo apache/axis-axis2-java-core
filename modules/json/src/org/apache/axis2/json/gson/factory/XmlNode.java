@@ -40,7 +40,7 @@ public class XmlNode {
     }
 
 
-    public void addChildtoList(XmlNode child) {
+    public void addChildToList(XmlNode child) {
         childrenList.add(child);
     }
 

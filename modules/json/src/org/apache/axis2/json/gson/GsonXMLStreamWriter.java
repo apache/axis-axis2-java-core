@@ -374,7 +374,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
                 throw new XMLStreamException("Error occours while write first begin object ");
             }
         }
-        JsonObject stackObj = null;
+        JsonObject stackObj;
         try {
             if (flushObject != null) {
                 if (topNestedArrayObj != null && flushObject.getType() == JSONType.NESTED_ARRAY &&

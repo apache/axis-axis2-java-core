@@ -169,11 +169,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
     public boolean hasNext() throws XMLStreamException {
         try {
             tokenType = jsonReader.peek();
-            if (tokenType == JsonToken.END_DOCUMENT) {
-                return false;
-            } else {
-                return true;
-            }
+            return !(tokenType == JsonToken.END_DOCUMENT);
         } catch (IOException e) {
             throw new XMLStreamException("Unexpected end of json stream");
         }
@@ -195,42 +191,30 @@ public class GsonXMLStreamReader implements XMLStreamReader {
 
 
     public boolean isStartElement() {
-        if (state == JsonState.NameName
+        return (state == JsonState.NameName
                 || state == JsonState.NameValue
                 || state == JsonState.ValueValue_CHAR
-                || state == JsonState.EndObjectBeginObject_START) {
-            return true;
-        } else {
-            return false;
-        }
+                || state == JsonState.EndObjectBeginObject_START);
     }
 
 
     public boolean isEndElement() {
-        if (state == JsonState.ValueValue_START
+        return (state == JsonState.ValueValue_START
                 || state == JsonState.EndArrayName
                 || state == JsonState.ValueEndObject_END_2
                 || state == JsonState.ValueName_START
                 || state == JsonState.EndObjectName
                 || state == JsonState.EndObjectBeginObject_END
                 || state == JsonState.EndArrayEndObject
-                || state == JsonState.EndObjectEndObject) {
-            return true;
-        } else {
-            return false;
-        }
+                || state == JsonState.EndObjectEndObject);
     }
 
 
     public boolean isCharacters() {
-        if (state == JsonState.ValueValue_END
+        return (state == JsonState.ValueValue_END
                 || state == JsonState.ValueEndArray
                 || state == JsonState.ValueEndObject_END_1
-                || state == JsonState.ValueName_END) {
-            return true;
-        } else {
-            return false;
-        }
+                || state == JsonState.ValueName_END);
 
     }
 
@@ -382,11 +366,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
 
 
     public boolean hasText() {
-        if (isCharacters()) {
-            return true;
-        } else {
-            return false;
-        }
+        return isCharacters();
     }
 
 
@@ -404,17 +384,17 @@ public class GsonXMLStreamReader implements XMLStreamReader {
 
 
             public int getCharacterOffset() {
-                return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                return 0;
             }
 
 
             public String getPublicId() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
 
             public String getSystemId() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
         };
     }

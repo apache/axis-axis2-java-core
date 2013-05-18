@@ -54,7 +54,7 @@ public class JsonFormatter implements MessageFormatter {
 
     public void writeTo(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat, OutputStream outputStream, boolean b) throws AxisFault {
         String charSetEncoding = (String) outMsgCtxt.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-        JsonWriter jsonWriter = null;
+        JsonWriter jsonWriter;
         String msg;
 
         try {
@@ -129,8 +129,7 @@ public class JsonFormatter implements MessageFormatter {
     }
 
     public String getContentType(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat, String s) {
-        String contentType = (String)outMsgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
-        return contentType;
+        return (String)outMsgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
     }
 
     public URL getTargetAddress(MessageContext messageContext, OMOutputFormat omOutputFormat, URL url) throws AxisFault {
