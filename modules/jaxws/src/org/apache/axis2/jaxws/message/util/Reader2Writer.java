@@ -76,11 +76,7 @@ public class Reader2Writer {
         Iterator it = omDocument.getChildren();
         while (it.hasNext()) {
             OMNode omNode = (OMNode)it.next();
-            // TODO Using serialize and consume
-            // caused an axiom bug...falling back to serialize
-            // (which is less performant due to om caching)
-            //omNode.serializeAndConsume(writer);
-            omNode.serialize(writer);
+            omNode.serializeAndConsume(writer);
         }
         // Close the reader if marked to do so
         if (closeReader) {
