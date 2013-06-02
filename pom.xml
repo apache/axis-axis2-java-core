@@ -510,6 +510,13 @@
             <email>sagara AT apache.org</email>
             <organization>WSO2</organization>
         </developer>
+        <developer>
+            <name>Shameera Rathnayaka</name>
+            <id>shameera</id>
+            <email>shameera AT apache.org</email>
+            <url>http://lk.linkedin.com/pub/shameera-rathnayaka/1a/661/561</url>
+            <organization>WSO2</organization>
+        </developer>
     </developers>
     <contributors>
         <contributor>
