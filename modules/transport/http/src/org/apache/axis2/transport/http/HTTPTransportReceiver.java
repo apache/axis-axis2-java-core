@@ -20,6 +20,13 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.Utils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,12 +35,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 
 
 /**
@@ -113,23 +114,25 @@ public class HTTPTransportReceiver {
 
                 AxisService axisService = (AxisService) it.next();
 
-                Iterator iterator = axisService.getOperations();
+                if (!Utils.isHiddenService(axisService)) {
+                    Iterator iterator = axisService.getOperations();
 
-                temp += "<h3><a href=\"" + axisService.getName() + "?wsdl\">" +
-                        axisService.getName() + "</a></h3>";
+                    temp += "<h3><a href=\"" + axisService.getName() + "?wsdl\">" +
+                            axisService.getName() + "</a></h3>";
 
-                if (iterator.hasNext()) {
-                    temp += "Available operations <ul>";
+                    if (iterator.hasNext()) {
+                        temp += "Available operations <ul>";
 
-                    for (; iterator.hasNext();) {
-                        AxisOperation axisOperation = (AxisOperation) iterator.next();
+                        for (; iterator.hasNext();) {
+                            AxisOperation axisOperation = (AxisOperation) iterator.next();
 
-                        temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
+                            temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
+                        }
+
+                        temp += "</ul>";
+                    } else {
+                        temp += "No operations specified for this service";
                     }
-
-                    temp += "</ul>";
-                } else {
-                    temp += "No operations specified for this service";
                 }
             }
         }

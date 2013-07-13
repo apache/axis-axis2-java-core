@@ -20,23 +20,6 @@
 
 package org.apache.axis2.util;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
@@ -72,6 +55,22 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Utils {
     private static final Log log = LogFactory.getLog(Utils.class);
@@ -803,5 +802,22 @@ public class Utils {
     		val =  messageContext.getProperty("transportNonBlocking");
     		return val != null && ((Boolean)val).booleanValue();
     	}
+    }
+
+    /**
+     * This method is used to find whether an axis2service is declared as hidden using the
+     * "hiddenService" param
+     *
+     * @param axisService - the service of interest
+     * @return true if is declared as hidden, false if not
+     */
+    public static boolean isHiddenService(AxisService axisService) {
+        boolean hideService = false;
+        Parameter hiddenServiceParam;
+        hiddenServiceParam = axisService.getParameter(Constants.HIDDEN_SERVICE_PARAM_NAME);
+        if (hiddenServiceParam != null) {
+            hideService = !JavaUtils.isFalseExplicitly(hiddenServiceParam.getValue());
+        }
+        return hideService;
     }
 }
