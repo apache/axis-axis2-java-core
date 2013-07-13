@@ -121,6 +121,9 @@
                         <fileset>
                             <directory>src/test/test1/target</directory>
                         </fileset>
+                        <fileset>
+                            <directory>src/test/test2/target</directory>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
