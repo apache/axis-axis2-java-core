@@ -15,6 +15,7 @@
 */
 package org.apache.axis2.transport.jms;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -36,14 +37,13 @@ import org.apache.axis2.transport.jms.iowrappers.BytesMessageInputStream;
 
 import javax.jms.*;
 import javax.jms.Queue;
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.NameNotFoundException;
 
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.*;
 
 /**
