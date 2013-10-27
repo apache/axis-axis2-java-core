@@ -70,7 +70,7 @@
         <axiom.version>1.2.15-SNAPSHOT</axiom.version>
         <neethi.version>3.0.3-SNAPSHOT</neethi.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
-        <xmlschema.version>2.0.3</xmlschema.version>
+        <xmlschema.version>2.0.4-SNAPSHOT</xmlschema.version>
 
         <!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>
