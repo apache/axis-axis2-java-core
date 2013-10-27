@@ -20,10 +20,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -32,13 +28,17 @@ import org.apache.axis2.wsdl.codegen.XMLSchemaTest;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class WSDLValidatorExtensionTest extends XMLSchemaTest {
 
     @Test
     public void testWSDLValidation() throws Exception {
         XmlSchema schema = loadSingleSchemaFile(SampleSchemasDirectory + "schemaIncludes.xsd");
-        if (schema.getIncludes().getCount() != 0 && schema.getElements().getCount() == 0
-                && schema.getSchemaTypes().getCount() == 0 && schema.getGroups().getCount() == 0
+        if (!schema.getExternals().isEmpty() && schema.getElements().isEmpty()
+                && schema.getSchemaTypes().isEmpty() && schema.getGroups().isEmpty()
                 && schema.getTargetNamespace() == null) {
             try {
                 AxisService service = new AxisService();

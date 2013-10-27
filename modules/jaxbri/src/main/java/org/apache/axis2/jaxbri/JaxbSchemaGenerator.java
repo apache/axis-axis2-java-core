@@ -21,10 +21,16 @@ package org.apache.axis2.jaxbri;
 
 import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
 import com.sun.xml.bind.v2.runtime.JaxBeanInfo;
+import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.util.Loader;
-import org.apache.axis2.deployment.util.BeanExcludeInfo;
-import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaComplexContent;
+import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,11 +43,11 @@ import javax.xml.bind.SchemaOutputResolver;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.dom.DOMResult;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,9 +56,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 
 public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
     public JaxbSchemaGenerator(ClassLoader loader, String className,
@@ -260,15 +263,15 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
                 targetNamespacePrefixMap.put(targetNameSpace, targetNamespacePrefix);
             }
 
-            XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema, false);
             XmlSchemaSequence sequence = new XmlSchemaSequence();
             XmlSchemaComplexContentExtension complexExtension =
                     new XmlSchemaComplexContentExtension();
 
-            XmlSchemaElement eltOuter = new XmlSchemaElement();
+            XmlSchemaElement eltOuter = new XmlSchemaElement(xmlSchema, false);
             schemaTypeName = new QName(targetNameSpace, simpleName, targetNamespacePrefix);
             eltOuter.setName(simpleName);
-            eltOuter.setQName(schemaTypeName);
+            eltOuter.setSchemaTypeName(schemaTypeName);
 
             Class sup = javaType.getSuperclass();
             if ((sup != null) && !("java.lang.Object".compareTo(sup.getName()) == 0) &&
@@ -299,7 +302,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
                 //if the parent class package name is differ from the child
                 if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
                         contains(tgtNamespace)) {
-                    XmlSchemaImport importElement = new XmlSchemaImport();
+                    XmlSchemaImport importElement = new XmlSchemaImport(xmlSchema);
                     importElement.setNamespace(tgtNamespace);
                     xmlSchema.getItems().add(importElement);
                     ((NamespaceMap) xmlSchema.getNamespaceContext()).
@@ -320,11 +323,11 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             complexType.setName(simpleName);
 
 //            xmlSchema.getItems().add(eltOuter);
-            xmlSchema.getElements().add(schemaTypeName, eltOuter);
+            xmlSchema.getElements().put(schemaTypeName, eltOuter);
             eltOuter.setSchemaTypeName(complexType.getQName());
 
             xmlSchema.getItems().add(complexType);
-            xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
+            xmlSchema.getSchemaTypes().put(schemaTypeName, complexType);
 
             // adding this type to the table
             typeTable.addComplexSchema(name, eltOuter.getQName());

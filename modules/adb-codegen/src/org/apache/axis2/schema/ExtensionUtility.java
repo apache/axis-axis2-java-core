@@ -46,9 +46,9 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaInclude;
 import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
@@ -356,10 +356,8 @@ public class ExtensionUtility {
                                    String opName,
                                    String qnameSuffix,
                                    TypeMapper typeMap) {
-        XmlSchemaObjectCollection xmlObjectCollection = complexType.getAttributes();
-        XmlSchemaObject item;
-        for (Iterator iter = xmlObjectCollection.getIterator(); iter.hasNext();) {
-            item = (XmlSchemaObject) iter.next();
+
+        for (XmlSchemaObject item : complexType.getAttributes()) {
             XmlSchemaAttribute xmlSchemaAttribute;
             if (item instanceof XmlSchemaAttribute) {
                 xmlSchemaAttribute = (XmlSchemaAttribute) item;
@@ -380,24 +378,20 @@ public class ExtensionUtility {
         if (schema != null) {
             xmlSchemaType = schema.getTypeByName(typeName);
             if (xmlSchemaType == null) {
-                // try to find in an import or an include
-                XmlSchemaObjectCollection includes = schema.getIncludes();
-                if (includes != null) {
-                    Iterator includesIter = includes.getIterator();
-                    Object object = null;
-                    while (includesIter.hasNext()) {
-                        object = includesIter.next();
-                        if (object instanceof XmlSchemaImport) {
-                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
-                            xmlSchemaType = getSchemaType(schema1,typeName);
-                        }
-                        if (object instanceof XmlSchemaInclude) {
-                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
-                            xmlSchemaType = getSchemaType(schema1,typeName);
-                        }
-                        if (xmlSchemaType != null){
-                            break;
-                        }
+                // try to find in an import or an include) {
+
+                for (XmlSchemaObject object : schema.getExternals()) {
+
+                    if (object instanceof XmlSchemaImport) {
+                        XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                        xmlSchemaType = getSchemaType(schema1, typeName);
+                    }
+                    if (object instanceof XmlSchemaInclude) {
+                        XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                        xmlSchemaType = getSchemaType(schema1, typeName);
+                    }
+                    if (xmlSchemaType != null) {
+                        break;
                     }
                 }
             }
@@ -440,9 +434,8 @@ public class ExtensionUtility {
                                               Map<String,XmlSchema> schemaMap,
                                               String qnameSuffix) {
         if (particle instanceof XmlSchemaSequence) {
-            XmlSchemaObjectCollection items = ((XmlSchemaSequence) particle).getItems();
-            for (Iterator i = items.getIterator(); i.hasNext();) {
-                Object item = i.next();
+          List<XmlSchemaSequenceMember> items = ((XmlSchemaSequence) particle).getItems();
+            for (XmlSchemaSequenceMember item : items) {
                 // get each and every element in the sequence and
                 // traverse through them
                 if (item instanceof XmlSchemaElement) {
@@ -453,8 +446,8 @@ public class ExtensionUtility {
 
                     XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
                     String partName = null;
-                    if (xmlSchemaElement.getRefName() != null) {
-                        partName = xmlSchemaElement.getRefName().getLocalPart();
+                    if (xmlSchemaElement.getRef().getTargetQName() != null) {
+                        partName = xmlSchemaElement.getRef().getTargetQName().getLocalPart();
                     } else {
                         partName = xmlSchemaElement.getName();
                     }

@@ -23,14 +23,13 @@ package org.apache.axis2.json.gson.factory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -117,12 +116,9 @@ public class XmlNodeGenerator {
             XmlSchemaParticle particle = complexType.getParticle();
             if (particle instanceof XmlSchemaSequence) {
                 XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
-                XmlSchemaObjectCollection objectCollection = sequence.getItems();
-                Iterator objectIterator = objectCollection.getIterator();
-                while (objectIterator.hasNext()) {
-                    Object obj = objectIterator.next();
-                    if (obj instanceof XmlSchemaElement) {
-                        processElement((XmlSchemaElement)obj , parentNode , schema);
+                for (XmlSchemaSequenceMember member : sequence.getItems()) {
+                    if (member instanceof XmlSchemaElement) {
+                        processElement((XmlSchemaElement)member , parentNode , schema);
                     }
                 }
             }

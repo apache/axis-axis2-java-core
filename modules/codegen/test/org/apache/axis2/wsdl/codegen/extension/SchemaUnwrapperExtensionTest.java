@@ -186,6 +186,6 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
     private XmlSchema loadSchema(String schemaLocation) throws FileNotFoundException {
         InputStream is = new FileInputStream(schemaLocation);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        return schemaCol.read(new StreamSource(is), null);
+        return schemaCol.read(new StreamSource(is));
     }
 }

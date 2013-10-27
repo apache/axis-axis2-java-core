@@ -62,8 +62,8 @@
             <artifactId>wsdl4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.schema</groupId>
-            <artifactId>XmlSchema</artifactId>
+            <groupId>org.apache.ws.xmlschema</groupId>
+            <artifactId>xmlschema-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
@@ -71,8 +71,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.woden</groupId>
-            <artifactId>woden-core</artifactId>
-            <version>${woden.version}</version>
+            <artifactId>woden-impl-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden-impl-dom</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>

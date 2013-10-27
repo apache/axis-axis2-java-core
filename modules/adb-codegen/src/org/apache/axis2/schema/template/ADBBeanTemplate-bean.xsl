@@ -2162,6 +2162,7 @@
                             <xsl:variable name="particleClassType" select="@particleClassType"></xsl:variable>
 
                             <xsl:variable name="propQName">new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")</xsl:variable>
+                            <xsl:variable name="propQName2">new javax.xml.namespace.QName("","<xsl:value-of select="$propertyName"/>")</xsl:variable>
 
                            <xsl:choose>
                                 <xsl:when test="$unordered and not($choice and $hasParticleType)">  <!-- One property per iteration if unordered -->
@@ -2186,7 +2187,7 @@
                                          we have to sollow an excpetions : todo find a better solsution-->
                                          try{
                                     </xsl:if>
-                                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple) and not($particleClassType)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
+                                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple) and not($particleClassType)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName()) || <xsl:value-of select="$propQName2"/>.equals(reader.getName()) </xsl:if>){
                                 </xsl:otherwise>
                             </xsl:choose>
 

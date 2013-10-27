@@ -19,6 +19,12 @@
 
 package org.apache.axis2.description.java2wsdl;
 
+import org.apache.axis2.description.AxisService;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.w3c.dom.Document;
+
+import javax.management.RuntimeErrorException;
+import javax.xml.namespace.QName;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,13 +34,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.management.RuntimeErrorException;
-import javax.xml.namespace.QName;
-
-import org.apache.axis2.description.AxisService;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.w3c.dom.Document;
 
 public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
 
@@ -81,9 +80,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
         XmlSchema schema = schemaColl.iterator().next();
 
         boolean foundExtra = false;
-        Iterator names = schema.getSchemaTypes().getNames();
-        while (names.hasNext()) {
-            QName name = (QName) names.next();
+        for (QName name : schema.getSchemaTypes().keySet()) {
             if (name.getLocalPart().equals("ExtraClass"))
                 foundExtra = true;
         }

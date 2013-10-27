@@ -58,6 +58,7 @@ public interface CorbaConstants {
     String DEFAULT_SCHEMA_NAMESPACE_PREFIX = "xs";
     String URI_2001_SCHEMA_XSD = "http://www.w3.org/2001/XMLSchema";
     String FORM_DEFAULT_UNQUALIFIED = "unqualified";
+    String FORM_DEFAULT_QUALIFIED = "qualified";
 
     String SCHEMA_TO_IDL_MAPPING_LITERAL = "SchemaToIDLMapping";
     String ANY_TYPE_NAME = "CORBA.Any";

@@ -19,17 +19,6 @@
 
 package org.apache.axis2.description;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -43,6 +32,16 @@ import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class AxisServiceTest extends XMLSchemaTest {
     public static final String PARAM_NAME = "CustomParameter";
@@ -256,7 +255,7 @@ public class AxisServiceTest extends XMLSchemaTest {
     public void testPrintXSD() throws Exception {
         InputStream is = new FileInputStream(SampleSchemasDirectory + "sampleSchema1.xsd");
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         ArrayList<XmlSchema> xmlSchemas = new ArrayList<XmlSchema>();
         xmlSchemas.add(schema);

@@ -35,9 +35,10 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
 import javax.xml.namespace.QName;
@@ -189,23 +190,17 @@ public class JAXWSWapperExtension extends AbstractCodeGenerationExtension {
             xmlSchemaType = schema.getTypeByName(typeName);
             if (xmlSchemaType == null) {
                 // try to find in an import or an include
-                XmlSchemaObjectCollection includes = schema.getIncludes();
-                if (includes != null) {
-                    Iterator includesIter = includes.getIterator();
-                    Object object = null;
-                    while (includesIter.hasNext()) {
-                        object = includesIter.next();
-                        if (object instanceof XmlSchemaImport) {
-                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
-                            xmlSchemaType = getSchemaType(schema1, typeName);
-                        }
-                        if (object instanceof XmlSchemaInclude) {
-                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
-                            xmlSchemaType = getSchemaType(schema1, typeName);
-                        }
-                        if (xmlSchemaType != null) {
-                            break;
-                        }
+                for (XmlSchemaObject object : schema.getExternals()) {
+                    if (object instanceof XmlSchemaImport) {
+                        XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                        xmlSchemaType = getSchemaType(schema1, typeName);
+                    }
+                    if (object instanceof XmlSchemaInclude) {
+                        XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                        xmlSchemaType = getSchemaType(schema1, typeName);
+                    }
+                    if (xmlSchemaType != null) {
+                        break;
                     }
                 }
             }
@@ -222,8 +217,7 @@ public class JAXWSWapperExtension extends AbstractCodeGenerationExtension {
         if (schemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
 
-            XmlSchemaObjectCollection xmlObjectCollection = cmplxType.getAttributes();
-            if (xmlObjectCollection.getCount() != 0)
+            if (!cmplxType.getAttributes().isEmpty())
                 return false;
 
             if (cmplxType.getContentModel() == null) {
@@ -261,15 +255,14 @@ public class JAXWSWapperExtension extends AbstractCodeGenerationExtension {
             QName opName = ((AxisOperation) message.getParent()).getName();
 
             XmlSchemaSequence sequence = (XmlSchemaSequence) schemaParticle;
-            XmlSchemaObjectCollection items = sequence.getItems();
+            List<XmlSchemaSequenceMember> items = sequence.getItems();
 
             // if this is an empty sequence, return
-            if (items.getCount() == 0) {
+            if (items.isEmpty()) {
 /*be carefull */
                 return true;
             }
-            for (Iterator i = items.getIterator(); i.hasNext();) {
-                Object item = i.next();
+            for (XmlSchemaSequenceMember item : items) {
                 // get each and every element in the sequence and
                 // traverse through them
                 if (item instanceof XmlSchemaElement) {
@@ -280,8 +273,8 @@ public class JAXWSWapperExtension extends AbstractCodeGenerationExtension {
 //                    }
                     XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
                     String partName = null;
-                    if (xmlSchemaElement.getRefName() != null) {
-                        partName = xmlSchemaElement.getRefName().getLocalPart();
+                    if (xmlSchemaElement.getRef().getTargetQName() != null) {
+                        partName = xmlSchemaElement.getRef().getTargetQName().getLocalPart();
                     } else {
                         partName = xmlSchemaElement.getName();
                     }

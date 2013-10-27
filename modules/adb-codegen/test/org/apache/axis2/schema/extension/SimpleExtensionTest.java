@@ -58,7 +58,8 @@ public class SimpleExtensionTest extends AbstractTestCase {
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement element = factory.createOMElement(new QName(
                 "http://apache.org/axis2/schema/extension", "SimpleAmmountElement"));
-        element.addAttribute("currency", "SLR", null);
+        element.addAttribute("currency", "SLR",
+                             factory.createOMNamespace("http://apache.org/axis2/schema/extension", null));
         element.setText("1000");
         SimpleAmmountElement ammountElement = SimpleAmmountElement.Factory.parse(element
                 .getXMLStreamReader());
@@ -81,7 +82,8 @@ public class SimpleExtensionTest extends AbstractTestCase {
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement element = factory.createOMElement(new QName(
                 "http://apache.org/axis2/schema/extension", "PaymentAmountElement"));
-        element.addAttribute("currency", "SLR", null);
+        element.addAttribute("currency", "SLR",
+                             factory.createOMNamespace("http://apache.org/axis2/schema/extension", null));
         element.setText("2000");
         PaymentAmountElement ammountElement = PaymentAmountElement.Factory.parse(element
                 .getXMLStreamReader());
@@ -154,7 +156,8 @@ public class SimpleExtensionTest extends AbstractTestCase {
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement element = factory.createOMElement(new QName(
                 "http://apache.org/axis2/schema/extension", "ReproStringTypeElement"));
-        element.addAttribute("lang", "EN", null);
+        element.addAttribute("lang", "EN",
+                             factory.createOMNamespace("http://apache.org/axis2/schema/extension", null));
         element.setText("Value");
        
         ReproStringTypeElement reproStringTypeElement = ReproStringTypeElement.Factory.parse(element

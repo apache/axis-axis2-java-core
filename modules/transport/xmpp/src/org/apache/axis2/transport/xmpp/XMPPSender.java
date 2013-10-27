@@ -19,12 +19,6 @@
 
 package org.apache.axis2.transport.xmpp;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPVersion;
@@ -56,9 +50,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaGroupBase;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
@@ -67,6 +61,11 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 
 public class XMPPSender extends AbstractHandler implements TransportSender {
 	static Log log = null;
@@ -342,24 +341,40 @@ public class XMPPSender extends AbstractHandler implements TransportSender {
 		        XmlSchemaComplexType complexType = ((XmlSchemaComplexType)schemaType);
 		        XmlSchemaParticle particle = complexType.getParticle();
 		        if (particle instanceof XmlSchemaSequence || particle instanceof XmlSchemaAll) {
-		            XmlSchemaGroupBase xmlSchemaGroupBase = (XmlSchemaGroupBase)particle;
-		            Iterator iterator = xmlSchemaGroupBase.getItems().getIterator();
 
-		            while (iterator.hasNext()) {
-		                XmlSchemaElement innerElement = (XmlSchemaElement)iterator.next();
-		                QName qName = innerElement.getQName();
-		                if (qName == null && innerElement.getSchemaTypeName()
-		                        .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
-		                    break;
-		                }
-		                long minOccurs = innerElement.getMinOccurs();
-		                boolean nillable = innerElement.isNillable();
-		                String name =
-		                        qName != null ? qName.getLocalPart() : innerElement.getName();
-		                String type = innerElement.getSchemaTypeName().toString();
-		                paramList.append(","+type +" " +name);
-		            }
-		        }
+                    if (particle instanceof XmlSchemaSequence) {
+                        XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
+                        for (XmlSchemaSequenceMember member : sequence.getItems()) {
+                            XmlSchemaElement innerElement = (XmlSchemaElement) member;
+                            QName qName = innerElement.getQName();
+                            if (qName == null && innerElement.getSchemaTypeName()
+                                    .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
+                                break;
+                            }
+                            long minOccurs = innerElement.getMinOccurs();
+                            boolean nillable = innerElement.isNillable();
+                            String name =
+                                    qName != null ? qName.getLocalPart() : innerElement.getName();
+                            String type = innerElement.getSchemaTypeName().toString();
+                            paramList.append(","+type +" " +name);
+                        }
+                    }  else {
+                        XmlSchemaAll xmlSchemaAll = (XmlSchemaAll) particle;
+                        for (XmlSchemaElement innerElement : xmlSchemaAll.getItems()) {
+                            QName qName = innerElement.getQName();
+                            if (qName == null && innerElement.getSchemaTypeName()
+                                    .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
+                                break;
+                            }
+                            long minOccurs = innerElement.getMinOccurs();
+                            boolean nillable = innerElement.isNillable();
+                            String name =
+                                    qName != null ? qName.getLocalPart() : innerElement.getName();
+                            String type = innerElement.getSchemaTypeName().toString();
+                            paramList.append("," + type + " " + name);
+                        }
+                    }
+                }
 		   }	            	
 		}
 		//remove first ","
