@@ -118,7 +118,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.woden</groupId>
-            <artifactId>woden-impl-commons</artifactId>
+            <artifactId>woden-core</artifactId>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
