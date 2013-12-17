@@ -112,8 +112,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
             String XML1 = byteArrayOutputStream.toString();
             String XML2 = readSchema(c, i);
 
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
 
     }
@@ -131,8 +130,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
             xmlSchema.write(byteArrayOutputStream);
             String XML1 = byteArrayOutputStream.toString();
             String XML2 = readSchemaWithCustomSchema(c, i);
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
 
     }
@@ -151,8 +149,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
             String XML1 = byteArrayOutputStream.toString();
             String XML2 = readSchemaWithMappingSchema(c, i);
             XML1 = prepareForMapping(XML1);
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
 
     }
@@ -224,8 +221,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
             String XML1 = byteArrayOutputStream.toString();
             XML1 = prepareForDOM(XML1);
             String XML2 = readSchema(c, i);
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
 
     }
@@ -262,8 +258,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
                 XML1 = prepareForMap(XML1);
             }
             String XML2 = readSchema(c, i);
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
 
     }
@@ -315,8 +310,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
                 XML1 = prepareForPOJO(XML1);
             }
             String XML2 = readSchema(c, i);
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
 
     }
@@ -358,8 +352,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
                 XML1 = prepareForExc(XML1);
             }
             String XML2 = readSchema(c, i);
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
 
     }
@@ -404,8 +397,7 @@ public class DefaultSchemaGeneratorTest extends XMLSchemaTest {
             }
             XML1 = prepareForEnum(XML1);
             String XML2 = readSchema(c, i);
-            assertSimilarXML(XML1, XML2);
-            assertIdenticalXML(XML1, XML2);
+            assertSimilarXML(XML2, XML1);
         }
     }
 

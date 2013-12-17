@@ -263,8 +263,8 @@ public class AxisServiceTest extends XMLSchemaTest {
         service.printXSD(stream, "");
         // service has a single schema and it is printed. The it is compared
         // with the saved file
-        assertSimilarXML(stream.toString(), readXMLfromSchemaFile(SampleSchemasDirectory
-                + "printXSDReference.xsd"));
+        assertSimilarXML(readXMLfromSchemaFile(SampleSchemasDirectory
+                + "printXSDReference.xsd"), stream.toString());
     }
 
     public void testPrintWSDL() throws Exception {
@@ -274,7 +274,7 @@ public class AxisServiceTest extends XMLSchemaTest {
 
         String s = readWSDLFromFile("test-resources" + File.separator + "wsdl" + File.separator
                 + "printWSDLreference.wsdl");
-        assertSimilarXML(stream.toString(), s);
+        assertSimilarXML(s, stream.toString());
     }
 
     public String convertXMLFileToString(String fileName) {

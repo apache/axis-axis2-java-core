@@ -59,8 +59,8 @@ public class AxisService2WSDLTest extends XMLSchemaTest {
         // + "testGenerateInterfaceOperationElement_WSDL.wsdl",
         // element.toString());
         XMLPrettyPrinter.prettify(element, stream);
-        assertSimilarXML(stream.toString(), readWSDLFromFile("test-resources" + File.separator
-                + "wsdl" + File.separator + "testGenerateInterfaceOperationElement_WSDL.wsdl"));
+        assertSimilarXML(readWSDLFromFile("test-resources" + File.separator
+                + "wsdl" + File.separator + "testGenerateInterfaceOperationElement_WSDL.wsdl"), stream.toString());
 
     }
 
@@ -75,8 +75,8 @@ public class AxisService2WSDLTest extends XMLSchemaTest {
         // +
         // "testGenerateInterfaceOperationElement11_WSDL.wsdl",element.toString());
         XMLPrettyPrinter.prettify(element, stream);
-        assertSimilarXML(stream.toString(), readWSDLFromFile("test-resources" + File.separator
-                + "wsdl" + File.separator + "testGenerateInterfaceOperationElement11_WSDL.wsdl"));
+        assertSimilarXML(readWSDLFromFile("test-resources" + File.separator
+                + "wsdl" + File.separator + "testGenerateInterfaceOperationElement11_WSDL.wsdl"), stream.toString());
     }
     
     

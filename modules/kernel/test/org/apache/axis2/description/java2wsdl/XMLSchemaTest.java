@@ -20,12 +20,15 @@
 package org.apache.axis2.description.java2wsdl;
 
 import junit.framework.TestCase;
+
 import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 
 import javax.xml.transform.stream.StreamSource;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -55,16 +58,15 @@ public abstract class XMLSchemaTest extends TestCase {
             + "schemas" + File.separator + "mapping_files" + File.separator
             + "mapping1.txt";
 
-    public void assertSimilarXML(String XML1, String XML2) throws Exception {
-        Diff myDiff = new Diff(XML1, XML2);
-        assertTrue("XML similar " + myDiff.toString(), myDiff.similar());
-
-    }
-
-    public void assertIdenticalXML(String XML1, String XML2) throws Exception {
-        Diff myDiff = new Diff(XML1, XML2);
-        assertTrue("XML similar " + myDiff.toString(), myDiff.identical());
-
+    public void assertSimilarXML(String expected, String actual) throws Exception {
+        boolean ignoreWhitespace = XMLUnit.getIgnoreWhitespace();
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            Diff myDiff = new Diff(expected, actual);
+            assertTrue("XML similar " + myDiff.toString(), myDiff.similar());
+        } finally {
+            XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
+        }
     }
 
     public void loadSampleSchemaFile(ArrayList<XmlSchema> schemas) throws Exception{
