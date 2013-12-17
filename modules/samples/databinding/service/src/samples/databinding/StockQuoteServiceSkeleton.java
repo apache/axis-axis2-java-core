@@ -16,16 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-/**
- * StockQuoteServiceSkeleton.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis2 version: 1.1-SNAPSHOT Nov 03, 2006 (06:54:07 EST)
- */
 package samples.databinding;
-import javanet.staxutils.StAXSource;
-import org.apache.axiom.om.impl.builder.SAXOMBuilder;
+
+import org.apache.axiom.om.OMDocument;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
@@ -34,6 +28,7 @@ import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
 import samples.databinding.data.Change;
 import samples.databinding.data.GetStockQuote;
 import samples.databinding.data.GetStockQuoteResponse;
@@ -43,6 +38,7 @@ import samples.databinding.data.Quote;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+
 import java.io.IOException;
 import java.util.Calendar;
 /**
@@ -54,15 +50,13 @@ public class StockQuoteServiceSkeleton {
      *
      * @param param0
      */
-    public org.apache.axiom.om.OMElement getStockQuote(org.apache.axiom.om.OMElement param0) throws AxisFault {
-        StAXSource staxSource =
-                new StAXSource(param0.getXMLStreamReader());
+    public OMElement getStockQuote(OMElement param0) throws AxisFault {
         Unmarshaller unmarshaller = new Unmarshaller(GetStockQuote.class);
         UnmarshalHandler unmarshalHandler = unmarshaller.createHandler();
         GetStockQuote stockQuote;
         try {
             ContentHandler contentHandler = Unmarshaller.getContentHandler(unmarshalHandler);
-            TransformerFactory.newInstance().newTransformer().transform(staxSource, new SAXResult(contentHandler));
+            TransformerFactory.newInstance().newTransformer().transform(param0.getSAXSource(false), new SAXResult(contentHandler));
             stockQuote = (GetStockQuote) unmarshalHandler.getObject();
         } catch (SAXException e) {
             throw new RuntimeException(e);
@@ -90,9 +84,10 @@ public class StockQuoteServiceSkeleton {
         quote.setChange(change);
 
         stockQuoteResponse.setQuote(quote);
-        SAXOMBuilder builder = new SAXOMBuilder();
+        
+        OMDocument document = param0.getOMFactory().createOMDocument();
         try {
-            Marshaller.marshal(stockQuoteResponse, builder);
+            Marshaller.marshal(stockQuoteResponse, document.getSAXResult().getHandler());
         } catch (MarshalException e) {
             throw new RuntimeException(e);
         } catch (ValidationException e) {
@@ -100,7 +95,7 @@ public class StockQuoteServiceSkeleton {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return builder.getRootElement();
+        return document.getOMDocumentElement();
     }
 }
     

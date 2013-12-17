@@ -393,11 +393,6 @@
                                     <version>1.0.4</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>net.java.dev.stax-utils</groupId>
-                                    <artifactId>stax-utils</artifactId>
-                                    <version>20060502</version>
-                                </artifactItem>
-                                <artifactItem>
                                     <groupId>xerces</groupId>
                                     <artifactId>xercesImpl</artifactId>
                                     <version>2.9.1</version>

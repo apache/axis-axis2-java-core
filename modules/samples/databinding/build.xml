@@ -173,13 +173,11 @@
         </jar>
     </target>
 
-    <!--We are not shipping castor and stax-utils jars with the release. This target can be used to
+    <!--We are not shipping castor and Xerces jars with the release. This target can be used to
     download those jars that are required to run this sample.-->
     <target name="download.jars">
        <mkdir dir="lib"/>
 
-        <get src="http://ws.zones.apache.org/repository/stax-utils/jars/stax-utils-20060915.jar"
-             dest="lib/stax-utils-20060915.jar" verbose="true"/>
         <get src="http://dist.codehaus.org/castor/1.0.4/castor-1.0.4.jar" dest="lib/castor-1.0.4.jar"
              verbose="true"/>
         <get src="http://repo2.maven.org/maven2/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar"

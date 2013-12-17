@@ -17,13 +17,16 @@
  * under the License.
  */
 package samples.databinding;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.SAXOMBuilder;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.UnmarshalHandler;
 import org.exolab.castor.xml.Unmarshaller;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
 import samples.databinding.data.GetStockQuote;
 import samples.databinding.data.GetStockQuoteResponse;
 
@@ -31,7 +34,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 
-import javanet.staxutils.StAXSource;
 public final class StockClient {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
@@ -49,20 +51,18 @@ public final class StockClient {
         stub._getServiceClient().getOptions().setAction("getStockQuote");
         GetStockQuote stockQuote = new GetStockQuote();
         stockQuote.setSymbol(symbol);
-        SAXOMBuilder builder = new SAXOMBuilder();
-        Marshaller.marshal(stockQuote, builder);
+        OMDocument document = OMAbstractFactory.getOMFactory().createOMDocument();
+        Marshaller.marshal(stockQuote, document.getSAXResult().getHandler());
         OMElement response = stub.getStockQuote(
-                builder.getRootElement());
+                document.getOMDocumentElement());
 
 
-        StAXSource staxSource =
-                new StAXSource(response.getXMLStreamReader());
         Unmarshaller unmarshaller = new Unmarshaller(GetStockQuoteResponse.class);
         UnmarshalHandler unmarshalHandler = unmarshaller.createHandler();
         GetStockQuoteResponse stockQuoteResponse;
         try {
             ContentHandler contentHandler = Unmarshaller.getContentHandler(unmarshalHandler);
-            TransformerFactory.newInstance().newTransformer().transform(staxSource, new SAXResult(contentHandler));
+            TransformerFactory.newInstance().newTransformer().transform(response.getSAXSource(false), new SAXResult(contentHandler));
             stockQuoteResponse = (GetStockQuoteResponse) unmarshalHandler.getObject();
         } catch (SAXException e) {
             throw new RuntimeException(e);

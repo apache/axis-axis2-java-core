@@ -17,27 +17,28 @@
  * under the License.
  */
 package samples.databinding;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.SAXOMBuilder;
+import org.apache.axiom.om.ds.AbstractPushOMDataSource;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.StAXBuilder;
-import org.jdom.output.SAXOutputter;
 import org.jdom.output.StAXOutputter;
-import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+
 public final class StockClient2 {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
@@ -74,29 +75,11 @@ public final class StockClient2 {
         System.out.println("Price = " + price.getText());
     }
 
-    private static class JDOMDataSource implements OMDataSource {
+    private static class JDOMDataSource extends AbstractPushOMDataSource {
         private final Element data;
 
         private JDOMDataSource(Element data) {
             this.data = data;
-        }
-
-        public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-            try {
-                XMLOutputter outputter = new XMLOutputter();
-                outputter.output(data, output);
-            } catch (IOException e) {
-                throw new XMLStreamException(e);
-            }
-        }
-
-        public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
-            try {
-                XMLOutputter outputter = new XMLOutputter();
-                outputter.output(data, writer);
-            } catch (IOException e) {
-                throw new XMLStreamException(e);
-            }
         }
 
         public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
@@ -106,16 +89,6 @@ public final class StockClient2 {
             } catch (JDOMException e) {
                 throw new XMLStreamException(e);
             }
-        }
-
-        public XMLStreamReader getReader() throws XMLStreamException {
-            SAXOMBuilder builder = new SAXOMBuilder();
-            SAXOutputter outputter = new SAXOutputter();
-            outputter.setContentHandler(builder);
-            outputter.setEntityResolver(builder);
-            outputter.setDTDHandler(builder);
-            outputter.setEntityResolver(builder);
-            return builder.getRootElement().getXMLStreamReader();
         }
     }
 }
