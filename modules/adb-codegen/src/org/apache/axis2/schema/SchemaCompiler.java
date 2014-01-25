@@ -83,6 +83,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,9 @@ public class SchemaCompiler {
     //the list of processedElements for the outer elements
     private HashMap<QName, String> processedElementMap;
 
-    private HashMap<XmlSchemaElement, BeanWriterMetaInfoHolder> processedAnonymousComplexTypesMap;
+    //need to use IdentityHashMap to store processedAnonymousComplexTypes
+    //because the key used with the map, XmlSchemaElement, is not immutable
+    private IdentityHashMap<XmlSchemaElement, BeanWriterMetaInfoHolder> processedAnonymousComplexTypesMap;
 
     //we need this map to keep the referenced elements. these elements need to be kept seperate
     //to avoid conflicts
@@ -211,7 +214,7 @@ public class SchemaCompiler {
         processedElementMap = new HashMap<QName, String>();
         simpleTypesMap = new HashMap<QName, String>();
         processedElementList = new ArrayList<QName>();
-        processedAnonymousComplexTypesMap = new HashMap<XmlSchemaElement, BeanWriterMetaInfoHolder>();
+        processedAnonymousComplexTypesMap = new IdentityHashMap<XmlSchemaElement, BeanWriterMetaInfoHolder>();
         changedTypeMap = new HashMap<QName, QName>();
         processedTypeMetaInfoMap = new HashMap<QName, BeanWriterMetaInfoHolder>();
         processedElementRefMap = new HashMap<QName, String>();
