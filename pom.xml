@@ -83,6 +83,7 @@
         <module>modules/clustering</module>
         <module>modules/corba</module>
         <module>modules/osgi</module>
+        <module>modules/osgi-tests</module>
         <module>modules/transport/local</module>
         <module>modules/transport/http</module>
         <module>modules/transport/base</module>

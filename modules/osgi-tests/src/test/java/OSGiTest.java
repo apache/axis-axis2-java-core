@@ -16,13 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.osgi.module.Handler1;
 import org.apache.axis2.osgi.module.Handler2;
 import org.apache.axis2.osgi.module.SimpleModule;
@@ -31,13 +37,10 @@ import org.apache.axis2.osgi.service.Calculator;
 import org.apache.axis2.osgi.service.Version;
 import org.apache.axis2.testutils.PortAllocator;
 import org.apache.felix.framework.FrameworkFactory;
-import org.junit.Assert;
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
 public class OSGiTest {
@@ -92,16 +95,14 @@ public class OSGiTest {
         NativeTestContainer container = new NativeTestContainer(system, new FrameworkFactory());
         container.start();
         try {
-            BundleContext context = container.getSystemBundle().getBundleContext();
-            boolean found = false;
-            for (Bundle bundle : context.getBundles()) {
-                if (bundle.getSymbolicName().equals("org.apache.axis2.osgi")) {
-                    found = true;
-                    Assert.assertEquals(Bundle.ACTIVE, bundle.getState());
-                    break;
-                }
-            }
-            assertTrue(found);
+            OMFactory factory = OMAbstractFactory.getOMFactory();
+            OMElement payload = factory.createOMElement("getVersion", factory.createOMNamespace("http://service.osgi.axis2.apache.org", "ns"));
+            Options options = new Options();
+            options.setTo(new EndpointReference("http://localhost:" + httpPort + "/services/Version"));
+            ServiceClient serviceClient = new ServiceClient();
+            serviceClient.setOptions(options);
+            OMElement result = serviceClient.sendReceive(payload);
+            assertEquals("getVersionResponse", result.getLocalName());
         } finally {
             container.stop();
         }
