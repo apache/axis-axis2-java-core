@@ -744,13 +744,9 @@ public class AxisServlet extends HttpServlet {
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(request));
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, request);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, response);
-        try {
-            ServletContext context = getServletContext();
-            if(context != null) {
-                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, context);
-            }
-        } catch (Exception e){
-            log.debug(e.getMessage(), e);
+        ServletContext context = getServletContext();
+        if(context != null) {
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, context);
         }
 
         //setting the RequestResponseTransport object
