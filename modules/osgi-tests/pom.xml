@@ -80,6 +80,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-testutils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <pluginRepositories>
         <pluginRepository>
@@ -112,6 +117,11 @@
                                 <scope>test</scope>
                             </dependencySet>
                             <artifacts>
+                                <artifact>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.http.jetty</artifactId>
+                                    <version>2.2.2</version>
+                                </artifact>
                                 <artifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
                                     <artifactId>org.apache.servicemix.bundles.wsdl4j</artifactId>

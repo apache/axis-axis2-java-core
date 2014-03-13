@@ -17,6 +17,7 @@
  * under the License.
  */
 import static org.junit.Assert.assertTrue;
+import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.url;
@@ -28,6 +29,7 @@ import org.apache.axis2.osgi.module.SimpleModule;
 import org.apache.axis2.osgi.service.Activator;
 import org.apache.axis2.osgi.service.Calculator;
 import org.apache.axis2.osgi.service.Version;
+import org.apache.axis2.testutils.PortAllocator;
 import org.apache.felix.framework.FrameworkFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,6 +43,7 @@ import org.osgi.framework.Constants;
 public class OSGiTest {
     @Test
     public void test() throws Exception {
+        int httpPort = PortAllocator.allocatePort();
         ExamSystem system = DefaultExamSystem.create(options(
                 url("link:classpath:META-INF/links/org.ops4j.pax.logging.api.link"),
                 url("link:classpath:META-INF/links/org.osgi.compendium.link"),
@@ -66,6 +69,7 @@ public class OSGiTest {
                 url("link:classpath:org.apache.neethi.link"),
                 url("link:classpath:org.apache.woden.core.link"),
                 url("link:classpath:org.apache.ws.xmlschema.core.link"),
+                url("link:classpath:org.apache.felix.http.jetty.link"),
                 url("link:classpath:org.apache.axis2.osgi.link"),
                 provision(bundle()
                     .add(Handler1.class)
@@ -83,7 +87,8 @@ public class OSGiTest {
                     .set(Constants.BUNDLE_SYMBOLICNAME, "version.service")
                     .set(Constants.BUNDLE_ACTIVATOR, Activator.class.getName())
                     .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                    .build())));
+                    .build()),
+                frameworkProperty("org.osgi.service.http.port").value(String.valueOf(httpPort))));
         NativeTestContainer container = new NativeTestContainer(system, new FrameworkFactory());
         container.start();
         try {
