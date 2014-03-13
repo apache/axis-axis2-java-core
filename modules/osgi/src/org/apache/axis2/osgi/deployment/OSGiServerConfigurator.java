@@ -73,20 +73,32 @@ public class OSGiServerConfigurator extends DeploymentEngine implements AxisConf
     }
 
     public AxisConfiguration populateAxisConfiguration(InputStream in) throws DeploymentException {
-        axisConfig = new AxisConfiguration();
-        AxisConfigBuilder builder =
-                new AxisConfigBuilder(in, axisConfig, this);
-        builder.populateConfig();
+        // Dirty hack necessary because class loading in AxisConfigBuilder is completely broken:
+        // although it is possible to configure the class loaders explicitly in the AxisConfiguration,
+        // the AxisConfigBuilder will still use the thread context class loader in some places.
+        // On the other hand, in an OSGi environment, the TCCL is not well defined. To avoid problems,
+        // we set it to the class loader of the Axis2 OSGi bundle.
+        Thread currentThread = Thread.currentThread();
+        ClassLoader savedTCCL = currentThread.getContextClassLoader();
+        currentThread.setContextClassLoader(OSGiServerConfigurator.class.getClassLoader());
         try {
-            if (in != null) {
-                in.close();
+            axisConfig = new AxisConfiguration();
+            AxisConfigBuilder builder =
+                    new AxisConfigBuilder(in, axisConfig, this);
+            builder.populateConfig();
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                String msg = "Error in closing input stream";
+                throw new DeploymentException(msg, e);
             }
-        } catch (IOException e) {
-            String msg = "Error in closing input stream";
-            throw new DeploymentException(msg, e);
+            //TODO: if module deployer neede to set it should be set here.
+            return axisConfig;
+        } finally {
+            currentThread.setContextClassLoader(savedTCCL);
         }
-        //TODO: if module deployer neede to set it should be set here.
-        return axisConfig;
     }
 
     public void loadServices() {
