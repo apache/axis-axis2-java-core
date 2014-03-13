@@ -15,9 +15,9 @@
  */
 package org.apache.axis2.osgi;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.transport.http.AxisServlet;
-import org.apache.axis2.transport.http.ListingAgent;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -42,19 +42,25 @@ public class OSGiAxisServlet extends AxisServlet {
         this.context = context;
     }
 
-
-    public void init(ServletConfig servletConfig) throws ServletException {
-        this.servletConfig = servletConfig;
+    @Override
+    protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
         ServiceReference reference =
                 context.getServiceReference(ConfigurationContext.class.getName());
         if (reference == null) {
             throw new ServletException(
                     "An instance of ConfigurationContext is not available to continue the proccess.");
         }
-        configContext = (ConfigurationContext) context.getService(reference);
-        axisConfiguration = configContext.getAxisConfiguration();
-        agent = new ListingAgent(configContext);
-        initParams();
+        return (ConfigurationContext) context.getService(reference);
+    }
+
+    @Override
+    protected void initTransports() throws AxisFault {
+        // Not sure if this is correct, but the original OSGiAxisServlet code effectively skipped
+        // the invocation of the initTransports method.
+    }
+
+    public void init(ServletConfig servletConfig) throws ServletException {
+        super.init(servletConfig);
         ServletContext servletContext = servletConfig.getServletContext();
         if (servletContext != null) {
             servletContext.setAttribute(this.getClass().getName(), this);
