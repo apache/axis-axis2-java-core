@@ -123,6 +123,16 @@
                                     <version>2.2.2</version>
                                 </artifact>
                                 <artifact>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.http.whiteboard</artifactId>
+                                    <version>2.2.2</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.configadmin</artifactId>
+                                    <version>1.8.0</version>
+                                </artifact>
+                                <artifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
                                     <artifactId>org.apache.servicemix.bundles.wsdl4j</artifactId>
                                     <version>1.6.2_6</version>
