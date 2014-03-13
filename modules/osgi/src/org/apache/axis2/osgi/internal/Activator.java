@@ -73,11 +73,11 @@ public class Activator implements BundleActivator{
 
             HttpService httpService = (HttpService) context.getService(serviceReference);
             try {
-                OSGiAxisServlet axisServlet = new OSGiAxisServlet(context);
                 ServiceReference configCtxRef =
                         context.getServiceReference(ConfigurationContext.class.getName());
                 ConfigurationContext configCtx =
                         (ConfigurationContext) context.getService(configCtxRef);
+                OSGiAxisServlet axisServlet = new OSGiAxisServlet(configCtx);
                 String propServiceContextRoot = context.getProperty(AXIS2_OSGi_ROOT_CONTEXT);
                 String serviceContextRoot = "services";
                 if (propServiceContextRoot != null && propServiceContextRoot.length() != 0) {

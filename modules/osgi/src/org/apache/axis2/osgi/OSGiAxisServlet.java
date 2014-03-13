@@ -18,8 +18,6 @@ package org.apache.axis2.osgi;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.transport.http.AxisServlet;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -31,26 +29,15 @@ import javax.servlet.ServletException;
  */
 public class OSGiAxisServlet extends AxisServlet {
 
-    private BundleContext context;
+    private ConfigurationContext configurationContext;
 
-    /**
-     * OSGiAxisServlet needs an referenc to OSGi environmentb
-     *
-     * @param context BundleContext
-     */
-    public OSGiAxisServlet(BundleContext context) {
-        this.context = context;
+    public OSGiAxisServlet(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
     }
 
     @Override
     protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
-        ServiceReference reference =
-                context.getServiceReference(ConfigurationContext.class.getName());
-        if (reference == null) {
-            throw new ServletException(
-                    "An instance of ConfigurationContext is not available to continue the proccess.");
-        }
-        return (ConfigurationContext) context.getService(reference);
+        return configurationContext;
     }
 
     @Override
