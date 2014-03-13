@@ -17,13 +17,10 @@
  * under the License.
  */
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
-
-import javax.inject.Inject;
 
 import org.apache.axis2.osgi.module.Handler1;
 import org.apache.axis2.osgi.module.Handler2;
@@ -31,24 +28,22 @@ import org.apache.axis2.osgi.module.SimpleModule;
 import org.apache.axis2.osgi.service.Activator;
 import org.apache.axis2.osgi.service.Calculator;
 import org.apache.axis2.osgi.service.Version;
+import org.apache.felix.framework.FrameworkFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerClass;
+import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerClass.class)
 public class OSGiTest {
-    @Configuration
-    public static Option[] configuration() {
-        return options(
+    @Test
+    public void test() throws Exception {
+        ExamSystem system = DefaultExamSystem.create(options(
+                url("link:classpath:META-INF/links/org.ops4j.pax.logging.api.link"),
+                url("link:classpath:META-INF/links/org.osgi.compendium.link"),
                 url("link:classpath:org.apache.servicemix.bundles.wsdl4j.link"),
                 url("link:classpath:org.apache.geronimo.specs.geronimo-activation_1.1_spec.link"), // TODO: should not be necessary on Java 6
                 url("link:classpath:org.apache.geronimo.specs.geronimo-jms_1.1_spec.link"), // TODO: why the heck is this required???
@@ -88,23 +83,22 @@ public class OSGiTest {
                     .set(Constants.BUNDLE_SYMBOLICNAME, "version.service")
                     .set(Constants.BUNDLE_ACTIVATOR, Activator.class.getName())
                     .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                    .build()),
-                junitBundles());
-    }
-    
-    @Inject
-    private BundleContext context;
-    
-    @Test
-    public void test() {
-        boolean found = false;
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getSymbolicName().equals("org.apache.axis2.osgi")) {
-                found = true;
-                Assert.assertEquals(Bundle.ACTIVE, bundle.getState());
-                break;
+                    .build())));
+        NativeTestContainer container = new NativeTestContainer(system, new FrameworkFactory());
+        container.start();
+        try {
+            BundleContext context = container.getSystemBundle().getBundleContext();
+            boolean found = false;
+            for (Bundle bundle : context.getBundles()) {
+                if (bundle.getSymbolicName().equals("org.apache.axis2.osgi")) {
+                    found = true;
+                    Assert.assertEquals(Bundle.ACTIVE, bundle.getState());
+                    break;
+                }
             }
+            assertTrue(found);
+        } finally {
+            container.stop();
         }
-        assertTrue(found);
     }
 }
