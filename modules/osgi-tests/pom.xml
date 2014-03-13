@@ -39,7 +39,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-kernel</artifactId>
+            <artifactId>org.apache.axis2.osgi</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -125,11 +125,6 @@
                                 <scope>test</scope>
                             </dependencySet>
                             <artifacts>
-                                <artifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>org.apache.axis2.osgi</artifactId>
-                                    <version>${project.version}</version>
-                                </artifact>
                                 <artifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
                                     <artifactId>org.apache.servicemix.bundles.wsdl4j</artifactId>

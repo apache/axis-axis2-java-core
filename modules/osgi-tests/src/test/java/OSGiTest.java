@@ -19,10 +19,15 @@
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
 import javax.inject.Inject;
 
+import org.apache.axis2.osgi.service.Activator;
+import org.apache.axis2.osgi.service.Calculator;
+import org.apache.axis2.osgi.service.Version;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +38,7 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
@@ -63,6 +69,15 @@ public class OSGiTest {
                 url("link:classpath:org.apache.woden.core.link"),
                 url("link:classpath:org.apache.ws.xmlschema.core.link"),
                 url("link:classpath:org.apache.axis2.osgi.link"),
+                provision(bundle()
+                    .add(Activator.class)
+                    .add(Calculator.class)
+                    .add(Version.class)
+                    .add("META-INF/services.xml", OSGiTest.class.getResource("/META-INF/services.xml"))
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "version.service")
+                    .set(Constants.BUNDLE_ACTIVATOR, Activator.class.getName())
+                    .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                    .build()),
                 junitBundles());
     }
     
