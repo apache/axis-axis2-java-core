@@ -15,10 +15,7 @@
  */
 package org.apache.axis2.osgi;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.engine.AxisConfigurator;
-import org.apache.axis2.osgi.deployment.OSGiConfigurationContextFactory;
 import org.apache.axis2.transport.http.AxisServlet;
 import org.apache.axis2.transport.http.ListingAgent;
 import org.osgi.framework.BundleContext;
