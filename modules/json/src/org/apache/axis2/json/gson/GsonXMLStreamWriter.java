@@ -653,9 +653,11 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
 
     public void writeStartDocument(String encoding, String version) throws XMLStreamException {
         if (!isProcessed) {
-            xmlNodeGenerator.getMainXmlNode();
-            queue = xmlNodeGenerator.getQueue(mainXmlNode);
-            isProcessed = true;
+            try {
+                process();
+            } catch (IOException e) {
+                throw new XMLStreamException("Error occur while trying to write start document element", e);
+            }
         }
     }
 
@@ -672,7 +674,7 @@ public class GsonXMLStreamWriter implements XMLStreamWriter {
             try {
                 process();
             } catch (IOException e) {
-                throw new XMLStreamException("Error occur while trying to write first begin object ");
+                throw new XMLStreamException("Error occur while trying to write first begin object ", e);
             }
         }
         try {

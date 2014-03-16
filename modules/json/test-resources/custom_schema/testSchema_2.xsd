@@ -20,10 +20,10 @@
   -->
 
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-targetNamespace="http://test.json.axis2.apache.org"
-xmlns="http://test.json.axis2.apache.org"
-elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://test.json.axis2.apache.org"
+xmlns="http://test.json.axis2.apache.org" xmlns:ns1="http://test.json.axis2.apache.org/employee"
+xmlns:tns="http://test.json.axis2.apache.org" elementFormDefault="qualified">
+    <xs:import namespace="http://test.json.axis2.apache.org/employee" schemaLocation="test-resources/custom_schema/testSchema_3.xsd"></xs:import>
 
     <xs:element name="echoPerson">
         <xs:complexType>
@@ -48,5 +48,24 @@ elementFormDefault="qualified">
             <xs:element name="gender" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:element name="Offices" type="tns:Offices"></xs:element>
+
+    <xs:complexType name="Offices">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Office" type="tns:Office"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Office">
+        <xs:sequence>
+            <xs:element name="phone" nillable="true" type="xs:string"></xs:element>
+            <xs:element name="officeCode" nillable="true" type="xs:integer"></xs:element>
+            <xs:element ref="ns1:Employees"></xs:element>
+            <xs:element name="country" nillable="true" type="xs:string"></xs:element>
+            <xs:element name="city" nillable="true" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
 
 </xs:schema>

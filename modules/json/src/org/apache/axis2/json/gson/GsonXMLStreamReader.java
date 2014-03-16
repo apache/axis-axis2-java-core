@@ -21,6 +21,7 @@ package org.apache.axis2.json.gson;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.json.gson.factory.JSONType;
 import org.apache.axis2.json.gson.factory.JsonConstant;
@@ -87,7 +88,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
     }
 
     public GsonXMLStreamReader(JsonReader jsonReader, QName elementQname, List<XmlSchema> xmlSchemaList,
-                               ConfigurationContext configContext) {
+                               ConfigurationContext configContext) throws AxisFault {
         this.jsonReader = jsonReader;
         initXmlStreamReader(elementQname, xmlSchemaList, configContext);
     }
@@ -96,16 +97,20 @@ public class GsonXMLStreamReader implements XMLStreamReader {
         return jsonReader;
     }
 
-    public void initXmlStreamReader(QName elementQname, List<XmlSchema> xmlSchemaList, ConfigurationContext configContext) {
+    public void initXmlStreamReader(QName elementQname, List<XmlSchema> xmlSchemaList, ConfigurationContext configContext) throws AxisFault {
         this.elementQname = elementQname;
         this.xmlSchemaList = xmlSchemaList;
         this.configContext = configContext;
-        process();
+        try {
+            process();
+        } catch (AxisFault axisFault) {
+            throw new AxisFault("Error while initializing XMLStreamReader ", axisFault);
+        }
         isProcessed = true;
 
     }
 
-    private void process() {
+    private void process() throws AxisFault {
         Object ob = configContext.getProperty(JsonConstant.XMLNODES);
         if (ob != null) {
             Map<QName, XmlNode> nodeMap = (Map<QName, XmlNode>) ob;

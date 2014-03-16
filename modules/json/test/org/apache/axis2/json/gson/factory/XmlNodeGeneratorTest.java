@@ -22,6 +22,7 @@ package org.apache.axis2.json.gson.factory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.xml.namespace.QName;
@@ -34,21 +35,11 @@ import java.util.List;
 
 public class XmlNodeGeneratorTest {
 
+    static List<XmlSchema> schemaList = null;
     @Test
     public void testMainXMLNode() throws Exception {
-
         QName elementQName = new QName("http://test.json.axis2.apache.org" ,"echoPerson");
-
-        String fileName = "test-resources/custom_schema/testSchema_2.xsd";
-        InputStream is = new FileInputStream(fileName);
-        XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is));
-
-        List<XmlSchema> schemaList = new ArrayList<XmlSchema>();
-        schemaList.add(schema);
-
         XmlNodeGenerator xmlNodeGenerator = new XmlNodeGenerator(schemaList, elementQName);
-
         XmlNode mainXmlNode = xmlNodeGenerator.getMainXmlNode();
 
         Assert.assertNotNull(mainXmlNode);
@@ -67,7 +58,50 @@ public class XmlNodeGeneratorTest {
 
         Assert.assertEquals("gender", mainXmlNode.getChildrenList().get(0).getChildrenList().get(2).getName());
         Assert.assertEquals(0, mainXmlNode.getChildrenList().get(0).getChildrenList().get(2).getChildrenList().size());
+    }
 
+    @Test
+    public void testXMLNodeGenWithRefElement() throws Exception {
+        QName eleQName = new QName("http://test.json.axis2.apache.org", "Offices");
+        XmlNodeGenerator xmlNodeGenerator = new XmlNodeGenerator(schemaList, eleQName);
+        XmlNode mainXmlNode = xmlNodeGenerator.getMainXmlNode();
+
+        Assert.assertNotNull(mainXmlNode);
+        Assert.assertEquals(true, mainXmlNode.getChildrenList().get(0).isArray());
+        Assert.assertEquals(5, mainXmlNode.getChildrenList().get(0).getChildrenList().size());
+        Assert.assertEquals("Employees", mainXmlNode.getChildrenList().get(0).getChildrenList().get(2).getName());
+        Assert.assertEquals(false, mainXmlNode.getChildrenList().get(0).getChildrenList().get(2).isArray());
+        Assert.assertEquals("Employee", mainXmlNode.getChildrenList().get(0).getChildrenList().get(2).getChildrenList().get(0).getName());
+        Assert.assertEquals(true, mainXmlNode.getChildrenList().get(0).getChildrenList().get(2).getChildrenList().get(0).isArray());
+        Assert.assertEquals(3, mainXmlNode.getChildrenList().get(0).getChildrenList().get(2).getChildrenList().get(0).getChildrenList().size());
 
     }
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        InputStream is2 = null;
+        InputStream is3 = null;
+        try {
+            String testSchema2 = "test-resources/custom_schema/testSchema_2.xsd";
+            String testSchema3 = "test-resources/custom_schema/testSchema_3.xsd";
+            is2 = new FileInputStream(testSchema2);
+            is3 = new FileInputStream(testSchema3);
+            XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+            XmlSchema schema2 = schemaCol.read(new StreamSource(is2));
+            XmlSchema schema3 = schemaCol.read(new StreamSource(is3));
+
+            schemaList = new ArrayList<XmlSchema>();
+            schemaList.add(schema2);
+            schemaList.add(schema3);
+        } finally {
+            if (is2 != null) {
+                is2.close();
+            }
+            if (is3 != null) {
+                is3.close();
+            }
+        }
+
+    }
+
 }
