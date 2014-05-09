@@ -66,7 +66,8 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
-            <version>4.2.1</version>
+            <!-- For Felix 4.2.x and 4.4.x, source JARs are not available -->
+            <version>4.0.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
