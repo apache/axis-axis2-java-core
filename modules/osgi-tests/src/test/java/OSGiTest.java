@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 public class OSGiTest {
@@ -105,8 +106,20 @@ public class OSGiTest {
             serviceClient.setOptions(options);
             OMElement result = serviceClient.sendReceive(payload);
             assertEquals("getVersionResponse", result.getLocalName());
+            // Stop the Axis2 bundle explicitly here so that we can test that it cleanly shuts down
+            // TODO: doesn't work yet; see AXIS2-5646
+//            getAxis2Bundle(container).stop();
         } finally {
             container.stop();
         }
+    }
+    
+    private static Bundle getAxis2Bundle(NativeTestContainer container) {
+        for (Bundle bundle : container.getSystemBundle().getBundleContext().getBundles()) {
+            if (bundle.getSymbolicName().equals("org.apache.axis2.osgi")) {
+                return bundle;
+            }
+        }
+        throw new Error("Axis2 bundle not found");
     }
 }
