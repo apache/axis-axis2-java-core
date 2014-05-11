@@ -107,8 +107,7 @@ public class OSGiTest {
             OMElement result = serviceClient.sendReceive(payload);
             assertEquals("getVersionResponse", result.getLocalName());
             // Stop the Axis2 bundle explicitly here so that we can test that it cleanly shuts down
-            // TODO: doesn't work yet; see AXIS2-5646
-//            getAxis2Bundle(container).stop();
+            getAxis2Bundle(container).stop();
         } finally {
             container.stop();
         }
