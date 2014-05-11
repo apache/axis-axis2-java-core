@@ -77,6 +77,7 @@ public class OSGiConfigurationContextFactory implements ManagedService {
         }
         bundleTracker.close();
         if (configCtx != null) {
+            log.debug("Terminating configuration context");
             try {
                 configCtx.terminate();
                 configCtx = null;

@@ -174,17 +174,19 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                         unreslovedBundles.add(bundle);
                     }
                     try {
-                        for (Iterator iterator = axisServiceGroup.getServices();
-                             iterator.hasNext();) {
-                            AxisService service = (AxisService) iterator.next();
-                            log.info("[Axis2/OSGi] Service - " + service.getName());
+                        if (log.isInfoEnabled()) {
+                            List<String> serviceNames = new ArrayList<String>();
+                            for (Iterator<AxisService> iterator = axisServiceGroup.getServices();
+                                    iterator.hasNext(); ) {
+                                AxisService service = (AxisService) iterator.next();
+                                serviceNames.add(service.getName());
+                            }
+                            log.info("Stopping service group "
+                                    + axisServiceGroup.getServiceGroupName() + " with services "
+                                    + serviceNames + " in bundle " + bundle.getSymbolicName());
                         }
                         configCtx.getAxisConfiguration()
                                 .removeServiceGroup(axisServiceGroup.getServiceGroupName());
-                        log.info("[Axis2/OSGi] Stopping " +
-                                 axisServiceGroup.getServiceGroupName() +
-                                 " service group in Bundle - " +
-                                 bundle.getSymbolicName());
                     } catch (AxisFault e) {
                         String msg = "Error while removing the service group";
                         log.error(msg, e);
