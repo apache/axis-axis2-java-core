@@ -23,6 +23,8 @@ import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -42,11 +44,16 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.FrameworkListener;
 
 public class OSGiTest {
     @Test
-    public void test() throws Exception {
+    public void test() throws Throwable {
         int httpPort = PortAllocator.allocatePort();
         ExamSystem system = DefaultExamSystem.create(options(
                 url("link:classpath:META-INF/links/org.ops4j.pax.logging.api.link"),
@@ -108,6 +115,8 @@ public class OSGiTest {
             assertEquals("getVersionResponse", result.getLocalName());
             // Stop the Axis2 bundle explicitly here so that we can test that it cleanly shuts down
             getAxis2Bundle(container).stop();
+            // TODO: Test for AXIS2-5646
+//            stopBundle(getAxis2Bundle(container));
         } finally {
             container.stop();
         }
@@ -120,5 +129,55 @@ public class OSGiTest {
             }
         }
         throw new Error("Axis2 bundle not found");
+    }
+
+    static class Listener implements FrameworkListener, BundleListener {
+        private final Bundle bundle;
+        private final CountDownLatch latch = new CountDownLatch(1);
+        private Throwable throwable;
+        
+        Listener(Bundle bundle) {
+            this.bundle = bundle;
+        }
+
+        public void frameworkEvent(FrameworkEvent event) {
+            if (event.getType() == FrameworkEvent.ERROR && event.getSource() == bundle && throwable == null) {
+                throwable = event.getThrowable();
+            }
+        }
+
+        public void bundleChanged(BundleEvent event) {
+            if (event.getType() == BundleEvent.STOPPED && event.getSource() == bundle) {
+                latch.countDown();
+            }
+        }
+        
+        void check() throws Throwable {
+            latch.await();
+            if (throwable != null) {
+                throw throwable;
+            }
+        }
+    }
+    
+    /**
+     * Stop the given bundle and throw any exception triggered during the stop operation.
+     */
+    private static void stopBundle(Bundle bundle) throws Throwable {
+        // The listener must be registered on the system bundle; registering it on the bundle
+        // passed as parameter won't work because a stopping bundle can't receive asynchronous events.
+        BundleContext systemBundleContext = bundle.getBundleContext().getBundle(0).getBundleContext();
+        Listener listener = new Listener(bundle);
+        // Need a framework listener to intercept errors that would otherwise end up only being logged
+        systemBundleContext.addFrameworkListener(listener);
+        systemBundleContext.addBundleListener(listener);
+        try {
+            // Note: the stop method may also throw exceptions
+            bundle.stop();
+            listener.check();
+        } finally {
+            systemBundleContext.removeFrameworkListener(listener);
+            systemBundleContext.removeBundleListener(listener);
+        }
     }
 }
