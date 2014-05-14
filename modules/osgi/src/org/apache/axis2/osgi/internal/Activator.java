@@ -15,18 +15,20 @@
  */
 package org.apache.axis2.osgi.internal;
 
+import java.util.Hashtable;
+
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.osgi.OSGiAxisServlet;
+
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.AXIS2_OSGi_ROOT_CONTEXT;
+
 import org.apache.axis2.osgi.deployment.OSGiConfigurationContextFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.*;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
 import org.osgi.util.tracker.ServiceTracker;
 
-import javax.servlet.ServletException;
+import javax.servlet.Servlet;
 
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
@@ -35,7 +37,7 @@ public class Activator implements BundleActivator{
 
     private static Log log = LogFactory.getLog(Activator.class);
 
-    private HttpServiceTracker tracker;
+    private ConfigurationContextTracker tracker;
 
     private final OSGiConfigurationContextFactory managedService;
 
@@ -45,61 +47,49 @@ public class Activator implements BundleActivator{
 
     public void start(BundleContext context) throws Exception {
         managedService.start(context);
-        managedService.updated(null);
-        tracker = new HttpServiceTracker(context);
+        tracker = new ConfigurationContextTracker(context);
         tracker.open();
     }
 
     public void stop(BundleContext context) {
         tracker.close();
         managedService.stop();
-        //ungetService ConfigurationContext.class.getName()
-        ServiceReference configCtxRef =
-                context.getServiceReference(ConfigurationContext.class.getName());
-        if (configCtxRef != null) {
-            context.ungetService(configCtxRef);
-        }
     }
 
-    //HttpServiceTracker
+    class ConfigurationContextTracker extends ServiceTracker {
 
-    class HttpServiceTracker extends ServiceTracker {
-
-        public HttpServiceTracker(BundleContext context) {
-            super(context, HttpService.class.getName(), null);
+        public ConfigurationContextTracker(BundleContext context) {
+            super(context, ConfigurationContext.class.getName(), null);
         }
 
         public Object addingService(ServiceReference serviceReference) {
 
-            HttpService httpService = (HttpService) context.getService(serviceReference);
-            try {
-                OSGiAxisServlet axisServlet = new OSGiAxisServlet(context);
-                ServiceReference configCtxRef =
-                        context.getServiceReference(ConfigurationContext.class.getName());
-                ConfigurationContext configCtx =
-                        (ConfigurationContext) context.getService(configCtxRef);
-                String propServiceContextRoot = context.getProperty(AXIS2_OSGi_ROOT_CONTEXT);
-                String serviceContextRoot = "services";
-                if (propServiceContextRoot != null && propServiceContextRoot.length() != 0) {
-                    if (propServiceContextRoot.startsWith("/")) {
-                        serviceContextRoot = propServiceContextRoot.substring(1);
-                    } else {
-                        serviceContextRoot = propServiceContextRoot;
-                    }
+            ConfigurationContext configCtx = (ConfigurationContext) context.getService(serviceReference);
+            OSGiAxisServlet axisServlet = new OSGiAxisServlet(configCtx);
+            String propServiceContextRoot = context.getProperty(AXIS2_OSGi_ROOT_CONTEXT);
+            String serviceContextRoot = "services";
+            if (propServiceContextRoot != null && propServiceContextRoot.length() != 0) {
+                if (propServiceContextRoot.startsWith("/")) {
+                    serviceContextRoot = propServiceContextRoot.substring(1);
+                } else {
+                    serviceContextRoot = propServiceContextRoot;
                 }
-                configCtx.setServicePath(serviceContextRoot);
-                String contextRoot = "/" + serviceContextRoot;
-                log.info("Registering SOAP message listener servlet to context : " + contextRoot);
-                httpService.registerServlet(contextRoot, axisServlet, null, null);
-            } catch (ServletException e) {
-                String msg = "Error while registering servlets";
-                log.error(msg, e);
-            } catch (NamespaceException e) {
-                String msg = "Namespace missmatch when registering servlets";
-                log.error(msg, e);
             }
-            return httpService;
+            configCtx.setServicePath(serviceContextRoot);
+            String contextRoot = "/" + serviceContextRoot;
+            log.info("Registering SOAP message listener servlet to context : " + contextRoot);
+            Hashtable props = new Hashtable();
+            props.put("alias", contextRoot);
+            // Register the servlet as an OSGi service to be picked up by the HTTP whiteboard service.
+            // We return the ServiceRegistration so that we can unregister the servlet later.
+            return context.registerService(Servlet.class.getName(), axisServlet, props);
         }
 
+        @Override
+        public void removedService(ServiceReference reference, Object service) {
+            // Unregister the servlet and unget the reference to the ConfigurationContext.
+            ((ServiceRegistration)service).unregister();
+            context.ungetService(reference);
+        }
     }
 }
