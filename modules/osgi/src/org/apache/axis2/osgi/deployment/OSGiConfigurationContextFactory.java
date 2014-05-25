@@ -56,6 +56,8 @@ public class OSGiConfigurationContextFactory implements ManagedService {
 
     private ServiceRegistration mngServiceRegistration;
 
+    private ServiceRegistration transportServiceRegistration;
+    
     private ConfigurationContext configCtx;
 
     private ServiceRegistration configCtxServiceRegistration;
@@ -72,6 +74,14 @@ public class OSGiConfigurationContextFactory implements ManagedService {
     }
 
     public synchronized void stop() {
+        if (configCtxServiceRegistration != null) {
+            configCtxServiceRegistration.unregister();
+        }
+        
+        if (transportServiceRegistration != null) {
+            transportServiceRegistration.unregister();
+        }
+        
         if (mngServiceRegistration != null) {
             mngServiceRegistration.unregister();
         }
@@ -119,7 +129,7 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             Dictionary prop = new Properties();
             prop.put(PROTOCOL, "http");
             //adding the default listener
-            context.registerService(TransportListener.class.getName(), new HttpListener(context),
+            transportServiceRegistration = context.registerService(TransportListener.class.getName(), new HttpListener(context),
                                     prop);
             log.info("Axis2 environment has started.");
         } catch (AxisFault e) {

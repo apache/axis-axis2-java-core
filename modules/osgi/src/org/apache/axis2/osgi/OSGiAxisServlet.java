@@ -54,4 +54,11 @@ public class OSGiAxisServlet extends AxisServlet {
         }
 
     }
+
+    @Override
+    public void destroy() {
+        // Do nothing. This prevents AxisServlet from terminating the configuration context.
+        // The configuration context is terminated by OSGiConfigurationContextFactory, and
+        // invoking the terminate method twice (potentially concurrently) causes problems.
+    }
 }
