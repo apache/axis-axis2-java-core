@@ -204,6 +204,34 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-repo</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                            <modules>addressing</modules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-client-repo</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/client-repo</outputDirectory>
+                            <modules>addressing</modules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -466,14 +494,6 @@
                                 <property name="repo.dir" value="${project.build.directory}/repo" />
                                 <property name="services.dir" value="${repo.dir}/services" />
                                 <property name="servicejars.dir" value="${repo.dir}/servicejars" />
-
-                                <!-- Enable Addressing on the client side -->
-                                <mkdir dir="./target/client-repo/modules/" />
-                                <copy file="../addressing/target/addressing-${project.version}.mar" tofile="./target/client-repo/modules/addressing-${project.version}.mar" />
-
-                                <!-- Enable Addressing on the server side -->
-                                <mkdir dir="${repo.dir}/modules/" />
-                                <copy file="../addressing/target/addressing-${project.version}.mar" tofile="${repo.dir}/modules/addressing-${project.version}.mar" />
 
                                 <!-- ================================================================ -->
                                 <!-- Non-JAXWS services -->
