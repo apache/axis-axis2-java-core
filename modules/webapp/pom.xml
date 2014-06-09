@@ -209,48 +209,20 @@
             </plugin>
             <plugin>
                 <!-- Compile the JSPs so that syntax errors are detected during the build. -->
-                <groupId>org.codehaus.mojo.jspc</groupId>
-                <artifactId>jspc-maven-plugin</artifactId>
-                <version>2.0-alpha-3</version>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-jspc-plugin</artifactId>
+                <version>6.1.26</version>
                 <executions>
                     <execution>
                         <goals>
-                             <goal>compile</goal>
+                             <goal>jspc</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <includeInProject>false</includeInProject>
+                    <!-- We don't want to keep the generated classes; we just want to validate the JSPs -->
+                    <generatedClasses>${project.build.directory}/jspc</generatedClasses>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.mojo.jspc</groupId>
-                        <artifactId>jspc-compiler-tomcat6</artifactId>
-                        <version>2.0-alpha-3</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- We only want to validate the JSPs, but not to include the compiled
-                             versions in the project. However, the includeInProject parameter of
-                             the jspc-maven-plugin seems to be broken (the classes are always
-                             compiled to the target/classes folder) and maven-war-plugin doesn't
-                             have an option to exclude specific classes or packages. Therefore
-                             the only way to achieve this is to delete the files after compilation. -->
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <delete dir="${project.build.outputDirectory}/jsp" />
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>

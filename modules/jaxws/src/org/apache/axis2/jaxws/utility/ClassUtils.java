@@ -321,7 +321,12 @@ public class ClassUtils {
         }
         try {
             if (type instanceof Class) {
-                list.add( (Class)type);
+                Class<?> clazz = (Class<?>)type;
+                if (clazz.isArray()) {
+                    getClasses(clazz.getComponentType(), list);
+                } else {
+                    list.add(clazz);
+                }
             }
             if (type instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType) type;

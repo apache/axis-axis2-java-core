@@ -73,6 +73,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -301,6 +302,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 serviceMethods.add(method);
             }
         }
+        // The order of the methods returned by getMethods is undefined, but the test cases assume that the
+        // order is the same on all Java versions. Java 6 seems to use reverse lexical order, so we use that
+        // here to make things deterministic.
+        Collections.sort(serviceMethods, new Comparator<Method>() {
+            public int compare(Method o1, Method o2) {
+                return -o1.getName().compareTo(o2.getName());
+            }
+        });
         methods = processMethods(serviceMethods.toArray(new Method[serviceMethods.size()]));
         
         for (String extraClassName : getExtraClasses()) {
