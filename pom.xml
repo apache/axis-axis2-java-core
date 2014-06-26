@@ -518,6 +518,13 @@
             <url>http://lk.linkedin.com/pub/shameera-rathnayaka/1a/661/561</url>
             <organization>WSO2</organization>
         </developer>
+        <developer>
+            <name>Isuru Suriarachchi</name>
+            <id>isurues</id>
+            <email>isurues AT apache.org</email>
+            <url>https://www.linkedin.com/pub/isuru-suriarachchi/a/58b/b69</url>
+            <organization>Indiana University</organization>
+        </developer>
     </developers>
     <contributors>
         <contributor>
