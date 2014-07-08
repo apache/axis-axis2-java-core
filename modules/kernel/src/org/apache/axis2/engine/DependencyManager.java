@@ -27,8 +27,10 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.service.Lifecycle;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -127,7 +129,7 @@ public class DependencyManager {
                     Class implClass = Loader.loadClass(
                             classLoader,
                             ((String) implInfoParam.getValue()).trim());
-                    Object serviceImpl = implClass.newInstance();
+                    Object serviceImpl = makeNewServiceObject(service);
                     serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceImpl);
                     initServiceObject(serviceImpl, serviceContext);
                 } catch (Exception e) {
@@ -136,6 +138,17 @@ public class DependencyManager {
             }
         }
     }
+    
+    protected static Object makeNewServiceObject(AxisService service) throws AxisFault {
+        Object serviceObject = Utils.createServiceObject(service);
+        if (serviceObject == null) {
+            throw new AxisFault(
+                    Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
+        } else {
+            return serviceObject;
+        }
+    }
+        
 
     /**
      * Notify a service object that it's on death row.
