@@ -64,7 +64,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
             throw new SOAPException("A SOAPFault has been already added to this SOAPBody");
         }
         SOAPBodyElementImpl<OMElement> childEle =
-                new SOAPBodyElementImpl<OMElement>((OMElement)getOwnerDocument().createElement(localName));
+                new SOAPBodyElementImpl<OMElement>((OMElement)target.getOwnerDocument().createElement(localName));
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         target.appendChild(childEle.target);
         childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
@@ -80,7 +80,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         }
         SOAPBodyElementImpl<OMElement> childEle =
                 new SOAPBodyElementImpl<OMElement>(
-                        (OMElement)getOwnerDocument().createElementNS(namespaceURI,
+                        (OMElement)target.getOwnerDocument().createElementNS(namespaceURI,
                                                                         localName));
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
@@ -95,7 +95,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         String namespaceURI = child.getNamespaceURI();
         String prefix = child.getPrefix();
 
-        SOAPBodyElementImpl<OMElement> childEle = new SOAPBodyElementImpl<OMElement>((OMElement)child);
+        SOAPBodyElementImpl<?> childEle = toSOAPBodyElement(child);
 
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
@@ -105,6 +105,14 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
+    }
+    
+    private SOAPBodyElementImpl<?> toSOAPBodyElement(Element element) {
+        if (element instanceof SOAPBodyElementImpl) {
+            return (SOAPBodyElementImpl<?>)element;
+        } else {
+            return new SOAPBodyElementImpl<OMElement>(((SOAPElementImpl<?>)element).omTarget);
+        }
     }
     
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
@@ -163,14 +171,14 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         SOAPBodyElementImpl<OMElement> childEle;
         if (uri == null || "".equals(uri)) {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                    (OMElement)getOwnerDocument().createElement(localName));
+                    (OMElement)target.getOwnerDocument().createElement(localName));
         } else if (prefix.length() == 0) {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                (OMElement)getOwnerDocument().createElementNS(uri,
+                (OMElement)target.getOwnerDocument().createElementNS(uri,
                                                                 localName));
         } else {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                    (OMElement)getOwnerDocument().createElementNS(uri,
+                    (OMElement)target.getOwnerDocument().createElementNS(uri,
                                                                     prefix + ":" + localName));
         }
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
@@ -399,11 +407,11 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         }
         if (node instanceof org.w3c.dom.Text) {
             org.w3c.dom.Text domText = (org.w3c.dom.Text)node;
-            return new TextImplEx(domText.getData(), parent);
+            return new TextImplEx(domText.getData());
         }
         if (node instanceof org.w3c.dom.Comment) {
             org.w3c.dom.Comment domText = (org.w3c.dom.Comment)node;
-            return new CommentImpl(domText.getData(), parent);
+            return new CommentImpl(domText.getData());
         }
         Element domEle = ((Element)node);
         int indexOfColon = domEle.getTagName().indexOf(":");
@@ -496,14 +504,14 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         SOAPBodyElementImpl<OMElement> childEle;
         if (qname.getNamespaceURI() == null || "".equals(qname.getNamespaceURI())) {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                    (OMElement)getOwnerDocument().createElement(qname.getLocalPart()));
+                    (OMElement)target.getOwnerDocument().createElement(qname.getLocalPart()));
         }else if(null == qname.getPrefix() || "".equals(qname.getPrefix().trim())) {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                    (OMElement)getOwnerDocument().createElementNS(qname.getNamespaceURI(),
+                    (OMElement)target.getOwnerDocument().createElementNS(qname.getNamespaceURI(),
                                                                             qname.getLocalPart()));
         }else {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                    (OMElement)getOwnerDocument().createElementNS(qname.getNamespaceURI(),
+                    (OMElement)target.getOwnerDocument().createElementNS(qname.getNamespaceURI(),
                                                                     qname.getPrefix() + ":" +
                                                                             qname.getLocalPart()));
         }
@@ -568,7 +576,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             org.w3c.dom.Node domNode = (org.w3c.dom.Node)childIter.next();
-            Node saajNode = toSAAJNode(domNode);
+            org.w3c.dom.Node saajNode = toSAAJNode(domNode);
             if (saajNode instanceof javax.xml.soap.Text) {
                 childElements.add(saajNode);
             } else if (!(saajNode instanceof SOAPBodyElement)) {

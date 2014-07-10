@@ -18,19 +18,12 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMComment;
-import org.w3c.dom.Comment;
+import javax.xml.soap.Node;
 
-public class CommentImpl extends TextImplEx implements Comment {
-    public CommentImpl(OMComment textNode) {
-        super(textNode);
-    }
+import org.apache.axiom.om.OMNode;
 
-    public CommentImpl(String data) {
-        super(data);
-    }
-
-    public boolean isComment() {
-        return true;
+public abstract class NodeImpl<T extends org.w3c.dom.Node, S extends OMNode> extends ProxyNode<T,S> implements Node {
+    public NodeImpl(T target, S omTarget) {
+        super(target, omTarget);
     }
 }

@@ -1192,7 +1192,7 @@ public class SOAPPartImpl extends SOAPPart {
     	throw new IllegalStateException("Cannot set value of SOAPPart.");
     }
     
-    javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode) {
-        return SAAJNode.toSAAJNode(domNode, this);
+    Node toSAAJNode(org.w3c.dom.Node domNode) {
+        return ProxyNode.toSAAJNode(domNode, this);
     }
 }

@@ -349,7 +349,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             org.w3c.dom.Node domNode = (org.w3c.dom.Node)childIter.next();
-            Node saajNode = toSAAJNode(domNode);
+            org.w3c.dom.Node saajNode = toSAAJNode(domNode);
             if (saajNode instanceof javax.xml.soap.Text) {
                 childElements.add(saajNode);
             } else if (!(saajNode instanceof SOAPHeaderElement)) {
