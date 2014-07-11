@@ -21,7 +21,6 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAP11Version;
 import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPFactory;
@@ -31,7 +30,6 @@ import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
-import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
@@ -362,15 +360,5 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
             }
         }
         return childElements.iterator();
-    }
-
-    public void detachNode() {
-        this.detach();
-    }
-
-    public OMNode detach() {
-        OMNode omNode = omTarget.detach();
-        parentElement = null;
-        return omNode;
     }
 }

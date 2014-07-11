@@ -21,7 +21,6 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAP11Version;
 import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPFactory;
@@ -124,12 +123,12 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         if (namespaceURI == null || namespaceURI.trim().length() == 0) {
             childEle =
                 new SOAPBodyElementImpl<OMElement>(
-                        (OMElement)getOwnerDocument().createElement(localName));
+                        (OMElement)target.getOwnerDocument().createElement(localName));
         } else {
             omTarget.declareNamespace(namespaceURI, prefix);
             childEle =
                 new SOAPBodyElementImpl<OMElement>(
-                        (OMElement)getOwnerDocument().createElementNS(namespaceURI,
+                        (OMElement)target.getOwnerDocument().createElementNS(namespaceURI,
                                                                         localName));            
         }
 
@@ -475,15 +474,6 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
             }
         }
         return saajEle;
-    }
-
-    public void detachNode() {
-        this.detach();
-    }
-
-    public OMNode detach() {
-        this.parentElement = null;
-        return this.omTarget.detach();
     }
 
     public Iterator getChildElements(Name name) {

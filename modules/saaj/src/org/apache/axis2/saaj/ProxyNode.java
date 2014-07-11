@@ -20,12 +20,10 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMComment;
-import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMInformationItem;
-import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -55,7 +53,6 @@ import javax.xml.soap.SOAPException;
 public abstract class ProxyNode<T extends org.w3c.dom.Node, S extends OMInformationItem> implements Node {
     protected final T target;
     protected final S omTarget;
-    protected SOAPElement parentElement;
     static final String SAAJ_NODE = "saaj.node";
 
     public ProxyNode(T target, S omTarget) {
@@ -73,35 +70,6 @@ public abstract class ProxyNode<T extends org.w3c.dom.Node, S extends OMInformat
     }
 
     /**
-     * Removes this <code>Node</code> object from the tree. Once removed, this node can be garbage
-     * collected if there are no application references to it.
-     */
-    public void detachNode() {
-        this.detach();
-    }
-
-    public OMNode detach() {
-        parentElement = null;
-        return null;
-    }
-
-    /**
-     * Removes this <code>Node</code> object from the tree. Once removed, this node can be garbage
-     * collected if there are no application references to it.
-     */
-    public SOAPElement getParentElement() {
-        return this.parentElement;
-    }
-
-    public OMContainer getParent() {
-        return (OMContainer)this.parentElement;
-    }
-
-    /* public OMNode getOMNode() {
-        return omNode;
-    }*/
-
-    /**
      * Notifies the implementation that this <code>Node</code> object is no longer being used by the
      * application and that the implementation is free to reuse this object for nodes that may be
      * created later.
@@ -112,19 +80,6 @@ public abstract class ProxyNode<T extends org.w3c.dom.Node, S extends OMInformat
     public void recycleNode() {
         // No corresponding implementation in OM
         // There is no implementation in Axis 1.2 also
-    }
-
-    /**
-     * Sets the parent of this <code>Node</code> object to the given <code>SOAPElement</code>
-     * object.
-     *
-     * @param parent the <code>SOAPElement</code> object to be set as the parent of this
-     *               <code>Node</code> object
-     * @throws SOAPException if there is a problem in setting the parent to the given element
-     * @see #getParentElement() getParentElement()
-     */
-    public void setParentElement(SOAPElement parent) throws SOAPException {
-        this.parentElement = parent;
     }
 
     public void setType(int nodeType) throws OMException {
@@ -235,21 +190,20 @@ public abstract class ProxyNode<T extends org.w3c.dom.Node, S extends OMInformat
         }
     }
     
-    // TODO: the existence of this method probably indicates a problem in TextImplEx
     public org.w3c.dom.Node getParentNode() {
-        return null;
+        return toSAAJNode(target.getParentNode());
     }
 
     public final boolean hasAttributes() {
-        return parentElement.hasAttributes();
+        return target.hasAttributes();
     }
 
     public final boolean isSupported(String feature, String version) {
-        return parentElement.isSupported(feature, version);
+        return target.isSupported(feature, version);
     }
 
     public final String getBaseURI() {
-        return parentElement.getBaseURI();
+        return target.getBaseURI();
     }
 
     public final String getNodeValue() throws DOMException {
