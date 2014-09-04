@@ -19,10 +19,14 @@
 
 package org.apache.axis2.addressing;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.description.AxisBinding;
 import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.LoggingControl;
@@ -328,5 +332,52 @@ public class AddressingHelper {
                 }
             }
         }
-	}
+    }
+    
+    /**
+     * @param endpoint
+     *            The endpoint to check for a
+     *            {@link AddressingConstants#ADDRESSING_IDENTITY_PARAMETER}. Must not be
+     *            <code>null</code>
+     * @return The Addressing identity OMElement ({@link AddressingConstants#QNAME_IDENTITY}) if
+     *         such is configured on the specified <code>endpoint</code> or its <code>binding</code>
+     *         , or <code>null</code> if not available. This will normally be available if the
+     *         service was created from a WSDL which contains a WS-Addressing endpoint reference
+     *         with an &lt;wsid:Identity&gt; extension either on the port or corresponding binding.
+     */
+    public static OMElement getAddressingIdentityParameterValue(AxisEndpoint endpoint) {
+        OMElement identityElement = (OMElement) endpoint.getParameterValue(AddressingConstants.ADDRESSING_IDENTITY_PARAMETER);
+        
+        //unwrap identity element if wrapped in a parameter element
+        //NB: in revision 1371373 wrapping of parameter value when parsing parameters from services.xml has been removed
+        if (identityElement != null && identityElement.getLocalName().equals(DeploymentConstants.TAG_PARAMETER)) {
+            identityElement = identityElement.getFirstElement();
+        }
+        
+        if (identityElement != null) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(String.format("getAddressingIdentityParameterValue: %s parameter from AxisEndpoint '%s': %s", AddressingConstants.ADDRESSING_IDENTITY_PARAMETER,
+                    endpoint.getName(), identityElement.toString()));
+            }
+            
+            return identityElement;
+        }
+        
+        AxisBinding binding = endpoint.getBinding();
+        if (binding != null) {
+            identityElement = (OMElement) binding.getParameterValue(AddressingConstants.ADDRESSING_IDENTITY_PARAMETER);
+        }
+        
+        //unwrap identity element if wrapped in a parameter element
+        if (identityElement != null && identityElement.getLocalName().equals(DeploymentConstants.TAG_PARAMETER)) {
+            identityElement = identityElement.getFirstElement();
+        }
+        
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(String.format("getAddressingIdentityParameterValue: %s parameter from AxisBinding '%s': %s", AddressingConstants.ADDRESSING_IDENTITY_PARAMETER,
+                binding.getName(), identityElement == null ? "N/A" : identityElement.toString()));
+        }
+        
+        return identityElement;
+    }
 }

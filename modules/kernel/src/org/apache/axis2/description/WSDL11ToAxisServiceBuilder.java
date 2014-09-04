@@ -564,6 +564,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     				if(referenceParameters != null){
     					axisEndpoint.addParameter(AddressingConstants.REFERENCE_PARAMETER_PARAMETER, new ArrayList(referenceParameters.values()));
     				}
+    				for (OMElement extensibleElement : epr.getExtensibleElements()) {
+    				    if (AddressingConstants.QNAME_IDENTITY.equals(extensibleElement.getQName())) {
+    				        axisEndpoint.addParameter(AddressingConstants.ADDRESSING_IDENTITY_PARAMETER, extensibleElement.cloneOMElement());
+    				        break;
+    				    }
+    				}
     			} catch (Exception e) {
     				if(log.isDebugEnabled()){
     					log.debug("Exception encountered processing embedded wsa:EndpointReference", e);

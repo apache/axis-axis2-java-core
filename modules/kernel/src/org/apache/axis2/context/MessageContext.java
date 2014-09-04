@@ -52,6 +52,7 @@ import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.Handler;
@@ -4319,5 +4320,50 @@ public class MessageContext extends AbstractContext
      */
     public void setFailureReason(Exception failureReason) {
         this.failureReason = failureReason;
+    }
+    
+    /**
+     * @return Identifies and returns the service endpoint for this message context. The method will
+     *         use the following steps to identify the endpoint:
+     *         <ul>
+     *         <li>If a non-null {@link AxisEndpoint} instance is set under the
+     *         {@link WSDL2Constants#ENDPOINT_LOCAL_NAME ENDPOINT_LOCAL_NAME} message context
+     *         property, return it</li>
+     *         <li>If a non-null {@link #getAxisService() axisService} instance is set and it
+     *         specifies {@link AxisService#isClientSide() clientSide=true}, retrieve the endpoint
+     *         which matches its {@link AxisService#getEndpointName() enpointName}</li>
+     *         <li>else, return <code>null</code></li>
+     *         </ul>
+     */
+    public AxisEndpoint findEndpoint() {
+        AxisEndpoint endpoint = (AxisEndpoint) getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
+        
+        final String methodName = "findEnpoint()";
+        if (endpoint != null) {
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("%s:%s - identified endpoint from property '%s': %s", getLogIDString(), methodName, WSDL2Constants.ENDPOINT_LOCAL_NAME, endpoint.getName()));
+            }
+            
+            return endpoint;
+        }
+        
+        if (axisService == null) {
+            if (log.isWarnEnabled()) {
+                log.warn(String.format("%s:%s - no service set, cannot identify endpoint", getLogIDString(), methodName));
+            }
+            
+            return null;
+        }
+        
+        if (!axisService.isClientSide()) {
+            if (log.isWarnEnabled()) {
+                log.warn(String.format("%s:%s - no '%s' property set and serverSide=true, cannot uniquely identify endpoint for service: ", getLogIDString(), methodName, WSDL2Constants.ENDPOINT_LOCAL_NAME, axisService.getName()));
+            }
+            return null;
+        }
+        
+        //on client-side, the default endpoint name is the one the AxisService was created with
+        String endpointName = axisService.getEndpointName();
+        return axisService.getEndpoint(endpointName);
     }
 }
