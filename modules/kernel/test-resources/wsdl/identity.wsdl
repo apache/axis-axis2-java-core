@@ -1,0 +1,165 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns1="http://org.apache.axis2/xsd"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ns="http://echo.sample.axis2.apache.org"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    targetNamespace="http://echo.sample.axis2.apache.org">
+    <wsdl:documentation>Echo</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified"
+            elementFormDefault="qualified" targetNamespace="http://echo.sample.axis2.apache.org">
+            <xs:element name="echoStringArray">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="in"
+                            nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echoStringArrayResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return"
+                            nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echoString">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="in" nillable="true"
+                            type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echoStringResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true"
+                            type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="echoStringArrayRequest">
+        <wsdl:part name="parameters" element="ns:echoStringArray" />
+    </wsdl:message>
+    <wsdl:message name="echoStringArrayResponse">
+        <wsdl:part name="parameters" element="ns:echoStringArrayResponse" />
+    </wsdl:message>
+    <wsdl:message name="echoStringRequest">
+        <wsdl:part name="parameters" element="ns:echoString" />
+    </wsdl:message>
+    <wsdl:message name="echoStringResponse">
+        <wsdl:part name="parameters" element="ns:echoStringResponse" />
+    </wsdl:message>
+    <wsdl:portType name="EchoPortType">
+        <wsdl:operation name="echoStringArray">
+            <wsdl:input message="ns:echoStringArrayRequest"
+                wsaw:Action="urn:echoStringArray" />
+            <wsdl:output message="ns:echoStringArrayResponse"
+                wsaw:Action="urn:echoStringArrayResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="echoString">
+            <wsdl:input message="ns:echoStringRequest" wsaw:Action="urn:echoString" />
+            <wsdl:output message="ns:echoStringResponse" wsaw:Action="urn:echoStringResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EchoSoap11Binding" type="ns:EchoPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+            style="document" />
+        <wsdl:operation name="echoStringArray">
+            <soap:operation soapAction="urn:echoStringArray"
+                style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoString">
+            <soap:operation soapAction="urn:echoString" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="EchoSoap12Binding" type="ns:EchoPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"
+            style="document" />
+        <wsdl:operation name="echoStringArray">
+            <soap12:operation soapAction="urn:echoStringArray"
+                style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoString">
+            <soap12:operation soapAction="urn:echoString" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="EchoHttpBinding" type="ns:EchoPortType">
+        <http:binding verb="POST" />
+        <wsdl:operation name="echoStringArray">
+            <http:operation location="echoStringArray" />
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters" />
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoString">
+            <http:operation location="echoString" />
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters" />
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Echo">
+        <wsdl:port name="EchoHttpSoap11Endpoint" binding="ns:EchoSoap11Binding">
+            <soap:address location="http://localhost:8080/axis2/services/Echo.EchoHttpSoap11Endpoint" />
+            <wsa:EndpointReference xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                <wsa:Address>http://localhost:8080/axis2/services/Echo.EchoHttpSoap12Endpoint</wsa:Address>
+                <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+                    <Spn>http/server.example.com</Spn>
+                </Identity>
+            </wsa:EndpointReference>
+        </wsdl:port>
+        <wsdl:port name="EchoHttpSoap12Endpoint" binding="ns:EchoSoap12Binding">
+            <soap12:address location="http://localhost:8080/axis2/services/Echo.EchoHttpSoap12Endpoint" />
+            <wsa:EndpointReference xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                <wsa:Address>http://localhost:8080/axis2/services/Echo.EchoHttpSoap12Endpoint</wsa:Address>
+                <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+                    <Spn>http/server.example.com</Spn>
+                </Identity>
+            </wsa:EndpointReference>
+        </wsdl:port>
+        <wsdl:port name="EchoHttpEndpoint" binding="ns:EchoHttpBinding">
+            <http:address location="http://localhost:8080/axis2/services/Echo.EchoHttpEndpoint" />
+            <wsa:EndpointReference xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                <wsa:Address>http://localhost:8080/axis2/services/Echo.EchoHttpEndpoint</wsa:Address>
+                <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+                    <Spn>http/server.example.com</Spn>
+                </Identity>
+            </wsa:EndpointReference>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
