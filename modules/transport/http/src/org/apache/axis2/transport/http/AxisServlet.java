@@ -87,11 +87,11 @@ import java.util.concurrent.CountDownLatch;
  */
 public class AxisServlet extends HttpServlet {
     private static final long serialVersionUID = 3105135058353738906L;
-    
+
     static final OnDemandLogger log = new OnDemandLogger(AxisServlet.class);
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
-    
+
     private static final Set<String> metadataQueryParamNames;
 
     protected transient ConfigurationContext configContext;
@@ -108,9 +108,9 @@ public class AxisServlet extends HttpServlet {
     private boolean closeReader = true;
 
     private static final int BUFFER_SIZE = 1024 * 8;
-    
+
     private boolean initCalled = false;
-    
+
     private transient AxisServletListener httpListener;
     private transient AxisServletListener httpsListener;
 
@@ -145,7 +145,7 @@ public class AxisServlet extends HttpServlet {
         //set the initial buffer for a larger value
         response.setBufferSize(BUFFER_SIZE);
 
-        
+
         preprocessRequest(request);
 
         MessageContext msgContext;
@@ -157,9 +157,9 @@ public class AxisServlet extends HttpServlet {
             try {
                 // adding ServletContext into msgContext;
                 String url = request.getRequestURL().toString();
-                
+
                 OutputStream bufferedOut = new BufferedOutputStream(out);
-                
+
                 InvocationResponse pi = HTTPTransportUtils.
                         processHTTPPostRequest(msgContext,
                                 new BufferedInputStream(request.getInputStream()),
@@ -179,8 +179,8 @@ public class AxisServlet extends HttpServlet {
                 }
 
                 // if data has not been sent back and this is not a signal response
-                if (!TransportUtils.isResponseWritten(msgContext)  
-                		&& (((RequestResponseTransport) 
+                if (!TransportUtils.isResponseWritten(msgContext)
+                		&& (((RequestResponseTransport)
                 				msgContext.getProperty(
                 						RequestResponseTransport.TRANSPORT_CONTROL)).
                 						getStatus() != RequestResponseTransport.
@@ -193,7 +193,7 @@ public class AxisServlet extends HttpServlet {
                             + msgContext
                             .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
                 }
-                
+
                 // Make sure that no data remains in the BufferedOutputStream even if the message
                 // formatter doesn't call flush
                 bufferedOut.flush();
@@ -458,7 +458,7 @@ public class AxisServlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
-        
+
         // prevent this method from being called more than once per instance
         initCalled = true;
         super.init(config);
@@ -516,9 +516,12 @@ public class AxisServlet extends HttpServlet {
                      "unreliable.");
         }
 
-        ListenerManager listenerManager = new ListenerManager();
-        listenerManager.init(configContext);
-        listenerManager.start();
+        // AXIS2-5673: Create a new ListenerManager only if configContext does not have one already.
+        if (configContext.getListenerManager() == null) {
+            ListenerManager listenerManager = new ListenerManager();
+            listenerManager.init(configContext);
+            listenerManager.start();
+        }
     }
 
     private AxisServletListener getAxisServletListener(String name) {
@@ -563,7 +566,7 @@ public class AxisServlet extends HttpServlet {
         } else {
             MultiThreadedHttpConnectionManager.shutdownAll();
         }
-        
+
     }
 
     private String getHTTPClientVersion() {
@@ -643,7 +646,7 @@ public class AxisServlet extends HttpServlet {
 
         configContext.setContextRoot(contextRoot);
     }
-    
+
     /**
      * Preprocess the request. This will:
      * <ul>
@@ -653,7 +656,7 @@ public class AxisServlet extends HttpServlet {
      * <li>Reject the request if no {@link AxisServletListener} has been registered for the
      * protocol.
      * </ul>
-     * 
+     *
      * @param req the request to preprocess
      */
     // This method should not be part of the public API. In particular we must not allow subclasses
@@ -677,7 +680,7 @@ public class AxisServlet extends HttpServlet {
                 }
             }
         }
-        
+
     }
 
     /**
@@ -808,15 +811,15 @@ public class AxisServlet extends HttpServlet {
             faultToBeThrownOut = fault;
             signalResponseReady();
         }
-        
+
         public boolean isResponseWritten() {
         	return responseWritten;
         }
-        
+
         public void setResponseWritten(boolean responseWritten) {
         	this.responseWritten = responseWritten;
         }
-        
+
     }
 
     void setResponseState(MessageContext messageContext, HttpServletResponse response) {
