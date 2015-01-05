@@ -89,8 +89,8 @@
     </dependencies>
     <pluginRepositories>
         <pluginRepository>
-            <id>cloudbees-snapshot</id>
-            <url>http://repository-veithen.forge.cloudbees.com/snapshot/</url>
+            <id>veithen-github-mvn-repo</id>
+            <url>https://raw.github.com/veithen/mvn-repo/master/snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
