@@ -68,16 +68,7 @@ import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.StreamWrapper;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.traversal.DocumentTraversal;
-import org.w3c.dom.traversal.NodeFilter;
-import org.w3c.dom.traversal.TreeWalker;
-
 
 public class BeanUtil {
    
@@ -1357,81 +1348,8 @@ public class BeanUtil {
             return ((OMDocument)document).getOMDocumentElement();
         
         } else {
-        DocumentTraversal traversal = (DocumentTraversal) document;
-        TreeWalker walker = traversal.createTreeWalker(
-                ((Document)document).getDocumentElement(), NodeFilter.SHOW_ALL, null, true);
-        return (OMElement) traverseDOMDocument(fac, walker, null);
+            return OMXMLBuilderFactory.createOMBuilder((Document)document, false).getDocumentElement(true);
         }
-    }
-    
-    /**
-     * Traverse dom document and construct a OMElement.
-     * Act as a helper method for convertDOMtoOM()
-     *
-     * @param fac the fac
-     * @param walker the walker
-     * @param parent the parent
-     * @return the oM node
-     */
-    private static OMNode traverseDOMDocument(OMFactory fac, TreeWalker walker,
-            OMContainer parent) {
-        OMNode curr = null;
-        Node node = walker.getCurrentNode();
-        
-        switch (node.getNodeType()) {
-        case Node.ELEMENT_NODE:
-            OMNamespace eleNS = null;
-            if (node.getNamespaceURI() != null) {
-                eleNS = fac.createOMNamespace(node.getNamespaceURI(),
-                        node.getPrefix());
-            }
-            curr = fac.createOMElement(node.getNodeName(), eleNS);
-            curr = processDOMAttributes(fac, (OMElement) curr, node.getAttributes());
-            if (parent != null) {
-                parent.addChild(curr);
-            }
-            if (node.getFirstChild() != null) {
-                walker.setCurrentNode(node.getFirstChild());
-                traverseDOMDocument(fac, walker, (OMContainer) curr);
-            }
-            break;
-
-        case Node.PROCESSING_INSTRUCTION_NODE:
-            ProcessingInstruction domPI = (ProcessingInstruction) node;
-            parent.addChild(fac.createOMProcessingInstruction(parent,
-                    domPI.getTarget(), domPI.getData()));
-            break;
-
-        case Node.COMMENT_NODE:
-            parent.addChild(fac.createOMComment(parent,
-                    ((Comment) node).getNodeValue()));
-            break;
-
-        case Node.TEXT_NODE:
-            parent.addChild(fac.createOMText(node.getNodeValue()));
-            break;
-        }
-        if (node.getNextSibling() != null && parent != null) {
-            walker.setCurrentNode(node.getNextSibling());
-            traverseDOMDocument(fac, walker, parent);
-        }
-        return curr;
-    }
-    
-    private static OMElement processDOMAttributes(OMFactory fac,
-            OMElement curr, NamedNodeMap attMap) {
-        if (attMap != null && attMap.getLength() > 0) {
-            for (int i = 0; i < attMap.getLength(); i++) {
-                Attr att = (Attr) attMap.item(i);
-                OMNamespace attrNS = null;
-                if (att.getNamespaceURI() != null) {
-                    attrNS = fac.createOMNamespace(att.getNamespaceURI(),
-                            att.getPrefix());
-                }
-                curr.addAttribute(att.getNodeName(), att.getNodeValue(), attrNS);
-            }
-        }
-        return curr;
     }
     
     /**
