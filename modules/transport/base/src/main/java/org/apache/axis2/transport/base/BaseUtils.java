@@ -271,6 +271,12 @@ public class BaseUtils {
                 String msg = "Error loading properties from a file at :" + filePath;
                 log.error(msg, e);
                 throw new BaseTransportException(msg, e);
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    // Ignore
+                }
             }
         }
         return properties;
