@@ -20,10 +20,10 @@
 package org.apache.axis2.databinding.typemapping;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.attachments.utils.DataHandlerUtils;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.databinding.types.HexBinary;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.context.MessageContext;
@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import javax.activation.DataHandler;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -200,7 +201,7 @@ public class SimpleTypeMapper {
             if (txt.isOptimized()) {
                 return (DataHandler)txt.getDataHandler();
             } else {
-                return (DataHandler)DataHandlerUtils.getDataHandlerFromText(txt.getText(), null);
+                return new DataHandler(new ByteArrayDataSource(Base64Utils.decode(txt.getText())));
             }
         }
         return null;
