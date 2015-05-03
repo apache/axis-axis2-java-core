@@ -87,24 +87,12 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>veithen-github-mvn-repo</id>
-            <url>https://raw.github.com/veithen/mvn-repo/master/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <build>
         <plugins>
             <plugin>
                 <groupId>com.github.veithen.alta</groupId>
                 <artifactId>alta-maven-plugin</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>0.1</version>
                 <executions>
                     <execution>
                         <goals>
