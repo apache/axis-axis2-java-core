@@ -625,7 +625,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-testutils</artifactId>
+                <artifactId>testutils</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
