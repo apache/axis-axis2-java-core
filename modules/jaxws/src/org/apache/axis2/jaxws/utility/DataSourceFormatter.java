@@ -82,24 +82,24 @@ public class DataSourceFormatter implements MessageFormatter {
                 } catch (IOException ex) {
                     throw AxisFault.makeFault(ex);
                 }
-            } else { 
-                    OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
-                    if (omElement != null) {
-                        try {
-                            if (preserve) {
-                                omElement.serialize(outputStream, format);
-                            } else {
-                                omElement.serializeAndConsume(outputStream, format);
-                            }
-                        } catch (XMLStreamException e) {
-                            throw AxisFault.makeFault(e);
-                        }
-                    }
+            } else {
+                OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
+                if (omElement != null) {
                     try {
-                        outputStream.flush();
-                    } catch (IOException e) {
+                        if (preserve) {
+                            omElement.serialize(outputStream, format);
+                        } else {
+                            omElement.serializeAndConsume(outputStream, format);
+                        }
+                    } catch (XMLStreamException e) {
                         throw AxisFault.makeFault(e);
                     }
+                }
+                try {
+                    outputStream.flush();
+                } catch (IOException e) {
+                    throw AxisFault.makeFault(e);
+                }
             }
         } finally {
             if (log.isDebugEnabled()) {
