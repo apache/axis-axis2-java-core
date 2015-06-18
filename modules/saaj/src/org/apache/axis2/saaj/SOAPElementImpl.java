@@ -69,7 +69,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
      */
     public SOAPElement addAttribute(Name name, String value) throws SOAPException {
         if (name.getURI() == null || name.getURI().trim().length() == 0) {
-            target.setAttribute(name.getLocalName(), value);
+            target.setAttributeNS("", name.getLocalName(), value);
         } else {
             target.setAttributeNS(name.getURI(), name.getPrefix() + ":" + name.getLocalName(),
                                    value);
