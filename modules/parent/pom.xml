@@ -67,7 +67,7 @@
     </issueManagement>
     <properties>
         <!-- Tracking SNAPSHOT(s) of a few projects -->
-        <axiom.version>1.2.15-SNAPSHOT</axiom.version>
+        <axiom.version>1.2.16-SNAPSHOT</axiom.version>
         <neethi.version>3.0.4-SNAPSHOT</neethi.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
         <xmlschema.version>2.1.1-SNAPSHOT</xmlschema.version>
