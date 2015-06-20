@@ -135,7 +135,7 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
 
     }
 
-    public void testRESTMethods() throws AxisFault {
+    public void testRESTMethods() throws Exception {
 
         HttpClient httpClient = new HttpClient();
 
@@ -153,10 +153,6 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
             OMElement returnElem = response.getFirstChildWithName(new QName("return"));
             assertEquals("IBM stock added with value : 34.7", returnElem.getText());
 
-        } catch (Exception e) {
-            System.err.println("Error occurred while trying to invoke method: " + e.getMessage());
-            e.printStackTrace();
-            fail("Caught exception " + e.toString());
         } finally {
             method1.releaseConnection();
         }
@@ -176,10 +172,6 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
             OMElement returnElem = response.getFirstChildWithName(new QName("return"));
             assertEquals("34.7", returnElem.getText());
 
-        } catch (Exception e) {
-            System.err.println("Error occurred while trying to invoke method: " + e.getMessage());
-            e.printStackTrace();
-            fail("Caught exception " + e.toString());
         } finally {
             method2.releaseConnection();
         }
