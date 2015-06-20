@@ -39,6 +39,7 @@ public class GenericWSDLGenerationTest   extends XMLTestCase {
 
     public void test1() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreComments(true);
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             Java2WSDLBuilder builder = new Java2WSDLBuilder(out, GenericService.class.getName(), GenericService.class.getClassLoader());
@@ -52,6 +53,7 @@ public class GenericWSDLGenerationTest   extends XMLTestCase {
 	            fail(myDiff.toString());
         } finally {
             XMLUnit.setIgnoreWhitespace(false);
+            XMLUnit.setIgnoreComments(false);
         }
     }
 }

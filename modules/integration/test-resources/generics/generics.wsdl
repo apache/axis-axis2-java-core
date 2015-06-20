@@ -17,11 +17,12 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="processStringArray">
+            <!-- TODO: This isn't correct; the processStringArray method has an argument -->
+            <!-- xs:element name="processStringArray">
                  <xs:complexType>
                     <xs:sequence/>
                 </xs:complexType>
-            </xs:element>           
+            </xs:element -->           
             <xs:element name="processPersonList">
                 <xs:complexType>
                     <xs:sequence>
@@ -58,9 +59,9 @@
             </xs:complexType>
         </xs:schema>
     </wsdl:types>
-    <wsdl:message name="processStringArrayRequest">
+    <!-- wsdl:message name="processStringArrayRequest">
         <wsdl:part name="parameters" element="ns:processStringArray"/>
-    </wsdl:message>
+    </wsdl:message -->
     <wsdl:message name="processStringListRequest">
         <wsdl:part name="parameters" element="ns:processStringList"/>
     </wsdl:message>
@@ -80,9 +81,9 @@
         <wsdl:part name="parameters" element="ns:getStringListResponse"/>
     </wsdl:message>
     <wsdl:portType name="GenericServicePortType">
-        <wsdl:operation name="processStringArray">
+        <!-- wsdl:operation name="processStringArray">
             <wsdl:input message="ns:processStringArrayRequest" wsaw:Action="urn:processStringArray"/>
-        </wsdl:operation>
+        </wsdl:operation -->
         <wsdl:operation name="processStringList">
             <wsdl:input message="ns:processStringListRequest" wsaw:Action="urn:processStringList"/>
             <wsdl:output message="ns:processStringListResponse" wsaw:Action="urn:processStringListResponse"/>
@@ -98,12 +99,12 @@
     </wsdl:portType>
     <wsdl:binding name="GenericServiceSoap11Binding" type="ns:GenericServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-        <wsdl:operation name="processStringArray">
+        <!-- wsdl:operation name="processStringArray">
             <soap:operation soapAction="urn:processStringArray" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
-        </wsdl:operation>
+        </wsdl:operation -->
         <wsdl:operation name="processStringList">
             <soap:operation soapAction="urn:processStringList" style="document"/>
             <wsdl:input>
@@ -134,12 +135,12 @@
     </wsdl:binding>
     <wsdl:binding name="GenericServiceSoap12Binding" type="ns:GenericServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-        <wsdl:operation name="processStringArray">
+        <!-- wsdl:operation name="processStringArray">
             <soap12:operation soapAction="urn:processStringArray" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
-        </wsdl:operation>
+        </wsdl:operation -->
         <wsdl:operation name="processStringList">
             <soap12:operation soapAction="urn:processStringList" style="document"/>
             <wsdl:input>
@@ -170,12 +171,12 @@
     </wsdl:binding>
     <wsdl:binding name="GenericServiceHttpBinding" type="ns:GenericServicePortType">
         <http:binding verb="POST"/>
-        <wsdl:operation name="processStringArray">
+        <!-- wsdl:operation name="processStringArray">
             <http:operation location="processStringArray"/>
             <wsdl:input>
                 <mime:content type="application/xml" part="parameters"/>
             </wsdl:input>
-        </wsdl:operation>
+        </wsdl:operation -->
         <wsdl:operation name="processStringList">
             <http:operation location="processStringList"/>
             <wsdl:input>
