@@ -23,7 +23,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -59,7 +58,7 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
                 createConfigurationContextFromFileSystem(null, null);
     }
 
-    public void testServiceCreate() throws AxisFault {
+    public void test() throws Exception {
         AxisConfiguration axisConfig = configContext.getAxisConfiguration();
         AxisService axisService =
                 AxisService.createService("org.apache.axis2.rest.StockService", axisConfig);
@@ -132,10 +131,6 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
         assertNotNull(axisService.getEndpoint("StockServiceHttpEndpoint"));
         axisConfig.addService(axisService);
         assertEquals("StockService", axisService.getName());
-
-    }
-
-    public void testRESTMethods() throws Exception {
 
         HttpClient httpClient = new HttpClient();
 
