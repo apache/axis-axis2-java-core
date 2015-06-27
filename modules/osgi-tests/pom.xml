@@ -77,6 +77,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-link-assembly</artifactId>
+            <version>${exam.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -92,15 +98,14 @@
             <plugin>
                 <groupId>com.github.veithen.alta</groupId>
                 <artifactId>alta-maven-plugin</artifactId>
-                <version>0.1</version>
+                <version>0.2</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate-test-resources</goal>
                         </goals>
                         <configuration>
-                            <name>%paxexam.linkName%</name>
-                            <altName>%bundle.symbolicName%.link</altName>
+                            <name>%bundle.symbolicName%.link</name>
                             <value>%url%</value>
                             <dependencySet>
                                 <scope>test</scope>
