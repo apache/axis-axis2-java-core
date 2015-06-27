@@ -98,7 +98,7 @@
             <plugin>
                 <groupId>com.github.veithen.alta</groupId>
                 <artifactId>alta-maven-plugin</artifactId>
-                <version>0.2</version>
+                <version>0.2.1</version>
                 <executions>
                     <execution>
                         <goals>
