@@ -35,8 +35,13 @@ here, you can visit the <a href=
 "http://axis.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
 Web site for Axis2/C implementation information.</p>
 <p>Apache Axis2, Axis2, Apache, the Apache feather logo, and the Apache Axis2 project logo are trademarks of The Apache Software Foundation.</p>
+<h3>June 27, 2015 - Apache Axis2/Java 1.6.3 released!</h3>
+<p>Apache Axis2/Java 1.6.3 is a maintenance release that fixes over
+<a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=10611&amp;version=12320771">50 issues</a>.
+It is also the first release to package all the transport implementations from the formerly separate Axis2
+Transports project. This release upgrades Axiom to version 1.2.14.</p>
 <h3>April 17, 2012 - Apache Axis2/Java 1.6.2 released!</h3>
-<p>Apache Axis2/Java 1.6.2 is a maintenance releases containing fixes for several issues discovered over the six months.
+<p>Apache Axis2/Java 1.6.2 is a maintenance release containing fixes for several issues discovered over the past six months.
 This version upgrade Axiom to 1.2.13 and Neethi to version 3.0.2. The complete list of fixes can be found <a href="http://s.apache.org/7lT">here</a>.</p>
 <h3>Aug 30, 2011 - Apache Axis2/Java 1.5.6 and 1.6.1 released!</h3>
 <p>1.5.6 and 1.6.1 are maintenance releases containing fixes for several issues discovered over the last months.
