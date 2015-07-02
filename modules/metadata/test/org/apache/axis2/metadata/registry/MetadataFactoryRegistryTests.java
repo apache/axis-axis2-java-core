@@ -21,8 +21,8 @@ package org.apache.axis2.metadata.registry;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
+import org.apache.axis2.wsdl.WSDLUtil;
 
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import java.io.File;
 
@@ -53,8 +53,7 @@ public class MetadataFactoryRegistryTests extends TestCase {
     	Exception e = null;
     	WSDLReader reader = null;
     	try {
-    		WSDLFactory factory = WSDLFactory.newInstance();
-        	reader = factory.newWSDLReader();
+    		reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
     	}
     	catch(Exception e2) {
     		e.printStackTrace();

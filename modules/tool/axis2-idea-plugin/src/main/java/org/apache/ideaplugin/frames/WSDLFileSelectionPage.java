@@ -23,12 +23,12 @@ import org.apache.axis2.tools.component.WizardComponents;
 import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.idea.WSDLFileFilter;
 import org.apache.axis2.tools.wizardframe.CodegenFrame;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.ideaplugin.bean.ArchiveBean;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -205,7 +205,7 @@ public class WSDLFileSelectionPage extends WizardPanel {
     private void checkWSDLFile(){
         if (txtWSDL.getText().equals("") ) {
             try{
-                WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+            	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
                 reader.readWSDL(txtWSDL.getText().trim()) ;
             }catch(WSDLException e1) {
                 txtWSDL.setText("");

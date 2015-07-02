@@ -20,12 +20,14 @@
 package org.apache.axis2.description;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 import org.xml.sax.InputSource;
 
 import javax.wsdl.Definition;
 import javax.wsdl.xml.WSDLReader;
-import javax.wsdl.factory.WSDLFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -36,7 +38,7 @@ public class Java2WSDLTest extends TestCase {
         Java2WSDLBuilder builder = new Java2WSDLBuilder(out, CalculatorService.class.getName(), CalculatorService.class.getClassLoader(), new HashMap());
         builder.generateWSDL();
         InputSource inputSource = new InputSource(new ByteArrayInputStream(out.toByteArray()));
-        WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
+        WSDLReader wsdlReader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
         Definition definition = wsdlReader.readWSDL(null, inputSource);
         assertNotNull(definition);
     }

@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
@@ -33,7 +34,6 @@ import org.xml.sax.SAXParseException;
 import javax.wsdl.Definition;
 import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -148,7 +148,7 @@ public class WSDLWrapperTest extends TestCase {
 
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
 
         // switch off the verbose mode for all usecases
         reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);

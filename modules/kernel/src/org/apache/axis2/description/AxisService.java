@@ -64,6 +64,7 @@ import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
@@ -2387,7 +2388,7 @@ public class AxisService extends AxisDescription {
             Document doc = XMLUtils.newDocument(in);
             String namespaceURI = doc.getDocumentElement().getNamespaceURI();
             if (Constants.NS_URI_WSDL11.equals(namespaceURI)) {
-                WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+            	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
                 reader.setFeature("javax.wsdl.importDocuments", true);
                 Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
                 if (wsdlDefinition != null) {

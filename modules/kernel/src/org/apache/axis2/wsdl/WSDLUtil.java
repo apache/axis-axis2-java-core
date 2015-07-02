@@ -19,8 +19,17 @@
 
 package org.apache.axis2.wsdl;
 
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.WSDL2Constants;
 
+import javax.wsdl.Fault;
+import javax.wsdl.Input;
+import javax.wsdl.Output;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.AttributeExtensible;
+import javax.wsdl.extensions.ExtensionRegistry;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 /**
@@ -108,4 +117,68 @@ public class WSDLUtil {
         return buffer.toString();
     }
 
+    /**
+     * Registers default extension attributes types to given <code>extensionRegistry</code> instance.
+     * <p>
+     * The method configures the following attributes of {@link Input}, {@link Output} and {@link Fault} WSDL elements
+     * to use {@link AttributeExtensible.STRING_TYPE}:
+     * <ul>
+     * <li>{http://www.w3.org/2005/08/addressing}Action</li>
+     * <li>{http://www.w3.org/2006/05/addressing/wsdl}Action</li>
+     * <li>{http://www.w3.org/2007/05/addressing/metadata}Action</li>
+     * <li>{http://schemas.xmlsoap.org/ws/2004/08/addressing}Action</li>
+     * </ul>
+     * </p>
+     * @param extensionRegistry The extension registry to add default extension attribute types to. Must not be null.
+     */
+    public static void registerDefaultExtensionAttributeTypes(ExtensionRegistry extensionRegistry) {
+    	if (extensionRegistry == null) {
+    		throw new IllegalArgumentException("Extension registry must not be null");
+    	}
+    	
+	    QName finalWSANS = new QName(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
+	    extensionRegistry.registerExtensionAttributeType(Input.class, finalWSANS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Output.class, finalWSANS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Fault.class, finalWSANS, AttributeExtensible.STRING_TYPE);
+        
+	    QName finalWSAWNS = new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION);
+	    extensionRegistry.registerExtensionAttributeType(Input.class, finalWSAWNS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Output.class, finalWSAWNS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Fault.class, finalWSAWNS, AttributeExtensible.STRING_TYPE);
+	
+	    QName finalWSAMNS = new QName(AddressingConstants.Final.WSAM_NAMESPACE, AddressingConstants.WSA_ACTION);
+	    extensionRegistry.registerExtensionAttributeType(Input.class, finalWSAMNS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Output.class, finalWSAMNS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Fault.class, finalWSAMNS, AttributeExtensible.STRING_TYPE);
+	
+	    QName submissionWSAWNS = new QName(AddressingConstants.Submission.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
+	    extensionRegistry.registerExtensionAttributeType(Input.class, submissionWSAWNS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Output.class, submissionWSAWNS, AttributeExtensible.STRING_TYPE);
+	    extensionRegistry.registerExtensionAttributeType(Fault.class, submissionWSAWNS, AttributeExtensible.STRING_TYPE);
+    }
+    
+    /**
+     * Creates a new WSDLReader and configures it with a {@link WSDLFactory#newPopulatedExtensionRegistry()} if it does not specify an extension registry.
+     * The method will register default extension attribute types in WSDLReader's {@link WSDLReader#getExtensionRegistry() extensionRegistry},
+     * see {@link #registerDefaultExtensionAttributeTypes(ExtensionRegistry)}. 
+     * 
+     * @return The newly created WSDLReader instance.
+     * @throws WSDLException
+     */
+    public static WSDLReader newWSDLReaderWithPopulatedExtensionRegistry()
+    		throws WSDLException {
+    	WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+        WSDLReader reader = wsdlFactory.newWSDLReader();
+
+        ExtensionRegistry extensionRegistry = reader.getExtensionRegistry();
+        if (extensionRegistry == null) {
+        	extensionRegistry = wsdlFactory.newPopulatedExtensionRegistry();
+        }
+        
+        WSDLUtil.registerDefaultExtensionAttributeTypes(extensionRegistry);
+        
+        reader.setExtensionRegistry(extensionRegistry);
+        
+        return reader;
+    }
 }

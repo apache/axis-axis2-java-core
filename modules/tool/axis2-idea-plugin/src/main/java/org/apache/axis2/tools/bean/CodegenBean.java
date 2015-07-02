@@ -29,6 +29,7 @@ import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 
@@ -36,7 +37,6 @@ import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -412,7 +412,7 @@ public class CodegenBean {
 
     public void readWSDL() throws WSDLException {
 
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
         wsdlDefinition = reader.readWSDL(WSDLFileName) ;
         if (wsdlDefinition != null) {
             wsdlDefinition.setDocumentBaseURI(WSDLFileName);

@@ -32,6 +32,7 @@ import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
 import org.apache.axis2.metadata.factory.ResourceFinderFactory;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 import org.apache.axis2.metadata.resource.ResourceFinder;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +45,6 @@ import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -464,8 +464,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
             reader = (WSDLReader)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws WSDLException {
-                            WSDLFactory factory = WSDLFactory.newInstance();
-                            return factory.newWSDLReader();
+                        	return WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
                         }
                     });
         } catch (PrivilegedActionException e) {

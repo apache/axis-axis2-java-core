@@ -28,6 +28,7 @@ import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
@@ -305,17 +306,8 @@ public class CodeGenerationEngine {
      */
     public Definition readInTheWSDLFile(final String uri) throws WSDLException {
 
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
         reader.setFeature("javax.wsdl.importDocuments", true);
-
-        ExtensionRegistry extReg = WSDLFactory.newInstance().newPopulatedExtensionRegistry();
-        extReg.registerExtensionAttributeType(Input.class,
-                new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION),
-                AttributeExtensible.STRING_TYPE);
-        extReg.registerExtensionAttributeType(Output.class,
-                new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION),
-                AttributeExtensible.STRING_TYPE);
-        reader.setExtensionRegistry(extReg);
 
         return reader.readWSDL(uri);
         

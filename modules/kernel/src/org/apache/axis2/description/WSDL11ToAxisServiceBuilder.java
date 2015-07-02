@@ -91,7 +91,6 @@ import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.extensions.soap12.SOAP12Body;
 import javax.wsdl.extensions.soap12.SOAP12Header;
 import javax.wsdl.extensions.soap12.SOAP12Operation;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -2313,7 +2312,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
 
         // switch off the verbose mode for all usecases
         reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);

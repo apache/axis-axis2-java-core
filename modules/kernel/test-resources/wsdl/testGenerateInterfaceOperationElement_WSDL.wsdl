@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
   ~ distributed with this work for additional information
@@ -16,8 +15,7 @@
   ~ KIND, either express or implied. See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  -->
-<wsdl2:description xmlns:wsdl2="http://www.w3.org/ns/wsdl" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://ws.apache.org/axis2" xmlns:wsoap="http://www.w3.org/ns/wsdl/soap" xmlns:wrpc="http://www.w3.org/ns/wsdl/rpc" xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions" xmlns:whttp="http://www.w3.org/ns/wsdl/http" targetNamespace="http://ws.apache.org/axis2">
+  --><wsdl2:description xmlns:wsdl2="http://www.w3.org/ns/wsdl" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://ws.apache.org/axis2" xmlns:wsoap="http://www.w3.org/ns/wsdl/soap" xmlns:wrpc="http://www.w3.org/ns/wsdl/rpc" xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions" xmlns:whttp="http://www.w3.org/ns/wsdl/http" targetNamespace="http://ws.apache.org/axis2">
     <wsdl2:types/>
     <wsdl2:interface name="ServiceInterface">
         <wsdl2:operation name="test" pattern="http://www.w3.org/ns/wsdl/in-out">

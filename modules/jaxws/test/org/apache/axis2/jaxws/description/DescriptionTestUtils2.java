@@ -23,6 +23,7 @@ package org.apache.axis2.jaxws.description;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.unitTest.TestLogger;
+import org.apache.axis2.wsdl.WSDLUtil;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
@@ -72,8 +73,7 @@ public class DescriptionTestUtils2 {
     static Definition createWSDLDefinition(URL wsdlURL) {
         Definition wsdlDefinition = null;
         try {
-            WSDLFactory factory = WSDLFactory.newInstance();
-            WSDLReader reader = factory.newWSDLReader();
+        	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
             wsdlDefinition = reader.readWSDL(wsdlURL.toString());
         }
         catch (Exception e) {
