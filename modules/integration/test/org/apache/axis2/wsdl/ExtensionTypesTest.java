@@ -73,13 +73,10 @@ public class ExtensionTypesTest extends UtilServerBasedTestCase implements TestC
 	public void testExtensionTypes() throws MalformedURLException, AxisFault {					 
 		URL wsdlURL = new URL(String.format("http://localhost:%s/axis2/services/EchoXMLService?wsdl", UtilServer.TESTING_PORT));
 		ServiceClient serviceClient = new ServiceClient(null, wsdlURL, new QName("http://engine.axis2.apache.org", "EchoXMLService"), "EchoHttpSoap11Endpoint");
-
 		Definition definition = (Definition) serviceClient.getAxisService().getParameter("wsdl4jDefinition").getValue();
-
 		PortType pt = definition.getPortType(new QName("http://engine.axis2.apache.org", "EchoXMLServicePortType"));
+		Operation op = pt.getOperation("echoOM", null, null);
 
-		Operation op = (Operation) pt.getOperations().get(0);
-	
 		QName addressingActionAttName = new QName("http://www.w3.org/2006/05/addressing/wsdl", "Action");
 		Object addressingActionAttValue = op.getInput().getExtensionAttributes().get(addressingActionAttName);
 		assertNotNull(String.format("The value of extension attribute %s on %s operation's input is null", addressingActionAttName, op.getName()), addressingActionAttValue);
