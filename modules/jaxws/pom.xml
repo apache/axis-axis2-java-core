@@ -273,6 +273,7 @@
 
                                 <echo>Generating java from samplemtom.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
+                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
                                     <classpath refid="maven.runtime.classpath" />
                                     <classpath location="${compiled.classes.dir}" />
                                     <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd" />

@@ -278,6 +278,7 @@
                                 </java>
                                 <echo>Generating java from samplemtom.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
+                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
                                     <classpath refid="maven.runtime.classpath" />
                                     <classpath location="${compiled.classes.dir}" />
                                     <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd" />
@@ -326,6 +327,7 @@
                                 </java>
                                 <echo>Generating java from gorilla_dlw.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
+                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
                                     <classpath refid="maven.runtime.classpath" />
                                     <classpath location="${compiled.classes.dir}" />
                                     <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl" />
@@ -1376,6 +1378,10 @@
                        
                     </includes>
                     <systemProperties>
+                        <property>
+                            <name>javax.xml.accessExternalSchema</name>
+                            <value>all</value>
+                        </property>
                         <property>
                             <name>OASISCatalogManager.catalog.debug.level</name>
                             <value>0</value>

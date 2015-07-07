@@ -40,6 +40,7 @@
     <mkdir dir="target/test-classes"/>
 
 		<java fork="yes" classname="org.apache.axis2.wsdl.WSDL2Java" failonerror="yes">
+			<jvmarg value="-Djavax.xml.accessExternalSchema=all" />
 			<classpath refid="maven.test.classpath" />
 			<classpath location="${compiled.classes.dir}" />
 			<arg line="-ap -o ${wsdl.output.base.dir}/version -d none -s -u -uri test-resources/wsdls/Version.wsdl" />

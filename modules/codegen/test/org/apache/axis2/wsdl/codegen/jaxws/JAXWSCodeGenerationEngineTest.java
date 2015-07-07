@@ -36,6 +36,7 @@ public class JAXWSCodeGenerationEngineTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        System.setProperty("javax.xml.accessExternalSchema", "all");
         File dir = new File(filePath);
         assertEquals("Generated directory dtill exists ", false, dir.exists());
     }
