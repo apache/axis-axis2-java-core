@@ -68,9 +68,9 @@
     <properties>
         <!-- Tracking SNAPSHOT(s) of a few projects -->
         <axiom.version>1.2.16-SNAPSHOT</axiom.version>
-        <neethi.version>3.0.4-SNAPSHOT</neethi.version>
+        <neethi.version>3.0.3</neethi.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
-        <xmlschema.version>2.1.1-SNAPSHOT</xmlschema.version>
+        <xmlschema.version>2.2.1</xmlschema.version>
 
         <!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>

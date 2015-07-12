@@ -59,13 +59,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -161,7 +155,7 @@ public class BuilderUtil {
                             XmlSchemaAll sequence = (XmlSchemaAll) particle;
                             // now we need to know some information from the binding operation.
 
-                            for (XmlSchemaSequenceMember sequenceMember : sequence.getItems()) {
+                            for (XmlSchemaAllMember sequenceMember : sequence.getItems()) {
 
                                 XmlSchemaElement innerElement = (XmlSchemaElement) sequenceMember;
                                 QName qName = innerElement.getQName();

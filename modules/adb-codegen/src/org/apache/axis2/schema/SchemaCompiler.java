@@ -29,54 +29,8 @@ import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaAny;
-import org.apache.ws.commons.schema.XmlSchemaAnyAttribute;
-import org.apache.ws.commons.schema.XmlSchemaAttribute;
-import org.apache.ws.commons.schema.XmlSchemaAttributeGroup;
-import org.apache.ws.commons.schema.XmlSchemaAttributeGroupMember;
-import org.apache.ws.commons.schema.XmlSchemaAttributeGroupRef;
-import org.apache.ws.commons.schema.XmlSchemaAttributeOrGroupRef;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexContent;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaContent;
-import org.apache.ws.commons.schema.XmlSchemaContentModel;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaExternal;
-import org.apache.ws.commons.schema.XmlSchemaFacet;
-import org.apache.ws.commons.schema.XmlSchemaGroup;
-import org.apache.ws.commons.schema.XmlSchemaGroupParticle;
-import org.apache.ws.commons.schema.XmlSchemaGroupRef;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
-import org.apache.ws.commons.schema.XmlSchemaTotalDigitsFacet;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.utils.XmlSchemaObjectBase;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
@@ -2083,11 +2037,11 @@ public class SchemaCompiler {
             }
 
         } else if (particle instanceof XmlSchemaAll) {
-            List<XmlSchemaElement> items = ((XmlSchemaAll) particle).getItems();
+            List<XmlSchemaAllMember> items = ((XmlSchemaAll) particle).getItems();
             processSchemaAllItems(parentElementQName, items, metainfHolder, false, parentSchema);
         } else if (particle instanceof XmlSchemaChoice) {
             XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) particle;
-            List<XmlSchemaObject> items = ((XmlSchemaChoice) particle).getItems();
+            List<XmlSchemaChoiceMember> items = ((XmlSchemaChoice) particle).getItems();
 
             if ((xmlSchemaChoice.getMaxOccurs() > 1)) {
                 // we have to process many sequence types
@@ -2176,18 +2130,18 @@ public class SchemaCompiler {
                          boolean order,
                          XmlSchema parentSchema) throws SchemaCompilationException {
 
-        Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap =
-                new LinkedHashMap<XmlSchemaObject, Boolean>();
+        Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap =
+                new LinkedHashMap<XmlSchemaObjectBase, Boolean>();
         Map processedElementTypeMap = new LinkedHashMap(); // TODO: not sure what is the correct generic type here
         List<QName> localNillableList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, QName> particleQNameMap = new HashMap<XmlSchemaObject, QName>();
+        Map<XmlSchemaObjectBase, QName> particleQNameMap = new HashMap<XmlSchemaObjectBase, QName>();
 
         // this list is used to keep the details of the
         // elements within a choice withing sequence
         List<QName> innerChoiceElementList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, Integer> elementOrderMap = new HashMap<XmlSchemaObject, Integer>();
+        Map<XmlSchemaObjectBase, Integer> elementOrderMap = new HashMap<XmlSchemaObjectBase, Integer>();
 
         int sequenceCounter = 0;
         for (XmlSchemaSequenceMember member : items) {
@@ -2205,26 +2159,26 @@ public class SchemaCompiler {
     }
 
     private void processChoiceItems(QName parentElementQName,
-                                    List<XmlSchemaObject> items,
+                                    List<XmlSchemaChoiceMember> items,
                                     BeanWriterMetaInfoHolder metainfHolder,
                                     boolean order,
                                     XmlSchema parentSchema) throws SchemaCompilationException {
 
-        Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap =
-                new LinkedHashMap<XmlSchemaObject, Boolean>();
+        Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap =
+                new LinkedHashMap<XmlSchemaObjectBase, Boolean>();
         Map processedElementTypeMap = new LinkedHashMap(); // TODO: not sure what is the correct generic type here
         List<QName> localNillableList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, QName> particleQNameMap = new HashMap<XmlSchemaObject, QName>();
+        Map<XmlSchemaObjectBase, QName> particleQNameMap = new HashMap<XmlSchemaObjectBase, QName>();
 
         // this list is used to keep the details of the
         // elements within a choice withing sequence
         List<QName> innerChoiceElementList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, Integer> elementOrderMap = new HashMap<XmlSchemaObject, Integer>();
+        Map<XmlSchemaObjectBase, Integer> elementOrderMap = new HashMap<XmlSchemaObjectBase, Integer>();
 
         int sequenceCounter = 0;
-        for (XmlSchemaObject item : items) {
+        for (XmlSchemaChoiceMember item : items) {
             //recursively process the element
             processElements(parentElementQName, item, processedElementArrayStatusMap,
                             processedElementTypeMap, elementOrderMap, localNillableList,
@@ -2239,26 +2193,26 @@ public class SchemaCompiler {
 
 
     private void processSchemaAllItems(QName parentElementQName,
-                                       List<XmlSchemaElement> items,
+                                       List<XmlSchemaAllMember> items,
                                        BeanWriterMetaInfoHolder metainfHolder,
                                        boolean order,
                                        XmlSchema parentSchema) throws SchemaCompilationException {
 
-        Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap =
-                new LinkedHashMap<XmlSchemaObject, Boolean>();
+        Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap =
+                new LinkedHashMap<XmlSchemaObjectBase, Boolean>();
         Map processedElementTypeMap = new LinkedHashMap(); // TODO: not sure what is the correct generic type here
         List<QName> localNillableList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, QName> particleQNameMap = new HashMap<XmlSchemaObject, QName>();
+        Map<XmlSchemaObjectBase, QName> particleQNameMap = new HashMap<XmlSchemaObjectBase, QName>();
 
         // this list is used to keep the details of the
         // elements within a choice withing sequence
         List<QName> innerChoiceElementList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, Integer> elementOrderMap = new HashMap<XmlSchemaObject, Integer>();
+        Map<XmlSchemaObjectBase, Integer> elementOrderMap = new HashMap<XmlSchemaObjectBase, Integer>();
 
         int sequenceCounter = 0;
-        for (XmlSchemaObject item : items) {
+        for (XmlSchemaAllMember item : items) {
             //recursively process the element
             processElements(parentElementQName, item, processedElementArrayStatusMap,
                             processedElementTypeMap, elementOrderMap, localNillableList,
@@ -2273,19 +2227,19 @@ public class SchemaCompiler {
 
 
     private void addProcessedItemsToMetaInfoHolder(
-            Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap,
+            Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap,
             Map processedElementTypeMap,
             List<QName> innerChoiceElementList,
-            Map<XmlSchemaObject, Integer> elementOrderMap,
+            Map<XmlSchemaObjectBase, Integer> elementOrderMap,
             List<QName> localNillableList,
-            Map<XmlSchemaObject, QName> particleQNameMap,
+            Map<XmlSchemaObjectBase, QName> particleQNameMap,
             BeanWriterMetaInfoHolder metainfHolder,
             boolean order,
             XmlSchema parentSchema) throws SchemaCompilationException {
 
         // loop through the processed items and add them to the matainf object
         int startingItemNumberOrder = metainfHolder.getOrderStartPoint();
-        for (XmlSchemaObject child : processedElementArrayStatusMap.keySet()) {
+        for (XmlSchemaObjectBase child : processedElementArrayStatusMap.keySet()) {
 
             // process the XmlSchemaElement
             if (child instanceof XmlSchemaElement) {
@@ -2503,12 +2457,12 @@ public class SchemaCompiler {
 
     }
 
-    private void processElements(QName parentElementQName, XmlSchemaObject item,
-                                 Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap,
+    private void processElements(QName parentElementQName, XmlSchemaObjectBase item,
+                                 Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap,
                                  Map processedElementTypeMap,
-                                 Map<XmlSchemaObject, Integer> elementOrderMap,
+                                 Map<XmlSchemaObjectBase, Integer> elementOrderMap,
                                  List<QName> localNillableList,
-                                 Map<XmlSchemaObject, QName> particleQNameMap,
+                                 Map<XmlSchemaObjectBase, QName> particleQNameMap,
                                  boolean order, int sequenceCounter,
                                  XmlSchema parentSchema) throws SchemaCompilationException {
 
