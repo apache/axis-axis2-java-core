@@ -405,9 +405,9 @@
                             <td>1.4 Release (Archived)</td>
                             <td>
                                 Binary Distribution
-                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4.zip">zip</a> |
-                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4.zip.md5">MD5</a> |
-                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4.zip.asc">PGP</a>
+                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-bin.zip">zip</a> |
+                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-bin.zip.md5">MD5</a> |
+                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-bin.zip.asc">PGP</a>
                                 <br/>
                                 Source Distribution
                                 <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-src.zip">zip</a> |
@@ -415,9 +415,9 @@
                                 <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-src.zip.asc">PGP</a>
                                 <br/>
                                 WAR Distribution
-                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2.war">zip</a> |
-                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2.war.md5">MD5</a> |
-                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2.war.asc">PGP</a>
+                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-war.zip">zip</a> |
+                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-war.zip.md5">MD5</a> |
+                                <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-war.zip.asc">PGP</a>
                                 <br/>
                                 Documents Distribution
                                 <a href="http://archive.apache.org/dist/ws/axis2/1_4/axis2-1.4-docs.zip">zip</a> |
