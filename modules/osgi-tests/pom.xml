@@ -56,10 +56,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- TODO: manage this dependency -->
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.2.2</version>
             <scope>test</scope>
         </dependency>
         
