@@ -59,21 +59,21 @@ public class DataSourceFormatter implements MessageFormatter {
             if (log.isDebugEnabled()) {
                 log.debug("start writeTo()");
             }
+            OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
+            DataSource busObject;
+            try {
+                busObject = (DataSource)((DataSourceBlock)((OMSourcedElement) omElement).getDataSource()).getBusinessObject(true);
+            } catch (XMLStreamException e) {
+                throw AxisFault.makeFault(e);
+            }
+            DataHandler dataHandler = new DataHandler(busObject);
             if (attachments != null && !attachments.isEmpty()) {
-                OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
-                DataSource busObject;
-                try {
-                    busObject = (DataSource)((DataSourceBlock)((OMSourcedElement) omElement).getDataSource()).getBusinessObject(true);
-                } catch (XMLStreamException e) {
-                    throw AxisFault.makeFault(e);
-                }
                 OMMultipartWriter mpw = new OMMultipartWriter(outputStream, format);
-                DataHandler rootDataHandler = new DataHandler(busObject);
-                if (!rootDataHandler.getContentType().equals(contentType)) {
-                    rootDataHandler = new WrappedDataHandler(rootDataHandler, contentType);
+                if (!dataHandler.getContentType().equals(contentType)) {
+                    dataHandler = new WrappedDataHandler(dataHandler, contentType);
                 }
                 try {
-                    mpw.writePart(rootDataHandler, format.getRootContentId());
+                    mpw.writePart(dataHandler, format.getRootContentId());
                     for (String cid : attachments.keySet()) {
                         mpw.writePart(attachments.get(cid), cid);
                     }
@@ -82,24 +82,13 @@ public class DataSourceFormatter implements MessageFormatter {
                 } catch (IOException ex) {
                     throw AxisFault.makeFault(ex);
                 }
-            } else { 
-                    OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
-                    if (omElement != null) {
-                        try {
-                            if (preserve) {
-                                omElement.serialize(outputStream, format);
-                            } else {
-                                omElement.serializeAndConsume(outputStream, format);
-                            }
-                        } catch (XMLStreamException e) {
-                            throw AxisFault.makeFault(e);
-                        }
-                    }
-                    try {
-                        outputStream.flush();
-                    } catch (IOException e) {
-                        throw AxisFault.makeFault(e);
-                    }
+            } else {
+                try {
+                    dataHandler.writeTo(outputStream);
+                    outputStream.flush();
+                } catch (IOException e) {
+                    throw AxisFault.makeFault(e);
+                }
             }
         } finally {
             if (log.isDebugEnabled()) {

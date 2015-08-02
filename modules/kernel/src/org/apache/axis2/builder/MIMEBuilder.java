@@ -20,6 +20,7 @@
 package org.apache.axis2.builder;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMConstants;
@@ -27,9 +28,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
 import java.io.InputStream;
+import java.text.ParseException;
 
 public class MIMEBuilder implements Builder {
 

@@ -101,6 +101,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>saaj-testsuite</artifactId>
+            <version>${axiom.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
              on Sun's internal copy of Xerces. See AXIS2-4228. -->
         <dependency>

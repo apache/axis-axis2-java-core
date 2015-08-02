@@ -18,19 +18,13 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMComment;
-import org.w3c.dom.Comment;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-public class CommentImpl extends TextImplEx implements Comment {
-    public CommentImpl(OMComment textNode) {
-        super(textNode);
-    }
+import org.apache.axiom.ts.saaj.SAAJTestSuiteBuilder;
 
-    public CommentImpl(String data) {
-        super(data);
-    }
-
-    public boolean isComment() {
-        return true;
+public class ImplementationTest extends TestCase {
+    public static TestSuite suite() throws Exception {
+        return new SAAJTestSuiteBuilder(new SAAJMetaFactoryImpl()).build();
     }
 }

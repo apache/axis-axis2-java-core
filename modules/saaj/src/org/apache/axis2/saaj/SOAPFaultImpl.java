@@ -755,7 +755,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             org.w3c.dom.Node domNode = (org.w3c.dom.Node)childIter.next();
-            Node saajNode = toSAAJNode(domNode);
+            org.w3c.dom.Node saajNode = toSAAJNode(domNode);
             if (!(saajNode instanceof SOAPFaultElement)) {
                 // silently replace node, as per saaj 1.2 spec
                 SOAPFaultElement bodyEle = new SOAPFaultElementImpl<OMElement>((OMElement)domNode);

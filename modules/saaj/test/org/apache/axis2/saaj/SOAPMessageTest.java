@@ -20,6 +20,9 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
+
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axis2.saaj.util.SAAJDataSource;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.junit.Before;
@@ -27,7 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.activation.DataHandler;
-import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
@@ -46,6 +48,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.transform.stream.StreamSource;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -247,7 +250,7 @@ public class SOAPMessageTest extends Assert {
         //start parameter is not checked, due to it is optional parameter, and seems RI will not add this value
         //assertNotNull("start parameter should exist in the content-type header", contentType.getParameter("start"));
         assertNotNull("type parameter should exist in the content-type header", contentType.getParameter("type"));
-        assertEquals(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType.getBaseType());        
+        assertEquals(MediaType.MULTIPART_RELATED, contentType.getMediaType());        
     }
 
     @Validated @Test
@@ -266,7 +269,7 @@ public class SOAPMessageTest extends Assert {
         msg2.saveChanges();
         ContentType contentType2 = new ContentType(msg2.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0]);
 
-        assertEquals(contentType.getBaseType(), contentType2.getBaseType());
+        assertEquals(contentType.getMediaType(), contentType2.getMediaType());
         assertEquals(contentType.getParameter("boundary"), contentType2.getParameter("boundary"));
         assertEquals(contentType.getParameter("type"), contentType2.getParameter("type"));
         //start parameter is not checked, due to it is an optional parameter, and seems RI will not add this value
@@ -284,14 +287,14 @@ public class SOAPMessageTest extends Assert {
         
         assertNotNull(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE));
         ContentType contentType = new ContentType(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0]);        
-        assertEquals(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType.getBaseType());
+        assertEquals(MediaType.MULTIPART_RELATED, contentType.getMediaType());
         
         msg.removeAllAttachments();
         msg.saveChanges();
 
         assertNotNull(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE));
         contentType = new ContentType(msg.getMimeHeaders().getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0]);        
-        assertEquals("text/xml", contentType.getBaseType());
+        assertEquals(MediaType.TEXT_XML, contentType.getMediaType());
     }
 
     private StringBuffer copyToBuffer(InputStream inputStream) {

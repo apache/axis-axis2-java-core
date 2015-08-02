@@ -68,7 +68,7 @@
     <properties>
         <neethi.version>3.0.2</neethi.version>
         <woden.version>1.0M9</woden.version>
-        <axiom.version>1.2.14</axiom.version>
+        <axiom.version>1.2.15</axiom.version>
         <xmlschema.version>1.4.7</xmlschema.version>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
@@ -918,12 +918,12 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
-                <version>1.6.1</version>
+                <version>1.7.4</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.6.1</version>
+                <version>1.7.4</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

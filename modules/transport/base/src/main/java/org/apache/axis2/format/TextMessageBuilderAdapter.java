@@ -22,10 +22,9 @@ package org.apache.axis2.format;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.text.ParseException;
 
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
-
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;

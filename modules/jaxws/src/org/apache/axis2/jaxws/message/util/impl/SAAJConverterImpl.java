@@ -362,8 +362,7 @@ public class SAAJConverterImpl implements SAAJConverter {
                         break;
                     }
                     case XMLStreamReader.END_DOCUMENT: {
-                        // Close reader and ignore
-                        reader.close();
+                        // Ignore
                         break;
                     }
                     case XMLStreamReader.PROCESSING_INSTRUCTION: {
@@ -382,6 +381,7 @@ public class SAAJConverterImpl implements SAAJConverter {
                         this._unexpectedEvent("EventID " + String.valueOf(eventID));
                 }
             }
+            reader.close();
         } catch (WebServiceException e) {
             throw e;
         } catch (XMLStreamException e) {

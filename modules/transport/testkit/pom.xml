@@ -83,6 +83,10 @@
             <artifactId>jetty</artifactId>
             <version>5.1.10</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>

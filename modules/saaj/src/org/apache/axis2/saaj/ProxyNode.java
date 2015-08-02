@@ -19,10 +19,12 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMComment;
+import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMInformationItem;
+import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
@@ -31,17 +33,15 @@ import org.apache.axiom.soap.SOAPFaultNode;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.w3c.dom.Attr;
-import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 
-import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
@@ -50,15 +50,15 @@ import javax.xml.soap.SOAPException;
  * some tree manipulation methods. This interface provides methods for getting the value of a node,
  * for getting and setting the parent of a node, and for removing a node.
  */
-public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> implements Node {
+public abstract class ProxyNode<T extends org.w3c.dom.Node, S extends OMInformationItem> implements Node {
     protected final T target;
     protected final S omTarget;
-    protected SOAPElement parentElement;
     static final String SAAJ_NODE = "saaj.node";
 
-    public SAAJNode(T target, S omTarget) {
+    public ProxyNode(T target, S omTarget) {
         this.target = target;
         this.omTarget = omTarget;
+        target.setUserData(SAAJ_NODE, this, null);
     }
 
     public final T getTarget() {
@@ -68,35 +68,6 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
     public final S getOMTarget() {
         return omTarget;
     }
-
-    /**
-     * Removes this <code>Node</code> object from the tree. Once removed, this node can be garbage
-     * collected if there are no application references to it.
-     */
-    public void detachNode() {
-        this.detach();
-    }
-
-    public OMNode detach() {
-        parentElement = null;
-        return null;
-    }
-
-    /**
-     * Removes this <code>Node</code> object from the tree. Once removed, this node can be garbage
-     * collected if there are no application references to it.
-     */
-    public SOAPElement getParentElement() {
-        return this.parentElement;
-    }
-
-    public OMContainer getParent() {
-        return (OMContainer)this.parentElement;
-    }
-
-    /* public OMNode getOMNode() {
-        return omNode;
-    }*/
 
     /**
      * Notifies the implementation that this <code>Node</code> object is no longer being used by the
@@ -109,19 +80,6 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
     public void recycleNode() {
         // No corresponding implementation in OM
         // There is no implementation in Axis 1.2 also
-    }
-
-    /**
-     * Sets the parent of this <code>Node</code> object to the given <code>SOAPElement</code>
-     * object.
-     *
-     * @param parent the <code>SOAPElement</code> object to be set as the parent of this
-     *               <code>Node</code> object
-     * @throws SOAPException if there is a problem in setting the parent to the given element
-     * @see #getParentElement() getParentElement()
-     */
-    public void setParentElement(SOAPElement parent) throws SOAPException {
-        this.parentElement = parent;
     }
 
     public void setType(int nodeType) throws OMException {
@@ -159,7 +117,7 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
      * @param domNode
      * @return the SAAJ Node corresponding to the domNode
      */
-    javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode) {
+    Node toSAAJNode(Node domNode) {
         return toSAAJNode(domNode, this);
     }
     
@@ -169,7 +127,7 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
      * @param domNode
      * @return the SAAJ Node corresponding to the domNode
      */
-    static javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode, Node parentNode) {
+    static Node toSAAJNode(Node domNode, Node parentNode) {
         if (domNode == null) {
             return null;
         }
@@ -177,42 +135,17 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
         if (saajNode == null) {  // if SAAJ node has not been set in userData, try to construct it
             return toSAAJNode2(domNode, parentNode);
         }
-        // update siblings for text nodes
-        if (domNode instanceof org.w3c.dom.Text || domNode instanceof org.w3c.dom.Comment) {
-            org.w3c.dom.Node prevSiblingDOMNode = domNode.getPreviousSibling();
-            org.w3c.dom.Node nextSiblingDOMNode = domNode.getNextSibling();
-            
-            TextImplEx saajTextNode = (TextImplEx)saajNode;
-            
-            saajTextNode.setPreviousSibling(prevSiblingDOMNode);
-            saajTextNode.setNextSibling(nextSiblingDOMNode);
-        }
         return saajNode;
     }
 
-    private static javax.xml.soap.Node toSAAJNode2(org.w3c.dom.Node domNode, Node parentNode) {
+    private static Node toSAAJNode2(Node domNode, Node parentNode) {
         if (domNode == null) {
             return null;
         }
         if (domNode instanceof org.w3c.dom.Text) {
-            Text text = (Text)domNode;
-            org.w3c.dom.Node prevSiblingDOMNode = text.getPreviousSibling();
-            org.w3c.dom.Node nextSiblingDOMNode = text.getNextSibling();
-            SOAPElementImpl<OMElement> parent = new SOAPElementImpl<OMElement>((OMElement)domNode.getParentNode());
-            TextImplEx saajTextNode =
-                    new TextImplEx(text.getData(), parent, prevSiblingDOMNode, nextSiblingDOMNode);
-            domNode.setUserData(SAAJ_NODE, saajTextNode, null);
-            return saajTextNode;
+            return new TextImplEx((OMText)domNode);
         } else if (domNode instanceof org.w3c.dom.Comment) {
-            Comment comment = (Comment)domNode;
-            org.w3c.dom.Node prevSiblingDOMNode = comment.getPreviousSibling();
-            org.w3c.dom.Node nextSiblingDOMNode = comment.getNextSibling();
-            SOAPElementImpl<OMElement> parent = new SOAPElementImpl<OMElement>((OMElement)domNode.getParentNode());
-            CommentImpl saajTextNode = new CommentImpl(comment.getData(),
-                                                     parent, prevSiblingDOMNode,
-                                                     nextSiblingDOMNode);
-            domNode.setUserData(SAAJ_NODE, saajTextNode, null);
-            return saajTextNode;
+            return new CommentImpl((OMComment)domNode);
         } else if (domNode instanceof SOAPBody) {
             javax.xml.soap.SOAPBody saajSOAPBody =
                     new org.apache.axis2.saaj.SOAPBodyImpl((SOAPBody)domNode);
@@ -249,27 +182,7 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
             domNode.setUserData(SAAJ_NODE, saajSOAPHeader, null);
             return saajSOAPHeader;
         } else if (domNode instanceof Document) {
-            
-            // Must be a SOAPEnvelope
-            if (!(parentNode instanceof org.apache.axis2.saaj.SOAPEnvelopeImpl)) {
-                return null;
-            }
-            org.apache.axis2.saaj.SOAPEnvelopeImpl saajEnv = 
-                (org.apache.axis2.saaj.SOAPEnvelopeImpl) parentNode;
-            javax.xml.soap.SOAPPart saajSOAPPart = null;
-            if (saajEnv.getSOAPPartParent() != null) {
-                // return existing SOAPPart
-                saajSOAPPart = saajEnv.getSOAPPartParent();
-                
-            } else {
-                // Create Message and SOAPPart
-                SOAPMessageImpl saajSOAPMessage = 
-                        new SOAPMessageImpl(saajEnv);
-                saajSOAPPart = saajSOAPMessage.getSOAPPart();
-            }
-            
-            domNode.setUserData(SAAJ_NODE, saajSOAPPart, null);
-            return saajSOAPPart;
+            return new SAAJDocument((OMDocument)domNode);
         } else { // instanceof org.apache.axis2.om.impl.dom.ElementImpl
             SOAPElementImpl<OMElement> saajSOAPElement = new SOAPElementImpl<OMElement>((OMElement)domNode);
             domNode.setUserData(SAAJ_NODE, saajSOAPElement, null);
@@ -277,21 +190,20 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
         }
     }
     
-    // TODO: the existence of this method probably indicates a problem in TextImplEx
     public org.w3c.dom.Node getParentNode() {
-        return null;
+        return toSAAJNode(target.getParentNode());
     }
 
     public final boolean hasAttributes() {
-        return parentElement.hasAttributes();
+        return target.hasAttributes();
     }
 
     public final boolean isSupported(String feature, String version) {
-        return parentElement.isSupported(feature, version);
+        return target.isSupported(feature, version);
     }
 
     public final String getBaseURI() {
-        return parentElement.getBaseURI();
+        return target.getBaseURI();
     }
 
     public final String getNodeValue() throws DOMException {
@@ -363,8 +275,8 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
     }
 
     public final org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild) throws DOMException {
-        if (oldChild instanceof SAAJNode) {
-            oldChild = ((SAAJNode<?,?>)oldChild).getTarget();
+        if (oldChild instanceof ProxyNode) {
+            oldChild = ((ProxyNode<?,?>)oldChild).getTarget();
         }
         return target.removeChild(oldChild);
     }
@@ -374,11 +286,11 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
     }
 
     public final short getNodeType() {
-        return parentElement.getNodeType();
+        return target.getNodeType();
     }
 
     public final Document getOwnerDocument() {
-        return target.getOwnerDocument();
+        return (Document)toSAAJNode(target.getOwnerDocument());
     }
 
     public final String getLocalName() {
@@ -422,10 +334,11 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
             throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, "Wrong document");
         }
         try {
-            if (child instanceof Text) {
-                return appendText((Text)child);
-            } else if (child instanceof Element) {
+            if (child instanceof Element) {
                 return appendElement((Element)child);
+            } else {
+                target.appendChild(((ProxyNode<?,?>)child).target);
+                return child;
             }
         } catch (SOAPException e) {
             DOMException ex = 
@@ -433,24 +346,13 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
             ex.initCause(e);
             throw ex;
         }
-        throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                "An attempt was made to insert a node where it is not permitted.");
-    }
-
-    protected Text appendText(Text child) throws SOAPException {
-        String text = child.getData();
-        Text textNode = getOwnerDocument().createTextNode(text);
-        target.appendChild(textNode);
-        TextImplEx saajTextNode = new TextImplEx(text, (SOAPElement)this);
-        textNode.setUserData(SAAJ_NODE, saajTextNode, null);
-        return saajTextNode;
     }
     
     protected Element appendElement(Element child) throws SOAPException {
         String namespaceURI = child.getNamespaceURI();
         String prefix = child.getPrefix();
 
-        SOAPElementImpl<OMElement> childEle = new SOAPElementImpl<OMElement>((OMElement)child);
+        SOAPElementImpl<OMElement> childEle = (SOAPElementImpl<OMElement>)child;
         
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
@@ -468,5 +370,13 @@ public abstract class SAAJNode<T extends org.w3c.dom.Node, S extends OMNode> imp
 
     public final NamedNodeMap getAttributes() {
         return target.getAttributes();
+    }
+
+    public final org.w3c.dom.Node getNextSibling() {
+        return toSAAJNode(target.getNextSibling());
+    }
+
+    public final org.w3c.dom.Node getPreviousSibling() {
+        return toSAAJNode(target.getPreviousSibling());
     }
 }

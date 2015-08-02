@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.impl.BufferUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMDataSource;
@@ -60,7 +61,7 @@ public class DataSourceBuilder implements Builder {
         return factory.createOMElement(ds, "dummy", ns);
     }
 
-    public class ByteArrayDataSourceEx extends javax.mail.util.ByteArrayDataSource implements OMDataSource {
+    public class ByteArrayDataSourceEx extends ByteArrayDataSource implements OMDataSource {
         private byte[] bytes;
     
         public ByteArrayDataSourceEx(byte[] bytes, String s) {

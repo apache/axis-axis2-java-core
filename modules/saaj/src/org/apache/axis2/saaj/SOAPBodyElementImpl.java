@@ -39,7 +39,7 @@ public class SOAPBodyElementImpl<T extends OMElement> extends SOAPElementImpl<T>
         if (!(parent instanceof SOAPBody)) {
             throw new IllegalArgumentException("Parent is not a SOAPBody");
         }
-        this.parentElement = parent;
+        super.setParentElement(parent);
     }
 
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
