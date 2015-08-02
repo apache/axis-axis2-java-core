@@ -22,13 +22,14 @@ package org.apache.axis2.jaxws.utility;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
-import org.apache.axiom.om.impl.MIMEOutputUtils;
+import org.apache.axiom.om.impl.OMMultipartWriter;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
+import org.apache.axis2.util.WrappedDataHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -66,12 +67,21 @@ public class DataSourceFormatter implements MessageFormatter {
                 } catch (XMLStreamException e) {
                     throw AxisFault.makeFault(e);
                 }
-                MIMEOutputUtils.writeDataHandlerWithAttachmentsMessage(
-                        new DataHandler(busObject), 
-                        contentType, 
-                        outputStream, 
-                        attachments, 
-                        format);
+                OMMultipartWriter mpw = new OMMultipartWriter(outputStream, format);
+                DataHandler rootDataHandler = new DataHandler(busObject);
+                if (!rootDataHandler.getContentType().equals(contentType)) {
+                    rootDataHandler = new WrappedDataHandler(rootDataHandler, contentType);
+                }
+                try {
+                    mpw.writePart(rootDataHandler, format.getRootContentId());
+                    for (String cid : attachments.keySet()) {
+                        mpw.writePart(attachments.get(cid), cid);
+                    }
+                    mpw.complete();
+                    outputStream.flush();
+                } catch (IOException ex) {
+                    throw AxisFault.makeFault(ex);
+                }
             } else { 
                     OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
                     if (omElement != null) {
