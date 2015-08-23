@@ -63,7 +63,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
             throw new SOAPException("A SOAPFault has been already added to this SOAPBody");
         }
         SOAPBodyElementImpl<OMElement> childEle =
-                new SOAPBodyElementImpl<OMElement>((OMElement)target.getOwnerDocument().createElement(localName));
+                new SOAPBodyElementImpl<OMElement>((OMElement)target.getOwnerDocument().createElementNS(null, localName));
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         target.appendChild(childEle.target);
         childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
@@ -123,7 +123,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         if (namespaceURI == null || namespaceURI.trim().length() == 0) {
             childEle =
                 new SOAPBodyElementImpl<OMElement>(
-                        (OMElement)target.getOwnerDocument().createElement(localName));
+                        (OMElement)target.getOwnerDocument().createElementNS(null, localName));
         } else {
             omTarget.declareNamespace(namespaceURI, prefix);
             childEle =
@@ -170,7 +170,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         SOAPBodyElementImpl<OMElement> childEle;
         if (uri == null || "".equals(uri)) {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                    (OMElement)target.getOwnerDocument().createElement(localName));
+                    (OMElement)target.getOwnerDocument().createElementNS(null, localName));
         } else if (prefix.length() == 0) {
             childEle = new SOAPBodyElementImpl<OMElement>(
                 (OMElement)target.getOwnerDocument().createElementNS(uri,
@@ -494,7 +494,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         SOAPBodyElementImpl<OMElement> childEle;
         if (qname.getNamespaceURI() == null || "".equals(qname.getNamespaceURI())) {
             childEle = new SOAPBodyElementImpl<OMElement>(
-                    (OMElement)target.getOwnerDocument().createElement(qname.getLocalPart()));
+                    (OMElement)target.getOwnerDocument().createElementNS(null, qname.getLocalPart()));
         }else if(null == qname.getPrefix() || "".equals(qname.getPrefix().trim())) {
             childEle = new SOAPBodyElementImpl<OMElement>(
                     (OMElement)target.getOwnerDocument().createElementNS(qname.getNamespaceURI(),

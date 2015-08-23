@@ -96,7 +96,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
 
         SOAPElementImpl<OMElement> childEle;        
         if (namespaceURI == null || namespaceURI.trim().length() == 0) {
-            childEle =  new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElement(localName));
+            childEle =  new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElementNS(null, localName));
         } else {
             omTarget.declareNamespace(namespaceURI, prefix);
             childEle =
@@ -167,7 +167,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
       */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         SOAPElementImpl<OMElement> childEle =
-                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElement(localName));
+                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElementNS(null, localName));
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         target.appendChild(childEle.target);
         childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);

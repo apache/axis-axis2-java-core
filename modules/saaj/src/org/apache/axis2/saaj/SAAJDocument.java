@@ -73,7 +73,7 @@ public final class SAAJDocument extends ProxyNode<Document,OMDocument> implement
     }
 
     public Element createElement(String arg0) throws DOMException {
-        return (Element)toSAAJNode(target.createElement(arg0));
+        return (Element)toSAAJNode(target.createElementNS(null, arg0));
     }
 
     public Element createElementNS(String arg0, String arg1) throws DOMException {
