@@ -30,7 +30,7 @@
     <artifactId>axis2-transport-http</artifactId>
     <name>Apache Axis2 - Transport - HTTP</name>
     <description>This inclues all the available transports in Axis2</description>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/transport/http</connection>
@@ -60,22 +60,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Bundle-Vendor>Apache Software Foundation</Bundle-Vendor>
-                        <Bundle-Description>${project.description}</Bundle-Description>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>
-                            org.apache.axis2.transport.http.*;-split-package:=merge-last,
-                        </Export-Package>
-                    </instructions>
-                </configuration>
             </plugin>
         </plugins>
         <resources>
