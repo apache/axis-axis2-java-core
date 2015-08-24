@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -367,12 +369,12 @@ public class OMElementDispatchTest extends AbstractTestCase {
 
             // At this point, the payload should be an OMSourcedElement
             // that was created from the ParsedEntityReader's stream
-            assertTrue(payload instanceof OMSourcedElement);
+            assertThat(payload).isInstanceOf(OMSourcedElement.class);
 
 
             // Check to make sure the contents of the message are correct
             String responseText = payload.toStringWithConsume();
-            assertTrue(responseText.contains("TEST RESPONSE"));
+            assertThat(responseText).contains("TEST RESPONSE");
         } finally {
             
             // Uninstall the Test ParsedEntityReader

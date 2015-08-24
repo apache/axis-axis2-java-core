@@ -625,6 +625,11 @@
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>xml-truth</artifactId>
+                <version>${axiom.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ws.xmlschema</groupId>
                 <artifactId>xmlschema-core</artifactId>
                 <version>${xmlschema.version}</version>
