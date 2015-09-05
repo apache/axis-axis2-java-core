@@ -29,7 +29,6 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -104,7 +103,7 @@ public class MTOMSerializationTests extends TestCase {
         
         OMElement payload = createPayload();
         
-        SOAPFactory factory = new SOAP11Factory();
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = factory.createSOAPEnvelope();
         SOAPBody body = factory.createSOAPBody(env);
         
