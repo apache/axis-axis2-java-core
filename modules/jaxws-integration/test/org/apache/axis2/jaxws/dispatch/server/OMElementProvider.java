@@ -36,7 +36,6 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 
 /**
  * A Provider&lt;OMElement&gt; implementation used to test sending and 
@@ -68,7 +67,7 @@ public class OMElementProvider implements Provider<OMElement> {
 
         OMElement payload = createPayload();
         
-        SOAPFactory factory = new SOAP12Factory();
+        SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
         SOAPEnvelope env = factory.createSOAPEnvelope();
         SOAPBody body = factory.createSOAPBody(env);
         
