@@ -525,6 +525,12 @@
             <url>https://www.linkedin.com/pub/isuru-suriarachchi/a/58b/b69</url>
             <organization>Indiana University</organization>
         </developer>
+        <developer>
+            <name>Hiranya Jayathilaka</name>
+            <id>hiranya</id>
+            <email>hiranya AT apache.org</email>
+            <organization>UC Santa Barbara</organization>
+        </developer>
     </developers>
     <contributors>
         <contributor>
