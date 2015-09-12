@@ -342,6 +342,9 @@ public class Utils {
             for (int i = 0; i < urls.size(); i++) {
                 urllist[i] = (URL)urls.get(i);
             }
+            if (log.isDebugEnabled()) {
+                log.debug("Creating class loader with the following libraries: " + Arrays.asList(urllist));
+            }
             classLoader = (URLClassLoader)AccessController
                     .doPrivileged(new PrivilegedAction() {
                         public Object run() {
