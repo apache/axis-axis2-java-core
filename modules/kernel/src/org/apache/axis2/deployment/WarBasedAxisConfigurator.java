@@ -226,6 +226,10 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     }
                 }
                 if (repository != null) {
+                    // WEB-INF contains a lib folder, but we don't want to create a class loader that
+                    // attempts to load libraries from there (in particular with parent last as class
+                    // loading policy).
+                    axisConfig.setSystemClassLoader(Thread.currentThread().getContextClassLoader());
                     loadRepository(repository);
                     log.debug("loaded repository from /WEB-INF folder (unpacked war)");
                 }
@@ -235,6 +239,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 URL url = config.getServletContext().getResource("/WEB-INF/");
                 if (url != null) {
                     repository = url.toString();
+                    axisConfig.setSystemClassLoader(Thread.currentThread().getContextClassLoader());
                     loadRepositoryFromURL(url);
                     log.debug("loaded repository from /WEB-INF/ folder (URL)");
                 }
