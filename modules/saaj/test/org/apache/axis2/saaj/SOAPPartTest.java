@@ -20,7 +20,6 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
