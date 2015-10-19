@@ -31,7 +31,7 @@ public class DirectoryResourceLocation extends AbstractUrlResourceLocation {
     private Manifest manifest;
 
     public DirectoryResourceLocation(File baseDir) throws MalformedURLException {
-        super(baseDir.toURL());
+        super(baseDir.toURI().toURL());
         this.baseDir = baseDir;
     }
 

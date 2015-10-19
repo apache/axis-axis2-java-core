@@ -28,6 +28,8 @@ import org.apache.commons.io.FileUtils;
 
 public class JarFileClassLoaderTest extends TestCase {
     private File tmpDir;
+    private File root;
+    private File dirWithSpaces;
     
     @Override
     protected void setUp() throws Exception {
@@ -39,13 +41,17 @@ public class JarFileClassLoaderTest extends TestCase {
         // outside
         // root/a
         // root/dir/b
+        // dir with spaces
         FileUtils.touch(new File(tmpDir, "outside"));
-        File root = new File(tmpDir, "root");
+        root = new File(tmpDir, "root");
         root.mkdir();
         FileUtils.touch(new File(root, "a"));
         File dir = new File(root, "dir");
         dir.mkdir();
         FileUtils.touch(new File(dir, "b"));
+        dirWithSpaces = new File(tmpDir, "dir with spaces");
+        dirWithSpaces.mkdir();
+        FileUtils.touch(new File(dirWithSpaces, "test"));
     }
 
     @Override
@@ -66,9 +72,16 @@ public class JarFileClassLoaderTest extends TestCase {
      * @throws Exception
      */
     public void testConfinement() throws Exception {
-        ClassLoader cl = new JarFileClassLoader(new URL[] { new File(tmpDir, "root").toURL() });
+        ClassLoader cl = new JarFileClassLoader(new URL[] { root.toURI().toURL() });
         assertNull(cl.getResource("../outside"));
         assertNotNull(cl.getResource("a"));
         assertNotNull(cl.getResource("dir/b"));
+    }
+    
+    public void testClasspathElementWithSpaces() throws Exception {
+        ClassLoader cl = new JarFileClassLoader(new URL[] { dirWithSpaces.toURI().toURL() });
+        URL test = cl.getResource("test");
+        assertNotNull(test);
+        assertEquals(new File(dirWithSpaces, "test"), new File(test.toURI()));
     }
 }

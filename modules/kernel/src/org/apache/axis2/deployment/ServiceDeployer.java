@@ -83,7 +83,7 @@ public class ServiceDeployer extends AbstractDeployer {
                     deploymentFileData.getAbsolutePath(), deploymentFileData,
                     serviceGroup, isDirectory, wsdlservice,
                     configCtx);
-            URL location = deploymentFileData.getFile().toURL();
+            URL location = deploymentFileData.getFile().toURI().toURL();
 
             // Add the hierarchical path to the service group
             if (location != null) {

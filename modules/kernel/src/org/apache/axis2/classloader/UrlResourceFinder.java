@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -185,10 +186,13 @@ public class UrlResourceFinder implements ResourceFinder {
                     } catch (FileNotFoundException e) {
                         // if this is a file URL, the file doesn't exist yet... watch to see if it appears later
                         if ("file".equals(url.getProtocol())) {
-                            File file = new File(url.getPath());
-                            watchedFiles.add(file);
-                            continue;
-
+                            try {
+                                File file = new File(url.toURI());
+                                watchedFiles.add(file);
+                                continue;
+                            } catch (URISyntaxException ex) {
+                                // Ignore; we should never get here
+                            }
                         }
                     } catch (IOException ignored) {
                         // can't seem to open the file... this is most likely a bad jar file
@@ -226,7 +230,12 @@ public class UrlResourceFinder implements ResourceFinder {
             throw new UnsupportedOperationException("Only local file jars are supported " + url);
         }
 
-        File file = new File(url.getPath());
+        File file;
+        try {
+            file = new File(url.toURI());
+        } catch (URISyntaxException ex) {
+            throw new IOException("Invalid file URL");
+        }
         if (!file.exists()) {
             throw new FileNotFoundException(file.getAbsolutePath());
         }

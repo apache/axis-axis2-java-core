@@ -66,7 +66,7 @@ public class JarFileUrlConnection extends JarURLConnection {
         this.url = url;
         this.jarFile = jarFile;
         this.jarEntry = jarEntry;
-        jarFileUrl = new File(jarFile.getName()).toURL();
+        jarFileUrl = new File(jarFile.getName()).toURI().toURL();
     }
 
     public JarFile getJarFile() throws IOException {
@@ -125,7 +125,7 @@ public class JarFileUrlConnection extends JarURLConnection {
     }
 
     public Permission getPermission() throws IOException {
-        URL jarFileUrl = new File(jarFile.getName()).toURL();
+        URL jarFileUrl = new File(jarFile.getName()).toURI().toURL();
         return jarFileUrl.openConnection().getPermission();
     }
 
