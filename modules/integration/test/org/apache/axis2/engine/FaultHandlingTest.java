@@ -198,8 +198,8 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
 
             sender.sendReceive(payload).toString();
         } catch (AxisFault axisFault) {
-            assertTrue(axisFault.getFaultCodeElement().toString()
-                    .indexOf(FaultHandler.M_FAULT_EXCEPTION) > -1);
+            assertEquals(FaultHandler.FAULT_EXCEPTION, axisFault.getFaultCode());
+            assertEquals(FaultHandler.FAULT_EXCEPTION, axisFault.getFaultCodeElement().getValueAsQName());
             assertTrue(axisFault.getFaultDetailElement().toString()
                     .indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
             assertTrue(axisFault.getFaultReasonElement().toString()

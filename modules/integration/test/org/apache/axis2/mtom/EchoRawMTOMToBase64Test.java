@@ -103,7 +103,7 @@ public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
         return rpcWrapEle;
     }
 
-    public void testEchoXMLASync() throws Exception {
+    public void _testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
         Options clientOptions = new Options();
         clientOptions.setTo(targetEPR);
