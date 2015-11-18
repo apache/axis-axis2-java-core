@@ -33,6 +33,9 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+
+import static com.google.common.truth.Truth.assertThat;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -83,8 +86,8 @@ public class HandlerPrePostInvokerTests extends TestCase {
         HandlerPostInvokerFactory postFact = (HandlerPostInvokerFactory)FactoryRegistry.getFactory(HandlerPostInvokerFactory.class);
         HandlerPreInvoker preInvoker = preFact.createHandlerPreInvoker();
         HandlerPostInvoker postInvoker = postFact.createHandlerPostInvoker();
-        assertTrue("preInvoker should be instanceof " + org.apache.axis2.jaxws.handler.impl.HandlerPreInvokerImpl.class.getCanonicalName(), preInvoker instanceof org.apache.axis2.jaxws.handler.impl.HandlerPreInvokerImpl);
-        assertTrue("postInvoker should be instanceof " + org.apache.axis2.jaxws.handler.impl.HandlerPostInvokerImpl.class.getCanonicalName(), postInvoker instanceof org.apache.axis2.jaxws.handler.impl.HandlerPostInvokerImpl);
+        assertThat(preInvoker).named("preInvoker").isInstanceOf(org.apache.axis2.jaxws.handler.impl.HandlerPreInvokerImpl.class);
+        assertThat(postInvoker).named("postInvoker").isInstanceOf(org.apache.axis2.jaxws.handler.impl.HandlerPostInvokerImpl.class);
     }
     
     /**
