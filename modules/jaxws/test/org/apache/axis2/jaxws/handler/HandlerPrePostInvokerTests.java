@@ -104,15 +104,11 @@ public class HandlerPrePostInvokerTests extends TestCase {
         HandlerChainProcessor processor =
                 new HandlerChainProcessor(handlers, Protocol.soap11);
         boolean success = true;
-        try {
-            // server-side incoming request
-            success = processor.processChain(mc.getMEPContext(),
-                                    HandlerChainProcessor.Direction.IN,
-                                    HandlerChainProcessor.MEP.REQUEST,
-                                    true);
-        } catch (Exception e) {
-            assertNull(e);  // should not get exception
-        }
+        // server-side incoming request
+        success = processor.processChain(mc.getMEPContext(),
+                                HandlerChainProcessor.Direction.IN,
+                                HandlerChainProcessor.MEP.REQUEST,
+                                true);
         
         assertTrue("processChain should have succeeded", success);
         assertTrue("preInvoker should have been called", preInvokerCalled);
@@ -130,15 +126,11 @@ public class HandlerPrePostInvokerTests extends TestCase {
         HandlerChainProcessor processor =
                 new HandlerChainProcessor(handlers, Protocol.soap11);
         boolean success = true;
-        try {
-            // server-side incoming request
-            success = processor.processChain(mc.getMEPContext(),
-                                    HandlerChainProcessor.Direction.IN,
-                                    HandlerChainProcessor.MEP.REQUEST,
-                                    true);
-        } catch (Exception e) {
-            assertNull(e);  // should not get exception
-        }
+        // server-side incoming request
+        success = processor.processChain(mc.getMEPContext(),
+                                HandlerChainProcessor.Direction.IN,
+                                HandlerChainProcessor.MEP.REQUEST,
+                                true);
         
         assertTrue("processChain should have succeeded", success);
         assertTrue("postInvoker should have been called", postInvokerCalled);
