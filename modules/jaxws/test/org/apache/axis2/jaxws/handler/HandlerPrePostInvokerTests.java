@@ -95,26 +95,32 @@ public class HandlerPrePostInvokerTests extends TestCase {
      *
      */
     public void testFactoryPrePost() {
-        
-        FactoryRegistry.setFactory(HandlerPreInvokerFactory.class, new HandlerPreInvokerFactoryImpl());
-        FactoryRegistry.setFactory(HandlerPostInvokerFactory.class, new HandlerPostInvokerFactoryImpl());
-        
-        ArrayList<Handler> handlers = new ArrayList<Handler>();
-        handlers.add(new SOAPHandler1());
-        HandlerChainProcessor processor =
-                new HandlerChainProcessor(handlers, Protocol.soap11);
-        boolean success = true;
-        // server-side incoming request
-        success = processor.processChain(mc.getMEPContext(),
-                                HandlerChainProcessor.Direction.IN,
-                                HandlerChainProcessor.MEP.REQUEST,
-                                true);
-        
-        assertTrue("processChain should have succeeded", success);
-        assertTrue("preInvoker should have been called", preInvokerCalled);
-        assertTrue("postInvoker should have been called", postInvokerCalled);
-        assertTrue("Handler did not access message but messageAccessed property is true.", !messageAccessed);
-
+        HandlerPreInvokerFactory orgHandlerPreInvokerFactory = (HandlerPreInvokerFactory)FactoryRegistry.getFactory(HandlerPreInvokerFactory.class);
+        HandlerPostInvokerFactory orgHandlerPostInvokerFactory = (HandlerPostInvokerFactory)FactoryRegistry.getFactory(HandlerPostInvokerFactory.class);
+        try {
+            FactoryRegistry.setFactory(HandlerPreInvokerFactory.class, new HandlerPreInvokerFactoryImpl());
+            FactoryRegistry.setFactory(HandlerPostInvokerFactory.class, new HandlerPostInvokerFactoryImpl());
+            
+            ArrayList<Handler> handlers = new ArrayList<Handler>();
+            handlers.add(new SOAPHandler1());
+            HandlerChainProcessor processor =
+                    new HandlerChainProcessor(handlers, Protocol.soap11);
+            boolean success = true;
+            // server-side incoming request
+            success = processor.processChain(mc.getMEPContext(),
+                                    HandlerChainProcessor.Direction.IN,
+                                    HandlerChainProcessor.MEP.REQUEST,
+                                    true);
+            
+            assertTrue("processChain should have succeeded", success);
+            assertTrue("preInvoker should have been called", preInvokerCalled);
+            assertTrue("postInvoker should have been called", postInvokerCalled);
+            assertTrue("Handler did not access message but messageAccessed property is true.", !messageAccessed);
+        } finally {
+            // Reset factory state to avoid side effects visible to other tests
+            FactoryRegistry.setFactory(HandlerPreInvokerFactory.class, orgHandlerPreInvokerFactory);
+            FactoryRegistry.setFactory(HandlerPostInvokerFactory.class, orgHandlerPostInvokerFactory);
+        }
     }
 
     public void testPostInvokerMessageAccessed() {
