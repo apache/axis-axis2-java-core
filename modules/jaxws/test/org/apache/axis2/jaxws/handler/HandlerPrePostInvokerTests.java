@@ -124,25 +124,27 @@ public class HandlerPrePostInvokerTests extends TestCase {
     }
 
     public void testPostInvokerMessageAccessed() {
-        
-        FactoryRegistry.setFactory(HandlerPostInvokerFactory.class, new HandlerPostInvokerFactoryImpl());
-        
-        ArrayList<Handler> handlers = new ArrayList<Handler>();
-        handlers.add(new SOAPHandlerGetsMessage());
-        HandlerChainProcessor processor =
-                new HandlerChainProcessor(handlers, Protocol.soap11);
-        boolean success = true;
-        // server-side incoming request
-        success = processor.processChain(mc.getMEPContext(),
-                                HandlerChainProcessor.Direction.IN,
-                                HandlerChainProcessor.MEP.REQUEST,
-                                true);
-        
-        assertTrue("processChain should have succeeded", success);
-        assertTrue("postInvoker should have been called", postInvokerCalled);
-        assertTrue("Handler did access message but messageAccessed property is false.", messageAccessed);
-
-
+        HandlerPostInvokerFactory orgHandlerPostInvokerFactory = (HandlerPostInvokerFactory)FactoryRegistry.getFactory(HandlerPostInvokerFactory.class);
+        try {
+            FactoryRegistry.setFactory(HandlerPostInvokerFactory.class, new HandlerPostInvokerFactoryImpl());
+            
+            ArrayList<Handler> handlers = new ArrayList<Handler>();
+            handlers.add(new SOAPHandlerGetsMessage());
+            HandlerChainProcessor processor =
+                    new HandlerChainProcessor(handlers, Protocol.soap11);
+            boolean success = true;
+            // server-side incoming request
+            success = processor.processChain(mc.getMEPContext(),
+                                    HandlerChainProcessor.Direction.IN,
+                                    HandlerChainProcessor.MEP.REQUEST,
+                                    true);
+            
+            assertTrue("processChain should have succeeded", success);
+            assertTrue("postInvoker should have been called", postInvokerCalled);
+            assertTrue("Handler did access message but messageAccessed property is false.", messageAccessed);
+        } finally {
+            FactoryRegistry.setFactory(HandlerPostInvokerFactory.class, orgHandlerPostInvokerFactory);
+        }
     }
 
     /*****************************************
