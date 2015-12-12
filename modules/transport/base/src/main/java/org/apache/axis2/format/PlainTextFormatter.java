@@ -24,7 +24,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axis2.transport.base.BaseConstants;
 
 import java.io.ByteArrayOutputStream;
@@ -35,7 +34,6 @@ import java.io.Writer;
 import java.net.URL;
 
 import javax.activation.DataSource;
-import javax.xml.stream.XMLStreamException;
 
 public class PlainTextFormatter implements MessageFormatterEx {
 
@@ -50,12 +48,10 @@ public class PlainTextFormatter implements MessageFormatterEx {
         if (BaseConstants.DEFAULT_TEXT_WRAPPER.equals(textElt.getQName())) {
             try {
                 Writer out = new OutputStreamWriter(outputStream, format.getCharSetEncoding());
-                ElementHelper.writeTextTo(textElt, out, preserve);
+                textElt.writeTextTo(out, preserve);
                 out.flush();
             } catch (IOException e) {
                 throw new AxisFault("Error writing text message to stream", e);
-            } catch (XMLStreamException e) {
-                throw new AxisFault("Error extracting the text payload from the message", e);
             }
         }
     }

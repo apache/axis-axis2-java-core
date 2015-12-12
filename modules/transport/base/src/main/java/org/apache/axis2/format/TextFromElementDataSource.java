@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import javax.activation.DataSource;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.ElementHelper;
 import org.apache.commons.io.input.ReaderInputStream;
 
 /**
@@ -57,7 +56,7 @@ public class TextFromElementDataSource implements DataSource {
     }
 
     public InputStream getInputStream() throws IOException {
-        return new ReaderInputStream(ElementHelper.getTextAsStream(element, true), charset);
+        return new ReaderInputStream(element.getTextAsStream(true), charset);
     }
 
     public OutputStream getOutputStream() throws IOException {
