@@ -93,31 +93,12 @@
         <module>modules/transport/testkit</module>
         <module>modules/transport/udp</module>
         <module>modules/transport/xmpp</module>
+        <module>modules/distribution</module>
+        <module>modules/samples</module>
     </modules>
     <profiles>
         <profile>
-            <!-- This profile needs to be activated when doing the release:prepare
-                 (by adding -Peverything) to make sure that the release plugin updates
-                 the version numbers of all relevant submodules. It must contain
-                 all modules not built by default, i.e. the set of modules used
-                 by this profile must be the union of the module sets of all
-                 other profiles. -->
-            <id>everything</id>
-            <modules>
-                <module>modules/distribution</module>
-                <module>modules/samples/java_first_jaxws</module>
-                <module>modules/samples/jaxws-addressbook</module>
-                <module>modules/samples/jaxws-calculator</module>
-                <module>modules/samples/jaxws-interop</module>
-                <module>modules/samples/jaxws-samples</module>
-                <module>modules/samples/jaxws-version</module>
-            </modules>
-        </profile>
-        <profile>
             <id>apache-release</id>
-            <modules>
-                <module>modules/distribution</module>
-            </modules>
             <build>
                 <plugins>
                     <plugin>

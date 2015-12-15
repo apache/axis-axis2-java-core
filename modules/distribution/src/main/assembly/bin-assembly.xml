@@ -124,6 +124,7 @@
             <directory>../../modules/samples</directory>
             <outputDirectory>samples</outputDirectory>
             <includes>
+                <include>pom.xml</include>
                 <include>databinding/**/*</include>
                 <include>faulthandling/**/*</include>
                 <include>jaxws-calculator/**/*</include>
