@@ -143,32 +143,6 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <!-- Configure an additional execution. The configuration
-                             is the same as the one specified together with the execution
-                             in the pre-site phase.  -->
-                        <executions>
-                            <execution>
-                                <id>distribution-javadoc</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>aggregate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-site-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>site</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
                             <execution>
@@ -182,18 +156,6 @@
                                         <goal>single</goal>
                                     </goals>
                                     <skipAssembly>true</skipAssembly>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>package-other-distributions</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/main/assembly/doc.xml</descriptor>
-                                    </descriptors>
                                 </configuration>
                             </execution>
                             <execution>
@@ -631,24 +593,6 @@
                             <resourceBundles>
                                 <resourceBundle>org.apache.axis2:axis2-resource-bundle:${project.version}</resourceBundle>
                             </resourceBundles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>package-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/assembly/jar.xml</descriptor>
-                            </descriptors>
-                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>
