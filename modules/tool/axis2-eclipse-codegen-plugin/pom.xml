@@ -201,8 +201,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>extract-bundle-symbolicname-and-version</id>
@@ -211,13 +211,15 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                import java.util.jar.Manifest
-                                
-                                Manifest manifest = new Manifest(new FileInputStream(new File(project.basedir, "META-INF/MANIFEST.MF")))
-                                project.properties["bundle-symbolic-name"] = manifest.mainAttributes.getValue("Bundle-SymbolicName").find("^[^;]*") 
-                                project.properties["bundle-version"] = manifest.mainAttributes.getValue("Bundle-Version")
-                            </source>
+                            <scripts>
+                                <script>
+                                    import java.util.jar.Manifest
+                                    
+                                    Manifest manifest = new Manifest(new FileInputStream(new File(project.basedir, "META-INF/MANIFEST.MF")))
+                                    project.properties["bundle-symbolic-name"] = manifest.mainAttributes.getValue("Bundle-SymbolicName").find("^[^;]*") 
+                                    project.properties["bundle-version"] = manifest.mainAttributes.getValue("Bundle-Version")
+                                </script>
+                            </scripts>
                         </configuration>
                     </execution>
                 </executions>

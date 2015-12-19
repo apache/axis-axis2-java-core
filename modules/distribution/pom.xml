@@ -289,8 +289,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>generate-timestamp</id>
@@ -299,11 +299,13 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                import java.util.Date 
-                                import java.text.MessageFormat 
-                                project.properties['buildTimestamp'] = MessageFormat.format("{0,date,dd-MM-yyyy}", new Date())
-                            </source>
+                            <scripts>
+                                <script>
+                                    import java.util.Date 
+                                    import java.text.MessageFormat 
+                                    project.properties['buildTimestamp'] = MessageFormat.format("{0,date,dd-MM-yyyy}", new Date())
+                                </script>
+                            </scripts>
                         </configuration>
                     </execution>
                 </executions>
