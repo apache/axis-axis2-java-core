@@ -33,7 +33,6 @@ supported by Axis2.</p>
 				<tr>
 					<th scope="col">Name</th>
 					<th scope="col">Description</th>
-					<th scope="col">Downloads</th>
 				</tr>
 				<tr>
 					<td>
@@ -44,9 +43,6 @@ Tool- Command Line &amp; Ant Task</a>
 implemented by the WSDL2Code class and WSDL2Java class. One can
 choose to run the main classes directly or use one of the scripts
 to run the WSDL2Code and WSDL2Java appropriately.</td>
-					<td>This tool is bundled with the Axis2 Standard Binary
-Distribution found <a href="../download.cgi#std-bin">here</a>
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -57,11 +53,6 @@ Wizard - Eclipse Plug-in</a>
 an important tool that allows the generation of service archives
 ("aar" file or a "jar" files) that can be deployed as a Web
 services to the Axis2.</td>
-					<td>
-						<a href="http://www.apache.org/dyn/mirrors/mirrors.cgi/axis/axis2/java/core/${axis2_version}/axis2-eclipse-service-plugin-${axis2_version}.zip">zip</a> |
-						<a href="http://www.apache.org/dist/axis/axis2/java/core/${axis2_version}/axis2-eclipse-service-plugin-${axis2_version}.zip.md5">MD5</a> |
-						<a href="http://www.apache.org/dist/axis/axis2/java/core/${axis2_version}/axis2-eclipse-service-plugin-${axis2_version}.zip.asc">PGP</a>
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -71,11 +62,6 @@ Generator Wizard - Eclipse Plug-in</a>
 					<td>Axis2 code generator comes built-in with an <a href="http://www.eclipse.org/">eclipse</a> plug-in. This can be used to
 generate a WSDL file from a java class (Java2WSDL) and/or a java
 class file from a WSDL (WSDL2Java)</td>
-					<td>
-						<a href="http://www.apache.org/dyn/mirrors/mirrors.cgi/axis/axis2/java/core/${axis2_version}/axis2-eclipse-codegen-plugin-${axis2_version}.zip">zip</a> |
-						<a href="http://www.apache.org/dist/axis/axis2/java/core/${axis2_version}/axis2-eclipse-codegen-plugin-${axis2_version}.zip.md5">MD5</a> |
-						<a href="http://www.apache.org/dist/axis/axis2/java/core/${axis2_version}/axis2-eclipse-codegen-plugin-${axis2_version}.zip.asc">PGP</a>
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -85,11 +71,6 @@ Generator Wizard - IntelliJ IDEA Plug-in</a>
 					<td>Using this tool one can create service archives that can be
 deployed as a Web services to the Axis2, and also generate a java
 class file from a WSDL file (WSDL2Java).</td>
-					<td>
-                        <a href="http://www.apache.org/dyn/mirrors/mirrors.cgi/axis/axis2/java/core/${axis2_version}/axis2-idea-plugin-${axis2_version}.zip">zip</a> |
-                        <a href="http://www.apache.org/dist/axis/axis2/java/core/${axis2_version}/axis2-idea-plugin-${axis2_version}.zip.md5">MD5</a> |
-                        <a href="http://www.apache.org/dist/axis/axis2/java/core/${axis2_version}/axis2-idea-plugin-${axis2_version}.zip.asc">PGP</a>
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -97,14 +78,12 @@ class file from a WSDL file (WSDL2Java).</td>
 Plug-in</a>
 					</td>
 					<td>This plugin generates an Axis2 service file (AAR file).</td>
-					<td>N/A <a href="#note1">[1]</a></td>
 				</tr>
 				<tr>
 					<td>
 						Maven2 MAR Plug-in
 					</td>
 					<td>This plugin generates an Axis2 module archive file (MAR file).</td>
-					<td>N/A <a href="#note1">[1]</a></td>
 				</tr>
 				<tr>
 					<td>
@@ -115,7 +94,6 @@ Java2WSDL Plug-in</a>
 						<p>This plugin takes as input a Java class and generates a WSDL,
 which describes a Web service for invoking the classes methods.</p>
 					</td>
-					<td>N/A <a href="#note1">[1]</a></td>
 				</tr>
 				<tr>
 					<td>
@@ -127,10 +105,12 @@ WSDL2Code Plug-in</a>
 server stubs for calling or implementing a Web service matching the
 WSDL.</p>
 					</td>
-					<td>N/A <a href="#note1">[1]</a></td>
 				</tr>
 			</tbody>
 		</table>
-		<p><a name="note1"/>[1] All Maven plugins are available from the Maven central repository and need not be downloaded separately.</p>
+		<p>The command line tools and Ant tasks are bundled with the Axis2 binary distribution.
+		The Eclipse and IntelliJ IDEA plugins are shipped as separate archives. These files can
+		be downloaded <a href="download.html">here</a>.
+		All Maven plugins are available from the Maven central repository and need not be downloaded separately.</p>
 	</body>
 </document>

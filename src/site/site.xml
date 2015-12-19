@@ -43,9 +43,12 @@
 
         <menu name="Axis2/Java">
             <item name="Home" href="index.html" />
-        </menu>
-        <menu name="Downloads">
-            <item name="Releases" href="download.cgi" />
+            <item name="Downloads" href="download.html" />
+            <item name="Release Notes" href="javascript:void(0)">
+                <item name="1.6.1" href="release-notes/1.6.1.html"/>
+                <item name="1.6.2" href="release-notes/1.6.2.html"/>
+                <item name="1.6.3" href="release-notes/1.6.3.html"/>
+            </item>
             <item name="Modules" href="modules/index.html" />
             <item name="Tools" href="tools/index.html" />
         </menu>

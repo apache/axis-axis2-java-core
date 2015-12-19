@@ -40,20 +40,14 @@ Axis2.</p>
 <td><a href="addressing/index.html">Addressing</a></td>
 <td>This is an implementation of WS-Addressing submission version
 (2004-08) and WS-Addressing 2005-08 versions.</td>
-<td>Bundled with the <a href="../download.cgi#std-bin">Standard Binary Distribution</a>.</td>
+<td>Bundled with the <a href="../download.html">Standard Binary Distribution</a>.</td>
 </tr>
 <tr>
 <td><a href="../docs/soapmonitor-module.html">SOAP Monitor</a></td>
 <td>SOAP Monitor utility provides a way for Web services developers
 to monitor the SOAP messages being sent/received without requiring
 any special configuration or restarting of the server</td>
-<td>Bundled with the <a href="../download.cgi#std-bin">Standard Binary Distribution</a>.</td>
-</tr>
-<tr>
-<td><a href=
-"http://ws.apache.org/sandesha/sandesha2/index.html">Sandesha2</a></td>
-<td>An implementation of WS-RM specification February 2005</td>
-<td><a href="http://axis.apache.org/axis2/java/sandesha/">http://axis.apache.org/axis2/java/sandesha/</a></td>
+<td>Bundled with the <a href="../download.html">Standard Binary Distribution</a>.</td>
 </tr>
 <tr>
 <td><a href="http://ws.apache.org/rampart/">Rampart</a></td>
