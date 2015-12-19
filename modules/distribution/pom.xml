@@ -424,7 +424,7 @@
                         <configuration>
                             <projectsDirectory>${project.build.directory}/axis2-${project.version}/samples</projectsDirectory>
                             <pomIncludes>
-                                <pomInclude>*/pom.xml</pomInclude>
+                                <pomInclude>pom.xml</pomInclude>
                             </pomIncludes>
                             <streamLogs>true</streamLogs>
                         </configuration>

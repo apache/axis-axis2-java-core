@@ -19,10 +19,13 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.axis2.samples</groupId>
+    <parent>
+        <groupId>org.apache.axis2.examples</groupId>
+        <artifactId>samples</artifactId>
+        <version>1.6.4-SNAPSHOT</version>
+    </parent>
     <artifactId>jaxws-calculator</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.4-SNAPSHOT</version>
     <name>JAXWS Calculator Service</name>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -80,14 +83,4 @@
             <version>1.6.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <id>apache.snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>http://repository.apache.org/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
 </project>
