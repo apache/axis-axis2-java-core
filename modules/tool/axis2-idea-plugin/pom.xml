@@ -199,10 +199,15 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <configuration>
-                            <createChecksum>true</createChecksum>
-                        </configuration>
+                        <groupId>net.ju-n.maven.plugins</groupId>
+                        <artifactId>checksum-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>artifacts</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
