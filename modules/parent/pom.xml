@@ -104,10 +104,6 @@
         <rhino.version>1.6R7</rhino.version>
         <servlet.api.version>2.3</servlet.api.version>
         <spring.version>2.5.1</spring.version>
-        <stax.api.version>1.0.1</stax.api.version>
-        <stax.impl.artifact>wstx-asl</stax.impl.artifact>
-        <stax.impl.groupid>org.codehaus.woodstox</stax.impl.groupid>
-        <stax.impl.version>3.2.9</stax.impl.version>
         <tomcat.version>6.0.16</tomcat.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
         <xalan.version>2.7.0</xalan.version>
@@ -633,17 +629,6 @@
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commons.codec.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${stax.impl.groupid}</groupId>
-                <artifactId>${stax.impl.artifact}</artifactId>
-                <version>${stax.impl.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>stax</groupId>
-                        <artifactId>stax-api</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
