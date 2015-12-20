@@ -920,12 +920,6 @@
 
     <profiles>
         <profile>
-            <id>java16</id>
-            <activation>
-                <jdk>1.6</jdk>
-            </activation>
-        </profile>
-        <profile>
             <id>apache-release</id>
             <build>
                 <plugins>
@@ -1091,6 +1085,10 @@
                         </goals>
                         <configuration>
                             <rules>
+                                <requireJavaVersion>
+                                    <!-- We require Java 7 for the build, but we enforce Java 5 compatibility using Animal Sniffer -->
+                                    <version>1.7.0</version>
+                                </requireJavaVersion>
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
                                     <banRepositories>true</banRepositories>
@@ -1110,6 +1108,27 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.14</version>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java15</artifactId>
+                        <version>1.0</version>
+                    </signature>
                 </configuration>
             </plugin>
             <plugin>
