@@ -134,29 +134,7 @@
                                     <skipAssembly>true</skipAssembly>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>prepare-dists</id>
-                                <!-- Must be done in the install phase after the checksum and signature for
-                                     the docs distribution has been generated. -->
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/main/assembly/dists.xml</descriptor>
-                                    </descriptors>
-                                    <!-- We can only prepare the distributions if they have been signed -->
-                                    <skipAssembly>${gpg.skip}</skipAssembly>
-                                </configuration>
-                            </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <configuration>
-                            <createChecksum>true</createChecksum>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
