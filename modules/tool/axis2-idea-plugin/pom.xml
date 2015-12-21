@@ -185,6 +185,7 @@
                             <descriptors>
                                 <descriptor>${pom.basedir}/idea-plugin-aseembly.xml</descriptor>
                             </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>
