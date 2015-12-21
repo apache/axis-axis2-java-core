@@ -23,9 +23,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
+        <artifactId>axis2</artifactId>
         <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../../parent/pom.xml</relativePath>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
     <name>Apache Axis2 - tool - Java2WSDL Maven Plugin</name>
