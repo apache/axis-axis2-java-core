@@ -102,26 +102,6 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>1.0-beta-1</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <!-- We need Maven 2.1 because the prepare-package phase
-                                             doesn't exist in Maven 2.0 -->
-                                        <requireMavenVersion>
-                                            <version>2.1.0</version>
-                                        </requireMavenVersion>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <artifactId>maven-source-plugin</artifactId>
                         <executions>
                             <execution>
@@ -1256,6 +1236,9 @@
                         </goals>
                         <configuration>
                             <rules>
+                                <requireMavenVersion>
+                                    <version>3.0.0</version>
+                                </requireMavenVersion>
                                 <requireJavaVersion>
                                     <!-- We require Java 7 for the build, but we enforce Java 5 compatibility using Animal Sniffer -->
                                     <version>1.7.0</version>
