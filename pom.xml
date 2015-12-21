@@ -1053,18 +1053,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <!-- Minimum required version here is 2.2-beta-4 because org.apache:apache:7 uses
-                         the runOnlyAtExecutionRoot parameter which is not supported in earlier
-                         versions. -->
-                    <version>2.2-beta-5</version>
-                    <configuration>
-                        <!-- Workaround for MASSEMBLY-422 / MASSEMBLY-449 -->
-                        <archiverConfig>
-                            <fileMode>420</fileMode> <!-- 420(dec) = 644(oct) -->
-                            <directoryMode>493</directoryMode> <!-- 493(dec) = 755(oct) -->
-                            <defaultDirectoryMode>493</defaultDirectoryMode>
-                        </archiverConfig>
-                    </configuration>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -1116,7 +1105,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1-beta-1</version>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
