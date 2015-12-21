@@ -294,7 +294,7 @@
                 <executions>
                     <execution>
                         <id>generate-timestamp</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
@@ -304,6 +304,7 @@
                                     import java.util.Date 
                                     import java.text.MessageFormat 
                                     project.properties['buildTimestamp'] = MessageFormat.format("{0,date,dd-MM-yyyy}", new Date())
+                                    project.properties['release_version'] = project.version.replaceAll("-SNAPSHOT", "")
                                 </script>
                             </scripts>
                         </configuration>
