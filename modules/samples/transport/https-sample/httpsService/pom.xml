@@ -16,17 +16,18 @@
     <parent>
         <artifactId>https-sample</artifactId>
         <groupId>org.apache.axis2.examples</groupId>
-        <version>1.6.3-SNAPSHOT</version>
+        <version>1.6.4-SNAPSHOT</version>
     </parent>
     <groupId>org.apache.axis2.examples</groupId>
     <artifactId>httpsService</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.4-SNAPSHOT</version>
     <packaging>war</packaging>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
+                <version>1.5</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
@@ -55,6 +56,7 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.26</version>
                 <configuration>
                     <webAppConfig>
                         <contextPath>/</contextPath>

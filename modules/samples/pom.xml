@@ -38,6 +38,8 @@
         <module>jaxws-interop</module>
         <module>jaxws-samples</module>
         <module>jaxws-version</module>
+        <module>transport/https-sample</module>
+        <module>transport/jms-sample</module>
     </modules>
     <build>
         <plugins>

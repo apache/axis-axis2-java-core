@@ -145,6 +145,7 @@
                 <include>quickstartxmlbeans/**/*</include>
                 <include>servicelifecycle/**/*</include>
                 <include>soapwithattachments/**/*</include>
+                <include>transport/**/*</include>
                 <include>userguide/**/*</include>
                 <include>version/**/*</include>
                 <include>wsdl/**/*</include>
