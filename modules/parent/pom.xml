@@ -784,10 +784,10 @@
                 <version>${maven.plugin.descriptor.version}</version>
             </dependency>
             <dependency>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-archetype-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-archetype-plugin</artifactId>
                 <version>${maven.archetype.plugin.version}</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
