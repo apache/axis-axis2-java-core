@@ -38,6 +38,7 @@
         <url>http://issues.apache.org/jira/browse/AXIS2</url>
     </issueManagement>
     <modules>
+        <module>apidocs</module>
         <module>modules/resource-bundle</module> <!-- Must be first in the list! -->
         <module>modules/adb</module>
         <module>modules/adb-codegen</module>
@@ -482,6 +483,12 @@
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk</developerConnection>
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk</url>
     </scm>
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging</url>
+        </site>
+    </distributionManagement>
     <properties>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
@@ -495,7 +502,7 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.10.3</version>
                     <configuration>
                         <reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
                         <destDir>api</destDir>
@@ -546,18 +553,6 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>site-javadoc</id>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
@@ -579,6 +574,11 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>1.1</version>
             </plugin>
         </plugins>
     </build>
