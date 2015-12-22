@@ -19,12 +19,10 @@
   -->
 
 <project name="Apache Axis2">
-    <!-- Explicitly set the skin to avoid the issue described in MNG-3139,
-         which may occur sporadically -->
     <skin>
         <groupId>org.apache.maven.skins</groupId>
-        <artifactId>maven-default-skin</artifactId>
-        <version>1.0</version>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.4</version>
     </skin>
     <bannerLeft>
         <name>Apache Axis2</name>
