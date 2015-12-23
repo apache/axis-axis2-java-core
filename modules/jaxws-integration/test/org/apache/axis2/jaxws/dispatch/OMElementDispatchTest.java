@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -390,14 +391,14 @@ public class OMElementDispatchTest extends AbstractTestCase {
      * inserted to simulate getting a response from the Parser.
      */
     public class ParsedEntityReaderTest implements ParsedEntityReader {
-        int count =0;
+        private final AtomicInteger count = new AtomicInteger();
+        
         public boolean isParsedEntityStreamAvailable() {
             return true;
         }
 
         public InputStream readParsedEntityStream(XMLStreamReader reader) {
-            count++;
-            if (count == 2) {
+            if (count.incrementAndGet() == 2) {
                 return new ByteArrayInputStream(testResponse.getBytes()); 
             } else  {
                 return null;
