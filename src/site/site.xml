@@ -19,12 +19,10 @@
   -->
 
 <project name="Apache Axis2">
-    <!-- Explicitly set the skin to avoid the issue described in MNG-3139,
-         which may occur sporadically -->
     <skin>
         <groupId>org.apache.maven.skins</groupId>
-        <artifactId>maven-default-skin</artifactId>
-        <version>1.0</version>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.4</version>
     </skin>
     <bannerLeft>
         <name>Apache Axis2</name>
@@ -36,10 +34,10 @@
         <href>http://axis.apache.org/axis2/java/core/</href>
     </bannerRight>
     <body>
-        <links>
+        <breadcrumbs>
+            <item name="Apache" href="http://www.apache.org" />
             <item name="Axis2/Java" href="index.html" />
-            <item name="Apache    " href="http://www.apache.org" />
-        </links>
+        </breadcrumbs>
 
         <menu name="Axis2/Java">
             <item name="Home" href="index.html" />
@@ -84,6 +82,8 @@
             <item name="Source Code"
                   href="http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/" />
             <item name="Acknowledgements" href="thanks.html" />
+        </menu>
+        <menu name="Apache" inherit="bottom">
             <item name="License"
                   href="http://www.apache.org/licenses/LICENSE-2.0.html" />
             <item name="Sponsorship" href="http://www.apache.org/foundation/sponsorship.html"/>
