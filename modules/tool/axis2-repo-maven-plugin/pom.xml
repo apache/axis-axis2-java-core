@@ -27,9 +27,10 @@
     </parent>
     <artifactId>axis2-repo-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Apache Axis2 - tool - Repository Maven Plugin</name>
+    <name>axis2-repo-maven-plugin</name>
     <description>
-        A Maven 2 plugin for creating Axis 2 repositories from project dependencies
+        axis2-repo-maven-plugin is a Maven plugin that creates Axis2 repositories from project dependencies.
+        It supports both AAR and MAR files.
     </description>
     <dependencies>
         <dependency>
@@ -46,12 +47,18 @@
             <version>1.2</version>
         </dependency>
     </dependencies>
-    <url>http://axis.apache.org/axis2/java/core/</url>
+    <url>http://axis.apache.org/axis2/java/core/tools/maven-plugins/axis2-repo-maven-plugin/</url>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-repo-maven-plugin</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-repo-maven-plugin</developerConnection>
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/tool/axis2-repo-maven-plugin</url>
     </scm>
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging/tools/maven-plugins/axis2-repo-maven-plugin</url>
+        </site>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>
@@ -80,9 +87,18 @@
     <reporting>
         <plugins>
             <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>2.6</version>
             </plugin>
         </plugins>
     </reporting>
