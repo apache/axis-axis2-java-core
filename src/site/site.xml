@@ -67,7 +67,7 @@
             <item name="Articles" href="articles.html" />
             <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2/" />
             <item name="Reference Library" href="refLib.html" />
-            <item name="Online Java Docs" href="api/index.html" />
+            <item name="Online Java Docs" href="apidocs/index.html" />
         </menu>
         <menu name="Get Involved">
             <item name="Overview" href="overview.html" />
