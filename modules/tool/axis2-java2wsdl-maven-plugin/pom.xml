@@ -107,4 +107,16 @@
             <artifactId>maven-plugin-testing-harness</artifactId>
         </dependency>
     </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports/>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

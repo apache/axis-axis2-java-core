@@ -115,4 +115,16 @@
             <email>john.pfeifer@hnpsolutions.com</email>
         </contributor>
     </contributors>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports/>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
