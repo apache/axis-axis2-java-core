@@ -175,9 +175,10 @@ In order to prepare the release artifacts for vote, execute the following steps:
         mvn release:prepare
 
     When asked for a tag name, accept the default value (in the following format: `vX.Y.Z`).
-    The execution of the `release:prepare` goal may occasionally fail for users in
-    locations that use the EU Subversion server. If this happens,
-    wait for a minute (so that the EU server can catch up with its master) and simply rerun the command.
+    The execution of the `release:prepare` goal may occasionally fail because `svn.apache.org`
+    resolves to one of the geolocated SVN mirrors and there is a propagation delay between
+    the master and these mirrors. If this happens,
+    wait for a minute (so that the mirrors can catch up with the master) and simply rerun the command.
     It will continue where the error occurred.
 
 2.  Perform the release using the following command:
@@ -201,6 +202,10 @@ In order to prepare the release artifacts for vote, execute the following steps:
 
     Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there
     are no unexpected changes to the site. Then commit the changes.
+    Note that this may fail because of [INFRA-11007](https://issues.apache.org/jira/browse/INFRA-11007).
+    In this case, switch to the Subversion master using the following command before trying to commit again:
+
+        svn switch --relocate https://svn.apache.org/ https://svn-master.apache.org/
 
 7.  Start the release vote by sending a mail to `java-dev@axis.apache.org`.
     The mail should mention the following things:
