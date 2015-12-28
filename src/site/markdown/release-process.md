@@ -97,38 +97,24 @@ Performing a release
 
 Verify that the code meets the basic requirements for being releasable:
 
-1.  Check the consistency between the metadata in `pom.xml` and `modules/parent/pom.xml`.
-    Since the root and parent POMs are different, some of the metadata is duplicated and needs to be synchronized
-    manually. This includes the mailing list addresses, issue tracker information, SCM location, etc.
-
-2.  Check that the set of legal (`legal/*.LICENSE`) files corresponds to the set of third party
+1.  Check that the set of legal (`legal/*.LICENSE`) files corresponds to the set of third party
     JARs included in the binary distribution.
 
-3.  Check that the `apache-release` profile works correctly and produces the required distributions.
+2.  Check that the `apache-release` profile works correctly and produces the required distributions.
     The profile can be executed as follows:
     
-        mvn clean install -Papache-release -Dmaven.test.skip=true
+        mvn clean install -Papache-release
 
-4.  Check that the source distribution is buildable.
+3.  Check that the source distribution is buildable.
 
-5.  Check that the source tree is buildable with an empty local Maven repository.
+4.  Check that the source tree is buildable with an empty local Maven repository.
 
 If any problems are detected, they should be fixed on the trunk (except for issues specific to the
 release branch) and then merged to the release branch.
 
-Next update the relevant documents for the new release:
-
-1.  Update the `release-notes.html` file on the release branch (since the content of this file is replaced
-    with every release, there is no need to keep it in sync with the trunk, except if the template changes).
-
-2.  Update the `src/site/xdoc/index.xml` file with a description of the release and add an entry for
-    the release in `src/site/xdoc/download.xml`. To avoid extra work for the RM doing the next major release,
-    these changes should be done on the trunk first and then merged to the release branch.
-    If the release is a maintenance release, then the previous release from that branch must be prepared
-    for archiving by changing the links in the download page. This is necessary to conform to the
-    [release archiving policy](http://www.apache.org/dev/release.html#when-to-archive). If the release
-    is a major release, then this should be done with the release from the oldest branch, unless it is expected
-    that users will still continue to download and use that release.
+Next update the release note found under `src/site/markdown/release-notes`. To avoid extra work for
+the RM doing the next major release, these changes should be done on the trunk first and then merged
+to the release branch.
 
 ### Pre-requisites
 
@@ -221,21 +207,18 @@ If the vote passes, execute the following steps:
     [here](https://docs.sonatype.org/display/Repository/Releasing+a+Staging+Repository)
     for detailed instructions for this step.
 
-2.  Login to `people.apache.org` and copy the distributions (including the checksums and
-    signatures) to `/www/www.apache.org/dist/axis/axis2/java/core/`. If you followed the
-    steps described above, then you should already have everything that is needed in your `public_html`
-    folder and you only need to copy the `X.Y.Z` folder to the right location. Please execute the
-    copy with umask 0002 and check that the files and directories have the right permissions (write access for the
-    `axis` group).
+2.  Publish the distributions:
 
-3.  Check out the current Axis2 site from <https://svn.apache.org/repos/asf/axis/site/axis2/java/core/>
-    and synchronize it with the site for the new release. The site should have been generated during the
-    release build and can be found in the `target/checkout/target/site`. Alternatively you can
-    check out the release tag and rebuild the site using `mvn site`, or extract it from the
-    documents distribution. Axiom has a script (see `etc/syncsite.py`) that can be used to
-    synchronize the site in Subversion. It takes care of executing the relevant `svn add`
-    and `svn remove` commands on the local working copy of the site.
-    The live Web site is updated automatically by svnpubsub once the changes have been committed to SVN.
+        svn mv https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/x.y.z \
+               https://dist.apache.org/repos/dist/release/axis/axis2/java/core/
+
+3.  Publish the site:
+
+        svn co --depth=immediates https://svn.apache.org/repos/asf/axis/site/axis2/java/ axis2-site
+        cd axis2-site
+        svn rm core
+        svn mv core-staging core
+        svn commit
 
 It may take several hours before everything has been synchronized. Before proceeding, check that
 
@@ -256,4 +239,6 @@ of Axis2, because not everybody subscribed to that list knows about the project.
 
 2.  Update the status of the release version in JIRA.
 
-3.  Remove archived releases from `/www/www.apache.org/dist/axis` on `people.apache.org`.
+3.  Remove old (archived) releases from <https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/>.
+
+4.  Create an empty release note for the next release under `src/site/markdown/release-notes`.
