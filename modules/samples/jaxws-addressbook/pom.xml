@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.axis2.examples</groupId>
         <artifactId>samples</artifactId>
-        <version>1.6.4</version>
+        <version>1.6.5-SNAPSHOT</version>
     </parent>
     <artifactId>jaxws-addressbook</artifactId>
     <packaging>jar</packaging>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>1.6.4</version>
+            <version>1.6.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
