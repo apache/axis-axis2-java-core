@@ -93,44 +93,28 @@ Release process overview
 Performing a release
 --------------------
 
-**Note:** performing the release requires at least Maven 2.1.0. The recommended version is 2.2.1.
-
 ### Preparation
 
 Verify that the code meets the basic requirements for being releasable:
 
-1.  Check the consistency between the metadata in `pom.xml` and `modules/parent/pom.xml`.
-    Since the root and parent POMs are different, some of the metadata is duplicated and needs to be synchronized
-    manually. This includes the mailing list addresses, issue tracker information, SCM location, etc.
-
-2.  Check that the set of legal (`legal/*.LICENSE`) files corresponds to the set of third party
+1.  Check that the set of legal (`legal/*.LICENSE`) files corresponds to the set of third party
     JARs included in the binary distribution.
 
-3.  Check that the `apache-release` profile works correctly and produces the required distributions.
+2.  Check that the `apache-release` profile works correctly and produces the required distributions.
     The profile can be executed as follows:
     
-        mvn clean install -Papache-release -Dmaven.test.skip=true
+        mvn clean install -Papache-release
 
-4.  Check that the source distribution is buildable.
+3.  Check that the source distribution is buildable.
 
-5.  Check that the source tree is buildable with an empty local Maven repository.
+4.  Check that the source tree is buildable with an empty local Maven repository.
 
 If any problems are detected, they should be fixed on the trunk (except for issues specific to the
 release branch) and then merged to the release branch.
 
-Next update the relevant documents for the new release:
-
-1.  Update the `release-notes.html` file on the release branch (since the content of this file is replaced
-    with every release, there is no need to keep it in sync with the trunk, except if the template changes).
-
-2.  Update the `src/site/xdoc/index.xml` file with a description of the release and add an entry for
-    the release in `src/site/xdoc/download.xml`. To avoid extra work for the RM doing the next major release,
-    these changes should be done on the trunk first and then merged to the release branch.
-    If the release is a maintenance release, then the previous release from that branch must be prepared
-    for archiving by changing the links in the download page. This is necessary to conform to the
-    [release archiving policy](http://www.apache.org/dev/release.html#when-to-archive). If the release
-    is a major release, then this should be done with the release from the oldest branch, unless it is expected
-    that users will still continue to download and use that release.
+Next update the release note found under `src/site/markdown/release-notes`. To avoid extra work for
+the RM doing the next major release, these changes should be done on the trunk first and then merged
+to the release branch.
 
 ### Pre-requisites
 
@@ -172,51 +156,50 @@ The following things are required to perform the actual release:
 
 In order to prepare the release artifacts for vote, execute the following steps:
 
-1.  Update the release date in `release-notes.html`, `src/site/xdoc/index.xml` and
-    `src/site/xdoc/download.xml`. Since it is not possible to predict the exact date when the
-    release is officially announced, this should be the date when the release tag is created.
+1.  Start the release process using the following command:
 
-2.  Temporarily disable the Hudson build(s) for Axis2, in order to avoid accidental deployment of the release
-    candidate to the local repository of a Hudson executor if the release process fails somewhere in the middle and/or
-    a Hudson build starts at the wrong moment.
+        mvn release:prepare
 
-3.  Start the release process using the following command:
-
-        mvn release:prepare -Peverything
-
-    When asked for a tag name, use the following format: `vX.Y.Z`. The `everything` profile
-    makes sure that the version numbers of all Maven modules are incremented properly.
-    The execution of the `release:prepare` goal may fail for users in
-    locations that use the EU Subversion server. If this happens,
-    wait for a minute (so that the EU server can catch up with its master) and simply rerun the command.
+    When asked for a tag name, accept the default value (in the following format: `vX.Y.Z`).
+    The execution of the `release:prepare` goal may occasionally fail because `svn.apache.org`
+    resolves to one of the geolocated SVN mirrors and there is a propagation delay between
+    the master and these mirrors. If this happens,
+    wait for a minute (so that the mirrors can catch up with the master) and simply rerun the command.
     It will continue where the error occurred.
 
-4.  Perform the release using the following command:
+2.  Perform the release using the following command:
 
         mvn release:perform
 
-5.  Login to Nexus and close the staging repository. For more details about this step, see
+3.  Login to Nexus and close the staging repository. For more details about this step, see
     [here](https://docs.sonatype.org/display/Repository/Closing+a+Staging+Repository).
 
-6.  Deploy the distributions to your `public_html` area on `people.apache.org`.
-    The `release:perform` goal should have produced all the necessary files in the
-    `target/checkout/target/axis2-&lt;version&gt;-dists` folder. Please preserve the directory structure and
-    file names because they exactly match the requirements for deployment to `www.apache.org`
-    (see below).
+4.  Execute the `target/checkout/etc/dist.py` script to upload the distributions.
 
-7.  Generate and deploy the Maven site to your `public_html` area on `people.apache.org`
-    (either by building the site locally and transfer the files to `people.apache.org`, or by
-    checking out the release tag and building the site directly on `people.apache.org`).
+5.  Create a staging area for the Maven site:
 
-8.  Start the release vote by sending a mail to `java-dev@axis.apache.org`.
+        svn cp https://svn.apache.org/repos/asf/axis/site/axis2/java/core \
+               https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging
+
+6.  Change to the `target/checkout` directory and prepare the site using the following commands:
+
+        mvn site-deploy
+        mvn scm-publish:publish-scm -Dscmpublish.skipCheckin=true
+
+    Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there
+    are no unexpected changes to the site. Then commit the changes.
+    Note that this may fail because of [INFRA-11007](https://issues.apache.org/jira/browse/INFRA-11007).
+    In this case, switch to the Subversion master using the following command before trying to commit again:
+
+        svn switch --relocate https://svn.apache.org/ https://svn-master.apache.org/
+
+7.  Start the release vote by sending a mail to `java-dev@axis.apache.org`.
     The mail should mention the following things:
 
-    *   The list of issues solved in the release (by linking to the relevant JIRA view).
     *   A link to the Nexus staging repository.
-    *   The URL on `people.apache.org` where the distributions can be downloaded.
-    *   A link to the preview of the Maven site.
-
-9.  Reenable the Hudson build(s).
+    *   A link to the directory containing the distributions
+        (<https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/x.y.x/>).
+    *   A link to the preview of the Maven site (<http://axis.apache.org/axis2/java/core-staging/>).
 
 If the vote passes, execute the following steps:
 
@@ -224,21 +207,18 @@ If the vote passes, execute the following steps:
     [here](https://docs.sonatype.org/display/Repository/Releasing+a+Staging+Repository)
     for detailed instructions for this step.
 
-2.  Login to `people.apache.org` and copy the distributions (including the checksums and
-    signatures) to `/www/www.apache.org/dist/axis/axis2/java/core/`. If you followed the
-    steps described above, then you should already have everything that is needed in your `public_html`
-    folder and you only need to copy the `X.Y.Z` folder to the right location. Please execute the
-    copy with umask 0002 and check that the files and directories have the right permissions (write access for the
-    `axis` group).
+2.  Publish the distributions:
 
-3.  Check out the current Axis2 site from <https://svn.apache.org/repos/asf/axis/site/axis2/java/core/>
-    and synchronize it with the site for the new release. The site should have been generated during the
-    release build and can be found in the `target/checkout/target/site`. Alternatively you can
-    check out the release tag and rebuild the site using `mvn site`, or extract it from the
-    documents distribution. Axiom has a script (see `etc/syncsite.py`) that can be used to
-    synchronize the site in Subversion. It takes care of executing the relevant `svn add`
-    and `svn remove` commands on the local working copy of the site.
-    The live Web site is updated automatically by svnpubsub once the changes have been committed to SVN.
+        svn mv https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/x.y.z \
+               https://dist.apache.org/repos/dist/release/axis/axis2/java/core/
+
+3.  Publish the site:
+
+        svn co --depth=immediates https://svn.apache.org/repos/asf/axis/site/axis2/java/ axis2-site
+        cd axis2-site
+        svn rm core
+        svn mv core-staging core
+        svn commit
 
 It may take several hours before everything has been synchronized. Before proceeding, check that
 
@@ -259,4 +239,6 @@ of Axis2, because not everybody subscribed to that list knows about the project.
 
 2.  Update the status of the release version in JIRA.
 
-3.  Remove archived releases from `/www/www.apache.org/dist/axis` on `people.apache.org`.
+3.  Remove old (archived) releases from <https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/>.
+
+4.  Create an empty release note for the next release under `src/site/markdown/release-notes`.
