@@ -93,8 +93,6 @@ Release process overview
 Performing a release
 --------------------
 
-**Note:** performing the release requires at least Maven 2.1.0. The recommended version is 2.2.1.
-
 ### Preparation
 
 Verify that the code meets the basic requirements for being releasable:
@@ -172,51 +170,45 @@ The following things are required to perform the actual release:
 
 In order to prepare the release artifacts for vote, execute the following steps:
 
-1.  Update the release date in `release-notes.html`, `src/site/xdoc/index.xml` and
-    `src/site/xdoc/download.xml`. Since it is not possible to predict the exact date when the
-    release is officially announced, this should be the date when the release tag is created.
+1.  Start the release process using the following command:
 
-2.  Temporarily disable the Hudson build(s) for Axis2, in order to avoid accidental deployment of the release
-    candidate to the local repository of a Hudson executor if the release process fails somewhere in the middle and/or
-    a Hudson build starts at the wrong moment.
+        mvn release:prepare
 
-3.  Start the release process using the following command:
-
-        mvn release:prepare -Peverything
-
-    When asked for a tag name, use the following format: `vX.Y.Z`. The `everything` profile
-    makes sure that the version numbers of all Maven modules are incremented properly.
-    The execution of the `release:prepare` goal may fail for users in
+    When asked for a tag name, accept the default value (in the following format: `vX.Y.Z`).
+    The execution of the `release:prepare` goal may occasionally fail for users in
     locations that use the EU Subversion server. If this happens,
     wait for a minute (so that the EU server can catch up with its master) and simply rerun the command.
     It will continue where the error occurred.
 
-4.  Perform the release using the following command:
+2.  Perform the release using the following command:
 
         mvn release:perform
 
-5.  Login to Nexus and close the staging repository. For more details about this step, see
+3.  Login to Nexus and close the staging repository. For more details about this step, see
     [here](https://docs.sonatype.org/display/Repository/Closing+a+Staging+Repository).
 
-6.  Deploy the distributions to your `public_html` area on `people.apache.org`.
-    The `release:perform` goal should have produced all the necessary files in the
-    `target/checkout/target/axis2-&lt;version&gt;-dists` folder. Please preserve the directory structure and
-    file names because they exactly match the requirements for deployment to `www.apache.org`
-    (see below).
+4.  Execute the `target/checkout/etc/dist.py` script to upload the distributions.
 
-7.  Generate and deploy the Maven site to your `public_html` area on `people.apache.org`
-    (either by building the site locally and transfer the files to `people.apache.org`, or by
-    checking out the release tag and building the site directly on `people.apache.org`).
+5.  Create a staging area for the Maven site:
 
-8.  Start the release vote by sending a mail to `java-dev@axis.apache.org`.
+        svn cp https://svn.apache.org/repos/asf/axis/site/axis2/java/core \
+               https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging
+
+6.  Change to the `target/checkout` directory and prepare the site using the following commands:
+
+        mvn site-deploy
+        mvn scm-publish:publish-scm -Dscmpublish.skipCheckin=true
+
+    Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there
+    are no unexpected changes to the site. Then commit the changes.
+
+7.  Start the release vote by sending a mail to `java-dev@axis.apache.org`.
     The mail should mention the following things:
 
-    *   The list of issues solved in the release (by linking to the relevant JIRA view).
     *   A link to the Nexus staging repository.
-    *   The URL on `people.apache.org` where the distributions can be downloaded.
-    *   A link to the preview of the Maven site.
-
-9.  Reenable the Hudson build(s).
+    *   A link to the directory containing the distributions
+        (<https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/x.y.x/>).
+    *   A link to the preview of the Maven site (<http://axis.apache.org/axis2/java/core-staging/>).
 
 If the vote passes, execute the following steps:
 
