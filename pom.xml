@@ -68,6 +68,7 @@
         <module>modules/tool/axis2-mar-maven-plugin</module>
         <module>modules/tool/axis2-repo-maven-plugin</module>
         <module>modules/tool/axis2-wsdl2code-maven-plugin</module>
+        <module>modules/tool/simple-server-maven-plugin</module>
         <module>modules/webapp</module>
         <module>modules/xmlbeans</module>
         <module>modules/scripting</module>
@@ -493,6 +494,8 @@
         <maven.artifact.version>2.0.8</maven.artifact.version>
         <maven.plugin.testing.version>1.1</maven.plugin.testing.version>
         <maven.version>2.0.7</maven.version>
+        <maven.plugin.descriptor.version>2.0.7</maven.plugin.descriptor.version>
+        <plexus.classworlds.version>2.4</plexus.classworlds.version>
         <plexus.utils.version>1.4.9</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
         <servlet.api.version>2.3</servlet.api.version>
@@ -831,9 +834,19 @@
                 <version>${maven.archiver.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-descriptor</artifactId>
+                <version>${maven.plugin.descriptor.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>${plexus.utils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-classworlds</artifactId>
+                <version>${plexus.classworlds.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
