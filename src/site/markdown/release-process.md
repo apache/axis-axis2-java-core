@@ -239,6 +239,6 @@ of Axis2, because not everybody subscribed to that list knows about the project.
 
 2.  Update the status of the release version in JIRA.
 
-3.  Remove old (archived) releases from <https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/>.
+3.  Remove old (archived) releases from <https://dist.apache.org/repos/dist/release/axis/axis2/java/core/>.
 
 4.  Create an empty release note for the next release under `src/site/markdown/release-notes`.
