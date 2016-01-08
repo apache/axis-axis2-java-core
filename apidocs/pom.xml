@@ -296,8 +296,6 @@
                     <dependencySourceIncludes>
                         <dependencySourceInclude>${project.groupId}:*</dependencySourceInclude>
                     </dependencySourceIncludes>
-                    <!-- There are no other modules that generate Javadoc we can link to -->
-                    <detectOfflineLinks>false</detectOfflineLinks>
                     <breakiterator>true</breakiterator>
                     <!-- The notimestamp, windowtitle and bottom parameters are chosen to minimize the number
                          of changes between releases (to avoid mass changes when committing the site for a new release) -->
