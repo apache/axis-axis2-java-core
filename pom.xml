@@ -483,7 +483,7 @@
     </distributionManagement>
     <properties>
         <!-- Tracking SNAPSHOT(s) of a few projects -->
-        <axiom.version>1.2.17-SNAPSHOT</axiom.version>
+        <axiom.version>1.2.18-SNAPSHOT</axiom.version>
         <neethi.version>3.0.3</neethi.version>
         <woden.version>1.0M11-SNAPSHOT</woden.version>
         <xmlschema.version>2.2.1</xmlschema.version>
