@@ -169,12 +169,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
     }
     
     protected XMLStreamReader _getReaderFromOM(OMElement omElement) {
-        XMLStreamReader reader;
-        if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
-            reader = omElement.getXMLStreamReaderWithoutCaching();
-        } else {
-            reader = omElement.getXMLStreamReader();
-        }
+        XMLStreamReader reader = super._getReaderFromOM(omElement);
         if (reader instanceof OMXMLStreamReader) {
             ((OMXMLStreamReader)reader).setInlineMTOM(false);  // Optimize attachment usage
         }
