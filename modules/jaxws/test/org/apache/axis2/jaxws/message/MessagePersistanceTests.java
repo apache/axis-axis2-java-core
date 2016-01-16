@@ -21,15 +21,15 @@ package org.apache.axis2.jaxws.message;
 
 import junit.framework.TestCase;
 
-import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
-import org.apache.axiom.om.OMXMLStreamReader;
-import org.apache.axiom.om.util.CopyUtils;
 import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPCloneOptions;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.util.stax.xop.XOPEncodedStream;
+import org.apache.axiom.util.stax.xop.XOPUtils;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
@@ -53,6 +53,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
@@ -86,6 +87,14 @@ public class MessagePersistanceTests extends TestCase {
         ImageInputStream fiis = new FileImageInputStream(file);
         Image image = ImageIO.read(fiis);
         imageDS = new DataSourceImpl("image/jpeg", "test.jpg", image);
+    }
+    
+    private static SOAPEnvelope copy(SOAPEnvelope sourceEnv) {
+        SOAPCloneOptions options = new SOAPCloneOptions();
+        options.setFetchDataHandlers(true);
+        options.setPreserveModel(true);
+        options.setCopyOMDataSources(true);
+        return (SOAPEnvelope)sourceEnv.clone(options);
     }
     
     /**
@@ -291,7 +300,7 @@ public class MessagePersistanceTests extends TestCase {
         assertTrue(ds instanceof JAXBBlockImpl);
         
         // Now simulate persisting the message in memory
-        SOAPEnvelope env2 = CopyUtils.copy(env);
+        SOAPEnvelope env2 = copy(env);
         
         // Make sure the Axiom structure is intact.  
         env = axisMC.getEnvelope();
@@ -507,10 +516,9 @@ public class MessagePersistanceTests extends TestCase {
         env.build();
         
         // Use tree as input to XMLStreamReader
-        OMXMLStreamReader xmlStreamReader = (OMXMLStreamReader) env.getXMLStreamReader();
-        
         // Issue XOP:Include events for optimized MTOM text nodes
-        xmlStreamReader.setInlineMTOM(false);
+        XOPEncodedStream stream = XOPUtils.getXOPEncodedStream(env.getXMLStreamReader());
+        XMLStreamReader xmlStreamReader = stream.getReader();
         
         DataHandler dh = null;
         while(xmlStreamReader.hasNext()) {
@@ -520,7 +528,7 @@ public class MessagePersistanceTests extends TestCase {
                 if (XOP_INCLUDE.equals(qName)) {
                     String hrefValue = xmlStreamReader.getAttributeValue("", "href");
                     if (hrefValue != null) {
-                        dh =((OMAttachmentAccessor)xmlStreamReader).getDataHandler(hrefValue);
+                        dh = stream.getMimePartProvider().getDataHandler(XOPUtils.getContentIDFromURL(hrefValue));
                     }
                 }
             }
@@ -585,7 +593,7 @@ public class MessagePersistanceTests extends TestCase {
         assertTrue(ds instanceof JAXBBlockImpl);
         
         // Now simulate persisting the message in memory
-        SOAPEnvelope env2 = CopyUtils.copy(env);
+        SOAPEnvelope env2 = copy(env);
         
         // Make sure the Axiom structure is intact.  
         env = axisMC.getEnvelope();
