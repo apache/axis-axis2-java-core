@@ -472,7 +472,12 @@ public abstract class BlockImpl implements Block {
      */
     protected Object _getBOFromOM(OMElement omElement, Object busContext)
         throws XMLStreamException, WebServiceException {
-        XMLStreamReader reader = _getReaderFromOM(omElement);
+        XMLStreamReader reader;
+        if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
+            reader = omElement.getXMLStreamReaderWithoutCaching();
+        } else {
+            reader = omElement.getXMLStreamReader();
+        }
         return _getBOFromReader(reader, busContext);
     }
     
@@ -485,20 +490,6 @@ public abstract class BlockImpl implements Block {
      */
     protected abstract XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
             throws XMLStreamException, WebServiceException;
-    
-    /**
-     * @param omElement
-     * @return XMLStreamReader
-     */
-    protected XMLStreamReader _getReaderFromOM(OMElement omElement) {
-        XMLStreamReader reader;
-        if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
-            reader = omElement.getXMLStreamReaderWithoutCaching();
-        } else {
-            reader = omElement.getXMLStreamReader();
-        }
-        return reader;
-    }
     
     /**
      * @param busObject
