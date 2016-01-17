@@ -20,34 +20,24 @@
 package org.apache.axis2.jaxws.message.attachments;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.datasource.jaxb.AbstractJAXBAttachmentMarshaller;
+import org.apache.axis2.datasource.jaxb.AttachmentContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamWriter;
 
-/**
- * An implementation of the JAXB AttachmentMarshaller that is used to handle binary data from JAXB
- * and create populate the appropriate constructs within the JAX-WS Message Model.
- */
-public final class JAXBAttachmentMarshaller extends AbstractJAXBAttachmentMarshaller {
+public final class MessageAttachmentContext implements AttachmentContext {
     
-    private static final Log log = LogFactory.getLog(JAXBAttachmentMarshaller.class);
-    private Message message;
+    private static final Log log = LogFactory.getLog(MessageAttachmentContext.class);
+    private final Message message;
     
-    public JAXBAttachmentMarshaller(Message message, XMLStreamWriter writer) {
-        super(getAxis2MessageContext(message), writer);
+    public MessageAttachmentContext(Message message) {
         this.message = message;
     }
     
-    /**
-     * Get the Axis2 Message Context out of the Message by going through the JAXWS Message Context.
-     * @param message The Message from which to get the Axis Message Context
-     * @return the Axis Message context or null if one is not found.
-     */
-    private static MessageContext getAxis2MessageContext(Message message) {
+    public MessageContext getMessageContext() {
+        // Get the Axis2 Message Context out of the Message by going through the JAXWS Message Context.
         MessageContext axisMessageContext = null;
         if (message != null) {
             if (message.getMessageContext() != null) {
@@ -57,7 +47,7 @@ public final class JAXBAttachmentMarshaller extends AbstractJAXBAttachmentMarsha
         return axisMessageContext;
     }
 
-    protected boolean isMTOMEnabled() {
+    public boolean isMTOMEnabled() {
         if (message == null) {
             return false;
         } else {
@@ -65,13 +55,13 @@ public final class JAXBAttachmentMarshaller extends AbstractJAXBAttachmentMarsha
         }  
     }
     
-    protected void setDoingSWA() {
+    public void setDoingSWA() {
         if (message != null) {
             message.setDoingSWA(true);
         }
     }
     
-    protected void addDataHandler(DataHandler dh, String cid) {
+    public void addDataHandler(DataHandler dh, String cid) {
         if (message != null) {
             message.addDataHandler(dh, cid);
         } else {
@@ -81,5 +71,9 @@ public final class JAXBAttachmentMarshaller extends AbstractJAXBAttachmentMarsha
                 log.debug("   dataHandler  =" + dh);
             }
         }
+    }
+
+    public DataHandler getDataHandlerForSwA(String blobcid) {
+        return message.getDataHandler(blobcid);
     }
 }

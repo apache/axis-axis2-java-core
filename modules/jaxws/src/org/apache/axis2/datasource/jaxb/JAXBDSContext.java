@@ -287,21 +287,8 @@ public class JAXBDSContext {
         return null;
     }
     
-    /**
-     * Create an AttachmentMarshaller to marshal MTOM/SWA Attachments
-     * @param writer
-     * @return
-     */
-    protected AttachmentMarshaller createAttachmentMarshaller(XMLStreamWriter writer) {
-        return new JAXBAttachmentMarshaller(getMessageContext(), writer);
-    }
-    
-    /**
-     * Create an Attachment unmarshaller for unmarshalling MTOM/SWA Attachments
-     * @return AttachmentUnmarshaller
-     */
-    protected AttachmentUnmarshaller createAttachmentUnmarshaller(MimePartProvider mimePartProvider) {
-        return new JAXBAttachmentUnmarshaller(mimePartProvider, getMessageContext());
+    protected AttachmentContext createAttachmentContext() {
+        return new MessageContextAttachmentContext(getMessageContext());
     }
 
     /**
@@ -332,7 +319,7 @@ public class JAXBDSContext {
 
         
         // Create an attachment unmarshaller
-        AttachmentUnmarshaller aum = createAttachmentUnmarshaller(xopEncodedStream.getMimePartProvider());
+        AttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller(createAttachmentContext(), xopEncodedStream.getMimePartProvider());
 
         if (aum != null) {
             if (DEBUG_ENABLED) {
@@ -418,7 +405,7 @@ public class JAXBDSContext {
                 }
             }
 
-            AttachmentMarshaller am = createAttachmentMarshaller(writer);
+            AttachmentMarshaller am = new JAXBAttachmentMarshaller(createAttachmentContext(), writer);
             if (am != null) {
                 if (DEBUG_ENABLED) {
                     log.debug("Adding JAXBAttachmentMarshaller to Marshaller");

@@ -19,18 +19,14 @@
 
 package org.apache.axis2.jaxws.message.databinding;
 
-import org.apache.axiom.util.stax.xop.MimePartProvider;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.datasource.jaxb.AttachmentContext;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
-import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentUnmarshaller;
+import org.apache.axis2.jaxws.message.attachments.MessageAttachmentContext;
 import org.apache.axis2.jaxws.spi.Constants;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.attachment.AttachmentMarshaller;
-import javax.xml.bind.attachment.AttachmentUnmarshaller;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.TreeSet;
 
 /*
@@ -89,13 +85,8 @@ public class JAXBBlockContext extends JAXBDSContext {
     }
 
     @Override
-    protected AttachmentMarshaller createAttachmentMarshaller(XMLStreamWriter writer) {
-        return new JAXBAttachmentMarshaller(getMessage(), writer);
-    }
-    
-    @Override
-    protected AttachmentUnmarshaller createAttachmentUnmarshaller(MimePartProvider mimePartProvider) {
-        return new JAXBAttachmentUnmarshaller(mimePartProvider, getMessage());
+    protected AttachmentContext createAttachmentContext() {
+        return new MessageAttachmentContext(getMessage());
     }
 
     public ClassLoader getClassLoader() {
