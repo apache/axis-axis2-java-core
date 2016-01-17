@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.util.XMLStreamWriterRemoveIllegalChars;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
-import org.apache.axiom.util.stax.xop.MimePartProvider;
 import org.apache.axiom.util.stax.xop.XOPEncodedStream;
 import org.apache.axiom.util.stax.xop.XOPUtils;
 import org.apache.axis2.context.MessageContext;
@@ -59,7 +58,6 @@ import javax.xml.ws.WebServiceException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -96,7 +94,7 @@ public class JAXBDSContext {
     //              Doc/Lit Bare "Minimal" Processing (JAXB ObjectFactories are missing...
     //                   and thus we must use "by type" for primitives/String)
     // Please don't use "by java type" processing to get around errors.
-    private Class processType = null;
+    private Class<?> processType = null;
     private boolean isxmlList =false;
     
     private String webServiceNamespace;
@@ -127,7 +125,7 @@ public class JAXBDSContext {
      * @deprecated
      */
     public JAXBDSContext(String contextPackage) {
-        this.contextPackages = new TreeSet();
+        this.contextPackages = new TreeSet<String>();
         this.contextPackages.add(contextPackage);
         this.contextPackagesKey = this.contextPackages.toString();
     }
@@ -234,7 +232,7 @@ public class JAXBDSContext {
     }
     
     /** @return RPC Declared Type */
-    public Class getProcessType() {
+    public Class<?> getProcessType() {
         return processType;
     }
 
@@ -246,7 +244,7 @@ public class JAXBDSContext {
      *
      * @param type
      */
-    public void setProcessType(Class type) {
+    public void setProcessType(Class<?> type) {
     	if (log.isDebugEnabled()) {
      		log.debug("Process Type set to: " + type);
      	}
@@ -461,8 +459,8 @@ public class JAXBDSContext {
     private static void marshalByElement(final Object b, final Marshaller m, 
                                          final XMLStreamWriter writer,
                                          final boolean optimize) {
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
                 // Marshalling directly to the output stream is faster than marshalling through the
                 // XMLStreamWriter. 
                 // Take advantage of this optimization if there is an output stream.
@@ -504,7 +502,7 @@ public class JAXBDSContext {
     private static String getDebugName(Object o) {
         String name = (o == null) ? "null" : o.getClass().getCanonicalName();
         if (o instanceof JAXBElement) {
-            name += " containing " + getDebugName(((JAXBElement) o).getValue());
+            name += " containing " + getDebugName(((JAXBElement<?>) o).getValue());
         }
         return name;
     }
@@ -565,7 +563,7 @@ public class JAXBDSContext {
      * @throws WebServiceException
      */
     public static Object unmarshalByType(final Unmarshaller u, final XMLStreamReader reader,
-                                          final Class type, final boolean isList,
+                                          final Class<?> type, final boolean isList,
                                           final JAXBUtils.CONSTRUCTION_TYPE ctype)
         throws WebServiceException {
 
@@ -576,7 +574,7 @@ public class JAXBDSContext {
             log.debug("  ctype = "+ ctype);
         }
 
-        return AccessController.doPrivileged(new PrivilegedAction() {
+        return AccessController.doPrivileged(new PrivilegedAction<Object>() {
             public Object run() {
                 try {
                     // Unfortunately RPC is type based. Thus a
@@ -605,7 +603,7 @@ public class JAXBDSContext {
                             	//process primitives first
                             	//first verify if we have a primitive type associated in the array.
                             	//array could be single dimension or multi dimension.
-                            	Class cType = type.getComponentType();
+                            	Class<?> cType = type.getComponentType();
                             	while(cType.isArray()){
                             		cType = cType.getComponentType();
                             	}
@@ -687,14 +685,13 @@ public class JAXBDSContext {
                         
                     }
                     if (log.isDebugEnabled()) {
-                        Class cls;
                         if (jaxb == null) {
                             if (DEBUG_ENABLED) {
                                 log.debug("End unmarshalByType returning null object");
                             }
 
                         } else if (jaxb instanceof JAXBElement) {
-                            JAXBElement jbe = (JAXBElement) jaxb;
+                            JAXBElement<?> jbe = (JAXBElement<?>) jaxb;
                             if (DEBUG_ENABLED) {
                                 log.debug("End unmarshalByType returning JAXBElement");
                                 log.debug("  Class = " + jbe.getDeclaredType());
@@ -718,13 +715,13 @@ public class JAXBDSContext {
 
     private static Object unmarshalArray(final XMLStreamReader reader, 
                                          final Unmarshaller u, 
-                                         Class type)
+                                         Class<?> type)
        throws Exception {
         try {
             if (DEBUG_ENABLED) {
                 log.debug("Invoking unmarshalArray");
             }
-            Object jaxb = AccessController.doPrivileged(new PrivilegedAction() {
+            Object jaxb = AccessController.doPrivileged(new PrivilegedAction<Object>() {
                 public Object run() {
                     try {
                         return u.unmarshal(reader, String[].class);
@@ -770,7 +767,7 @@ public class JAXBDSContext {
      */
     public static Object unmarshalAsListOrArray(final XMLStreamReader reader, 
                                                 final Unmarshaller u, 
-                                                 Class type)
+                                                 Class<?> type)
         throws IllegalAccessException, ParseException,NoSuchMethodException,
         InstantiationException,
         DatatypeConfigurationException,InvocationTargetException,JAXBException {
@@ -785,7 +782,7 @@ public class JAXBDSContext {
             // First unmarshal as a String
             Object jaxb = null;
             try {
-                jaxb = AccessController.doPrivileged(new PrivilegedAction() {
+                jaxb = AccessController.doPrivileged(new PrivilegedAction<Object>() {
                     public Object run() {
                         try {
                             return u.unmarshal(reader, String.class);
@@ -823,14 +820,14 @@ public class JAXBDSContext {
             return null;
         }
         if (obj instanceof JAXBElement) {
-            return ((JAXBElement) obj).getValue();
+            return ((JAXBElement<?>) obj).getValue();
         }
         return obj;
     }
 
     private static boolean isOccurrenceArray(Object obj) {
         return (obj instanceof JAXBElement) &&
-            (((JAXBElement)obj).getValue() instanceof OccurrenceArray);
+            (((JAXBElement<?>)obj).getValue() instanceof OccurrenceArray);
                 
     }
     /**
@@ -847,7 +844,7 @@ public class JAXBDSContext {
      * outputstream should be attempted.
      */
     private void marshalByType(final Object b, final Marshaller m,
-                                      final XMLStreamWriter writer, final Class type,
+                                      final XMLStreamWriter writer, final Class<?> type,
                                       final boolean isList, 
                                       final JAXBUtils.CONSTRUCTION_TYPE ctype,
                                       final boolean optimize) 
@@ -863,11 +860,11 @@ public class JAXBDSContext {
                         
         }
         if (isOccurrenceArray(b)) {
-            marshalOccurrenceArray((JAXBElement) b, m, writer);
+            marshalOccurrenceArray((JAXBElement<?>) b, m, writer);
             return;
         }
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
                 try {
 
                     // NOTE
@@ -915,7 +912,7 @@ public class JAXBDSContext {
                                 log.debug("marshalling [context path approach] " +
                                                 "with xmllist text = " + text);
                             }
-                            jbo = new JAXBElement(qName, String.class, text);
+                            jbo = new JAXBElement<String>(qName, String.class, text);
                         } else if (ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY) {
                             // Some versions of JAXB have array/list processing built in.
                             // This code is a safeguard because apparently some versions
@@ -926,7 +923,7 @@ public class JAXBDSContext {
                                 log.debug("marshalling [class array approach] " +
                                                 "with xmllist text = " + text);
                             }
-                            jbo = new JAXBElement(qName, String.class, text); 
+                            jbo = new JAXBElement<String>(qName, String.class, text); 
                         }
                     }
                     // When JAXBContext is created using a context path, it will not include Enum
@@ -950,10 +947,10 @@ public class JAXBDSContext {
                                 log.debug("marshalByType. Marshaling " + type.getName()
                                         + " as Enum");
                             }
-                            JAXBElement jbe = (JAXBElement) b;
-                            String value = XMLRootElementUtil.getEnumValue((Enum) jbe.getValue());
+                            JAXBElement<?> jbe = (JAXBElement<?>) b;
+                            String value = XMLRootElementUtil.getEnumValue((Enum<?>) jbe.getValue());
 
-                            jbo = new JAXBElement(jbe.getName(), String.class, value);
+                            jbo = new JAXBElement<String>(jbe.getName(), String.class, value);
                         }
                     }
 
@@ -995,7 +992,7 @@ public class JAXBDSContext {
      * @param writer_in XMLStreamWriter
      */
     private void marshalOccurrenceArray(
-                final JAXBElement jbe_in, 
+                final JAXBElement<?> jbe_in, 
                 final Marshaller m_in,
                 final XMLStreamWriter writer_in) {
         
@@ -1004,8 +1001,8 @@ public class JAXBDSContext {
             log.debug("  Marshaller = " + JavaUtils.getObjectIdentity(m_in));
         }
         
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
                 try {
                     
                     Marshaller m = m_in;
@@ -1031,7 +1028,7 @@ public class JAXBDSContext {
                     // The name is the name of the individual occurence elements
                     // Type type is Object[]
                     // The value is the array of Object[] representing each element
-                    JAXBElement jbe = new JAXBElement(jbe_in.getName(), 
+                    JAXBElement<Object[]> jbe = new JAXBElement<Object[]>(jbe_in.getName(), 
                             Object[].class, 
                             occurArray.getAsArray());
 
@@ -1078,7 +1075,7 @@ public class JAXBDSContext {
             if (DEBUG_ENABLED) {
                 log.debug("Invoking unMarshalByElement");
             }
-            return AccessController.doPrivileged(new PrivilegedAction() {
+            return AccessController.doPrivileged(new PrivilegedAction<Object>() {
                 public Object run() {
                     try {
                         return u.unmarshal(reader);

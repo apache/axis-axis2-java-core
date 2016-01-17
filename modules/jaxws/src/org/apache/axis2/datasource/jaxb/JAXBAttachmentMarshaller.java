@@ -113,8 +113,8 @@ public final class JAXBAttachmentMarshaller extends AttachmentMarshaller {
             final InternetHeaders ih = new InternetHeaders();
             final byte[] dataArray = data; 
             ih.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, mimeType);
-            final MimeBodyPart mbp = (MimeBodyPart) AccessController.doPrivileged(new PrivilegedAction() {
-                public Object run() {
+            final MimeBodyPart mbp = AccessController.doPrivileged(new PrivilegedAction<MimeBodyPart>() {
+                public MimeBodyPart run() {
                     try {
                         return new MimeBodyPart(ih, dataArray);
                     } catch (MessagingException e) {
@@ -123,8 +123,8 @@ public final class JAXBAttachmentMarshaller extends AttachmentMarshaller {
                 }});
 
             //Create a data source for the MIME Body Part
-            MimePartDataSource mpds = (MimePartDataSource) AccessController.doPrivileged(new PrivilegedAction() {
-                public Object run() {
+            MimePartDataSource mpds = AccessController.doPrivileged(new PrivilegedAction<MimePartDataSource>() {
+                public MimePartDataSource run() {
                     return new MimePartDataSource(mbp);
                 }});
             long dataLength =data.length;
