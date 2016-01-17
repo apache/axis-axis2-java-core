@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.message.attachments;
 
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.datasource.jaxb.AbstractJAXBAttachmentMarshaller;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +32,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An implementation of the JAXB AttachmentMarshaller that is used to handle binary data from JAXB
  * and create populate the appropriate constructs within the JAX-WS Message Model.
  */
-public class JAXBAttachmentMarshaller extends org.apache.axis2.datasource.jaxb.JAXBAttachmentMarshaller {
+public final class JAXBAttachmentMarshaller extends AbstractJAXBAttachmentMarshaller {
     
     private static final Log log = LogFactory.getLog(JAXBAttachmentMarshaller.class);
     private Message message;
@@ -58,7 +59,7 @@ public class JAXBAttachmentMarshaller extends org.apache.axis2.datasource.jaxb.J
     /**
      * @return if MTOM enabled calculated from the context information
      */
-    public boolean isMTOMEnabled() {
+    protected boolean isMTOMEnabled() {
         if (message == null) {
             return false;
         } else {
@@ -69,7 +70,7 @@ public class JAXBAttachmentMarshaller extends org.apache.axis2.datasource.jaxb.J
     /**
      * Indicate on the context that SWA attachments are encountered
      */
-    public void setDoingSWA() {
+    protected void setDoingSWA() {
         if (message != null) {
             message.setDoingSWA(true);
         }
@@ -80,7 +81,7 @@ public class JAXBAttachmentMarshaller extends org.apache.axis2.datasource.jaxb.J
      * @param dh
      * @param cid
      */
-    public void addDataHandler(DataHandler dh, String cid) {
+    protected void addDataHandler(DataHandler dh, String cid) {
         if (message != null) {
             message.addDataHandler(dh, cid);
         } else {
