@@ -107,7 +107,7 @@ public class SAAJConverterTests extends TestCase {
 		SAAJConverter converter = f.getSAAJConverter();
 		
 		// Step 2: Convert the OM SOAPEnvelope to an SAAJ SOAPEnvelope
-		SOAPEnvelope saajEnvelope = converter.toSAAJ(omEnvelope);
+		SOAPEnvelope saajEnvelope = converter.toSAAJ(omEnvelope, true).getSOAPPart().getEnvelope();
 		
 		// Step 2a: Simple assertion check to ensure correctness.
 		String name = saajEnvelope.getBody().getFirstChild().getLocalName();
@@ -121,7 +121,7 @@ public class SAAJConverterTests extends TestCase {
 		assertTrue("a".equals(name));
 		
 		// Step 4: Rinse and repeat
-		saajEnvelope = converter.toSAAJ(omEnvelope);
+		saajEnvelope = converter.toSAAJ(omEnvelope, true).getSOAPPart().getEnvelope();
 		name = saajEnvelope.getBody().getFirstChild().getLocalName();
 		assertTrue("a".equals(name));
 		omEnvelope = converter.toOM(saajEnvelope);
@@ -212,7 +212,7 @@ public class SAAJConverterTests extends TestCase {
 		SAAJConverter converter = f.getSAAJConverter();
 		
 		// Step 2: Convert the OM SOAPEnvelope to an SAAJ SOAPEnvelope
-		SOAPEnvelope saajEnvelope = converter.toSAAJ(omEnvelope);
+		SOAPEnvelope saajEnvelope = converter.toSAAJ(omEnvelope, true).getSOAPPart().getEnvelope();
 		
 		// Step 3: Verify attribute type is stored after conversion
 		Element testElement = (Element) saajEnvelope.getBody().getFirstChild().getFirstChild();

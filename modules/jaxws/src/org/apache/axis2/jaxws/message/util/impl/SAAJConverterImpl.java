@@ -28,18 +28,23 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.util.stax.xop.MimePartProvider;
+import org.apache.axiom.util.stax.xop.XOPEncodedStream;
+import org.apache.axiom.util.stax.xop.XOPUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
+import org.apache.axis2.namespace.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
-import org.w3c.dom.Attr; 
+import org.w3c.dom.Attr;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.Detail;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
@@ -62,6 +67,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 /** SAAJConverterImpl Provides an conversion methods between OM<->SAAJ */
@@ -77,21 +83,20 @@ public class SAAJConverterImpl implements SAAJConverter {
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.soap.SOAPEnvelope)
       */
-    public SOAPEnvelope toSAAJ(org.apache.axiom.soap.SOAPEnvelope omEnvelope)
+    public SOAPMessage toSAAJ(org.apache.axiom.soap.SOAPEnvelope omEnvelope, boolean inlineMtom)
             throws WebServiceException {
     	if (log.isDebugEnabled()) {
-    	    log.debug("Converting OM SOAPEnvelope to SAAJ SOAPEnvelope");
+    	    log.debug("Converting OM SOAPEnvelope to SAAJ SOAPMessage");
     	    log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}
     	
-        SOAPEnvelope soapEnvelope = null;
         try {
             // Build the default envelope
             OMNamespace ns = omEnvelope.getNamespace();
             MessageFactory mf = createMessageFactory(ns.getNamespaceURI());
             SOAPMessage sm = mf.createMessage();
             SOAPPart sp = sm.getSOAPPart();
-            soapEnvelope = sp.getEnvelope();
+            SOAPEnvelope soapEnvelope = sp.getEnvelope();
 
             // The getSOAPEnvelope() call creates a default SOAPEnvelope with a SOAPHeader and SOAPBody.
             // The SOAPHeader and SOAPBody are removed (they will be added back in if they are present in the
@@ -109,15 +114,23 @@ public class SAAJConverterImpl implements SAAJConverter {
             // The best way to walk the data is to get the XMLStreamReader and use this
             // to build the SOAPElements
             XMLStreamReader reader = omEnvelope.getXMLStreamReader();
+            MimePartProvider mimePartProvider;
+            if (inlineMtom) {
+                mimePartProvider = null;
+            } else {
+                XOPEncodedStream xop = XOPUtils.getXOPEncodedStream(reader);
+                mimePartProvider = xop.getMimePartProvider();
+                reader = xop.getReader();
+            }
 
             NameCreator nc = new NameCreator(soapEnvelope);
-            buildSOAPTree(nc, soapEnvelope, null, reader, false);
+            buildSOAPTree(nc, sm, soapEnvelope, null, reader, mimePartProvider, false);
+            return sm;
         } catch (WebServiceException e) {
             throw e;
         } catch (SOAPException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
-        return soapEnvelope;
     }
 
     /* (non-Javadoc)
@@ -253,7 +266,7 @@ public class SAAJConverterImpl implements SAAJConverter {
                     .makeWebServiceException(Messages.getMessage("SAAJConverterErr1"));
         }
         NameCreator nc = new NameCreator((SOAPEnvelope)env);
-        return buildSOAPTree(nc, null, parent, reader, false);
+        return buildSOAPTree(nc, null, null, parent, reader, null, false);
     }
 
 
@@ -279,7 +292,7 @@ public class SAAJConverterImpl implements SAAJConverter {
             reader = omElement.getXMLStreamReaderWithoutCaching();
         }
         NameCreator nc = new NameCreator(sf);
-        return buildSOAPTree(nc, null, parent, reader, false);
+        return buildSOAPTree(nc, null, null, parent, reader, null, false);
     }
 
 
@@ -295,9 +308,11 @@ public class SAAJConverterImpl implements SAAJConverter {
      * @param quitAtBody - true if quit reading after the body START_ELEMENT
      */
     protected SOAPElement buildSOAPTree(NameCreator nc,
+                                        SOAPMessage message,
                                         SOAPElement root,
                                         SOAPElement parent,
                                         XMLStreamReader reader,
+                                        MimePartProvider mimePartProvider,
                                         boolean quitAtBody)
             throws WebServiceException {
         try {
@@ -314,6 +329,18 @@ public class SAAJConverterImpl implements SAAJConverter {
                             parent = createElementFromTag(nc, parent, reader);
                             if (root == null) {
                                 root = parent;
+                            }
+                        }
+                        if (message != null && mimePartProvider != null
+                                && Constants.ELEM_XOP_INCLUDE.equals(reader.getLocalName())
+                                && Constants.URI_XOP_INCLUDE.equals(reader.getNamespaceURI())) {
+                            String href = reader.getAttributeValue(null, "href");
+                            if (href != null) {
+                                String contentId = XOPUtils.getContentIDFromURL(href);
+                                AttachmentPart part = message.createAttachmentPart();
+                                part.setContentId(contentId);
+                                part.setDataHandler(mimePartProvider.getDataHandler(contentId));
+                                message.addAttachmentPart(part);
                             }
                         }
                         if (quitAtBody && parent instanceof SOAPBody) {
@@ -387,6 +414,8 @@ public class SAAJConverterImpl implements SAAJConverter {
         } catch (XMLStreamException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         } catch (SOAPException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        } catch (IOException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
         return root;

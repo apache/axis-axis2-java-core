@@ -27,6 +27,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
 
 /** SAAJConverter Provides Conversion between SAAJ and OM Constructed via the SAAJConverterFactory */
@@ -35,13 +36,18 @@ public interface SAAJConverter {
 	public final static String OM_ATTRIBUTE_KEY = "ATTRIBUTE_TYPE_KEY";
 	
     /**
-     * Convert OM SOAPEnvleope to SAAJ SOAPEnvelope
+     * Convert OM {@link org.apache.axiom.soap.SOAPEnvelope} to SAAJ {@link SOAPMessage}.
      *
      * @param omElement
-     * @return SOAPEnvelope
+     * @param inlineMtom
+     *            Specifies how optimized base64 encoded content is handled. {@code true} indicates
+     *            that such content should be inlined (i.e. converted to text nodes). {@code false}
+     *            instructs the method to produce an XOP encoded message and add the optimized
+     *            content as attachment parts to the returned message.
+     * @return the converted message
      * @throws WebServiceException
      */
-    public SOAPEnvelope toSAAJ(org.apache.axiom.soap.SOAPEnvelope omElement)
+    public SOAPMessage toSAAJ(org.apache.axiom.soap.SOAPEnvelope omElement, boolean inlineMtom)
             throws WebServiceException;
 
     /**

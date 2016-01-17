@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
@@ -28,6 +29,7 @@ import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
 import javax.xml.ws.WebServiceException;
 
 /**
@@ -92,7 +94,11 @@ public class XMLPartImpl extends XMLPartBase {
 
     @Override
     protected SOAPEnvelope _convertOM2SE(OMElement om) throws WebServiceException {
-        return getSAAJConverter().toSAAJ((org.apache.axiom.soap.SOAPEnvelope)om);
+        try {
+            return getSAAJConverter().toSAAJ((org.apache.axiom.soap.SOAPEnvelope)om, true).getSOAPPart().getEnvelope();
+        } catch (SOAPException ex) {
+            throw ExceptionFactory.makeWebServiceException(ex);
+        }
     }
 
     @Override

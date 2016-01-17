@@ -48,7 +48,6 @@ import javax.activation.DataHandler;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPEnvelope;
@@ -57,8 +56,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -188,36 +185,13 @@ public class MessageImpl implements Message {
             // Get OMElement from XMLPart.
             OMElement element = xmlPart.getAsOMElement();
             
+            SOAPMessage soapMessage = getSAAJConverter().toSAAJ((org.apache.axiom.soap.SOAPEnvelope)element, false);
+            
             // Get the namespace so that we can determine SOAP11 or SOAP12
             OMNamespace ns = element.getNamespace();
             
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            element.serialize(outStream);
-            
-            // In some cases (usually inbound) the builder will not be closed after
-            // serialization.  In that case it should be closed manually.
-            if (element.getBuilder() != null && !element.getBuilder().isCompleted()) {
-                element.close(false);
-            }
-            
-            byte[] bytes = outStream.toByteArray();
-            
-            if (log.isDebugEnabled()) {
-                String text = new String(bytes);
-                log.debug("  inputstream = " + text);
-            }
-            
-            // Create InputStream
-            ByteArrayInputStream inStream = new ByteArrayInputStream(bytes);
-            
-            // Create MessageFactory that supports the version of SOAP in the om element
-            MessageFactory mf = getSAAJConverter().createMessageFactory(ns.getNamespaceURI());
-            
-            // Create soapMessage object from Message Factory using the input
-            // stream created from OM.
-            
             // Get the MimeHeaders from the transportHeaders map
-            MimeHeaders defaultHeaders = new MimeHeaders();
+            MimeHeaders defaultHeaders = soapMessage.getMimeHeaders();
             if (transportHeaders != null) {
                 Iterator it = transportHeaders.entrySet().iterator();
                 while (it.hasNext()) {
@@ -266,7 +240,6 @@ public class MessageImpl implements Message {
             if (log.isDebugEnabled()) {
                 log.debug("  setContentType =" + ctValue);
             }
-            SOAPMessage soapMessage = mf.createMessage(defaultHeaders, inStream);
             
             // At this point the XMLPart is still an OMElement.  
             // We need to change it to the new SOAPEnvelope.

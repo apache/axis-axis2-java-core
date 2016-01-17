@@ -43,9 +43,6 @@ public class MTOMBuilder implements MIMEAwareBuilder {
     public OMElement processMIMEMessage(Attachments attachments, String contentType,
             MessageContext messageContext) throws AxisFault {
         try {
-            // TODO: this will be changed later (see AXIS2-5308)
-            messageContext.setAttachmentMap(attachments);
-            
             SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
             OMDocument document = builder.getDocument();
             String charsetEncoding = document.getCharsetEncoding();
