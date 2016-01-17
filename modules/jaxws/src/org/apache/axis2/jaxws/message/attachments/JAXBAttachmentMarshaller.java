@@ -56,9 +56,7 @@ public final class JAXBAttachmentMarshaller extends AbstractJAXBAttachmentMarsha
         }
         return axisMessageContext;
     }
-    /**
-     * @return if MTOM enabled calculated from the context information
-     */
+
     protected boolean isMTOMEnabled() {
         if (message == null) {
             return false;
@@ -67,20 +65,12 @@ public final class JAXBAttachmentMarshaller extends AbstractJAXBAttachmentMarsha
         }  
     }
     
-    /**
-     * Indicate on the context that SWA attachments are encountered
-     */
     protected void setDoingSWA() {
         if (message != null) {
             message.setDoingSWA(true);
         }
     }
     
-    /**
-     * Inform the context that an Attachment (DataHandler, CID) is written.
-     * @param dh
-     * @param cid
-     */
     protected void addDataHandler(DataHandler dh, String cid) {
         if (message != null) {
             message.addDataHandler(dh, cid);
