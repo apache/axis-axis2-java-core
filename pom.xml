@@ -482,13 +482,10 @@
         </site>
     </distributionManagement>
     <properties>
-        <!-- Tracking SNAPSHOT(s) of a few projects -->
-        <axiom.version>1.2.18-SNAPSHOT</axiom.version>
         <neethi.version>3.0.3</neethi.version>
-        <woden.version>1.0M11-SNAPSHOT</woden.version>
+        <woden.version>1.0M10</woden.version>
+        <axiom.version>1.2.17</axiom.version>
         <xmlschema.version>2.2.1</xmlschema.version>
-
-        <!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <bsf.version>2.4.0</bsf.version>
