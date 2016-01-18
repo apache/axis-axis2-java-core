@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-jaxws</artifactId>
@@ -127,9 +127,9 @@
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxws</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxws</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/jaxws</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.0/modules/jaxws</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.0/modules/jaxws</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.7.0/modules/jaxws</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>

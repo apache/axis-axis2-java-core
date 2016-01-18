@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-json</artifactId>
@@ -83,9 +83,9 @@
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/json</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/json</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/json</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.0/modules/json</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.0/modules/json</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.7.0/modules/json</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -123,10 +123,10 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.test.classpath"/>
-                                    <arg line="-ss -sd -u -or -o ${project.build.directory}/gen -uri test-wsdl/LibraryService.wsdl"/>
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-ss -sd -u -or -o ${project.build.directory}/gen -uri test-wsdl/LibraryService.wsdl" />
                                 </java>
-                                <delete file="${project.build.directory}/gen/src/org/apache/axis2/json/adb/LibraryServiceSkeleton.java"/>
+                                <delete file="${project.build.directory}/gen/src/org/apache/axis2/json/adb/LibraryServiceSkeleton.java" />
                             </tasks>
                         </configuration>
                     </execution>

@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.7.0</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
 
@@ -35,9 +35,9 @@
 
   <url>http://axis.apache.org/axis2/java/core/</url>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/transport/mail</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/transport/mail</developerConnection>
-    <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/transport/mail</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.0/modules/transport/mail</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.0/modules/transport/mail</developerConnection>
+    <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.7.0/modules/transport/mail</url>
   </scm>
 
   <build>
