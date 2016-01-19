@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
-        <version>1.7.1-SNAPSHOT</version>
+        <version>1.8.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -29,9 +29,9 @@
     <name>Apache Axis2 - OSGi Tests</name>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_7/modules/osgi-tests</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_7/modules/osgi-tests</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_7/modules/osgi-tests</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/osgi-tests</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/osgi-tests</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/osgi-tests</url>
     </scm>
     <properties>
         <exam.version>3.4.0</exam.version>
