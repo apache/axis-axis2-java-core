@@ -56,7 +56,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.HexBinary;
@@ -361,7 +361,7 @@ public abstract class AbstractTestCase extends TestCase {
         String contentType = format.getContentTypeForMTOM("text/xml");
         Attachments attachments = new Attachments(new ByteArrayInputStream(buffer.toByteArray()), contentType);
         assertEquals(countDataHandlers(bean) + 1, attachments.getAllContentIDs().length);
-        MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(attachments.getRootPartInputStream()), attachments);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
         OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), cache ? bodyElement.getXMLStreamReader() : bodyElement.getXMLStreamReaderWithoutCaching()));
     }
@@ -381,7 +381,7 @@ public abstract class AbstractTestCase extends TestCase {
 //        System.out.write(buffer.toByteArray());
         String contentType = format.getContentTypeForMTOM("text/xml");
         Attachments attachments = new Attachments(new ByteArrayInputStream(buffer.toByteArray()), contentType);
-        MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(attachments.getRootPartInputStream()), attachments);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
         OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), bodyElement.getXMLStreamReaderWithoutCaching()));
     }

@@ -19,16 +19,17 @@
 
 package org.apache.axis2.saaj.util;
 
-import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMMetaFactory;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.util.stax.xop.MimePartProvider;
+import org.apache.axiom.util.stax.xop.XOPDecodingStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,7 +42,10 @@ import javax.xml.soap.SOAPException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /** Utility class for the Axis2-WSS4J Module */
 public class SAAJUtil {
@@ -136,8 +140,7 @@ public class SAAJUtil {
      */
     public static org.apache.axiom.soap.SOAPEnvelope toOMSOAPEnvelope(
             javax.xml.soap.SOAPMessage message) throws SOAPException {
-        
-        Attachments attachments = new Attachments();
+        final Map<String,DataHandler> attachments = new HashMap<String,DataHandler>();
         for (Iterator it = message.getAttachments(); it.hasNext(); ) {
             AttachmentPart attachment = (AttachmentPart)it.next();
             String contentId = attachment.getContentId();
@@ -149,12 +152,25 @@ public class SAAJUtil {
                 if (contentId.startsWith("<") && contentId.endsWith(">")) {
                     contentId = contentId.substring(1, contentId.length()-1);
                 }
-                attachments.addDataHandler(contentId, dh);
+                attachments.put(contentId, dh);
             }
         }
         OMElement docElem = (OMElement)message.getSOAPPart().getDocumentElement();
-        MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(docElem.getXMLStreamReader(), attachments);
-        return builder.getSOAPEnvelope();
+        MimePartProvider mimePartProvider = new MimePartProvider() {
+            public boolean isLoaded(String contentID) {
+                return true;
+            }
+            
+            public DataHandler getDataHandler(String contentID) throws IOException {
+                DataHandler dh = attachments.get(contentID);
+                if (dh == null) {
+                    throw new IOException("No attachment with content ID " + contentID + " found");
+                } else {
+                    return dh;
+                }
+            }
+        };
+        return OMXMLBuilderFactory.createStAXSOAPModelBuilder(new XOPDecodingStreamReader(docElem.getXMLStreamReader(), mimePartProvider)).getSOAPEnvelope();
     }
 
     /**

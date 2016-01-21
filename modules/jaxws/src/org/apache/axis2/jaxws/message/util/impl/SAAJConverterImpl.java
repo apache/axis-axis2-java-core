@@ -22,12 +22,15 @@ package org.apache.axis2.jaxws.message.util.impl;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.impl.builder.AttachmentsMimePartProvider;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.util.stax.xop.XOPDecodingStreamReader;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
@@ -140,11 +143,11 @@ public class SAAJConverterImpl implements SAAJConverter {
         XMLStreamReader reader = new SOAPElementReader(saajEnvelope);
         
         // Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
-        StAXSOAPModelBuilder builder = null;
+        SOAPModelBuilder builder = null;
         if (attachments == null) {
             builder = new StAXSOAPModelBuilder(reader, null);
         } else {
-            builder = new MTOMStAXSOAPModelBuilder(reader, attachments, null);
+            builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(new XOPDecodingStreamReader(reader, new AttachmentsMimePartProvider(attachments)));
         }
         // Create and return the OM Envelope
         org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();

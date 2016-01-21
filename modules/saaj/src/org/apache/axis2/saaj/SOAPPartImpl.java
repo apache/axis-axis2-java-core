@@ -24,12 +24,12 @@ import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMMetaFactory;
-import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
@@ -191,12 +191,9 @@ public class SOAPPartImpl extends SOAPPart {
             throw new SOAPException(e);
         }
 
-        StAXSOAPModelBuilder builder;
+        SOAPModelBuilder builder;
         if (isMTOM && attachments != null) {
-            builder = new MTOMStAXSOAPModelBuilder(streamReader,
-                                                   soapFactory,
-                                                   attachments,
-                                                   soapEnvelopeNamespaceURI);
+            builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
         } else {
             builder = new StAXSOAPModelBuilder(streamReader,
                                                soapFactory,

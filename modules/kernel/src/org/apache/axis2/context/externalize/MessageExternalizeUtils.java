@@ -25,12 +25,10 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -183,11 +181,11 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         }
     }
     
-    private static StAXBuilder getAttachmentsBuilder(MessageContext msgContext,
+    private static OMXMLParserWrapper getAttachmentsBuilder(MessageContext msgContext,
                 InputStream inStream, String contentTypeString,
                 boolean isSOAP)
             throws OMException, XMLStreamException, FactoryConfigurationError {
-        StAXBuilder builder = null;
+        OMXMLParserWrapper builder = null;
         XMLStreamReader streamReader;
 
         Attachments attachments = BuilderUtil.createAttachmentsMap(msgContext, inStream, contentTypeString);
@@ -207,23 +205,10 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
 
         String soapEnvelopeNamespaceURI = BuilderUtil.getEnvelopeNamespace(contentTypeString);
 
-        return getAttachmentBuilder(msgContext, attachments, streamReader, soapEnvelopeNamespaceURI, isSOAP);
-
-    }
-
-    private static StAXBuilder getAttachmentBuilder(MessageContext msgContext,
-            Attachments attachments, XMLStreamReader streamReader, String soapEnvelopeNamespaceURI,
-            boolean isSOAP) throws OMException, XMLStreamException, FactoryConfigurationError {
-
-        StAXBuilder builder = null;
-
         if (isSOAP) {
             if (attachments.getAttachmentSpecType().equals(
                     MTOMConstants.MTOM_TYPE)) {
-                //Creates the MTOM specific MTOMStAXSOAPModelBuilder
-                builder = new MTOMStAXSOAPModelBuilder(streamReader,
-                        attachments, soapEnvelopeNamespaceURI);
-                msgContext.setDoingMTOM(true);
+                builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
             } else if (attachments.getAttachmentSpecType().equals(
                     MTOMConstants.SWA_TYPE)) {
                 builder = new StAXSOAPModelBuilder(streamReader,
@@ -238,7 +223,7 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         // To handle REST XOP case
         else {
             if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
-                builder = new XOPAwareStAXOMBuilder(streamReader, attachments);
+                builder = OMXMLBuilderFactory.createOMBuilder(StAXParserConfiguration.DEFAULT, attachments);
 
             } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
                 builder = new StAXOMBuilder(streamReader);
