@@ -53,7 +53,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.util.MultipleEntryHashMap;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.io.IOUtils;
@@ -63,7 +62,6 @@ import org.apache.ws.commons.schema.*;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedReader;
@@ -458,35 +456,7 @@ public class BuilderUtil {
         return value;
     }
 
-    public static StAXBuilder getAttachmentsBuilder(MessageContext msgContext,
-                                                    InputStream inStream, String contentTypeString,
-                                                    boolean isSOAP)
-            throws OMException, XMLStreamException, FactoryConfigurationError {
-        StAXBuilder builder = null;
-        XMLStreamReader streamReader;
-
-        Attachments attachments = createAttachmentsMap(msgContext, inStream, contentTypeString);
-        String charSetEncoding = getCharSetEncoding(attachments.getRootPartContentType());
-
-        if ((charSetEncoding == null)
-            || "null".equalsIgnoreCase(charSetEncoding)) {
-            charSetEncoding = MessageContext.UTF_8;
-        }
-        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                               charSetEncoding);
-
-        streamReader = StAXUtils.createXMLStreamReader(attachments.getRootPartInputStream(), charSetEncoding);
-
-        // Setting the Attachments map to new SwA API
-        msgContext.setAttachmentMap(attachments);
-
-        String soapEnvelopeNamespaceURI = getEnvelopeNamespace(contentTypeString);
-
-        return MessageProcessorSelector.getAttachmentBuilder(msgContext, attachments, streamReader, soapEnvelopeNamespaceURI, isSOAP);
-
-    }
-
-    protected static Attachments createAttachmentsMap(MessageContext msgContext,
+    public static Attachments createAttachmentsMap(MessageContext msgContext,
                                                       InputStream inStream,
                                                       String contentTypeString) {
         boolean fileCacheForAttachments = isAttachmentsCacheEnabled(msgContext);
