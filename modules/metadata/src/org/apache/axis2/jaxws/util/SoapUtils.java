@@ -21,23 +21,15 @@ package org.apache.axis2.jaxws.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-
-import javax.xml.stream.XMLStreamReader;
 
 public class SoapUtils {
 
 
     public static OMElement getOMElement(SOAPEnvelope response) {
-        XMLStreamReader parser = response.getXMLStreamReader();
-
-        StAXOMBuilder builder =
-                new StAXOMBuilder(OMAbstractFactory.getOMFactory(), parser);
-
-        return builder.getDocumentElement();
-
+        return OMXMLBuilderFactory.createStAXOMBuilder(response.getXMLStreamReader()).getDocumentElement();
     }
 
     public static SOAPFactory getSoapFactory(String soapVersionURI) {

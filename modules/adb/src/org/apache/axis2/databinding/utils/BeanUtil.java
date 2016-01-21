@@ -55,7 +55,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.*;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.classloader.BeanInfoCache;
@@ -1510,10 +1509,9 @@ public class BeanUtil {
                         entryQName, properties.toArray(), null,
                         typeTable, elementFormDefault);
 
-                StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
-                        OMAbstractFactory.getOMFactory(), new StreamWrapper(
-                                pullParser));
-                omEntry = stAXOMBuilder.getDocumentElement();
+                OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(
+                        new StreamWrapper(pullParser));
+                omEntry = builder.getDocumentElement();
                 list.add(omEntry);
             }
         }
@@ -1823,9 +1821,9 @@ public class BeanUtil {
         XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(eleQName, properties.toArray(), null, typeTable,
             elementFormDefault);
 
-        StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
-            OMAbstractFactory.getOMFactory(), new StreamWrapper(pullParser));
-        return stAXOMBuilder.getDocumentElement();
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(
+            new StreamWrapper(pullParser));
+        return builder.getDocumentElement();
     }
 
     /**

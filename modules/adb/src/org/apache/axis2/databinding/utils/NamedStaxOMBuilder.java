@@ -20,7 +20,8 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
@@ -28,8 +29,8 @@ import javax.xml.stream.XMLStreamReader;
 
 public class NamedStaxOMBuilder {
 
-    //wrap a StAXOMBuilder
-    private StAXOMBuilder builder;
+    //wrap an OMXMLParserWrapper
+    private OMXMLParserWrapper builder;
     private XMLStreamReader reader;
     private QName nameToMatch;
 
@@ -39,7 +40,7 @@ public class NamedStaxOMBuilder {
      */
     public NamedStaxOMBuilder(XMLStreamReader xmlStreamReader, QName nameToMatch) {
         reader = xmlStreamReader;
-        builder = new StAXOMBuilder(xmlStreamReader);
+        builder = OMXMLBuilderFactory.createStAXOMBuilder(xmlStreamReader);
         this.nameToMatch = nameToMatch;
     }
 

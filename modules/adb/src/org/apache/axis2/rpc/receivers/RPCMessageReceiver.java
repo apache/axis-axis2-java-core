@@ -25,8 +25,8 @@ package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -201,8 +201,8 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                         QName innerElementQName = new QName(elementQName.getNamespaceURI(), getSimpleClassName(exceptionType));
                         XMLStreamReader xr = BeanUtil.getPullParser(cause,
                                 innerElementQName, typeTable, true, false);
-                        StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
-                        OMElement documentElement = stAXOMBuilder.getDocumentElement();
+                        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(new StreamWrapper(xr));
+                        OMElement documentElement = builder.getDocumentElement();
                         exceptionElement.addChild(documentElement);
                         }
                     }

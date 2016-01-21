@@ -25,11 +25,8 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXParserConfiguration;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.BuilderUtil;
@@ -48,7 +45,6 @@ import java.io.OutputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * Utility to read/write the Message of a MessageContext
@@ -185,9 +181,6 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
                 InputStream inStream, String contentTypeString,
                 boolean isSOAP)
             throws OMException, XMLStreamException, FactoryConfigurationError {
-        OMXMLParserWrapper builder = null;
-        XMLStreamReader streamReader;
-
         Attachments attachments = BuilderUtil.createAttachmentsMap(msgContext, inStream, contentTypeString);
         String charSetEncoding = BuilderUtil.getCharSetEncoding(attachments.getRootPartContentType());
 
@@ -198,41 +191,26 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                charSetEncoding);
 
-        streamReader = StAXUtils.createXMLStreamReader(attachments.getRootPartInputStream(), charSetEncoding);
-
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);
-
-        String soapEnvelopeNamespaceURI = BuilderUtil.getEnvelopeNamespace(contentTypeString);
 
         if (isSOAP) {
             if (attachments.getAttachmentSpecType().equals(
                     MTOMConstants.MTOM_TYPE)) {
-                builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
-            } else if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.SWA_TYPE)) {
-                builder = new StAXSOAPModelBuilder(streamReader,
-                        soapEnvelopeNamespaceURI);
-            } else if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.SWA_TYPE_12)) {
-                builder = new StAXSOAPModelBuilder(streamReader,
-                        soapEnvelopeNamespaceURI);
+                return OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
+            } else {
+                return OMXMLBuilderFactory.createSOAPModelBuilder(attachments.getRootPartInputStream(), charSetEncoding);
             }
 
         }
         // To handle REST XOP case
         else {
             if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
-                builder = OMXMLBuilderFactory.createOMBuilder(StAXParserConfiguration.DEFAULT, attachments);
-
-            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
-                builder = new StAXOMBuilder(streamReader);
-            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE_12)) {
-                builder = new StAXOMBuilder(streamReader);
+                return OMXMLBuilderFactory.createOMBuilder(StAXParserConfiguration.DEFAULT, attachments);
+            } else {
+                return OMXMLBuilderFactory.createOMBuilder(attachments.getRootPartInputStream(), charSetEncoding);
             }
         }
-
-        return builder;
     }
 
     /**

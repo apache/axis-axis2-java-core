@@ -21,10 +21,6 @@ package org.apache.axis2.transport.base;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -39,8 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,24 +87,6 @@ public class BaseUtils {
                 log.warn("Error marking service : " + serviceName + " as faulty", axisFault);
             }
         }
-    }
-
-    /**
-     * Create a SOAP envelope using SOAP 1.1 or 1.2 depending on the namespace
-     * @param in InputStream for the payload
-     * @param namespace the SOAP namespace
-     * @return the SOAP envelope for the correct version
-     * @throws javax.xml.stream.XMLStreamException on error
-     */
-    public static SOAPEnvelope getEnvelope(InputStream in, String namespace) throws XMLStreamException {
-
-        try {
-            in.reset();
-        } catch (IOException ignore) {}
-        XMLStreamReader xmlreader =
-            StAXUtils.createXMLStreamReader(in, MessageContext.DEFAULT_CHAR_SET_ENCODING);
-        StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, namespace);
-        return (SOAPEnvelope) builder.getDocumentElement();
     }
 
     /**

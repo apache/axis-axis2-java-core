@@ -20,12 +20,11 @@
 
 package org.apache.axis2.transport.local;
 
-import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
@@ -38,7 +37,6 @@ import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -144,13 +142,7 @@ public class LocalTransportReceiver implements TransportListener {
             msgCtx.setServerSide(true);
 
             InputStreamReader streamReader = new InputStreamReader(in);
-            OMXMLParserWrapper builder;
-            try {
-                builder = BuilderUtil.getBuilder(streamReader);
-            } catch (XMLStreamException e) {
-                throw AxisFault.makeFault(e);
-            }
-            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+            SOAPEnvelope envelope = OMXMLBuilderFactory.createSOAPModelBuilder(streamReader).getSOAPEnvelope();
 
             msgCtx.setEnvelope(envelope);
 

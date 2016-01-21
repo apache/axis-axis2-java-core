@@ -29,10 +29,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXParserConfiguration;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
@@ -41,7 +38,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axiom.soap.SOAPProcessingException;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -62,8 +58,6 @@ import org.apache.ws.commons.schema.*;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -256,22 +250,6 @@ public class BuilderUtil {
             soapFactory.createOMElement(key, ns, bodyFirstChild).setText(
                     textValue);
         }
-    }
-
-    /**
-     * @deprecated Please use {@link #createPOXBuilder(InputStream, String)} to enable usage of non
-     *             standard Axiom implementations.
-     */
-    public static StAXBuilder getPOXBuilder(InputStream inStream, String charSetEnc)
-            throws XMLStreamException {
-        StAXBuilder builder;
-        // We use the StAXParserConfiguration.SOAP here as well because we don't want to allow
-        // document type declarations (that potentially reference external entities), even
-        // in plain XML messages.
-        XMLStreamReader xmlreader =
-                StAXUtils.createXMLStreamReader(StAXParserConfiguration.SOAP, inStream, charSetEnc);
-        builder = new StAXOMBuilder(xmlreader);
-        return builder;
     }
 
     /**
@@ -575,27 +553,6 @@ public class BuilderUtil {
     }
 
     /**
-     * Utility method to get a StAXBuilder
-     *
-     * @param in an InputStream
-     * @return a StAXSOAPModelBuilder for the given InputStream
-     * @throws XMLStreamException
-     * @deprecated If some one really need this method, please shout.
-     */
-    public static StAXBuilder getBuilder(Reader in) throws XMLStreamException {
-        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in);
-        return new StAXSOAPModelBuilder(xmlreader, null);
-    }
-
-    /**
-     * @deprecated Please use {@link OMXMLBuilderFactory#createOMBuilder(InputStream)} instead.
-     */
-    public static StAXBuilder getBuilder(InputStream inStream) throws XMLStreamException {
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
-        return new StAXOMBuilder(xmlReader);
-    }
-
-    /**
      * Create a SOAP model builder. This method delegates to
      * {@link OMXMLBuilderFactory#createSOAPModelBuilder(InputStream, String)} but generates
      * additional logging if an error occurs.
@@ -620,76 +577,6 @@ public class BuilderUtil {
             }
             throw e;
         }
-    }
-
-    /**
-     * @deprecated Please use {@link #createSOAPModelBuilder(InputStream, String)} to enable usage
-     *             of non standard Axiom implementations.
-     */
-    public static StAXBuilder getBuilder(InputStream inStream, String charSetEnc)
-            throws XMLStreamException {
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-        try {
-            return new StAXSOAPModelBuilder(xmlReader);
-        } catch (OMException e) {
-            log.info("OMException in getSOAPBuilder", e);
-            try {
-                log.info("Remaining input stream :[" +
-                         new String(IOUtils.toByteArray(inStream), charSetEnc) + "]");
-            } catch (IOException e1) {
-                // Nothing here?
-            }
-            throw e;
-        }
-    }
-
-    /**
-     * @deprecated Please use {@link #createSOAPModelBuilder(InputStream, String)} to enable usage
-     *             of non standard Axiom implementations.
-     */
-    public static StAXBuilder getSOAPBuilder(InputStream inStream) throws XMLStreamException {
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
-        try {
-            return new StAXSOAPModelBuilder(xmlReader);
-        } catch (OMException e) {
-            log.info("OMException in getSOAPBuilder", e);
-            try {
-                log.info("Remaining input stream :[" +
-                         new String(IOUtils.toByteArray(inStream)) + "]");
-            } catch (IOException e1) {
-                // Nothing here?
-            }
-            throw e;
-        }
-    }
-
-    /**
-     * @deprecated Please use {@link #createSOAPModelBuilder(InputStream, String)} to enable usage
-     *             of non standard Axiom implementations.
-     */
-    public static StAXBuilder getSOAPBuilder(InputStream inStream, String charSetEnc)
-            throws XMLStreamException {
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-        try {
-            return new StAXSOAPModelBuilder(xmlReader);
-        } catch (OMException e) {
-            log.info("OMException in getSOAPBuilder", e);
-            try {
-                log.info("Remaining input stream :[" +
-                         new String(IOUtils.toByteArray(inStream), charSetEnc) + "]");
-            } catch (IOException e1) {
-                // Nothing here?
-            }
-            throw e;
-        }
-    }
-
-    public static StAXBuilder getBuilder(SOAPFactory soapFactory, InputStream in, String charSetEnc)
-            throws XMLStreamException {
-        StAXBuilder builder;
-        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in, charSetEnc);
-        builder = new StAXOMBuilder(soapFactory, xmlreader);
-        return builder;
     }
 
     /**

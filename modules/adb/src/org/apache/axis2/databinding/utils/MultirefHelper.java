@@ -25,7 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -105,7 +105,7 @@ public class MultirefHelper {
     }
 
     private OMElement elementClone(OMElement ele) {
-        return new StAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
+        return OMXMLBuilderFactory.createStAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
     }
 
     public Object processRef(Class javatype, String id,

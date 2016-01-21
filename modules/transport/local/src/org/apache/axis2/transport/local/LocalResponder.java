@@ -20,13 +20,12 @@
 
 package org.apache.axis2.transport.local;
 
-import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
@@ -39,7 +38,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.Map;
 
@@ -217,14 +215,6 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
 
         ByteArrayInputStream bs = new ByteArrayInputStream(out.toByteArray());
         InputStreamReader streamReader = new InputStreamReader(bs);
-        OMXMLParserWrapper builder;
-
-        try {
-            builder = BuilderUtil.getBuilder(streamReader);
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        }
-
-        return (SOAPEnvelope) builder.getDocumentElement();
+        return OMXMLBuilderFactory.createSOAPModelBuilder(streamReader).getSOAPEnvelope();
     }
 }
