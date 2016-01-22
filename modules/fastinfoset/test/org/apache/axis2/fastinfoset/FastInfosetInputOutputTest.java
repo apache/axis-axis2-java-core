@@ -22,8 +22,8 @@ package org.apache.axis2.fastinfoset;
 import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
 import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.custommonkey.xmlunit.XMLTestCase;
 
 import javax.xml.stream.XMLStreamReader;
@@ -53,7 +53,8 @@ public class FastInfosetInputOutputTest extends XMLTestCase {
 
         try {
             // first let's read the xml document in to Axiom
-            OMElement element = new StAXOMBuilder(inputFile).getDocumentElement();
+            OMElement element = OMXMLBuilderFactory.createOMBuilder(
+                    new FileInputStream(inputFile)).getDocumentElement();
 
             // output it using binary xml outputter
             XMLStreamWriter streamWriter = new StAXDocumentSerializer(new FileOutputStream(tempFile));
@@ -63,7 +64,7 @@ public class FastInfosetInputOutputTest extends XMLTestCase {
 
             // now let's read the binary file in to Axiom
             XMLStreamReader streamReader = new StAXDocumentParser(new FileInputStream(tempFile));
-            StAXBuilder builder = new StAXOMBuilder(streamReader);
+            OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(streamReader);
             builder.getDocumentElement().serialize(new FileWriter(outputFile));
 
             // let's see this is the same that we fed in to this test initially

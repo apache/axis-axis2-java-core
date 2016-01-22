@@ -20,11 +20,10 @@
 package org.apache.axis2.scripting.convertors;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.bsf.BSFEngine;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 
 /**
  * The DefaultOMElementConvertor converts between Synapse OMElements and Strings
@@ -32,16 +31,8 @@ import java.io.ByteArrayInputStream;
 public class DefaultOMElementConvertor implements OMElementConvertor {
 
     public OMElement fromScript(Object o) {
-        try {
-
-            byte[] xmlBytes = o.toString().getBytes();
-            StAXOMBuilder builder = new StAXOMBuilder(new ByteArrayInputStream(xmlBytes));
-            OMElement omElement = builder.getDocumentElement();
-            return omElement;
-
-        } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        }
+        return OMXMLBuilderFactory.createOMBuilder(
+                new StringReader(o.toString())).getDocumentElement();
     }
 
     public Object toScript(OMElement omElement) {

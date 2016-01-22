@@ -1,13 +1,12 @@
 package org.apache.axis2.jaxws.provider;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.Constants;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
@@ -46,7 +45,6 @@ public class OMProviderTests extends ProviderTestCase {
 
         private static String request = "<invokeOp>Hello Provider OM</invokeOp>";
         private static String SOAPFaultRequest ="<invokeOp>SOAPFault</invokeOp>";
-        private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         
    public static Test suite() {
       return getTestSetup(new TestSuite(OMProviderTests.class));
@@ -68,8 +66,7 @@ public class OMProviderTests extends ProviderTestCase {
         // Create the OMElement object with the payload contents.  Since
         // we're in PAYLOAD mode, we don't have to worry about the envelope.
         StringReader sr = new StringReader(SOAP11_ENVELOPE_HEAD+request+SOAP11_ENVELOPE_TAIL);
-        XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inputReader, null); 
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(sr); 
         SOAPEnvelope om = (SOAPEnvelope) builder.getDocumentElement();
 
         
@@ -95,8 +92,7 @@ public class OMProviderTests extends ProviderTestCase {
                 portName, OMElement.class, Mode.MESSAGE);
         
         StringReader sr = new StringReader(SOAP11_ENVELOPE_HEAD+SOAPFaultRequest+SOAP11_ENVELOPE_TAIL);
-        XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inputReader, null); 
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(sr); 
         SOAPEnvelope om = (SOAPEnvelope) builder.getDocumentElement();
         OMElement response = null;
         try{
@@ -118,8 +114,7 @@ public class OMProviderTests extends ProviderTestCase {
         bp.getRequestContext().put(Constants.THROW_EXCEPTION_IF_SOAP_FAULT, Boolean.FALSE);
        
         StringReader sr = new StringReader(SOAP11_ENVELOPE_HEAD+SOAPFaultRequest+SOAP11_ENVELOPE_TAIL);
-        XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inputReader, null); 
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(sr); 
         SOAPEnvelope om = (SOAPEnvelope) builder.getDocumentElement();
         OMElement response = null;
         try{

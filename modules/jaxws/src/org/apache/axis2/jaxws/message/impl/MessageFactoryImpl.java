@@ -20,9 +20,9 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -57,14 +57,13 @@ public class MessageFactoryImpl implements MessageFactory {
       */
     public Message createFrom(XMLStreamReader reader, Protocol protocol)
             throws XMLStreamException, WebServiceException {
-        StAXOMBuilder builder;
+        OMXMLParserWrapper builder;
         if (protocol == Protocol.rest) {
             // Build a normal OM tree
-            builder = new StAXOMBuilder(reader);
+            builder = OMXMLBuilderFactory.createStAXOMBuilder(reader);
         } else {
             // Build a SOAP OM tree
-            builder = new StAXSOAPModelBuilder(reader,
-                                               null);  // Pass null as the version to trigger autodetection
+            builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(reader);
         }
         OMElement omElement = builder.getDocumentElement();
         return createFrom(omElement, protocol);

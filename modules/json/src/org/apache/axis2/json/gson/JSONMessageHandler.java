@@ -20,7 +20,8 @@
 package org.apache.axis2.json.gson;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
@@ -77,7 +78,7 @@ public class JSONMessageHandler extends AbstractHandler {
                         QName elementQname = msgContext.getAxisOperation().getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getElementQName();
                         List<XmlSchema> schemas = msgContext.getAxisService().getSchema();
                         gsonXMLStreamReader.initXmlStreamReader(elementQname, schemas, msgContext.getConfigurationContext());
-                        StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(gsonXMLStreamReader);
+                        OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory.createStAXOMBuilder(gsonXMLStreamReader);
                         OMElement omElement = stAXOMBuilder.getDocumentElement();
                         msgContext.getEnvelope().getBody().addChild(omElement);
                     } else {

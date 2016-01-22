@@ -65,7 +65,7 @@
             <xsl:choose>
                 <xsl:when test="$base64">
                      if (optimizeContent) {
-                        org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
+                        org.apache.axiom.om.OMXMLParserWrapper builder = org.apache.axiom.om.OMXMLBuilderFactory.createStAXOMBuilder
                         (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
                         org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement(true);
                         optimizeContent(documentElement,qNameArray);

@@ -20,7 +20,8 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
@@ -62,7 +63,7 @@ public abstract class BlockFactoryImpl implements BlockFactory {
 
     public Block createFrom(XMLStreamReader reader, Object context, QName qName)
             throws XMLStreamException, WebServiceException {
-        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(reader);
         OMElement omElement = builder.getDocumentElement();
         return createFrom(omElement, context, omElement.getQName());
     }

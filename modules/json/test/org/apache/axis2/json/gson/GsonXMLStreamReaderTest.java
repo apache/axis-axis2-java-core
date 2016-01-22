@@ -21,7 +21,8 @@ package org.apache.axis2.json.gson;
 
 import com.google.gson.stream.JsonReader;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -57,7 +58,7 @@ public class GsonXMLStreamReaderTest {
         ConfigurationContext configCtxt = new ConfigurationContext(new AxisConfiguration());
         GsonXMLStreamReader gsonXMLStreamReader = new GsonXMLStreamReader(jsonReader);
         gsonXMLStreamReader.initXmlStreamReader(elementQName , schemaList , configCtxt);
-        StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(gsonXMLStreamReader);
+        OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory.createStAXOMBuilder(gsonXMLStreamReader);
         OMElement omElement = stAXOMBuilder.getDocumentElement();
         String actual = omElement.toString();
         inputStream.close();

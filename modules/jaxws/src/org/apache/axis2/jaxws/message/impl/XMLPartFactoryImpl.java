@@ -20,8 +20,9 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
@@ -43,8 +44,7 @@ public class XMLPartFactoryImpl implements XMLPartFactory {
       */
     public XMLPart createFrom(XMLStreamReader reader, Protocol protocol)
             throws XMLStreamException, WebServiceException {
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader,
-                                                                null);  // Pass null has the version to trigger autodetection
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(reader);
         SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
         return createFrom(omEnvelope, protocol);
     }

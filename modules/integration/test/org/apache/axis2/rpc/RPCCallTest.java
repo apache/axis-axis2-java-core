@@ -19,11 +19,8 @@
 
 package org.apache.axis2.rpc;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.ConverterUtil;
@@ -32,13 +29,10 @@ import org.apache.axis2.integration.RPCLocalTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class RPCCallTest extends RPCLocalTestCase {
 
@@ -455,14 +449,9 @@ public class RPCCallTest extends RPCLocalTestCase {
                 "    <arg0><abc>vaue3</abc></arg0>\n" +
                 "    <arg0><abc>vaue4</abc></arg0>\n" +
                 "</req:omElementArray>";
-        StAXOMBuilder staxOMBuilder;
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
-                ByteArrayInputStream(str.getBytes()));
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-
-        staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-
-        OMElement elem = sender.sendReceive(staxOMBuilder.getDocumentElement());
+        OMElement elem = sender.sendReceive(
+                OMXMLBuilderFactory.createOMBuilder(
+                        new StringReader(str)).getDocumentElement());
         assertEquals("4", elem.getFirstElement().getText());
     }
 
@@ -474,13 +463,7 @@ public class RPCCallTest extends RPCLocalTestCase {
                 "    <item0 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xsd:string\">klm</item0>\n" +
                 " <arg1 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"xsd:int\">10</arg1>" +
                 "</req:handleArrayList>";
-        StAXOMBuilder staxOMBuilder;
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                new ByteArrayInputStream(str.getBytes()));
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-
-        staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        return staxOMBuilder.getDocumentElement();
+        return OMXMLBuilderFactory.createOMBuilder(new StringReader(str)).getDocumentElement();
     }
 
 

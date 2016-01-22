@@ -21,11 +21,13 @@ package org.apache.axis2.policy.model;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 
+import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -152,7 +154,8 @@ public class MTOMAssertionTest extends TestCase {
     
 
     private Policy getPolicy(String filePath) throws Exception {
-        StAXOMBuilder builder = new StAXOMBuilder(filePath);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(
+                new FileInputStream(filePath));
         OMElement elem = builder.getDocumentElement();
         return PolicyEngine.getPolicy(elem);
     }

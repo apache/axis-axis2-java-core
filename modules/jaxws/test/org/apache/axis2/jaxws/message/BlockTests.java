@@ -25,6 +25,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
@@ -627,7 +629,7 @@ public class BlockTests extends TestCase {
         // what occurs on the outbound JAX-WS dispatch<OMElement> client
         StringReader sr = new StringReader(sampleText);
         XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXOMBuilder builder = new StAXOMBuilder(inputReader);  
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(inputReader);  
         OMElement om = builder.getDocumentElement();
         Block block = f.createFrom(om, null, null);
 
@@ -662,7 +664,7 @@ public class BlockTests extends TestCase {
         // what occurs on the outbound JAX-WS dispatch<OMElement> client
         StringReader sr = new StringReader(sampleText);
         XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXOMBuilder builder = new StAXOMBuilder(inputReader);  
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(inputReader);  
         OMElement om = builder.getDocumentElement();
         Block block = f.createFrom(om, null, null);
 

@@ -21,15 +21,13 @@ package org.apache.axis2.fastinfoset;
 
 import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 
 public class FastInfosetPOXBuilder implements Builder {
@@ -53,9 +51,6 @@ public class FastInfosetPOXBuilder implements Builder {
 			logger.debug("Processing a Document with the content type: " + contentType);
 		}
 		//Create a instance of the StAX Parser which can handle the fast infoset stream
-		XMLStreamReader streamReader = new StAXDocumentParser(inputStream);
-		StAXBuilder builder = new StAXOMBuilder(streamReader);
-
-		return builder.getDocumentElement();
+		return OMXMLBuilderFactory.createStAXOMBuilder(new StAXDocumentParser(inputStream)).getDocumentElement();
 	}
 }

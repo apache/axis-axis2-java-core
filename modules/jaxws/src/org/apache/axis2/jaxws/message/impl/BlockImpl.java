@@ -23,9 +23,10 @@ import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.ds.ByteArrayDataSource;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -172,7 +173,7 @@ public abstract class BlockImpl implements Block {
                     try {
                         XMLStreamReader newReader = _getReaderFromBO(busObject, busContext);
                         busObject = null;
-                        StAXOMBuilder builder = new StAXOMBuilder(newReader);
+                        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(newReader);
                         omElement = builder.getDocumentElement();
                         omElement.close(true);
                     } catch (Exception e) {
@@ -502,7 +503,7 @@ public abstract class BlockImpl implements Block {
         throws XMLStreamException, WebServiceException {
         // Getting the reader does not destroy the BusinessObject
         XMLStreamReader newReader = _getReaderFromBO(busObject, busContext);
-        StAXOMBuilder builder = new StAXOMBuilder(newReader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(newReader);
         return builder.getDocumentElement();
     }
 

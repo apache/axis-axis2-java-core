@@ -23,13 +23,12 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.builder.AttachmentsMimePartProvider;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPModelBuilder;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.util.stax.xop.XOPDecodingStreamReader;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -141,14 +140,12 @@ public class SAAJConverterImpl implements SAAJConverter {
         _fixFaultElements(saajEnvelope);        
         // Get a XMLStreamReader backed by a SOAPElement tree
         XMLStreamReader reader = new SOAPElementReader(saajEnvelope);
-        
-        // Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
-        SOAPModelBuilder builder = null;
-        if (attachments == null) {
-            builder = new StAXSOAPModelBuilder(reader, null);
-        } else {
-            builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(new XOPDecodingStreamReader(reader, new AttachmentsMimePartProvider(attachments)));
+        if (attachments != null) {
+            reader = new XOPDecodingStreamReader(reader, new AttachmentsMimePartProvider(attachments));
         }
+        
+        // Get a SOAP OM Builder.
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(reader);
         // Create and return the OM Envelope
         org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
         
@@ -187,8 +184,8 @@ public class SAAJConverterImpl implements SAAJConverter {
         } catch (XMLStreamException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
-        // Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);
+        // Get a SOAP OM Builder.
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(reader);
         // Create and return the OM Envelope
         return builder.getSOAPEnvelope();
     }
@@ -213,7 +210,7 @@ public class SAAJConverterImpl implements SAAJConverter {
         // Get a XMLStreamReader backed by a SOAPElement tree
         XMLStreamReader reader = new SOAPElementReader(soapElement);
         // Get a OM Builder.
-        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(reader);
         // Create and return the Element
         OMElement om = builder.getDocumentElement();
         // TODO The following statement expands the OM tree.  This is 

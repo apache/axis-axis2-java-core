@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.message.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
@@ -36,7 +37,7 @@ import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -366,7 +367,7 @@ public class XMLFaultUtils {
         
         SOAPEnvelope dummyEnv = (SOAPEnvelope) m.getAsOMElement();        
         
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(dummyEnv.getXMLStreamReaderWithoutCaching());
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(dummyEnv.getXMLStreamReaderWithoutCaching());
         SOAPEnvelope newEnv = (SOAPEnvelope) builder.getDocumentElement();
         
         SOAPBody body = newEnv.getBody();

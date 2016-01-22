@@ -34,18 +34,19 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.ds.ParserInputStreamDataSource;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.message.databinding.ParsedEntityReader;
 import org.apache.axis2.jaxws.message.databinding.impl.ParsedEntityReaderImpl;
 import org.apache.axis2.jaxws.message.factory.ParsedEntityReaderFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 public class ParserInputStreamCustomBuilderTests extends TestCase {
-	private StAXSOAPModelBuilder builder = null;
+	private SOAPModelBuilder builder = null;
 	private XMLStreamReader parser = null;
 	private String mockenvelope= "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"+
 	"<soapenv:Header/>"+
@@ -118,9 +119,9 @@ public class ParserInputStreamCustomBuilderTests extends TestCase {
 		SOAPEnvelope env = (SOAPEnvelope)getOMBuilder().getDocumentElement();
 		return env;
 	}
-    private StAXSOAPModelBuilder getOMBuilder() throws Exception {
+    private SOAPModelBuilder getOMBuilder() throws Exception {
     	if(builder == null){
-	        builder = new StAXSOAPModelBuilder(getParser(), null);
+	        builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(getParser());
     	}
         return builder;
     }

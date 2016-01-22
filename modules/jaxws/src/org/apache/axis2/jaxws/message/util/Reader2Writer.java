@@ -21,7 +21,8 @@ package org.apache.axis2.jaxws.message.util;
 
 import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -71,7 +72,7 @@ public class Reader2Writer {
     public void outputTo(XMLStreamWriter writer) throws XMLStreamException {
         // Using OM to convert the reader to a writer.  This seems to be
         // the safest way to make the conversion, and it promotes code re-use.
-        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(reader);
         OMDocument omDocument = builder.getDocument();
         Iterator it = omDocument.getChildren();
         while (it.hasNext()) {

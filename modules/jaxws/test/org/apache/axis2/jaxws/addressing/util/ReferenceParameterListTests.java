@@ -20,10 +20,12 @@
 package org.apache.axis2.jaxws.addressing.util;
 
 import junit.framework.TestCase;
+
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.w3c.dom.Element;
 
 import javax.xml.stream.XMLStreamReader;
@@ -41,7 +43,7 @@ public class ReferenceParameterListTests extends TestCase {
     public void setUp() throws Exception {
         File resourceFile = new File(testResourceDir, resourceFileName);
         XMLStreamReader parser = StAXUtils.createXMLStreamReader(new FileReader(resourceFile));
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(parser, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(parser);
         header = ((SOAPEnvelope)builder.getDocumentElement()).getHeader();
     }
     

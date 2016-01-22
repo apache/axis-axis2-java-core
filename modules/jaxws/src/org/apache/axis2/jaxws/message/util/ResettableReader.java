@@ -20,7 +20,8 @@
 package org.apache.axis2.jaxws.message.util;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 
 import javax.xml.stream.XMLStreamReader;
 
@@ -41,7 +42,7 @@ public class ResettableReader extends Reader {
      */
     public ResettableReader(XMLStreamReader reader) {
         super(reader, true);
-        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(reader);
         omElement = builder.getDocumentElement();
         reset();
     }
