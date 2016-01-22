@@ -21,7 +21,7 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFaultCode;
@@ -363,7 +363,7 @@ public class AxisServlet extends HttpServlet {
             try {
                 SOAPEnvelope envelope = messageContext.getEnvelope();
                 if(envelope != null) {
-                    StAXBuilder builder = (StAXBuilder) envelope.getBuilder();
+                    OMXMLParserWrapper builder = envelope.getBuilder();
                     if (builder != null) {
                         builder.close();
                     }
