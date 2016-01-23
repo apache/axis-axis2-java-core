@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.context.listener;
 
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.builder.CustomBuilderSupport;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -78,7 +78,7 @@ public class ProviderOMContextListener implements MessageContextListener {
         if (envelope == null) {
             return;
         }
-        if (!(envelope.getBuilder() instanceof StAXOMBuilder)) {
+        if (!(envelope.getBuilder() instanceof CustomBuilderSupport)) {
             return;
         }
 
@@ -88,7 +88,7 @@ public class ProviderOMContextListener implements MessageContextListener {
         }
 
         ParserInputStreamCustomBuilder pacb = new ParserInputStreamCustomBuilder(null);
-        ((StAXOMBuilder) envelope.getBuilder()).registerCustomBuilderForPayload(pacb);
+        ((CustomBuilderSupport) envelope.getBuilder()).registerCustomBuilderForPayload(pacb);
     }
 
     /* (non-Javadoc)
