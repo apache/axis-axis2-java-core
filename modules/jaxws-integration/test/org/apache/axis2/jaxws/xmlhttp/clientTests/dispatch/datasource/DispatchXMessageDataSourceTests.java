@@ -75,7 +75,12 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
 
         String textResourceDir = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/xmlhttp";
         File file2 = new File(textResourceDir+File.separator+"README.txt");
-        txtDS = new FileDataSource(file2);
+        txtDS = new FileDataSource(file2) {
+            @Override
+            public String getContentType() {
+                return "text/plain";
+            }
+        };
 
         String resourceDir = System.getProperty("basedir",".")+"/"+"test-resources";
         File file3 = new File(resourceDir+File.separator+"log4j.properties");
