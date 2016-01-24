@@ -37,6 +37,9 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPBinding;
+
+import static com.google.common.truth.Truth.assertThat;
+
 import java.awt.*;
 import java.io.File;
 import java.io.ByteArrayOutputStream;
@@ -91,7 +94,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         DataSource request = txtDS;
         DataSource response = dispatch.invoke(request);
         assertTrue(response != null);
-        assertEquals(response.getContentType(),"text/plain");
+        assertThat(response.getContentType()).isEqualTo("text/plain");
         String req = new String(getStreamAsByteArray(request.getInputStream()));
         String res = new String(getStreamAsByteArray(response.getInputStream()));
         assertEquals(req, res);
@@ -102,7 +105,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         DataSource request = imageDS;
         DataSource response = dispatch.invoke(request);
         assertTrue(response != null);
-        assertEquals(response.getContentType(),"image/jpeg");
+        assertThat(response.getContentType()).isEqualTo("image/jpeg");
         assertTrue(Arrays.equals(getStreamAsByteArray(request.getInputStream()), 
                 getStreamAsByteArray(response.getInputStream())));
     }
@@ -125,7 +128,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         DataSource request = txtDS;
         DataSource response = dispatch.invoke(request);
         assertTrue(response != null);
-        assertEquals(response.getContentType(),"text/plain");
+        assertThat(response.getContentType()).isEqualTo("text/plain");
         String req = new String(getStreamAsByteArray(request.getInputStream()));
         String res = new String(getStreamAsByteArray(response.getInputStream()));
         assertEquals(req, res);
@@ -147,7 +150,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         DataSource request = imageDS;
         DataSource response = dispatch.invoke(request);
         assertTrue(response != null);
-        assertEquals(response.getContentType(),"image/jpeg");
+        assertThat(response.getContentType()).isEqualTo("image/jpeg");
         assertTrue(Arrays.equals(getStreamAsByteArray(request.getInputStream()), 
                 getStreamAsByteArray(response.getInputStream())));
         Map attachments2 = (Map) dispatch.getResponseContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS);
@@ -169,7 +172,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         DataSource request = txtDS;
         DataSource response = dispatch.invoke(request);
         assertTrue(response != null);
-        assertEquals(response.getContentType(),"text/plain");
+        assertThat(response.getContentType()).isEqualTo("text/plain");
         String req = new String(getStreamAsByteArray(request.getInputStream()));
         String res = new String(getStreamAsByteArray(response.getInputStream()));
         assertEquals(req, res);
