@@ -276,7 +276,6 @@
                     <webXml>conf/web.xml</webXml>
                     <!-- This is basically the same list as in modules/distribution/src/main/assembly/bin-assembly.xml -->
                     <packagingExcludes>
-                        WEB-INF/lib/geronimo-activation_1.1_spec-*.jar,
                         WEB-INF/lib/geronimo-javamail_1.4_spec-*.jar,
                         WEB-INF/lib/spring-beans-*.jar,
                         WEB-INF/lib/spring-context-*.jar,

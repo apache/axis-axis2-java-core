@@ -60,7 +60,6 @@ public class OSGiTest {
                 url("link:classpath:META-INF/links/org.osgi.compendium.link"),
                 url("link:classpath:org.apache.felix.configadmin.link"),
                 url("link:classpath:org.apache.servicemix.bundles.wsdl4j.link"),
-                url("link:classpath:org.apache.geronimo.specs.geronimo-activation_1.1_spec.link"), // TODO: should not be necessary on Java 6
                 url("link:classpath:org.apache.geronimo.specs.geronimo-jms_1.1_spec.link"), // TODO: why the heck is this required???
                 url("link:classpath:org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec.link"),
                 url("link:classpath:org.apache.geronimo.specs.geronimo-javamail_1.4_spec.link"), // TODO: should no longer be necessary

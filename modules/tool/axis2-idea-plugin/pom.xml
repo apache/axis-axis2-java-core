@@ -89,10 +89,6 @@
             <artifactId>geronimo-javamail_1.4_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-activation_1.1_spec</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>openapi</artifactId>
         </dependency>

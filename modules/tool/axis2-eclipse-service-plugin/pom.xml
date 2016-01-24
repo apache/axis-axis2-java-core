@@ -163,7 +163,7 @@
                     <manifestLocation>META-INF</manifestLocation>
                     <instructions>
                         <!-- Embed all dependencies, except those which are provided by the Eclipse runtime -->
-                        <Embed-Dependency>*;scope=compile|runtime;groupId=!org.eclipse.*;artifactId=!commons-logging|woodstox-core-asl|geronimo-activation_1.1_spec|geronimo-javamail_1.4_spec|geronimo-stax-api_1.0_spec|ant*</Embed-Dependency>
+                        <Embed-Dependency>*;scope=compile|runtime;groupId=!org.eclipse.*;artifactId=!commons-logging|woodstox-core-asl|geronimo-javamail_1.4_spec|ant*</Embed-Dependency>
                         <Embed-Directory>lib</Embed-Directory>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!-- Exclude imports that are actually not used -->

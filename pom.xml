@@ -495,10 +495,8 @@
         <commons.io.version>2.1</commons.io.version>
         <commons.logging.version>1.1.1</commons.logging.version>
         <fi.version>1.2.7</fi.version>
-        <geronimo.spec.activation.version>1.0.2</geronimo.spec.activation.version>
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <geronimo.spec.javamail.version>1.6</geronimo.spec.javamail.version>
-        <geronimo.spec.stax.version>1.0.1</geronimo.spec.stax.version>
         <geronimo.spec.metadata.version>1.1.2</geronimo.spec.metadata.version>
         <geronimo.spec.saaj.version>1.0.1</geronimo.spec.saaj.version>
         <geronimo.spec.jaxws.version>1.0</geronimo.spec.jaxws.version>
@@ -763,16 +761,6 @@
                 <version>${commons.codec.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-stax-api_1.0_spec</artifactId>
-                <version>${geronimo.spec.stax.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-activation_1.1_spec</artifactId>
-                <version>${geronimo.spec.activation.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-javamail_1.4_spec</artifactId>
@@ -1241,8 +1229,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -1261,8 +1249,8 @@
                 <configuration>
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java15</artifactId>
-                        <version>1.0</version>
+                        <artifactId>java16</artifactId>
+                        <version>1.1</version>
                     </signature>
                 </configuration>
             </plugin>
