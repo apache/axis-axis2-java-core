@@ -21,18 +21,6 @@
     <artifactId>https-sample</artifactId>
     <packaging>pom</packaging>
     <name>Apache Axis2 Transport-HTTPS sample</name>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
