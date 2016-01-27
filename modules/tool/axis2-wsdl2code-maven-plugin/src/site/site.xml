@@ -19,7 +19,7 @@
   ~ under the License.
   -->
 
-<project name="axis2-wsdl2code-plugin">
+<project name="axis2-wsdl2code-maven-plugin">
     <body>
         <menu name="Overview">
             <item name="About" href="index.html"/>
