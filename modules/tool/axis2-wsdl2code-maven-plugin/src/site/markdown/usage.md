@@ -48,16 +48,7 @@ To run the plugin, add the following section to your POM:
     </build>
 
 The plugin will be invoked automatically in the generate-sources
-phase. You can also invoke it directly from the command line by
-running the command
-
-    mvn axis2-wsdl2code:wsdl2code
-
-By default, the plugin reads the file `src/main/axis2/service.wsdl`.
-Sources for the Java programming language and the ADB data binding are
-generated into `target/generated-sources/axis2/wsdl2code`.
-Note the configuration element `packageName` above, which sets
-the package name, thus a subdirectory.
+phase.
 
 See the detailed documentation on [properties](wsdl2code-mojo.html) for
 how to configure the goal.
