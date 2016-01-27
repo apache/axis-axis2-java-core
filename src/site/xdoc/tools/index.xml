@@ -93,7 +93,7 @@ which describes a Web service for invoking the classes methods.</p>
 				</tr>
 				<tr>
 					<td>
-						<a href="maven-plugins/maven-wsdl2code-plugin.html">axis2-wsdl2java-maven-plugin</a>
+						<a href="maven-plugins/axis2-wsdl2code-maven-plugin/index.html">axis2-wsdl2code-maven-plugin</a>
 					</td>
 					<td>
 						<p>This plugin takes as input a WSDL and generates client and

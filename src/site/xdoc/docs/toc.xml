@@ -137,7 +137,7 @@ Plug-in</a></li>
 <li>25.4 <a href="../tools/eclipse/wsdl2java-plugin.html">Code Generator Wizard - Eclipse Plug-in</a></li>
 <li>25.5 <a href="../tools/maven-plugins/maven-aar-plugin.html">AAR Maven2 Plug-in</a></li>
 <li>25.6 <a href="../tools/maven-plugins/maven-java2wsdl-plugin.html">Java2WSDL Maven2 Plug-in</a></li>
-<li>25.7 <a href="../tools/maven-plugins/maven-wsdl2code-plugin.html">WSDL2Code Maven2 Plug-in</a></li>
+<li>25.7 <a href="../tools/maven-plugins/axis2-wsdl2code-maven-plugin/index.html">WSDL2Code Maven2 Plug-in</a></li>
 </ul>
 </li>
 <li><a href="migration.html">Migration Guide

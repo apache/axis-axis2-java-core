@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -19,14 +17,11 @@
   ~ under the License.
   -->
 
-<project name="axis2-wsdl2code-plugin">
-    <body>
-        <menu name="Overview">
-            <item name="About" href="index.html"/>
-            <item name="Usage" href="usage.html"/>
-            <item name="Plugin Documentation" href="plugin-info.html">
-                <item name="wsdl2code" href="wsdl2code-mojo.html"/>
-            </item>
-        </menu>
-    </body>
-</project>
+About
+-----
+
+This plugin takes as input a WSDL and generates client
+and server stubs for calling or implementing a web service
+matching the WSDL.
+
+The full description of goals is available [here](plugin-info.html).
