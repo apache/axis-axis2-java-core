@@ -20,9 +20,9 @@
 Usage
 -----
 
-The WSDl2Code offers a single goal:
+axis2-wsdl2code-maven-plugin offers a single goal:
 
-*   wsdl2code (default): Reads the WSDL and generates code.
+*   wsdl2code: Reads the WSDL and generates code.
 
 To run the plugin, add the following section to your POM:
 
