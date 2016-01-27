@@ -39,7 +39,8 @@ import java.util.Properties;
 
 
 /**
- * @description A Mojo for generating Java sources from a WSDL.
+ * A Mojo for generating Java sources from a WSDL.
+ * 
  * @goal wsdl2code
  * @phase generate-sources
  * @requiresDependencyResolution test
@@ -49,7 +50,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
      * The maven project.
      *
      * @parameter expression="${project}"
-     * @read-only
+     * @readonly
      * @required
      */
     private MavenProject project;
@@ -72,7 +73,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
      * Package name of the generated sources; will be used to create a package structure below the
      * output directory.
      *
-     * @parameter expression="${axis2.wsdl2code.package}"     * 
+     * @parameter expression="${axis2.wsdl2code.package}"
      */
     private String packageName;
 
@@ -84,7 +85,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
     private String language;
 
     /**
-     * The databinding framework, which is being used.
+     * The databinding framework, which is being used by the generated sources.
      *
      * @parameter expression="${axis2.wsdl2code.databindingName}" default-value="adb"
      */
@@ -98,8 +99,8 @@ public class WSDL2CodeMojo extends AbstractMojo {
     private String jibxBindingFile;
 
     /**
-     * Port name, for which to generate sources. By default, sources will be generated for all
-     * ports.
+     * Port name, for which to generate sources. By default, sources will be generated for a
+     * randomly picked port.
      *
      * @parameter expression="${axis2.wsdl2code.portName}"
      */
@@ -128,14 +129,14 @@ public class WSDL2CodeMojo extends AbstractMojo {
     private boolean generateServerSide;
 
     /**
-     * Whether to generate sources for a test case.
+     * Whether a test case is being generated.
      *
      * @parameter expression="${axis2.wsdl2code.generateTestCase}" default-value="false"
      */
     private boolean generateTestcase;
 
     /**
-     * Whether to generate a "services.xml" file.
+     * Whether a "services.xml" file is being generated.
      *
      * @parameter expression="${axis2.wsdl2code.generateServicesXml}" default-value="false"
      */
@@ -189,12 +190,17 @@ public class WSDL2CodeMojo extends AbstractMojo {
     private String targetResourcesFolderLocation = null;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.unwrap}" default-value="false" *
+     * This will select between wrapped and unwrapped during code generation. Maps to the -uw option
+     * of the command line tool.
+     * 
+     * @parameter expression="${axis2.wsdl2code.unwrap}" default-value="false"
      */
     private boolean unwrap = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.allPorts}" default-value="false" *
+     * Set this to true to generate code for all ports.
+     * 
+     * @parameter expression="${axis2.wsdl2code.allPorts}" default-value="false"
      */
     private boolean allPorts = false;
 
@@ -240,10 +246,28 @@ public class WSDL2CodeMojo extends AbstractMojo {
      */
     private Properties options;
 
-    /** @parameter expression="${axis2.wsdl2code.namespaceToPackages}" */
+    /**
+     * Map of namespace URI to packages in the format {@code uri1=package1,uri2=package2,...}. Using
+     * this parameter is discouraged. In general, you should use the {@code namespaceUris}
+     * parameter. However, the latter cannot be set on the command line.
+     * 
+     * @parameter expression="${axis2.wsdl2code.namespaceToPackages}"
+     */
     private String namespaceToPackages = null;
 
-    /** @parameter */
+    /**
+     * Map of namespace URI to packages. Example:
+     * <pre>
+     * &lt;namespaceURIs>
+     *   &lt;namespaceURI>
+     *     &lt;uri>uri1&lt;/uri>
+     *     &lt;packageName>package1&lt;/packageName>
+     *   &lt;/namespaceURI>
+     *   ...
+     * &lt;/namespaceURI></pre>
+     * 
+     * @parameter
+     */
     private NamespaceURIMapping[] namespaceURIs = null;
     
     /**
