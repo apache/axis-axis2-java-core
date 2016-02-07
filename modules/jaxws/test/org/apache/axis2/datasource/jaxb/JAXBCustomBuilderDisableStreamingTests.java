@@ -43,7 +43,7 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
         msgCtx.setProperty(Constants.JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING, new Boolean(false));
         jaxbDSC.setMessageContext(msgCtx);
         try {
-            assertNull(jaxbCB.create("ns", "lp", null, new MockXMLStreamReader(), null));
+            assertNull(jaxbCB.create(new MockXMLStreamReader("ns", "lp")));
         } catch (Exception e) {
             // Since we didn't set up the JAXBDSContext fully, if the disabling of it didn't
             // work, then we'll get some sort of exception.
@@ -60,7 +60,7 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
         msgCtx.setProperty(Constants.JAXWS_PAYLOAD_HIGH_FIDELITY, new Boolean(true));
         jaxbDSC.setMessageContext(msgCtx);
         try {
-            assertNull(jaxbCB.create("ns", "lp", null, new MockXMLStreamReader(), null));
+            assertNull(jaxbCB.create(new MockXMLStreamReader("ns", "lp")));
         } catch (Exception e) {
             // Since we didn't set up the JAXBDSContext fully, if the disabling of it didn't
             // work, then we'll get some sort of exception.
@@ -79,7 +79,7 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
         
         jaxbDSC.setMessageContext(msgCtx);
         try {
-            assertNull(jaxbCB.create("ns", "lp", null, new MockXMLStreamReader(), null));
+            assertNull(jaxbCB.create(new MockXMLStreamReader("ns", "lp")));
         } catch (Exception e) {
             // Since we didn't set up the JAXBDSContext fully, if the disabling of it didn't
             // work, then we'll get some sort of exception.
@@ -96,7 +96,7 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
         // msgCtx.setProperty(Constants.JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING, new Boolean(false));
         jaxbDSC.setMessageContext(msgCtx);
         try {
-            jaxbCB.create("ns", "lp", null, new MockXMLStreamReader(), null);
+            jaxbCB.create(new MockXMLStreamReader("ns", "lp"));
             fail("JAXB Payload streaming default was not enabled");
         } catch (Exception e) {
             // Expected code path
@@ -107,6 +107,13 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
 
     
     class MockXMLStreamReader implements javax.xml.stream.XMLStreamReader {
+        private final String namespaceURI;
+        private final String localName;
+        
+        MockXMLStreamReader(String namespaceURI, String localName) {
+            this.namespaceURI = namespaceURI;
+            this.localName = localName;
+        }
 
         public void close() throws XMLStreamException {
         }
@@ -160,7 +167,7 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
         }
 
         public String getLocalName() {
-            return null;
+            return localName;
         }
 
         public Location getLocation() {
@@ -184,7 +191,7 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
         }
 
         public String getNamespaceURI() {
-            return null;
+            return namespaceURI;
         }
 
         public String getNamespaceURI(int i) {

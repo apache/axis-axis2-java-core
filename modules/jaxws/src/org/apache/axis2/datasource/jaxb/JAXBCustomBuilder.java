@@ -19,16 +19,9 @@
 
 package org.apache.axis2.datasource.jaxb;
 
-import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.impl.builder.CustomBuilder;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,11 +51,12 @@ public class JAXBCustomBuilder implements CustomBuilder {
     }
 
 
-    public OMElement create(String namespace, 
-                            String localPart, 
-                            OMContainer parent,
-                            XMLStreamReader reader, 
-                            OMFactory factory) throws OMException {
+    public OMDataSource create(XMLStreamReader reader) throws OMException {
+        String namespace = reader.getNamespaceURI();
+        if (namespace == null) {
+            namespace = "";
+        }
+        String localPart = reader.getLocalName();
         
         if (log.isDebugEnabled()) {
             log.debug("create namespace = " + namespace);
@@ -79,10 +73,6 @@ public class JAXBCustomBuilder implements CustomBuilder {
         try {
             // Create an OMSourcedElement backed by an unmarshalled JAXB object
             
-            // Currently we cannot control how the unmarshaller will emit the prefix
-            // So if the value of the prefix is needed, full expansion is necessary.
-            OMNamespace ns = factory.createOMNamespace(namespace, null);
-            
             Object jaxb = jdsContext.unmarshal(reader);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully unmarshalled jaxb object " + jaxb);
@@ -92,11 +82,8 @@ public class JAXBCustomBuilder implements CustomBuilder {
             if (log.isDebugEnabled()) {
                 log.debug("The JAXBDataSource is " + ds);
             }
-            OMSourcedElement omse = factory.createOMElement(ds, localPart, ns);
-            
-            parent.addChild(omse);
             JAXBCustomBuilderMonitor.updateTotalCreates();
-            return omse;
+            return ds;
         } catch (JAXBException e) {
             JAXBCustomBuilderMonitor.updateTotalFailedCreates();
             throw new OMException(e);
