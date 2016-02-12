@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.axis2.maven2.wsdl2code;
 
 import java.io.File;
@@ -24,22 +23,21 @@ import java.io.File;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Generates source code from a WSDL.
+ * Generates source code from a WSDL, for use in unit tests. This goal bind by default to the
+ * generate-test-sources phase and adds the sources to the test sources of the project; it is
+ * otherwise identical to the axis2-wsdl2code:generate-sources goal.
  * 
- * @goal wsdl2code
- * @phase generate-sources
- * @deprecated This goal is identical to axis2-wsdl2code:generate-sources; either switch to that
- *             goal or use the new axis2-wsdl2code:generate-test-sources goal if you need to
- *             generate code for use in unit tests only.
+ * @goal generate-test-sources
+ * @phase generate-test-sources
  */
-public class WSDL2CodeMojo extends GenerateSourcesMojo {
+public class GenerateTestSourcesMojo extends AbstractWSDL2CodeMojo {
     /**
      * The output directory, where the generated sources are being created.
      *
-     * @parameter expression="${axis2.wsdl2code.target}" default-value="${project.build.directory}/generated-sources/axis2/wsdl2code"
+     * @parameter expression="${axis2.wsdl2code.target}" default-value="${project.build.directory}/generated-test-sources/wsdl2code"
      */
     private File outputDirectory;
-
+    
     @Override
     protected File getOutputDirectory() {
         return outputDirectory;
@@ -47,6 +45,6 @@ public class WSDL2CodeMojo extends GenerateSourcesMojo {
 
     @Override
     protected void addSourceRoot(MavenProject project, File srcDir) {
-        project.addCompileSourceRoot(srcDir.getPath());
+        project.addTestCompileSourceRoot(srcDir.getPath());
     }
 }

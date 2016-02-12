@@ -186,9 +186,8 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>wsdl2code</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <packageName>server</packageName>
@@ -1279,7 +1278,6 @@
                         <configuration>
                             <sources>
                                 <source>${project.build.directory}/schema/src</source>
-                                <source>${project.build.directory}/generated-sources/axis2/wsdl2code/src</source>
                             </sources>
                         </configuration>
                     </execution>

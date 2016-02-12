@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.axis2.maven2.wsdl2code;
 
 import java.io.File;
@@ -26,20 +25,17 @@ import org.apache.maven.project.MavenProject;
 /**
  * Generates source code from a WSDL.
  * 
- * @goal wsdl2code
+ * @goal generate-sources
  * @phase generate-sources
- * @deprecated This goal is identical to axis2-wsdl2code:generate-sources; either switch to that
- *             goal or use the new axis2-wsdl2code:generate-test-sources goal if you need to
- *             generate code for use in unit tests only.
  */
-public class WSDL2CodeMojo extends GenerateSourcesMojo {
+public class GenerateSourcesMojo extends AbstractWSDL2CodeMojo {
     /**
      * The output directory, where the generated sources are being created.
      *
-     * @parameter expression="${axis2.wsdl2code.target}" default-value="${project.build.directory}/generated-sources/axis2/wsdl2code"
+     * @parameter expression="${axis2.wsdl2code.target}" default-value="${project.build.directory}/generated-sources/wsdl2code"
      */
     private File outputDirectory;
-
+    
     @Override
     protected File getOutputDirectory() {
         return outputDirectory;

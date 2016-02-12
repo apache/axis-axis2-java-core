@@ -20,9 +20,11 @@
 Usage
 -----
 
-axis2-wsdl2code-maven-plugin offers a single goal:
-
-*   wsdl2code: Reads the WSDL and generates code.
+axis2-wsdl2code-maven-plugin offers to goals: `generate-sources` and `generate-test-sources`.
+Both read a given WSDL and generate source code, but they differ in the phases in which they
+expect to be executed. Use `generate-sources` if the generated classes should become part of the
+artifact produced by the Maven module; use `generate-test-sources` if the generated code is only
+used by the unit tests.
 
 To run the plugin, add the following section to your POM:
 
@@ -34,7 +36,7 @@ To run the plugin, add the following section to your POM:
           <executions>
             <execution>
               <goals>
-                <goal>wsdl2code</goal>
+                <goal>generate-sources</goal>
               </goals>
             </execution>
             <configuration>

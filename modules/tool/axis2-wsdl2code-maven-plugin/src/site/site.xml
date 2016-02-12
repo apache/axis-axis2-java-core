@@ -25,7 +25,8 @@
             <item name="About" href="index.html"/>
             <item name="Usage" href="usage.html"/>
             <item name="Plugin Documentation" href="plugin-info.html">
-                <item name="wsdl2code" href="wsdl2code-mojo.html"/>
+                <item name="generate-sources" href="generate-sources-mojo.html"/>
+                <item name="generate-test-sources" href="generate-test-sources-mojo.html"/>
             </item>
         </menu>
     </body>
