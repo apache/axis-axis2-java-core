@@ -31,19 +31,19 @@ To run the plugin, add the following section to your POM:
     <build>
       <plugins>
         <plugin>
-          <groupId>org.apache.axis2.maven2</groupId>
+          <groupId>org.apache.axis2</groupId>
           <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
           <executions>
             <execution>
               <goals>
                 <goal>generate-sources</goal>
               </goals>
+              <configuration>
+                <packageName>com.foo.myservice</packageName>
+                <wsdlFile>src/main/wsdl/myservice.wsdl</wsdlFile>
+                <databindingName>xmlbeans</databindingName>
+              </configuration>
             </execution>
-            <configuration>
-              <packageName>com.foo.myservice</packageName>
-              <wsdlFile>src/main/wsdl/myservice.wsdl</wsdlFile>
-              <databindingName>xmlbeans</databindingName>
-            </configuration>
           </executions>
         </plugin>
       </plugins>
