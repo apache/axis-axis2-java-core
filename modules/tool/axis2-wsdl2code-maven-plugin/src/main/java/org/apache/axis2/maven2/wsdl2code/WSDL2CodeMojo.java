@@ -24,16 +24,13 @@ import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -43,7 +40,6 @@ import java.util.Properties;
  * 
  * @goal wsdl2code
  * @phase generate-sources
- * @requiresDependencyResolution test
  */
 public class WSDL2CodeMojo extends AbstractMojo {
     /**
@@ -643,7 +639,6 @@ public class WSDL2CodeMojo extends AbstractMojo {
     public void execute() throws MojoFailureException, MojoExecutionException {
 
         fixCompileSourceRoots();
-        showDependencies();
 
         Map<String,CommandLineOption> commandLineOptions = this.fillOptionMap();
         CommandLineOptionParser parser =
@@ -657,27 +652,6 @@ public class WSDL2CodeMojo extends AbstractMojo {
             }
             t.printStackTrace();
             throw new MojoExecutionException(e.getMessage(), e);
-        }
-    }
-
-    private void showDependencies() {
-        Log log = getLog();
-        if (!log.isDebugEnabled()) {
-            return;
-        }
-        log.debug("The projects dependency artifacts are: ");
-        for (Iterator<?> iter = project.getDependencyArtifacts().iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact)iter.next();
-            log.debug("    " + artifact.getGroupId() + ":" + artifact.getArtifactId() +
-                    ":" + artifact.getVersion() + ":" + artifact.getClassifier() +
-                    ":" + artifact.getScope() + ":" + artifact.getType());
-        }
-        log.debug("The projects transitive artifacts are: ");
-        for (Iterator<?> iter = project.getArtifacts().iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact)iter.next();
-            log.debug("    " + artifact.getGroupId() + ":" + artifact.getArtifactId() +
-                    ":" + artifact.getVersion() + ":" + artifact.getClassifier() +
-                    ":" + artifact.getScope() + ":" + artifact.getType());
         }
     }
 
