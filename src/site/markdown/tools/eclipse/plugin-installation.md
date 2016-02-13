@@ -60,3 +60,22 @@ procedure to install the Axis2 plugins:
 2.  Extract the content of the ZIP archive into the Eclipse installation directory.
     This should add one or more JAR files and/or directories to the existing `plugins`
     folder.
+
+Debugging
+---------
+
+If a plugin doesn't show up in the Eclipse UI, use the following debugging procedure:
+
+1.  Start Eclipse with the `-console` option.
+
+2.  In the console, use `ss axis2` to check if the plugin has been installed and to
+    identify its bundle ID.
+
+3.  If the plugin has not been installed, use the `install` command (with a `file:` URL
+    pointing to the plugin) to force its installation.
+
+4.  Use the `start` command (with the bundle ID as argument) to attempt to start the
+    bundle. If the plugin doesn't show up in the UI, then this command will typically
+    fail with an error message explaining the reason.
+
+Please use this procedure before opening a bug report.
