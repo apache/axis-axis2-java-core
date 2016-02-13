@@ -207,8 +207,7 @@ are executed within the phases. You can also add your own phases
 and handlers.</p>
 <p>Handlers come from "modules" that can be plugged into a running
 Axis2 system. These modules, such as Rampart, which provides an
-implementation of WS-Security, and Sandesha, which provides an
-implementation of WS-ReliableMessaging, are the main extensibility
+implementation of WS-Security, are the main extensibility
 mechanisms in Axis2.</p>
 <a name="distributions" id="distributions"></a>
 <h2>Axis2 Distributions</h2>

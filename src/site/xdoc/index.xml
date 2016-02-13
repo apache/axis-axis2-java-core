@@ -58,17 +58,6 @@ functionality for features such as security and reliability. The
 currently available or under development include:</p>
 <ul>
 <li><a href=
-"http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsrm"
->WS-ReliableMessaging</a> - Supported by <a href=
-"http://axis.apache.org/axis2/java/sandesha/">Apache
-Sandesha2</a></li>
-<li><a href=
-"http://www-128.ibm.com/developerworks/library/specification/ws-tx/#coor"
->WS-Coordination</a> and <a href=
-"http://www-128.ibm.com/developerworks/library/specification/ws-tx/#atom"
->WS-AtomicTransaction</a> - Supported by <a href=
-"http://axis.apache.org/axis2/java/kandula/">Apache Kandula2</a></li>
-<li><a href=
 "http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss"
 >WS-Security</a> - Supported by <a href=
 "http://axis.apache.org/axis2/java/rampart/">
@@ -155,16 +144,6 @@ supports the Web Service Description Language, version <a href=
 build stubs to access remote services, and also to automatically
 export machine-readable descriptions of your deployed services from
 Axis2.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Add-ons</strong> - Several
-Web services specifications have been incorporated including
-<a href="http://ws.apache.org/wss4j/">WSS4J</a> for
-security (Apache Rampart), <a href="http://axis.apache.org/axis2/java/sandesha/"
->Sandesha</a> for reliable messaging, <a href=
-"http://axis.apache.org/axis2/java/kandula/">Kandula</a> which
-is an encapsulation of WS-Coordination, WS-AtomicTransaction and
-WS-BusinessActivity.</p>
 </li>
 <li>
 <p style="margin-bottom: 0in"><strong>Composition and
