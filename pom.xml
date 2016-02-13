@@ -42,6 +42,7 @@
         <module>apidocs</module>
         <module>modules/adb</module>
         <module>modules/adb-codegen</module>
+        <module>modules/adb-tests</module>
         <module>modules/addressing</module>
         <module>modules/codegen</module>
         <module>modules/fastinfoset</module>
