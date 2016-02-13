@@ -24,7 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axiom.om.impl.builder.CustomBuilderSupport;
+import org.apache.axiom.om.ds.custombuilder.CustomBuilderSupport;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
@@ -910,7 +910,7 @@ public class MessageTests extends TestCase {
         if (installJAXBCustomBuilder) {
             jds = new JAXBDSContext(EchoStringResponse.class.getPackage().getName());
             JAXBCustomBuilder jcb = new JAXBCustomBuilder(jds);
-            ((CustomBuilderSupport)builder).registerCustomBuilderForPayload(jcb);
+            ((CustomBuilderSupport)builder).registerCustomBuilder(jcb, jcb);
         }
         
         // Create a SOAP 1.1 Message from the sample incoming XML

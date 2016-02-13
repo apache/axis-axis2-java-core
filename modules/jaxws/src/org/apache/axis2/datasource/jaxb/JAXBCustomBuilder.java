@@ -19,22 +19,24 @@
 
 package org.apache.axis2.datasource.jaxb;
 
+import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.builder.CustomBuilder;
+import org.apache.axiom.om.ds.custombuilder.CustomBuilder;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPConstants;
 import javax.xml.stream.XMLStreamReader;
 
 /**
  * JAXBCustomBuilder creates an OMSourcedElement backed by a JAXBDataSource
  * for the specified namespace and localPart.
  */
-public class JAXBCustomBuilder implements CustomBuilder {
+public class JAXBCustomBuilder implements CustomBuilder, CustomBuilder.Selector {
 
     private static final Log log = LogFactory.getLog(JAXBCustomBuilder.class);
     
@@ -52,24 +54,12 @@ public class JAXBCustomBuilder implements CustomBuilder {
 
 
     public OMDataSource create(XMLStreamReader reader) throws OMException {
-        String namespace = reader.getNamespaceURI();
-        if (namespace == null) {
-            namespace = "";
-        }
-        String localPart = reader.getLocalName();
-        
         if (log.isDebugEnabled()) {
-            log.debug("create namespace = " + namespace);
-            log.debug("  localPart = " + localPart);
+            log.debug("create namespace = " + reader.getNamespaceURI());
+            log.debug("  localPart = " + reader.getLocalName());
             log.debug("  reader = " + reader.getClass());
         }
         
-        // There are some situations where we want to use normal
-        // unmarshalling, so return null
-        if (!shouldUnmarshal(namespace, localPart)) {
-            JAXBCustomBuilderMonitor.updateTotalFailedCreates();
-            return null;
-        }
         try {
             // Create an OMSourcedElement backed by an unmarshalled JAXB object
             
@@ -90,37 +80,23 @@ public class JAXBCustomBuilder implements CustomBuilder {
         }
     }
     
-    /**
-     * @param namespace
-     * @param localPart
-     * @return true if this ns and local part is acceptable for unmarshalling
-     */
-    private boolean shouldUnmarshal(String namespace, String localPart) {
-        boolean isHighFidelity = HandlerUtils.isHighFidelity(jdsContext.getMessageContext());
-
-        if (isHighFidelity) {
-            if (log.isDebugEnabled()) {
+    @Override
+    public boolean accepts(OMContainer parent, int depth, String namespaceURI, String localName) {
+        if (parent instanceof OMDocument || parent instanceof SOAPBody) {
+            boolean shouldUnmarshal;
+            if (HandlerUtils.isHighFidelity(jdsContext.getMessageContext())) {
                 log.debug("JAXB payload streaming disabled because high fidelity messages are requested.");
+                shouldUnmarshal = false;
+            } else {
+                // Don't unmarshal if this looks like encrypted data
+                shouldUnmarshal = !localName.equals("EncryptedData");
             }
-            return false;
-
-        }
-        
-        // Don't unmarshall SOAPFaults or anything else in the SOAP 
-        // namespace.
-        // Don't unmarshall elements that are unqualified
-        if (localPart == null || namespace == null || namespace.length() == 0 ||
-            SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE.equals(namespace) ||
-            SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(namespace)) {
+            if (!shouldUnmarshal) {
+                JAXBCustomBuilderMonitor.updateTotalFailedCreates();
+            }
+            return shouldUnmarshal;
+        } else {
             return false;
         }
-       
-        // Don't unmarshal if this looks like encrypted data
-        if (localPart.equals("EncryptedData")) {
-            return false;
-        }
-        
-        return true;
-                
     }
 }

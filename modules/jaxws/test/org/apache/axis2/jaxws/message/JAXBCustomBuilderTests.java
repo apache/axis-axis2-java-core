@@ -26,7 +26,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.impl.builder.CustomBuilderSupport;
+import org.apache.axiom.om.ds.custombuilder.CustomBuilderSupport;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
@@ -103,7 +103,7 @@ public class JAXBCustomBuilderTests extends TestCase {
         
         // Register the JAXBCustomBuilder...this will intercept the payload
         // and build a jaxb element
-        ((CustomBuilderSupport)builder).registerCustomBuilderForPayload(jcb);
+        ((CustomBuilderSupport)builder).registerCustomBuilder(jcb, jcb);
         
         // Get the OM element
         OMElement om = builder.getDocumentElement();  

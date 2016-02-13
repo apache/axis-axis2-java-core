@@ -510,9 +510,6 @@ public class WrapTests extends AbstractTestCase {
                     assertTrue(totalBuilders >= 1);
                     int totalCreates = JAXBCustomBuilderMonitor.getTotalCreates();
                     assertTrue(totalCreates == 0);
-                    int totalFailedCreates = 
-                            JAXBCustomBuilderMonitor.getTotalFailedCreates();
-                    assertTrue(totalFailedCreates >= 1);
                      
                 } 
                 TestLogger.logger.debug("------------------------------");
