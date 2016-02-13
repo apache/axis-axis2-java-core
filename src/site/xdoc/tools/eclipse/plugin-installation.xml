@@ -47,7 +47,7 @@
                 Axis2 plugins:
             </p>
             <ol>
-                <li><a href="../index.html">Download</a> the ZIP file for the plugin you want to install.</li>
+                <li><a href="../../download.html">Download</a> the ZIP file for the plugin you want to install.</li>
                 <li>Extract the content of the <tt>plugins</tt> folder in the ZIP archive into the
                 <tt>dropins</tt> folder (i.e. do <b>not</b> create a <tt>plugins</tt> folder under <tt>dropins</tt>).</li>
             </ol>
@@ -62,7 +62,7 @@
                 procedure to install the Axis2 plugins:
             </p>
             <ol>
-                <li><a href="../index.html">Download</a> the ZIP file for the plugin you want to install.</li>
+                <li><a href="../../download.html">Download</a> the ZIP file for the plugin you want to install.</li>
                 <li>Extract the content of the ZIP archive into the Eclipse installation directory.
                 This should add one or more JAR files and/or directories to the existing <tt>plugins</tt>
                 folder.</li>
