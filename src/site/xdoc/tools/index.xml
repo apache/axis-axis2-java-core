@@ -113,7 +113,7 @@ WSDL.</p>
 		</table>
 		<p>The command line tools and Ant tasks are bundled with the Axis2 binary distribution.
 		The Eclipse and IntelliJ IDEA plugins are shipped as separate archives. These files can
-		be downloaded <a href="download.html">here</a>.
+		be downloaded <a href="../download.html">here</a>.
 		All Maven plugins are available from the Maven central repository and need not be downloaded separately.</p>
 	</body>
 </document>
