@@ -158,24 +158,23 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>generate-properties</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
+                            <artifacts>
+                                <artifact>
                                     <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-jaxws_2.2_spec</artifactId>
-                                    <type>jar</type>
-                                 </artifactItem>
-                            </artifactItems>
-                            <overWrite>true</overWrite>
-                            <outputDirectory>${project.build.directory}/endorsed</outputDirectory>
-                            <stripVersion>true</stripVersion>
+                                 </artifact>
+                            </artifacts>
+                            <name>jaxws.bootclasspath</name>
+                            <value>%file%</value>
+                            <separator>${path.separator}</separator>
                         </configuration>
                     </execution>
                 </executions>
@@ -185,7 +184,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <compilerArgument>
-                        -Xbootclasspath/p:${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar   
+                        -Xbootclasspath/p:${jaxws.bootclasspath}
                     </compilerArgument>
                 </configuration>
             </plugin>
@@ -283,7 +282,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <argLine>
-                        -Xbootclasspath/p:${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar   
+                        -Xbootclasspath/p:${jaxws.bootclasspath}
                     </argLine>
                     <includes>
                         <include>**/*Tests.java</include>

@@ -191,33 +191,31 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>generate-properties</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
+                            <artifacts>
+                                <artifact>
                                     <groupId>javax.xml.bind</groupId>
                                     <artifactId>jaxb-api</artifactId>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
+                                </artifact>
+                                <artifact>
                                     <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-saaj_1.3_spec</artifactId>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
+                                </artifact>
+                                <artifact>
                                     <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-jaxws_2.2_spec</artifactId>
-                                 </artifactItem>
-                            </artifactItems>
-                            <overWrite>true</overWrite>
-                            <outputDirectory>${project.build.directory}/endorsed</outputDirectory>
-                            <stripVersion>true</stripVersion>
+                                </artifact>
+                            </artifacts>
+                            <name>jaxws.bootclasspath</name>
+                            <value>%file%</value>
+                            <separator>${path.separator}</separator>
                         </configuration>
                     </execution>
                 </executions>
@@ -227,7 +225,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <compilerArgument>
-                        -Xbootclasspath/p:${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar${path.separator}${basedir}/../jaxws-api/target/classes${path.separator}${basedir}/../jws-api/target/classes
+                        -Xbootclasspath/p:${jaxws.bootclasspath}
                     </compilerArgument>
                 </configuration>
             </plugin>
@@ -347,7 +345,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <argLine>-Xms256m -Xmx512m -Xbootclasspath/p:${project.build.directory}/endorsed/jaxb-api.jar${path.separator}${project.build.directory}/endorsed/geronimo-saaj_1.3_spec.jar${path.separator}${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar</argLine>
+                    <argLine>-Xms256m -Xmx512m -Xbootclasspath/p:${jaxws.bootclasspath}</argLine>
                     <!-- Enable the next 2 lines if you want to attach a debugger
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
                     <includes>
