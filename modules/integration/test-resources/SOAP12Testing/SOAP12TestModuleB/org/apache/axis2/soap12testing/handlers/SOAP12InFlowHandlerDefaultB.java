@@ -114,7 +114,7 @@ public class SOAP12InFlowHandlerDefaultB extends AbstractHandler implements Head
                                     //fault.setReason(reason);
                                     if (roleValue != null && roleValue.equals(SAMPLE_ROLE + "/" + ROLE_BY_B)) {
                                         SOAPFaultNode node = factory.createSOAPFaultNode(fault);
-                                        node.setNodeValue(SAMPLE_ROLE + "/" + ROLE_BY_B);
+                                        node.setFaultNodeValue(SAMPLE_ROLE + "/" + ROLE_BY_B);
                                         SOAPFaultRole role = factory.createSOAPFaultRole(fault);
                                         role.setRoleValue(SAMPLE_ROLE + "/" + ROLE_BY_B);
                                         msgContext.setProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME, node);
