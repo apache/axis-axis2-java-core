@@ -42,6 +42,7 @@
         <module>apidocs</module>
         <module>modules/adb</module>
         <module>modules/adb-codegen</module>
+        <module>modules/adb-tests</module>
         <module>modules/addressing</module>
         <module>modules/codegen</module>
         <module>modules/fastinfoset</module>
@@ -677,6 +678,11 @@
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-dom</artifactId>
+                <version>${axiom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>testutils</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
