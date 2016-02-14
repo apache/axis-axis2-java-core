@@ -45,7 +45,7 @@ public class ServiceTest {
             ((BindingProvider)client).getRequestContext().put(
                     BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                     "http://localhost:" + port + "/axis2/services/FiverxLinkService");
-            assertThat(client.ladeRzVersion("test")).isEqualTo("test response");
+            assertThat(client.ladeRzVersion("test")).isEqualTo("test result");
         } finally {
             server.stop();
         }
