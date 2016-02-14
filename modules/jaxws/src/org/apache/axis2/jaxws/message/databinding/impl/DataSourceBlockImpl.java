@@ -44,7 +44,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -151,11 +150,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
             throws XMLStreamException, WebServiceException {
         try {
             if (busObj instanceof DataSource) {
-                XMLInputFactory f = StAXUtils.getXMLInputFactory();
-
-                XMLStreamReader reader = f.createXMLStreamReader(((DataSource)busObj).getInputStream());
-                StAXUtils.releaseXMLInputFactory(f);
-                return reader;
+                return StAXUtils.createXMLStreamReader(((DataSource)busObj).getInputStream());
             }
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));

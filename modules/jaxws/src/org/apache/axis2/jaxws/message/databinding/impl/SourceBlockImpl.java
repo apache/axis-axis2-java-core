@@ -227,9 +227,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
             if (busObj instanceof StreamSource) {
                 XMLInputFactory f = StAXUtils.getXMLInputFactory();
 
-                XMLStreamReader reader = f.createXMLStreamReader((Source)busObj);
-                StAXUtils.releaseXMLInputFactory(f);
-                return reader;
+                return f.createXMLStreamReader((Source)busObj);
             }
             //TODO: For GM we need to only use this approach when absolutely necessary.
             // For example, we don't want to do this if this is a (1.6) StaxSource or if the 
