@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FiverxLinkService" targetNamespace="http://fiverx.de/spec/abrechnungsservice"
+             xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://fiverx.de/spec/abrechnungsservice/types"
+             xmlns:tns="http://fiverx.de/spec/abrechnungsservice" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <schema targetNamespace="http://fiverx.de/spec/abrechnungsservice/types"
+                xmlns="http://www.w3.org/2001/XMLSchema" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/"
+                xmlns:tns="http://fiverx.de/spec/abrechnungsservice/types"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <complexType name="ladeRezepte">
+                <sequence>
+                    <element name="rzeParamLaden" nillable="true" type="string"/>
+                    <element name="rzeParamVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeRezepteResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeRueckweisungen">
+                <sequence>
+                    <element name="rzeParamVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeRueckweisungenResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeRzDienste">
+                <sequence>
+                    <element name="rzeParamDienste" nillable="true" type="string"/>
+                    <element name="rzeParamVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeRzDiensteResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeRzVersion">
+                <sequence>
+                    <element name="rzeParamLadeVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeRzVersionResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeStatusRezept">
+                <sequence>
+                    <element name="rzeParamStatus" nillable="true" type="string"/>
+                    <element name="rzeParamVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ladeStatusRezeptResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="pruefeRezept">
+                <sequence>
+                    <element name="rzePruefung" nillable="true" type="string"/>
+                    <element name="rzeParamVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="pruefeRezeptResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="sendeRezepte">
+                <sequence>
+                    <element name="rzeLeistung" nillable="true" type="string"/>
+                    <element name="rzeParamVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="sendeRezepteResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="storniereRezept">
+                <sequence>
+                    <element name="rzeParamStorno" nillable="true" type="string"/>
+                    <element name="rzeParamVersion" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="storniereRezeptResponse">
+                <sequence>
+                    <element name="result" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <element name="ladeRezepte" type="tns:ladeRezepte"/>
+            <element name="ladeRezepteResponse" type="tns:ladeRezepteResponse"/>
+            <element name="ladeRueckweisungen" type="tns:ladeRueckweisungen"/>
+            <element name="ladeRueckweisungenResponse" type="tns:ladeRueckweisungenResponse"/>
+            <element name="ladeRzDienste" type="tns:ladeRzDienste"/>
+            <element name="ladeRzDiensteResponse" type="tns:ladeRzDiensteResponse"/>
+            <element name="ladeRzVersion" type="tns:ladeRzVersion"/>
+            <element name="ladeRzVersionResponse" type="tns:ladeRzVersionResponse"/>
+            <element name="ladeStatusRezept" type="tns:ladeStatusRezept"/>
+            <element name="ladeStatusRezeptResponse" type="tns:ladeStatusRezeptResponse"/>
+            <element name="pruefeRezept" type="tns:pruefeRezept"/>
+            <element name="pruefeRezeptResponse" type="tns:pruefeRezeptResponse"/>
+            <element name="sendeRezepte" type="tns:sendeRezepte"/>
+            <element name="sendeRezepteResponse" type="tns:sendeRezepteResponse"/>
+            <element name="storniereRezept" type="tns:storniereRezept"/>
+            <element name="storniereRezeptResponse" type="tns:storniereRezeptResponse"/>
+        </schema>
+    </types>
+    <message name="FiverxLinkService_ladeRzDiensteResponse">
+        <part name="result" element="ns1:ladeRzDiensteResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeRzVersionResponse">
+        <part name="result" element="ns1:ladeRzVersionResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_storniereRezeptResponse">
+        <part name="result" element="ns1:storniereRezeptResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeRezepte">
+        <part name="parameters" element="ns1:ladeRezepte">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeRezepteResponse">
+        <part name="result" element="ns1:ladeRezepteResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_sendeRezepteResponse">
+        <part name="result" element="ns1:sendeRezepteResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_pruefeRezept">
+        <part name="parameters" element="ns1:pruefeRezept">
+        </part>
+    </message>
+    <message name="FiverxLinkService_pruefeRezeptResponse">
+        <part name="result" element="ns1:pruefeRezeptResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_storniereRezept">
+        <part name="parameters" element="ns1:storniereRezept">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeRueckweisungen">
+        <part name="parameters" element="ns1:ladeRueckweisungen">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeStatusRezeptResponse">
+        <part name="result" element="ns1:ladeStatusRezeptResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_sendeRezepte">
+        <part name="parameters" element="ns1:sendeRezepte">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeStatusRezept">
+        <part name="parameters" element="ns1:ladeStatusRezept">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeRueckweisungenResponse">
+        <part name="result" element="ns1:ladeRueckweisungenResponse">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeRzVersion">
+        <part name="parameters" element="ns1:ladeRzVersion">
+        </part>
+    </message>
+    <message name="FiverxLinkService_ladeRzDienste">
+        <part name="parameters" element="ns1:ladeRzDienste">
+        </part>
+    </message>
+    <portType name="FiverxLinkService">
+        <operation name="ladeRezepte">
+            <input message="tns:FiverxLinkService_ladeRezepte">
+            </input>
+            <output message="tns:FiverxLinkService_ladeRezepteResponse">
+            </output>
+        </operation>
+        <operation name="ladeRueckweisungen">
+            <input message="tns:FiverxLinkService_ladeRueckweisungen">
+            </input>
+            <output message="tns:FiverxLinkService_ladeRueckweisungenResponse">
+            </output>
+        </operation>
+        <operation name="ladeRzDienste">
+            <input message="tns:FiverxLinkService_ladeRzDienste">
+            </input>
+            <output message="tns:FiverxLinkService_ladeRzDiensteResponse">
+            </output>
+        </operation>
+        <operation name="ladeRzVersion">
+            <input message="tns:FiverxLinkService_ladeRzVersion">
+            </input>
+            <output message="tns:FiverxLinkService_ladeRzVersionResponse">
+            </output>
+        </operation>
+        <operation name="ladeStatusRezept">
+            <input message="tns:FiverxLinkService_ladeStatusRezept">
+            </input>
+            <output message="tns:FiverxLinkService_ladeStatusRezeptResponse">
+            </output>
+        </operation>
+        <operation name="pruefeRezept">
+            <input message="tns:FiverxLinkService_pruefeRezept">
+            </input>
+            <output message="tns:FiverxLinkService_pruefeRezeptResponse">
+            </output>
+        </operation>
+        <operation name="sendeRezepte">
+            <input message="tns:FiverxLinkService_sendeRezepte">
+            </input>
+            <output message="tns:FiverxLinkService_sendeRezepteResponse">
+            </output>
+        </operation>
+        <operation name="storniereRezept">
+            <input message="tns:FiverxLinkService_storniereRezept">
+            </input>
+            <output message="tns:FiverxLinkService_storniereRezeptResponse">
+            </output>
+        </operation>
+    </portType>
+    <binding name="FiverxLinkServiceBinding" type="tns:FiverxLinkService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ladeRezepte">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="ladeRueckweisungen">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="ladeRzDienste">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="ladeRzVersion">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="ladeStatusRezept">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="pruefeRezept">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="sendeRezepte">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="storniereRezept">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="FiverxLinkService">
+        <port name="FiverxLinkServicePort" binding="tns:FiverxLinkServiceBinding">
+            <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+        </port>
+    </service>
+</definitions>
