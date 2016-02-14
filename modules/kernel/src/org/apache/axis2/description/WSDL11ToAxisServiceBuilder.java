@@ -332,10 +332,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Binding binding = findBinding(wsdl4jDefinition, wsdl4jService);
             Definition bindingWSDL = getParentDefinition(wsdl4jDefinition,
                     binding.getQName(), COMPONENT_BINDING, new HashSet());
-            Definition portTypeWSDL = getParentDefinition(bindingWSDL,
-                    binding.getPortType().getQName(), COMPONENT_PORT_TYPE, new HashSet());
-            PortType portType = portTypeWSDL.getPortType(binding.getPortType().getQName());
-
+            
+            //do not search for wsdl where port type is defined, this search is depth-first
+            //and might lead to a wsdl where the port is only referenced but undefined
+            //instead look up the port type in the wsdl and only if not found fall back to binding's port type
+            PortType portType = wsdl4jDefinition.getPortType(binding.getPortType().getQName());
+            if (portType == null) {
+                //TODO in case of recursive imports, binding's port type will contain operations with null input message 
+                //requires fix for http://sourceforge.net/p/wsdl4j/bugs/39
+                portType = binding.getPortType();
+            }
 
             if (portType == null) {
                 throw new AxisFault("There is no port type associated with the binding");
@@ -361,7 +367,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             addDocumentation(axisService, documentationElement);
 
             axisService.setName(wsdl4jService.getQName().getLocalPart());
-            populateEndpoints(binding, bindingWSDL,wsdl4jService, portType, portTypeWSDL);
+            populateEndpoints(binding, bindingWSDL,wsdl4jService, portType);
             processPoliciesInDefintion(wsdl4jDefinition);
             axisService.getPolicyInclude().setPolicyRegistry(registry);
 
@@ -457,8 +463,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void populateEndpoints(Binding binding,
                                    Definition bindingWSDL,
                                    Service wsdl4jService,
-                                   PortType portType,
-                                   Definition portTypeWSDL) throws AxisFault {
+                                   PortType portType) throws AxisFault {
 
         Map wsdl4jPorts = wsdl4jService.getPorts();
         QName bindingName = binding.getQName();
@@ -471,7 +476,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // process the port type for this binding
         // although we support multiports they must be belongs to same port type and should have the
         // same soap style
-        populatePortType(portType, portTypeWSDL);
+        populatePortType(portType);
 
         Binding currentBinding;
         Definition currentBindingWSDL = null;
@@ -492,12 +497,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     if (axisService.getEndpointName() == null &&
                             bindingName.equals(port.getBinding().getQName())) {
                         populateEndpoint(axisEndpoint, port, currentBinding,
-                                bindingWSDL, portType, portTypeWSDL, true);
+                                bindingWSDL, portType, true);
                         axisService.setEndpointName(axisEndpoint.getName());
                         axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
                     } else {
                         populateEndpoint(axisEndpoint, port, currentBinding,
-                                bindingWSDL, portType, portTypeWSDL, false);
+                                bindingWSDL, portType, false);
                     }
 
                     axisEndpoint.setParent(axisService);
@@ -523,7 +528,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                   Binding wsdl4jBinding,
                                   Definition bindingWSDL,
                                   PortType portType,
-                                  Definition portTypeWSDL,
                                   boolean isSetMessageQNames)
             throws AxisFault {
 
@@ -544,7 +548,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     wsdl4jBinding,
                     bindingWSDL,
                     portType,
-                    portTypeWSDL,
                     isSetMessageQNames);
             processedBindings.put(wsdl4jBinding.getQName(), axisBinding);
         }
@@ -578,8 +581,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     	}
     }
 
-	private void populatePortType(PortType wsdl4jPortType,
-                                  Definition portTypeWSDL) throws AxisFault {
+	private void populatePortType(PortType wsdl4jPortType) throws AxisFault {
 		copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
 				axisService, PORT_TYPE);
         List wsdl4jOperations = wsdl4jPortType.getOperations();
@@ -600,7 +602,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         for (Iterator iterator = wsdl4jOperations.iterator(); iterator.hasNext();) {
             wsdl4jOperation = (Operation) iterator.next();
 
-            axisOperation = populateOperations(wsdl4jOperation, wsdl4jPortType, portTypeWSDL);
+            axisOperation = populateOperations(wsdl4jOperation, wsdl4jPortType);
             addDocumentation(axisOperation, wsdl4jOperation.getDocumentationElement());
             if (wsdl4jOperation.getInput() != null) {
                 addMessageDocumentation(axisOperation, wsdl4jOperation.getInput().getDocumentationElement(), WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -645,7 +647,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                  Binding wsdl4jBinding,
                                  Definition bindingWSDL,
                                  PortType portType,
-                                 Definition portTypeWSDL,
                                  boolean isSetMessageQNames)
             throws AxisFault {
 
@@ -678,7 +679,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setName(new QName(bindingWSDL.getTargetNamespace(), wsdl4jBindingOperation.getName()));
             addDocumentation(axisBindingOperation, wsdl4jBindingOperation.getDocumentationElement());
 
-            axisOperation = axisService.getOperation(new QName(portTypeWSDL.getTargetNamespace(), wsdl4jOperation.getName()));
+            axisOperation = axisService.getOperation(new QName(portType.getQName().getNamespaceURI(), wsdl4jOperation.getName()));
             axisBindingOperation.setAxisOperation(axisOperation);
 
             // process ExtensibilityElements of the wsdl4jBinding
@@ -1406,9 +1407,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @throws AxisFault
      */
     private AxisOperation populateOperations(Operation wsdl4jOperation,
-                                             PortType wsdl4jPortType, Definition dif)
+                                             PortType wsdl4jPortType)
             throws AxisFault {
-        QName opName = new QName(dif.getTargetNamespace(), wsdl4jOperation.getName());
+        QName opName = new QName(wsdl4jPortType.getQName().getNamespaceURI(), wsdl4jOperation.getName());
         // Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
         if (axisOperation == null) {
@@ -1444,7 +1445,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String action = null;
                 if (inputActions == null || inputActions.size() == 0) {
                     action = WSDL11ActionHelper
-                            .getActionFromInputElement(dif, wsdl4jPortType,
+                            .getActionFromInputElement(wsdl4jDefinition, wsdl4jPortType,
                                                        wsdl4jOperation, wsdl4jInputMessage);
                 }
                 if (action != null) {
@@ -1475,7 +1476,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // with the Default Action Pattern
                 String action = axisOperation.getOutputAction();
                 if (action == null) {
-                    action = WSDL11ActionHelper.getActionFromOutputElement(dif,
+                    action = WSDL11ActionHelper.getActionFromOutputElement(wsdl4jDefinition,
                                                                            wsdl4jPortType,
                                                                            wsdl4jOperation,
                                                                            wsdl4jOutputMessage);
@@ -1507,7 +1508,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String action = axisOperation.getOutputAction();
                 if (action == null) {
                     action = WSDL11ActionHelper
-                            .getActionFromInputElement(dif, wsdl4jPortType,
+                            .getActionFromInputElement(wsdl4jDefinition, wsdl4jPortType,
                                                        wsdl4jOperation, wsdl4jInputMessage);
                 }
                 if (action != null) {
@@ -1534,7 +1535,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 ArrayList inputActions = axisOperation.getWSAMappingList();
                 String action = null;
                 if (inputActions == null || inputActions.size() == 0) {
-                    action = WSDL11ActionHelper.getActionFromOutputElement(dif,
+                    action = WSDL11ActionHelper.getActionFromOutputElement(wsdl4jDefinition,
                                                                            wsdl4jPortType,
                                                                            wsdl4jOperation,
                                                                            wsdl4jOutputMessage);
@@ -1563,7 +1564,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         .setName(faultMessage.getQName().getLocalPart());
 
                 copyExtensibleElements(faultMessage.getExtensibilityElements(),
-                                       dif, axisFaultMessage, PORT_TYPE_OPERATION_FAULT);
+                                       wsdl4jDefinition, axisFaultMessage, PORT_TYPE_OPERATION_FAULT);
 
             }
 
@@ -1572,7 +1573,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // with the Default Action Pattern
             String action = axisOperation.getFaultAction(fault.getName());
             if (action == null) {
-                action = WSDL11ActionHelper.getActionFromFaultElement(dif,
+                action = WSDL11ActionHelper.getActionFromFaultElement(wsdl4jDefinition,
                                                                       wsdl4jPortType,
                                                                       wsdl4jOperation, fault);
             }
@@ -1593,7 +1594,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             
                 String faultAction = axisOperation.getFaultAction(exceptionClassName);
                 if (faultAction == null) {
-                    faultAction = WSDL11ActionHelper.getActionFromFaultElement(dif,
+                    faultAction = WSDL11ActionHelper.getActionFromFaultElement(wsdl4jDefinition,
                                                                           wsdl4jPortType,
                                                                           wsdl4jOperation, fault);
                     if (log.isDebugEnabled()) {

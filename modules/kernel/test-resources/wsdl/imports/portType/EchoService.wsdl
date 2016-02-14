@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:ns="http://tempuri.org" 
+    xmlns:bindings="http://tempuri.org/bindings"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" 
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    targetNamespace="http://tempuri.org">
+    
+    <wsdl:documentation>EchoService</wsdl:documentation>
+    
+    <wsp:Policy 
+        xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+        xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+        wsu:Id="usingAddressingPolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsaws:UsingAddressing xmlns:wsaws="http://schemas.xmlsoap.org/ws/2004/08/addressing" />
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    
+    <wsdl:import namespace="http://tempuri.org/bindings" location="EchoBindings.wsdl" />
+    
+    <wsdl:service name="EchoService">
+        <wsdl:port name="EchoServiceHttpSoap12Endpoint" binding="bindings:EchoServiceSoap12Binding">
+            <soap12:address location="http://localhost:9083/wsstack/services/EchoService.EchoServiceHttpSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="EchoServiceHttpEndpoint" binding="bindings:EchoServiceHttpBinding">
+            <http:address location="http://localhost:9083/wsstack/services/EchoService.EchoServiceHttpEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

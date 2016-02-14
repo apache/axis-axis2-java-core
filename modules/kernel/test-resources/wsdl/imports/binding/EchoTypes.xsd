@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" 
+    targetNamespace="http://tempuri.org/types"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="echo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="echo" nillable="true" type="xs:anyType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" nillable="true" type="xs:anyType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
