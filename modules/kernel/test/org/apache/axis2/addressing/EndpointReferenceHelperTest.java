@@ -33,6 +33,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class EndpointReferenceHelperTest extends TestCase {
+    private void compareAttributes(OMAttribute expected, OMAttribute actual) {
+        assertEquals(expected.getNamespace(), actual.getNamespace());
+        assertEquals(expected.getLocalName(), actual.getLocalName());
+        assertEquals(expected.getAttributeValue(), actual.getAttributeValue());
+    }
 
     public void testToAndFromOMForFinalSpecEPR() throws Exception {
         String address = "http://ws.apache.org/axis2";
@@ -77,19 +82,19 @@ public class EndpointReferenceHelperTest extends TestCase {
 
         assertEquals(epr.getAddress(), deser.getAddress());
         ArrayList addrAttrs = deser.getAddressAttributes();
-        assertEquals(attr1, addrAttrs.get(0));
-        assertEquals(attr2, addrAttrs.get(1));
+        compareAttributes(attr1, (OMAttribute)addrAttrs.get(0));
+        compareAttributes(attr2, (OMAttribute)addrAttrs.get(1));
 
         ArrayList attrs = deser.getAttributes();
-        assertEquals(attr1, attrs.get(0));
-        assertEquals(attr2, attrs.get(1));
+        compareAttributes(attr1, (OMAttribute)attrs.get(0));
+        compareAttributes(attr2, (OMAttribute)attrs.get(1));
 
         ArrayList metadata = deser.getMetaData();
         assertEquals(md1, metadata.get(0));
         assertEquals(md2, metadata.get(1));
         ArrayList mdAttrs = deser.getMetadataAttributes();
-        assertEquals(attr1, mdAttrs.get(0));
-        assertEquals(attr2, mdAttrs.get(1));
+        compareAttributes(attr1, (OMAttribute)mdAttrs.get(0));
+        compareAttributes(attr2, (OMAttribute)mdAttrs.get(1));
 
         ArrayList extelts = deser.getExtensibleElements();
         assertEquals(ext1, extelts.get(0));
@@ -109,15 +114,15 @@ public class EndpointReferenceHelperTest extends TestCase {
         assertEquals(attr2, addrAttrs.get(1));
 
         attrs = deser.getAttributes();
-        assertEquals(attr1, attrs.get(0));
-        assertEquals(attr2, attrs.get(1));
+        compareAttributes(attr1, (OMAttribute)attrs.get(0));
+        compareAttributes(attr2, (OMAttribute)attrs.get(1));
 
         metadata = deser.getMetaData();
         assertEquals(md1, metadata.get(0));
         assertEquals(md2, metadata.get(1));
         mdAttrs = deser.getMetadataAttributes();
-        assertEquals(attr1, mdAttrs.get(0));
-        assertEquals(attr2, mdAttrs.get(1));
+        compareAttributes(attr1, (OMAttribute)mdAttrs.get(0));
+        compareAttributes(attr2, (OMAttribute)mdAttrs.get(1));
 
         extelts = deser.getExtensibleElements();
         assertEquals(ext1, extelts.get(0));
@@ -187,12 +192,12 @@ public class EndpointReferenceHelperTest extends TestCase {
 
         assertEquals(epr.getAddress(), deser.getAddress());
         ArrayList addrAttrs = deser.getAddressAttributes();
-        assertEquals(attr1, addrAttrs.get(0));
-        assertEquals(attr2, addrAttrs.get(1));
+        compareAttributes(attr1, (OMAttribute)addrAttrs.get(0));
+        compareAttributes(attr2, (OMAttribute)addrAttrs.get(1));
 
         ArrayList attrs = deser.getAttributes();
-        assertEquals(attr1, attrs.get(0));
-        assertEquals(attr2, attrs.get(1));
+        compareAttributes(attr1, (OMAttribute)attrs.get(0));
+        compareAttributes(attr2, (OMAttribute)attrs.get(1));
 
         //Metadata will be lost unless it is saved as an extensibility element.
         ArrayList metadata = deser.getMetaData();
@@ -216,12 +221,12 @@ public class EndpointReferenceHelperTest extends TestCase {
 
         assertEquals(epr.getAddress(), deser.getAddress());
         addrAttrs = deser.getAddressAttributes();
-        assertEquals(attr1, addrAttrs.get(0));
-        assertEquals(attr2, addrAttrs.get(1));
+        compareAttributes(attr1, (OMAttribute)addrAttrs.get(0));
+        compareAttributes(attr2, (OMAttribute)addrAttrs.get(1));
 
         attrs = deser.getAttributes();
-        assertEquals(attr1, attrs.get(0));
-        assertEquals(attr2, attrs.get(1));
+        compareAttributes(attr1, (OMAttribute)attrs.get(0));
+        compareAttributes(attr2, (OMAttribute)attrs.get(1));
 
         //Metadata will be lost unless it is saved as an extensibility element.
         metadata = deser.getMetaData();
