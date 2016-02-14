@@ -78,14 +78,56 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
+                        <id>wsdl2code-mtom</id>
                         <goals>
                             <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <wsdlFile>src/test/wsdl/MTOMService.wsdl</wsdlFile>
-                            <databindingName>adb</databindingName>
                             <syncMode>sync</syncMode>
                             <packageName>org.apache.axis2.databinding.mtom.client</packageName>
+                            <outputDirectory>${project.build.directory}/wsdl2code/mtom</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsdl2code-axis2-5741</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFile>src/test/wsdl/AXIS2-5741.wsdl</wsdlFile>
+                            <packageName>org.apache.axis2.databinding.axis2_5741.service</packageName>
+                            <generateServerSide>true</generateServerSide>
+                            <generateServicesXml>true</generateServicesXml>
+                            <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5741</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <databindingName>adb</databindingName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <configuration>
+                            <transformationSets>
+                                <transformationSet>
+                                    <dir>${project.build.directory}/wsdl2code/AXIS2-5741/resources</dir>
+                                    <includes>
+                                        <include>services.xml</include>
+                                    </includes>
+                                    <stylesheet>src/test/xslt/AXIS2-5741.xsl</stylesheet>
+                                    <outputDir>${project.build.directory}/repo/AXIS2-5741/services/FiverxLinkService/META-INF</outputDir>
+                                </transformationSet>
+                            </transformationSets>
                         </configuration>
                     </execution>
                 </executions>
@@ -96,6 +138,7 @@
                 <version>2.4.1</version>
                 <executions>
                     <execution>
+                        <id>wsimport-mtom</id>
                         <goals>
                             <goal>wsimport-test</goal>
                         </goals>
@@ -104,6 +147,18 @@
                                 <wsdlFile>${basedir}/src/test/wsdl/MTOMService.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.databinding.mtom.service</packageName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsimport-axis2-5741</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/src/test/wsdl/AXIS2-5741.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.apache.axis2.databinding.axis2_5741.client</packageName>
                         </configuration>
                     </execution>
                 </executions>
