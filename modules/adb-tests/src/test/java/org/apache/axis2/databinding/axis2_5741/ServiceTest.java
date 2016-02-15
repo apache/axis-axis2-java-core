@@ -28,12 +28,10 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.databinding.axis2_5741.client.FiverxLinkService;
 import org.apache.axis2.databinding.axis2_5741.client.FiverxLinkService_Service;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ServiceTest {
     @Test
-    @Ignore("AXIS2-5741")
     public void test() throws Exception {
         int port = PortAllocator.allocatePort();
         ConfigurationContext configurationContext =

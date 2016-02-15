@@ -619,7 +619,7 @@ public class SchemaCompiler {
                     String className = findClassName(schemaType.getQName(),
                                                      isArray(xsElt));
 
-                    innerElementMap.put(xsElt.getQName(), className);
+                    innerElementMap.put(xsElt.getWireName(), className);
 
                     // always store the class name in the element meta Info itself
                     // this details only needed by the unwrappig to set the complex type
@@ -642,7 +642,7 @@ public class SchemaCompiler {
                     //the anon map. we've to write it just like we treat a referenced type(giving due
                     //care that this is meant to be an attribute in some class)
 
-                    QName generatedTypeName = generateTypeQName(xsElt.getQName(), parentSchema);
+                    QName generatedTypeName = generateTypeQName(xsElt.getWireName(), parentSchema);
 
                     if (schemaType instanceof XmlSchemaComplexType) {
                         //set a name
@@ -664,7 +664,7 @@ public class SchemaCompiler {
                         processedAnonymousComplexTypesMap.remove(xsElt);
                         String className = findClassName(schemaType.getQName(), isArray(xsElt));
                         innerElementMap.put(
-                                xsElt.getQName(),
+                                xsElt.getWireName(),
                                 className);
 
                         //store in the schema map to retrive in the unwrapping
@@ -832,7 +832,7 @@ public class SchemaCompiler {
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
                     //since this is a inner element we should add it to the inner element map
-                    innerElementMap.put(xsElt.getQName(), className);
+                    innerElementMap.put(xsElt.getWireName(), className);
                     // set the class name to be used in unwrapping
                     xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                                       className);
@@ -843,7 +843,7 @@ public class SchemaCompiler {
                 //this type is not found at all. we'll just register it with whatever the class name we can comeup with
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
-                    innerElementMap.put(xsElt.getQName(), className);
+                    innerElementMap.put(xsElt.getWireName(), className);
                     // set the class name to be used in unwrapping
                     xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                                       className);
@@ -2246,12 +2246,12 @@ public class SchemaCompiler {
                 XmlSchemaElement elt = (XmlSchemaElement) child;
                 QName referencedQName = null;
 
-                if (elt.getQName() != null) {
-                    referencedQName = elt.getQName();
+                if (elt.getWireName() != null) {
+                    referencedQName = elt.getWireName();
                     QName schemaTypeQName = elt.getSchemaType() != null ?
                                             elt.getSchemaType().getQName() : elt.getSchemaTypeName();
                     if (schemaTypeQName != null) {
-                        String clazzName = (String) processedElementTypeMap.get(elt.getQName());
+                        String clazzName = (String) processedElementTypeMap.get(elt.getWireName());
                         metainfHolder.registerMapping(referencedQName,
                                                       schemaTypeQName,
                                                       clazzName,
@@ -2337,13 +2337,13 @@ public class SchemaCompiler {
                 }
 
                 //get the nillable state and register that on the metainf holder
-                if (localNillableList.contains(elt.getQName())) {
-                    metainfHolder.registerNillableQName(elt.getQName());
+                if (localNillableList.contains(elt.getWireName())) {
+                    metainfHolder.registerNillableQName(elt.getWireName());
                 }
 
                 //get the binary state and add that to the status map
                 if (isBinary(elt)) {
-                    metainfHolder.addtStatus(elt.getQName(),
+                    metainfHolder.addtStatus(elt.getWireName(),
                                              SchemaConstants.BINARY_TYPE);
                 }
                 // process the XMLSchemaAny
