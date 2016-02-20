@@ -287,7 +287,9 @@
         </dependency>
         
         <!-- These are needed to run JAX-WS tools -->
-        <dependency>
+        <!-- TODO: don't add them unless you also add the corresponding license files
+                   (and check that inclusion of these dependencies conforms to ASF policies) -->
+        <!-- dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <exclusions>
@@ -326,7 +328,7 @@
                     <artifactId>activation</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency -->
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
