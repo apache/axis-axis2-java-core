@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
-        <version>1.7.1</version>
+        <version>1.7.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>addressing</artifactId>
@@ -50,9 +50,9 @@
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.1/modules/addressing</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.1/modules/addressing</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.7.1/modules/addressing</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_7/modules/addressing</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_7/modules/addressing</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_7/modules/addressing</url>
     </scm>
     <build>
         <sourceDirectory>src</sourceDirectory>
