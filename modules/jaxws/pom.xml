@@ -130,6 +130,13 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>addressing</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -312,13 +319,27 @@
                                         <include name="**/axis2.xml" />
                                     </fileset>
                                 </copy>
-                                <property name="addressing_version" value="${project.version}" />
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="." target="build-repo" />
                             </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <axis2xml>../kernel/conf/axis2.xml</axis2xml>
+                            <configurationDirectory>conf</configurationDirectory>
+                            <outputDirectory>${project.build.directory}/repository</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
