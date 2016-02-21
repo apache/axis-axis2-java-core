@@ -1215,7 +1215,7 @@ public class BeanUtil {
                         } else {
                             wrappingElement = fac.createOMElement(partName, null);
                         }
-                        OMText text = fac.createOMText(arg, true);
+                        OMText text = fac.createOMText((DataHandler)arg, true);
                         wrappingElement.addChild(text);
                         objects.add(wrappingElement);
                     }else if (SimpleTypeMapper.isEnum(arg.getClass())) {
