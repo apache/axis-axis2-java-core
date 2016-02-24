@@ -102,11 +102,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-	<dependency>
-	        <groupId>xmlunit</groupId>
-	        <artifactId>xmlunit</artifactId>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
             <scope>test</scope>
-	 </dependency>
+        </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-testkit</artifactId>
