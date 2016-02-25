@@ -65,6 +65,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
         try {
             //Creates StAX document serializer which actually implements the XMLStreamWriter
             XMLStreamWriter streamWriter = new StAXDocumentSerializer(outStream);
+            streamWriter.writeStartDocument();
             element.serializeAndConsume(streamWriter);
             //TODO Looks like the SOAP envelop doesn't have an end document tag. Find out why?
             streamWriter.writeEndDocument();
@@ -143,6 +144,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
         try {
             //Create the StAX document serializer
             XMLStreamWriter streamWriter = new StAXDocumentSerializer(outputStream);
+            streamWriter.writeStartDocument();
             if (preserve) {
                 element.serialize(streamWriter);
             } else {
