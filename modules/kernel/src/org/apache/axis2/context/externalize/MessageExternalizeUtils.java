@@ -277,11 +277,9 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
                 boolean isSOAP = true;
                 builder = getAttachmentsBuilder(mc, mis, optimizedContentType, isSOAP);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
-                envelope.buildWithAttachments();
             } else {
                 builder = OMXMLBuilderFactory.createSOAPModelBuilder(mis, charSetEnc);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
-                envelope.build();
             }
         } catch (Exception ex) {
             // TODO: what to do if can't get the XML stream reader
@@ -291,9 +289,8 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
                       + ex.getClass().getName() + " : " + ex.getLocalizedMessage() + "]", ex);
             envelope = null;
         } finally {
-            if (builder != null) {
-                builder.close();
-            }
+            // Prepare the builder to close the underlying stream
+            builder.detach();
             // Close the message input stream.  This will ensure that the
             // underlying stream is advanced past the message.
             mis.close();
