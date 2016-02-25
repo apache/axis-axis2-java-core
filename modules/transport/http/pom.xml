@@ -113,5 +113,10 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-truth</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

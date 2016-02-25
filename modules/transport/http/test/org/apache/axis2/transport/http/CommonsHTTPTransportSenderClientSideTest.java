@@ -1,5 +1,8 @@
 package org.apache.axis2.transport.http;
 
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -41,8 +44,7 @@ public class CommonsHTTPTransportSenderClientSideTest extends AbstractHTTPServer
                 getHeaders().get("Content-Type"));
         assertEquals("Not the expected Header value", "custom-value",
                 getHeaders().get("Custom-header"));
-        assertEquals("Not the expected body content", getEnvelope().toString()
-                .replace("utf", "UTF"), getStringContent());
+        assertAbout(xml()).that(getStringContent()).hasSameContentAs(getEnvelope().toString());
     }
      
     /*

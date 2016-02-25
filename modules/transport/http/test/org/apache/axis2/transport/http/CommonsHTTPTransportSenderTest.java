@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.transport.http;
 
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +72,9 @@ public abstract class CommonsHTTPTransportSenderTest extends TestCase  {
                 .get("Content-Type"));
         assertEquals("Not the expected Header value", "custom-value", httpResponse.getHeaders()
                 .get("Custom-header"));
-        assertEquals("Not the expected body content", envelope.toString().replace("utf", "UTF"),
-                new String(httpResponse.getByteArrayOutputStream().toByteArray()));
+        assertAbout(xml())
+                .that(new String(httpResponse.getByteArrayOutputStream().toByteArray()))
+                .hasSameContentAs(envelope.toString());
     }
     
     public void testInvokeWithAxisHttpResponseImpl() throws Exception {
@@ -84,8 +88,9 @@ public abstract class CommonsHTTPTransportSenderTest extends TestCase  {
                 .get("Content-Type"));
         assertEquals("Not the expected Header value", "custom-value", httpResponse.getHeaders()
                 .get("Custom-header"));
-        assertEquals("Not the expected body content", envelope.toString().replace("utf", "UTF"),
-                new String(httpResponse.getByteArrayOutputStream().toByteArray()));
+        assertAbout(xml())
+                .that(new String(httpResponse.getByteArrayOutputStream().toByteArray()))
+                .hasSameContentAs(envelope.toString());
     }
 
     public void testCleanup() throws AxisFault {

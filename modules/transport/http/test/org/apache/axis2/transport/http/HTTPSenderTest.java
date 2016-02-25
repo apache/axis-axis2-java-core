@@ -29,6 +29,10 @@ import org.apache.axis2.transport.http.mock.server.BasicHttpServer;
 
 import javax.mail.MessagingException;
 import javax.ws.rs.core.HttpHeaders;
+
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -127,7 +131,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 "http://localhost:" + port + "/postService", false);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_POST,
                 getHTTPMethod());
-        assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
+        assertAbout(xml()).that(getStringContent()).hasSameContentAs(getEnvelope().toString());
         assertEquals("Not the expected HTTP Header value", "urn:postService",
                 getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
@@ -169,7 +173,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 + port + "/putService", false);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_PUT,
                 getHTTPMethod());
-        assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
+        assertAbout(xml()).that(getStringContent()).hasSameContentAs(getEnvelope().toString());
         assertEquals("Not the expected HTTP Header value", "urn:putService",
                 getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
@@ -252,7 +256,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
                 getHeaders().get(HttpHeaders.USER_AGENT));
 
         sendViaHTTP(null, "urn:noService", "http://localhost:" + port + "/noService", false);
-        assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
+        assertAbout(xml()).that(getStringContent()).hasSameContentAs(getEnvelope().toString());
         assertEquals("Not the expected HTTP Header value", "urn:noService",
                 getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",

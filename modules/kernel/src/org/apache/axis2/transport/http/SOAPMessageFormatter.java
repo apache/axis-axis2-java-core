@@ -20,9 +20,13 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.OMMultipartWriter;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPMessage;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -67,11 +71,23 @@ public class SOAPMessageFormatter implements MessageFormatter {
             if (!(format.isOptimized()) && format.isDoingSWA()) {
                 writeSwAMessage(msgCtxt, out, format, preserve);
             } else {
-                OMElement element = msgCtxt.getEnvelope();
-                if (preserve) {
-                    element.serialize(out, format);
+                SOAPEnvelope envelope = msgCtxt.getEnvelope();
+                // Always use a SOAPMessage for serialization so that we produce an XML declaration.
+                // Note that an XML declaration shouldn't be necessary except for weird cases such as
+                // the UDP transport. This is for compatibility with Axis2 1.7.0 and Axiom 1.2.x;
+                // Axiom 1.3.x no longer produces an XML declaration when serializing a SOAPEnvelope.
+                SOAPMessage message;
+                OMContainer parent = envelope.getParent();
+                if (parent instanceof SOAPMessage) {
+                    message = (SOAPMessage)parent;
                 } else {
-                    element.serializeAndConsume(out, format);
+                    message = ((SOAPFactory)envelope.getOMFactory()).createSOAPMessage();
+                    message.setSOAPEnvelope(envelope);
+                }
+                if (preserve) {
+                    message.serialize(out, format);
+                } else {
+                    message.serializeAndConsume(out, format);
                 }
             }
         } catch (XMLStreamException e) {
@@ -85,34 +101,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
 
     public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format)
             throws AxisFault {
-        if (log.isDebugEnabled()) {
-            log.debug("start getBytes()");
-            log.debug("  isOptimized=" + format.isOptimized());
-            log.debug("  isDoingSWA=" + format.isDoingSWA());
-        }
-        OMElement element = msgCtxt.getEnvelope();
-        try {
-            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            if (!format.isOptimized()) {
-                if (format.isDoingSWA()) {
-                    writeSwAMessage(msgCtxt, bytesOut, format, false);
-                } else {
-                    element.serializeAndConsume(bytesOut, format);
-                }
-                return bytesOut.toByteArray();
-            } else {
-                element.serializeAndConsume(bytesOut, format);
-                return bytesOut.toByteArray();
-            }
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        } catch (FactoryConfigurationError e) {
-            throw AxisFault.makeFault(e);
-        } finally {
-            if (log.isDebugEnabled()) {
-                log.debug("end getBytes()");
-            }
-        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        writeTo(msgCtxt, format, out, true);
+        return out.toByteArray();
     }
 
     public String getContentType(MessageContext msgCtxt, OMOutputFormat format,

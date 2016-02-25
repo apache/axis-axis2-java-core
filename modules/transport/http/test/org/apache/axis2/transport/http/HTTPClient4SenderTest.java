@@ -22,6 +22,9 @@ package org.apache.axis2.transport.http;
 import org.apache.axis2.Constants;
 import org.apache.axis2.transport.http.impl.httpclient4.HTTPSenderImpl;
 
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
 import javax.ws.rs.core.HttpHeaders;
 
 public class HTTPClient4SenderTest extends HTTPSenderTest {
@@ -73,7 +76,7 @@ public class HTTPClient4SenderTest extends HTTPSenderTest {
                     "http://localhost:" + port + "/postService", false);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_POST,
                      getHTTPMethod());
-        assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
+        assertAbout(xml()).that(getStringContent()).hasSameContentAs(getEnvelope().toString());
         assertEquals("Not the expected HTTP Header value", "urn:postService",
                      getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
@@ -107,7 +110,7 @@ public class HTTPClient4SenderTest extends HTTPSenderTest {
                                                                                + port + "/putService", false);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_PUT,
                      getHTTPMethod());
-        assertEquals("Not the expected content", getEnvelope().toString(), getStringContent());
+        assertAbout(xml()).that(getStringContent()).hasSameContentAs(getEnvelope().toString());
         assertEquals("Not the expected HTTP Header value", "urn:putService",
                      getHeaders().get("SOAPAction").replace("\"", ""));
         assertEquals("Not the expected HTTP Header value", "text/xml",
