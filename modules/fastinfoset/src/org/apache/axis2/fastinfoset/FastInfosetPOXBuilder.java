@@ -32,25 +32,25 @@ import java.io.InputStream;
 
 public class FastInfosetPOXBuilder implements Builder {
 
-	private static Log logger = LogFactory.getLog(FastInfosetBuilder.class);
-	
-	/**
-	 * Returns a OMElement handler to the document element of the Fast Infoset message.
-	 * 
-	 * @param inputStream InputStream to the message
-	 * @param contentType Content type of the message
-	 * @param messageContext MessageContext to be used
-	 * 
-	 * @return OMElement handler to the document element
-	 * 
-	 * @see org.apache.axis2.builder.Builder#processDocument(InputStream, String, MessageContext)
-	 */
-	public OMElement processDocument(InputStream inputStream, String contentType, 
-			MessageContext messageContext) throws AxisFault {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Processing a Document with the content type: " + contentType);
-		}
-		//Create a instance of the StAX Parser which can handle the fast infoset stream
-		return OMXMLBuilderFactory.createStAXOMBuilder(new StAXDocumentParser(inputStream)).getDocumentElement();
-	}
+    private static Log logger = LogFactory.getLog(FastInfosetBuilder.class);
+    
+    /**
+     * Returns a OMElement handler to the document element of the Fast Infoset message.
+     * 
+     * @param inputStream InputStream to the message
+     * @param contentType Content type of the message
+     * @param messageContext MessageContext to be used
+     * 
+     * @return OMElement handler to the document element
+     * 
+     * @see org.apache.axis2.builder.Builder#processDocument(InputStream, String, MessageContext)
+     */
+    public OMElement processDocument(InputStream inputStream, String contentType, 
+            MessageContext messageContext) throws AxisFault {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Processing a Document with the content type: " + contentType);
+        }
+        //Create a instance of the StAX Parser which can handle the fast infoset stream
+        return OMXMLBuilderFactory.createStAXOMBuilder(new StAXDocumentParser(inputStream)).getDocumentElement();
+    }
 }
