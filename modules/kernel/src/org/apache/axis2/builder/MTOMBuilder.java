@@ -47,6 +47,7 @@ public class MTOMBuilder implements MIMEAwareBuilder {
             messageContext.setAttachmentMap(attachments);
             
             SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
+            messageContext.setProperty(Constants.BUILDER, builder);
             OMDocument document = builder.getDocument();
             String charsetEncoding = document.getCharsetEncoding();
             if (charsetEncoding == null) {

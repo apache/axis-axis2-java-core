@@ -20,6 +20,10 @@
 
 package org.apache.axis2;
 
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.TransportUtils;
+
 /**
  * Class Constants
  */
@@ -258,12 +262,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     
     
     /**
-     * On inbound requests, the detachable input stream can be queried to get
-     * the inbound length.  It can also be "detached" from the inbound http stream
-     * to allow resources to be freed.
+     * The {@link OMXMLParserWrapper Axiom builder} of the message in a message context.
+     * 
+     * @see TransportUtils#detachInputStream(MessageContext)
      */
-    public static final String DETACHABLE_INPUT_STREAM = 
-        "org.apache.axiom.om.util.DetachableInputStream";
+    public static final String BUILDER = OMXMLParserWrapper.class.getName();
 
     /** SOAP Role Configuration */
     public static final String SOAP_ROLE_CONFIGURATION_ELEMENT = "SOAPRoleConfiguration";

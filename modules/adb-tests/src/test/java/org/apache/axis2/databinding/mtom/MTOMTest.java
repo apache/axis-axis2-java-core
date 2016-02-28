@@ -28,12 +28,10 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.databinding.mtom.client.MTOMServiceStub;
 import org.apache.axis2.databinding.mtom.client.MTOMServiceStub.GetContent;
 import org.apache.axis2.databinding.mtom.service.MTOMServiceImpl;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MTOMTest {
     @Test
-    @Ignore("AXIS2-5694")
     public void test() throws Exception {
         int port = PortAllocator.allocatePort();
         String address = "http://localhost:" + port + "/mtom";

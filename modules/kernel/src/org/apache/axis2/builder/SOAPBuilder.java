@@ -23,7 +23,6 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -40,16 +39,11 @@ public class SOAPBuilder implements MIMEAwareBuilder {
             String charSetEncoding = (String) messageContext
                     .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
             
-            // Apply a detachable inputstream.  This can be used later
-            // to (a) get the length of the incoming message or (b)
-            // free transport resources.
-            DetachableInputStream is = new DetachableInputStream(inputStream);
-            messageContext.setProperty(Constants.DETACHABLE_INPUT_STREAM, is);
-            
             // createSOAPModelBuilder takes care of configuring the underlying parser to
             // avoid the security issue described in CVE-2010-1632
-            OMXMLParserWrapper builder = OMXMLBuilderFactory.createSOAPModelBuilder(is,
+            OMXMLParserWrapper builder = OMXMLBuilderFactory.createSOAPModelBuilder(inputStream,
                     charSetEncoding);
+            messageContext.setProperty(Constants.BUILDER, builder);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
             BuilderUtil
                     .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);

@@ -28,7 +28,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -106,16 +105,8 @@ public class TransportUtils {
 
             SOAPEnvelope env = createSOAPMessage(msgContext, inStream, contentType);
 
-            // if we were told to detach, we will make the call here, this is only applicable
-            // if a DetachableInputStream instance is found on the MessageContext
             if(detach) {
-                DetachableInputStream dis = (DetachableInputStream) msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM);
-                if(dis != null) {
-                    if(log.isDebugEnabled()) {
-                        log.debug("Detaching input stream after SOAPEnvelope construction");
-                    }
-                    dis.detach();
-                }
+                detachInputStream(msgContext);
             }
             return env;
         } catch (Exception e) {
@@ -576,31 +567,27 @@ public class TransportUtils {
     }
 
     /**
-     * This method can be called by components wishing to detach the DetachableInputStream
-     * object that is present on the MessageContext. This is meant to shield components
-     * from any logic that needs to be executed on the DetachableInputStream in order to
-     * have it effectively detached. If the DetachableInputStream is not present, or if
-     * the supplied MessageContext is null, no action will be taken.
+     * Prepare the message in the given message context so that the underlying input stream can be
+     * closed.
+     * 
+     * @param msgContext
      */
     public static void detachInputStream(MessageContext msgContext) throws AxisFault {
-        try {
-            if(msgContext != null
-                   &&
-                   msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM) != null) {
-                DetachableInputStream dis = (DetachableInputStream) msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM);
-                if(log.isDebugEnabled()) {
-                    log.debug("Detaching DetachableInputStream: " + dis);
+        if (msgContext != null) {
+            OMXMLParserWrapper builder = (OMXMLParserWrapper)msgContext.getProperty(Constants.BUILDER);
+            if (builder != null) {
+                builder.detach();
+            } else {
+                Attachments attachments = msgContext.getAttachmentMap(false);
+                if (attachments != null) {
+                    attachments.getAllContentIDs();
+                } else {
+                    SOAPEnvelope envelope = msgContext.getEnvelope();
+                    if (envelope != null) {
+                        envelope.build();
+                    }
                 }
-                dis.detach();
             }
-            else {
-                if(log.isDebugEnabled()) {
-                    log.debug("Detach not performed for MessageContext: " + msgContext);
-                }
-            }
-        }
-        catch(Throwable t) {
-            throw AxisFault.makeFault(t);
         }
     }
 
