@@ -196,10 +196,10 @@ public class TransportUtils {
             type = getContentType(contentType, msgContext);
             Builder builder = MessageProcessorSelector.getMessageBuilder(type, msgContext);
             if (builder != null) {
-	            if (log.isDebugEnabled()) {
-	                log.debug("createSOAPEnvelope using Builder (" +
-	                          builder.getClass() + ") selected from type (" + type +")");
-	            }
+                if (log.isDebugEnabled()) {
+                    log.debug("createSOAPEnvelope using Builder (" +
+                              builder.getClass() + ") selected from type (" + type +")");
+                }
                 documentElement = builder.processDocument(inStream, contentType, msgContext);
             }
         }
@@ -241,10 +241,10 @@ public class TransportUtils {
         if (contentType != null) {
             type = getContentType(contentType, msgContext);
             if (builder != null) {
-	            if (log.isDebugEnabled()) {
-	                log.debug("createSOAPEnvelope using Builder (" +
-	                          builder.getClass() + ") selected from type (" + type +")");
-	            }
+                if (log.isDebugEnabled()) {
+                    log.debug("createSOAPEnvelope using Builder (" +
+                              builder.getClass() + ") selected from type (" + type +")");
+                }
                 documentElement = builder.processDocument(inStream, contentType, msgContext);
             }
         }
@@ -438,114 +438,107 @@ public class TransportUtils {
         }
     }
 
-
-
-
-
-        /**
-         * This is a helper method to get the response written flag from the RequestResponseTransport
-         * instance.
-         */
-        public static boolean isResponseWritten(MessageContext messageContext) {
-            RequestResponseTransport reqResTransport = getRequestResponseTransport(messageContext);
-            if (reqResTransport != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found RequestResponseTransport returning isResponseWritten()");
-                }
-                return reqResTransport.isResponseWritten();
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Did not find RequestResponseTransport returning false from get"
-                            + "ResponseWritten()");
-                }
-                return false;
+    /**
+     * This is a helper method to get the response written flag from the RequestResponseTransport
+     * instance.
+     */
+    public static boolean isResponseWritten(MessageContext messageContext) {
+        RequestResponseTransport reqResTransport = getRequestResponseTransport(messageContext);
+        if (reqResTransport != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found RequestResponseTransport returning isResponseWritten()");
             }
+            return reqResTransport.isResponseWritten();
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Did not find RequestResponseTransport returning false from get"
+                        + "ResponseWritten()");
+            }
+            return false;
         }
-
-       /**
-         * This is a helper method to set the response written flag on the RequestResponseTransport
-         * instance.
-        */
-       public static void setResponseWritten(MessageContext messageContext, boolean responseWritten) {
-            RequestResponseTransport reqResTransport = getRequestResponseTransport(messageContext);
-            if (reqResTransport != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found RequestResponseTransport setting response written");
-                }
-                reqResTransport.setResponseWritten(responseWritten);
-            } else {
-                if (log.isDebugEnabled()) {
-                   log.debug("Did not find RequestResponseTransport cannot set response written");
-               }
-           }
-       }
-
-       /**
-        * This is an internal helper method to retrieve the RequestResponseTransport instance
-        * from the MessageContext object. The MessageContext may be the response MessageContext so
-        * in that case we will have to retrieve the request MessageContext from the OperationContext.
-        */
-       private static RequestResponseTransport getRequestResponseTransport(MessageContext messageContext) {
-    	   try {
-    		   // If this is the request MessageContext we should find it directly by the getProperty()
-               // method
-    	       RequestResponseTransport transportControl = (RequestResponseTransport)
-    	           messageContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
-    	       
-               if (transportControl != null) {
-                   return transportControl;
-               }
-               // If this is the response MessageContext we need to look for the request MessageContext
-        	   else if (messageContext.getOperationContext() != null
-        				&& messageContext.getOperationContext()
-                      		.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE) != null) {
-        						return (RequestResponseTransport) messageContext.
-        						getOperationContext().getMessageContext(
-        								WSDLConstants.MESSAGE_LABEL_IN_VALUE).getProperty(
-        										RequestResponseTransport.TRANSPORT_CONTROL);
-        		}
-        		else {
-        			return null;
-        		}
-    	   }
-           catch(AxisFault af) {
-           	// probably should not be fatal, so just log the message
-           	String msg = Messages.getMessage("getMessageContextError", af.toString());
-           	log.debug(msg);
-           	return null;
-           }
     }
 
-       /**
-        * Clean up cached attachment file
-        * @param msgContext
-        */
-       public static void deleteAttachments(MessageContext msgContext) {
-       	if (log.isDebugEnabled()) {
-               log.debug("Entering deleteAttachments()");
-           }
+    /**
+     * This is a helper method to set the response written flag on the RequestResponseTransport
+     * instance.
+     */
+    public static void setResponseWritten(MessageContext messageContext, boolean responseWritten) {
+        RequestResponseTransport reqResTransport = getRequestResponseTransport(messageContext);
+        if (reqResTransport != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found RequestResponseTransport setting response written");
+            }
+            reqResTransport.setResponseWritten(responseWritten);
+        } else {
+            if (log.isDebugEnabled()) {
+               log.debug("Did not find RequestResponseTransport cannot set response written");
+            }
+        }
+    }
 
-       	Attachments attachments = msgContext.getAttachmentMap();
+    /**
+     * This is an internal helper method to retrieve the RequestResponseTransport instance
+     * from the MessageContext object. The MessageContext may be the response MessageContext so
+     * in that case we will have to retrieve the request MessageContext from the OperationContext.
+     */
+    private static RequestResponseTransport getRequestResponseTransport(MessageContext messageContext) {
+        try {
+            // If this is the request MessageContext we should find it directly by the getProperty()
+            // method
+            RequestResponseTransport transportControl = (RequestResponseTransport)
+                    messageContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+            
+            if (transportControl != null) {
+                return transportControl;
+            }
+            // If this is the response MessageContext we need to look for the request MessageContext
+            else if (messageContext.getOperationContext() != null
+                    && messageContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE) != null) {
+                return (RequestResponseTransport) messageContext.getOperationContext().getMessageContext(
+                        WSDLConstants.MESSAGE_LABEL_IN_VALUE).getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+            }
+            else {
+                return null;
+            }
+        }
+        catch(AxisFault af) {
+            // probably should not be fatal, so just log the message
+            String msg = Messages.getMessage("getMessageContextError", af.toString());
+            log.debug(msg);
+            return null;
+        }
+    }
 
-           if (attachments != null) {
-               // Get the list of Content IDs for the attachments...but does not try to pull the stream for new attachments.
-               // (Pulling the stream for new attachments will probably fail...the stream is probably closed)
-               List keys = attachments.getContentIDList();
-               if (keys != null && keys.size() > 0) {
-               	String key = null;
-               	File file = null;
-               	   LifecycleManager lcm = (LifecycleManager)msgContext.getRootContext().getAxisConfiguration().getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);               		
-               	DataSource dataSource = null;
-                   for (int i = 0; i < keys.size(); i++) {
-                       try {
-                           key = (String) keys.get(i);
-                           dataSource = attachments.getDataHandler(key).getDataSource();
-                           if(dataSource instanceof CachedFileDataSource){
-                           	file = ((CachedFileDataSource)dataSource).getFile();
-                           	if (log.isDebugEnabled()) {
-                                   log.debug("Delete cache attachment file: "+file.getName());
+    /**
+     * Clean up cached attachment file
+     * @param msgContext
+     */
+    public static void deleteAttachments(MessageContext msgContext) {
+        if (log.isDebugEnabled()) {
+            log.debug("Entering deleteAttachments()");
+        }
+
+        Attachments attachments = msgContext.getAttachmentMap();
+
+        if (attachments != null) {
+            // Get the list of Content IDs for the attachments...but does not try to pull the stream for new attachments.
+            // (Pulling the stream for new attachments will probably fail...the stream is probably closed)
+            List keys = attachments.getContentIDList();
+            if (keys != null && keys.size() > 0) {
+                String key = null;
+                File file = null;
+                LifecycleManager lcm = (LifecycleManager)msgContext.getRootContext().getAxisConfiguration().getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);                       
+                DataSource dataSource = null;
+                for (int i = 0; i < keys.size(); i++) {
+                    try {
+                        key = (String) keys.get(i);
+                        dataSource = attachments.getDataHandler(key).getDataSource();
+                        if(dataSource instanceof CachedFileDataSource){
+                            file = ((CachedFileDataSource)dataSource).getFile();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Delete cache attachment file: "+file.getName());
                             }
-                           	if(lcm!=null){
+                            if(lcm!=null){
                                 if(log.isDebugEnabled()){
                                     log.debug("deleting file using lifecyclemanager");
                                 }
@@ -553,63 +546,63 @@ public class TransportUtils {
                             }else{
                                 file.delete();
                             }
-                           }
-                       }
-                       catch (Exception e) {
-                    	   if (log.isDebugEnabled()) {
-                               log.debug("Delete cache attachment file failed"+ e.getMessage());
-                           }
+                        }
+                    }
+                    catch (Exception e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Delete cache attachment file failed"+ e.getMessage());
+                        }
 
-                           if (file != null) {
-                               if(lcm!=null){
-                                   try{
-                                       lcm.deleteOnExit(file);
-                                   }catch(Exception ex){
-                                       file.deleteOnExit();
-                                   }
-                               }
-                               else{
-                                   file.deleteOnExit();
-                               }
-                           }
-                       }
-                   }
-               }
-           }
+                        if (file != null) {
+                            if(lcm!=null){
+                                try{
+                                    lcm.deleteOnExit(file);
+                                }catch(Exception ex){
+                                    file.deleteOnExit();
+                                }
+                            }
+                            else{
+                                file.deleteOnExit();
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-           if (log.isDebugEnabled()) {
-               log.debug("Exiting deleteAttachments()");
-           }
-       }
+        if (log.isDebugEnabled()) {
+            log.debug("Exiting deleteAttachments()");
+        }
+    }
 
-       /**
-        * This method can be called by components wishing to detach the DetachableInputStream
-        * object that is present on the MessageContext. This is meant to shield components
-        * from any logic that needs to be executed on the DetachableInputStream in order to
-        * have it effectively detached. If the DetachableInputStream is not present, or if
-        * the supplied MessageContext is null, no action will be taken.
-        */
-       public static void detachInputStream(MessageContext msgContext) throws AxisFault {
-           try {
-               if(msgContext != null
-                       &&
-                       msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM) != null) {
-                   DetachableInputStream dis = (DetachableInputStream) msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM);
-                   if(log.isDebugEnabled()) {
-                       log.debug("Detaching DetachableInputStream: " + dis);
-                   }
-                   dis.detach();
-               }
-               else {
-                   if(log.isDebugEnabled()) {
-                       log.debug("Detach not performed for MessageContext: " + msgContext);
-                   }
-               }
-           }
-           catch(Throwable t) {
-               throw AxisFault.makeFault(t);
-           }
-       }
+    /**
+     * This method can be called by components wishing to detach the DetachableInputStream
+     * object that is present on the MessageContext. This is meant to shield components
+     * from any logic that needs to be executed on the DetachableInputStream in order to
+     * have it effectively detached. If the DetachableInputStream is not present, or if
+     * the supplied MessageContext is null, no action will be taken.
+     */
+    public static void detachInputStream(MessageContext msgContext) throws AxisFault {
+        try {
+            if(msgContext != null
+                   &&
+                   msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM) != null) {
+                DetachableInputStream dis = (DetachableInputStream) msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM);
+                if(log.isDebugEnabled()) {
+                    log.debug("Detaching DetachableInputStream: " + dis);
+                }
+                dis.detach();
+            }
+            else {
+                if(log.isDebugEnabled()) {
+                    log.debug("Detach not performed for MessageContext: " + msgContext);
+                }
+            }
+        }
+        catch(Throwable t) {
+            throw AxisFault.makeFault(t);
+        }
+    }
 
     /**
      * <p>
@@ -746,4 +739,3 @@ public class TransportUtils {
     }
 
 }
-	
