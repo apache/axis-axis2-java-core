@@ -133,7 +133,6 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
             SOAPHeaderImpl saajSOAPHeader;
             header = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPHeader(omTarget);
             saajSOAPHeader = new SOAPHeaderImpl(header);
-            saajSOAPHeader.setParentElement(this);
             ((Element)omTarget.getHeader()).setUserData(SAAJ_NODE, saajSOAPHeader, null);
             return saajSOAPHeader;
         } else {
