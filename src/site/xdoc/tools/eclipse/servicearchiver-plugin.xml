@@ -27,7 +27,7 @@
         <h1>Service Archive Generator Wizard Guide for Eclipse Plug-in</h1>
         <p>This document will guide you through the installation and usage
         of the archive generator Eclipse plug-in.</p>
-        <p><a href="../index.html">[Download Plugin Tool]</a></p>
+        <p><a href="../../download.html">[Download Plugin Tool]</a></p>
         <macro name="toc"/>
         <section name="Introduction">
             <p>As part of the Axis2 tool set, the service archive generator is
