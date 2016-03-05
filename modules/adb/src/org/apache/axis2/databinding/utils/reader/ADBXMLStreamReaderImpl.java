@@ -19,10 +19,13 @@
 
 package org.apache.axis2.databinding.utils.reader;
 
+import org.apache.axiom.ext.stax.datahandler.DataHandlerProvider;
+import org.apache.axiom.ext.stax.datahandler.DataHandlerReader;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.util.OMSerializerUtil;
+import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.ConverterUtil;
@@ -57,7 +60,7 @@ import java.lang.reflect.Array;
  * possible
  * <p/>
  */
-public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
+public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, DataHandlerReader {
 
     private Object[] properties;
     private Object[] attributes;
@@ -168,20 +171,37 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
      * @throws IllegalArgumentException
      */
     public Object getProperty(String key) throws IllegalArgumentException {
-        if (OPTIMIZATION_ENABLED.equals(key)) {
-            return Boolean.TRUE;
-        } else if (state == TEXT_STATE) {
-            if (IS_BINARY.equals(key)) {
-                return Boolean.FALSE;
-            } else {
-                return null;
-            }
-        } else if (state == DELEGATED_STATE) {
-            return childReader.getProperty(key);
-        } else {
-            return null;
-        }
+        return XMLStreamReaderUtils.processGetProperty(this, key);
+    }
 
+    @Override
+    public boolean isBinary() {
+        return state == DELEGATED_STATE && childReader instanceof DataHandlerReader && ((DataHandlerReader)childReader).isBinary();
+    }
+
+    @Override
+    public boolean isOptimized() {
+        return ((DataHandlerReader)childReader).isOptimized();
+    }
+
+    @Override
+    public boolean isDeferred() {
+        return ((DataHandlerReader)childReader).isDeferred();
+    }
+
+    @Override
+    public String getContentID() {
+        return ((DataHandlerReader)childReader).getContentID();
+    }
+
+    @Override
+    public DataHandler getDataHandler() throws XMLStreamException {
+        return ((DataHandlerReader)childReader).getDataHandler();
+    }
+
+    @Override
+    public DataHandlerProvider getDataHandlerProvider() {
+        return ((DataHandlerReader)childReader).getDataHandlerProvider();
     }
 
     public void require(int i, String string, String string1)

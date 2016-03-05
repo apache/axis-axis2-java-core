@@ -19,20 +19,27 @@
 
 package org.apache.axis2.databinding.utils.reader;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-public class WrappingXMLStreamReader implements ADBXMLStreamReader {
+import org.apache.axiom.ext.stax.datahandler.DataHandlerProvider;
+import org.apache.axiom.ext.stax.datahandler.DataHandlerReader;
+import org.apache.axiom.util.stax.XMLStreamReaderUtils;
+
+public class WrappingXMLStreamReader implements ADBXMLStreamReader, DataHandlerReader {
 
     private XMLStreamReader reader;
+    private DataHandlerReader dataHandlerReader;
     private int depth;
     private boolean done;
 
     public WrappingXMLStreamReader(XMLStreamReader reader) {
         this.reader = reader;
+        dataHandlerReader = XMLStreamReaderUtils.getDataHandlerReader(reader);
     }
 
     public boolean isDone() {
@@ -40,7 +47,37 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public Object getProperty(String string) throws IllegalArgumentException {
-        return reader.getProperty(string);
+        return XMLStreamReaderUtils.processGetProperty(this, string);
+    }
+
+    @Override
+    public boolean isBinary() {
+        return dataHandlerReader != null && dataHandlerReader.isBinary();
+    }
+
+    @Override
+    public boolean isOptimized() {
+        return dataHandlerReader.isOptimized();
+    }
+
+    @Override
+    public boolean isDeferred() {
+        return dataHandlerReader.isDeferred();
+    }
+
+    @Override
+    public String getContentID() {
+        return dataHandlerReader.getContentID();
+    }
+
+    @Override
+    public DataHandler getDataHandler() throws XMLStreamException {
+        return dataHandlerReader.getDataHandler();
+    }
+
+    @Override
+    public DataHandlerProvider getDataHandlerProvider() {
+        return dataHandlerReader.getDataHandlerProvider();
     }
 
     public int next() throws XMLStreamException {
