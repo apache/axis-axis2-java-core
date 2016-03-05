@@ -89,23 +89,6 @@ public class _int
 
 
     /**
-     * isReaderMTOMAware
-     *
-     * @return true if the reader supports MTOM
-     */
-    public static boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
-        boolean isReaderMTOMAware = false;
-
-        try {
-            isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
-        } catch (java.lang.IllegalArgumentException e) {
-            isReaderMTOMAware = false;
-        }
-        return isReaderMTOMAware;
-    }
-
-
-    /**
      * @param parentQName
      * @param factory
      * @return org.apache.axiom.om.OMElement
