@@ -179,6 +179,9 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
       * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(java.lang.String, java.lang.String)
       */
     public SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException {
+        if (uri == null) {
+            uri = "";
+        }
         if (prefix == null || prefix.length() == 0) {
             omTarget.declareDefaultNamespace(uri);
         } else {
