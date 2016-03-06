@@ -183,15 +183,7 @@ class XMLSpineImpl implements XMLSpine {
     }
 
     public XMLStreamReader getXMLStreamReader(boolean consume) throws WebServiceException {
-        if (consume) {
-            if (root.getBuilder() != null && !root.getBuilder().isCompleted()) {
-                return root.getXMLStreamReaderWithoutCaching();
-            } else {
-                return root.getXMLStreamReader();
-            }
-        } else {
-            return root.getXMLStreamReader();
-        }
+        return root.getXMLStreamReader(!consume);
     }
 
     /* (non-Javadoc)

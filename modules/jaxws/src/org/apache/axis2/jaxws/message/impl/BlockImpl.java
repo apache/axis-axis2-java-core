@@ -232,15 +232,9 @@ public abstract class BlockImpl implements Block {
                     Messages.getMessage("BlockImplErr1", this.getClass().getName()));
         }
         if (omElement != null) {
+            newReader = omElement.getXMLStreamReader(!consume);
             if (consume) {
-                if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
-                    newReader = omElement.getXMLStreamReaderWithoutCaching();
-                } else {
-                    newReader = omElement.getXMLStreamReader();
-                }
                 omElement = null;
-            } else {
-                newReader = omElement.getXMLStreamReader();
             }
         } else if (busObject != null) {
             // Getting the reader does not destroy the BusinessObject
@@ -472,14 +466,8 @@ public abstract class BlockImpl implements Block {
      * @throws WebServiceException
      */
     protected Object _getBOFromOM(OMElement omElement, Object busContext)
-        throws XMLStreamException, WebServiceException {
-        XMLStreamReader reader;
-        if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
-            reader = omElement.getXMLStreamReaderWithoutCaching();
-        } else {
-            reader = omElement.getXMLStreamReader();
-        }
-        return _getBOFromReader(reader, busContext);
+            throws XMLStreamException, WebServiceException {
+        return _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
     }
     
     /**
