@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.attachments.impl.BufferUtils;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
@@ -29,7 +28,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axis2.datasource.SourceDataSource;
+import org.apache.axis2.builder.DataSourceBuilder;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -63,8 +62,7 @@ import java.security.PrivilegedExceptionAction;
  * Block containing a business object that is a javax.activation.DataSource
  * <p/>
  */
-// TODO: business object type is inconsistent
-public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataSourceBlock {
+public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements DataSourceBlock {
 
     private static final Log log = LogFactory.getLog(DataSourceBlockImpl.class);
 
@@ -97,7 +95,7 @@ public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataS
         super(omElement, null, qName, factory);
     }
 
-    protected Object _getBOFromReader(XMLStreamReader reader, Void busContext) throws XMLStreamException, WebServiceException {
+    protected DataSource _getBOFromReader(XMLStreamReader reader, Void busContext) throws XMLStreamException, WebServiceException {
         Reader2Writer r2w = new Reader2Writer(reader);
         try {
             return new ByteArrayDataSource(r2w.getAsString(), "application/octet-stream");
@@ -114,17 +112,18 @@ public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataS
     }
 
     @Override
-    protected Object _getBOFromOM(OMElement omElement, Void busContext)
+    protected DataSource _getBOFromOM(OMElement omElement, Void busContext)
         throws XMLStreamException, WebServiceException {
-        Object busObject;
+        DataSource busObject;
         
         // Shortcut to get business object from existing data source
-        if (omElement instanceof OMSourcedElement) {
-            OMDataSource ds = ((OMSourcedElement) omElement).getDataSource();
-            if (ds instanceof SourceDataSource) {
-                return ((SourceDataSource) ds).getObject();
-            }
-        }
+        // TODO: incorrect (wrong type)
+//        if (omElement instanceof OMSourcedElement) {
+//            OMDataSource ds = ((OMSourcedElement) omElement).getDataSource();
+//            if (ds instanceof SourceDataSource) {
+//                return ((SourceDataSource) ds).getObject();
+//            }
+//        }
         
         // If the message is a fault, there are some special gymnastics that we have to do
         // to get this working for all of the handler scenarios.  
@@ -136,7 +135,7 @@ public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataS
         
         // Transform reader into business object
         if (!hasFault) {
-            busObject = ((OMSourcedElement)omElement).getDataSource();
+            busObject = (DataSourceBuilder.ByteArrayDataSourceEx)((OMSourcedElement)omElement).getDataSource();
         }
         else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -147,7 +146,7 @@ public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataS
     }
 
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Void busContext)
+    protected XMLStreamReader _getReaderFromBO(DataSource busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         try {
             if (busObj instanceof DataSource) {
@@ -171,7 +170,7 @@ public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataS
     }
     
     @Override
-    protected void _outputFromBO(Object busObject, Void busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(DataSource busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
         // There is no fast way to output the Source to a writer, so get the reader
         // and pass use the default reader->writer.
@@ -191,7 +190,7 @@ public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataS
 
 
     @Override
-    protected Object _getBOFromBO(Object busObject, Void busContext, boolean consume) {
+    protected DataSource _getBOFromBO(DataSource busObject, Void busContext, boolean consume) {
         if (consume) {
             return busObject;
         } else {
