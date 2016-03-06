@@ -47,7 +47,7 @@ import java.io.UnsupportedEncodingException;
  * <p/>
  * Block containing a business object that is a String of xml text
  */
-public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
+public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStringBlock {
 
     /**
      * Constructor called from factory
@@ -72,7 +72,7 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
         super(omElement, null, qName, factory);
     }
 
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected String _getBOFromReader(XMLStreamReader reader, Void busContext)
             throws XMLStreamException {
         // Create a Reader2Writer converter and get the output as a String
         Reader2Writer r2w;
@@ -85,7 +85,7 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
     }
     
     @Override
-    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+    protected String _getBOFromOM(OMElement omElement, Void busContext)
         throws XMLStreamException, WebServiceException {
         
         // Shortcut to get business object from existing data source
@@ -98,15 +98,13 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
         return super._getBOFromOM(omElement, busContext);
     }
 
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(String busObj, Void busContext)
             throws XMLStreamException {
         // Create an XMLStreamReader from the inputFactory using the String as the sources
-        String str = (String)busObj;
-        StringReader sr = new StringReader(str);
-        return StAXUtils.createXMLStreamReader(sr);
+        return StAXUtils.createXMLStreamReader(new StringReader(busObj));
     }
 
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(String busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException {
         // There is no fast way to output the String to a writer, so get the reader
         // and pass use the default reader->writer.

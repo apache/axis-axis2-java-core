@@ -70,7 +70,7 @@ import java.security.PrivilegedExceptionAction;
  * A Source is consumed when read.  The block will make a copy of the source if a non-consumable
  * request is made.
  */
-public class SourceBlockImpl extends BlockImpl implements SourceBlock {
+public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlock {
 
     private static final Log log = LogFactory.getLog(SourceBlockImpl.class);
     private static Class staxSource = null;
@@ -134,7 +134,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
     }
 
     @Override
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected Source _getBOFromReader(XMLStreamReader reader, Void busContext)
             throws XMLStreamException {
 
         // Best solution is to use a StAXSource
@@ -161,9 +161,9 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
     }
     
     @Override
-    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+    protected Source _getBOFromOM(OMElement omElement, Void busContext)
         throws XMLStreamException, WebServiceException {
-        Object busObject;
+        Source busObject;
         
         // Shortcut to get business object from existing data source
         if (omElement instanceof OMSourcedElement) {
@@ -196,7 +196,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
     }
 
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(Source busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         try {
             // TODO not sure if this is always the most performant way to do this.
@@ -261,7 +261,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
     }
 
     @Override
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(Source busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
         // There is no fast way to output the Source to a writer, so get the reader
         // and pass use the default reader->writer.
@@ -281,7 +281,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 
 
     @Override
-    protected Object _getBOFromBO(Object busObject, Object busContext, boolean consume) {
+    protected Source _getBOFromBO(Source busObject, Void busContext, boolean consume) {
         if (consume) {
             return busObject;
         } else {

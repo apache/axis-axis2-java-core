@@ -50,7 +50,7 @@ import java.io.UnsupportedEncodingException;
  * 
  *
  */
-public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBlock {
+public class SOAPEnvelopeBlockImpl extends BlockImpl<SOAPEnvelope,Void> implements SOAPEnvelopeBlock {
 
     /**
      * Called by SOAPEnvelopeBlockFactory
@@ -60,11 +60,11 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
      * @param qName
      * @param factory
      */
-    public SOAPEnvelopeBlockImpl(Object busObject, Object busContext,
+    public SOAPEnvelopeBlockImpl(SOAPEnvelope busObject,
                                  QName qName, BlockFactory factory) {
         super(busObject,
-              busContext,
-              (qName == null) ? getQName((SOAPEnvelope)busObject) : qName,
+              null,
+              (qName == null) ? getQName(busObject) : qName,
               factory);
     }
 
@@ -76,16 +76,16 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
      * @param qName
      * @param factory
      */
-    public SOAPEnvelopeBlockImpl(OMElement omElement, Object busContext,
+    public SOAPEnvelopeBlockImpl(OMElement omElement,
                                  QName qName, BlockFactory factory) {
-        super(omElement, busContext, qName, factory);
+        super(omElement, null, qName, factory);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.impl.BlockImpl#_getBOFromReader(javax.xml.stream.XMLStreamReader, java.lang.Object)
       */
     @Override
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected SOAPEnvelope _getBOFromReader(XMLStreamReader reader, Void busContext)
             throws XMLStreamException, WebServiceException {
         MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
         Message message = mf.createFrom(reader, null);
@@ -98,16 +98,16 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
       * @see org.apache.axis2.jaxws.message.impl.BlockImpl#_getReaderFromBO(java.lang.Object, java.lang.Object)
       */
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(SOAPEnvelope busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
-        return new SOAPElementReader((SOAPElement)busObj);
+        return new SOAPElementReader(busObj);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.impl.BlockImpl#_outputFromBO(java.lang.Object, java.lang.Object, javax.xml.stream.XMLStreamWriter)
       */
     @Override
-    protected void _outputFromBO(Object busObject, Object busContext,
+    protected void _outputFromBO(SOAPEnvelope busObject, Void busContext,
                                  XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
         XMLStreamReader reader = _getReaderFromBO(busObject, busContext);

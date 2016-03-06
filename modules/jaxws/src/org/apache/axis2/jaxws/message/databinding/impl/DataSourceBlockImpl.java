@@ -63,7 +63,8 @@ import java.security.PrivilegedExceptionAction;
  * Block containing a business object that is a javax.activation.DataSource
  * <p/>
  */
-public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
+// TODO: business object type is inconsistent
+public class DataSourceBlockImpl extends BlockImpl<Object,Void> implements DataSourceBlock {
 
     private static final Log log = LogFactory.getLog(DataSourceBlockImpl.class);
 
@@ -96,7 +97,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
         super(omElement, null, qName, factory);
     }
 
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, WebServiceException {
+    protected Object _getBOFromReader(XMLStreamReader reader, Void busContext) throws XMLStreamException, WebServiceException {
         Reader2Writer r2w = new Reader2Writer(reader);
         try {
             return new ByteArrayDataSource(r2w.getAsString(), "application/octet-stream");
@@ -113,7 +114,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
     }
 
     @Override
-    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+    protected Object _getBOFromOM(OMElement omElement, Void busContext)
         throws XMLStreamException, WebServiceException {
         Object busObject;
         
@@ -146,7 +147,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
     }
 
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(Object busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         try {
             if (busObj instanceof DataSource) {
@@ -170,7 +171,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
     }
     
     @Override
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(Object busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
         // There is no fast way to output the Source to a writer, so get the reader
         // and pass use the default reader->writer.
@@ -190,7 +191,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
 
 
     @Override
-    protected Object _getBOFromBO(Object busObject, Object busContext, boolean consume) {
+    protected Object _getBOFromBO(Object busObject, Void busContext, boolean consume) {
         if (consume) {
             return busObject;
         } else {

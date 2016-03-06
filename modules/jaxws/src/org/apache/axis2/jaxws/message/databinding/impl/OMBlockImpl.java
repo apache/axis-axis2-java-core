@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 /** OMBlockImpl Block with a business object that is an OMElement */
-public class OMBlockImpl extends BlockImpl implements OMBlock {
+public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
 
 
     /**
@@ -47,43 +47,42 @@ public class OMBlockImpl extends BlockImpl implements OMBlock {
      * @param factory
      */
     OMBlockImpl(OMElement busObject, BlockFactory factory) {
-        super(busObject,
-              null,
+        super(null,
+              busObject,
               busObject.getQName(),
               factory);
     }
 
     @Override
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected OMElement _getBOFromReader(XMLStreamReader reader, Void busContext)
             throws XMLStreamException, WebServiceException {
         // Take a shortcut and return the OMElement
         return this.getOMElement();
     }
 
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(OMElement busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         OMElement om = (OMElement)busObj;
         return om.getXMLStreamReader();
     }
     
     @Override
-    protected Object _getBOFromOM(OMElement om, Object busContext)
+    protected OMElement _getBOFromOM(OMElement om, Void busContext)
         throws XMLStreamException, WebServiceException {
         return om;
     }
     
     @Override
-    protected OMElement _getOMFromBO(Object busObject, Object busContext)
+    protected OMElement _getOMFromBO(OMElement busObject, Void busContext)
         throws XMLStreamException, WebServiceException {
-        return (OMElement) busObject;
+        return busObject;
     }
 
     @Override
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(OMElement busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
-        OMElement om = (OMElement)busObject;
-        om.serialize(writer);
+        busObject.serialize(writer);
     }
 
     public boolean isElementData() {

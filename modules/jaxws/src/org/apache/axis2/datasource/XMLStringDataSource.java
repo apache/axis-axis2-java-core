@@ -48,7 +48,7 @@ public class XMLStringDataSource extends OMDataSourceExtBase {
         return new XMLStringDataSource(data);
     }
 
-    public Object getObject() {
+    public String getObject() {
         return data;
     }
 

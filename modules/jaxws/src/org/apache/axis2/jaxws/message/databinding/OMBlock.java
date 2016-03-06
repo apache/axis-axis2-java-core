@@ -19,9 +19,10 @@
 
 package org.apache.axis2.jaxws.message.databinding;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
 
 /** OMBlock Block represented by an OMElement object */
-public interface OMBlock extends Block {
+public interface OMBlock extends Block<OMElement,Void> {
 
 }

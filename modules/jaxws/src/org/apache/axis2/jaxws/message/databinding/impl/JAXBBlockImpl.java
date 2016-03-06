@@ -52,7 +52,7 @@ import java.io.UnsupportedEncodingException;
  * JAXBBlockImpl <p/> A Block containing a JAXB business object (either a JAXBElement or an object
  * with @XmlRootElement).
  */
-public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
+public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements JAXBBlock {
 
     private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
 
@@ -86,7 +86,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         super(omElement, busContext, qName, factory);
     }
 
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected Object _getBOFromReader(XMLStreamReader reader, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         // Get the JAXBBlockContext. All of the necessry information is recorded on it
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
@@ -107,7 +107,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
     }
     
     @Override
-    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+    protected Object _getBOFromOM(OMElement omElement, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         
         // Shortcut to get business object from existing data source
@@ -142,7 +142,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @throws XMLStreamException
      * @throws WebServiceException
      */
-    private byte[] _getBytesFromBO(Object busObj, Object busContext, String encoding)
+    private byte[] _getBytesFromBO(Object busObj, JAXBBlockContext busContext, String encoding)
         throws XMLStreamException, WebServiceException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -160,14 +160,14 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
 
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(Object busObj, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         ByteArrayInputStream baos =
                 new ByteArrayInputStream(_getBytesFromBO(busObj, busContext, "utf-8"));
         return StAXUtils.createXMLStreamReader(baos, "utf-8");
     }
     
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(Object busObject, JAXBBlockContext busContext, XMLStreamWriter writer)
         throws XMLStreamException, WebServiceException {
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
         

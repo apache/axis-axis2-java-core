@@ -60,7 +60,7 @@ public class SourceDataSource extends OMDataSourceExtBase {
         return null;
     }
 
-    public Object getObject() {
+    public Source getObject() {
         return data;
     }
 

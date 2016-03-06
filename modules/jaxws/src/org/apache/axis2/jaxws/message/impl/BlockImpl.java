@@ -63,12 +63,12 @@ import java.util.HashMap;
  * The derived classes don't have direct access to the instance data. This ensures that BlockImpl
  * controls the transformations.
  */
-public abstract class BlockImpl implements Block {
+public abstract class BlockImpl<T,C> implements Block<T,C> {
 
     private static Log log = LogFactory.getLog(BlockImpl.class);
 
-    protected Object busObject;
-    protected Object busContext;
+    protected T busObject;
+    protected C busContext;
 
     protected OMElement omElement = null;
 
@@ -89,7 +89,7 @@ public abstract class BlockImpl implements Block {
      * @param qName      or null if unknown
      * @param factory    that creates the Block
      */
-    protected BlockImpl(Object busObject, Object busContext, QName qName, BlockFactory factory) {
+    protected BlockImpl(T busObject, C busContext, QName qName, BlockFactory factory) {
         this.busObject = busObject;
         this.busContext = busContext;
         this.qName = qName;
@@ -104,11 +104,16 @@ public abstract class BlockImpl implements Block {
      * @param qName      or null if unknown
      * @param factory    that creates the Block
      */
-    protected BlockImpl(OMElement omElement, Object busContext, QName qName, BlockFactory factory) {
+    protected BlockImpl(OMElement omElement, C busContext, QName qName, BlockFactory factory) {
         this.omElement = omElement;
         this.busContext = busContext;
         this.qName = qName;
         this.factory = factory;
+    }
+    
+    // Hack to disambiguate the constructors is T = OMElement
+    protected BlockImpl(C busContext, OMElement omElement, QName qName, BlockFactory factory) {
+        this(omElement, busContext, qName, factory);
     }
 
     /* (non-Javadoc)
@@ -136,7 +141,7 @@ public abstract class BlockImpl implements Block {
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getBusinessObject(boolean)
       */
-    public Object getBusinessObject(boolean consume)
+    public T getBusinessObject(boolean consume)
             throws XMLStreamException, WebServiceException {
         if (consumed) {
             throw ExceptionFactory.makeWebServiceException(
@@ -152,7 +157,7 @@ public abstract class BlockImpl implements Block {
 
         // Save the businessObject in a local variable
         // so that we can reset the Block if consume was indicated
-        Object newBusObject = busObject;
+        T newBusObject = busObject;
         setConsumed(consume);
         return newBusObject;
     }
@@ -437,7 +442,7 @@ public abstract class BlockImpl implements Block {
      * @param consume
      * @return
      */
-    protected Object _getBOFromBO(Object busObject, Object busContext, boolean consume) {
+    protected T _getBOFromBO(T busObject, C busContext, boolean consume) {
         return busObject;
     }
 
@@ -450,7 +455,7 @@ public abstract class BlockImpl implements Block {
      * @param busContext
      * @return
      */
-    protected abstract Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected abstract T _getBOFromReader(XMLStreamReader reader, C busContext)
             throws XMLStreamException, WebServiceException;
 
     
@@ -465,7 +470,7 @@ public abstract class BlockImpl implements Block {
      * @throws XMLStreamException
      * @throws WebServiceException
      */
-    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+    protected T _getBOFromOM(OMElement omElement, C busContext)
             throws XMLStreamException, WebServiceException {
         return _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
     }
@@ -477,7 +482,7 @@ public abstract class BlockImpl implements Block {
      * @param busContext
      * @return
      */
-    protected abstract XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected abstract XMLStreamReader _getReaderFromBO(T busObj, C busContext)
             throws XMLStreamException, WebServiceException;
     
     /**
@@ -487,7 +492,7 @@ public abstract class BlockImpl implements Block {
      * @throws XMLStreamException
      * @throws WebServiceException
      */
-    protected OMElement _getOMFromBO(Object busObject, Object busContext)
+    protected OMElement _getOMFromBO(T busObject, C busContext)
         throws XMLStreamException, WebServiceException {
         // Getting the reader does not destroy the BusinessObject
         XMLStreamReader newReader = _getReaderFromBO(busObject, busContext);
@@ -556,7 +561,7 @@ public abstract class BlockImpl implements Block {
      * @throws XMLStreamException
      * @throws WebServiceException
      */
-    protected abstract void _outputFromBO(Object busObject, Object busContext,
+    protected abstract void _outputFromBO(T busObject, C busContext,
                                           XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException;
 	
