@@ -72,6 +72,7 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         super(omElement, null, qName, factory);
     }
 
+    @Override
     protected String _getBOFromReader(XMLStreamReader reader, Void busContext)
             throws XMLStreamException {
         // Create a Reader2Writer converter and get the output as a String
@@ -98,12 +99,14 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         return super._getBOFromOM(omElement, busContext);
     }
 
+    @Override
     protected XMLStreamReader _getReaderFromBO(String busObj, Void busContext)
             throws XMLStreamException {
         // Create an XMLStreamReader from the inputFactory using the String as the sources
         return StAXUtils.createXMLStreamReader(new StringReader(busObj));
     }
 
+    @Override
     protected void _outputFromBO(String busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException {
         // There is no fast way to output the String to a writer, so get the reader

@@ -86,6 +86,7 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         super(omElement, busContext, qName, factory);
     }
 
+    @Override
     protected Object _getBOFromReader(XMLStreamReader reader, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         // Get the JAXBBlockContext. All of the necessry information is recorded on it
@@ -167,6 +168,7 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         return StAXUtils.createXMLStreamReader(baos, "utf-8");
     }
     
+    @Override
     protected void _outputFromBO(Object busObject, JAXBBlockContext busContext, XMLStreamWriter writer)
         throws XMLStreamException, WebServiceException {
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;

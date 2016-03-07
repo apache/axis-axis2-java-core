@@ -119,18 +119,18 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getBlockFactory()
       */
-    public BlockFactory getBlockFactory() {
+    public final BlockFactory getBlockFactory() {
         return factory;
     }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getBusinessContext()
       */
-    public Object getBusinessContext() {
+    public final Object getBusinessContext() {
         return busContext;
     }
 
-    public Message getParent() {
+    public final Message getParent() {
         return parent;
     }
 
@@ -141,7 +141,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getBusinessObject(boolean)
       */
-    public T getBusinessObject(boolean consume)
+    public final T getBusinessObject(boolean consume)
             throws XMLStreamException, WebServiceException {
         if (consumed) {
             throw ExceptionFactory.makeWebServiceException(
@@ -166,7 +166,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getQName()
       */
-    public QName getQName() throws WebServiceException {
+    public final QName getQName() throws WebServiceException {
         // If the QName is not known, find it
         try {
             if (qName == null) {
@@ -217,14 +217,14 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
      *
      * @param qName
      */
-    protected void setQName(QName qName) {
+    protected final void setQName(QName qName) {
         this.qName = qName;
     }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getXMLStreamReader(boolean)
       */
-    public XMLStreamReader getXMLStreamReader(boolean consume)
+    public final XMLStreamReader getXMLStreamReader(boolean consume)
             throws XMLStreamException, WebServiceException {
         XMLStreamReader newReader = null;
         if (consumed) {
@@ -253,7 +253,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMDataSource#getReader()
       */
-    public XMLStreamReader getReader() throws XMLStreamException {
+    public final XMLStreamReader getReader() throws XMLStreamException {
         return getXMLStreamReader(true);
     }
 
@@ -279,7 +279,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
       */
-    public void serialize(Writer writerTarget, OMOutputFormat format) throws XMLStreamException {
+    public final void serialize(Writer writerTarget, OMOutputFormat format) throws XMLStreamException {
         MTOMXMLStreamWriter writer =
                 new MTOMXMLStreamWriter(StAXUtils.createXMLStreamWriter(writerTarget));
         writer.setOutputFormat(format);
@@ -291,7 +291,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
       */
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+    public final void serialize(XMLStreamWriter writer) throws XMLStreamException {
         outputTo(writer, isDestructiveWrite());
     }
 
@@ -317,7 +317,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#isConsumed()
       */
-    public boolean isConsumed() {
+    public final boolean isConsumed() {
         return consumed;
     }
 
@@ -327,7 +327,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
      * @param consume
      * @return
      */
-    public void setConsumed(boolean consume) {
+    public final void setConsumed(boolean consume) {
         if (consume) {
             this.consumed = true;
             busObject = null;
@@ -343,11 +343,11 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
         }
     }
 
-    public boolean isQNameAvailable() {
+    public final boolean isQNameAvailable() {
         return (qName != null);
     }
 
-    public void outputTo(XMLStreamWriter writer, boolean consume)
+    public final void outputTo(XMLStreamWriter writer, boolean consume)
             throws XMLStreamException, WebServiceException {
         if (log.isDebugEnabled()) {
             log.debug("Start outputTo");
@@ -381,7 +381,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
      * Called if we have passed the pivot point but someone wants to output the block. The actual
      * block implementation may choose to override this setting
      */
-    protected void _postPivot_outputTo(XMLStreamWriter writer)
+    protected final void _postPivot_outputTo(XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
         if (log.isDebugEnabled()) {
             QName theQName = isQNameAvailable() ? getQName() : new QName("unknown");
@@ -397,7 +397,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
      * Called if we have passed the pivot point but someone wants to output the block. The actual
      * block implementation may choose to override this setting.
      */
-    protected XMLStreamReader _postPivot_getXMLStreamReader()
+    protected final XMLStreamReader _postPivot_getXMLStreamReader()
             throws XMLStreamException, WebServiceException {
         if (log.isDebugEnabled()) {
             QName theQName = isQNameAvailable() ? getQName() : new QName("unknown");
@@ -422,11 +422,11 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
      * @return true if the representation of the block is currently a business object. Derived classes
      *         may use this information to get information in a performant way.
      */
-    protected boolean isBusinessObject() {
+    protected final boolean isBusinessObject() {
         return busObject != null;
     }
 
-    public String traceString(String indent) {
+    public final String traceString(String indent) {
         // TODO add trace string
         return null;
     }
@@ -508,7 +508,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
      * @param writer
      * @throws XMLStreamException
      */
-    protected void _outputFromReader(XMLStreamReader reader, XMLStreamWriter writer)
+    protected final void _outputFromReader(XMLStreamReader reader, XMLStreamWriter writer)
             throws XMLStreamException {
         Reader2Writer r2w = new Reader2Writer(reader);
         r2w.outputTo(writer);
@@ -522,7 +522,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
      * @param writer
      * @throws XMLStreamException
      */
-    protected void _outputFromOM(OMElement omElement, XMLStreamWriter writer, boolean consume)
+    protected final void _outputFromOM(OMElement omElement, XMLStreamWriter writer, boolean consume)
             throws XMLStreamException {
         if (consume) {
             if (log.isDebugEnabled()) {
@@ -565,21 +565,21 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
                                           XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException;
 	
-    public Object getProperty(String key) {
+    public final Object getProperty(String key) {
         if (map == null) {
             return null;
         }
         return map.get(key);
     }
 
-    public Object setProperty(String key, Object value) {
+    public final Object setProperty(String key, Object value) {
         if (map == null) {
             map = new HashMap();
         }
         return map.put(key, value);
     }
 
-    public boolean hasProperty(String key) {
+    public final boolean hasProperty(String key) {
         if (map == null) {
             return false;
         } 
