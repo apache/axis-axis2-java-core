@@ -1269,7 +1269,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             <xsl:variable name="loopBoolName">loopDone<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="startQname">startQname<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="stateMachineName">stateMachine<xsl:value-of select="position()"/></xsl:variable>
-                            <xsl:variable name="builderName">builder<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                             <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
@@ -1370,13 +1369,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                  event = reader.getEventType();
                                                  if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
 
-                                                      // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
-                                                         = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                                              new org.apache.axis2.util.StreamWrapper(reader), reader.getName());
-
-                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
-                                                        reader.next();
+                                                       <xsl:value-of select="$listName"/>.add(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, true));
                                                         if (reader.isEndElement()) {
                                                             // we have two countinuos end elements
                                                            <xsl:value-of select="$loopBoolName"/> = true;
@@ -1424,13 +1417,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                               reader.next();
                                                           }else{
                                                       </xsl:if>
-                                                            // we parse it as an omElement
-                                                            // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                                            // this is needed by the builder classes
-                                                             org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> =
-                                                                 new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                                                     new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
-                                                             <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement().getFirstElement());
+                                                             <xsl:value-of select="$listName"/>.add(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, false).getFirstElement());
                                                        <xsl:if test="@nillable">}</xsl:if>
                                                  } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
                                                             !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
@@ -1540,12 +1527,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                           }else{
                                                       </xsl:if>
 
-                                                      // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
-                                                         = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                                              new org.apache.axis2.util.StreamWrapper(reader), <xsl:value-of select="$startQname"/>);
-
-                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement().getFirstElement());
+                                                       <xsl:value-of select="$listName"/>.add(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, false).getFirstElement());
                                                        <xsl:if test="@nillable">}</xsl:if>
                                                  } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
                                                             !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
@@ -1654,16 +1636,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <xsl:when test="@any">
                                     <!--No concerns of being nillable here. if it's ours and if the nillable attribute was present
                                         we would have outputted a null already-->
-                                     <!--This can be any element and we may not know the name. so we pick the name of the element from the parser-->
-                                     //use the QName from the parser as the name for the builder
-                                     javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = reader.getName();
 
-                                     // We need to wrap the reader so that it produces a fake START_DOCUMENT event
-                                     // this is needed by the builder classes
-                                     org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> =
-                                         new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                             new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
-                                     object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$builderName"/>.getOMElement());
+                                     object.set<xsl:value-of select="$javaName"/>(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, false));
                                      <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                          reader.next();
                                      </xsl:if>
@@ -1684,13 +1658,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                          }
                                      }
 
-                                     <!-- todo  put the code here for nillable -->
-                                     // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                     // this is needed by the builder classes
-                                     org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> =
-                                         new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                             new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
-                                     object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$builderName"/>.getOMElement().getFirstElement());
+                                     object.set<xsl:value-of select="$javaName"/>(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, false).getFirstElement());
                                      <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                          reader.next();
                                      </xsl:if>

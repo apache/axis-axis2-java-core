@@ -568,13 +568,7 @@ import javax.xml.stream.XMLStreamWriter;
                                                  event = reader.getEventType();
                                                  if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
 
-                                                      // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder builder1
-                                                         = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                                              new org.apache.axis2.util.StreamWrapper(reader), reader.getName());
-
-                                                       list1.add(builder1.getOMElement());
-                                                        reader.next();
+                                                       list1.add(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, true));
                                                         if (reader.isEndElement()) {
                                                             // we have two countinuos end elements
                                                            loopDone1 = true;

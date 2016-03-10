@@ -356,15 +356,7 @@ import javax.xml.stream.XMLStreamWriter;
                                 
                                     
                                      
-                                     //use the QName from the parser as the name for the builder
-                                     javax.xml.namespace.QName startQname1 = reader.getName();
-
-                                     // We need to wrap the reader so that it produces a fake START_DOCUMENT event
-                                     // this is needed by the builder classes
-                                     org.apache.axis2.databinding.utils.NamedStaxOMBuilder builder1 =
-                                         new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                             new org.apache.axis2.util.StreamWrapper(reader),startQname1);
-                                     object.setAnyType(builder1.getOMElement());
+                                     object.setAnyType(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, false));
                                      
                               }  // End of if for expected property start element
                                 
