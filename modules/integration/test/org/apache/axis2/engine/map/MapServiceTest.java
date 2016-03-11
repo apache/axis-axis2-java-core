@@ -127,6 +127,7 @@ public class MapServiceTest extends TestCase {
             OMFactory fac = OMAbstractFactory.getOMFactory();
             OMElement map = AXIOMUtil
                     .stringToOM("<map><entry><key>key1</key><value>value1</value></entry></map>");
+            map.build();
             OMNamespace omNs = fac.createOMNamespace(
                     "http://map.engine.axis2.apache.org", "map");
             OMElement msg = fac.createOMElement(opName, omNs);
