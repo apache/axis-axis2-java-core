@@ -25,8 +25,8 @@ import javax.xml.namespace.QName;
 
 public class FaultMapKey {
 
-    private QName elementQname;
-    private String operationName;
+    private final QName elementQname;
+    private final String operationName;
 
     public FaultMapKey(QName elementQname, String operationName) {
         this.elementQname = elementQname;
@@ -39,29 +39,13 @@ public class FaultMapKey {
         boolean isEqual = false;
         if (obj instanceof FaultMapKey){
             FaultMapKey faultMapKey = (FaultMapKey) obj;
-            isEqual = this.elementQname.equals(faultMapKey.getElementQname()) &&
-                          this.operationName.equals(faultMapKey.getOperationName());
+            isEqual = this.elementQname.equals(faultMapKey.elementQname) &&
+                          this.operationName.equals(faultMapKey.operationName);
         }
         return isEqual;
     }
 
     public int hashCode() {
         return this.elementQname.hashCode() + this.operationName.hashCode();
-    }
-
-    public QName getElementQname() {
-        return elementQname;
-    }
-
-    public void setElementQname(QName elementQname) {
-        this.elementQname = elementQname;
-    }
-
-    public String getOperationName() {
-        return operationName;
-    }
-
-    public void setOperationName(String operationName) {
-        this.operationName = operationName;
     }
 }

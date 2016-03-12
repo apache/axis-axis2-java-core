@@ -59,9 +59,9 @@
         protected org.apache.axis2.description.AxisOperation[] _operations;
 
         //hashmaps to keep the fault mapping
-        private java.util.HashMap faultExceptionNameMap = new java.util.HashMap();
-        private java.util.HashMap faultExceptionClassNameMap = new java.util.HashMap();
-        private java.util.HashMap faultMessageMap = new java.util.HashMap();
+        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,String> faultExceptionNameMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,String>();
+        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,String> faultExceptionClassNameMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,String>();
+        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,String> faultMessageMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,String>();
 
         private static int counter = 0;
 
@@ -519,12 +519,12 @@
                 if (faultExceptionNameMap.containsKey(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"))){
                     //make the fault by reflection
                     try{
-                        java.lang.String exceptionClassName = (java.lang.String)faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
+                        java.lang.String exceptionClassName = faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
                         java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
                         java.lang.reflect.Constructor constructor = exceptionClass.getConstructor(java.lang.String.class);
                         java.lang.Exception ex = (java.lang.Exception) constructor.newInstance(f.getMessage());
                         //message class
-                        java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
+                        java.lang.String messageClassName = faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
                         java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
                         java.lang.Object messageObject = fromOM(faultElt,messageClass);
                         java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
@@ -789,12 +789,12 @@
 										if (faultExceptionNameMap.containsKey(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"))){
 											//make the fault by reflection
 											try{
-													java.lang.String exceptionClassName = (java.lang.String)faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
+													java.lang.String exceptionClassName = faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
 													java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
 													java.lang.reflect.Constructor constructor = exceptionClass.getConstructor(java.lang.String.class);
                                                     java.lang.Exception ex = (java.lang.Exception) constructor.newInstance(f.getMessage());
 													//message class
-													java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
+													java.lang.String messageClassName = faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
 														java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
 													java.lang.Object messageObject = fromOM(faultElt,messageClass);
 													java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
@@ -1049,12 +1049,12 @@
                       if (faultExceptionNameMap.containsKey(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"))){
                           //make the fault by reflection
                           try{
-                              java.lang.String exceptionClassName = (java.lang.String)faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
+                              java.lang.String exceptionClassName = faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
                               java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
                               java.lang.Exception ex=
                                       (java.lang.Exception) exceptionClass.newInstance();
                               //message class
-                              java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
+                              java.lang.String messageClassName = faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(faultElt.getQName(),"<xsl:value-of select="@originalName"/>"));
                               java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
                               java.lang.Object messageObject = fromOM(faultElt,messageClass);
                               java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
