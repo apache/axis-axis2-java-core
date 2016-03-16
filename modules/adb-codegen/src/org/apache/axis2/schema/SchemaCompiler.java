@@ -691,7 +691,7 @@ public class SchemaCompiler {
                         processedAnonymousComplexTypesMap.remove(xsElt);
                         String className = findClassName(schemaType.getQName(), isArray(xsElt));
                         innerElementMap.put(
-                                xsElt.getQName(),
+                                xsElt.getWireName(),
                                 className);
 
                         //store in the schema map
