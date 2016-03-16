@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ColorService" targetNamespace="http://ise-online.com/ColorService/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ise-online.com/ColorService/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://ise-online.com/ColorService/">
+      <xsd:element name="Color">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="in">
+               <xsd:simpleType>
+                  <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="RED"/>
+                     <xsd:enumeration value="GREEN"/>
+                     <xsd:enumeration value="BLUE"/>
+                  </xsd:restriction>
+               </xsd:simpleType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ColorResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="out" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="TestRequest">
+    <wsdl:part name="parameters" element="tns:Color">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="TestResponse">
+    <wsdl:part name="parameters" element="tns:ColorResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ColorService">
+    <wsdl:operation name="Test">
+      <wsdl:input message="tns:TestRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:TestResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ColorServiceSOAP" type="tns:ColorService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Test">
+      <soap:operation soapAction="http://ise-online.com/ColorService/Test"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ColorService">
+    <wsdl:port name="ColorServiceSOAP" binding="tns:ColorServiceSOAP">
+      <soap:address location="http://www.example.org/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

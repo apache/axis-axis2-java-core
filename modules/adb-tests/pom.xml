@@ -104,6 +104,20 @@
                             <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5741</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>wsdl2code-axis2-5749</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>wsdl2code</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFile>src/test/wsdl/AXIS2-5749.wsdl</wsdlFile>
+                            <packageName>org.apache.axis2.databinding.axis2_5749.service</packageName>
+                            <generateServerSide>true</generateServerSide>
+                            <generateServicesXml>true</generateServicesXml>
+                            <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5749</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <databindingName>adb</databindingName>
@@ -128,6 +142,14 @@
                                     </includes>
                                     <stylesheet>src/test/xslt/AXIS2-5741.xsl</stylesheet>
                                     <outputDir>${project.build.directory}/repo/AXIS2-5741/services/FiverxLinkService/META-INF</outputDir>
+                                </transformationSet>
+                                <transformationSet>
+                                    <dir>${project.build.directory}/wsdl2code/AXIS2-5749/resources</dir>
+                                    <includes>
+                                        <include>services.xml</include>
+                                    </includes>
+                                    <stylesheet>src/test/xslt/AXIS2-5749.xsl</stylesheet>
+                                    <outputDir>${project.build.directory}/repo/AXIS2-5749/services/ColorService/META-INF</outputDir>
                                 </transformationSet>
                             </transformationSets>
                         </configuration>
@@ -163,6 +185,18 @@
                             <packageName>org.apache.axis2.databinding.axis2_5741.client</packageName>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>wsimport-axis2-5749</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/src/test/wsdl/AXIS2-5749.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.apache.axis2.databinding.axis2_5749.client</packageName>
+                        </configuration>
+                    </execution>
                 </executions>
                 <dependencies>
                     <dependency>
@@ -185,6 +219,7 @@
                             <sources>
                                 <source>${project.build.directory}/wsdl2code/mtom/src</source>
                                 <source>${project.build.directory}/wsdl2code/AXIS2-5741/src</source>
+                                <source>${project.build.directory}/wsdl2code/AXIS2-5749/src</source>
                             </sources>
                         </configuration>
                     </execution>
