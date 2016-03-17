@@ -231,6 +231,21 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <!-- Disable the Javadoc execution configured by the apache-release profile.
+                     The wsdl2code goal adds sources as project source, not project test sources,
+                     and that causes problems. Note that we don't need the Javadocs anyway. -->
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
