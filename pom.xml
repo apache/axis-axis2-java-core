@@ -96,6 +96,7 @@
         <module>modules/transport/xmpp</module>
         <module>modules/distribution</module>
         <module>modules/samples</module>
+        <module>databinding-tests</module>
     </modules>
     <profiles>
         <profile>

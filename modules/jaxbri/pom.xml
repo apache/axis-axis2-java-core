@@ -63,19 +63,13 @@
                 <artifactId>commons-logging</artifactId>
             </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-testutils</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>testutils</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -139,26 +133,6 @@
                                     <classpath refid="maven.test.classpath" />
                                     <arg line="-d jaxbri -o ${project.build.directory}/gen/Test01 -u -uri src/test/wsdl/Test01.wsdl" />
                                 </java>
-                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
-                                    <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -ss -ssi -sd -o ${project.build.directory}/gen/processor -u -uri src/test/wsdl/processor.wsdl -ns2p http://www.example.org/data=org.apache.axis2.jaxbri.processor.data,http://www.example.org/ws=org.apache.axis2.jaxbri.processor.service" />
-                                </java>
-                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
-                                    <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -o ${project.build.directory}/gen/processor -u -uri src/test/wsdl/processor.wsdl -ns2p http://www.example.org/data=org.apache.axis2.jaxbri.processor.data,http://www.example.org/ws=org.apache.axis2.jaxbri.processor.client" />
-                                </java>
-                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
-                                    <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -ss -ssi -sd -g -o ${project.build.directory}/gen/identityservice -u -uri src/test/wsdl/identityService.wsdl -p org.apache.axis2.jaxbri.identityservice -ns2p http://www.example.org/identity=org.apache.axis2.jaxbri.identityservice" />
-                                </java>
-                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
-                                    <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -ss -ssi -sd -g -o ${project.build.directory}/gen/mtom -u -uri src/test/wsdl/mtom.wsdl -p org.apache.axis2.jaxbri.mtom -ns2p http://www.example.org/mtom/=org.apache.axis2.jaxbri.mtom -EbindingFileName " />
-                                </java>
                             </tasks>
                         </configuration>
                     </execution>
@@ -174,108 +148,6 @@
                                 <property name="maven.class.path" refid="maven.runtime.classpath" />
                                 <ant dir="${project.build.directory}/gen/Test01" />
                             </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/gen/Test01/src</source>
-                                <source>${project.build.directory}/gen/processor/src</source>
-                                <source>${project.build.directory}/gen/identityservice/src</source>
-                                <source>${project.build.directory}/gen/mtom/src</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>Test01-repo</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/repo/Test01</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${project.build.directory}/gen/Test01/resources</directory>
-                                    <targetPath>services/Test01.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>processor-repo</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/repo/processor</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${project.build.directory}/gen/processor/resources</directory>
-                                    <targetPath>services/processor.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>identityservice-repo</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/repo/identityservice</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${project.build.directory}/gen/identityservice/resources</directory>
-                                    <targetPath>services/identityservice.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>mtom-repo</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/repo/mtom</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${project.build.directory}/gen/mtom/resources</directory>
-                                    <targetPath>services/mtom.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>
