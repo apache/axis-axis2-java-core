@@ -23,11 +23,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.mtom1.Base64Binary;
 import org.apache.axis2.jaxws.sample.mtom1.ImageDepot;
 import org.apache.axis2.jaxws.sample.mtom1.Invoke;
 import org.apache.axis2.jaxws.sample.mtom1.ObjectFactory;
 import org.apache.axis2.jaxws.sample.mtom1.SendImageResponse;
-import org.w3._2005._05.xmlmime.Base64Binary;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;

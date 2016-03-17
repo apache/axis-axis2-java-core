@@ -230,262 +230,476 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>xjc-soap11</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>XmlSchema</sourceType>
+                            <testSources>
+                                <testSource>test-resources/xsd/soap11.xsd</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/soap11</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-echo</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>XmlSchema</sourceType>
+                            <testSources>
+                                <testSource>test-resources/xsd/echo.xsd</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/echo</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-stock1</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>XmlSchema</sourceType>
+                            <testSources>
+                                <testSource>test-resources/xsd/stock1.xsd</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/stock1</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-stock2</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>XmlSchema</sourceType>
+                            <testSources>
+                                <testSource>test-resources/xsd/stock2.xsd</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/stock2</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-samplemtom</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>XmlSchema</sourceType>
+                            <testSources>
+                                <testSource>test-resources/xsd/samplemtom.xsd</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/samplemtom</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-greeterTypes</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>XmlSchema</sourceType>
+                            <testSources>
+                                <testSource>test-resources/xsd/greeterTypes.xsd</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/greeterTypes</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-ProxyDocLitWrapped</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/ProxyDocLitWrapped.wsdl</testSource>
+                            </testSources>
+                            <packageName>org.test.proxy.doclitwrapped</packageName>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/ProxyDocLitWrapped</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-AddNumbers</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/AddNumbers.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/AddNumbers</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-ProxyDocLitnonWrapped</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/ProxyDocLitnonWrapped.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/ProxyDocLitnonWrapped</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-samplemtomjpeg</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/samplemtomjpeg.wsdl</testSource>
+                            </testSources>
+                            <packageName>org.apache.axis2.jaxws.sample.mtom1</packageName>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/samplemtomjpeg</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-RPCLit</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/RPCLit.wsdl</testSource>
+                            </testSources>
+                            <packageName>org.test.proxy.rpclit</packageName>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/RPCLit</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-RPCLitSWA</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/RPCLitSWA.wsdl</testSource>
+                            </testSources>
+                            <packageName>org.test.proxy.rpclitswa</packageName>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/RPCLitSWA</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-gorilla_dlw</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/gorilla_dlw.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/gorilla_dlw</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-SOAP12Echo</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/SOAP12Echo.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/SOAP12Echo</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-AddNumbersHandler</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/AddNumbersHandler.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/AddNumbersHandler</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-HeadersHandler</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/HeadersHandler.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/HeadersHandler</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-async_doclitwr</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/async_doclitwr.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/async_doclitwr</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-async_doclitwr2</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/async_doclitwr2.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/async_doclitwr2</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-FaultyWebService</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/FaultyWebService.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/FaultyWebService</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-FaultsService</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/FaultsService.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/FaultsService</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-jaxbsource</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>XmlSchema</sourceType>
+                            <testSources>
+                                <testSource>test-resources/xsd/jaxbsource.xsd</testSource>
+                            </testSources>
+                            <packageName>org.test.dispatch.jaxbsource</packageName>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/jaxbsource</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-doclit_nonwrap</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/doclit_nonwrap.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/doclit_nonwrap</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-doclitwrap</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/doclitwrap.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/doclitwrap</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-doclitbare</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/doclitbare.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/doclitbare</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-EchoMessage</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/EchoMessage.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/EchoMessage</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-resourceinjection</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/resourceinjection.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/resourceinjection</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-AnyType</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/AnyType.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/AnyType</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-MessageContext</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/MessageContext.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/MessageContext</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-WSDLMultiTests</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/WSDLMultiTests.wsdl</testSource>
+                            </testSources>
+                            <packageName>multi</packageName>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/WSDLMultiTests</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-shapes</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/shapes.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/shapes</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-SOAPActionTest</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/SOAPActionTest.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/SOAPActionTest</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-rpclitenum</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/rpclitenum.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/rpclitenum</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-rpclitstringarray</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/rpclitstringarray.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/rpclitstringarray</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-swamtomservice</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/swamtomservice.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/swamtomservice</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-ProcessDocumentService</id>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/ProcessDocumentService.wsdl</testSource>
+                            </testSources>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/ProcessDocumentService</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>gen-ts</id>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-                                <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="test-resources/xsd" />
-                                <property name="wsdl.source.dir" value="test-resources/wsdl" />
-                                <property name="schema.output.base.dir" value="target/schema" />
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
-                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
-                                <!-- make the dirs -->
-                                <mkdir dir="${schema.output.base.dir}" />
-                                <mkdir dir="${schema.generated.src.dir}" />
-                                <mkdir dir="${schema.generated.classes.dir}" />
-                                <!-- Run JAXB schema compiler with designated schemas -->
-                                <echo>Generating JAX-B classes from XSDs</echo>
-                                <echo>Generating java from soap 11</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/soap11.xsd" />
-                                </java>
-                                <echo>Generating java from echo.xsd</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/echo.xsd" />
-                                </java>
-                                <echo>Generating java from stock1.xsd</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd" />
-                                </java>
-                                <echo>Generating java from stock2.xsd</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd" />
-                                </java>
-                                <echo>Generating java from samplemtom.xsd</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd" />
-                                </java>
-                                <echo>Generating java from greeterTypes.xsd</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd" />
-                                </java>
-                                <echo>Generating java from ProxyDocLitWrapped.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl" />
-                                </java>
-                                <echo>Generating java from AddNumbers.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl" />
-                                </java>
-                                <echo>Generating java from ProxyDocLitnonWrapped.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl" />
-                                </java>
-                                <echo>Generating java from samplemtomjpeg.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/samplemtomjpeg.wsdl" />
-                                </java>
-                                <echo>Generating java from RPCLit.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl" />
-                                </java>
-                                <echo>Generating java from RPCLitSWA.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclitswa -quiet -wsdl ${wsdl.source.dir}/RPCLitSWA.wsdl" />
-                                </java>
-                                <echo>Generating java from gorilla_dlw.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <jvmarg value="-Djavax.xml.accessExternalSchema=all" />
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl" />
-                                </java>
-                                <echo>Generating java from SOAP12Echo.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAP12Echo.wsdl" />
-                                </java>
-                                <echo>Generating java from AddNumbersHandler.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl" />
-                                </java>
-                                <echo>Generating java from HeadersHandler.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/HeadersHandler.wsdl" />
-                                </java>
-                                <echo>Generating java from async_doclitwr.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl" />
-                                </java>
-                                <echo>Generating java from async_doclitwr2.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr2.wsdl" />
-                                </java>
-                                <echo>Generating java from FaultyWebService.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultyWebService.wsdl" />
-                                </java>
-                                <echo>Generating java from FaultsService.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultsService.wsdl" />
-                                </java>
-                                <echo>Generating java from jaxbsource</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd" />
-                                </java>
-                                <echo>Generating java from doclit_nonwrap.wsdl for javabean endpoint
-                                    support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclit_nonwrap.wsdl" />
-                                </java>
-                                <echo>Generating java from doclitwrap.wsdl for javabean endpoint
-                                    support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitwrap.wsdl" />
-                                </java>
-                                <echo>Generating java from doclitbare.wsdl for javabean endpoint
-                                    support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl" />
-                                </java>
-                                
-                                <echo>Generating java from EchoMessage.wsdl for javabean endpoint
-                                    support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/EchoMessage.wsdl" />
-                                </java>
-                                
-                                <echo>Generating java from resourceinjection.wsdl for javabean
-                                    endpoint Resource Injection support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl" />
-                                </java>
-                                <echo>Generating java from AnyType.wsdl for javabean endpoint
-                                    AnyType support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl" />
-                                </java>
-                                <echo>Generating java from MessageContext.wsdl for message context
-                                    properties support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/MessageContext.wsdl" />
-                                </java>
-                                <echo>Generating java from WSDLMultiTests.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/WSDLMultiTests.wsdl" />
-                                </java>
-                                <echo>Generating java from Polymorphic shapes.wsdl for javabean
-                                    endpoint support
-                                </echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl" />
-                                </java>
-                                <echo>Generating java from SOAPActionTest.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl" />
-                                </java>
-                                <echo>Generating java from rpclitenum.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl" />
-                                </java>
-                                <echo>Generating java from rpclitstringarray.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl" />
-                                </java>
-                                <echo>Generating java from swamtomservice.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/swamtomservice.wsdl" />
-                                </java>
-                                <echo>Generating java from ProcessDocumentService.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProcessDocumentService.wsdl" />
-                                </java>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
                     <execution>
                         <id>build-repo</id>
                         <phase>test-compile</phase>
@@ -652,7 +866,7 @@
                                     <fileset dir="test/org/apache/axis2/jaxws/provider/jaxb">
                                         <include name="META-INF/**" />
                                     </fileset>
-                                    <fileset dir="target/schema/classes">
+                                    <fileset dir="target/test-classes">
                                         <include name="org/test/mtom/**" />
                                     </fileset>
                                 </copy>
@@ -667,7 +881,7 @@
                                     <fileset dir="test/org/apache/axis2/jaxws/sample/mtom1">
                                         <include name="META-INF/**" />
                                     </fileset>
-                                    <fileset dir="target/schema/classes">
+                                    <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/sample/mtom1/**" />
                                     </fileset>
                                 </copy>
@@ -1259,24 +1473,6 @@
                                 </resource>
                             </resources>              
                         </configuration>            
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/schema/src</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
