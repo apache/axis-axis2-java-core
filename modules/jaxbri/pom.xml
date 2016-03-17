@@ -103,36 +103,26 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>src/test/wsdl/DocLitBareService.wsdl</testSource>
+                            </testSources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>gen-ts</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-                                <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="src/test/xsd" />
-                                <property name="schema.output.base.dir" value="target/schema" />
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
-                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
-                                <!-- make the dirs -->
-                                <mkdir dir="${schema.output.base.dir}" />
-                                <mkdir dir="${schema.generated.src.dir}" />
-                                <mkdir dir="${schema.generated.classes.dir}" />
-                                <!-- Run JAXB schema compiler with designated schemas -->
-                                <echo>Generating JAX-B classes for DocLitBareService test</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl src/test/wsdl/DocLitBareService.wsdl" />
-                                </java>
-                            </tasks>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>wsdl2java</id>
                         <phase>generate-test-sources</phase>
@@ -200,7 +190,6 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/schema/src</source>
                                 <source>${project.build.directory}/gen/Test01/src</source>
                                 <source>${project.build.directory}/gen/processor/src</source>
                                 <source>${project.build.directory}/gen/identityservice/src</source>
