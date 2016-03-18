@@ -251,6 +251,13 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      */
     private NamespaceURIMapping[] namespaceURIs = null;
     
+    /**
+     * The charset encoding to use for generated source files.
+     * 
+     * @parameter default-value="${project.build.sourceEncoding}"
+     */
+    private String encoding;
+    
     private CodeGenConfiguration buildConfiguration() throws CodeGenerationException, MojoFailureException {
         CodeGenConfiguration config = new CodeGenConfiguration();
         
@@ -318,6 +325,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
         config.setServiceName(serviceName);
         config.setPortName(portName);
         config.setUri2PackageNameMap(getNamespaceToPackagesMap());
+        config.setOutputEncoding(encoding);
         
         config.loadWsdl(wsdlFile);
         

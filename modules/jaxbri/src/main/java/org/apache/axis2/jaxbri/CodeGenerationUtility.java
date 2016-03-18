@@ -249,7 +249,7 @@ public class CodeGenerationUtility {
 
                 // Emit the code artifacts
                 JCodeModel codeModel = jaxbModel.generateCode(null, null);
-                FileCodeWriter writer = new FileCodeWriter(outputDir);
+                FileCodeWriter writer = new FileCodeWriter(outputDir, cgconfig.getOutputEncoding());
                 codeModel.build(writer);
 
                 Collection mappings = jaxbModel.getMappings();

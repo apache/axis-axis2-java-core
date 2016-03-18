@@ -187,6 +187,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.outputLanguage = outputLanguage;
     }
 
+    public void setOutputEncoding(String outputEncoding) {
+        this.outputEncoding = outputEncoding;
+    }
+
     public void setAdvancedCodeGenEnabled(boolean advancedCodeGenEnabled) {
         this.advancedCodeGenEnabled = advancedCodeGenEnabled;
     }
@@ -219,6 +223,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     //get the defaults for these from the property file
     private String outputLanguage = ConfigPropertyFileLoader.getDefaultLanguage();
+    private String outputEncoding = System.getProperty("file.encoding");
     private String databindingType = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
     private boolean advancedCodeGenEnabled = false;
 
@@ -403,6 +408,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public String getOutputLanguage() {
         return outputLanguage;
+    }
+
+    public String getOutputEncoding() {
+        return outputEncoding;
     }
 
     public boolean isAdvancedCodeGenEnabled() {
