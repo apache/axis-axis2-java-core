@@ -28,7 +28,9 @@ import java.util.Map;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
 import org.apache.axis2.wsdl.codegen.jaxws.JAXWSCodeGenerationEngine;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.WSDL2JavaOptionsValidator;
@@ -47,7 +49,9 @@ public class WSDL2Code {
          return;
       }
         if (isOptionsValid(commandLineOptionParser)){
-            new CodeGenerationEngine(commandLineOptionParser).generate();
+            CodeGenConfiguration config = new CodeGenConfiguration();
+            CodegenConfigLoader.loadConfig(config, commandLineOptionParser.getAllOptions());
+            new CodeGenerationEngine(config).generate();
         } else {
             printUsage();
         }

@@ -23,12 +23,10 @@ package org.apache.axis2.schema;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -44,7 +42,7 @@ public class ExtensionUtilityTest extends XMLSchemaTest {
         loadSampleSchemaFile(schemas);
         AxisService service=new AxisService();
         service.addSchema(schemas);
-        CodeGenConfiguration configuration=new CodeGenConfiguration(new HashMap<String, CommandLineOption>());
+        CodeGenConfiguration configuration=new CodeGenConfiguration();
         configuration.addAxisService(service);
         ExtensionUtility.invoke(configuration);
         TypeMapper mapper=configuration.getTypeMapper();

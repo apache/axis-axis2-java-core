@@ -32,6 +32,7 @@ import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -383,7 +384,8 @@ public class CodegenBean {
             if (!"xmlbeans".equals(getDatabindingName())) {
                 Thread.currentThread().setContextClassLoader(Class.class.getClassLoader());
             }
-            CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
+            CodeGenConfiguration codegenConfig = new CodeGenConfiguration();
+            CodegenConfigLoader.loadConfig(codegenConfig, fillOptionMap());
             codegenConfig.addAxisService(getAxisService(WSDLFileName));
             codegenConfig.setWsdlDefinition(wsdlDefinition);
             //set the baseURI
@@ -391,7 +393,8 @@ public class CodegenBean {
             new CodeGenerationEngine(codegenConfig).generate();
         } catch (Throwable e) {
             try {
-                CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
+                CodeGenConfiguration codegenConfig = new CodeGenConfiguration();
+                CodegenConfigLoader.loadConfig(codegenConfig, fillOptionMap());
                 codegenConfig.addAxisService(getAxisService(WSDLFileName));
                 codegenConfig.setWsdlDefinition(wsdlDefinition);
                 //set the baseURI

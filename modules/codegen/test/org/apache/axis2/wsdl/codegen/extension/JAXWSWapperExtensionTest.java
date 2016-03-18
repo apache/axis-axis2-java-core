@@ -21,8 +21,6 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -35,7 +33,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.XMLSchemaTest;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -144,8 +141,7 @@ public class JAXWSWapperExtensionTest extends XMLSchemaTest {
         axisOperation.addMessage(axisMessage, "test_message");
         service.addOperation(axisOperation);
         JAXWSWapperExtension extension = new JAXWSWapperExtension();
-        Map<String, CommandLineOption> optionMap = new HashMap<String, CommandLineOption>();
-        CodeGenConfiguration configuration = new CodeGenConfiguration(optionMap);
+        CodeGenConfiguration configuration = new CodeGenConfiguration();
         configuration.setOutputLanguage("jax-ws");
         configuration.setParametersWrapped(false);
         configuration.addAxisService(service);
@@ -156,8 +152,7 @@ public class JAXWSWapperExtensionTest extends XMLSchemaTest {
     @Test
     public void  testWalkSchema() throws Exception{
         JAXWSWapperExtension extension = new JAXWSWapperExtension();
-        Map<String, CommandLineOption> optionMap = new HashMap<String, CommandLineOption>();
-        CodeGenConfiguration configuration = new CodeGenConfiguration(optionMap);
+        CodeGenConfiguration configuration = new CodeGenConfiguration();
         configuration.setOutputLanguage("jax-ws");
         configuration.setParametersWrapped(false);
         configuration.addAxisService(service);        

@@ -21,13 +21,11 @@ package org.temp;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.jaxbri.CodeGenerationUtility;
-import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -38,9 +36,8 @@ public class CodeGenerationUtilityTest extends XMLSchemaTest {
     @Test
     public void testProcessSchemas() throws Exception {
         ArrayList<XmlSchema> list = new ArrayList<XmlSchema>();
-        Map<String, CommandLineOption> optionMap = new HashMap<String, CommandLineOption>();
         loadSampleSchemaFile(list);
-        CodeGenConfiguration codeGenConfiguration = new CodeGenConfiguration(optionMap);
+        CodeGenConfiguration codeGenConfiguration = new CodeGenConfiguration();
         codeGenConfiguration.setBaseURI("localhost/test");
         codeGenConfiguration.setOutputLocation(new File("target"));
         TypeMapper mapper = CodeGenerationUtility.processSchemas(list, null, codeGenConfiguration);

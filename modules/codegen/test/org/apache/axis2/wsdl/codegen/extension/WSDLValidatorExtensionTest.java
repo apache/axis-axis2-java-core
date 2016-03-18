@@ -21,7 +21,6 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.XMLSchemaTest;
@@ -29,8 +28,6 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class WSDLValidatorExtensionTest extends XMLSchemaTest {
 
@@ -43,10 +40,9 @@ public class WSDLValidatorExtensionTest extends XMLSchemaTest {
             try {
                 AxisService service = new AxisService();
                 ArrayList<XmlSchema> list = new ArrayList<XmlSchema>();
-                Map<String, CommandLineOption> optionMap = new HashMap<String, CommandLineOption>();
                 list.add(schema);
                 service.addSchema(list);
-                CodeGenConfiguration configuration = new CodeGenConfiguration(optionMap);
+                CodeGenConfiguration configuration = new CodeGenConfiguration();
                 configuration.addAxisService(service);
                 WSDLValidatorExtension extension = new WSDLValidatorExtension();
 

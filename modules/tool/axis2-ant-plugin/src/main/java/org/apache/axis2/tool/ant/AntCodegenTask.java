@@ -23,7 +23,9 @@ import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -413,7 +415,9 @@ public class AntCodegenTask extends Task {
             Map commandLineOptions = this.fillOptionMap();
             CommandLineOptionParser parser =
                     new CommandLineOptionParser(commandLineOptions);
-            new CodeGenerationEngine(parser).generate();
+            CodeGenConfiguration config = new CodeGenConfiguration();
+            CodegenConfigLoader.loadConfig(config, parser.getAllOptions());
+            new CodeGenerationEngine(config).generate();
         } catch (Throwable e) {
             throw new BuildException(e);
         }

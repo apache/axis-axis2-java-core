@@ -22,8 +22,10 @@ package org.apache.axis2.maven2.wsdl2code;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -630,7 +632,9 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
         CommandLineOptionParser parser =
                 new CommandLineOptionParser(commandLineOptions);
         try {
-            new CodeGenerationEngine(parser).generate();
+            CodeGenConfiguration config = new CodeGenConfiguration();
+            CodegenConfigLoader.loadConfig(config, parser.getAllOptions());
+            new CodeGenerationEngine(config).generate();
         } catch (CodeGenerationException e) {
             Throwable t = e;
             while (t.getCause() != null) {
