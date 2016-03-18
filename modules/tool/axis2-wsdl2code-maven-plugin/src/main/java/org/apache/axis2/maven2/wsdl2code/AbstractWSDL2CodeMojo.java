@@ -19,13 +19,10 @@
 
 package org.apache.axis2.maven2.wsdl2code;
 
-import org.apache.axis2.util.CommandLineOption;
-import org.apache.axis2.util.CommandLineOptionConstants;
-import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
+import org.apache.axis2.wsdl.codegen.extension.JiBXExtension;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -156,12 +153,12 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     /**
      * @parameter expression="${axis2.wsdl2code.externalMapping}"
      */
-    private String externalMapping = null;
+    private File externalMapping = null;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.wsdlVersion}"
+     * @parameter expression="${axis2.wsdl2code.wsdlVersion}" default-value="1.1"
      */
-    private String wsdlVersion = null;
+    private String wsdlVersion;
 
     /**
      * @parameter expression="${axis2.wsdl2code.targetSourceFolderLocation}" default-value="src"
@@ -254,10 +251,9 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      */
     private NamespaceURIMapping[] namespaceURIs = null;
     
-    /** Fills the option map. This map is passed onto the code generation API to generate the code. */
-    private Map<String,CommandLineOption> fillOptionMap() throws MojoFailureException {
-        Map<String,CommandLineOption> optionMap = new HashMap<String,CommandLineOption>();
-
+    private CodeGenConfiguration buildConfiguration() throws CodeGenerationException, MojoFailureException {
+        CodeGenConfiguration config = new CodeGenConfiguration();
+        
         ////////////////////////////////////////////////////////////////
         //WSDL file name
         // here we need to set the project base uri to relative paths.
@@ -269,276 +265,75 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
            }
         }
 
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
-                        getStringArray(wsdlFile)));
-        //output location
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
-                        getStringArray(getOutputDirectory().getPath())));
-        //////////////////////////////////////////////////////////////////
-        // Databinding type
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
-                        getStringArray(databindingName)));
+        config.setOutputLocation(getOutputDirectory());
+        config.setDatabindingType(databindingName);
 
         if ("jibx".equals(databindingName)) {
-            String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX
-                             + org.apache.axis2.wsdl.codegen.extension.JiBXExtension.BINDING_PATH_OPTION;
-            optionMap.put(key, new CommandLineOption(key, getStringArray(jibxBindingFile)));
+            config.getProperties().put(JiBXExtension.BINDING_PATH_OPTION, jibxBindingFile);
         }
 
         if ("async".equals(syncMode)) {
-            // Async only option - forcing to generate async methods only
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                            new String[0]));
+            config.setSyncOn(false);
+            config.setAsyncOn(true);
         } else if ("sync".equals(syncMode)) {
-            // Sync only option - forcing to generate Sync methods only
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION,
-                            new String[0]));
+            config.setSyncOn(true);
+            config.setAsyncOn(false);
         } else if ("both".equals(syncMode)) {
-            // Do nothing
+            config.setSyncOn(true);
+            config.setAsyncOn(true);
         } else {
             throw new MojoFailureException("Invalid syncMode: " + syncMode +
                     ", expected either of 'sync', 'async' or 'both'.");
         }
 
-        //Package
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION,
-                        getStringArray(packageName)));
-
-        //stub language
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION,
-                        getStringArray(language)));
-
-        //server side and generate services.xml options
-        if (generateServerSide) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
-                            new String[0]));
-
-            //services XML generation - effective only when specified as the server side
-            if (generateServicesXml) {
-                optionMap.put(
-                        CommandLineOptionConstants.WSDL2JavaConstants
-                                .GENERATE_SERVICE_DESCRIPTION_OPTION,
-                        new CommandLineOption(
-                                CommandLineOptionConstants.WSDL2JavaConstants
-                                        .GENERATE_SERVICE_DESCRIPTION_OPTION,
-                                new String[0]));
-            }
-            //generate all option - Only valid when generating serverside code
-            if (generateAllClasses) {
-                optionMap.put(
-                        CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
-                        new CommandLineOption(
-                                CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
-                                new String[0]));
-            }
-
-        }
-
-        //generate the test case
-        if (generateTestcase) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION,
-                            new String[0]));
-        }
-
-        //Unwrap classes option - this determines whether the generated classes are inside the stub/MR
-        //or gets generates as seperate classes
-        if (unpackClasses) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.UNPACK_CLASSES_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.UNPACK_CLASSES_OPTION,
-                            new String[0]));
-        }
-
-        //server side interface option
-        if (generateServerSideInterface) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION,
-                            new String[0]));
-        }
-
-        if (unwrap) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
-                            new String[0]));
-        }
-
-        if (allPorts) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.All_PORTS_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.All_PORTS_OPTION,
-                            new String[0]));
-        }
-
-        if (backwardCompatible) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION,
-                            new String[0]));
-        }
-
-        if (flattenFiles) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.FLATTEN_FILES_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.FLATTEN_FILES_OPTION,
-                            new String[0]));
-        }
-
-        if (skipMessageReceiver) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.NO_MESSAGE_RECEIVER_OPTION_LONG,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.NO_MESSAGE_RECEIVER_OPTION_LONG,
-                            new String[0]));
-        }
-
-        if (skipBuildXML) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.NO_BUILD_XML_OPTION_LONG,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.NO_BUILD_XML_OPTION_LONG,
-                            new String[0]));
-        }
-
-        if (skipWSDL) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.NO_WSDLS_OPTION_LONG,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.NO_WSDLS_OPTION_LONG,
-                            new String[0]));
-        }
-
-        if (overWrite) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.OVERRIDE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.OVERRIDE_OPTION,
-                            new String[0]));
-        }
-
-        if (suppressPrefixes) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.SUPPRESS_PREFIXES_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.SUPPRESS_PREFIXES_OPTION,
-                            new String[0]));
-        }
-
-        if (repositoryPath != null) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
-                            new String[]{repositoryPath}));
-        }
-
-        if (externalMapping != null) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
-                            new String[]{externalMapping}));
-        }
-
-        if (wsdlVersion != null) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
-                            new String[]{wsdlVersion}));
-        }
-
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
-                        new String[]{targetSourceFolderLocation}));
-
+        config.setPackageName(packageName);
+        config.setOutputLanguage(language);
+        config.setServerSide(generateServerSide);
+        config.setGenerateDeployementDescriptor(generateServicesXml);
+        config.setGenerateAll(generateAllClasses);
+        config.setWriteTestCase(generateTestcase);
+        config.setPackClasses(!unpackClasses);
+        config.setServerSideInterface(generateServerSideInterface);
+        config.setParametersWrapped(!unwrap);
+        config.setAllPorts(allPorts);
+        config.setBackwordCompatibilityMode(backwardCompatible);
+        config.setFlattenFiles(flattenFiles);
+        config.setSkipMessageReceiver(skipMessageReceiver);
+        config.setSkipBuildXML(skipBuildXML);
+        config.setSkipWriteWSDLs(skipWSDL);
+        config.setOverride(overWrite);
+        config.setSuppressPrefixesMode(suppressPrefixes);
+        config.setRepositoryPath(repositoryPath);
+        config.setTypeMappingFile(externalMapping);
+        config.setWSDLVersion(wsdlVersion);
+        config.setSourceLocation(targetSourceFolderLocation);
         if (targetResourcesFolderLocation != null) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
-                            new String[]{targetResourcesFolderLocation}));
+            config.setResourceLocation(targetResourcesFolderLocation);
         }
 
         if(options != null) {
-            for (Map.Entry<?,?> entry : options.entrySet()) {
-                String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX + entry.getKey();
-                String value = (String) entry.getValue();
-                optionMap.put(
-                        key,
-                        new CommandLineOption(
-                                key,
-                                new String[]{value}));
-            }
+            config.getProperties().putAll(options);
         }
 
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
-                        new String[] { serviceName }));
-
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
-                        new String[] { portName }));
-        // set the namespaces
-        if (!((namespaceToPackages == null) && (namespaceURIs == null))) {
-            optionMap.put(
-                    CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
-                            new String[] { getNamespaceToPackagesMap() }));
-        }
+        config.setServiceName(serviceName);
+        config.setPortName(portName);
+        config.setUri2PackageNameMap(getNamespaceToPackagesMap());
         
-        return optionMap;
+        config.loadWsdl(wsdlFile);
+        
+        return config;
     }
 
-    private String getNamespaceToPackagesMap() throws MojoFailureException {
-        StringBuffer sb = new StringBuffer();
+    private Map<String,String> getNamespaceToPackagesMap() throws MojoFailureException {
+        Map<String,String> map = new HashMap<String,String>();
         if (namespaceToPackages != null) {
-            sb.append(namespaceToPackages);
+            for (String pair : namespaceToPackages.trim().split(",")) {
+                String values[] = pair.split("=");
+                map.put(values[0].trim(), values[1].trim());
+            }
         }
         if (namespaceURIs != null) {
-            for (int i = 0; i < namespaceURIs.length; i++) {
-                NamespaceURIMapping mapping = namespaceURIs[i];
+            for (NamespaceURIMapping mapping : namespaceURIs) {
                 String uri = mapping.getUri();
                 if (uri == null) {
                     throw new MojoFailureException(
@@ -549,40 +344,19 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
                     throw new MojoFailureException(
                             "A namespace to package mapping requires a packageName child element.");
                 }
-                if (sb.length() > 0) {
-                    sb.append(",");
-                }
-                sb.append(uri);
-                sb.append('=');
-                sb.append(uriPackageName);
+                map.put(uri, uriPackageName);
             }
         }
-        return (sb.length() != 0) ? sb.toString() : null;
-    }
-
-    /**
-     * Utility method to convert a string into a single item string[]
-     *
-     * @param value
-     * @return Returns String[].
-     */
-    private String[] getStringArray(String value) {
-        String[] values = new String[1];
-        values[0] = value;
-        return values;
+        return map;
     }
 
     public void execute() throws MojoFailureException, MojoExecutionException {
+        File outputDirectory = getOutputDirectory();
+        outputDirectory.mkdirs();
+        addSourceRoot(project, new File(outputDirectory, targetSourceFolderLocation));
 
-        addSourceRoot(project, new File(getOutputDirectory(), targetSourceFolderLocation));
-
-        Map<String,CommandLineOption> commandLineOptions = this.fillOptionMap();
-        CommandLineOptionParser parser =
-                new CommandLineOptionParser(commandLineOptions);
         try {
-            CodeGenConfiguration config = new CodeGenConfiguration();
-            CodegenConfigLoader.loadConfig(config, parser.getAllOptions());
-            new CodeGenerationEngine(config).generate();
+            new CodeGenerationEngine(buildConfiguration()).generate();
         } catch (CodeGenerationException e) {
             Throwable t = e;
             while (t.getCause() != null) {
