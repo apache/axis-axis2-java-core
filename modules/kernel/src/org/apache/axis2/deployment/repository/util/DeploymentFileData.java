@@ -82,7 +82,12 @@ public class DeploymentFileData {
      * @return the name of the referenced file
      */
     public String getName() {
-        return file.getName(); // No need to check for null due to constructor check
+        if (file != null) {
+            return file.getName();
+        } else {
+            String path = url.getPath();
+            return path.substring(path.lastIndexOf('/') + 1);
+        }
     }
 
 
