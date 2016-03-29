@@ -80,13 +80,13 @@ public class BeanWriterMetaInfoHolder {
     protected String itemTypeClassName;
     protected boolean isUnion;
     protected boolean isList;
-    protected boolean fixed = false;
 
     protected boolean isParticleClass;
     // keep whether this class has a partical class type variable
     protected boolean hasParticleType;
 
     protected List<QName> nillableQNameList = new ArrayList<QName>();
+    protected List<QName> fixedQNameList = new ArrayList<QName>();
 
     //the parent metainfo holder, useful in handling extensions and
     //restrictions
@@ -313,6 +313,25 @@ public class BeanWriterMetaInfoHolder {
      */
     public boolean isNillable(QName eltQName) {
         return nillableQNameList.contains(eltQName);
+    }
+
+    /**
+     * Registers a Qname as fixed
+     * The qName better be of an element
+     *
+     * @param eltQName
+     */
+    public void registerFixedQName(QName eltQName) {
+        fixedQNameList.add(eltQName);
+    }
+
+    /**
+     * Returns whether a QName is fixed or not
+     *
+     * @param eltQName
+     */
+    public boolean isFixed(QName eltQName) {
+        return fixedQNameList.contains(eltQName);
     }
 
     /**
@@ -944,14 +963,6 @@ public class BeanWriterMetaInfoHolder {
         return restrictionBaseType;
     }    
 
-    public boolean isFixed() {
-        return fixed;
-    }
-
-    public void setFixed(boolean fixed) {
-        this.fixed = fixed;
-    }
-
     @Override
     public String toString() {
         return "BeanWriterMetaInfoHolder [anonymous=" + anonymous + ", choice=" + choice
@@ -975,7 +986,7 @@ public class BeanWriterMetaInfoHolder {
                 + restrictionBaseType + ", restrictionClassName=" + restrictionClassName
                 + ", simple=" + simple + ", specialTypeFlagMap=" + specialTypeFlagMap
                 + ", totalDigitsFacet=" + totalDigitsFacet + ", xmlNameJavaNameMap="
-                + xmlNameJavaNameMap + ", xmlNameJavaNameMap=" + fixed + "]";
+                + xmlNameJavaNameMap + ", fixedQNameList=" + fixedQNameList + "]";
     }
     
 }
