@@ -19,7 +19,6 @@
 
 package org.apache.axis2.jaxws.message.databinding.impl;
 
-import org.apache.axiom.attachments.impl.BufferUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -28,6 +27,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.util.io.IOUtils;
 import org.apache.axis2.builder.DataSourceBuilder;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -165,7 +165,7 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
     
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
         try {
-            BufferUtils.inputStream2OutputStream(((DataSource)busObject).getInputStream(), output);
+            IOUtils.copy(((DataSource)busObject).getInputStream(), output, -1);
         } catch (IOException e) {
             throw new XMLStreamException(e);
         }

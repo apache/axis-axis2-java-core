@@ -23,8 +23,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
-import org.apache.axiom.attachments.impl.BufferUtils;
 import org.apache.axiom.util.UIDGenerator;
+import org.apache.axiom.util.io.IOUtils;
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -188,7 +188,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
     
     private byte[] getStreamAsByteArray(InputStream is) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-        BufferUtils.inputStream2OutputStream(is, baos);
+        IOUtils.copy(is, baos, -1);
         baos.flush();
         return baos.toByteArray();
     }
