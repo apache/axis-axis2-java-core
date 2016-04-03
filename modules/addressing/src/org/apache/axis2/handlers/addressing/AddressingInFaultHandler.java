@@ -90,12 +90,12 @@ public class AddressingInFaultHandler extends AbstractHandler implements Address
             SOAPFaultCode code = fault.getCode();
             SOAPFaultSubCode subCode = code.getSubCode();
             if (subCode == null) {
-                faultLocalName = code.getTextAsQName().getLocalPart();
+                faultLocalName = code.getValueAsQName().getLocalPart();
             } else {
                 while (subCode.getSubCode() != null) {
                     subCode = subCode.getSubCode();
                 }
-                faultLocalName = subCode.getValue().getTextAsQName().getLocalPart();
+                faultLocalName = subCode.getValueAsQName().getLocalPart();
             }
 
             String newReason = AddressingFaultsHelper

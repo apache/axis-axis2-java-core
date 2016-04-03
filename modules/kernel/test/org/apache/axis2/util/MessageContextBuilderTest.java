@@ -76,7 +76,7 @@ public class MessageContextBuilderTest extends AbstractTestCase {
         SOAPFault fault = faultContext.getEnvelope().getBody().getFault();
         String se = faultContext.getEnvelope().getNamespace().getPrefix();
         
-        assertEquals (fault.getCode().getTextAsQName().getPrefix(), se);
+        assertEquals (fault.getCode().getValueAsQName().getPrefix(), se);
     }
 
     

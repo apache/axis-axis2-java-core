@@ -235,13 +235,13 @@ public class AxisFault extends RemoteException {
 
         if (soapFaultCode != null) {
             // This works the same regardless of SOAP version
-            faultCode = soapFaultCode.getTextAsQName();
+            faultCode = soapFaultCode.getValueAsQName();
 
             SOAPFaultSubCode subCode = soapFaultCode.getSubCode();
             if (subCode != null) {
                 faultSubCodes = new ArrayList<QName>();
                 while (subCode != null) {
-                    faultSubCodes.add(subCode.getValue().getTextAsQName());
+                    faultSubCodes.add(subCode.getValueAsQName());
                     subCode = subCode.getSubCode();
                 }
             }
