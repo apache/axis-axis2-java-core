@@ -151,13 +151,7 @@ public class XMLFaultUtils {
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         SOAPFaultCode soapCode = soapFault.getCode();
-        QName codeQName = null;
-        if (isSoap11) {
-            codeQName = soapCode.getTextAsQName();
-        } else {
-            codeQName = soapCode.getValue().getTextAsQName();
-        }
-        XMLFaultCode code = XMLFaultCode.fromQName(codeQName);
+        XMLFaultCode code = XMLFaultCode.fromQName(soapCode.getValueAsQName());
 
         // Get the primary reason text
         // TODO what if this fails
@@ -187,9 +181,7 @@ public class XMLFaultUtils {
 
             // Walk the nested sub codes and collect the qnames
             while (soapSubCode != null) {
-                SOAPFaultValue soapSubCodeValue = soapSubCode.getValue();
-                QName qName = soapSubCodeValue.getTextAsQName();
-                list.add(qName);
+                list.add(soapSubCode.getValueAsQName());
                 soapSubCode = soapSubCode.getSubCode();
             }
 

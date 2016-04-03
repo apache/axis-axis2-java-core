@@ -446,14 +446,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      */
     public QName getFaultCodeAsQName() {
         SOAPFaultCode soapFaultCode = this.omTarget.getCode();
-        if (soapFaultCode != null) {
-            if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
-                return soapFaultCode.getTextAsQName();
-            } else {
-                return soapFaultCode.getValue().getTextAsQName();
-            }
-        }
-        return null;
+        return soapFaultCode != null ? soapFaultCode.getValueAsQName() : null;
     }
 
     /**
@@ -613,8 +606,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
         ArrayList faultSubcodes = new ArrayList();
         SOAPFaultSubCode subCodeElement = this.omTarget.getCode().getSubCode();
         while (subCodeElement != null) {
-            QName qname = subCodeElement.getValue().getTextAsQName();
-            faultSubcodes.add(qname);
+            faultSubcodes.add(subCodeElement.getValueAsQName());
             subCodeElement = subCodeElement.getSubCode();
         }
         return faultSubcodes.iterator();
