@@ -858,7 +858,7 @@ public class SchemaCompiler {
             if (isOuter) {
                 this.nillableElementList.add(xsElt.getQName());
             } else {
-                localNillableList.add(xsElt.getQName());
+                localNillableList.add(xsElt.getWireName());
             }
         }
 
