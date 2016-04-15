@@ -733,10 +733,8 @@ public class Utils {
                     final Class<?> serviceClass = Loader.loadClass(
                             classLoader,
                             ((String) serviceClassParam.getValue()).trim());
-                    String className = ((String) serviceClassParam.getValue()).trim();
-                    Class serviceObjectMaker = Loader.loadClass(classLoader, className);
-                    if (serviceObjectMaker.getModifiers() != Modifier.PUBLIC) {
-                        throw new AxisFault("Service class " + className +
+                    if (serviceClass.getModifiers() != Modifier.PUBLIC) {
+                        throw new AxisFault("Service class " + serviceClass.getName() +
                                             " must have public as access Modifier");
                     }
                     return org.apache.axis2.java.security.AccessController.doPrivileged(
