@@ -66,6 +66,7 @@ WSDL2Java Reference
                                    -Ejavaversion 1.5                      (for xmlbeans) - generates Java 1.5 code (typed lists instead of arrays)
                                    -Emp <package name> (for ADB) - extension mapper package name
                                    -Eosv (for ADB) - turn off strict validation.
+                                   -Eiu (for ADB) - Ignore Unexpected elements instead of throwing ADBException
                                    -Ewdc (for xmlbeans) - Generate code with a dummy schema. if someone use this option
                                       they have to generate the xmlbeans code seperately with the scomp command comes with the
                                       xmlbeans distribution and replace the Axis2 generated classes with correct classes
