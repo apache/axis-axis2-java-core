@@ -36,6 +36,13 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class CreateTestRepositoryMojo extends AbstractCreateRepositoryMojo {
     /**
+     * Input directory with additional files to be copied to the repository.
+     * 
+     * @parameter default-value="src/test/repository"
+     */
+    private File inputDirectory;
+    
+    /**
      * The output directory where the repository will be created.
      * 
      * @parameter default-value="${project.build.directory}/test-repository"
@@ -51,6 +58,11 @@ public class CreateTestRepositoryMojo extends AbstractCreateRepositoryMojo {
     @Override
     protected String getScope() {
         return Artifact.SCOPE_TEST;
+    }
+
+    @Override
+    protected File getInputDirectory() {
+        return inputDirectory;
     }
 
     @Override

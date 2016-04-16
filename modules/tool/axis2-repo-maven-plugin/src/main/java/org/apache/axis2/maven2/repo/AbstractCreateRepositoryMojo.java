@@ -33,11 +33,13 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -155,9 +157,29 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     
     protected abstract String getScope();
     
+    protected abstract File getInputDirectory();
+    
     protected abstract File getOutputDirectory();
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        Log log = getLog();
+        File inputDirectory = getInputDirectory();
+        File outputDirectory = getOutputDirectory();
+        if (inputDirectory.exists()) {
+            log.info("Copying files from " + inputDirectory);
+            DirectoryScanner ds = new DirectoryScanner();
+            ds.setBasedir(inputDirectory);
+            ds.scan();
+            for (String relativePath : ds.getIncludedFiles()) {
+                try {
+                    FileUtils.copyFile(
+                            new File(inputDirectory, relativePath),
+                            new File(outputDirectory, relativePath));
+                } catch (IOException ex) {
+                    throw new MojoExecutionException("Failed to copy " + relativePath, ex);
+                }
+            }
+        }
         Set<Artifact> artifacts = new HashSet<Artifact>();
         if (useDependencies) {
             artifacts.addAll(projectArtifacts);
@@ -168,7 +190,6 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 artifacts.addAll(project.getAttachedArtifacts());
             }
         }
-        File outputDirectory = getOutputDirectory();
         if (includeModules || includeServices) {
             FilterArtifacts filter = new FilterArtifacts();
             filter.addFilter(new ScopeFilter(getScope(), null));
@@ -199,14 +220,14 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 if (deployer == null) {
                     throw new MojoExecutionException("No deployer found for artifact type " + type);
                 }
-                deployer.deploy(getLog(), artifact);
+                deployer.deploy(log, artifact);
             }
             for (ArchiveDeployer deployer : deployers.values()) {
-                deployer.finish(getLog());
+                deployer.finish(log);
             }
         }
         if (axis2xml != null) {
-            getLog().info("Copying axis2.xml");
+            log.info("Copying axis2.xml");
             File targetDirectory = configurationDirectory == null
                     ? outputDirectory : new File(outputDirectory, configurationDirectory);
             try {

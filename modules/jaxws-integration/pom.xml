@@ -214,6 +214,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo</outputDirectory>
                             <modules>addressing</modules>
+                            <axis2xml>test-resources/axis2.xml</axis2xml>
                         </configuration>
                     </execution>
                     <execution>
@@ -708,27 +709,6 @@
                                 <property name="repo.dir" value="${project.build.directory}/repo" />
                                 <property name="services.dir" value="${repo.dir}/services" />
                                 <property name="servicejars.dir" value="${repo.dir}/servicejars" />
-
-                                <!-- ================================================================ -->
-                                <!-- Non-JAXWS services -->
-                                <!-- ================================================================ -->
-
-                                <copy toDir="${services.dir}/EchoService/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="server/**" />
-                                    </fileset>
-                                    <fileset dir="test/server">
-                                        <exclude name="**/*.java" />
-                                    </fileset>
-                                </copy>
-                                <copy toDir="${services.dir}/BookStoreService/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/client/soapaction/**" />
-                                    </fileset>
-                                    <fileset dir="test/org/apache/axis2/jaxws/client/soapaction/server">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
 
                                 <mkdir dir="${servicejars.dir}" />
                                 <!-- ================================================================ -->
@@ -1450,29 +1430,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-repo</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>test-resources</directory>
-                                    <includes>
-                                        <include>axis2.xml</include>
-                                    </includes>
-                                </resource>
-                            </resources>              
-                        </configuration>            
                     </execution>
                 </executions>
             </plugin>
