@@ -1498,10 +1498,6 @@
                             <value>0</value>
                         </property>
                         <property>
-                            <name>build.repository</name>
-                            <value>${project.build.directory}/repo</value>
-                        </property>
-                        <property>
                             <name>javax.xml.soap.MessageFactory</name>
                             <value>org.apache.axis2.saaj.MessageFactoryImpl</value>
                         </property>
