@@ -631,19 +631,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>xjc-SOAPActionTest</id>
-                        <goals>
-                            <goal>testXjc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceType>WSDL</sourceType>
-                            <testSources>
-                                <testSource>test-resources/wsdl/SOAPActionTest.wsdl</testSource>
-                            </testSources>
-                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/SOAPActionTest</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>xjc-rpclitenum</id>
                         <goals>
                             <goal>testXjc</goal>
@@ -693,6 +680,23 @@
                                 <testSource>test-resources/wsdl/ProcessDocumentService.wsdl</testSource>
                             </testSources>
                             <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/ProcessDocumentService</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>wsimport-SOAPActionTest</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/src/test/repository/services/BookStoreService/META-INF/SOAPActionTest.wsdl</wsdlFile>
+                            </wsdlFiles>
                         </configuration>
                     </execution>
                 </executions>
