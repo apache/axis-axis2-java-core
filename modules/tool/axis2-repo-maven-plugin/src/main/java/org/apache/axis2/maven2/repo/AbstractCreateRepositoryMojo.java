@@ -191,8 +191,8 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 File file = artifact.getFile();
                 if (file == null || file.isDirectory()) {
                     throw new MojoFailureException("Artifact " + artifact.getId() + " not available. " +
-                    		"This typically means that it is part of the reactor but that the " +
-                    		"package phase has not been executed.");
+                            "This typically means that it is part of the reactor but that the " +
+                            "package phase has not been executed.");
                 }
                 String type = artifact.getType();
                 ArchiveDeployer deployer = deployers.get(type);
