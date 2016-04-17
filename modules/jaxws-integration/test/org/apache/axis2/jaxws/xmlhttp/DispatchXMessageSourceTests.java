@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source;
+package org.apache.axis2.jaxws.xmlhttp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

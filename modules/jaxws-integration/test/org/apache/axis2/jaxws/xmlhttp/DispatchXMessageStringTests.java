@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string;
+package org.apache.axis2.jaxws.xmlhttp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -29,30 +29,30 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
 
-public class DispatchXPayloadStringTests extends AbstractTestCase {
+public class DispatchXMessageStringTests extends AbstractTestCase {
 
     public String HOSTPORT = "http://localhost:6060";
         
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XPayloadStringProvider.XPayloadStringProviderPort";
-    private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadStringProvider");
-    private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadStringProviderPort");
+    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageStringProvider.XMessageStringProviderPort";
+    private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageStringProvider");
+    private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageStringProviderPort");
  
     private static String XML_TEXT = "<p:echo xmlns:p=\"http://sample\">hello world</p:echo>";
     private static String XML_TEXT_NPE = "<p:echo xmlns:p=\"http://sample\">NPE</p:echo>";
-    
+
     public static Test suite() {
-        return getTestSetup(new TestSuite(DispatchXPayloadStringTests.class));
+        return getTestSetup(new TestSuite(DispatchXMessageStringTests.class));
     }
 
     public Dispatch<String> getDispatch() {
        Service service = Service.create(SERVICE_NAME);
        service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING,ENDPOINT_URL);
-       Dispatch<String> dispatch = service.createDispatch(PORT_NAME, String.class, Service.Mode.PAYLOAD);
+       Dispatch<String> dispatch = service.createDispatch(PORT_NAME, String.class, Service.Mode.MESSAGE);
        return dispatch;
     }
     
     /**
-     * Simple XML/HTTP Payload Test
+     * Simple XML/HTTP Message Test
      * @throws Exception
      */
     public void testSimple() throws Exception {
@@ -64,8 +64,7 @@ public class DispatchXPayloadStringTests extends AbstractTestCase {
         assertTrue(response != null);
         assertTrue(request.equals(response));
         
-        // Try again to verify
-        TestLogger.logger.debug("Request  = " + request);
+        // Try a second time
         response = dispatch.invoke(request);
         TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
@@ -135,3 +134,4 @@ public class DispatchXPayloadStringTests extends AbstractTestCase {
         assertTrue(request.equals(response));
     }
 }
+
