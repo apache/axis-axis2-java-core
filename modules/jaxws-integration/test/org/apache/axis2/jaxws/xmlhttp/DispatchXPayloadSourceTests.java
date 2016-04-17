@@ -19,10 +19,10 @@
 
 package org.apache.axis2.jaxws.xmlhttp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -32,29 +32,27 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
+
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public class DispatchXPayloadSourceTests extends AbstractTestCase {
+public class DispatchXPayloadSourceTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
 
     private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-    public String HOSTPORT = "http://localhost:6060";
-        
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageSourceProvider.XMessageSourceProviderPort";
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadSourceProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadSourceProviderPort");
  
     private static String XML_TEXT = "<p:echo xmlns:p=\"http://sample\">hello world</p:echo>";
     private static String XML_TEXT_NPE = "<p:echo xmlns:p=\"http://sample\">NPE</p:echo>";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(DispatchXPayloadSourceTests.class));
-    }
-  
     public Dispatch<Source> getDispatch() {
        Service service = Service.create(SERVICE_NAME);
-       service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING,ENDPOINT_URL);
+       service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING, "http://localhost:" + server.getPort() + "/axis2/services/XMessageSourceProvider.XMessageSourceProviderPort");
        Dispatch<Source> dispatch = service.createDispatch(PORT_NAME, Source.class, Service.Mode.PAYLOAD);
        return dispatch;
     }
@@ -63,6 +61,7 @@ public class DispatchXPayloadSourceTests extends AbstractTestCase {
      * Simple XML/HTTP Payload Test
      * @throws Exception
      */
+    @Test
     public void testSimple() throws Exception {
         Dispatch<Source> dispatch = getDispatch();
         String request = XML_TEXT;

@@ -19,10 +19,11 @@
 
 package org.apache.axis2.jaxws.xmlhttp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axiom.util.io.IOUtils;
 
@@ -39,6 +40,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPBinding;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.*;
 import java.io.File;
@@ -49,11 +52,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 
-public class DispatchXMessageDataSourceTests extends AbstractTestCase {
-
-    public String HOSTPORT = "http://localhost:6060";
-        
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageDataSourceProvider.XMessageDataSourceProviderPort";
+public class DispatchXMessageDataSourceTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
+    
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProviderPort");
  
@@ -61,10 +63,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
     private FileDataSource txtDS;
     private DataSource attachmentDS;
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(DispatchXMessageDataSourceTests.class));
-    }
- 
+    @Before
     public void setUp() throws Exception {
         String imageResourceDir = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";
 
@@ -89,11 +88,12 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
     
     public Dispatch<DataSource> getDispatch() {
        Service service = Service.create(SERVICE_NAME);
-       service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING,ENDPOINT_URL);
+       service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING, "http://localhost:" + server.getPort() + "/axis2/services/XMessageDataSourceProvider.XMessageDataSourceProviderPort");
        Dispatch<DataSource> dispatch = service.createDispatch(PORT_NAME, DataSource.class, Service.Mode.MESSAGE);
        return dispatch;
     }
     
+    @Test
     public void testDataSourceWithTXT() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
         DataSource request = txtDS;
@@ -105,6 +105,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         assertEquals(req, res);
     }
 
+    @Test
     public void testDataSourceWithImage() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
         DataSource request = imageDS;
@@ -115,6 +116,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
                 getStreamAsByteArray(response.getInputStream())));
     }
 
+    @Test
     public void testDataSourceWithTXTPlusAttachment() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
 
@@ -142,6 +144,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         assertEquals(attachments2.size(), 1);
     }
 
+    @Test
     public void testDataSourceWithImagePlusAttachment() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
 
@@ -163,6 +166,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
         assertEquals(attachments2.size(), 1);
     }
 
+    @Test
     public void testDataSourceWithTXTPlusTwoAttachments() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
 

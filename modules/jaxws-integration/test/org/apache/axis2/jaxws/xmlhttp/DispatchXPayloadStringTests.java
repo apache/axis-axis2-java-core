@@ -19,34 +19,31 @@
 
 package org.apache.axis2.jaxws.xmlhttp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
 
-public class DispatchXPayloadStringTests extends AbstractTestCase {
-
-    public String HOSTPORT = "http://localhost:6060";
-        
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XPayloadStringProvider.XPayloadStringProviderPort";
+public class DispatchXPayloadStringTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
+    
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadStringProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadStringProviderPort");
  
     private static String XML_TEXT = "<p:echo xmlns:p=\"http://sample\">hello world</p:echo>";
     private static String XML_TEXT_NPE = "<p:echo xmlns:p=\"http://sample\">NPE</p:echo>";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(DispatchXPayloadStringTests.class));
-    }
-
     public Dispatch<String> getDispatch() {
        Service service = Service.create(SERVICE_NAME);
-       service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING,ENDPOINT_URL);
+       service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING, "http://localhost:" + server.getPort() + "/axis2/services/XPayloadStringProvider.XPayloadStringProviderPort");
        Dispatch<String> dispatch = service.createDispatch(PORT_NAME, String.class, Service.Mode.PAYLOAD);
        return dispatch;
     }
@@ -55,6 +52,7 @@ public class DispatchXPayloadStringTests extends AbstractTestCase {
      * Simple XML/HTTP Payload Test
      * @throws Exception
      */
+    @Test
     public void testSimple() throws Exception {
         Dispatch<String> dispatch = getDispatch();
         String request = XML_TEXT;
