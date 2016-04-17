@@ -39,6 +39,8 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -73,6 +75,13 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      * @parameter default-value="modules"
      */
     private String modulesDirectory;
+    
+    /**
+     * The directory (relative to the repository root) where JAX-WS service JARs will be deployed.
+     * 
+     * @parameter default-value="servicejars"
+     */
+    private String jaxwsServicesDirectory;
     
     /**
      * The <tt>axis2.xml</tt> file to be copied into the repository.
@@ -155,11 +164,21 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      */
     private String services;
     
+    /**
+     * A list of JAX-WS service JARs to be generated (by packaging class files from the current
+     * project).
+     * 
+     * @parameter
+     */
+    private JAXWSService[] jaxwsServices;
+    
     protected abstract String getScope();
     
     protected abstract File getInputDirectory();
     
     protected abstract File getOutputDirectory();
+    
+    protected abstract File[] getClassDirectories();
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
@@ -224,6 +243,29 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
             }
             for (ArchiveDeployer deployer : deployers.values()) {
                 deployer.finish(log);
+            }
+        }
+        if (jaxwsServices != null) {
+            File targetDirectory = new File(outputDirectory, jaxwsServicesDirectory);
+            for (JAXWSService service : jaxwsServices) {
+                String jarName = service.getName() + ".jar";
+                try {
+                    JarArchiver archiver = new JarArchiver();
+                    archiver.setDestFile(new File(targetDirectory, jarName));
+                    String[] packages = service.getPackages();
+                    String[] includes = new String[packages.length];
+                    for (int i=0; i<packages.length; i++) {
+                        includes[i] = packages[i].replace('.', '/') + "/**/*.class";
+                    }
+                    for (File classDirectory : getClassDirectories()) {
+                        archiver.addDirectory(classDirectory, includes, new String[0]);
+                    }
+                    archiver.createArchive();
+                } catch (ArchiverException ex) {
+                    throw new MojoExecutionException("Failed to build " + jarName, ex);
+                } catch (IOException ex) {
+                    throw new MojoExecutionException("Failed to build " + jarName, ex);
+                }
             }
         }
         if (axis2xml != null) {

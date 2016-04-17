@@ -46,6 +46,12 @@ public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
      */
     private File outputDirectory;
     
+    /**
+     * @parameter expression="${project.build.outputDirectory}"
+     * @readonly
+     */
+    private File buildOutputDirectory;
+    
     @Override
     protected String getScope() {
         return Artifact.SCOPE_RUNTIME;
@@ -59,5 +65,10 @@ public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
     @Override
     protected File getOutputDirectory() {
         return outputDirectory;
+    }
+
+    @Override
+    protected File[] getClassDirectories() {
+        return new File[] { buildOutputDirectory };
     }
 }

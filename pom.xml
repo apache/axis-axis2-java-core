@@ -1213,6 +1213,11 @@
                     <artifactId>jaxb2-maven-plugin</artifactId>
                     <version>2.2</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxws-maven-plugin</artifactId>
+                    <version>2.4.1</version>
+                </plugin>
                 
                 <!-- Use 1.5.2 versions of the aar and mar plugins in order to avoid
                      the chicken and egg problem. -->

@@ -207,7 +207,6 @@
                 <executions>
                     <execution>
                         <id>build-repo</id>
-                        <phase>generate-test-resources</phase>
                         <goals>
                             <goal>create-test-repository</goal>
                         </goals>
@@ -215,6 +214,38 @@
                             <outputDirectory>${project.build.directory}/repo</outputDirectory>
                             <modules>addressing</modules>
                             <axis2xml>test-resources/axis2.xml</axis2xml>
+                            <jaxwsServices>
+                                <jaxwsService>
+                                    <name>XPayloadStringProvider</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.xmlhttp.provider.payload.string</package>
+                                    </packages>
+                                </jaxwsService>
+                                <jaxwsService>
+                                    <name>XMessageStringProvider</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.xmlhttp.provider.message.string</package>
+                                    </packages>
+                                </jaxwsService>
+                                <jaxwsService>
+                                    <name>XPayloadSourceProvider</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.xmlhttp.provider.payload.source</package>
+                                    </packages>
+                                </jaxwsService>
+                                <jaxwsService>
+                                    <name>XMessageSourceProvider</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.xmlhttp.provider.message.source</package>
+                                    </packages>
+                                </jaxwsService>
+                                <jaxwsService>
+                                    <name>XMessageDataSourceProvider</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.xmlhttp.provider.message.datasource</package>
+                                    </packages>
+                                </jaxwsService>
+                            </jaxwsServices>
                         </configuration>
                     </execution>
                     <execution>
@@ -983,69 +1014,6 @@
 
                                 <jar destfile="${servicejars.dir}/gorilla_dlw.jar" basedir="${servicejars.dir}/gorilla_dlw" />
                                 <delete dir="${servicejars.dir}/gorilla_dlw" />
-
-                                <!-- ================================================================ -->
-                                <!-- XML HTTP Tests -->
-                                <!-- ================================================================ -->
-                                <copy toDir="${servicejars.dir}/XPayloadStringProvider/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/string/*.class" />
-                                    </fileset>
-                                    <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/string">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
-
-                                <jar destfile="${servicejars.dir}/XPayloadStringProvider.jar" basedir="${servicejars.dir}/XPayloadStringProvider" />
-                                <delete dir="${servicejars.dir}/XPayloadStringProvider" />
-
-                                <copy toDir="${servicejars.dir}/XMessageStringProvider/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/string/*.class" />
-                                    </fileset>
-                                    <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/string">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
-
-                                <jar destfile="${servicejars.dir}/XMessageStringProvider.jar" basedir="${servicejars.dir}/XMessageStringProvider" />
-                                <delete dir="${servicejars.dir}/XMessageStringProvider" />
-
-                                <copy toDir="${servicejars.dir}/XPayloadSourceProvider/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/source/*.class" />
-                                    </fileset>
-                                    <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/source">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
-
-                                <jar destfile="${servicejars.dir}/XPayloadSourceProvider.jar" basedir="${servicejars.dir}/XPayloadSourceProvider" />
-                                <delete dir="${servicejars.dir}/XPayloadSourceProvider" />
-
-                                <copy toDir="${servicejars.dir}/XMessageSourceProvider/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/source/*.class" />
-                                    </fileset>
-                                    <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/source">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
-
-                                <jar destfile="${servicejars.dir}/XMessageSourceProvider.jar" basedir="${servicejars.dir}/XMessageSourceProvider" />
-                                <delete dir="${servicejars.dir}/XMessageSourceProvider" />
-
-                                <copy toDir="${servicejars.dir}/XMessageDataSourceProvider/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/datasource/*.class" />
-                                    </fileset>
-                                    <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/datasource">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
-
-                                <jar destfile="${servicejars.dir}/XMessageDataSourceProvider.jar" basedir="${servicejars.dir}/XMessageDataSourceProvider" />
-                                <delete dir="${servicejars.dir}/XMessageDataSourceProvider" />
 
                                 <!-- ================================================================ -->
                                 <!-- Java Bean Endpoint Samples -->
