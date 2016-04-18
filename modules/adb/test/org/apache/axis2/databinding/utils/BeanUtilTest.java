@@ -34,6 +34,9 @@ import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
 
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.util.List;
@@ -283,5 +286,14 @@ public class BeanUtilTest extends TestCase {
 	    return new String(theChars);
 	      }
   
-   
+    /**
+     * Regression test for AXIS2-5751.
+     */
+    public void testSerializeAnyTypeNull() {
+        assertAbout(xml())
+                .that(BeanUtil.getPullParser(new ComplexTypeWithAnyTypeElement(), new QName("root"), null, false, false))
+                .ignoringNamespaceDeclarations()
+                .ignoringNamespacePrefixes()
+                .hasSameContentAs("<root><prop xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true'/></root>");
+    }
 }
