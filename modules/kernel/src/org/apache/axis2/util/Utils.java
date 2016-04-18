@@ -733,7 +733,8 @@ public class Utils {
                     final Class<?> serviceClass = Loader.loadClass(
                             classLoader,
                             ((String) serviceClassParam.getValue()).trim());
-                    if (serviceClass.getModifiers() != Modifier.PUBLIC) {
+                    int mod = serviceClass.getModifiers();
+                    if (!Modifier.isPublic(mod) || Modifier.isAbstract(mod) || Modifier.isInterface(mod)) {
                         throw new AxisFault("Service class " + serviceClass.getName() +
                                             " must have public as access Modifier");
                     }
