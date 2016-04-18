@@ -355,7 +355,7 @@ public class BeanUtil {
                 }else {
                     addTypeQname(elemntNameSpace, propertyQnameValueList, property,
                                  beanName, processingDocLitBare);
-                    if (Object.class.equals(ptype)) {
+                    if (Object.class.equals(ptype) && value != null) {
                         //this is required to match this element prefix as
                         //root element's prefix.
                         QName qNamefortheType = (QName) typeTable
