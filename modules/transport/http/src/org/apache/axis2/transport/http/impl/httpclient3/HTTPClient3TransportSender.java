@@ -23,16 +23,19 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.AbstractHTTPSender;
-import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
+import org.apache.axis2.transport.http.AbstractHTTPTransportSender;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
-import org.apache.axis2.transport.http.HTTPTransportSender;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The Class HTTPClient4TransportSender use Commons-HTTPclient 3.1. Users are highly
  * encouraged to use HTTPClient4TransportSender instead of CommonsHTTPTransportSender.
  */
-public class HTTPClient3TransportSender extends CommonsHTTPTransportSender implements
-        HTTPTransportSender {
+public class HTTPClient3TransportSender extends AbstractHTTPTransportSender {
+    private final static Log log = LogFactory.getLog(HTTPClient3TransportSender.class);
 
     public void setHTTPClientVersion(ConfigurationContext configurationContext) {
         configurationContext.setProperty(HTTPTransportConstants.HTTP_CLIENT_VERSION,
@@ -41,7 +44,14 @@ public class HTTPClient3TransportSender extends CommonsHTTPTransportSender imple
 
     @Override
     public void cleanup(MessageContext msgContext) throws AxisFault {
-        super.cleanup(msgContext);
+        HttpMethod httpMethod = (HttpMethod) msgContext.getProperty(HTTPConstants.HTTP_METHOD);
+        if (httpMethod != null) {
+            // TODO : Don't do this if we're not on the right thread! Can we confirm?
+            log.trace("cleanup() releasing connection for " + httpMethod);
+
+            httpMethod.releaseConnection();
+            msgContext.removeProperty(HTTPConstants.HTTP_METHOD); // guard against multiple calls
+        }
     }
 
     @Override

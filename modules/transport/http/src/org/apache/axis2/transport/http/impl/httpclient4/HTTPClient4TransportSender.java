@@ -23,18 +23,16 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.AbstractHTTPSender;
-import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
+import org.apache.axis2.transport.http.AbstractHTTPTransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
-import org.apache.axis2.transport.http.HTTPTransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * The Class HTTPClient4TransportSender use HC HTTPClient 4.X. 
  */
-public class HTTPClient4TransportSender extends CommonsHTTPTransportSender implements
-                                                                           HTTPTransportSender {
+public class HTTPClient4TransportSender extends AbstractHTTPTransportSender {
 
     private static final Log log = LogFactory.getLog(HTTPClient4TransportSender.class);
 
