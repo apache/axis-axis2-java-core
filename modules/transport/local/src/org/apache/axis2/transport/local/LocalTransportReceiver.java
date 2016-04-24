@@ -34,23 +34,16 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class LocalTransportReceiver implements TransportListener {
-    protected static final Log log = LogFactory.getLog(LocalTransportReceiver.class);
 
     public static ConfigurationContext CONFIG_CONTEXT;
     private ConfigurationContext confContext;
     private MessageContext inMessageContext;
-    /** Whether the call is blocking or non-blocking */
-    private boolean nonBlocking = false;
-    /** If the call is non-blocking the in message context will be stored in this property */
-    public static final String IN_MESSAGE_CONTEXT = "IN_MESSAGE_CONTEXT";
 
     public LocalTransportReceiver(ConfigurationContext configContext) {
         confContext = configContext;
@@ -58,11 +51,6 @@ public class LocalTransportReceiver implements TransportListener {
 
     public LocalTransportReceiver(LocalTransportSender sender) {
         this(CONFIG_CONTEXT);
-    }
-
-    public LocalTransportReceiver(LocalTransportSender sender, boolean nonBlocking) {
-        this(CONFIG_CONTEXT);
-        this.nonBlocking = nonBlocking;
     }
 
     public void processMessage(MessageContext inMessageContext,
@@ -92,27 +80,12 @@ public class LocalTransportReceiver implements TransportListener {
                                OutputStream response)
             throws AxisFault {
         MessageContext msgCtx = confContext.createMessageContext();
-
-        if (this.nonBlocking) {
-            if (log.isDebugEnabled()) {
-                log.debug("Setting the in-message context as a property(" + IN_MESSAGE_CONTEXT +
-                        ") to the current message context");
-            }
-            // Set the in-message context as a property to the  current message context.
-            msgCtx.setProperty(IN_MESSAGE_CONTEXT, inMessageContext);
-        }
-
         if (inMessageContext != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Setting the property " + HTTPConstants.MC_HTTP_SERVLETREQUEST + " to " +
-                        inMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
-                log.debug("Setting the property " + MessageContext.REMOTE_ADDR + " to " +
-                        inMessageContext.getProperty(MessageContext.REMOTE_ADDR));
-            }
             msgCtx.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST,
                                inMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
             msgCtx.setProperty(MessageContext.REMOTE_ADDR,
                                inMessageContext.getProperty(MessageContext.REMOTE_ADDR));
+
         }
 
         TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
@@ -146,15 +119,6 @@ public class LocalTransportReceiver implements TransportListener {
 
             msgCtx.setEnvelope(envelope);
 
-             if (log.isDebugEnabled()) {
-                log.debug("Setting incoming Transport name - " + Constants.TRANSPORT_LOCAL);
-                log.debug("Setting TransportIn - " + tIn);
-                log.debug("Setting TransportOut - " + localTransportResOut);
-                log.debug("Setting To address - " + to);
-                log.debug("Setting WSAction - " + action);
-                log.debug("Setting Envelope - " + envelope.toString());
-            }
-
             AxisEngine.receive(msgCtx);
         } catch (AxisFault e) {
             // write the fault back.
@@ -163,10 +127,6 @@ public class LocalTransportReceiver implements TransportListener {
                         MessageContextBuilder.createFaultMessageContext(msgCtx, e);
                 faultContext.setTransportOut(localTransportResOut);
                 faultContext.setProperty(MessageContext.TRANSPORT_OUT, response);
-
-                if(log.isDebugEnabled()) {
-                    log.debug("Setting FaultContext's TransportOut - " + localTransportResOut);
-                }
 
                 AxisEngine.sendFault(faultContext);
             } catch (AxisFault axisFault) {
