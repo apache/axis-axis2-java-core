@@ -87,6 +87,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-jaxbri</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>jalopy</groupId>
             <artifactId>jalopy</artifactId>
         </dependency>
