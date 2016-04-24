@@ -22,6 +22,7 @@ package org.apache.axis2.transport.http;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
 import org.apache.axis2.transport.testkit.axis2.TransportDescriptionFactory;
 import org.apache.axis2.transport.testkit.http.HttpTestEnvironment;
 import org.apache.axis2.transport.testkit.tests.Setup;
@@ -44,7 +45,7 @@ public class HttpTransportDescriptionFactory implements TransportDescriptionFact
 
     public TransportOutDescription createTransportOutDescription() throws Exception {
         TransportOutDescription desc = new TransportOutDescription("http");
-        desc.setSender(new CommonsHTTPTransportSender());
+        desc.setSender(new HTTPClient4TransportSender());
         return desc;
     }
 }

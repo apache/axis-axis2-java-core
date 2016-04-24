@@ -87,6 +87,7 @@
         <module>modules/osgi-tests</module>
         <module>modules/transport/local</module>
         <module>modules/transport/http</module>
+        <module>modules/transport/http-hc3</module>
         <module>modules/transport/base</module>
         <module>modules/transport/jms</module>
         <module>modules/transport/mail</module>

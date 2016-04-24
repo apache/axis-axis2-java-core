@@ -22,7 +22,6 @@ package org.apache.axis2.transport.http.mock.server;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.mail.MessagingException;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -144,10 +143,8 @@ public abstract class AbstractHTTPServerTest extends TestCase {
      * @return the envelope
      * @throws IOException
      *             Signals that an I/O exception has occurred.
-     * @throws MessagingException
-     *             the messaging exception
      */
-    public static SOAPEnvelope getEnvelope() throws IOException, MessagingException {
+    public static SOAPEnvelope getEnvelope() throws IOException {
         SOAPFactory soapFac = OMAbstractFactory.getSOAP11Factory();
         OMFactory omFac = OMAbstractFactory.getOMFactory();
         SOAPEnvelope enp = soapFac.createSOAPEnvelope();

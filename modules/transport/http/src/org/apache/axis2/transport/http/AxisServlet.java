@@ -52,7 +52,6 @@ import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.OnDemandLogger;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -564,7 +563,11 @@ public class AxisServlet extends HttpServlet {
                 && HTTPTransportConstants.HTTP_CLIENT_4_X_VERSION.equals(clientVersion)) {
             // TODO - Handle for HTTPClient 4
         } else {
-            MultiThreadedHttpConnectionManager.shutdownAll();
+            try {
+                Class.forName("org.apache.commons.httpclient.MultiThreadedHttpConnectionManager").getMethod("shutdownAll").invoke(null);
+            } catch (Exception ex) {
+                log.warn("Failed to shut down MultiThreadedHttpConnectionManager", ex);
+            }
         }
 
     }

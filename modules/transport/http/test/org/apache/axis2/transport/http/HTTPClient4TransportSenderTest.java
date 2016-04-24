@@ -33,7 +33,6 @@ public class HTTPClient4TransportSenderTest extends CommonsHTTPTransportSenderTe
         return new HTTPClient4TransportSender();
     }
 
-    @Override
     public void testCleanup() throws AxisFault {
         TransportSender sender = getTransportSender();
         MessageContext msgContext = new MessageContext();

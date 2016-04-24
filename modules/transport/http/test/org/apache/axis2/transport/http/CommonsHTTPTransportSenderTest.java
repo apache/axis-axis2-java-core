@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
@@ -51,8 +50,6 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.mock.MockAxisHttpResponse;
 import org.apache.axis2.transport.http.mock.MockHttpServletResponse;
 import org.apache.axis2.transport.http.mock.MockHTTPResponse;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.message.BasicRequestLine;
@@ -93,18 +90,6 @@ public abstract class CommonsHTTPTransportSenderTest extends TestCase  {
                 .hasSameContentAs(envelope.toString());
     }
 
-    public void testCleanup() throws AxisFault {
-        TransportSender sender = getTransportSender();
-        MessageContext msgContext = new MessageContext();
-        HttpMethod httpMethod = new GetMethod();
-        msgContext.setProperty(HTTPConstants.HTTP_METHOD, httpMethod);
-        assertNotNull("HttpMethod can not be null",
-                msgContext.getProperty(HTTPConstants.HTTP_METHOD));
-        sender.cleanup(msgContext);
-        assertNull("HttpMethod should be null", msgContext.getProperty(HTTPConstants.HTTP_METHOD));
-
-    }
-    
     public void testInit() throws AxisFault {
         ConfigurationContext confContext = ConfigurationContextFactory
                 .createEmptyConfigurationContext();
@@ -149,7 +134,7 @@ public abstract class CommonsHTTPTransportSenderTest extends TestCase  {
 
     }
     
-    static SOAPEnvelope getEnvelope() throws IOException, MessagingException {
+    static SOAPEnvelope getEnvelope() throws IOException {
         SOAPFactory soapFac = OMAbstractFactory.getSOAP11Factory();
         OMFactory omFac = OMAbstractFactory.getOMFactory();
         SOAPEnvelope enp = soapFac.createSOAPEnvelope();

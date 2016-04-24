@@ -19,8 +19,12 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.impl.httpclient3.HTTPClient3TransportSender;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 public class HTTPClient3TransportSenderTest extends CommonsHTTPTransportSenderTest {
 
@@ -29,4 +33,15 @@ public class HTTPClient3TransportSenderTest extends CommonsHTTPTransportSenderTe
         return new HTTPClient3TransportSender();
     }
 
+    public void testCleanup() throws AxisFault {
+        TransportSender sender = getTransportSender();
+        MessageContext msgContext = new MessageContext();
+        HttpMethod httpMethod = new GetMethod();
+        msgContext.setProperty(HTTPConstants.HTTP_METHOD, httpMethod);
+        assertNotNull("HttpMethod can not be null",
+                msgContext.getProperty(HTTPConstants.HTTP_METHOD));
+        sender.cleanup(msgContext);
+        assertNull("HttpMethod should be null", msgContext.getProperty(HTTPConstants.HTTP_METHOD));
+
+    }
 }

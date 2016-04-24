@@ -27,7 +27,6 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.transport.http.mock.server.AbstractHTTPServerTest;
 import org.apache.axis2.transport.http.mock.server.BasicHttpServer;
 
-import javax.mail.MessagingException;
 import javax.ws.rs.core.HttpHeaders;
 
 import static com.google.common.truth.Truth.assertAbout;
@@ -58,11 +57,9 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
      *            the rest
      * @throws IOException
      *             Signals that an I/O exception has occurred.
-     * @throws MessagingException
-     *             the messaging exception
      */
     protected void sendViaHTTP(String httpMethod, String soapAction, String address, boolean rest)
-            throws IOException, MessagingException {
+            throws IOException {
         httpSender = getHTTPSender();
         MessageContext msgContext = new MessageContext();
         ConfigurationContext configContext = ConfigurationContextFactory

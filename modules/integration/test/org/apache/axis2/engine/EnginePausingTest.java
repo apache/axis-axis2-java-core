@@ -43,7 +43,7 @@ import org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
+import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class EnginePausingTest extends TestCase {
         configContext.setServicePath(Constants.DEFAULT_SERVICES_PATH);
         configContext.setContextRoot("axis2");
         transportOut = new TransportOutDescription("null");
-        transportOut.setSender(new CommonsHTTPTransportSender());
+        transportOut.setSender(new HTTPClient4TransportSender());
         transportIn = new TransportInDescription("null");
 
     }

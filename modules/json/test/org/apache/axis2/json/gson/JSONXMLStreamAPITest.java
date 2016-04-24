@@ -20,17 +20,10 @@
 package org.apache.axis2.json.gson;
 
 import org.apache.axis2.testutils.UtilServer;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-
 
 public class JSONXMLStreamAPITest {
 
