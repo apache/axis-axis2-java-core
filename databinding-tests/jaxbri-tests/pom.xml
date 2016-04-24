@@ -188,11 +188,6 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>axis2-jaxbri</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                    <dependency>
                         <!-- Work around "'file' access is not allowed due to restriction set by
                              the accessExternalSchema property" error on Java 8. -->
                         <groupId>xerces</groupId>
