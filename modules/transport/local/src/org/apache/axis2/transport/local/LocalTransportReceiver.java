@@ -27,11 +27,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 
@@ -39,8 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-public class LocalTransportReceiver implements TransportListener {
-
+public class LocalTransportReceiver {
     public static ConfigurationContext CONFIG_CONTEXT;
     private ConfigurationContext confContext;
     private MessageContext inMessageContext;
@@ -134,29 +131,5 @@ public class LocalTransportReceiver implements TransportListener {
                 throw axisFault;
             }
         }
-    }
-
-    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn) throws AxisFault {
-    }
-
-    public void start() throws AxisFault {
-    }
-
-    public void stop() throws AxisFault {
-    }
-
-    public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        return null;
-    }
-
-    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference[0];
-    }
-
-    public SessionContext getSessionContext(MessageContext messageContext) {
-        return null;
-    }
-
-    public void destroy() {
     }
 }
