@@ -19,8 +19,8 @@
 
 package org.apache.axis2.datasource.jaxb;
 
+import org.apache.axiom.mime.MimePartProvider;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.util.stax.xop.MimePartProvider;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

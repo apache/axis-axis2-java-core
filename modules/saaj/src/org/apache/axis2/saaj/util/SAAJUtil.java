@@ -19,10 +19,10 @@
 
 package org.apache.axis2.saaj.util;
 
+import org.apache.axiom.mime.MimePartProvider;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axiom.util.stax.xop.MimePartProvider;
 import org.apache.axiom.util.stax.xop.XOPDecodingStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
