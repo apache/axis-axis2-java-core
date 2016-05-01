@@ -24,22 +24,18 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.axiom.attachments.lifecycle.DataHandlerExt;
-import org.apache.commons.io.IOUtils;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.blob.BlobDataSource;
+import org.apache.axiom.mime.PartDataHandler;
 
 public class MtomImpl implements MtomSkeletonInterface {
-    private final Map<String,byte[]> documents = new HashMap<String,byte[]>();
+    private final Map<String,Blob> documents = new HashMap<String,Blob>();
     
     public UploadDocumentResponse uploadDocument(UploadDocument uploadDocument) {
         String id = UUID.randomUUID().toString();
-        try {
-            // If we don't get a DataHandlerExt here, then we know that we are not using MTOM
-            documents.put(id, IOUtils.toByteArray(((DataHandlerExt)uploadDocument.getContent()).readOnce()));
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        // If we don't get a PartDataHandler here, then we know that we are not using MTOM
+        documents.put(id, ((PartDataHandler)uploadDocument.getContent()).getPart().getBlob());
         UploadDocumentResponse response = new UploadDocumentResponse();
         response.setId(id);
         return response;
@@ -47,7 +43,7 @@ public class MtomImpl implements MtomSkeletonInterface {
 
     public RetrieveDocumentResponse retrieveDocument(RetrieveDocument retrieveDocument) {
         RetrieveDocumentResponse response = new RetrieveDocumentResponse();
-        response.setContent(new DataHandler(new ByteArrayDataSource(documents.get(retrieveDocument.getId()), "application/octet-stream")));
+        response.setContent(new DataHandler(new BlobDataSource(documents.get(retrieveDocument.getId()), "application/octet-stream")));
         return response;
     }
 }
