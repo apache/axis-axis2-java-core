@@ -22,6 +22,7 @@ package org.apache.axis2.builder;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.util.MessageProcessorSelector;
 
 import java.io.InputStream;
 
@@ -30,7 +31,7 @@ import java.io.InputStream;
  * Message builders are used by {@link org.apache.axis2.transport.TransportListener}
  * implementations to process the raw payload of the message and turn it into SOAP.
  * Transports should use
- * {@link org.apache.axis2.builder.BuilderUtil#getBuilderFromSelector(String, MessageContext)}
+ * {@link MessageProcessorSelector#getMessageBuilder(String, MessageContext)}
  * to select the message builder appropriate for the content type of the message.
  */
 public interface Builder {

@@ -49,6 +49,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.util.MultipleEntryHashMap;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.io.IOUtils;
@@ -580,62 +581,11 @@ public class BuilderUtil {
     }
 
     /**
-     * Initial work for a builder selector which selects the builder for a given message format
-     * based on the the content type of the recieved message. content-type to builder mapping can be
-     * specified through the Axis2.xml.
-     *
-     * @param type       content-type
-     * @param msgContext the active MessageContext
-     * @return the builder registered against the given content-type
-     * @throws AxisFault
+     * @deprecated Use {@link MessageProcessorSelector#getMessageBuilder(String, MessageContext)}.
      */
     public static Builder getBuilderFromSelector(String type, MessageContext msgContext)
             throws AxisFault {
-    	boolean useFallbackBuilder = false;
-        AxisConfiguration configuration =
-                msgContext.getConfigurationContext().getAxisConfiguration();
-        Parameter useFallbackParameter = configuration.getParameter(Constants.Configuration.USE_DEFAULT_FALLBACK_BUILDER);
-        if (useFallbackParameter !=null){
-        	useFallbackBuilder = JavaUtils.isTrueExplicitly(useFallbackParameter.getValue(),useFallbackBuilder);
-        }
-        Builder builder = configuration.getMessageBuilder(type,useFallbackBuilder);
-        if (builder != null) {
-            // Check whether the request has a Accept header if so use that as the response
-            // message type.
-            // If thats not present,
-            // Setting the received content-type as the messageType to make
-            // sure that we respond using the received message serialization format.
-
-            Object contentNegotiation = configuration
-                    .getParameterValue(Constants.Configuration.ENABLE_HTTP_CONTENT_NEGOTIATION);
-            if (JavaUtils.isTrueExplicitly(contentNegotiation)) {
-                Map transportHeaders =
-                        (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-                if (transportHeaders != null) {
-                    String acceptHeader = (String)transportHeaders.get(HTTPConstants.HEADER_ACCEPT);
-                    if (acceptHeader != null) {
-                        int index = acceptHeader.indexOf(";");
-                        if (index > 0) {
-                            acceptHeader = acceptHeader.substring(0, index);
-                        }
-                        String[] strings = acceptHeader.split(",");
-                        for (String string : strings) {
-                            String accept = string.trim();
-                            // We dont want dynamic content negotoatin to work on text.xml as its
-                            // ambiguos as to whether the user requests SOAP 1.1 or POX response
-                            if (!HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(accept) &&
-                                configuration.getMessageFormatter(accept) != null) {
-                                type = string;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, type);
-        }
-        return builder;
+        return MessageProcessorSelector.getMessageBuilder(type, msgContext);
     }
 
     public static void validateSOAPVersion(String soapNamespaceURIFromTransport,
