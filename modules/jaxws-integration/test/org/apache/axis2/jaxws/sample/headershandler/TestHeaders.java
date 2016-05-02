@@ -98,7 +98,7 @@ public class TestHeaders {
      * 
      * @param clazz the currently executing handler class
      */
-    public TestHeaders(Class clazz) {
+    public TestHeaders(Class<?> clazz) {
     	className = clazz.getSimpleName();
     }
     
@@ -178,10 +178,10 @@ public class TestHeaders {
     public void confirmMessageAsString(MessageContext mc) {
         String text = null;
         if (mc != null) {
-            Object accessor =  mc.get(Constants.JAXWS_MESSAGE_ACCESSOR);
+            MessageAccessor accessor = (MessageAccessor) mc.get(Constants.JAXWS_MESSAGE_ACCESSOR);
             if (accessor != null) {
                 Boolean preMessageAccessed = (Boolean) mc.get("jaxws.isMessageAccessed");
-                text = accessor.toString();
+                text = accessor.getMessageAsString();
                 Boolean postMessageAccessed = (Boolean) mc.get("jaxws.isMessageAccessed");
                 if (preMessageAccessed != postMessageAccessed) {
                     throw new WebServiceException("The message was accessed when toString was called.");

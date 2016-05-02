@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.core;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.api.MessageAccessor;
 import org.apache.axis2.jaxws.api.MessageAccessorFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -30,8 +29,6 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -55,9 +52,6 @@ import java.util.Map;
  * is available.
  */
 public class MessageContext {
-
-    private static Log log = LogFactory.getLog(MessageContext.class);
-    
     private InvocationContext invocationCtx;
     private org.apache.axis2.context.MessageContext axisMsgCtx;
     private EndpointDescription endpointDesc;
@@ -144,10 +138,10 @@ public class MessageContext {
     public Map<String, Object> getProperties() {
         // only use properties that are local to the axis2 MC,
         // not the options bag.  See org.apache.axis2.context.AbstractContext
-        Iterator names = axisMsgCtx.getPropertyNames();
-        HashMap tempProps = new HashMap<String, Object>();
+        Iterator<String> names = axisMsgCtx.getPropertyNames();
+        HashMap<String, Object> tempProps = new HashMap<String, Object>();
         for (; names.hasNext();) {
-            String name = (String)names.next();
+            String name = names.next();
             tempProps.put(name, axisMsgCtx.getProperty(name));
         }
         //return new ReadOnlyProperties(tempProps);
