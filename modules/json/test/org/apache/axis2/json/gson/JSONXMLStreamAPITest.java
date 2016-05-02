@@ -19,30 +19,19 @@
 
 package org.apache.axis2.json.gson;
 
-import org.apache.axis2.testutils.UtilServer;
-import org.junit.After;
+import org.apache.axis2.testutils.Axis2Server;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class JSONXMLStreamAPITest {
-
-    @Before
-    public void setUp()throws Exception {
-        UtilServer.start("target/repo", "test-repository/gson/axis2.xml");
-
-    }
-
-    @After
-    public void tearDown()throws Exception {
-        UtilServer.stop();
-
-    }
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo/gson");
 
     @Test
     public void xmlStreamAPITest()throws Exception{
-        String getLibURL = "http://localhost:" + UtilServer.TESTING_PORT +"/axis2/services/LibraryService/getLibrary";
-        String echoLibURL = "http://localhost:" + UtilServer.TESTING_PORT +"/axis2/services/LibraryService/echoLibrary";
+        String getLibURL = server.getEndpoint("LibraryService") + "getLibrary";
+        String echoLibURL = server.getEndpoint("LibraryService") + "echoLibrary";
         String contentType = "application/json";
         String charSet = "UTF-8";
 

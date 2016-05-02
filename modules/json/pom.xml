@@ -156,6 +156,33 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>json-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <inputDirectory>test-repository/json</inputDirectory>
+                            <outputDirectory>${project.build.directory}/repo/json</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>gson-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <inputDirectory>test-repository/gson</inputDirectory>
+                            <outputDirectory>${project.build.directory}/repo/gson</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -165,11 +192,8 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                            <outputDirectory>${project.build.directory}/repo/gson</outputDirectory>
                             <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
                                 <resource>
                                     <directory>${project.build.directory}/gen/resources</directory>
                                     <targetPath>services/json_adb_test.aar/META-INF</targetPath>
