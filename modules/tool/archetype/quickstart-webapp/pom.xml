@@ -24,12 +24,12 @@
 	<parent>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2</artifactId>
-		<version>1.7.2-SNAPSHOT</version>
+		<version>1.7.2</version>
 		<relativePath>../../../../pom.xml</relativePath>
 	</parent>
 	<groupId>org.apache.axis2.archetype</groupId>
 	<artifactId>quickstart-webapp</artifactId>
-	<version>1.7.2-SNAPSHOT</version>
+	<version>1.7.2</version>
 	<packaging>maven-archetype</packaging>
 	<name>Axis2 quickstart-web archetype </name>
 	<description>Maven archetype for creating a  Axis2 web Service as a webapp </description>
