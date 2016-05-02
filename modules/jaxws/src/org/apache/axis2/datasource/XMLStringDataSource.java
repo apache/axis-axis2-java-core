@@ -21,27 +21,21 @@ package org.apache.axis2.datasource;
 
 
 import org.apache.axiom.om.OMDataSourceExt;
-import org.apache.axiom.om.ds.OMDataSourceExtBase;
+import org.apache.axiom.om.ds.AbstractPullOMDataSource;
 import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.StringReader;
 
 /**
  * OMDataSource backed by a string containing xml data
  */
-public class XMLStringDataSource extends OMDataSourceExtBase {
-    String data;
+public class XMLStringDataSource extends AbstractPullOMDataSource {
+    private final String data;
 
     public XMLStringDataSource(String data) {
-        super();
         this.data = data;
-    }
-
-    public void close() {
     }
 
     public OMDataSourceExt copy() {
@@ -53,26 +47,10 @@ public class XMLStringDataSource extends OMDataSourceExtBase {
     }
 
     public XMLStreamReader getReader() throws XMLStreamException {
-
-        try {
-            String encoding = "utf-8";
-            InputStream is = new ByteArrayInputStream(getXMLBytes(encoding));
-            return StAXUtils.createXMLStreamReader(is, encoding);
-        } catch (UnsupportedEncodingException e) {
-            throw new XMLStreamException(e);
-        }
-    }
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        return data.getBytes(encoding);
+        return StAXUtils.createXMLStreamReader(new StringReader(data));
     }
 
     public boolean isDestructiveRead() {
         return false;
     }
-
-    public boolean isDestructiveWrite() {
-        return false;
-    }
-    
 }
