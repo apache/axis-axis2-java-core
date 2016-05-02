@@ -38,7 +38,7 @@ public class ServiceTest {
         ColorService client = new ColorService_Service().getColorServiceSOAP();
         ((BindingProvider)client).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + server.getPort() + "/axis2/services/ColorService");
+                server.getEndpoint("ColorService"));
         Color color = new Color();
         color.setIn("RED");
         assertThat(client.test(color).getOut()).isEqualTo("Red is good!");
