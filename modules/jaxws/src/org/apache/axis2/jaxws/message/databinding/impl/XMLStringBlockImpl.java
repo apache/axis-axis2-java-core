@@ -24,8 +24,8 @@ import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.ds.StringOMDataSource;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.datasource.XMLStringDataSource;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.databinding.XMLStringBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -92,8 +92,8 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         // Shortcut to get business object from existing data source
         if (omElement instanceof OMSourcedElement) {
             OMDataSource ds = ((OMSourcedElement) omElement).getDataSource();
-            if (ds instanceof XMLStringDataSource) {
-                return ((XMLStringDataSource) ds).getObject();
+            if (ds instanceof StringOMDataSource) {
+                return ((StringOMDataSource) ds).getObject();
             }
         }
         return super._getBOFromOM(omElement, busContext);
@@ -152,7 +152,7 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
     }
     
     public OMDataSourceExt copy() throws OMException {
-        return new XMLStringDataSource((String) getObject());
+        return new StringOMDataSource((String) getObject());
     }
 
 
