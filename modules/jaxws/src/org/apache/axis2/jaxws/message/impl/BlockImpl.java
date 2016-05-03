@@ -19,13 +19,14 @@
 
 package org.apache.axis2.jaxws.message.impl;
 
+import org.apache.axiom.blob.Blobs;
 import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.ds.ByteArrayDataSource;
+import org.apache.axiom.om.ds.BlobOMDataSource;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -546,7 +547,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
         try {
             String encoding = "utf-8"; // Choose a common encoding
             byte[] bytes = this.getXMLBytes(encoding);
-            return new ByteArrayDataSource(bytes, encoding);
+            return new BlobOMDataSource(Blobs.createBlob(bytes), encoding);
         } catch (UnsupportedEncodingException e) {
             throw new OMException(e);
         }
