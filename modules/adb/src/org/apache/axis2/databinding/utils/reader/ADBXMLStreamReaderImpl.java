@@ -24,7 +24,6 @@ import org.apache.axiom.ext.stax.datahandler.DataHandlerReader;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.util.OMSerializerUtil;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
@@ -37,6 +36,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.lang.reflect.Array;
 
 /**
@@ -61,7 +61,8 @@ import java.lang.reflect.Array;
  * <p/>
  */
 public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, DataHandlerReader {
-
+    private static final AtomicInteger nsPrefix = new AtomicInteger();
+    
     private Object[] properties;
     private Object[] attributes;
     private QName elementQName;
@@ -131,7 +132,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, DataHandlerRe
                     if(qname !=null){
                         String prefix =qname.getPrefix();
                         if(prefix == null || "".equals(prefix)){
-                            prefix = OMSerializerUtil.getNextNSPrefix();
+                            prefix = getNextNSPrefix();
                         }
                         qname = new QName(qname.getNamespaceURI(),qname.getLocalPart(),prefix);
                         this.typeTable.getComplexSchemaMap().put(key,qname);
@@ -141,6 +142,10 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, DataHandlerRe
                 }
             }
         }
+    }
+
+    private static String getNextNSPrefix() {
+        return "ns" + nsPrefix.incrementAndGet();
     }
 
     /** add the namespace context */
@@ -474,7 +479,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, DataHandlerRe
                            // first check it is already there if not add the namespace.
                            String prefix = namespaceContext.getPrefix(attributeQName.getNamespaceURI());
                            if (prefix == null){
-                               prefix = OMSerializerUtil.getNextNSPrefix();
+                               prefix = getNextNSPrefix();
                                addToNsMap(prefix,attributeQName.getNamespaceURI());
                            }
 
