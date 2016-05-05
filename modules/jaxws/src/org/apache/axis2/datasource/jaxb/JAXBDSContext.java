@@ -519,13 +519,13 @@ public class JAXBDSContext {
             log.debug("XMLStreamWriter is " + writer);
         }
         OutputStream os = null;
-        if (writer.getClass() == MTOMXMLStreamWriter.class) {
+        if (writer instanceof MTOMXMLStreamWriter) {
             os = ((MTOMXMLStreamWriter) writer).getOutputStream();
             if (log.isDebugEnabled()) {
                 log.debug("OutputStream accessible from MTOMXMLStreamWriter is " + os);
             }
         }
-        if (writer.getClass() == XMLStreamWriterWithOS.class) {
+        if (writer instanceof XMLStreamWriterWithOS) {
             os = ((XMLStreamWriterWithOS) writer).getOutputStream();
             if (log.isDebugEnabled()) {
                 log.debug("OutputStream accessible from XMLStreamWriterWithOS is " + os);
