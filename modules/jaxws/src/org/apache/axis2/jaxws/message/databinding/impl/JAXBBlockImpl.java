@@ -45,8 +45,6 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * JAXBBlockImpl <p/> A Block containing a JAXB business object (either a JAXBElement or an object
@@ -195,18 +193,6 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        try {
-            byte[] bytes= _getBytesFromBO(
-                                          getBusinessObject(false), 
-                                          busContext, 
-                                          encoding);
-            return new ByteArrayInputStream(bytes);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -230,16 +216,6 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         }
         return new JAXBDataSource(this.getObject(), 
                                   (JAXBDSContext) this.getBusinessContext());
-    }
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        try {
-            return _getBytesFromBO(getBusinessObject(false), 
-                                   busContext, 
-                                   encoding);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
     }
 
     public void setParent(Message message) {

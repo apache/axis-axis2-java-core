@@ -49,9 +49,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
@@ -326,16 +324,6 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        try {
-            byte[] bytes = (byte[]) 
-                ConvertUtils.convert(getBusinessObject(false), byte[].class);
-            return new ByteArrayInputStream(bytes);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -350,23 +338,5 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
 
     public boolean isDestructiveWrite() {
         return true;
-    }
-
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        if (log.isDebugEnabled()) {
-            log.debug("Start getXMLBytes");
-        }
-        byte[] bytes = null;
-        try {
-            bytes = (byte[]) 
-                ConvertUtils.convert(getBusinessObject(false), byte[].class);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("End getXMLBytes");
-        }
-        return bytes;
     }
 }

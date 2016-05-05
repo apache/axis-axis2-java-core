@@ -37,10 +37,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 
 /**
  * XMLStringBlock
@@ -124,15 +121,6 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        try {
-            byte[] bytes = ((String) getBusinessObject(false)).getBytes(encoding);
-            return new ByteArrayInputStream(bytes);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -153,14 +141,5 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
     
     public OMDataSourceExt copy() throws OMException {
         return new StringOMDataSource((String) getObject());
-    }
-
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        try {
-            return ((String) getBusinessObject(false)).getBytes(encoding);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
     }
 }

@@ -23,11 +23,10 @@ import org.apache.axiom.blob.Blobs;
 import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.ds.AbstractOMDataSource;
 import org.apache.axiom.om.ds.BlobOMDataSource;
-import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -45,11 +44,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.HashMap;
 
 /**
  * BlockImpl Abstract Base class for various Block Implementations.
@@ -64,7 +60,7 @@ import java.util.HashMap;
  * The derived classes don't have direct access to the instance data. This ensures that BlockImpl
  * controls the transformations.
  */
-public abstract class BlockImpl<T,C> implements Block<T,C> {
+public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Block<T,C> {
 
     private static Log log = LogFactory.getLog(BlockImpl.class);
 
@@ -80,8 +76,6 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     protected boolean consumed = false;
     protected Message parent;
     
-    private HashMap<String,Object> map = null; // OMDataSourceExt properties
-
     /**
      * A Block has the following components
      *
@@ -256,37 +250,6 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
       */
     public final XMLStreamReader getReader() throws XMLStreamException {
         return getXMLStreamReader(true);
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMDataSource#serialize(java.io.OutputStream, org.apache.axiom.om.OMOutputFormat)
-      */
-    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        MTOMXMLStreamWriter writer = new MTOMXMLStreamWriter(output, format);
-        serialize(writer);
-        writer.flush();
-        try {
-            writer.close();
-        } catch (XMLStreamException e) {
-            // An exception can occur if nothing is written to the 
-            // writer.  This is possible if the underlying data source
-            // writers to the output stream directly.
-            if (log.isDebugEnabled()) {
-                log.debug("Catching and swallowing exception " + e);
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
-      */
-    public final void serialize(Writer writerTarget, OMOutputFormat format) throws XMLStreamException {
-        MTOMXMLStreamWriter writer =
-                new MTOMXMLStreamWriter(StAXUtils.createXMLStreamWriter(writerTarget));
-        writer.setOutputFormat(format);
-        serialize(writer);
-        writer.flush();
-        writer.close();
     }
 
     /* (non-Javadoc)
@@ -565,25 +528,4 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     protected abstract void _outputFromBO(T busObject, C busContext,
                                           XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException;
-	
-    public final Object getProperty(String key) {
-        if (map == null) {
-            return null;
-        }
-        return map.get(key);
-    }
-
-    public final Object setProperty(String key, Object value) {
-        if (map == null) {
-            map = new HashMap<String,Object>();
-        }
-        return map.put(key, value);
-    }
-
-    public final boolean hasProperty(String key) {
-        if (map == null) {
-            return false;
-        } 
-        return map.containsKey(key);
-    }
 }

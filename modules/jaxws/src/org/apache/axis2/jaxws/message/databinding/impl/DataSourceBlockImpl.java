@@ -23,11 +23,9 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.util.io.IOUtils;
 import org.apache.axis2.builder.DataSourceBuilder;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -36,7 +34,6 @@ import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -47,12 +44,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
@@ -163,14 +156,6 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
         }
     }
     
-    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        try {
-            IOUtils.copy(((DataSource)busObject).getInputStream(), output, -1);
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
-    }
-    
     @Override
     protected void _outputFromBO(DataSource busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
@@ -236,16 +221,6 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        try {
-            byte[] bytes = (byte[]) 
-                ConvertUtils.convert(getBusinessObject(false), byte[].class);
-            return new ByteArrayInputStream(bytes);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -260,23 +235,5 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
 
     public boolean isDestructiveWrite() {
         return true;
-    }
-
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        if (log.isDebugEnabled()) {
-            log.debug("Start getXMLBytes");
-        }
-        byte[] bytes = null;
-        try {
-            bytes = (byte[]) 
-                ConvertUtils.convert(getBusinessObject(false), byte[].class);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("End getXMLBytes");
-        }
-        return bytes;
     }
 }

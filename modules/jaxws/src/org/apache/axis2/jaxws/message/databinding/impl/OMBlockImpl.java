@@ -20,7 +20,6 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.databinding.OMBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -30,11 +29,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /** OMBlockImpl Block with a business object that is an OMElement */
 public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
@@ -92,11 +86,6 @@ public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        byte[] bytes = getXMLBytes(encoding);
-        return new ByteArrayInputStream(bytes);
-    }
-
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -111,20 +100,5 @@ public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
 
     public boolean isDestructiveWrite() {
         return false;
-    }
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OMOutputFormat format = new OMOutputFormat();
-        format.setCharSetEncoding(encoding);
-        try {
-            serialize(baos, format);
-            baos.flush();
-            return baos.toByteArray();
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        } catch (IOException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
     }
 }
