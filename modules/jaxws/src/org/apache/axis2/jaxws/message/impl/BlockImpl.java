@@ -80,7 +80,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
     protected boolean consumed = false;
     protected Message parent;
     
-    private HashMap map = null; // OMDataSourceExt properties
+    private HashMap<String,Object> map = null; // OMDataSourceExt properties
 
     /**
      * A Block has the following components
@@ -575,7 +575,7 @@ public abstract class BlockImpl<T,C> implements Block<T,C> {
 
     public final Object setProperty(String key, Object value) {
         if (map == null) {
-            map = new HashMap();
+            map = new HashMap<String,Object>();
         }
         return map.put(key, value);
     }
