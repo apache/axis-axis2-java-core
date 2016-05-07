@@ -184,10 +184,6 @@ public class SchemaCompiler {
 
         //load the base types
         baseSchemaTypeMap = SchemaPropertyLoader.getTypeMapperInstance().getTypeMap();
-        // adding all the soap encoding schema classes
-        processedTypemap.putAll(SchemaPropertyLoader.getTypeMapperInstance().getSoapEncodingTypesMap());
-
-
     }
 
     /**

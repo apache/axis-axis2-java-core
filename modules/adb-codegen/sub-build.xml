@@ -78,7 +78,6 @@
 			<arg file="${testsuite.source.dir}/union2.xsd"/>
 			<arg file="${testsuite.source.dir}/default_value.xsd"/>
 			<arg file="${testsuite.source.dir}/complexExtension.xsd"/>
-			<arg file="${testsuite.source.dir}/soapencoding.xsd"/>
 			<arg file="${testsuite.source.dir}/chameleon.xsd"/>
 			<arg file="${testsuite.source.dir}/nonamespace.xsd"/> <!-- compile only; no tests -->
 			<arg file="${testsuite.source.dir}/unqualified.xsd"/>
