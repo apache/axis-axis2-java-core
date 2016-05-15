@@ -80,7 +80,7 @@ public class JAXBDSContextTests extends TestCase {
         OMAbstractFactory.getOMFactory().createOMElement(new AbstractPushOMDataSource() {
             @Override
             public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-                writer.writeStartElement("root");
+                writer.writeStartElement("", "root", "");
                 try {
                     context.marshal(jaxbElement, writer);
                 } catch (JAXBException ex) {
@@ -142,7 +142,7 @@ public class JAXBDSContextTests extends TestCase {
         OMAbstractFactory.getOMFactory().createOMElement(new AbstractPushOMDataSource() {
             @Override
             public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-                writer.writeStartElement("root");
+                writer.writeStartElement("", "root", "");
                 try {
                     context.marshal(jaxbElement, writer);
                 } catch (JAXBException ex) {
