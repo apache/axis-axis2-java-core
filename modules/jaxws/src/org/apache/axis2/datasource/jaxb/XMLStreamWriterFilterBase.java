@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
-import org.apache.axiom.om.util.XMLStreamWriterFilter;
 
 /**
  * The base class for classes that are MTOMXMLStreamWriter filters.
@@ -242,24 +241,9 @@ public abstract class XMLStreamWriterFilterBase extends MTOMXMLStreamWriter {
     }
 
     @Override
-    public void setOutputFormat(OMOutputFormat format) {
-        delegate.setOutputFormat(format);
-    }
-
-    @Override
     public OutputStream getOutputStream() throws XMLStreamException {
         // Since the filter may modify the data, we can't allow access to the raw output stream
         return null;
-    }
-
-    @Override
-    public void setFilter(XMLStreamWriterFilter filter) {
-        delegate.setFilter(filter);
-    }
-
-    @Override
-    public XMLStreamWriterFilter removeFilter() {
-        return delegate.removeFilter();
     }
 
     /**
