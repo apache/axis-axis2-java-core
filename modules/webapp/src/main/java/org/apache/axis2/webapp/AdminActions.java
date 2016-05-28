@@ -25,6 +25,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -50,6 +51,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Provides methods to process axis2 admin requests.
@@ -208,20 +210,38 @@ final class AdminActions {
     @Action(name=EDIT_SERVICE_PARAMETERS)
     public View editServiceParameters(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("axisService");
-        AxisService serviceTemp =
+        AxisService service =
                 configContext.getAxisConfiguration().getServiceForActivation(serviceName);
-        if (serviceTemp.isActive()) {
+        if (service.isActive()) {
 
             if (serviceName != null) {
                 req.getSession().setAttribute(Constants.SERVICE,
                                               configContext.getAxisConfiguration().getService(
                                                       serviceName));
             }
+            req.setAttribute("serviceName", serviceName);
+            req.setAttribute("parameters", getParameters(service));
+            Map<String,Map<String,String>> operations = new TreeMap<String,Map<String,String>>();
+            for (Iterator<AxisOperation> it = service.getOperations(); it.hasNext(); ) {
+                AxisOperation operation = it.next();
+                operations.put(operation.getName().getLocalPart(), getParameters(operation));
+            }
+            req.setAttribute("operations", operations);
         } else {
             req.setAttribute("status", "Service " + serviceName + " is not an active service" +
                     ". \n Only parameters of active services can be edited.");
         }
         return new View("editServiceParameters.jsp");
+    }
+
+    private static Map<String,String> getParameters(AxisDescription description) {
+        Map<String,String> parameters = new TreeMap<String,String>();
+        for (Parameter parameter : description.getParameters()) {
+            if (parameter.getParameterType() != Parameter.OM_PARAMETER) {
+                parameters.put(parameter.getName(), parameter.getValue().toString());
+            }
+        }
+        return parameters;
     }
 
     @Action(name="updateServiceParameters", post=true)

@@ -19,103 +19,50 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
-<%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.AxisOperation,
-                 org.apache.axis2.description.AxisService,
-                 org.apache.axis2.description.Parameter,
-                 java.util.ArrayList,
-                 java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Edit Service Parameters</h1>
-  <form method="post" name="editServicepara" action="<c:url value="axis2-admin/updateServiceParameters"/>">
-  <t:status/>
-   <%
-            AxisService axisService = (AxisService)request.getSession().
-                    getAttribute(Constants.SERVICE);
-             if(axisService != null ){
-   %>     <table summary="main content table" width="100%">
-
+<t:status/>
+<c:if test="${not empty requestScope.serviceName}">
+    <form method="post" action="<c:url value="axis2-admin/updateServiceParameters"/>">
+        <input type="hidden" name="axisService" value="<c:out value="${requestScope.serviceName}"/>">
+        <table summary="main content table" width="100%">
             <tr>
-                 <td colspan="2" ><b>
-           <%
-                 String servicName =  axisService.getName();
-                 %>Service Parameters :: <%=servicName%>
-                 </b></td>
-             </tr>
-             <tr>
-             <td colspan="2" ><input style="display:none"  name="axisService" value="<%=servicName%>"></td>
+                <td colspan="2" ><b>Service Parameters :: <c:out value="${requestScope.serviceName}"/></b></td>
             </tr>
-             <%
-                 ArrayList service_para = axisService.getParameters();
-                 for (int i = 0; i < service_para.size(); i++) {
-                     Parameter parameter = (Parameter) service_para.get(i);
-                     if (parameter.getParameterType()==Parameter.OM_PARAMETER) {
-                         continue;
-                     }
-                     %>
-                     <tr>
-                     <td><%=parameter.getName()%></td>
-                     <td><input type="text" value="<%=parameter.getValue()%>"
-                           name="<%=(servicName + "_" + parameter.getName())%>" size="50">
-                           </td>
-                     </tr>
-                     <%
-                 }
-                Iterator operations =  axisService.getOperations();
-                if(operations.hasNext()){
-                    %>
+            <c:forEach items="${requestScope.parameters}" var="parameter">
+                <tr>
+                    <td><c:out value="${parameter.key}"/></td>
+                    <td><input type="text" name="<c:out value="${requestScope.serviceName}_${parameter.key}"/>" value="<c:out value="${parameter.value}"/>" size="50"></td>
+                </tr>
+            </c:forEach>
+            <c:if test="${not empty requestScope.operations}">
+                <tr>
+                    <td colspan="2">&nbsp</td>
+                </tr>
+                <tr>
+                   <td colspan="2"><b>Operation Parameters ::</b></td>
+                </tr>
+                <c:forEach items="${requestScope.operations}" var="operation">
                     <tr>
-                      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td colspan="2">&nbsp</td>
                     </tr>
                     <tr>
-                       <td colspan="2" > <b>Operation Paramaters :: </b>
-                       </td>
+                        <td colspan="2"><b>Operation : <c:out value="${operation.key}"/></b></td>
                     </tr>
-                    <%
-                }
-
-                 ArrayList op_paras ;
-                        operations = axisService.getOperations();
-                 while (operations.hasNext()) {
-                     AxisOperation axisOperation = (AxisOperation) operations.next();
-                     String operationName = axisOperation.getName().getLocalPart();
-                     %>
-                     <tr>
-                       <td colspan="2" > &nbsp;&nbsp;&nbsp;&nbsp;</td>
-                     </tr>
-                     <tr>
-                       <td colspan="2" ><b>Operation : <%=operationName%></b></td>
-                     </tr>
-                    <%
-                     op_paras = axisOperation.getParameters();
-                     for (int i = 0; i < op_paras.size(); i++) {
-                         Parameter parameter = (Parameter) op_paras.get(i);
-                         if (parameter.getParameterType()==Parameter.OM_PARAMETER) {
-                             continue;
-                         }
-                     %>
-                     <tr>
-                     <td><%=parameter.getName()%></td>
-                     <td><input type="text" value="<%=parameter.getValue()%>"
-                           name="<%=(operationName + "_" + parameter.getName())%>" size="50">
-                           </td>
-                     </tr>
-                     <%
-                  }
-                 }
-                 %>
-                 <tr>
-                    <td>&nbsp;</td>
-                <td>
-                     <input name="changePara" type="submit" value=" Change " >
-               </td>
-               </tr>
-                 </table>
-                 <%
-             }
-
-       %>
-       </form>
+                    <c:forEach items="${operation.value}" var="parameter">
+                        <tr>
+                            <td><c:out value="${parameter.key}"/></td>
+                            <td><input type="text" name="<c:out value="${operation.key}_${parameter.key}"/>" value="<c:out value="${parameter.value}"/>" size="50"></td>
+                        </tr>
+                    </c:forEach>
+                </c:forEach>
+            </c:if>
+            <tr>
+                <td>&nbsp;</td>
+                <td><input name="changePara" type="submit" value=" Change " ></td>
+            </tr>
+        </table>
+   </form>
+</c:if>
 <jsp:include page="/WEB-INF/include/adminfooter.jsp"/>
