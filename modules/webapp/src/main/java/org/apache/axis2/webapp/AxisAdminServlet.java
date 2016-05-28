@@ -21,6 +21,7 @@ package org.apache.axis2.webapp;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.AxisServlet;
 
 import javax.servlet.ServletConfig;
@@ -28,7 +29,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  *
@@ -36,22 +44,62 @@ import java.io.IOException;
 public class AxisAdminServlet extends AxisServlet {
     private static final long serialVersionUID = -6740625806509755370L;
     
-    protected transient AdminAgent agent;
+    private final Random random = new SecureRandom();
+    private final Map<String,ActionHandler> actionHandlers = new HashMap<String,ActionHandler>();
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
-        doGet(req, res);
+    private boolean axisSecurityEnabled() {
+        Parameter parameter = configContext.getAxisConfiguration()
+                .getParameter(Constants.ADMIN_SECURITY_DISABLED);
+        return parameter == null || !"true".equals(parameter.getValue());
     }
 
     @Override
-    protected void doGet(HttpServletRequest req,
-                         HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
-            agent.handle(req, resp);
-        } catch (Exception e) {
-            throw new ServletException(e);
+    protected void service(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action;
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null || pathInfo.length() == 0 || pathInfo.equals("/")) {
+            action = "index";
+        } else if (pathInfo.charAt(0) == '/') {
+            action = pathInfo.substring(1);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        ActionHandler actionHandler = actionHandlers.get(action);
+        if (actionHandler != null) {
+            if (actionHandler.isMethodAllowed(request.getMethod())) {
+                HttpSession session = request.getSession();
+                CSRFTokenCache tokenCache = (CSRFTokenCache)session.getAttribute(CSRFTokenCache.class.getName());
+                if (tokenCache == null) {
+                    tokenCache = new CSRFTokenCache();
+                    session.setAttribute(CSRFTokenCache.class.getName(), tokenCache);
+                }
+                if (actionHandler.isCSRFTokenRequired()) {
+                    String token = request.getParameter("token");
+                    if (token == null || !tokenCache.isValid(token)) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "No valid CSRF token found in request");
+                        return;
+                    }
+                }
+                session.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+                String statusKey = request.getParameter("status");
+                if (statusKey != null) {
+                    StatusCache statusCache = (StatusCache)session.getAttribute(StatusCache.class.getName());
+                    if (statusCache != null) {
+                        Status status = statusCache.get(statusKey);
+                        if (status != null) {
+                            request.setAttribute("status", status);
+                        }
+                    }
+                }
+                ActionResult result = actionHandler.handle(request, axisSecurityEnabled());
+                result.process(request, new CSRFPreventionResponseWrapper(response, actionHandlers, tokenCache, random));
+            } else {
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
@@ -62,7 +110,22 @@ public class AxisAdminServlet extends AxisServlet {
         this.configContext =
                 (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
         servletContext.setAttribute(this.getClass().getName(), this);
-        agent = new AdminAgent(configContext);
+        AdminActions actions = new AdminActions(configContext);
+        for (Method method : actions.getClass().getMethods()) {
+            Action actionAnnotation = method.getAnnotation(Action.class);
+            if (actionAnnotation != null) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes.length != 1
+                        || parameterTypes[0] != HttpServletRequest.class
+                        || !ActionResult.class.isAssignableFrom(method.getReturnType())) {
+                    throw new ServletException("Invalid method signature");
+                }
+                actionHandlers.put(
+                        actionAnnotation.name(),
+                        new ActionHandler(actions, method, actionAnnotation.authorizationRequired(),
+                                actionAnnotation.post()));
+            }
+        }
         this.servletConfig = config;
     }
 

@@ -56,7 +56,8 @@ public class AbstractAgent {
             throws IOException, ServletException {
 
 
-        String requestURI = httpServletRequest.getRequestURI();
+        // Don't use getRequestURI() here because it includes the session ID
+        String requestURI = httpServletRequest.getServletPath() + httpServletRequest.getPathInfo();
 
         String operation;
         int i = requestURI.lastIndexOf('/');

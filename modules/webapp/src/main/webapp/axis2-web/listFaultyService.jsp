@@ -25,13 +25,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
   <head>
-    <jsp:include page="include/httpbase.jsp"/>
+    <jsp:include page="/WEB-INF/include/httpbase.jsp"/>
     <title>List Single service</title>
     <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-  <jsp:include page="include/header.inc"/>
-    <jsp:include page="include/link-footer.jsp"/>
+  <jsp:include page="/WEB-INF/include/header.inc"/>
+    <jsp:include page="/WEB-INF/include/link-footer.jsp"/>
   <%
         String prifix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) +"services/";
     %>
@@ -86,6 +86,6 @@
 
             }
         %>
-<jsp:include page="include/footer.inc"/>
+<jsp:include page="/WEB-INF/include/footer.inc"/>
         </body>
 </html>

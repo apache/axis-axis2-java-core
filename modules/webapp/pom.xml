@@ -308,14 +308,15 @@
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.22</version>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>8.1.16.v20140903</version>
                 <configuration>
                     <webXml>conf/web.xml</webXml>
+                    <contextXml>conf/jetty.xml</contextXml>
                     <webAppConfig>
                         <contextPath>/axis2</contextPath>
-                        <baseResource implementation="org.mortbay.resource.ResourceCollection">
-                            <resourcesAsCSV>src/main/webapp,${project.build.directory}/webResources</resourcesAsCSV>
+                        <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+                            <resourcesAsCSV>${project.build.directory}/webResources,src/main/webapp</resourcesAsCSV>
                         </baseResource>
                     </webAppConfig>
                 </configuration>
