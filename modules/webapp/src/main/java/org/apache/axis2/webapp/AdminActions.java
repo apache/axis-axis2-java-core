@@ -48,6 +48,7 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ import java.util.Map;
 /**
  * Provides methods to process axis2 admin requests.
  */
-public class AdminAgent extends AbstractAgent {
+final class AdminActions {
     private static final Log log = LogFactory.getLog(AbstractAgent.class);
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
@@ -84,10 +85,11 @@ public class AdminAgent extends AbstractAgent {
     private static final String ENGAGE_TO_OPERATION_JSP_NAME = "engagingtoanoperation.jsp";
     private static final String LOGIN_JSP_NAME = "Login.jsp";
 
+    private final ConfigurationContext configContext;
     private File serviceDir;
 
-    public AdminAgent(ConfigurationContext aConfigContext) {
-        super(aConfigContext);
+    public AdminActions(ConfigurationContext configContext) {
+        this.configContext = configContext;
         try {
             if (configContext.getAxisConfiguration().getRepository() != null) {
                 File repoDir =
@@ -104,21 +106,20 @@ public class AdminAgent extends AbstractAgent {
         }
     }
 
-    @Override
-    public void handle(HttpServletRequest httpServletRequest,
-                       HttpServletResponse httpServletResponse)
-            throws IOException, ServletException {
-
-        // Redirect to the login page if axis2 security is enabled
-        // and the user is not authorized
-        if (!httpServletRequest.getPathInfo().equals("/welcome") && axisSecurityEnabled() && authorizationRequired(httpServletRequest)) {
-            httpServletResponse.sendRedirect("welcome");
-        } else {
-            super.handle(httpServletRequest, httpServletResponse);
-        }
+    protected void renderView(String jspName, HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        httpServletResponse.setContentType("text/html");
+        httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName)
+                .include(httpServletRequest, httpServletResponse);
     }
 
-    @Override
+    protected void populateSessionInformation(HttpServletRequest req) {
+        HashMap services = configContext.getAxisConfiguration().getServices();
+        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+    }
+
+    @Action(name="index")
     public void processIndex(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         renderView(ADMIN_JSP_NAME, req, res);
@@ -126,10 +127,12 @@ public class AdminAgent extends AbstractAgent {
 
     // supported web operations
 
+    @Action(name="welcome", authorizationRequired=false)
     public void processWelcome(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         renderView(LOGIN_JSP_NAME, req, res);
     }
 
+    @Action(name="upload")
     public void processUpload(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String hasHotDeployment =
@@ -191,7 +194,7 @@ public class AdminAgent extends AbstractAgent {
         renderView("upload.jsp", req, res);
     }
 
-
+    @Action(name="login", authorizationRequired=false)
     public void processLogin(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String username = req.getParameter("userName");
@@ -219,6 +222,7 @@ public class AdminAgent extends AbstractAgent {
         }
     }
 
+    @Action(name="editServicePara")
     public void processEditServicePara(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String serviceName = req.getParameter("axisService");
@@ -262,6 +266,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
     }
 
+    @Action(name="engagingGlobally")
     public void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
@@ -287,6 +292,7 @@ public class AdminAgent extends AbstractAgent {
 
     }
 
+    @Action(name="listOperations")
     public void processListOperations(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
@@ -333,6 +339,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(ENGAGE_TO_OPERATION_JSP_NAME, req, res);
     }
 
+    @Action(name="engageToService")
     public void processEngageToService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
@@ -366,6 +373,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(ENGAGING_MODULE_TO_SERVICE_JSP_NAME, req, res);
     }
 
+    @Action(name="engageToServiceGroup")
     public void processEngageToServiceGroup(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
@@ -398,13 +406,14 @@ public class AdminAgent extends AbstractAgent {
         renderView(ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME, req, res);
     }
 
-
+    @Action(name="logout")
     public void processLogout(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         req.getSession().invalidate();
         renderView("index.jsp", req, res);
     }
 
+    @Action(name="viewServiceGroupConetxt")
     public void processviewServiceGroupConetxt(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String type = req.getParameter("TYPE");
@@ -416,6 +425,7 @@ public class AdminAgent extends AbstractAgent {
         renderView("viewServiceGroupContext.jsp", req, res);
     }
 
+    @Action(name="viewServiceContext")
     public void processviewServiceContext(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String type = req.getParameter("TYPE");
@@ -434,6 +444,7 @@ public class AdminAgent extends AbstractAgent {
         renderView("viewServiceContext.jsp", req, res);
     }
 
+    @Action(name="selectServiceParaEdit")
     public void processSelectServiceParaEdit(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         populateSessionInformation(req);
@@ -441,6 +452,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(SELECT_SERVICE_JSP_NAME, req, res);
     }
 
+    @Action(name="listOperation")
     public void processListOperation(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         populateSessionInformation(req);
@@ -449,6 +461,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(SELECT_SERVICE_JSP_NAME, req, res);
     }
 
+    @Action(name="activateService")
     public void processActivateService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         if (req.getParameter("submit") != null) {
@@ -464,6 +477,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(ACTIVATE_SERVICE_JSP_NAME, req, res);
     }
 
+    @Action(name="deactivateService")
     public void processDeactivateService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         if (req.getParameter("submit") != null) {
@@ -482,7 +496,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(IN_ACTIVATE_SERVICE_JSP_NAME, req, res);
     }
 
-
+    @Action(name="viewGlobalHandlers")
     public void processViewGlobalHandlers(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         req.getSession().setAttribute(Constants.GLOBAL_HANDLERS,
@@ -491,6 +505,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(VIEW_GLOBAL_HANDLERS_JSP_NAME, req, res);
     }
 
+    @Action(name="viewServiceHandlers")
     public void processViewServiceHandlers(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String service = req.getParameter("axisService");
@@ -503,7 +518,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(VIEW_SERVICE_HANDLERS_JSP_NAME, req, res);
     }
 
-
+    @Action(name="listPhases")
     public void processListPhases(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         PhasesInfo info = configContext.getAxisConfiguration().getPhasesInfo();
@@ -511,6 +526,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_PHASES_JSP_NAME, req, res);
     }
 
+    @Action(name="listServiceGroups")
     public void processListServiceGroups(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Iterator<AxisServiceGroup> serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
@@ -520,6 +536,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_SERVICE_GROUP_JSP, req, res);
     }
 
+    @Action(name="listService")
     public void processListService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         populateSessionInformation(req);
@@ -529,6 +546,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_SERVICES_JSP_NAME, req, res);
     }
 
+    @Action(name="listSingleService")
     public void processListSingleService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
@@ -540,13 +558,14 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_SINGLE_SERVICES_JSP_NAME, req, res);
     }
 
-
+    @Action(name="listContexts")
     public void processListContexts(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         req.getSession().setAttribute(Constants.CONFIG_CONTEXT, configContext);
         renderView("ViewContexts.jsp", req, res);
     }
 
+    @Action(name="globalModules")
     public void processglobalModules(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Collection<AxisModule> modules = configContext.getAxisConfiguration().getEngagedModules();
@@ -556,6 +575,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME, req, res);
     }
 
+    @Action(name="listModules")
     public void processListModules(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
@@ -567,6 +587,7 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_AVAILABLE_MODULES_JSP_NAME, req, res);
     }
 
+    @Action(name="disengageModule")
     public void processdisengageModule(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String type = req.getParameter("type");
@@ -603,6 +624,7 @@ public class AdminAgent extends AbstractAgent {
         renderView("disengage.jsp", req, res);
     }
 
+    @Action(name="deleteService")
     public void processdeleteService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         String serviceName = req.getParameter("serviceName");
@@ -617,6 +639,7 @@ public class AdminAgent extends AbstractAgent {
         renderView("deleteService.jsp", req, res);
     }
 
+    @Action(name="selectService")
     public void processSelectService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         populateSessionInformation(req);
@@ -624,20 +647,4 @@ public class AdminAgent extends AbstractAgent {
 
         renderView(SELECT_SERVICE_JSP_NAME, req, res);
     }
-
-
-    private boolean authorizationRequired
-            (HttpServletRequest
-                    httpServletRequest) {
-        return httpServletRequest.getSession().getAttribute(Constants.LOGGED) == null &&
-                !httpServletRequest.getRequestURI().endsWith("login");
-    }
-
-    private boolean axisSecurityEnabled
-            () {
-        Parameter parameter = configContext.getAxisConfiguration()
-                .getParameter(Constants.ADMIN_SECURITY_DISABLED);
-        return parameter == null || !"true".equals(parameter.getValue());
-    }
-
 }

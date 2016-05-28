@@ -129,7 +129,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="<c:url value="axis2-admin/engagingglobally"/>">For all Services</a>
+         <a href="<c:url value="axis2-admin/engagingGlobally"/>">For all Services</a>
        </td>
     </tr>
      <tr>

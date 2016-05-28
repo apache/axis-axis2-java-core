@@ -21,6 +21,7 @@ package org.apache.axis2.webapp;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.AxisServlet;
 
 import javax.servlet.ServletConfig;
@@ -29,6 +30,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -36,7 +40,13 @@ import java.io.IOException;
 public class AxisAdminServlet extends AxisServlet {
     private static final long serialVersionUID = -6740625806509755370L;
     
-    protected transient AdminAgent agent;
+    private Map<String,ActionHandler> actionHandlers = new HashMap<String,ActionHandler>();
+
+    private boolean axisSecurityEnabled() {
+        Parameter parameter = configContext.getAxisConfiguration()
+                .getParameter(Constants.ADMIN_SECURITY_DISABLED);
+        return parameter == null || !"true".equals(parameter.getValue());
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -47,11 +57,22 @@ public class AxisAdminServlet extends AxisServlet {
     @Override
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
-        try {
+        String action;
+        String pathInfo = req.getPathInfo();
+        if (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/")) {
+            action = "index";
+        } else if (pathInfo.charAt(0) == '/') {
+            action = pathInfo.substring(1);
+        } else {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        ActionHandler actionHandler = actionHandlers.get(action);
+        if (actionHandler != null) {
             req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
-            agent.handle(req, resp);
-        } catch (Exception e) {
-            throw new ServletException(e);
+            actionHandler.handle(req, resp, axisSecurityEnabled());
+        } else {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
@@ -62,7 +83,15 @@ public class AxisAdminServlet extends AxisServlet {
         this.configContext =
                 (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
         servletContext.setAttribute(this.getClass().getName(), this);
-        agent = new AdminAgent(configContext);
+        AdminActions actions = new AdminActions(configContext);
+        for (Method method : actions.getClass().getMethods()) {
+            Action actionAnnotation = method.getAnnotation(Action.class);
+            if (actionAnnotation != null) {
+                actionHandlers.put(
+                        actionAnnotation.name(),
+                        new ActionHandler(actions, method, actionAnnotation.authorizationRequired()));
+            }
+        }
         this.servletConfig = config;
     }
 
