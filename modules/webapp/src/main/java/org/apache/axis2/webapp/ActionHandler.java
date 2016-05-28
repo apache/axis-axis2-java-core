@@ -44,6 +44,10 @@ final class ActionHandler {
         return post ? method.equals("POST") : method.equals("GET");
     }
 
+    boolean isCSRFTokenRequired() {
+        return post && authorizationRequired;
+    }
+
     ActionResult handle(HttpServletRequest request, boolean securityEnabled) throws IOException, ServletException {
         if (securityEnabled && authorizationRequired && request.getSession().getAttribute(Constants.LOGGED) == null) {
             return new Redirect("welcome");

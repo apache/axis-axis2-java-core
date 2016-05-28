@@ -33,8 +33,10 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  *
@@ -42,7 +44,8 @@ import java.util.Map;
 public class AxisAdminServlet extends AxisServlet {
     private static final long serialVersionUID = -6740625806509755370L;
     
-    private Map<String,ActionHandler> actionHandlers = new HashMap<String,ActionHandler>();
+    private final Random random = new SecureRandom();
+    private final Map<String,ActionHandler> actionHandlers = new HashMap<String,ActionHandler>();
 
     private boolean axisSecurityEnabled() {
         Parameter parameter = configContext.getAxisConfiguration()
@@ -67,6 +70,18 @@ public class AxisAdminServlet extends AxisServlet {
         if (actionHandler != null) {
             if (actionHandler.isMethodAllowed(request.getMethod())) {
                 HttpSession session = request.getSession();
+                CSRFTokenCache tokenCache = (CSRFTokenCache)session.getAttribute(CSRFTokenCache.class.getName());
+                if (tokenCache == null) {
+                    tokenCache = new CSRFTokenCache();
+                    session.setAttribute(CSRFTokenCache.class.getName(), tokenCache);
+                }
+                if (actionHandler.isCSRFTokenRequired()) {
+                    String token = request.getParameter("token");
+                    if (token == null || !tokenCache.isValid(token)) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "No valid CSRF token found in request");
+                        return;
+                    }
+                }
                 session.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
                 String statusKey = request.getParameter("status");
                 if (statusKey != null) {
@@ -78,7 +93,8 @@ public class AxisAdminServlet extends AxisServlet {
                         }
                     }
                 }
-                ((ActionResult)actionHandler.handle(request, axisSecurityEnabled())).process(request, response);
+                ActionResult result = actionHandler.handle(request, axisSecurityEnabled());
+                result.process(request, new CSRFPreventionResponseWrapper(response, actionHandlers, tokenCache, random));
             } else {
                 response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             }
