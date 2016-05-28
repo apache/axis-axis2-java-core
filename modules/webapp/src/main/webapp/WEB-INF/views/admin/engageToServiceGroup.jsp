@@ -52,7 +52,7 @@
 		<p>No Axis service groups are present to be engaged.</p>
 		<%} else {
 %>
-<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/doEngageToServiceGroup"/>">
+<form method="post" name="selectModuleForm" action="<c:url value="axis2-admin/doEngageToServiceGroup"/>">
     <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
             <td>Select a Module :</td>

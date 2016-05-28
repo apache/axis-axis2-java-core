@@ -35,7 +35,7 @@
             <li>click "Engage".</li>
         </ol>
 
-<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/doEngageToOperation"/>">
+<form method="post" name="selectModuleForm" action="<c:url value="axis2-admin/doEngageToOperation"/>">
 <input type="hidden" name="service" value="<c:out value="${requestScope.service}"/>">
 <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>

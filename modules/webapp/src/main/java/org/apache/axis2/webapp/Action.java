@@ -28,4 +28,5 @@ import java.lang.annotation.Target;
 @interface Action {
     String name();
     boolean authorizationRequired() default true;
+    boolean post() default false;
 }

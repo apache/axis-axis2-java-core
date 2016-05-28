@@ -28,7 +28,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Edit Service Parameters</h1>
-  <form method="get" name="editServicepara" action="<c:url value="axis2-admin/updateServiceParameters"/>">
+  <form method="post" name="editServicepara" action="<c:url value="axis2-admin/updateServiceParameters"/>">
   <t:status/>
    <%
             AxisService axisService = (AxisService)request.getSession().

@@ -26,7 +26,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Turn On Service</h1>
-<form method="get" name="serviceActivate" action="<c:url value="axis2-admin/doActivateService"/>">
+<form method="post" name="serviceActivate" action="<c:url value="axis2-admin/doActivateService"/>">
   <table summary="main content table" width="100%"  border="0">
 <tr>
   <td colspan="2" >

@@ -80,8 +80,8 @@
 %>
 <p>Service Description : <%=serviceDescription%><br>
 Service EPR : <%=prefix + axisService.getName()%><br>
-Service Status : <%=axisService.isActive() ? "Active" : "InActive"%><br>
-Actions : <a href="<c:url value="axis2-admin/deleteService"><c:param name="serviceName" value="<%=serviceName%>"/></c:url>">Remove Service</a></p><br>
+Service Status : <%=axisService.isActive() ? "Active" : "InActive"%>
+<form method="post" action="<c:url value="axis2-admin/deleteService"/>"><input type="hidden" name="serviceName" value="<%=serviceName%>"><input type="submit" value="Remove Service"></form></p>
 <%
     Collection engagedModules = axisService.getEngagedModules();
     String moduleName;
@@ -98,7 +98,7 @@ Actions : <a href="<c:url value="axis2-admin/deleteService"><c:param name="servi
 %>
 <ul>
     <% }
-    %><li><%=moduleName%> :: <a href="<c:url value="axis2-admin/disengageModule"><c:param name="type" value="service"/><c:param name="serviceName" value="<%=serviceName%>"/><c:param name="module" value="<%=moduleName%>"/></c:url>">Disengage</a></li>
+    %><li><form method="post" action="<c:url value="axis2-admin/disengageModule"/>"><%=moduleName%> :: <input type="hidden" name="type" value="service"><input type="hidden" name="serviceName" value="<%=serviceName%>"><input type="hidden" name="module" value="<%=moduleName%>"><input type="submit" value="Disengage"></form></li>
 
     <%
         }
@@ -137,7 +137,7 @@ Actions : <a href="<c:url value="axis2-admin/deleteService"><c:param name="servi
             moduleName = moduleDecription.getName();
     %>
     <li>
-    <%=moduleName%> :: <a href="<c:url value="axis2-admin/disengageModule"><c:param name="type" value="operation"/><c:param name="serviceName" value="<%=serviceName%>"/><c:param name="operation" value="<%=axisOperation.getName().getLocalPart()%>"/><c:param name="module" value="<%=moduleName%>"/></c:url>">Disengage</a>
+    <form method="post" action="<c:url value="axis2-admin/disengageModule"/>"><%=moduleName%> :: <input type="hidden" name="type" value="operation"><input type="hidden" name="serviceName" value="<%=serviceName%>"><input type="hidden" name="operation" value="<%=axisOperation.getName().getLocalPart()%>"><input type="hidden" name="module" value="<%=moduleName%>"><input type="submit" value="Disengage"></form>
     </li>
     <%
     }

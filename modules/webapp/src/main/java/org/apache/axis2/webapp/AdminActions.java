@@ -133,7 +133,7 @@ final class AdminActions {
         return new View("upload.jsp");
     }
 
-    @Action(name="doUpload")
+    @Action(name="doUpload", post=true)
     public Redirect doUpload(HttpServletRequest req) throws ServletException {
         RequestContext reqContext = new ServletRequestContext(req);
 
@@ -182,7 +182,7 @@ final class AdminActions {
         throw new ServletException("Invalid request");
     }
 
-    @Action(name="login", authorizationRequired=false)
+    @Action(name="login", authorizationRequired=false, post=true)
     public Redirect login(HttpServletRequest req) {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
@@ -224,7 +224,7 @@ final class AdminActions {
         return new View("editServiceParameters.jsp");
     }
 
-    @Action(name="updateServiceParameters")
+    @Action(name="updateServiceParameters", post=true)
     public Redirect updateServiceParameters(HttpServletRequest request) throws AxisFault {
         String serviceName = request.getParameter("axisService");
         AxisService service = configContext.getAxisConfiguration().getService(serviceName);
@@ -260,7 +260,7 @@ final class AdminActions {
         return new View("engageGlobally.jsp");
     }
 
-    @Action(name="doEngageGlobally")
+    @Action(name="doEngageGlobally", post=true)
     public Redirect doEngageGlobally(HttpServletRequest request) {
         String moduleName = request.getParameter("module");
         try {
@@ -295,7 +295,7 @@ final class AdminActions {
         return new View("engageToOperation.jsp");
     }
 
-    @Action(name="doEngageToOperation")
+    @Action(name="doEngageToOperation", post=true)
     public Redirect doEngageToOperation(HttpServletRequest request) {
         String moduleName = request.getParameter("module");
         String serviceName = request.getParameter("service");
@@ -329,7 +329,7 @@ final class AdminActions {
         return new View("engageToService.jsp");
     }
 
-    @Action(name="doEngageToService")
+    @Action(name="doEngageToService", post=true)
     public Redirect doEngageToService(HttpServletRequest request) {
         String moduleName = request.getParameter("module");
         String serviceName = request.getParameter("axisService");
@@ -362,7 +362,7 @@ final class AdminActions {
         return new View("engageToServiceGroup.jsp");
     }
 
-    @Action(name="doEngageToServiceGroup")
+    @Action(name="doEngageToServiceGroup", post=true)
     public Redirect doEngageToServiceGroup(HttpServletRequest request) throws AxisFault {
         String moduleName = request.getParameter("module");
         String serviceName = request.getParameter("axisService");
@@ -427,7 +427,7 @@ final class AdminActions {
         return new View("activateService.jsp");
     }
 
-    @Action(name="doActivateService")
+    @Action(name="doActivateService", post=true)
     public Redirect doActivateService(HttpServletRequest request) throws AxisFault {
         String serviceName = request.getParameter("axisService");
         String turnon = request.getParameter("turnon");
@@ -445,7 +445,7 @@ final class AdminActions {
         return new View("deactivateService.jsp");
     }
 
-    @Action(name="doDeactivateService")
+    @Action(name="doDeactivateService", post=true)
     public Redirect doDeactivateService(HttpServletRequest request) throws AxisFault {
         String serviceName = request.getParameter("axisService");
         String turnoff = request.getParameter("turnoff");
@@ -539,7 +539,7 @@ final class AdminActions {
         return new View("listModules.jsp");
     }
 
-    @Action(name="disengageModule")
+    @Action(name="disengageModule", post=true)
     public Redirect processdisengageModule(HttpServletRequest req) throws AxisFault {
         String type = req.getParameter("type");
         String serviceName = req.getParameter("serviceName");
@@ -572,7 +572,7 @@ final class AdminActions {
         }
     }
 
-    @Action(name="deleteService")
+    @Action(name="deleteService", post=true)
     public Redirect deleteService(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("serviceName");
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();

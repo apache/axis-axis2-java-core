@@ -51,14 +51,8 @@ public class AxisAdminServlet extends AxisServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+    protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(req, res);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response) throws ServletException, IOException {
         String action;
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/")) {
@@ -71,19 +65,23 @@ public class AxisAdminServlet extends AxisServlet {
         }
         ActionHandler actionHandler = actionHandlers.get(action);
         if (actionHandler != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
-            String statusKey = request.getParameter("status");
-            if (statusKey != null) {
-                StatusCache statusCache = (StatusCache)session.getAttribute(StatusCache.class.getName());
-                if (statusCache != null) {
-                    Status status = statusCache.get(statusKey);
-                    if (status != null) {
-                        request.setAttribute("status", status);
+            if (actionHandler.isMethodAllowed(request.getMethod())) {
+                HttpSession session = request.getSession();
+                session.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+                String statusKey = request.getParameter("status");
+                if (statusKey != null) {
+                    StatusCache statusCache = (StatusCache)session.getAttribute(StatusCache.class.getName());
+                    if (statusCache != null) {
+                        Status status = statusCache.get(statusKey);
+                        if (status != null) {
+                            request.setAttribute("status", status);
+                        }
                     }
                 }
+                ((ActionResult)actionHandler.handle(request, axisSecurityEnabled())).process(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             }
-            ((ActionResult)actionHandler.handle(request, axisSecurityEnabled())).process(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -108,7 +106,8 @@ public class AxisAdminServlet extends AxisServlet {
                 }
                 actionHandlers.put(
                         actionAnnotation.name(),
-                        new ActionHandler(actions, method, actionAnnotation.authorizationRequired()));
+                        new ActionHandler(actions, method, actionAnnotation.authorizationRequired(),
+                                actionAnnotation.post()));
             }
         }
         this.servletConfig = config;

@@ -31,11 +31,17 @@ final class ActionHandler {
     private final Object target;
     private final Method method;
     private final boolean authorizationRequired;
+    private final boolean post;
 
-    ActionHandler(Object target, Method method, boolean authorizationRequired) {
+    ActionHandler(Object target, Method method, boolean authorizationRequired, boolean post) {
         this.target = target;
         this.method = method;
         this.authorizationRequired = authorizationRequired;
+        this.post = post;
+    }
+
+    boolean isMethodAllowed(String method) {
+        return post ? method.equals("POST") : method.equals("GET");
     }
 
     ActionResult handle(HttpServletRequest request, boolean securityEnabled) throws IOException, ServletException {
