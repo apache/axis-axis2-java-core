@@ -63,7 +63,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="<c:url value="axis2-admin/listService"/>">Available Services</a>
+      <a href="<c:url value="axis2-admin/listServices"/>">Available Services</a>
     </td>
  </tr>
  <tr>
@@ -108,7 +108,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="<c:url value="axis2-admin/viewGlobalHandlers"/>">Global Chains</a>
+         <a href="<c:url value="axis2-admin/viewGlobalChains"/>">Global Chains</a>
        </td>
     </tr>
     <tr>
@@ -129,7 +129,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="<c:url value="axis2-admin/engagingGlobally"/>">For all Services</a>
+         <a href="<c:url value="axis2-admin/engageGlobally"/>">For all Services</a>
        </td>
     </tr>
      <tr>
@@ -199,7 +199,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="<c:url value="axis2-admin/listContexts"/>">View Hierarchy</a>
+         <a href="<c:url value="axis2-admin/viewContexts"/>">View Hierarchy</a>
        </td>
     </tr>
 </table>

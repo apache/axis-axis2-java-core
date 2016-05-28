@@ -18,6 +18,7 @@
   --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.AxisModule,
                                                                              org.apache.axis2.description.AxisOperation,
@@ -26,9 +27,6 @@
                                                                              java.util.HashMap,
                                                                              java.util.Iterator"%>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
-<%
-    String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
-%>
 <h1>Engage Module for an Operation</h1>
 <p>To engage a module for an  axis operation,</p>
     <ol>
@@ -37,7 +35,8 @@
             <li>click "Engage".</li>
         </ol>
 
-<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/listOperations"/>">
+<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/doEngageToOperation"/>">
+<input type="hidden" name="service" value="<c:out value="${requestScope.service}"/>">
 <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>
         <td>
@@ -50,7 +49,7 @@
     </tr>
     <tr>
         <td>
-            <select name="modules">
+            <select name="module">
             <%
                 HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
                 request.getSession().setAttribute(Constants.MODULE_MAP,null);
@@ -115,13 +114,7 @@
          </tr>
          <tr>
              <td>
-                <textarea cols="50"  <%
-                        if(status == null){
-                           %>
-                            style="display:none"
-                            <%
-                        } %>
-                    ><%=Utils.sanitizeWebOutput(status)%></textarea>
+                <t:status/>
               </td>
            </tr>
       </table>

@@ -18,6 +18,7 @@
   --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisOperation,
                  org.apache.axis2.description.AxisService,
@@ -27,7 +28,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Edit Service Parameters</h1>
-  <form method="get" name="editServicepara" action="<c:url value="axis2-admin/editServicepara"/>">
+  <form method="get" name="editServicepara" action="<c:url value="axis2-admin/updateServiceParameters"/>">
+  <t:status/>
    <%
             AxisService axisService = (AxisService)request.getSession().
                     getAttribute(Constants.SERVICE);
@@ -112,10 +114,6 @@
                </tr>
                  </table>
                  <%
-             } else {
-            	%>
-            	<p><%=request.getAttribute("status")%></p>
-            	<%
              }
 
        %>

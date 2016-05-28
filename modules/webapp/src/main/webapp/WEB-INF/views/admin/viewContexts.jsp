@@ -40,8 +40,8 @@
         String groupContextID = serviceGroupIds[i];
         ServiceGroupContext groupContext = configContext.getServiceGroupContext(groupContextID);
         %>
-           <li><%=groupContextID%><a style="color:blue" href="<c:url value="axis2-admin/viewServiceGroupConetxt"><c:param name="TYPE" value="VIEW"/><c:param name="ID" value="<%=groupContextID%>"/></c:url>">
-                    View</a>  <a style="color:red" href="<c:url value="axis2-admin/viewServiceGroupConetxt"><c:param name="TYPE" value="DELETE"/><c:param name="ID" value="<%=groupContextID%>"/></c:url>">
+           <li><%=groupContextID%><a style="color:blue" href="<c:url value="axis2-admin/viewServiceGroupContext"><c:param name="TYPE" value="VIEW"/><c:param name="ID" value="<%=groupContextID%>"/></c:url>">
+                    View</a>  <a style="color:red" href="<c:url value="axis2-admin/viewServiceGroupContext"><c:param name="TYPE" value="DELETE"/><c:param name="ID" value="<%=groupContextID%>"/></c:url>">
                     Remove</a> </li>
                     
                     <li>

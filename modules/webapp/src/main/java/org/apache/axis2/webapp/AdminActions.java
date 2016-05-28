@@ -41,6 +41,7 @@ import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -55,31 +56,27 @@ import java.util.Map;
  */
 final class AdminActions {
     private static final Log log = LogFactory.getLog(AbstractAgent.class);
+    
+    private static final String WELCOME = "welcome";
+    private static final String INDEX = "index";
+    private static final String UPLOAD = "upload";
+    private static final String LIST_SERVICES = "listServices";
+    private static final String ENGAGE_GLOBALLY = "engageGlobally";
+    private static final String ENGAGE_TO_SERVICE_GROUP = "engageToServiceGroup";
+    private static final String ENGAGE_TO_SERVICE = "engageToService";
+    private static final String ENGAGE_TO_OPERATION = "engageToOperation";
+    private static final String DEACTIVATE_SERVICE = "deactivateService";
+    private static final String ACTIVATE_SERVICE = "activateService";
+    private static final String EDIT_SERVICE_PARAMETERS = "editServiceParameters";
+
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
      */
-    private static final String LIST_SERVICE_GROUP_JSP = "ListServiceGroup.jsp";
-    private static final String LIST_SERVICES_JSP_NAME = "listService.jsp";
-    private static final String LIST_SINGLE_SERVICES_JSP_NAME = "listSingleService.jsp";
     private static final String SELECT_SERVICE_JSP_NAME = "SelectService.jsp";
-    private static final String IN_ACTIVATE_SERVICE_JSP_NAME = "InActivateService.jsp";
-    private static final String ACTIVATE_SERVICE_JSP_NAME = "ActivateService.jsp";
 
     /**
      * Field LIST_SINGLE_SERVICE_JSP_NAME
      */
-    private static final String LIST_PHASES_JSP_NAME = "viewphases.jsp";
-    private static final String LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME = "globalModules.jsp";
-    private static final String LIST_AVAILABLE_MODULES_JSP_NAME = "listModules.jsp";
-    private static final String ENGAGING_MODULE_TO_SERVICE_JSP_NAME = "engagingtoaservice.jsp";
-    private static final String ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME =
-            "EngageToServiceGroup.jsp";
-    private static final String ENGAGING_MODULE_GLOBALLY_JSP_NAME = "engagingglobally.jsp";
-    public static final String ADMIN_JSP_NAME = "admin.jsp";
-    private static final String VIEW_GLOBAL_HANDLERS_JSP_NAME = "ViewGlobalHandlers.jsp";
-    private static final String VIEW_SERVICE_HANDLERS_JSP_NAME = "ViewServiceHandlers.jsp";
-    private static final String SERVICE_PARA_EDIT_JSP_NAME = "ServiceParaEdit.jsp";
-    private static final String ENGAGE_TO_OPERATION_JSP_NAME = "engagingtoanoperation.jsp";
     private static final String LOGIN_JSP_NAME = "Login.jsp";
 
     private final ConfigurationContext configContext;
@@ -109,20 +106,23 @@ final class AdminActions {
         req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
     }
 
-    @Action(name="index")
-    public View processIndex(HttpServletRequest req) {
-        return new View(ADMIN_JSP_NAME);
+    @Action(name=INDEX)
+    public View index(HttpServletRequest req) {
+        return new View("admin.jsp");
     }
 
     // supported web operations
 
-    @Action(name="welcome", authorizationRequired=false)
-    public View processWelcome(HttpServletRequest req) {
+    @Action(name=WELCOME, authorizationRequired=false)
+    public View welcome(HttpServletRequest req) {
+        if ("true".equals(req.getParameter("failed"))) {
+            req.setAttribute("errorMessage", "Invalid auth credentials!");
+        }
         return new View(LOGIN_JSP_NAME);
     }
 
-    @Action(name="upload")
-    public View processUpload(HttpServletRequest req) {
+    @Action(name=UPLOAD)
+    public View upload(HttpServletRequest req) {
         String hasHotDeployment =
                 (String) configContext.getAxisConfiguration().getParameterValue("hotdeployment");
         String hasHotUpdate =
@@ -130,11 +130,15 @@ final class AdminActions {
         req.setAttribute("hotDeployment", (hasHotDeployment.equals("true")) ? "enabled"
                 : "disabled");
         req.setAttribute("hotUpdate", (hasHotUpdate.equals("true")) ? "enabled" : "disabled");
+        return new View("upload.jsp");
+    }
+
+    @Action(name="doUpload")
+    public Redirect doUpload(HttpServletRequest req) throws ServletException {
         RequestContext reqContext = new ServletRequestContext(req);
 
         boolean isMultipart = ServletFileUpload.isMultipartContent(reqContext);
         if (isMultipart) {
-
             try {
                 //Create a factory for disk-based file items
                 FileItemFactory factory = new DiskFileItemFactory();
@@ -151,8 +155,7 @@ final class AdminActions {
                         String fileExtesion = fileName;
                         fileExtesion = fileExtesion.toLowerCase();
                         if (!(fileExtesion.endsWith(".jar") || fileExtesion.endsWith(".aar"))) {
-                            req.setAttribute("status", "failure");
-                            req.setAttribute("cause", "Unsupported file type " + fileExtesion);
+                            return new Redirect(UPLOAD).withStatus(false, "Unsupported file type " + fileExtesion);
                         } else {
 
                             String fileNameOnly;
@@ -168,29 +171,25 @@ final class AdminActions {
 
                             File uploadedFile = new File(serviceDir, fileNameOnly);
                             item.write(uploadedFile);
-                            req.setAttribute("status", "success");
-                            req.setAttribute("filename", fileNameOnly);
+                            return new Redirect(UPLOAD).withStatus(true, "File " + fileNameOnly + " successfully uploaded");
                         }
                     }
                 }
             } catch (Exception e) {
-                req.setAttribute("status", "failure");
-                req.setAttribute("cause", e.getMessage());
-
+                return new Redirect(UPLOAD).withStatus(false, "The following error occurred: " + e.getMessage());
             }
         }
-        return new View("upload.jsp");
+        throw new ServletException("Invalid request");
     }
 
     @Action(name="login", authorizationRequired=false)
-    public ActionResult processLogin(HttpServletRequest req) {
+    public Redirect login(HttpServletRequest req) {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
 
         if ((username == null) || (password == null) || username.trim().length() == 0
                 || password.trim().length() == 0) {
-            req.setAttribute("errorMessage", "Invalid auth credentials!");
-            return new View(LOGIN_JSP_NAME);
+            return new Redirect(WELCOME).withParameter("failed", "true");
         }
 
         String adminUserName = (String) configContext.getAxisConfiguration().getParameter(
@@ -200,86 +199,84 @@ final class AdminActions {
 
         if (username.equals(adminUserName) && password.equals(adminPassword)) {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
-            return new Redirect("index");
+            return new Redirect(INDEX);
         } else {
-            req.setAttribute("errorMessage", "Invalid auth credentials!");
-            return new View(LOGIN_JSP_NAME);
+            return new Redirect(WELCOME).withParameter("failed", "true");
         }
     }
 
-    @Action(name="editServicePara")
-    public View processEditServicePara(HttpServletRequest req) throws AxisFault {
+    @Action(name=EDIT_SERVICE_PARAMETERS)
+    public View editServiceParameters(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("axisService");
-        if (req.getParameter("changePara") != null) {
-            AxisService service = configContext.getAxisConfiguration().getService(serviceName);
-            if (service != null) {
-                for (Parameter parameter : service.getParameters()) {
-                    String para = req.getParameter(serviceName + "_" + parameter.getName());
-                    service.addParameter(new Parameter(parameter.getName(), para));
-                }
+        AxisService serviceTemp =
+                configContext.getAxisConfiguration().getServiceForActivation(serviceName);
+        if (serviceTemp.isActive()) {
 
-                for (Iterator<AxisOperation> iterator = service.getOperations(); iterator.hasNext();) {
-                    AxisOperation axisOperation = iterator.next();
-                    String op_name = axisOperation.getName().getLocalPart();
-
-                    for (Parameter parameter : axisOperation.getParameters()) {
-                        String para = req.getParameter(op_name + "_" + parameter.getName());
-
-                        axisOperation.addParameter(new Parameter(parameter.getName(), para));
-                    }
-                }
+            if (serviceName != null) {
+                req.getSession().setAttribute(Constants.SERVICE,
+                                              configContext.getAxisConfiguration().getService(
+                                                      serviceName));
             }
-            req.setAttribute("status", "Parameters Changed Successfully.");
-            req.getSession().removeAttribute(Constants.SERVICE);
         } else {
-            AxisService serviceTemp =
-                    configContext.getAxisConfiguration().getServiceForActivation(serviceName);
-            if (serviceTemp.isActive()) {
-
-                if (serviceName != null) {
-                    req.getSession().setAttribute(Constants.SERVICE,
-                                                  configContext.getAxisConfiguration().getService(
-                                                          serviceName));
-                }
-            } else {
-                req.setAttribute("status", "Service " + serviceName + " is not an active service" +
-                        ". \n Only parameters of active services can be edited.");
-            }
+            req.setAttribute("status", "Service " + serviceName + " is not an active service" +
+                    ". \n Only parameters of active services can be edited.");
         }
-        return new View(SERVICE_PARA_EDIT_JSP_NAME);
+        return new View("editServiceParameters.jsp");
     }
 
-    @Action(name="engagingGlobally")
-    public View processEngagingGlobally(HttpServletRequest req) {
+    @Action(name="updateServiceParameters")
+    public Redirect updateServiceParameters(HttpServletRequest request) throws AxisFault {
+        String serviceName = request.getParameter("axisService");
+        AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+        if (service != null) {
+            for (Parameter parameter : service.getParameters()) {
+                String para = request.getParameter(serviceName + "_" + parameter.getName());
+                service.addParameter(new Parameter(parameter.getName(), para));
+            }
+
+            for (Iterator<AxisOperation> iterator = service.getOperations(); iterator.hasNext();) {
+                AxisOperation axisOperation = iterator.next();
+                String op_name = axisOperation.getName().getLocalPart();
+
+                for (Parameter parameter : axisOperation.getParameters()) {
+                    String para = request.getParameter(op_name + "_" + parameter.getName());
+
+                    axisOperation.addParameter(new Parameter(parameter.getName(), para));
+                }
+            }
+        }
+        return new Redirect(EDIT_SERVICE_PARAMETERS)
+                .withStatus(true, "Parameters Changed Successfully.")
+                .withParameter("axisService", serviceName);
+    }
+
+    @Action(name=ENGAGE_GLOBALLY)
+    public View engageGlobally(HttpServletRequest req) {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-
-        String moduleName = req.getParameter("modules");
-
-        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-
-        if (moduleName != null) {
-            try {
-                configContext.getAxisConfiguration().engageModule(moduleName);
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                                              moduleName + " module engaged globally successfully");
-            } catch (AxisFault axisFault) {
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
-            }
-        }
 
         req.getSession().setAttribute("modules", null);
-        return new View(ENGAGING_MODULE_GLOBALLY_JSP_NAME);
+        return new View("engageGlobally.jsp");
     }
 
-    @Action(name="listOperations")
-    public View processListOperations(HttpServletRequest req) throws AxisFault {
+    @Action(name="doEngageGlobally")
+    public Redirect doEngageGlobally(HttpServletRequest request) {
+        String moduleName = request.getParameter("module");
+        try {
+            configContext.getAxisConfiguration().engageModule(moduleName);
+            return new Redirect(ENGAGE_GLOBALLY).withStatus(true,
+                    moduleName + " module engaged globally successfully");
+        } catch (AxisFault axisFault) {
+            return new Redirect(ENGAGE_GLOBALLY).withStatus(false, axisFault.getMessage());
+        }
+    }
+
+    @Action(name=ENGAGE_TO_OPERATION)
+    public View engageToOperation(HttpServletRequest req) throws AxisFault {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-
-        String moduleName = req.getParameter("modules");
 
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
@@ -287,73 +284,67 @@ final class AdminActions {
         String serviceName = req.getParameter("axisService");
 
         if (serviceName != null) {
-            req.getSession().setAttribute("service", serviceName);
-        } else {
-            serviceName = (String) req.getSession().getAttribute("service");
+            req.setAttribute("service", serviceName);
         }
 
         req.getSession().setAttribute(
                 Constants.OPERATION_MAP,
                 configContext.getAxisConfiguration().getService(serviceName).getOperations());
-        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-
-        String operationName = req.getParameter("axisOperation");
-
-        if ((serviceName != null) && (moduleName != null) && (operationName != null)) {
-            try {
-                AxisOperation od = configContext.getAxisConfiguration().getService(
-                        serviceName).getOperation(new QName(operationName));
-
-                od.engageModule(
-                        configContext.getAxisConfiguration().getModule(moduleName));
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                                              moduleName
-                                                      +
-                                                      " module engaged to the operation successfully");
-            } catch (AxisFault axisFault) {
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
-            }
-        }
 
         req.getSession().setAttribute("operation", null);
-        return new View(ENGAGE_TO_OPERATION_JSP_NAME);
+        return new View("engageToOperation.jsp");
     }
 
-    @Action(name="engageToService")
-    public View processEngageToService(HttpServletRequest req) {
+    @Action(name="doEngageToOperation")
+    public Redirect doEngageToOperation(HttpServletRequest request) {
+        String moduleName = request.getParameter("module");
+        String serviceName = request.getParameter("service");
+        String operationName = request.getParameter("axisOperation");
+        Redirect redirect = new Redirect(ENGAGE_TO_OPERATION).withParameter("axisService", serviceName);
+        try {
+            AxisOperation od = configContext.getAxisConfiguration().getService(
+                    serviceName).getOperation(new QName(operationName));
+            od.engageModule(configContext.getAxisConfiguration().getModule(moduleName));
+            redirect.withStatus(true, moduleName + " module engaged to the operation successfully");
+        } catch (AxisFault axisFault) {
+            redirect.withStatus(false, axisFault.getMessage());
+        }
+        return redirect;
+    }
+
+    @Action(name=ENGAGE_TO_SERVICE)
+    public View engageToService(HttpServletRequest req) {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         populateSessionInformation(req);
 
-        String moduleName = req.getParameter("modules");
 
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
 
-        String serviceName = req.getParameter("axisService");
-
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
 
-        if ((serviceName != null) && (moduleName != null)) {
-            try {
-                configContext.getAxisConfiguration().getService(serviceName).engageModule(
-                        configContext.getAxisConfiguration().getModule(moduleName));
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                                              moduleName
-                                                      +
-                                                      " module engaged to the service successfully");
-            } catch (AxisFault axisFault) {
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
-            }
-        }
-
         req.getSession().setAttribute("axisService", null);
-        return new View(ENGAGING_MODULE_TO_SERVICE_JSP_NAME);
+        return new View("engageToService.jsp");
     }
 
-    @Action(name="engageToServiceGroup")
-    public View processEngageToServiceGroup(HttpServletRequest req) throws AxisFault {
+    @Action(name="doEngageToService")
+    public Redirect doEngageToService(HttpServletRequest request) {
+        String moduleName = request.getParameter("module");
+        String serviceName = request.getParameter("axisService");
+        try {
+            configContext.getAxisConfiguration().getService(serviceName).engageModule(
+                    configContext.getAxisConfiguration().getModule(moduleName));
+            return new Redirect(ENGAGE_TO_SERVICE).withStatus(true,
+                    moduleName + " module engaged to the service successfully");
+        } catch (AxisFault axisFault) {
+            return new Redirect(ENGAGE_TO_SERVICE).withStatus(false, axisFault.getMessage());
+        }
+    }
+
+    @Action(name=ENGAGE_TO_SERVICE_GROUP)
+    public View engageToServiceGroup(HttpServletRequest req) {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -362,36 +353,33 @@ final class AdminActions {
 
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, services);
 
-        String moduleName = req.getParameter("modules");
-
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
 
-        String serviceName = req.getParameter("axisService");
-
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
 
-        if ((serviceName != null) && (moduleName != null)) {
-            configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
-                    configContext.getAxisConfiguration().getModule(moduleName));
-            req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                                          moduleName
-                                                  +
-                                                  " module engaged to the service group successfully");
-        }
-
         req.getSession().setAttribute("axisService", null);
-        return new View(ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME);
+        return new View("engageToServiceGroup.jsp");
+    }
+
+    @Action(name="doEngageToServiceGroup")
+    public Redirect doEngageToServiceGroup(HttpServletRequest request) throws AxisFault {
+        String moduleName = request.getParameter("module");
+        String serviceName = request.getParameter("axisService");
+        configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
+                configContext.getAxisConfiguration().getModule(moduleName));
+        return new Redirect(ENGAGE_TO_SERVICE_GROUP).withStatus(true,
+                moduleName + " module engaged to the service group successfully");
     }
 
     @Action(name="logout")
-    public View processLogout(HttpServletRequest req) {
+    public Redirect logout(HttpServletRequest req) {
         req.getSession().invalidate();
-        return new View("index.jsp");
+        return new Redirect(WELCOME);
     }
 
-    @Action(name="viewServiceGroupConetxt")
-    public View processviewServiceGroupConetxt(HttpServletRequest req) {
+    @Action(name="viewServiceGroupContext")
+    public View viewServiceGroupContext(HttpServletRequest req) {
         String type = req.getParameter("TYPE");
         String sgID = req.getParameter("ID");
         ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
@@ -402,7 +390,7 @@ final class AdminActions {
     }
 
     @Action(name="viewServiceContext")
-    public View processviewServiceContext(HttpServletRequest req) throws AxisFault {
+    public View viewServiceContext(HttpServletRequest req) throws AxisFault {
         String type = req.getParameter("TYPE");
         String sgID = req.getParameter("PID");
         String ID = req.getParameter("ID");
@@ -420,62 +408,65 @@ final class AdminActions {
     }
 
     @Action(name="selectServiceParaEdit")
-    public View processSelectServiceParaEdit(HttpServletRequest req) {
+    public View selectServiceParaEdit(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
         return new View(SELECT_SERVICE_JSP_NAME);
     }
 
     @Action(name="listOperation")
-    public View processListOperation(HttpServletRequest req) {
+    public View listOperation(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
         return new View(SELECT_SERVICE_JSP_NAME);
     }
 
-    @Action(name="activateService")
-    public View processActivateService(HttpServletRequest req) throws AxisFault {
-        if (req.getParameter("submit") != null) {
-            String serviceName = req.getParameter("axisService");
-            String turnon = req.getParameter("turnon");
-            if (serviceName != null) {
-                if (turnon != null) {
-                    configContext.getAxisConfiguration().startService(serviceName);
-                }
-            }
-        }
+    @Action(name=ACTIVATE_SERVICE)
+    public View activateService(HttpServletRequest req) {
         populateSessionInformation(req);
-        return new View(ACTIVATE_SERVICE_JSP_NAME);
+        return new View("activateService.jsp");
     }
 
-    @Action(name="deactivateService")
-    public View processDeactivateService(HttpServletRequest req) throws AxisFault {
-        if (req.getParameter("submit") != null) {
-            String serviceName = req.getParameter("axisService");
-            String turnoff = req.getParameter("turnoff");
-            if (serviceName != null) {
-                if (turnoff != null) {
-                    configContext.getAxisConfiguration().stopService(serviceName);
-                }
-                populateSessionInformation(req);
+    @Action(name="doActivateService")
+    public Redirect doActivateService(HttpServletRequest request) throws AxisFault {
+        String serviceName = request.getParameter("axisService");
+        String turnon = request.getParameter("turnon");
+        if (serviceName != null) {
+            if (turnon != null) {
+                configContext.getAxisConfiguration().startService(serviceName);
             }
-        } else {
-            populateSessionInformation(req);
         }
-
-        return new View(IN_ACTIVATE_SERVICE_JSP_NAME);
+        return new Redirect(ACTIVATE_SERVICE);
     }
 
-    @Action(name="viewGlobalHandlers")
-    public View processViewGlobalHandlers(HttpServletRequest req) {
+    @Action(name=DEACTIVATE_SERVICE)
+    public View deactivateService(HttpServletRequest req) {
+        populateSessionInformation(req);
+        return new View("deactivateService.jsp");
+    }
+
+    @Action(name="doDeactivateService")
+    public Redirect doDeactivateService(HttpServletRequest request) throws AxisFault {
+        String serviceName = request.getParameter("axisService");
+        String turnoff = request.getParameter("turnoff");
+        if (serviceName != null) {
+            if (turnoff != null) {
+                configContext.getAxisConfiguration().stopService(serviceName);
+            }
+        }
+        return new Redirect(DEACTIVATE_SERVICE);
+    }
+
+    @Action(name="viewGlobalChains")
+    public View viewGlobalChains(HttpServletRequest req) {
         req.getSession().setAttribute(Constants.GLOBAL_HANDLERS,
                                       configContext.getAxisConfiguration());
 
-        return new View(VIEW_GLOBAL_HANDLERS_JSP_NAME);
+        return new View("viewGlobalChains.jsp");
     }
 
-    @Action(name="viewServiceHandlers")
-    public View processViewServiceHandlers(HttpServletRequest req) throws AxisFault {
+    @Action(name="viewOperationSpecificChains")
+    public View viewOperationSpecificChains(HttpServletRequest req) throws AxisFault {
         String service = req.getParameter("axisService");
 
         if (service != null) {
@@ -483,73 +474,73 @@ final class AdminActions {
                                           configContext.getAxisConfiguration().getService(service));
         }
 
-        return new View(VIEW_SERVICE_HANDLERS_JSP_NAME);
+        return new View("viewOperationSpecificChains.jsp");
     }
 
     @Action(name="listPhases")
-    public View processListPhases(HttpServletRequest req) {
+    public View listPhases(HttpServletRequest req) {
         PhasesInfo info = configContext.getAxisConfiguration().getPhasesInfo();
         req.getSession().setAttribute(Constants.PHASE_LIST, info);
-        return new View(LIST_PHASES_JSP_NAME);
+        return new View("viewphases.jsp");
     }
 
     @Action(name="listServiceGroups")
-    public View processListServiceGroups(HttpServletRequest req) {
+    public View listServiceGroups(HttpServletRequest req) {
         Iterator<AxisServiceGroup> serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, serviceGroups);
 
-        return new View(LIST_SERVICE_GROUP_JSP);
+        return new View("listServiceGroups.jsp");
     }
 
-    @Action(name="listService")
-    public View processListService(HttpServletRequest req) {
+    @Action(name=LIST_SERVICES)
+    public View listServices(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
                                       configContext.getAxisConfiguration().getFaultyServices());
 
-        return new View(LIST_SERVICES_JSP_NAME);
+        return new View("listServices.jsp");
     }
 
     @Action(name="listSingleService")
-    public View processListSingleService(HttpServletRequest req) throws AxisFault {
+    public View listSingleService(HttpServletRequest req) throws AxisFault {
         req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
         String serviceName = req.getParameter("serviceName");
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
             req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
         }
-        return new View(LIST_SINGLE_SERVICES_JSP_NAME);
+        return new View("listSingleService.jsp");
     }
 
-    @Action(name="listContexts")
-    public View processListContexts(HttpServletRequest req) {
+    @Action(name="viewContexts")
+    public View viewContexts(HttpServletRequest req) {
         req.getSession().setAttribute(Constants.CONFIG_CONTEXT, configContext);
-        return new View("ViewContexts.jsp");
+        return new View("viewContexts.jsp");
     }
 
     @Action(name="globalModules")
-    public View processglobalModules(HttpServletRequest req) {
+    public View globalModules(HttpServletRequest req) {
         Collection<AxisModule> modules = configContext.getAxisConfiguration().getEngagedModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
-        return new View(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
+        return new View("globalModules.jsp");
     }
 
     @Action(name="listModules")
-    public View processListModules(HttpServletRequest req) {
+    public View listModules(HttpServletRequest req) {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,
                                       configContext.getAxisConfiguration().getFaultyModules());
 
-        return new View(LIST_AVAILABLE_MODULES_JSP_NAME);
+        return new View("listModules.jsp");
     }
 
     @Action(name="disengageModule")
-    public View processdisengageModule(HttpServletRequest req) throws AxisFault {
+    public Redirect processdisengageModule(HttpServletRequest req) throws AxisFault {
         String type = req.getParameter("type");
         String serviceName = req.getParameter("serviceName");
         String moduleName = req.getParameter("module");
@@ -559,47 +550,42 @@ final class AdminActions {
         if (type.equals("operation")) {
             if (service.isEngaged(module.getName()) ||
                     axisConfiguration.isEngaged(module.getName())) {
-                req.getSession().setAttribute("status", "Can not disengage module " + moduleName +
-                        ". This module is engaged at a higher level.");
+                return new Redirect(LIST_SERVICES).withStatus(false, "Can not disengage module "
+                        + moduleName + ". This module is engaged at a higher level.");
             } else {
                 String opName = req.getParameter("operation");
                 AxisOperation op = service.getOperation(new QName(opName));
                 op.disengageModule(module);
-                req.getSession()
-                        .setAttribute("status", "Module " + moduleName + " was disengaged from " +
-                                "operation " + opName + " in service " + serviceName + ".");
+                return new Redirect(LIST_SERVICES).withStatus(true,
+                        "Module " + moduleName + " was disengaged from " + "operation " + opName
+                                + " in service " + serviceName + ".");
             }
         } else {
             if (axisConfiguration.isEngaged(module.getName())) {
-                req.getSession()
-                        .setAttribute("status", "Can not disengage module " + moduleName + ". " +
-                                "This module is engaged at a higher level.");
+                return new Redirect(LIST_SERVICES).withStatus(false, "Can not disengage module "
+                        + moduleName + ". " + "This module is engaged at a higher level.");
             } else {
                 service.disengageModule(axisConfiguration.getModule(moduleName));
-                req.getSession()
-                        .setAttribute("status", "Module " + moduleName + " was disengaged from" +
-                                " service " + serviceName + ".");
+                return new Redirect(LIST_SERVICES).withStatus(true, "Module " + moduleName
+                        + " was disengaged from" + " service " + serviceName + ".");
             }
         }
-        return new View("disengage.jsp");
     }
 
     @Action(name="deleteService")
-    public View processdeleteService(HttpServletRequest req) throws AxisFault {
+    public Redirect deleteService(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("serviceName");
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         if (axisConfiguration.getService(serviceName) != null) {
             axisConfiguration.removeService(serviceName);
-            req.getSession().setAttribute("status", "Service '" + serviceName + "' has been successfully removed.");
+            return new Redirect(LIST_SERVICES).withStatus(true, "Service '" + serviceName + "' has been successfully removed.");
         } else {
-            req.getSession().setAttribute("status", "Failed to delete service '" + serviceName + "'. Service doesn't exist.");
+            return new Redirect(LIST_SERVICES).withStatus(false, "Failed to delete service '" + serviceName + "'. Service doesn't exist.");
         }
-
-        return new View("deleteService.jsp");
     }
 
     @Action(name="selectService")
-    public View processSelectService(HttpServletRequest req) {
+    public View selectService(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
 

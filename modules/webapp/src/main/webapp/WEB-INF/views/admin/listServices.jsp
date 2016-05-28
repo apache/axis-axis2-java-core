@@ -18,6 +18,7 @@
   --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisModule" %>
 <%@ page import="org.apache.axis2.description.AxisOperation" %>
@@ -34,6 +35,7 @@
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 
 <h1>Available Services</h1>
+<t:status/>
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
 %>
 <%

@@ -29,6 +29,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -55,24 +57,35 @@ public class AxisAdminServlet extends AxisServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req,
-                         HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response) throws ServletException, IOException {
         String action;
-        String pathInfo = req.getPathInfo();
+        String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/")) {
             action = "index";
         } else if (pathInfo.charAt(0) == '/') {
             action = pathInfo.substring(1);
         } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         ActionHandler actionHandler = actionHandlers.get(action);
         if (actionHandler != null) {
-            req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
-            ((ActionResult)actionHandler.handle(req, axisSecurityEnabled())).process(req, resp);
+            HttpSession session = request.getSession();
+            session.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+            String statusKey = request.getParameter("status");
+            if (statusKey != null) {
+                StatusCache statusCache = (StatusCache)session.getAttribute(StatusCache.class.getName());
+                if (statusCache != null) {
+                    Status status = statusCache.get(statusKey);
+                    if (status != null) {
+                        request.setAttribute("status", status);
+                    }
+                }
+            }
+            ((ActionResult)actionHandler.handle(request, axisSecurityEnabled())).process(request, response);
         } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 

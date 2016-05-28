@@ -18,6 +18,7 @@
   --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.AxisModule,
                                                                              org.apache.axis2.description.AxisService,
@@ -27,9 +28,6 @@
          %>
 <%@ page import="org.apache.axis2.util.Utils" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
-<%
-    String status = (String) request.getSession().getAttribute(Constants.ENGAGE_STATUS);
-%>
 <h1>Engage Module for a Service</h1>
 
 <p>To engage a module for a axis service,</p>
@@ -40,7 +38,7 @@
         <li>click "Engage".</li>
     </ol>
 
-<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/engageToService"/>">
+<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/doEngageToService"/>">
     <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
             <td>
@@ -53,7 +51,7 @@
         </tr>
         <tr>
             <td>
-                <select name="modules">
+                <select name="module">
                     <%
 
                         HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
@@ -131,19 +129,7 @@
         </tr>
         <tr>
             <td>
-                <textarea cols="50" rows="5" <%
-                    //if (status == null) {
-                %>
-                          style="display:none"
-                        <%
-                            //} %>
-                        >
-                       
-                <%--
-                Following call causes exception so I commented out.
-                	<%=Utils.sanitizeWebOutput(status)%>
-                --%>
-                </textarea>
+                <t:status/>
             </td>
         </tr>
     </table>

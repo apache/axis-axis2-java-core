@@ -18,6 +18,7 @@
   --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisModule,
                  java.util.Collection,
@@ -25,21 +26,18 @@
                  java.util.Iterator" %>
 <%@ page import="org.apache.axis2.util.Utils" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
-<%
-    String status = (String) request.getSession().getAttribute(Constants.ENGAGE_STATUS);
-%>
 <h1>Engage Module Globally</h1>
 
 <p>To engage a module on all services across the system, select a module from the combo box below
     and click on the "Engage" button. Any module that needs to place handlers into the pre-dispatch
     phase needs to be engaged globally.</p>
 
-<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/engagingGlobally"/>">
+<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/doEngageGlobally"/>">
     <table summary="main content table" border="0" style="width:100%" cellspacing="1" cellpadding="1">
         <tr>
             <td style="width: 15%">Select a Module :</td>
             <td style="width: 75%" align="left">
-                <select name="modules">
+                <select name="module">
                     <%
                         HashMap modules = (HashMap) request.getSession().getAttribute(Constants.MODULE_MAP);
                         request.getSession().setAttribute(Constants.MODULE_MAP,null);
@@ -63,10 +61,5 @@
         </tr>
     </table>
 </form>
-<%
-    if (status != null) {
-%>
-<p style="color:blue"><%=Utils.sanitizeWebOutput(status)%></p>
-<%
-    } %>
+<t:status/>
 <jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

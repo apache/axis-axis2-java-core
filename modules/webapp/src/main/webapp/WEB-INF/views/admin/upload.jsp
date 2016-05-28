@@ -18,6 +18,7 @@
   --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <script type="text/javascript">
@@ -41,22 +42,9 @@
 </ul>
 <p>Simple as that!</p>
 
-<% if ("success".equals(request.getAttribute("status"))) { %>
-<p style="color:green">
-File <%= request.getAttribute("filename") %> successfully uploaded 
-</p>
-<%
-} else if ("failure".equals(request.getAttribute("status"))) {
-%>
-<p style="color:red">
-The following error occurred
-</p>
-<p style="color:red">
-<%= request.getAttribute("cause") %>
-</p>
-<% } %>
+<t:status/>
 
-<form method="post" name="Axis2upload" id="Axis2upload" action="<c:url value="axis2-admin/upload"/>"
+<form method="post" name="Axis2upload" id="Axis2upload" action="<c:url value="axis2-admin/doUpload"/>"
       enctype="multipart/form-data">
   <table summary="main content table">
     <tr>
