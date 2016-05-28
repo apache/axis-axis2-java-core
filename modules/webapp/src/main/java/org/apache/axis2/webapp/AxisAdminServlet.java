@@ -70,7 +70,7 @@ public class AxisAdminServlet extends AxisServlet {
         ActionHandler actionHandler = actionHandlers.get(action);
         if (actionHandler != null) {
             req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
-            actionHandler.handle(req, resp, axisSecurityEnabled());
+            ((ActionResult)actionHandler.handle(req, axisSecurityEnabled())).process(req, resp);
         } else {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -87,6 +87,12 @@ public class AxisAdminServlet extends AxisServlet {
         for (Method method : actions.getClass().getMethods()) {
             Action actionAnnotation = method.getAnnotation(Action.class);
             if (actionAnnotation != null) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes.length != 1
+                        || parameterTypes[0] != HttpServletRequest.class
+                        || !ActionResult.class.isAssignableFrom(method.getReturnType())) {
+                    throw new ServletException("Invalid method signature");
+                }
                 actionHandlers.put(
                         actionAnnotation.name(),
                         new ActionHandler(actions, method, actionAnnotation.authorizationRequired()));

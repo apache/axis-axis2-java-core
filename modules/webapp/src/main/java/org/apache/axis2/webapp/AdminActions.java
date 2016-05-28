@@ -41,12 +41,9 @@ import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -106,13 +103,6 @@ final class AdminActions {
         }
     }
 
-    protected void renderView(String jspName, HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        httpServletResponse.setContentType("text/html");
-        httpServletRequest.getRequestDispatcher("/WEB-INF/views/admin/" + jspName)
-                .include(httpServletRequest, httpServletResponse);
-    }
-
     protected void populateSessionInformation(HttpServletRequest req) {
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
@@ -120,21 +110,19 @@ final class AdminActions {
     }
 
     @Action(name="index")
-    public void processIndex(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
-        renderView(ADMIN_JSP_NAME, req, res);
+    public View processIndex(HttpServletRequest req) {
+        return new View(ADMIN_JSP_NAME);
     }
 
     // supported web operations
 
     @Action(name="welcome", authorizationRequired=false)
-    public void processWelcome(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        renderView(LOGIN_JSP_NAME, req, res);
+    public View processWelcome(HttpServletRequest req) {
+        return new View(LOGIN_JSP_NAME);
     }
 
     @Action(name="upload")
-    public void processUpload(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processUpload(HttpServletRequest req) {
         String hasHotDeployment =
                 (String) configContext.getAxisConfiguration().getParameterValue("hotdeployment");
         String hasHotUpdate =
@@ -191,20 +179,18 @@ final class AdminActions {
 
             }
         }
-        renderView("upload.jsp", req, res);
+        return new View("upload.jsp");
     }
 
     @Action(name="login", authorizationRequired=false)
-    public void processLogin(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public ActionResult processLogin(HttpServletRequest req) {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
 
         if ((username == null) || (password == null) || username.trim().length() == 0
                 || password.trim().length() == 0) {
             req.setAttribute("errorMessage", "Invalid auth credentials!");
-            renderView(LOGIN_JSP_NAME, req, res);
-            return;
+            return new View(LOGIN_JSP_NAME);
         }
 
         String adminUserName = (String) configContext.getAxisConfiguration().getParameter(
@@ -214,17 +200,15 @@ final class AdminActions {
 
         if (username.equals(adminUserName) && password.equals(adminPassword)) {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
-            res.sendRedirect(res.encodeURL("index"));
-            renderView(ADMIN_JSP_NAME, req, res);
+            return new Redirect("index");
         } else {
             req.setAttribute("errorMessage", "Invalid auth credentials!");
-            renderView(LOGIN_JSP_NAME, req, res);
+            return new View(LOGIN_JSP_NAME);
         }
     }
 
     @Action(name="editServicePara")
-    public void processEditServicePara(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processEditServicePara(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("axisService");
         if (req.getParameter("changePara") != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
@@ -245,7 +229,6 @@ final class AdminActions {
                     }
                 }
             }
-            res.setContentType("text/html");
             req.setAttribute("status", "Parameters Changed Successfully.");
             req.getSession().removeAttribute(Constants.SERVICE);
         } else {
@@ -263,12 +246,11 @@ final class AdminActions {
                         ". \n Only parameters of active services can be edited.");
             }
         }
-        renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
+        return new View(SERVICE_PARA_EDIT_JSP_NAME);
     }
 
     @Action(name="engagingGlobally")
-    public void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processEngagingGlobally(HttpServletRequest req) {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -288,13 +270,11 @@ final class AdminActions {
         }
 
         req.getSession().setAttribute("modules", null);
-        renderView(ENGAGING_MODULE_GLOBALLY_JSP_NAME, req, res);
-
+        return new View(ENGAGING_MODULE_GLOBALLY_JSP_NAME);
     }
 
     @Action(name="listOperations")
-    public void processListOperations(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListOperations(HttpServletRequest req) throws AxisFault {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -336,12 +316,11 @@ final class AdminActions {
         }
 
         req.getSession().setAttribute("operation", null);
-        renderView(ENGAGE_TO_OPERATION_JSP_NAME, req, res);
+        return new View(ENGAGE_TO_OPERATION_JSP_NAME);
     }
 
     @Action(name="engageToService")
-    public void processEngageToService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processEngageToService(HttpServletRequest req) {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -370,12 +349,11 @@ final class AdminActions {
         }
 
         req.getSession().setAttribute("axisService", null);
-        renderView(ENGAGING_MODULE_TO_SERVICE_JSP_NAME, req, res);
+        return new View(ENGAGING_MODULE_TO_SERVICE_JSP_NAME);
     }
 
     @Action(name="engageToServiceGroup")
-    public void processEngageToServiceGroup(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processEngageToServiceGroup(HttpServletRequest req) throws AxisFault {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -403,31 +381,28 @@ final class AdminActions {
         }
 
         req.getSession().setAttribute("axisService", null);
-        renderView(ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME, req, res);
+        return new View(ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME);
     }
 
     @Action(name="logout")
-    public void processLogout(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processLogout(HttpServletRequest req) {
         req.getSession().invalidate();
-        renderView("index.jsp", req, res);
+        return new View("index.jsp");
     }
 
     @Action(name="viewServiceGroupConetxt")
-    public void processviewServiceGroupConetxt(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processviewServiceGroupConetxt(HttpServletRequest req) {
         String type = req.getParameter("TYPE");
         String sgID = req.getParameter("ID");
         ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
         req.getSession().setAttribute("ServiceGroupContext",sgContext);
         req.getSession().setAttribute("TYPE",type);
         req.getSession().setAttribute("ConfigurationContext",configContext);
-        renderView("viewServiceGroupContext.jsp", req, res);
+        return new View("viewServiceGroupContext.jsp");
     }
 
     @Action(name="viewServiceContext")
-    public void processviewServiceContext(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processviewServiceContext(HttpServletRequest req) throws AxisFault {
         String type = req.getParameter("TYPE");
         String sgID = req.getParameter("PID");
         String ID = req.getParameter("ID");
@@ -441,29 +416,25 @@ final class AdminActions {
             req.setAttribute("ServiceContext",null);
             req.setAttribute("TYPE",type);
         }
-        renderView("viewServiceContext.jsp", req, res);
+        return new View("viewServiceContext.jsp");
     }
 
     @Action(name="selectServiceParaEdit")
-    public void processSelectServiceParaEdit(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processSelectServiceParaEdit(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
-        renderView(SELECT_SERVICE_JSP_NAME, req, res);
+        return new View(SELECT_SERVICE_JSP_NAME);
     }
 
     @Action(name="listOperation")
-    public void processListOperation(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListOperation(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
-
-        renderView(SELECT_SERVICE_JSP_NAME, req, res);
+        return new View(SELECT_SERVICE_JSP_NAME);
     }
 
     @Action(name="activateService")
-    public void processActivateService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processActivateService(HttpServletRequest req) throws AxisFault {
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("axisService");
             String turnon = req.getParameter("turnon");
@@ -474,12 +445,11 @@ final class AdminActions {
             }
         }
         populateSessionInformation(req);
-        renderView(ACTIVATE_SERVICE_JSP_NAME, req, res);
+        return new View(ACTIVATE_SERVICE_JSP_NAME);
     }
 
     @Action(name="deactivateService")
-    public void processDeactivateService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processDeactivateService(HttpServletRequest req) throws AxisFault {
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("axisService");
             String turnoff = req.getParameter("turnoff");
@@ -493,21 +463,19 @@ final class AdminActions {
             populateSessionInformation(req);
         }
 
-        renderView(IN_ACTIVATE_SERVICE_JSP_NAME, req, res);
+        return new View(IN_ACTIVATE_SERVICE_JSP_NAME);
     }
 
     @Action(name="viewGlobalHandlers")
-    public void processViewGlobalHandlers(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processViewGlobalHandlers(HttpServletRequest req) {
         req.getSession().setAttribute(Constants.GLOBAL_HANDLERS,
                                       configContext.getAxisConfiguration());
 
-        renderView(VIEW_GLOBAL_HANDLERS_JSP_NAME, req, res);
+        return new View(VIEW_GLOBAL_HANDLERS_JSP_NAME);
     }
 
     @Action(name="viewServiceHandlers")
-    public void processViewServiceHandlers(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processViewServiceHandlers(HttpServletRequest req) throws AxisFault {
         String service = req.getParameter("axisService");
 
         if (service != null) {
@@ -515,81 +483,73 @@ final class AdminActions {
                                           configContext.getAxisConfiguration().getService(service));
         }
 
-        renderView(VIEW_SERVICE_HANDLERS_JSP_NAME, req, res);
+        return new View(VIEW_SERVICE_HANDLERS_JSP_NAME);
     }
 
     @Action(name="listPhases")
-    public void processListPhases(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListPhases(HttpServletRequest req) {
         PhasesInfo info = configContext.getAxisConfiguration().getPhasesInfo();
         req.getSession().setAttribute(Constants.PHASE_LIST, info);
-        renderView(LIST_PHASES_JSP_NAME, req, res);
+        return new View(LIST_PHASES_JSP_NAME);
     }
 
     @Action(name="listServiceGroups")
-    public void processListServiceGroups(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListServiceGroups(HttpServletRequest req) {
         Iterator<AxisServiceGroup> serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, serviceGroups);
 
-        renderView(LIST_SERVICE_GROUP_JSP, req, res);
+        return new View(LIST_SERVICE_GROUP_JSP);
     }
 
     @Action(name="listService")
-    public void processListService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListService(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
                                       configContext.getAxisConfiguration().getFaultyServices());
 
-        renderView(LIST_SERVICES_JSP_NAME, req, res);
+        return new View(LIST_SERVICES_JSP_NAME);
     }
 
     @Action(name="listSingleService")
-    public void processListSingleService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListSingleService(HttpServletRequest req) throws AxisFault {
         req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
         String serviceName = req.getParameter("serviceName");
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
             req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
         }
-        renderView(LIST_SINGLE_SERVICES_JSP_NAME, req, res);
+        return new View(LIST_SINGLE_SERVICES_JSP_NAME);
     }
 
     @Action(name="listContexts")
-    public void processListContexts(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListContexts(HttpServletRequest req) {
         req.getSession().setAttribute(Constants.CONFIG_CONTEXT, configContext);
-        renderView("ViewContexts.jsp", req, res);
+        return new View("ViewContexts.jsp");
     }
 
     @Action(name="globalModules")
-    public void processglobalModules(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processglobalModules(HttpServletRequest req) {
         Collection<AxisModule> modules = configContext.getAxisConfiguration().getEngagedModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
-        renderView(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME, req, res);
+        return new View(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
     }
 
     @Action(name="listModules")
-    public void processListModules(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processListModules(HttpServletRequest req) {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,
                                       configContext.getAxisConfiguration().getFaultyModules());
 
-        renderView(LIST_AVAILABLE_MODULES_JSP_NAME, req, res);
+        return new View(LIST_AVAILABLE_MODULES_JSP_NAME);
     }
 
     @Action(name="disengageModule")
-    public void processdisengageModule(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processdisengageModule(HttpServletRequest req) throws AxisFault {
         String type = req.getParameter("type");
         String serviceName = req.getParameter("serviceName");
         String moduleName = req.getParameter("module");
@@ -621,12 +581,11 @@ final class AdminActions {
                                 " service " + serviceName + ".");
             }
         }
-        renderView("disengage.jsp", req, res);
+        return new View("disengage.jsp");
     }
 
     @Action(name="deleteService")
-    public void processdeleteService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processdeleteService(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("serviceName");
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         if (axisConfiguration.getService(serviceName) != null) {
@@ -636,15 +595,14 @@ final class AdminActions {
             req.getSession().setAttribute("status", "Failed to delete service '" + serviceName + "'. Service doesn't exist.");
         }
 
-        renderView("deleteService.jsp", req, res);
+        return new View("deleteService.jsp");
     }
 
     @Action(name="selectService")
-    public void processSelectService(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
+    public View processSelectService(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
 
-        renderView(SELECT_SERVICE_JSP_NAME, req, res);
+        return new View(SELECT_SERVICE_JSP_NAME);
     }
 }

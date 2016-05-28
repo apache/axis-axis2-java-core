@@ -24,7 +24,6 @@ import java.lang.reflect.Method;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis2.Constants;
 
@@ -39,12 +38,12 @@ final class ActionHandler {
         this.authorizationRequired = authorizationRequired;
     }
 
-    void handle(HttpServletRequest request, HttpServletResponse response, boolean securityEnabled) throws IOException, ServletException {
+    ActionResult handle(HttpServletRequest request, boolean securityEnabled) throws IOException, ServletException {
         if (securityEnabled && authorizationRequired && request.getSession().getAttribute(Constants.LOGGED) == null) {
-            response.sendRedirect("welcome");
+            return new Redirect("welcome");
         } else {
             try {
-                method.invoke(target, request, response);
+                return (ActionResult)method.invoke(target, request);
             } catch (IllegalAccessException ex) {
                 throw new ServletException(ex);
             } catch (IllegalArgumentException ex) {
