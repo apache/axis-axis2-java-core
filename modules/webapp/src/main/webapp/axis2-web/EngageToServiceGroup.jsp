@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.AxisModule,
                                                                              org.apache.axis2.description.AxisServiceGroup,
@@ -51,7 +52,7 @@
 		<p>No Axis service groups are present to be engaged.</p>
 		<%} else {
 %>
-<form method="get" name="selectModuleForm" action="axis2-admin/engageToServiceGroup">
+<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/engageToServiceGroup"/>">
     <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
             <td>Select a Module :</td>

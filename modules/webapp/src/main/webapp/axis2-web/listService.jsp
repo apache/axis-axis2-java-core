@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisModule" %>
 <%@ page import="org.apache.axis2.description.AxisOperation" %>
@@ -78,7 +79,7 @@
 <p>Service Description : <%=serviceDescription%><br>
 Service EPR : <%=prefix + axisService.getName()%><br>
 Service Status : <%=axisService.isActive() ? "Active" : "InActive"%><br>
-Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remove Service</a></p><br>
+Actions : <a href="<c:url value="axis2-admin/deleteService"><c:param name="serviceName" value="<%=serviceName%>"/></c:url>">Remove Service</a></p><br>
 <%
     Collection engagedModules = axisService.getEngagedModules();
     String moduleName;
@@ -95,7 +96,7 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
 %>
 <ul>
     <% }
-    %><li><%=moduleName%> :: <a href="axis2-admin/disengageModule?type=service&amp;serviceName=<%=serviceName%>&amp;module=<%=moduleName%>">Disengage</a></li>
+    %><li><%=moduleName%> :: <a href="<c:url value="axis2-admin/disengageModule"><c:param name="type" value="service"/><c:param name="serviceName" value="<%=serviceName%>"/><c:param name="module" value="<%=moduleName%>"/></c:url>">Disengage</a></li>
 
     <%
         }
@@ -134,7 +135,7 @@ Actions : <a href="axis2-admin/deleteService?serviceName=<%=serviceName%>">Remov
             moduleName = moduleDecription.getName();
     %>
     <li>
-    <%=moduleName%> :: <a href="axis2-admin/disengageModule?type=operation&amp;serviceName=<%=serviceName%>&amp;operation=<%=axisOperation.getName().getLocalPart()%>&amp;module=<%=moduleName%>">Disengage</a>
+    <%=moduleName%> :: <a href="<c:url value="axis2-admin/disengageModule"><c:param name="type" value="operation"/><c:param name="serviceName" value="<%=serviceName%>"/><c:param name="operation" value="<%=axisOperation.getName().getLocalPart()%>"/><c:param name="module" value="<%=moduleName%>"/></c:url>">Disengage</a>
     </li>
     <%
     }

@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.apache.axis2.context.ServiceContext" %>
@@ -49,7 +50,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/upload">Upload Service</a>
+         <a href="<c:url value="axis2-admin/upload"/>">Upload Service</a>
        </td>
     </tr>
 <tr>
@@ -62,7 +63,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="axis2-admin/listService">Available Services</a>
+      <a href="<c:url value="axis2-admin/listService"/>">Available Services</a>
     </td>
  </tr>
  <tr>
@@ -70,7 +71,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="axis2-admin/listServiceGroups">Available Service Groups</a>
+      <a href="<c:url value="axis2-admin/listServiceGroups"/>">Available Service Groups</a>
     </td>
  </tr>
  <tr>
@@ -78,7 +79,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="axis2-admin/listModules">Available Modules</a>
+      <a href="<c:url value="axis2-admin/listModules"/>">Available Modules</a>
     </td>
  </tr>
  <tr>
@@ -86,7 +87,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td>
-      <a href="axis2-admin/globalModules">Globally Engaged Modules</a>
+      <a href="<c:url value="axis2-admin/globalModules"/>">Globally Engaged Modules</a>
     </td>
  </tr>
  <tr>
@@ -94,7 +95,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="axis2-admin/listPhases">Available Phases</a>
+      <a href="<c:url value="axis2-admin/listPhases"/>">Available Phases</a>
     </td>
  </tr>
   <tr>
@@ -107,7 +108,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/viewGlobalHandlers">Global Chains</a>
+         <a href="<c:url value="axis2-admin/viewGlobalHandlers"/>">Global Chains</a>
        </td>
     </tr>
     <tr>
@@ -115,7 +116,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/selectService">Operation Specific Chains</a>
+         <a href="<c:url value="axis2-admin/selectService"/>">Operation Specific Chains</a>
        </td>
     </tr>
     <tr>
@@ -128,7 +129,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/engagingglobally">For all Services</a>
+         <a href="<c:url value="axis2-admin/engagingglobally"/>">For all Services</a>
        </td>
     </tr>
      <tr>
@@ -136,7 +137,7 @@
          &nbsp;&nbsp;&nbsp;&nbsp;
         </td>
         <td>
-          <a href="axis2-admin/engageToServiceGroup">For a Service Group</a>
+          <a href="<c:url value="axis2-admin/engageToServiceGroup"/>">For a Service Group</a>
         </td>
      </tr>
 
@@ -146,7 +147,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/engageToService">For a Service</a>
+         <a href="<c:url value="axis2-admin/engageToService"/>">For a Service</a>
        </td>
     </tr>
 
@@ -155,7 +156,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/listOperation">For an Operation</a>
+         <a href="<c:url value="axis2-admin/listOperation"/>">For an Operation</a>
        </td>
     </tr>
 
@@ -169,7 +170,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/deactivateService">Deactivate Service</a>
+         <a href="<c:url value="axis2-admin/deactivateService"/>">Deactivate Service</a>
        </td>
     </tr>
     <tr>
@@ -177,7 +178,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/activateService">Activate Service</a>
+         <a href="<c:url value="axis2-admin/activateService"/>">Activate Service</a>
        </td>
     </tr>
     <tr>
@@ -185,7 +186,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/selectServiceParaEdit">Edit Parameters</a>
+         <a href="<c:url value="axis2-admin/selectServiceParaEdit"/>">Edit Parameters</a>
        </td>
     </tr>
     <tr>
@@ -198,7 +199,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/listContexts">View Hierarchy</a>
+         <a href="<c:url value="axis2-admin/listContexts"/>">View Hierarchy</a>
        </td>
     </tr>
 </table>

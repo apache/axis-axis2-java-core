@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"/>
 <script type="text/javascript">
@@ -55,7 +56,7 @@ The following error occurred
 </p>
 <% } %>
 
-<form method="post" name="Axis2upload" id="Axis2upload" action="axis2-admin/upload"
+<form method="post" name="Axis2upload" id="Axis2upload" action="<c:url value="axis2-admin/upload"/>"
       enctype="multipart/form-data">
   <table summary="main content table">
     <tr>

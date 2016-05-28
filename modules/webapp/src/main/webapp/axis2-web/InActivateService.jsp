@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisService,
                  java.util.Collection,
@@ -25,7 +26,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"/>
 <h1>Deactivate Service</h1>
-<form method="get" name="serviceInActivate" action="axis2-admin/deactivateService">
+<form method="get" name="serviceInActivate" action="<c:url value="axis2-admin/deactivateService"/>">
   <table summary="main content table" style="width: 100%"  border="0">
 <tr>
   <td colspan="2" >

@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants" %>
 <%@ page import="org.apache.axis2.description.AxisModule" %>
 <%@ page import="org.apache.axis2.description.AxisService" %>
@@ -43,7 +44,7 @@
             AxisService axisService = (AxisService) axisServiceIter.next();
             String serviceName = axisService.getName();
     %>
-    <li><a style="color:blue" href="axis2-admin/ListSingleService?serviceName=<%=serviceName%>">
+    <li><a style="color:blue" href="<c:url value="axis2-admin/ListSingleService"><c:param name="serviceName" value="<%=serviceName%>"/></c:url>">
         <%=serviceName%></a></li>
     <%
         }

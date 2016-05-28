@@ -109,11 +109,10 @@ public class AdminAgent extends AbstractAgent {
                        HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
 
-        // We forward to login page if axis2 security is enabled
+        // Redirect to the login page if axis2 security is enabled
         // and the user is not authorized
-        // TODO Fix workaround for login test
-        if (axisSecurityEnabled() && authorizationRequired(httpServletRequest)) {
-            renderView(LOGIN_JSP_NAME, httpServletRequest, httpServletResponse);
+        if (!httpServletRequest.getPathInfo().equals("/welcome") && axisSecurityEnabled() && authorizationRequired(httpServletRequest)) {
+            httpServletResponse.sendRedirect("welcome");
         } else {
             super.handle(httpServletRequest, httpServletResponse);
         }
@@ -126,6 +125,10 @@ public class AdminAgent extends AbstractAgent {
     }
 
     // supported web operations
+
+    public void processWelcome(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        renderView(LOGIN_JSP_NAME, req, res);
+    }
 
     public void processUpload(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
@@ -208,6 +211,7 @@ public class AdminAgent extends AbstractAgent {
 
         if (username.equals(adminUserName) && password.equals(adminPassword)) {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
+            res.sendRedirect(res.encodeURL("index"));
             renderView(ADMIN_JSP_NAME, req, res);
         } else {
             req.setAttribute("errorMessage", "Invalid auth credentials!");

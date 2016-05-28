@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.apache.axis2.context.ServiceContext" %>
@@ -76,6 +77,6 @@
         <table summary="logout table" width="100%">
           <tr>
             <td align="right" colspan="2"><a href="#" onclick="javascript:history.back();">Back</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
-              href="axis2-admin/logout">Log out</a></td>
+              href="<c:url value="axis2-admin/logout"/>">Log out</a></td>
           </tr>
         </table>

@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.AxisModule,
                                                                              org.apache.axis2.description.AxisOperation,
@@ -36,7 +37,7 @@
             <li>click "Engage".</li>
         </ol>
 
-<form method="get" name="selectModuleForm" action="axis2-admin/listOperations">
+<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/listOperations"/>">
 <table summary="main content table" border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>
         <td>

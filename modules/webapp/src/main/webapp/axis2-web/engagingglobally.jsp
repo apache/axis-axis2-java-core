@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisModule,
                  java.util.Collection,
@@ -33,7 +34,7 @@
     and click on the "Engage" button. Any module that needs to place handlers into the pre-dispatch
     phase needs to be engaged globally.</p>
 
-<form method="get" name="selectModuleForm" action="axis2-admin/engagingglobally">
+<form method="get" name="selectModuleForm" action="<c:url value="axis2-admin/engagingglobally"/>">
     <table summary="main content table" border="0" style="width:100%" cellspacing="1" cellpadding="1">
         <tr>
             <td style="width: 15%">Select a Module :</td>

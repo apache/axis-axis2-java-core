@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisService,
                  java.util.Collection,
@@ -50,7 +51,7 @@
   %>
 <h1><%=heading%></h1>
 <p><%=disc%></p>
-<form method="get" name="selectServiceForm" action="axis2-admin/<%=action%>">
+<form method="get" name="selectServiceForm" action="<c:url value="<%="axis2-admin/"+action%>"/>">
 <table summary="main content table" border="0" style="width: 50%" cellspacing="1" cellpadding="1">
          <tr>
         <td style="width: 35%">Select a Service :</td><td style="width:65%">

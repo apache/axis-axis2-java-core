@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.apache.axis2.Constants"%>
 <%@ page import="org.apache.axis2.context.ConfigurationContext"%>
 <%@ page import="org.apache.axis2.context.ServiceContext"%>
@@ -39,8 +40,8 @@
         String groupContextID = serviceGroupIds[i];
         ServiceGroupContext groupContext = configContext.getServiceGroupContext(groupContextID);
         %>
-           <li><%=groupContextID%><a style="color:blue" href="axis2-admin/viewServiceGroupConetxt?TYPE=VIEW&ID=<%=groupContextID%>">
-                    View</a>  <a style="color:red" href="axis2-admin/viewServiceGroupConetxt?TYPE=DELETE&ID=<%=groupContextID%>">
+           <li><%=groupContextID%><a style="color:blue" href="<c:url value="axis2-admin/viewServiceGroupConetxt"><c:param name="TYPE" value="VIEW"/><c:param name="ID" value="<%=groupContextID%>"/></c:url>">
+                    View</a>  <a style="color:red" href="<c:url value="axis2-admin/viewServiceGroupConetxt"><c:param name="TYPE" value="DELETE"/><c:param name="ID" value="<%=groupContextID%>"/></c:url>">
                     Remove</a> </li>
                     
                     <li>
@@ -51,7 +52,7 @@
             ServiceContext serviceContext = (ServiceContext)serviceContextItr.next();
              String serviceConID = serviceContext.getAxisService().getName();
         %>
-            <li><%=serviceConID%><a style="color:blue" href="axis2-admin/viewServiceContext?TYPE=VIEW&ID=<%=serviceConID%>&PID=<%=groupContextID%>">
+            <li><%=serviceConID%><a style="color:blue" href="<c:url value="axis2-admin/viewServiceContext"><c:param name="TYPE" value="VIEW"/><c:param name="ID" value="<%=serviceConID%>"/><c:param name="PID" value="<%=groupContextID%>"/></c:url>">
                     View</a></li>
         <%
         }
