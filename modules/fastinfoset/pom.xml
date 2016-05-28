@@ -103,6 +103,7 @@
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-truth</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
