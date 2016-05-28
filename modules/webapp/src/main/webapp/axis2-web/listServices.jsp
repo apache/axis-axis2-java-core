@@ -33,14 +33,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<jsp:include page="include/httpbase.jsp"/>
+<jsp:include page="/WEB-INF/include/httpbase.jsp"/>
 <title>List Services</title>
     <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-<jsp:include page="include/header.inc"/>
-<jsp:include page="include/link-footer.jsp"/>
+<jsp:include page="/WEB-INF/include/header.inc"/>
+<jsp:include page="/WEB-INF/include/link-footer.jsp"/>
 <h1>Available services</h1>
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
 %>
@@ -132,6 +132,6 @@
 %> No services listed! Try hitting refresh. <%
     }
 %>
-<jsp:include page="include/footer.inc"/>
+<jsp:include page="/WEB-INF/include/footer.inc"/>
 </body>
 </html>

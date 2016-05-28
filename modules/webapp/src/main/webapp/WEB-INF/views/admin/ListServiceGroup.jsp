@@ -25,7 +25,7 @@
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Available Service Groups</h1>
 <%
     Iterator axisServiceGroupIter = (Iterator) request.getSession().getAttribute(
@@ -44,7 +44,7 @@
             AxisService axisService = (AxisService) axisServiceIter.next();
             String serviceName = axisService.getName();
     %>
-    <li><a style="color:blue" href="<c:url value="axis2-admin/ListSingleService"><c:param name="serviceName" value="<%=serviceName%>"/></c:url>">
+    <li><a style="color:blue" href="<c:url value="axis2-admin/listSingleService"><c:param name="serviceName" value="<%=serviceName%>"/></c:url>">
         <%=serviceName%></a></li>
     <%
         }
@@ -66,4 +66,4 @@
         }
     }
 %>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

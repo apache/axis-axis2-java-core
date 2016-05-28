@@ -24,7 +24,7 @@
 <%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Running Context Hierarchy</h1>
 <%
     ConfigurationContext configContext = (ConfigurationContext) request.getSession().getAttribute(
@@ -65,4 +65,4 @@
 	<p>No running contexts were found on the system.</p>
             <%}
 %>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

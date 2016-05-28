@@ -21,7 +21,7 @@
 <%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Running Context hierarchy</h1>
 <%
     String type = (String) request.getSession().getAttribute("TYPE");
@@ -52,4 +52,4 @@
 %> <h4>No service group context found</h4><%
     }
 %>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

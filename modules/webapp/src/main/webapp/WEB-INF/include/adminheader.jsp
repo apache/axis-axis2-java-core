@@ -71,7 +71,7 @@
     <table summary="left frame table" class="FULL_BLANK">
       <tr>
         <td valign="top" style="width:20%">
-          <jsp:include page="../LeftFrame.jsp"/>
+          <jsp:include page="LeftFrame.jsp"/>
         </td>
         <td valign="top" align="left" style="width:80%">
         <table summary="logout table" width="100%">

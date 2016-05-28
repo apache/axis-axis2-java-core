@@ -24,7 +24,7 @@
                  java.util.HashMap,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Deactivate Service</h1>
 <form method="get" name="serviceInActivate" action="<c:url value="axis2-admin/deactivateService"/>">
   <table summary="main content table" style="width: 100%"  border="0">
@@ -81,4 +81,4 @@ if (count > 0) {
 
 </table>
 </form>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

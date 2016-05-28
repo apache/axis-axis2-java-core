@@ -25,7 +25,7 @@
                                                                              java.util.Collection,
                                                                              java.util.HashMap,
                                                                              java.util.Iterator"%>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
@@ -126,4 +126,4 @@
            </tr>
       </table>
    </form>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

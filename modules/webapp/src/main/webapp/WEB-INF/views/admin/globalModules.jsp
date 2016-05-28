@@ -20,7 +20,7 @@
                  java.util.Collection,
                  java.util.Iterator"%>
  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Globally Engaged Modules</h1>
      <%
          boolean foundModules = false;
@@ -52,4 +52,4 @@
                  <%
          }
                  %>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

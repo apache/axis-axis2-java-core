@@ -26,7 +26,7 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>List Single Service</h1>
 <%
     String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
@@ -105,4 +105,4 @@ Service Status : <%=axisService.isActive() ? "Active" : "InActive"%>
 
     }
 %>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

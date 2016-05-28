@@ -27,13 +27,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-  <jsp:include page="include/httpbase.jsp"/>
+  <jsp:include page="/WEB-INF/include/httpbase.jsp"/>
   <title>List Services</title>
   <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Available services</h1>
 <%
   String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) +"/";
@@ -124,6 +124,6 @@ Engaged Modules for the Operation
 <%
   }
 %>
-<jsp:include page="include/adminfooter.inc"/>
+<jsp:include page="/WEB-INF/include/adminfooter.inc"/>
 </body>
 </html>

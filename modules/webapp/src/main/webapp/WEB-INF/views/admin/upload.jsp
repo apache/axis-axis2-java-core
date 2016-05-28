@@ -19,7 +19,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <script type="text/javascript">
 <!--
 	function checkFileUpload(){
@@ -73,4 +73,4 @@ The following error occurred
 <p>Hot deployment of new service archives is <%=request.getAttribute("hotDeployment") %></p>
 <p>Hot update of existing service archives is <%=request.getAttribute("hotUpdate") %></p>
 </blockquote>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

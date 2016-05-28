@@ -21,7 +21,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <jsp:include page="../include/httpbase.jsp"/>
+    <jsp:include page="/WEB-INF/include/httpbase.jsp"/>
     <title>Axis2 :: Resource not found!</title>
     <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">

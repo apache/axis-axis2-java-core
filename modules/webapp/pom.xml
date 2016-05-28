@@ -315,7 +315,7 @@
                     <webAppConfig>
                         <contextPath>/axis2</contextPath>
                         <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-                            <resourcesAsCSV>src/main/webapp,${project.build.directory}/webResources</resourcesAsCSV>
+                            <resourcesAsCSV>${project.build.directory}/webResources,src/main/webapp</resourcesAsCSV>
                         </baseResource>
                     </webAppConfig>
                 </configuration>

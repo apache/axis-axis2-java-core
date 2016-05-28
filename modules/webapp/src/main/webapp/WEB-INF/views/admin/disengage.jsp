@@ -17,7 +17,6 @@
   ~ under the License.
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
-<p><%=request.getSession().getAttribute("status")%></p>
-<p>Click <a href="services/listServices">here</a> to go to the service list page</p>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
+<%=request.getSession().getAttribute("status")%>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>

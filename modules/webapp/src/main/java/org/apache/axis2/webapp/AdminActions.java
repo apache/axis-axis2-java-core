@@ -109,7 +109,7 @@ final class AdminActions {
     protected void renderView(String jspName, HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) throws IOException, ServletException {
         httpServletResponse.setContentType("text/html");
-        httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName)
+        httpServletRequest.getRequestDispatcher("/WEB-INF/views/admin/" + jspName)
                 .include(httpServletRequest, httpServletResponse);
     }
 

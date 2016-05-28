@@ -20,7 +20,7 @@
                  org.apache.axis2.engine.Phase"%>
  <%@ page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
+<jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 <h1>Available Phases</h1>
      <%
          PhasesInfo phases = (PhasesInfo)request.getSession().getAttribute(Constants.PHASE_LIST);
@@ -108,4 +108,4 @@
              }
          %>
          </blockquote>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="/WEB-INF/include/adminfooter.jsp"/>
