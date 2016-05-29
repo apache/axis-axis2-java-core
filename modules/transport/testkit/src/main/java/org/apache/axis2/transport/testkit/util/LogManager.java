@@ -70,6 +70,10 @@ public class LogManager {
         }
     }
     
+    public synchronized boolean isLoggingEnabled() {
+        return testCaseDir != null;
+    }
+    
     public synchronized OutputStream createLog(String name) throws IOException {
         testCaseDir.mkdirs();
         OutputStream log = new FileOutputStream(new File(testCaseDir, StringUtils.leftPad(String.valueOf(sequence++), 2, '0') + "-" + name + ".log"));
