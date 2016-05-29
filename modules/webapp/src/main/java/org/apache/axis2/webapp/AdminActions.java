@@ -238,7 +238,10 @@ final class AdminActions {
         Map<String,String> parameters = new TreeMap<String,String>();
         for (Parameter parameter : description.getParameters()) {
             if (parameter.getParameterType() != Parameter.OM_PARAMETER) {
-                parameters.put(parameter.getName(), parameter.getValue().toString());
+                Object value = parameter.getValue();
+                if (value instanceof String) {
+                    parameters.put(parameter.getName(), (String)value);
+                }
             }
         }
         return parameters;
