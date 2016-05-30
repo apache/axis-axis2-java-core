@@ -22,6 +22,7 @@ package org.apache.axis2.datasource.jaxb;
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMDocument;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.ds.custombuilder.CustomBuilder;
 import org.apache.axiom.soap.SOAPBody;
@@ -30,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
@@ -52,21 +54,24 @@ public class JAXBCustomBuilder implements CustomBuilder, CustomBuilder.Selector 
         JAXBCustomBuilderMonitor.updateTotalBuilders();
     }
 
-
-    public OMDataSource create(XMLStreamReader reader) throws OMException {
-        if (log.isDebugEnabled()) {
-            log.debug("create namespace = " + reader.getNamespaceURI());
-            log.debug("  localPart = " + reader.getLocalName());
-            log.debug("  reader = " + reader.getClass());
-        }
-        
+    @Override
+    public OMDataSource create(OMElement element) throws OMException {
+        XMLStreamReader reader = element.getXMLStreamReaderWithoutCaching();
         try {
+            reader.next();
+            if (log.isDebugEnabled()) {
+                log.debug("create namespace = " + reader.getNamespaceURI());
+                log.debug("  localPart = " + reader.getLocalName());
+                log.debug("  reader = " + reader.getClass());
+            }
+        
             // Create an OMSourcedElement backed by an unmarshalled JAXB object
             
             Object jaxb = jdsContext.unmarshal(reader);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully unmarshalled jaxb object " + jaxb);
             }
+            reader.close();
             
             OMDataSource ds = new JAXBDataSource(jaxb, jdsContext);
             if (log.isDebugEnabled()) {
@@ -75,6 +80,9 @@ public class JAXBCustomBuilder implements CustomBuilder, CustomBuilder.Selector 
             JAXBCustomBuilderMonitor.updateTotalCreates();
             return ds;
         } catch (JAXBException e) {
+            JAXBCustomBuilderMonitor.updateTotalFailedCreates();
+            throw new OMException(e);
+        } catch (XMLStreamException e) {
             JAXBCustomBuilderMonitor.updateTotalFailedCreates();
             throw new OMException(e);
         }
