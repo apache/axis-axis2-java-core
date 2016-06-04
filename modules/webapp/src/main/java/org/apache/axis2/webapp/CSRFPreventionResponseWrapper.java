@@ -21,8 +21,10 @@ package org.apache.axis2.webapp;
 import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,20 +32,32 @@ import org.apache.commons.logging.LogFactory;
 final class CSRFPreventionResponseWrapper extends HttpServletResponseWrapper {
     private static final Log log = LogFactory.getLog(CSRFPreventionResponseWrapper.class);
 
+    private final HttpServletRequest request;
     private final Map<String,ActionHandler> actionHandlers;
-    private final CSRFTokenCache tokenCache;
     private final Random random;
     private String token;
 
-    CSRFPreventionResponseWrapper(HttpServletResponse response, Map<String,ActionHandler> actionHandlers, CSRFTokenCache tokenCache, Random random) {
+    CSRFPreventionResponseWrapper(HttpServletRequest request, HttpServletResponse response, Map<String,ActionHandler> actionHandlers, Random random) {
         super(response);
+        this.request = request;
         this.actionHandlers = actionHandlers;
-        this.tokenCache = tokenCache;
         this.random = random;
     }
 
     protected String getToken() {
         if (token == null) {
+            HttpSession session = request.getSession(false);
+            if (session == null) {
+                throw new IllegalStateException();
+            }
+            CSRFTokenCache tokenCache;
+            synchronized (session) {
+                tokenCache = (CSRFTokenCache)session.getAttribute(CSRFTokenCache.class.getName());
+                if (tokenCache == null) {
+                    tokenCache = new CSRFTokenCache();
+                    session.setAttribute(CSRFTokenCache.class.getName(), tokenCache);
+                }
+            }
             byte[] bytes = new byte[16];
             StringBuilder buffer = new StringBuilder();
             random.nextBytes(bytes);

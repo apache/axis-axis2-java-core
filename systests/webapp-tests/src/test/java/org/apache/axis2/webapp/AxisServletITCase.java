@@ -18,16 +18,17 @@
  */
 package org.apache.axis2.webapp;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.Rule;
+import org.junit.Test;
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@interface Action {
-    String name();
-    boolean authorizationRequired() default true;
-    boolean post() default false;
-    boolean sessionCreationAllowed() default false;
+public class AxisServletITCase {
+    @Rule
+    public Axis2WebTester tester = new Axis2WebTester();
+
+    @Test
+    public void testListServices() {
+        tester.beginAt("/");
+        tester.clickLinkWithExactText("Services");
+        tester.assertLinkPresentWithExactText("Version");
+    }
 }

@@ -60,6 +60,7 @@ final class AdminActions {
     private static final Log log = LogFactory.getLog(AbstractAgent.class);
     
     private static final String WELCOME = "welcome";
+    private static final String LOGOUT = "logout";
     private static final String INDEX = "index";
     private static final String UPLOAD = "upload";
     private static final String LIST_SERVICES = "listServices";
@@ -116,11 +117,16 @@ final class AdminActions {
     // supported web operations
 
     @Action(name=WELCOME, authorizationRequired=false)
-    public View welcome(HttpServletRequest req) {
-        if ("true".equals(req.getParameter("failed"))) {
-            req.setAttribute("errorMessage", "Invalid auth credentials!");
+    public ActionResult welcome(HttpServletRequest req) {
+        // Session fixation prevention: if there is an existing session, first invalidate it.
+        if (req.getSession(false) != null) {
+            return new Redirect(LOGOUT);
+        } else {
+            if ("true".equals(req.getParameter("failed"))) {
+                req.setAttribute("errorMessage", "Invalid auth credentials!");
+            }
+            return new View(LOGIN_JSP_NAME);
         }
-        return new View(LOGIN_JSP_NAME);
     }
 
     @Action(name=UPLOAD)
@@ -184,8 +190,15 @@ final class AdminActions {
         throw new ServletException("Invalid request");
     }
 
-    @Action(name="login", authorizationRequired=false, post=true)
+    @Action(name="login", authorizationRequired=false, post=true, sessionCreationAllowed=true)
     public Redirect login(HttpServletRequest req) {
+        // Session fixation prevention: don't allow to login in an existing session.
+        // Note that simply invalidating the session and creating a new one is not sufficient
+        // because on some servlet containers, the new session will keep the existing session ID.
+        if (req.getSession(false) != null) {
+            return new Redirect(WELCOME);
+        }
+
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
 
@@ -395,7 +408,7 @@ final class AdminActions {
                 moduleName + " module engaged to the service group successfully");
     }
 
-    @Action(name="logout")
+    @Action(name=LOGOUT)
     public Redirect logout(HttpServletRequest req) {
         req.getSession().invalidate();
         return new Redirect(WELCOME);

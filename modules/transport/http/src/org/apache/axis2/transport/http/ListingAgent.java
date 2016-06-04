@@ -58,8 +58,6 @@ public class ListingAgent extends AbstractAgent {
 
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
             "listServices.jsp";
-    private static final String LIST_SINGLE_SERVICE_JSP_NAME =
-            "listSingleService.jsp";
     private static final String LIST_FAULTY_SERVICES_JSP_NAME = "listFaultyService.jsp";
 
     public ListingAgent(ConfigurationContext aConfigContext) {
@@ -69,7 +67,7 @@ public class ListingAgent extends AbstractAgent {
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
-
+        httpServletRequest = new ForbidSessionCreationWrapper(httpServletRequest);
         String query = httpServletRequest.getQueryString();
         if (query != null) {
             if (HttpUtils.indexOfIngnoreCase(query , "wsdl2") > 0 || HttpUtils.indexOfIngnoreCase(query, "wsdl") > 0 ||
@@ -88,7 +86,7 @@ public class ListingAgent extends AbstractAgent {
         String serviceName = req.getParameter("serviceName");
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
-            req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
+            req.setAttribute(Constants.SINGLE_SERVICE, service);
         }
         renderView(LIST_FAULTY_SERVICES_JSP_NAME, req, res);
     }
@@ -192,16 +190,10 @@ public class ListingAgent extends AbstractAgent {
                 } else if (policy >= 0) {
                     handlePolicyRequest(req, res, serviceName, axisService);
                     return;
-                } else {
-                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, axisService);
                 }
-            } else {
-                req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
-                res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
             }
         }
-
-        renderView(LIST_SINGLE_SERVICE_JSP_NAME, req, res);
+        res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
     }
 
     private void handlePolicyRequest(HttpServletRequest req,
@@ -387,9 +379,9 @@ public class ListingAgent extends AbstractAgent {
         if(listServiceDisabled()){
            return;
         }
-        populateSessionInformation(req);
-        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                                      configContext.getAxisConfiguration().getFaultyServices());
+        populateRequestAttributes(req);
+        req.setAttribute(Constants.ERROR_SERVICE_MAP,
+                configContext.getAxisConfiguration().getFaultyServices());
         renderView(LIST_MULTIPLE_SERVICE_JSP_NAME, req, res);
     }
 

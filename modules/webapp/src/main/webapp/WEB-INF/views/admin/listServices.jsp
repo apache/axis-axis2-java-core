@@ -36,7 +36,7 @@
 
 <h1>Available Services</h1>
 <t:status/>
-<% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
+<% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getAttribute(Constants.SERVICE_PATH) + "/";
 %>
 <%
     HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);

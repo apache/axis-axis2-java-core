@@ -16,21 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.webapp;
+package org.apache.axis2.transport.http;
 
-import static net.sourceforge.jwebunit.junit.JWebUnit.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpSession;
 
-import org.junit.Test;
+public class ForbidSessionCreationWrapper extends HttpServletRequestWrapper {
+    public ForbidSessionCreationWrapper(HttpServletRequest request) {
+        super(request);
+    }
 
-public class WebappITCase {
-    @Test
-    public void test() {
-        setBaseUrl("http://localhost:" + System.getProperty("jetty.httpPort", "8080") + "/axis2/axis2-admin");
-        beginAt("/");
-        setTextField("userName", "admin");
-        setTextField("password", "axis2");
-        submit();
-        clickLinkWithText("Available Services");
-        assertMatch("Service EPR : http://localhost:[0-9]+/axis2/services/Version");
+    @Override
+    public HttpSession getSession() {
+        return getSession(true);
+    }
+
+    @Override
+    public HttpSession getSession(boolean create) {
+        HttpSession session = super.getSession(false);
+        if (create && session == null) {
+            throw new IllegalStateException("Session creation forbidden");
+        } else {
+            return session;
+        }
     }
 }

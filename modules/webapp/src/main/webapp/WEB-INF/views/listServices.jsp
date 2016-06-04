@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ page session="false" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisOperation" %>
 <%@ page import="org.apache.axis2.description.AxisService" %>
@@ -42,12 +43,11 @@
 <jsp:include page="/WEB-INF/include/header.inc"/>
 <jsp:include page="/WEB-INF/include/link-footer.jsp"/>
 <h1>Available services</h1>
-<% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
+<% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getAttribute(Constants.SERVICE_PATH) + "/";
 %>
 <%
-    HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);
-    request.getSession().setAttribute(Constants.SERVICE_MAP, null);
-    Hashtable errornessservice = (Hashtable) request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
+    HashMap serviceMap = (HashMap) request.getAttribute(Constants.SERVICE_MAP);
+    Hashtable errornessservice = (Hashtable) request.getAttribute(Constants.ERROR_SERVICE_MAP);
     boolean status = false;
     if (serviceMap != null && !serviceMap.isEmpty()) {
         Iterator opItr;
@@ -111,7 +111,7 @@
     }
     if (errornessservice != null) {
         if (errornessservice.size() > 0) {
-            request.getSession().setAttribute(Constants.IS_FAULTY, Constants.IS_FAULTY);
+            request.setAttribute(Constants.IS_FAULTY, Constants.IS_FAULTY);
 %>
 <hr>
 
