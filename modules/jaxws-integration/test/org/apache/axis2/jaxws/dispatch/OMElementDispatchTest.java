@@ -53,11 +53,14 @@ import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.message.databinding.ParsedEntityReader;
 import org.apache.axis2.jaxws.message.factory.ParsedEntityReaderFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 /**
  * This class uses the JAX-WS Dispatch API to test sending and receiving
  * messages using SOAP 1.2.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OMElementDispatchTest extends AbstractTestCase {
     
     private static final QName QNAME_SERVICE = new QName(
