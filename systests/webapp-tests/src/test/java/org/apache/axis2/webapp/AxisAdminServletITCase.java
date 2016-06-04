@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.webapp;
 
+import static com.google.common.truth.Truth.assertThat;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -25,13 +28,33 @@ public class AxisAdminServletITCase {
     @Rule
     public Axis2WebTester tester = new Axis2WebTester();
 
-    @Test
-    public void test() {
+    @Before
+    public void setUp() {
         tester.beginAt("/axis2-admin/");
         tester.setTextField("userName", "admin");
         tester.setTextField("password", "axis2");
         tester.submit();
+    }
+
+    @Test
+    public void testAvailableServices() {
         tester.clickLinkWithText("Available Services");
         tester.assertMatch("Service EPR : http://localhost:[0-9]+/axis2/services/Version");
+    }
+
+    /**
+     * Tests that the admin console is not vulnerable to session fixation attacks. This tests
+     * attempts to log in with an existing session. This should result in a new session with a
+     * different session ID.
+     */
+    @Test
+    public void loginInvalidatesExistingSession() {
+        String sessionId = tester.getSessionId();
+        assertThat(sessionId).isNotNull();
+        tester.gotoPage("/axis2-admin/welcome");
+        tester.setTextField("userName", "admin");
+        tester.setTextField("password", "axis2");
+        tester.submit();
+        assertThat(tester.getSessionId()).isNotEqualTo(sessionId);
     }
 }
