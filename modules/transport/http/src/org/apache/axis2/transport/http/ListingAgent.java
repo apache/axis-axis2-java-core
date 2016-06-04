@@ -58,8 +58,6 @@ public class ListingAgent extends AbstractAgent {
 
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
             "listServices.jsp";
-    private static final String LIST_SINGLE_SERVICE_JSP_NAME =
-            "listSingleService.jsp";
     private static final String LIST_FAULTY_SERVICES_JSP_NAME = "listFaultyService.jsp";
 
     public ListingAgent(ConfigurationContext aConfigContext) {
@@ -192,16 +190,10 @@ public class ListingAgent extends AbstractAgent {
                 } else if (policy >= 0) {
                     handlePolicyRequest(req, res, serviceName, axisService);
                     return;
-                } else {
-                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, axisService);
                 }
-            } else {
-                req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
-                res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
             }
         }
-
-        renderView(LIST_SINGLE_SERVICE_JSP_NAME, req, res);
+        res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
     }
 
     private void handlePolicyRequest(HttpServletRequest req,
