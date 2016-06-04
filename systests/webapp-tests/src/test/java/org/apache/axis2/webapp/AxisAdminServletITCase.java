@@ -18,19 +18,20 @@
  */
 package org.apache.axis2.webapp;
 
-import static net.sourceforge.jwebunit.junit.JWebUnit.*;
-
+import org.junit.Rule;
 import org.junit.Test;
 
-public class WebappITCase {
+public class AxisAdminServletITCase {
+    @Rule
+    public Axis2WebTester tester = new Axis2WebTester();
+
     @Test
     public void test() {
-        setBaseUrl("http://localhost:" + System.getProperty("jetty.httpPort", "8080") + "/axis2/axis2-admin");
-        beginAt("/");
-        setTextField("userName", "admin");
-        setTextField("password", "axis2");
-        submit();
-        clickLinkWithText("Available Services");
-        assertMatch("Service EPR : http://localhost:[0-9]+/axis2/services/Version");
+        tester.beginAt("/axis2-admin/");
+        tester.setTextField("userName", "admin");
+        tester.setTextField("password", "axis2");
+        tester.submit();
+        tester.clickLinkWithText("Available Services");
+        tester.assertMatch("Service EPR : http://localhost:[0-9]+/axis2/services/Version");
     }
 }

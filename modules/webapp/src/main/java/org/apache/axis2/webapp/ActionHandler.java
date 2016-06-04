@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.axis2.Constants;
 
@@ -32,12 +33,15 @@ final class ActionHandler {
     private final Method method;
     private final boolean authorizationRequired;
     private final boolean post;
+    private final boolean sessionCreationAllowed;
 
-    ActionHandler(Object target, Method method, boolean authorizationRequired, boolean post) {
+    ActionHandler(Object target, Method method, boolean authorizationRequired, boolean post,
+            boolean sessionCreationAllowed) {
         this.target = target;
         this.method = method;
         this.authorizationRequired = authorizationRequired;
         this.post = post;
+        this.sessionCreationAllowed = sessionCreationAllowed;
     }
 
     boolean isMethodAllowed(String method) {
@@ -48,8 +52,13 @@ final class ActionHandler {
         return post && authorizationRequired;
     }
 
+    boolean isSessionCreationAllowed() {
+        return sessionCreationAllowed;
+    }
+
     ActionResult handle(HttpServletRequest request, boolean securityEnabled) throws IOException, ServletException {
-        if (securityEnabled && authorizationRequired && request.getSession().getAttribute(Constants.LOGGED) == null) {
+        HttpSession session = request.getSession(false);
+        if (securityEnabled && authorizationRequired && (session == null || session.getAttribute(Constants.LOGGED) == null)) {
             return new Redirect("welcome");
         } else {
             try {

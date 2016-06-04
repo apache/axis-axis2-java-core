@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ page session="false" %>
 <%@ page import="org.apache.axis2.Constants" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.apache.axis2.description.Parameter" %>

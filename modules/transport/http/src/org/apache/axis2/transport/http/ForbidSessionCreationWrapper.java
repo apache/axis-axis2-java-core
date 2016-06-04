@@ -16,18 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.webapp;
+package org.apache.axis2.transport.http;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpSession;
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@interface Action {
-    String name();
-    boolean authorizationRequired() default true;
-    boolean post() default false;
-    boolean sessionCreationAllowed() default false;
+public class ForbidSessionCreationWrapper extends HttpServletRequestWrapper {
+    public ForbidSessionCreationWrapper(HttpServletRequest request) {
+        super(request);
+    }
+
+    @Override
+    public HttpSession getSession() {
+        return getSession(true);
+    }
+
+    @Override
+    public HttpSession getSession(boolean create) {
+        HttpSession session = super.getSession(false);
+        if (create && session == null) {
+            throw new IllegalStateException("Session creation forbidden");
+        } else {
+            return session;
+        }
+    }
 }

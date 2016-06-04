@@ -57,6 +57,7 @@
 ~ specific language governing permissions and limitations
 ~ under the License.
 --%>
+<%@ page session="false" %>
 <table summary="back home table"width="100%">
 	<tr><td>
 		<table summary="embedded back home table">

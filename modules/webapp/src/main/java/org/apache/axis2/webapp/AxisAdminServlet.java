@@ -23,6 +23,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.AxisServlet;
+import org.apache.axis2.transport.http.ForbidSessionCreationWrapper;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -69,32 +70,43 @@ public class AxisAdminServlet extends AxisServlet {
         ActionHandler actionHandler = actionHandlers.get(action);
         if (actionHandler != null) {
             if (actionHandler.isMethodAllowed(request.getMethod())) {
-                HttpSession session = request.getSession();
-                CSRFTokenCache tokenCache = (CSRFTokenCache)session.getAttribute(CSRFTokenCache.class.getName());
-                if (tokenCache == null) {
-                    tokenCache = new CSRFTokenCache();
-                    session.setAttribute(CSRFTokenCache.class.getName(), tokenCache);
+                if (!actionHandler.isSessionCreationAllowed()) {
+                    request = new ForbidSessionCreationWrapper(request);
                 }
+                HttpSession session = request.getSession(false);
                 if (actionHandler.isCSRFTokenRequired()) {
-                    String token = request.getParameter("token");
-                    if (token == null || !tokenCache.isValid(token)) {
+                    boolean tokenValid;
+                    if (session == null) {
+                        tokenValid = false;
+                    } else {
+                        CSRFTokenCache tokenCache = (CSRFTokenCache)session.getAttribute(CSRFTokenCache.class.getName());
+                        if (tokenCache == null) {
+                            tokenValid = false;
+                        } else {
+                            String token = request.getParameter("token");
+                            tokenValid = token != null && tokenCache.isValid(token);
+                        }
+                    }
+                    if (!tokenValid) {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "No valid CSRF token found in request");
                         return;
                     }
                 }
-                session.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
-                String statusKey = request.getParameter("status");
-                if (statusKey != null) {
-                    StatusCache statusCache = (StatusCache)session.getAttribute(StatusCache.class.getName());
-                    if (statusCache != null) {
-                        Status status = statusCache.get(statusKey);
-                        if (status != null) {
-                            request.setAttribute("status", status);
+                request.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+                if (session != null) {
+                    String statusKey = request.getParameter("status");
+                    if (statusKey != null) {
+                        StatusCache statusCache = (StatusCache)session.getAttribute(StatusCache.class.getName());
+                        if (statusCache != null) {
+                            Status status = statusCache.get(statusKey);
+                            if (status != null) {
+                                request.setAttribute("status", status);
+                            }
                         }
                     }
                 }
                 ActionResult result = actionHandler.handle(request, axisSecurityEnabled());
-                result.process(request, new CSRFPreventionResponseWrapper(response, actionHandlers, tokenCache, random));
+                result.process(request, new CSRFPreventionResponseWrapper(request, response, actionHandlers, random));
             } else {
                 response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             }
@@ -123,7 +135,7 @@ public class AxisAdminServlet extends AxisServlet {
                 actionHandlers.put(
                         actionAnnotation.name(),
                         new ActionHandler(actions, method, actionAnnotation.authorizationRequired(),
-                                actionAnnotation.post()));
+                                actionAnnotation.post(), actionAnnotation.sessionCreationAllowed()));
             }
         }
         this.servletConfig = config;

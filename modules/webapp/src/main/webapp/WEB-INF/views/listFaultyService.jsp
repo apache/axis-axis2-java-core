@@ -17,6 +17,7 @@
   ~ under the License.
   --%>
 
+<%@ page session="false" %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.AxisOperation"%>
 <%@ page import="org.apache.axis2.description.AxisService"%>
@@ -33,13 +34,13 @@
   <jsp:include page="/WEB-INF/include/header.inc"/>
     <jsp:include page="/WEB-INF/include/link-footer.jsp"/>
   <%
-        String prifix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) +"services/";
+        String prifix = request.getAttribute("frontendHostUrl") + (String)request.getAttribute(Constants.SERVICE_PATH) +"services/";
     %>
         <%
-            String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
+            String isFault = (String)request.getAttribute(Constants.IS_FAULTY);
             String servicName = request.getParameter("serviceName");
             if(Constants.IS_FAULTY.equals(isFault)){
-                Hashtable errornessservices =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
+                Hashtable errornessservices =(Hashtable)request.getAttribute(Constants.ERROR_SERVICE_MAP);
                 %>
                     <h3>This Web axisService has deployment faults</h3><%
                      %><p style="color:red"><%=(String)errornessservices.get(servicName) %></p>
@@ -48,7 +49,7 @@
                     }else {
 
                     AxisService axisService =
-                            (AxisService) request.getSession().getAttribute(Constants.SINGLE_SERVICE);
+                            (AxisService) request.getAttribute(Constants.SINGLE_SERVICE);
                     if(axisService!=null){
            Iterator opItr = axisService.getOperations();
             //operationsList = operations.values();

@@ -184,7 +184,7 @@ final class AdminActions {
         throw new ServletException("Invalid request");
     }
 
-    @Action(name="login", authorizationRequired=false, post=true)
+    @Action(name="login", authorizationRequired=false, post=true, sessionCreationAllowed=true)
     public Redirect login(HttpServletRequest req) {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
