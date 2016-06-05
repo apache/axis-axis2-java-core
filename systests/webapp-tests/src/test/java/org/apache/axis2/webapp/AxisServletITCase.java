@@ -31,4 +31,14 @@ public class AxisServletITCase {
         tester.clickLinkWithExactText("Services");
         tester.assertLinkPresentWithExactText("Version");
     }
+
+    /**
+     * Regression test for AXIS2-5683.
+     */
+    @Test
+    public void testHandlePolicyRequestXSS() {
+        tester.setIgnoreFailingStatusCodes(true);
+        tester.beginAt("/services/Version?policy&id=<xss>");
+        tester.assertResponseCode(404);
+    }
 }
