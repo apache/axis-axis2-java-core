@@ -240,12 +240,7 @@ public class ListingAgent extends AbstractAgent {
                 }
 
             } else {
-
-                OutputStream out = res.getOutputStream();
-                res.setContentType("text/html");
-                String outStr = "<b>No policy found for id="
-                                + idParam + "</b>";
-                out.write(outStr.getBytes());
+                res.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
 
         } else {
@@ -276,12 +271,7 @@ public class ListingAgent extends AbstractAgent {
                             e);
                 }
             } else {
-
-                OutputStream out = res.getOutputStream();
-                res.setContentType("text/html");
-                String outStr = "<b>No effective policy for "
-                                + serviceName + " service</b>";
-                out.write(outStr.getBytes());
+                res.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         }
     }

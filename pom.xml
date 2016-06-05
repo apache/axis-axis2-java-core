@@ -1314,6 +1314,12 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+            <plugin>
                 <!-- Always build source JARs -->
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
