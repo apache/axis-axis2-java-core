@@ -1301,12 +1301,24 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <systemProperties>
+                        <property>
+                            <name>java.io.tmpdir</name>
+                            <value>${project.build.directory}/tmp</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <systemProperties>
+                        <property>
+                            <name>java.io.tmpdir</name>
+                            <value>${project.build.directory}/tmp</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
@@ -1328,6 +1340,23 @@
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>create-tmp-directory</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                    import java.io.File
+                                    
+                                    // Create the temporary directory specified in the surefire configuration
+                                    new File(project.build.directory, 'tmp').mkdirs()
+                                ]]></script>
+                            </scripts>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>prepare-site</id>
                         <phase>pre-site</phase>
