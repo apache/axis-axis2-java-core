@@ -127,10 +127,6 @@
                                      We define our own source distribution in modules/distribution. -->
                                 <id>source-release-assembly</id>
                                 <configuration>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>single</goal>
-                                    </goals>
                                     <skipAssembly>true</skipAssembly>
                                 </configuration>
                             </execution>
