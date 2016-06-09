@@ -282,7 +282,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
 
     private void selectArtifacts(Set<Artifact> artifacts, String list, String type) throws MojoFailureException {
         if (list != null) {
-            Set<String> set = new HashSet<String>(Arrays.asList(StringUtils.split(list, ",")));
+            Set<String> set = new HashSet<String>(Arrays.asList(StringUtils.stripAll(StringUtils.split(list, ","))));
             for (Iterator<Artifact> it = artifacts.iterator(); it.hasNext(); ) {
                 Artifact artifact = it.next();
                 if (artifact.getType().equals(type) && !set.remove(artifact.getArtifactId())) {
