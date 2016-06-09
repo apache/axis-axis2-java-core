@@ -126,6 +126,10 @@
                                      so that the source-release assembly is not built.
                                      We define our own source distribution in modules/distribution. -->
                                 <id>source-release-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
                                 <configuration>
                                     <skipAssembly>true</skipAssembly>
                                 </configuration>
