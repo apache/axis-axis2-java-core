@@ -58,7 +58,7 @@
                         </goals>
                         <configuration>
                             <modules>
-                                <-- Test with additional whitespace -->
+                                <!-- Test with additional whitespace -->
                                 addressing,
                                 ping
                             </modules>
