@@ -1400,6 +1400,13 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <!-- Work around flakiness in the ASF infrastructure -->
+                    <retryFailedDeploymentCount>3</retryFailedDeploymentCount>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-site-plugin</artifactId>
                 <executions>
                     <execution>
