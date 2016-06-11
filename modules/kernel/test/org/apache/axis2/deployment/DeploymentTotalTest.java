@@ -19,39 +19,46 @@
 
 package org.apache.axis2.deployment;
 
-import junit.framework.TestCase;
-import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.Axis2Repo;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.registry.Handler3;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 import javax.xml.stream.XMLStreamException;
-import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
-public class DeploymentTotalTest extends TestCase {
-    AxisConfiguration axisConfig;
+public class DeploymentTotalTest {
+    @Rule
+    public Axis2Repo repo = new Axis2Repo("target/test-resources/deployment");
 
-    protected void setUp() throws Exception {
-        String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
-        axisConfig = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
-                .getAxisConfiguration();
-        axisConfig.engageModule("module1");
+    @Before
+    public void setUp() throws Exception {
+        repo.getAxisConfiguration().engageModule("module1");
          // OK, no exceptions.  Now make sure we read the correct file...
     }
 
+    @Test
     public void testparseService1() throws AxisFault, XMLStreamException {
-        Parameter param = axisConfig.getParameter("FavoriteColor");
+        Parameter param = repo.getAxisConfiguration().getParameter("FavoriteColor");
         assertNotNull("No FavoriteColor parameter in axis2.xml!", param);
         assertEquals("purple", param.getValue());
     }
 
+    @Test
     public void testDynamicPhase() {
+        AxisConfiguration axisConfig = repo.getAxisConfiguration();
+
         List inFlow = axisConfig.getInFlowPhases();
         for (int i = 0; i < inFlow.size(); i++) {
             Phase phase = (Phase) inFlow.get(i);
