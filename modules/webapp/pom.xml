@@ -307,6 +307,27 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Attach a JAR with the Webapp classes for use as a dependency in user projects. -->
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>classes</classifier>
+                            <excludes>
+                                <!-- Properties must be copied to target/classes so that they are loaded
+                                     by the Jetty plugin, but we don't want to include them in the JAR.
+                                     Our only option is therefore to exclude them here (which means that we
+                                     can't use the attachClasses property on the maven-war-plugin). -->
+                                <exclude>*.properties</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
