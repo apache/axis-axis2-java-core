@@ -114,6 +114,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getBlockFactory()
       */
+    @Override
     public final BlockFactory getBlockFactory() {
         return factory;
     }
@@ -121,14 +122,17 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getBusinessContext()
       */
+    @Override
     public final Object getBusinessContext() {
         return busContext;
     }
 
+    @Override
     public final Message getParent() {
         return parent;
     }
 
+    @Override
     public void setParent(Message p) {
         parent = p;
     }
@@ -136,6 +140,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getBusinessObject(boolean)
       */
+    @Override
     public final T getBusinessObject(boolean consume)
             throws XMLStreamException, WebServiceException {
         if (consumed) {
@@ -161,6 +166,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getQName()
       */
+    @Override
     public final QName getQName() throws WebServiceException {
         // If the QName is not known, find it
         try {
@@ -219,6 +225,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#getXMLStreamReader(boolean)
       */
+    @Override
     public final XMLStreamReader getXMLStreamReader(boolean consume)
             throws XMLStreamException, WebServiceException {
         XMLStreamReader newReader = null;
@@ -248,6 +255,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMDataSource#getReader()
       */
+    @Override
     public final XMLStreamReader getReader() throws XMLStreamException {
         return getXMLStreamReader(true);
     }
@@ -255,10 +263,12 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
       */
+    @Override
     public final void serialize(XMLStreamWriter writer) throws XMLStreamException {
         outputTo(writer, isDestructiveWrite());
     }
 
+    @Override
     public OMElement getOMElement() throws XMLStreamException, WebServiceException {
         OMElement newOMElement = null;
         boolean consume = true;  // get the OM consumes the message
@@ -281,6 +291,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.Block#isConsumed()
       */
+    @Override
     public final boolean isConsumed() {
         return consumed;
     }
@@ -307,10 +318,12 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
         }
     }
 
+    @Override
     public final boolean isQNameAvailable() {
         return (qName != null);
     }
 
+    @Override
     public final void outputTo(XMLStreamWriter writer, boolean consume)
             throws XMLStreamException, WebServiceException {
         if (log.isDebugEnabled()) {
@@ -390,6 +403,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
         return busObject != null;
     }
 
+    @Override
     public final String traceString(String indent) {
         // TODO add trace string
         return null;
@@ -504,6 +518,7 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
     /* (non-Javadoc)
      * @see org.apache.axiom.om.OMDataSourceExt#copy()
      */
+    @Override
     public OMDataSourceExt copy() throws OMException {
         // TODO: This is a default implementation.  Much
         // more refactoring needs to occur to account for attachments.

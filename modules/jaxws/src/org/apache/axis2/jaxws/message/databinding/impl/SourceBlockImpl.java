@@ -71,7 +71,7 @@ import java.security.PrivilegedExceptionAction;
 public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlock {
 
     private static final Log log = LogFactory.getLog(SourceBlockImpl.class);
-    private static Class staxSource = null;
+    private static Class<?> staxSource = null;
 
     static {
         try {
@@ -225,7 +225,7 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
             if (busObj instanceof StreamSource) {
                 XMLInputFactory f = StAXUtils.getXMLInputFactory();
 
-                return f.createXMLStreamReader((Source)busObj);
+                return f.createXMLStreamReader(busObj);
             }
             //TODO: For GM we need to only use this approach when absolutely necessary.
             // For example, we don't want to do this if this is a (1.6) StaxSource or if the 
@@ -233,7 +233,7 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
             //TODO: Uncomment this code if woodstock parser handles 
             // JAXBSource and SAXSource correctly.
             //return inputFactory.createXMLStreamReader((Source) busObj);
-            return _slow_getReaderFromSource((Source)busObj);
+            return _slow_getReaderFromSource(busObj);
         } catch (Exception e) {
             String className = (busObj == null) ? "none" : busObj.getClass().getName();
             throw ExceptionFactory
@@ -290,6 +290,7 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
     }
 
 
+    @Override
     public boolean isElementData() {
         return false;  // The source could be a text or element etc.
     }
@@ -298,13 +299,14 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
      * Return the class for this name
      * @return Class
      */
-    private static Class forName(final String className) throws ClassNotFoundException {
+    private static Class<?> forName(final String className) throws ClassNotFoundException {
         // NOTE: This method must remain private because it uses AccessController
-        Class cl = null;
+        Class<?> cl = null;
         try {
-            cl = (Class)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
+            cl = AccessController.doPrivileged(
+                    new PrivilegedExceptionAction<Class<?>>() {
+                        @Override
+                        public Class<?> run() throws ClassNotFoundException {
                             return Class.forName(className);
                         }
                     }
@@ -319,11 +321,12 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         return cl;
     }
     
-    
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -332,10 +335,12 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return true;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return true;
     }

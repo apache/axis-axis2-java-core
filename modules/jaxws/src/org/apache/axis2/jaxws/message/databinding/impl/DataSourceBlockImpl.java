@@ -27,7 +27,6 @@ import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.builder.DataSourceBuilder;
-import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
@@ -46,8 +45,6 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * SourceBlock
@@ -69,11 +66,6 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
     DataSourceBlockImpl(DataSource busObject, QName qName, BlockFactory factory)
             throws WebServiceException {
         super(busObject, null, qName, factory);
-        // Check validity of DataSource
-        if (!(busObject instanceof DataSource)) {
-            throw ExceptionFactory.makeWebServiceException(
-                    Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
-        }
     }
 
 
@@ -144,11 +136,7 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
     protected XMLStreamReader _getReaderFromBO(DataSource busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         try {
-            if (busObj instanceof DataSource) {
-                return StAXUtils.createXMLStreamReader(((DataSource)busObj).getInputStream());
-            }
-            throw ExceptionFactory.makeWebServiceException(
-                    Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
+            return StAXUtils.createXMLStreamReader(busObj.getInputStream());
         } catch (Exception e) {
             String className = (busObj == null) ? "none" : busObj.getClass().getName();
             throw ExceptionFactory
@@ -187,40 +175,17 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
         }
     }
 
+    @Override
     public boolean isElementData() {
         return false;  // The source could be a text or element etc.
     }
 
-    /**
-     * Return the class for this name
-     * @return Class
-     */
-    private static Class forName(final String className) throws ClassNotFoundException {
-        // NOTE: This method must remain private because it uses AccessController
-        Class cl = null;
-        try {
-            cl = (Class)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Class.forName(className);
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (ClassNotFoundException)e.getException();
-        }
-
-        return cl;
-    }
-    
-    
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -229,10 +194,12 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return true;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return true;
     }

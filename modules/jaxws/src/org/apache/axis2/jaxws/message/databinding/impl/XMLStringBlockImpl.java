@@ -112,15 +112,17 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         _outputFromReader(reader, writer);
     }
 
-
+    @Override
     public boolean isElementData() {
         return false;  // The text could be element or text or something else
     }
     
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -129,16 +131,19 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
 //        return false;
         // TODO: XMLStringBlock should actually be non destructive, but getReader() throws an exception when it is invoked the second time
         return true;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return false;
     }
     
+    @Override
     public OMDataSourceExt copy() throws OMException {
         return new StringOMDataSource((String) getObject());
     }

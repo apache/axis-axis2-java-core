@@ -117,14 +117,17 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl<SOAPEnvelope,Void> implemen
         return new QName(env.getNamespaceURI(), env.getLocalName(), env.getPrefix());
     }
 
+    @Override
     public boolean isElementData() {
         return true;
     }
     
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -133,10 +136,12 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl<SOAPEnvelope,Void> implemen
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return false;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return false;
     }

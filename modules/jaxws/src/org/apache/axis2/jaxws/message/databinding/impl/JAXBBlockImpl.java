@@ -88,15 +88,13 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
     protected Object _getBOFromReader(XMLStreamReader reader, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         // Get the JAXBBlockContext. All of the necessry information is recorded on it
-        JAXBBlockContext ctx = (JAXBBlockContext) busContext;
-        
         try {
-            busObject = ctx.unmarshal(reader);
+            busObject = busContext.unmarshal(reader);
         } catch (JAXBException je) {
             if (DEBUG_ENABLED) {
                 try {
                     log.debug("JAXBContext for unmarshal failure:" + 
-                              ctx.getJAXBContext(ctx.getClassLoader()));
+                              busContext.getJAXBContext(busContext.getClassLoader()));
                 } catch (Exception e) {
                 }
             }
@@ -169,15 +167,13 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
     @Override
     protected void _outputFromBO(Object busObject, JAXBBlockContext busContext, XMLStreamWriter writer)
         throws XMLStreamException, WebServiceException {
-        JAXBBlockContext ctx = (JAXBBlockContext) busContext;
-        
         try {
-            ctx.marshal(busObject, writer);
+            busContext.marshal(busObject, writer);
         } catch (JAXBException je) {
             if (DEBUG_ENABLED) {
                 try {
                     log.debug("JAXBContext for marshal failure:" + 
-                              ctx.getJAXBContext(ctx.getClassLoader()));
+                              busContext.getJAXBContext(busContext.getClassLoader()));
                 } catch (Exception e) {
                 }
             }
@@ -185,14 +181,17 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         }
     }
 
+    @Override
     public boolean isElementData() {
         return true;
     }
     
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -201,14 +200,17 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return false;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return false;
     }
     
+    @Override
     public OMDataSourceExt copy() throws OMException {
         
         if (DEBUG_ENABLED) {
@@ -218,9 +220,10 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
                                   (JAXBDSContext) this.getBusinessContext());
     }
 
+    @Override
     public void setParent(Message message) {
         if (busContext != null) {
-            ((JAXBBlockContext) busContext).setMessage(message);
+            busContext.setMessage(message);
         }
         super.setParent(message);
     }

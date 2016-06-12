@@ -57,8 +57,7 @@ public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
     @Override
     protected XMLStreamReader _getReaderFromBO(OMElement busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
-        OMElement om = (OMElement)busObj;
-        return om.getXMLStreamReader();
+        return busObj.getXMLStreamReader();
     }
     
     @Override
@@ -79,13 +78,17 @@ public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
         busObject.serialize(writer);
     }
 
+    @Override
     public boolean isElementData() {
         return true;
     }
+
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -94,10 +97,12 @@ public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return false;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return false;
     }
