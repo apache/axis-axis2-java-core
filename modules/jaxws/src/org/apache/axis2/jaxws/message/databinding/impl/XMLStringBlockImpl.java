@@ -69,8 +69,7 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         super(omElement, null, qName, factory);
     }
 
-    @Override
-    protected String _getBOFromReader(XMLStreamReader reader, Void busContext)
+    private String _getBOFromReader(XMLStreamReader reader, Void busContext)
             throws XMLStreamException {
         // Create a Reader2Writer converter and get the output as a String
         Reader2Writer r2w;
@@ -93,7 +92,7 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
                 return ((StringOMDataSource) ds).getObject();
             }
         }
-        return super._getBOFromOM(omElement, busContext);
+        return _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
     }
 
     @Override

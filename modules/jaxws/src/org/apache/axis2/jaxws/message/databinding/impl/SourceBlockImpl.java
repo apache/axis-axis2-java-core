@@ -131,8 +131,7 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         super(omElement, null, qName, factory);
     }
 
-    @Override
-    protected Source _getBOFromReader(XMLStreamReader reader, Void busContext)
+    private Source _getBOFromReader(XMLStreamReader reader, Void busContext)
             throws XMLStreamException {
 
         // Best solution is to use a StAXSource
@@ -181,7 +180,7 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         
         // Transform reader into business object
         if (!hasFault) {
-            busObject = super._getBOFromOM(omElement, busContext);
+            busObject = _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
         }
         else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

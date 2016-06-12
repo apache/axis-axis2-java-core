@@ -424,19 +424,6 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
         return busObject;
     }
 
-
-    /**
-     * The derived class must provide an implementation that builds the business object from the
-     * reader
-     *
-     * @param reader     XMLStreamReader, which is consumed
-     * @param busContext
-     * @return
-     */
-    protected abstract T _getBOFromReader(XMLStreamReader reader, C busContext)
-            throws XMLStreamException, WebServiceException;
-
-    
     /**
      * Default method for getting business object from OM.
      * Derived classes may override this method to get the business object from a
@@ -448,10 +435,8 @@ public abstract class BlockImpl<T,C> extends AbstractOMDataSource implements Blo
      * @throws XMLStreamException
      * @throws WebServiceException
      */
-    protected T _getBOFromOM(OMElement omElement, C busContext)
-            throws XMLStreamException, WebServiceException {
-        return _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
-    }
+    protected abstract T _getBOFromOM(OMElement omElement, C busContext)
+            throws XMLStreamException, WebServiceException;
     
     /**
      * Get an XMLStreamReader for the BusinessObject The derived Block must implement this method

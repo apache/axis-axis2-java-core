@@ -32,7 +32,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,7 +43,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * SourceBlock
@@ -78,17 +76,6 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
      */
     public DataSourceBlockImpl(OMElement omElement, QName qName, BlockFactory factory) {
         super(omElement, null, qName, factory);
-    }
-
-    @Override
-    protected DataSource _getBOFromReader(XMLStreamReader reader, Void busContext) throws XMLStreamException, WebServiceException {
-        Reader2Writer r2w = new Reader2Writer(reader);
-        try {
-            return new ByteArrayDataSource(r2w.getAsString(), "application/octet-stream");
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
-
     }
 
     @Override

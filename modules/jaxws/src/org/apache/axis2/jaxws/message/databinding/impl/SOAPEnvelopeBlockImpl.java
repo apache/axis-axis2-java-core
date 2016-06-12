@@ -74,14 +74,11 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl<SOAPEnvelope,Void> implemen
         super(omElement, null, qName, factory);
     }
 
-    /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.impl.BlockImpl#_getBOFromReader(javax.xml.stream.XMLStreamReader, java.lang.Object)
-      */
     @Override
-    protected SOAPEnvelope _getBOFromReader(XMLStreamReader reader, Void busContext)
+    protected SOAPEnvelope _getBOFromOM(OMElement omElement, Void busContext)
             throws XMLStreamException, WebServiceException {
         MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
-        Message message = mf.createFrom(reader, null);
+        Message message = mf.createFrom(omElement.getXMLStreamReader(false), null);
         SOAPEnvelope env = message.getAsSOAPEnvelope();
         this.setQName(getQName(env));
         return env;

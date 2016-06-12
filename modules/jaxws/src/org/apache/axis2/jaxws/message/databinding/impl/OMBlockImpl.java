@@ -48,13 +48,6 @@ public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
     }
 
     @Override
-    protected OMElement _getBOFromReader(XMLStreamReader reader, Void busContext)
-            throws XMLStreamException, WebServiceException {
-        // Take a shortcut and return the OMElement
-        return this.getOMElement();
-    }
-
-    @Override
     protected XMLStreamReader _getReaderFromBO(OMElement busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         return busObj.getXMLStreamReader();

@@ -84,8 +84,7 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         super(omElement, busContext, qName, factory);
     }
 
-    @Override
-    protected Object _getBOFromReader(XMLStreamReader reader, JAXBBlockContext busContext)
+    private Object _getBOFromReader(XMLStreamReader reader, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         // Get the JAXBBlockContext. All of the necessry information is recorded on it
         try {
@@ -129,7 +128,7 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
                 return ((JAXBBlockImpl) ds).getObject();
             }
         }
-        return super._getBOFromOM(omElement, busContext);
+        return _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
     }
 
     /**
