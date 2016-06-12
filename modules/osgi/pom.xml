@@ -110,7 +110,7 @@
                             javax.wsdl.xml,
                             javax.net.*,
                             javax.xml.parsers;resolution:=optional,
-                            javax.xml.stream;resolution:=optional;version="1.0",
+                            javax.xml.stream,
                             javax.xml.transform;resolution:=optional,
                             javax.xml.transform.dom;resolution:=optional,
                             javax.xml.transform.stream;resolution:=optional,
