@@ -23,13 +23,13 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.message.util.SOAPElementReader;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import javax.xml.namespace.QName;
@@ -37,6 +37,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.WebServiceException;
 
 /**
@@ -90,7 +91,7 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl<SOAPEnvelope,Void> implemen
     @Override
     protected XMLStreamReader _getReaderFromBO(SOAPEnvelope busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
-        return new SOAPElementReader(busObj);
+        return OMXMLBuilderFactory.createOMBuilder(new DOMSource(busObj)).getDocument().getXMLStreamReader(false);
     }
 
     /* (non-Javadoc)
