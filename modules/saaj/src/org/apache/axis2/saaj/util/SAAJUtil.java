@@ -23,7 +23,6 @@ import org.apache.axiom.mime.MimePartProvider;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axiom.util.stax.xop.XOPDecodingStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -33,6 +32,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
+import javax.xml.transform.stax.StAXSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -119,7 +119,8 @@ public class SAAJUtil {
                 }
             }
         };
-        return OMXMLBuilderFactory.createStAXSOAPModelBuilder(new XOPDecodingStreamReader(docElem.getXMLStreamReader(), mimePartProvider)).getSOAPEnvelope();
+        return OMXMLBuilderFactory.createSOAPModelBuilder(OMAbstractFactory.getMetaFactory(),
+                new StAXSource(docElem.getXMLStreamReader()), mimePartProvider).getSOAPEnvelope();
     }
 
     /**

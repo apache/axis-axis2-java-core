@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.message.util.impl;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMXMLBuilderFactory;
@@ -29,11 +30,9 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPModelBuilder;
-import org.apache.axiom.util.stax.xop.XOPDecodingStreamReader;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
-import org.apache.axis2.jaxws.message.util.SOAPElementReader;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
@@ -138,14 +137,16 @@ public class SAAJConverterImpl implements SAAJConverter {
     	
     	// Before we do the conversion, we have to fix the QNames for fault elements
         _fixFaultElements(saajEnvelope);        
-        // Get a XMLStreamReader backed by a SOAPElement tree
-        XMLStreamReader reader = new SOAPElementReader(saajEnvelope);
+        SOAPModelBuilder builder;
         if (attachments != null) {
-            reader = new XOPDecodingStreamReader(reader, new AttachmentsMimePartProvider(attachments));
+            builder = OMXMLBuilderFactory.createSOAPModelBuilder(
+                    OMAbstractFactory.getMetaFactory(),
+                    new DOMSource(saajEnvelope),
+                    new AttachmentsMimePartProvider(attachments));
+        } else {
+            // Get a SOAP OM Builder.
+            builder = OMXMLBuilderFactory.createSOAPModelBuilder(new DOMSource(saajEnvelope));
         }
-        
-        // Get a SOAP OM Builder.
-        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(reader);
         // Create and return the OM Envelope
         org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
         
@@ -207,10 +208,8 @@ public class SAAJConverterImpl implements SAAJConverter {
     		log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}
     	
-        // Get a XMLStreamReader backed by a SOAPElement tree
-        XMLStreamReader reader = new SOAPElementReader(soapElement);
         // Get a OM Builder.
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(reader);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(new DOMSource(soapElement));
         // Create and return the Element
         OMElement om = builder.getDocumentElement();
         // TODO The following statement expands the OM tree.  This is 

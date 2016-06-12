@@ -64,8 +64,7 @@ public class TextImplEx extends NodeImpl<org.w3c.dom.CharacterData,OMNode> imple
     }
 
     public boolean isElementContentWhitespace() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return ((org.w3c.dom.Text)target).isElementContentWhitespace();
     }
 
     public String getWholeText() {
