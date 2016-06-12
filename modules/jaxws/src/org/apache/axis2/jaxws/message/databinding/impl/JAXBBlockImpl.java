@@ -84,24 +84,6 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
         super(omElement, busContext, qName, factory);
     }
 
-    private Object _getBOFromReader(XMLStreamReader reader, JAXBBlockContext busContext)
-        throws XMLStreamException, WebServiceException {
-        // Get the JAXBBlockContext. All of the necessry information is recorded on it
-        try {
-            busObject = busContext.unmarshal(reader);
-        } catch (JAXBException je) {
-            if (DEBUG_ENABLED) {
-                try {
-                    log.debug("JAXBContext for unmarshal failure:" + 
-                              busContext.getJAXBContext(busContext.getClassLoader()));
-                } catch (Exception e) {
-                }
-            }
-            throw ExceptionFactory.makeWebServiceException(je);
-        }
-        return busObject;
-    }
-    
     @Override
     protected Object _getBOFromOM(OMElement omElement, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
@@ -128,7 +110,19 @@ public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements
                 return ((JAXBBlockImpl) ds).getObject();
             }
         }
-        return _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
+        
+        try {
+            return busContext.unmarshal(omElement);
+        } catch (JAXBException je) {
+            if (DEBUG_ENABLED) {
+                try {
+                    log.debug("JAXBContext for unmarshal failure:" + 
+                              busContext.getJAXBContext(busContext.getClassLoader()));
+                } catch (Exception e) {
+                }
+            }
+            throw ExceptionFactory.makeWebServiceException(je);
+        }
     }
 
     /**

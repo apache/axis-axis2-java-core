@@ -31,8 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * JAXBCustomBuilder creates an OMSourcedElement backed by a JAXBDataSource
@@ -56,22 +54,18 @@ public class JAXBCustomBuilder implements CustomBuilder, CustomBuilder.Selector 
 
     @Override
     public OMDataSource create(OMElement element) throws OMException {
-        XMLStreamReader reader = element.getXMLStreamReaderWithoutCaching();
         try {
-            reader.next();
             if (log.isDebugEnabled()) {
-                log.debug("create namespace = " + reader.getNamespaceURI());
-                log.debug("  localPart = " + reader.getLocalName());
-                log.debug("  reader = " + reader.getClass());
+                log.debug("create namespace = " + element.getNamespaceURI());
+                log.debug("  localPart = " + element.getLocalName());
             }
         
             // Create an OMSourcedElement backed by an unmarshalled JAXB object
             
-            Object jaxb = jdsContext.unmarshal(reader);
+            Object jaxb = jdsContext.unmarshal(element);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully unmarshalled jaxb object " + jaxb);
             }
-            reader.close();
             
             OMDataSource ds = new JAXBDataSource(jaxb, jdsContext);
             if (log.isDebugEnabled()) {
@@ -80,9 +74,6 @@ public class JAXBCustomBuilder implements CustomBuilder, CustomBuilder.Selector 
             JAXBCustomBuilderMonitor.updateTotalCreates();
             return ds;
         } catch (JAXBException e) {
-            JAXBCustomBuilderMonitor.updateTotalFailedCreates();
-            throw new OMException(e);
-        } catch (XMLStreamException e) {
             JAXBCustomBuilderMonitor.updateTotalFailedCreates();
             throw new OMException(e);
         }

@@ -19,11 +19,10 @@
 
 package org.apache.axis2.datasource.jaxb;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.XOPEncoded;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
-import org.apache.axiom.util.stax.XMLStreamReaderUtils;
-import org.apache.axiom.util.stax.xop.XOPEncodedStream;
-import org.apache.axiom.util.stax.xop.XOPUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
@@ -290,24 +289,15 @@ public class JAXBDSContext {
 
     /**
      * Unmarshal the xml into a JAXB object
-     * @param inputReader
+     * @param element
      * @return
      * @throws JAXBException
      */
-    public Object unmarshal(XMLStreamReader inputReader) throws JAXBException {
+    public Object unmarshal(OMElement element) throws JAXBException {
 
-        if (DEBUG_ENABLED) {
-            String clsText = (inputReader !=null) ? inputReader.getClass().toString() : "null";
-            log.debug("unmarshal with inputReader=" + clsText);
-        } 
         // See the Javadoc of the CustomBuilder interface for a complete explanation of
         // the following two instructions:
-        XOPEncodedStream xopEncodedStream = XOPUtils.getXOPEncodedStream(inputReader);
-        XMLStreamReader reader = XMLStreamReaderUtils.getOriginalXMLStreamReader(xopEncodedStream.getReader());
-        if (DEBUG_ENABLED) {
-            String clsText = (reader !=null) ? reader.getClass().toString() : "null";
-            log.debug("  originalReader=" + clsText);
-        } 
+        XOPEncoded<XMLStreamReader> xopEncodedStream = element.getXOPEncodedStreamReader(false);
         
         // There may be a preferred classloader that should be used
         ClassLoader cl = getClassLoader();
@@ -328,6 +318,7 @@ public class JAXBDSContext {
         Object jaxb = null;
 
         // Unmarshal into the business object.
+        XMLStreamReader reader = xopEncodedStream.getRootPart();
         if (getProcessType() == null) {
             jaxb = unmarshalByElement(u, reader);   // preferred and always used for
                                                     // style=document
