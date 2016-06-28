@@ -106,16 +106,15 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
                     <stopKey>foo</stopKey>
                     <stopPort>${jetty.stopPort}</stopPort>
-                    <connectors>
-                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>${jetty.httpPort}</port>
-                        </connector>
-                    </connectors>
+                    <stopWait>10</stopWait>
+                    <httpConnector>
+                        <port>${jetty.httpPort}</port>
+                    </httpConnector>
                     <war>${webapp}</war>
                     <webApp>
                         <contextPath>/axis2</contextPath>

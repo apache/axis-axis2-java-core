@@ -1213,9 +1213,9 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
+                    <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>8.1.16.v20140903</version>
+                    <version>9.3.10.v20160621</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-invoker-plugin</artifactId>
@@ -1263,8 +1263,8 @@
                                     <version>3.0.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <!-- We require Java 7 for the build, but we enforce Java 5 compatibility using Animal Sniffer -->
-                                    <version>1.7.0</version>
+                                    <!-- We require a recent Java version for the build, but we enforce compatibility with older versions using Animal Sniffer -->
+                                    <version>1.8.0</version>
                                 </requireJavaVersion>
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
