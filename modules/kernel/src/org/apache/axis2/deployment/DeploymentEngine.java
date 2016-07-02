@@ -22,7 +22,6 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -47,6 +46,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1156,19 +1156,23 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         return (extensionMap != null) ? extensionMap.get(extension) : null;
     }
 
+    private static void destroyClassLoader(ClassLoader classLoader) {
+        if (classLoader instanceof DeploymentClassLoader && classLoader instanceof Closeable) {
+            try {
+                ((Closeable)classLoader).close();
+            } catch (IOException ex) {
+                log.warn("Failed to destroy class loader " + classLoader, ex);
+            }
+        }
+    }
+
     /**
      * Clean up the mess
      */
     public void cleanup() {
-        if (axisConfig.getModuleClassLoader() instanceof JarFileClassLoader) {
-            ((JarFileClassLoader) axisConfig.getModuleClassLoader()).destroy();
-        }
-        if (axisConfig.getServiceClassLoader() instanceof JarFileClassLoader) {
-            ((JarFileClassLoader) axisConfig.getServiceClassLoader()).destroy();
-        }
-        if (axisConfig.getSystemClassLoader() instanceof JarFileClassLoader) {
-            ((JarFileClassLoader) axisConfig.getSystemClassLoader()).destroy();
-        }
+        destroyClassLoader(axisConfig.getModuleClassLoader());
+        destroyClassLoader(axisConfig.getServiceClassLoader());
+        destroyClassLoader(axisConfig.getSystemClassLoader());
         if (scheduler != null) {
             scheduler.cleanup(schedulerTask);
         }
