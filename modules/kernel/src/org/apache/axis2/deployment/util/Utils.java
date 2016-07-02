@@ -25,7 +25,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.Constants;
 import org.apache.axis2.jaxrs.JAXRSModel;
 import org.apache.axis2.context.ConfigurationContext;
@@ -348,31 +347,13 @@ public class Utils {
             classLoader = (URLClassLoader)AccessController
                     .doPrivileged(new PrivilegedAction() {
                         public Object run() {
-                            if (useJarFileClassLoader()) {
-                                return new JarFileClassLoader(urllist, parent);
-                            } else {
-                                return new DeploymentClassLoader(urllist, null, parent, isChildFirstClassLoading);
-                            }
+                            return new DeploymentClassLoader(urllist, null, parent, isChildFirstClassLoading);
                         }
                     });
             return classLoader;
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         }
-    }
-
-    private static boolean useJarFileClassLoader() {
-        // The JarFileClassLoader was created to address a locking problem seen only on Windows platforms.
-        // It carries with it a slight performance penalty that needs to be addressed.  Rather than make
-        // *nix OSes carry this burden we'll engage the JarFileClassLoader for Windows or if the user 
-        // specifically requests it.
-        boolean useJarFileClassLoader;
-        if (System.getProperty("org.apache.axis2.classloader.JarFileClassLoader") == null) {
-            useJarFileClassLoader = System.getProperty("os.name").startsWith("Windows");
-        } else {
-            useJarFileClassLoader = Boolean.getBoolean("org.apache.axis2.classloader.JarFileClassLoader");
-        }
-        return useJarFileClassLoader;
     }
 
     private static boolean addFiles(ArrayList urls, final File libfiles)
