@@ -1833,17 +1833,17 @@ public class SchemaCompiler {
 
         QName schemaTypeName = att.getSchemaTypeName();
         if (schemaTypeName != null) {
-            if (att.getQName() != null) {
+            if (att.getWireName() != null) {
                 if (baseSchemaTypeMap.containsKey(schemaTypeName)) {
 
-                    metainf.registerMapping(att.getQName(), schemaTypeName,
+                    metainf.registerMapping(att.getWireName(), schemaTypeName,
                                             baseSchemaTypeMap.get(schemaTypeName).toString(),
                                             SchemaConstants.ATTRIBUTE_TYPE);
 
                     // add optional attribute status if set
                     String use = att.getUse().toString();
                     if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                        metainf.addtStatus(att.getWireName(), SchemaConstants.OPTIONAL_TYPE);
                     }
 
                     String className = findClassName(schemaTypeName, false);
@@ -1853,11 +1853,11 @@ public class SchemaCompiler {
                             className);
                     // set the default value
                     if (att.getDefaultValue() != null) {
-                        metainf.registerDefaultValue(att.getQName(), att.getDefaultValue());
+                        metainf.registerDefaultValue(att.getWireName(), att.getDefaultValue());
                     }
                     if (att.getFixedValue() != null) {
-                        metainf.registerDefaultValue(att.getQName(), att.getFixedValue());
-                        metainf.registerFixedQName(att.getQName());
+                        metainf.registerDefaultValue(att.getWireName(), att.getFixedValue());
+                        metainf.registerFixedQName(att.getWireName());
                     }
                     // after
                 } else {
@@ -1878,14 +1878,14 @@ public class SchemaCompiler {
                                     //process simple type
                                     processSimpleSchemaType(simpleType, null, resolvedSchema, null);
                                 }
-                                metainf.registerMapping(att.getQName(),
+                                metainf.registerMapping(att.getWireName(),
                                                         schemaTypeName,
                                                         processedTypemap.get(schemaTypeName).toString(),
                                                         SchemaConstants.ATTRIBUTE_TYPE);
                                 // add optional attribute status if set
                                 String use = att.getUse().toString();
                                 if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                                    metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                                    metainf.addtStatus(att.getWireName(), SchemaConstants.OPTIONAL_TYPE);
                                 }
                             }
 
@@ -1920,7 +1920,7 @@ public class SchemaCompiler {
         } else {
             // this attribute refers to a custom type, probably one of the extended simple types.
             // with the inline schema definition
-            QName attributeQName = att.getQName();
+            QName attributeQName = att.getWireName();
             if (attributeQName != null) {
                 XmlSchemaSimpleType attributeSimpleType = att.getSchemaType();
                 XmlSchema resolvedSchema = parentSchema;
@@ -1960,14 +1960,14 @@ public class SchemaCompiler {
                         processSimpleSchemaType(attributeSimpleType, null, resolvedSchema,
                                                 schemaTypeQName);
                     }
-                    metainf.registerMapping(att.getQName(),
+                    metainf.registerMapping(att.getWireName(),
                                             schemaTypeQName,
                                             processedTypemap.get(schemaTypeQName).toString(),
                                             SchemaConstants.ATTRIBUTE_TYPE);
                     // add optional attribute status if set
                     String use = att.getUse().toString();
                     if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                        metainf.addtStatus(att.getWireName(), SchemaConstants.OPTIONAL_TYPE);
                     }
                 } else {
                     // TODO: handle the case when no attribute type specifed

@@ -159,6 +159,25 @@
                             <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5758</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>wsdl2code-axis2-5799</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFile>src/test/wsdl/AXIS2-5799.wsdl</wsdlFile>
+                            <syncMode>sync</syncMode>
+                            <unpackClasses>true</unpackClasses>
+                            <namespaceURIs>
+                                <namespaceURI>
+                                    <uri>urn:echo</uri>
+                                    <packageName>org.apache.axis2.databinding.axis2_5799.client</packageName>
+                                </namespaceURI>
+                            </namespaceURIs>
+                            <packageName>org.apache.axis2.databinding.axis2_5799.client</packageName>
+                            <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5799</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <databindingName>adb</databindingName>
@@ -259,6 +278,18 @@
                                 <wsdlFile>${basedir}/src/test/wsdl/AXIS2-5758.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.databinding.axis2_5758.service</packageName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsimport-axis2-5799</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/src/test/wsdl/AXIS2-5799.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.apache.axis2.databinding.axis2_5799.service</packageName>
                         </configuration>
                     </execution>
                 </executions>
