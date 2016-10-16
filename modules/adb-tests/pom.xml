@@ -184,10 +184,53 @@
                             <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5799</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>wsdl2code-axis2-5809</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>wsdl2code</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFile>src/test/wsdl/AXIS2-5809.wsdl</wsdlFile>
+                            <syncMode>sync</syncMode>
+                            <unpackClasses>true</unpackClasses>
+                            <namespaceURIs>
+                                <namespaceURI>
+                                    <uri>http://apache.org/axis2/echo</uri>
+                                    <packageName>org.apache.axis2.databinding.axis2_5809</packageName>
+                                </namespaceURI>
+                            </namespaceURIs>
+                            <packageName>org.apache.axis2.databinding.axis2_5809</packageName>
+                            <generateServerSide>true</generateServerSide>
+                            <generateAllClasses>true</generateAllClasses>
+                            <generateServicesXml>true</generateServicesXml>
+                            <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5809</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <databindingName>adb</databindingName>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/repo</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -216,6 +259,14 @@
                                     </includes>
                                     <stylesheet>src/test/xslt/AXIS2-5749.xsl</stylesheet>
                                     <outputDir>${project.build.directory}/repo/AXIS2-5749/services/ColorService/META-INF</outputDir>
+                                </transformationSet>
+                                <transformationSet>
+                                    <dir>${project.build.directory}/wsdl2code/AXIS2-5809/resources</dir>
+                                    <includes>
+                                        <include>services.xml</include>
+                                    </includes>
+                                    <stylesheet>src/test/xslt/AXIS2-5809.xsl</stylesheet>
+                                    <outputDir>${project.build.directory}/repo/AXIS2-5809/services/EchoService/META-INF</outputDir>
                                 </transformationSet>
                             </transformationSets>
                         </configuration>
@@ -325,6 +376,7 @@
                                 <source>${project.build.directory}/wsdl2code/AXIS2-5750/src</source>
                                 <source>${project.build.directory}/wsdl2code/AXIS2-5758/src</source>
                                 <source>${project.build.directory}/wsdl2code/AXIS2-5799/src</source>
+                                <source>${project.build.directory}/wsdl2code/AXIS2-5809/src</source>
                             </sources>
                         </configuration>
                     </execution>

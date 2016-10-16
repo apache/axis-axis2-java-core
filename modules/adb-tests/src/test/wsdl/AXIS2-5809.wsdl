@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://apache.org/axis2/echo" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="EchoService" targetNamespace="http://apache.org/axis2/echo">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://apache.org/axis2/echo" xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+      <xsd:element name="Echo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="content" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="EchoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="content" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="EchoRequest">
+    <wsdl:part element="tns:Echo" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="EchoResponse">
+    <wsdl:part element="tns:EchoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="EchoService">
+    <wsdl:operation name="Echo">
+      <wsdl:input message="tns:EchoRequest"/>
+      <wsdl:output message="tns:EchoResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoServiceSOAP" type="tns:EchoService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Echo">
+      <soap:operation soapAction="http://apache.org/axis2/echo/Echo"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoService">
+    <wsdl:port binding="tns:EchoServiceSOAP" name="EchoServiceSOAP">
+      <soap:address location="http://localhost:8080/echo"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
