@@ -37,7 +37,7 @@ public class ServiceTest {
         FiverxLinkService client = new FiverxLinkService_Service().getFiverxLinkServicePort();
         ((BindingProvider)client).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + server.getPort() + "/axis2/services/FiverxLinkService");
+                server.getEndpoint("FiverxLinkService"));
         assertThat(client.ladeRzVersion("test")).isEqualTo("test result");
     }
 }

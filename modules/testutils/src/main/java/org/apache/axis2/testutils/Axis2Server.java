@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.testutils;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
@@ -26,6 +27,7 @@ import org.junit.rules.ExternalResource;
 public class Axis2Server extends ExternalResource {
     private final String repositoryPath;
     private int port = -1;
+    private ConfigurationContext configurationContext;
     private SimpleHTTPServer server;
 
     public Axis2Server(String repositoryPath) {
@@ -39,10 +41,17 @@ public class Axis2Server extends ExternalResource {
         return port;
     }
 
+    public String getEndpoint(String serviceName) throws AxisFault {
+        if (configurationContext == null) {
+            throw new IllegalStateException();
+        }
+        return configurationContext.getAxisConfiguration().getService(serviceName).getEPRs()[0];
+    }
+
     @Override
     protected void before() throws Throwable {
         port = PortAllocator.allocatePort();
-        ConfigurationContext configurationContext =
+        configurationContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
         server = new SimpleHTTPServer(configurationContext, port);
         server.start();
@@ -51,6 +60,8 @@ public class Axis2Server extends ExternalResource {
     @Override
     protected void after() {
         port = -1;
+        configurationContext = null;
         server.stop();
+        server = null;
     }
 }
