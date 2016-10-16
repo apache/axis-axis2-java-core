@@ -214,10 +214,15 @@
             <outputDirectory>webapp</outputDirectory>
             <unpackOptions>
                 <includes>
-                    <include>WEB-INF/classes/**/*</include>
-                    <include>WEB-INF/web.xml</include>
+                    <include>WEB-INF/**/*</include>
                     <include>axis2-web/**/*</include>
                 </includes>
+                <excludes>
+                    <exclude>WEB-INF/conf/**/*</exclude>
+                    <exclude>WEB-INF/lib/**/*</exclude>
+                    <exclude>WEB-INF/services/**/*</exclude>
+                    <exclude>WEB-INF/modules/**/*</exclude>
+                </excludes>
             </unpackOptions>
         </dependencySet>
     </dependencySets>
