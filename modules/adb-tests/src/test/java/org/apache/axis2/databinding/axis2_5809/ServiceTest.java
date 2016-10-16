@@ -30,7 +30,7 @@ public class ServiceTest {
     
     @Test
     public void test() throws Exception {
-        EchoServiceStub stub = new EchoServiceStub(server.getEndpoint("EchoService"));
+        EchoServiceStub stub = new EchoServiceStub(server.getConfigurationContext(), server.getEndpoint("EchoService"));
         for (int i=0; i<500; i++) {
             Echo request = new Echo();
             request.setContent("test");

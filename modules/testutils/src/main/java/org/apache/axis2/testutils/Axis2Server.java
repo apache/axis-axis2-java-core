@@ -57,6 +57,10 @@ public class Axis2Server extends ExternalResource {
         return new EndpointReference(getEndpoint(serviceName));
     }
 
+    public ConfigurationContext getConfigurationContext() {
+        return configurationContext;
+    }
+
     @Override
     protected void before() throws Throwable {
         port = PortAllocator.allocatePort();
