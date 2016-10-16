@@ -22,30 +22,22 @@ import static com.google.common.truth.Truth.assertThat;
 
 import javax.xml.ws.BindingProvider;
 
-import org.apache.axiom.testutils.PortAllocator;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.databinding.axis2_5741.client.FiverxLinkService;
 import org.apache.axis2.databinding.axis2_5741.client.FiverxLinkService_Service;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class ServiceTest {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo/AXIS2-5741");
+    
     @Test
     public void test() throws Exception {
-        int port = PortAllocator.allocatePort();
-        ConfigurationContext configurationContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/repo/AXIS2-5741");
-        SimpleHTTPServer server = new SimpleHTTPServer(configurationContext, port);
-        server.start();
-        try {
-            FiverxLinkService client = new FiverxLinkService_Service().getFiverxLinkServicePort();
-            ((BindingProvider)client).getRequestContext().put(
-                    BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                    "http://localhost:" + port + "/axis2/services/FiverxLinkService");
-            assertThat(client.ladeRzVersion("test")).isEqualTo("test result");
-        } finally {
-            server.stop();
-        }
+        FiverxLinkService client = new FiverxLinkService_Service().getFiverxLinkServicePort();
+        ((BindingProvider)client).getRequestContext().put(
+                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                "http://localhost:" + server.getPort() + "/axis2/services/FiverxLinkService");
+        assertThat(client.ladeRzVersion("test")).isEqualTo("test result");
     }
 }
