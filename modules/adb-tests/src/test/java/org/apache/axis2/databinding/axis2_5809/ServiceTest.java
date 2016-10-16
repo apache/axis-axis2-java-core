@@ -19,24 +19,39 @@
 package org.apache.axis2.databinding.axis2_5809;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.fail;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.testutils.Axis2Server;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ServiceTest {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/AXIS2-5809");
     
-    @Ignore
     @Test
-    public void test() throws Exception {
+    public void testWithNormalResponse() throws Exception {
         EchoServiceStub stub = new EchoServiceStub(server.getConfigurationContext(), server.getEndpoint("EchoService"));
         for (int i=0; i<500; i++) {
             Echo request = new Echo();
             request.setContent("test");
             assertThat(stub.echo(request).getContent()).isEqualTo("test");
+        }
+    }
+    
+    @Test
+    public void testWithFault() throws Exception {
+        EchoServiceStub stub = new EchoServiceStub(server.getConfigurationContext(), server.getEndpoint("EchoService"));
+        for (int i=0; i<500; i++) {
+            Echo request = new Echo();
+            request.setContent("");
+            try {
+                stub.echo(request);
+                fail("Expected AxisFault");
+            } catch (AxisFault ex) {
+                // Expected
+            }
         }
     }
 }
