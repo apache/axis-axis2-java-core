@@ -21,6 +21,10 @@ package org.apache.axis2.databinding.axis2_5809;
 public class EchoServiceImpl extends EchoServiceSkeleton {
     @Override
     public EchoResponse echo(Echo echo) {
+        String content = echo.getContent();
+        if (content.isEmpty()) {
+            throw new RuntimeException();
+        }
         EchoResponse response = new EchoResponse();
         response.setContent(echo.getContent());
         return response;
