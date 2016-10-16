@@ -22,15 +22,17 @@ import static com.google.common.truth.Truth.assertThat;
 
 import org.apache.axis2.testutils.Axis2Server;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ServiceTest {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/AXIS2-5809");
     
+    @Ignore
     @Test
     public void test() throws Exception {
-        EchoServiceStub stub = new EchoServiceStub(server.getEndpoint("EchoService"));
+        EchoServiceStub stub = new EchoServiceStub(server.getConfigurationContext(), server.getEndpoint("EchoService"));
         for (int i=0; i<500; i++) {
             Echo request = new Echo();
             request.setContent("test");
