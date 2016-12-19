@@ -722,7 +722,10 @@ public class JMSUtils extends BaseUtils {
                         "dynamicTopics/" : "dynamicQueues/") + destinationName);
             } catch (NamingException x) {
                 log.warn("Cannot locate destination : " + destinationName);
-                throw x;
+                // Rethrow the original exception. If we get here this most likely means that
+                // the JMS provider doesn't support dynamic(Queues|Topics) and we should simply
+                // report the original lookup failure.
+                throw e;
             }
         } catch (NamingException e) {
             log.warn("Cannot locate destination : " + destinationName, e);
