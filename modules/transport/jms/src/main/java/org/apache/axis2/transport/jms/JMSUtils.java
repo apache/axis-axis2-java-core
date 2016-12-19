@@ -20,7 +20,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.builder.SOAPBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.MessageProcessorSelector;
