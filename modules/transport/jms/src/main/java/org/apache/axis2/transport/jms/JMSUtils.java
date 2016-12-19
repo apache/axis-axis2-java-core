@@ -431,9 +431,17 @@ public class JMSUtils extends BaseUtils {
         throws JMSException {
 
         if (dest instanceof Queue) {
-            return ((QueueSession) session).createReceiver((Queue) dest, messageSelector);
+            if (session instanceof QueueSession) {
+                return ((QueueSession) session).createReceiver((Queue) dest, messageSelector);
+            } else {
+                return session.createConsumer(dest, messageSelector);
+            }
         } else {
-            return ((TopicSession) session).createSubscriber((Topic) dest, messageSelector, false);
+            if (session instanceof TopicSession) {
+                return ((TopicSession) session).createSubscriber((Topic) dest, messageSelector, false);
+            } else {
+                return session.createConsumer(dest, messageSelector);
+            }
         }
     }
 
