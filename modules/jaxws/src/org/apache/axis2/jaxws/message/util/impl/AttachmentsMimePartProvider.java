@@ -37,11 +37,6 @@ final class AttachmentsMimePartProvider implements MimePartProvider {
     }
 
     @Override
-    public boolean isLoaded(String contentID) {
-        return true;
-    }
-
-    @Override
     public DataHandler getDataHandler(String contentID) throws IOException {
         DataHandler dh = attachments.getDataHandler(contentID);
         if (dh == null) {

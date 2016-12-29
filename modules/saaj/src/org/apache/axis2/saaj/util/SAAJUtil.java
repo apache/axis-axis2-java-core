@@ -106,10 +106,7 @@ public class SAAJUtil {
         }
         OMElement docElem = (OMElement)message.getSOAPPart().getDocumentElement();
         MimePartProvider mimePartProvider = new MimePartProvider() {
-            public boolean isLoaded(String contentID) {
-                return true;
-            }
-            
+            @Override
             public DataHandler getDataHandler(String contentID) throws IOException {
                 DataHandler dh = attachments.get(contentID);
                 if (dh == null) {
