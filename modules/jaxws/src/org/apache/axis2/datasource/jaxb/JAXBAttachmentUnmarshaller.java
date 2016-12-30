@@ -19,7 +19,7 @@
 
 package org.apache.axis2.datasource.jaxb;
 
-import org.apache.axiom.mime.MimePartProvider;
+import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMException;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -43,11 +43,11 @@ public final class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
     private static final Log log = LogFactory.getLog(JAXBAttachmentUnmarshaller.class);
 
     private final AttachmentContext context;
-    private final MimePartProvider mimePartProvider;
+    private final OMAttachmentAccessor attachmentAccessor;
 
-    public JAXBAttachmentUnmarshaller(AttachmentContext context, MimePartProvider mimePartProvider) {
+    public JAXBAttachmentUnmarshaller(AttachmentContext context, OMAttachmentAccessor attachmentAccessor) {
         this.context = context;
-        this.mimePartProvider = mimePartProvider;
+        this.attachmentAccessor = attachmentAccessor;
     }
 
     public final boolean isXOPPackage() {
@@ -157,14 +157,7 @@ public final class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         if (blobcid.startsWith("cid:")) {
             blobcid = blobcid.substring(4);
         }
-        DataHandler dh;
-        try {
-            dh = mimePartProvider.getDataHandler(blobcid);
-        } catch (IllegalArgumentException ex) {
-            dh = null;
-        } catch (IOException ex) {
-            throw new OMException("Failed to load attachment with content ID " + blobcid, ex);
-        }
+        DataHandler dh = attachmentAccessor.getDataHandler(blobcid);
         if (dh == null) {
             dh = context.getDataHandlerForSwA(blobcid);
         }

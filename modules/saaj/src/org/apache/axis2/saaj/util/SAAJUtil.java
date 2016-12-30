@@ -19,8 +19,8 @@
 
 package org.apache.axis2.saaj.util;
 
-import org.apache.axiom.mime.MimePartProvider;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.w3c.dom.Document;
@@ -36,7 +36,6 @@ import javax.xml.transform.stax.StAXSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -105,19 +104,14 @@ public class SAAJUtil {
             }
         }
         OMElement docElem = (OMElement)message.getSOAPPart().getDocumentElement();
-        MimePartProvider mimePartProvider = new MimePartProvider() {
+        OMAttachmentAccessor attachmentAccessor = new OMAttachmentAccessor() {
             @Override
-            public DataHandler getDataHandler(String contentID) throws IOException {
-                DataHandler dh = attachments.get(contentID);
-                if (dh == null) {
-                    throw new IOException("No attachment with content ID " + contentID + " found");
-                } else {
-                    return dh;
-                }
+            public DataHandler getDataHandler(String contentID) {
+                return attachments.get(contentID);
             }
         };
         return OMXMLBuilderFactory.createSOAPModelBuilder(OMAbstractFactory.getMetaFactory(),
-                new StAXSource(docElem.getXMLStreamReader()), mimePartProvider).getSOAPEnvelope();
+                new StAXSource(docElem.getXMLStreamReader()), attachmentAccessor).getSOAPEnvelope();
     }
 
     /**

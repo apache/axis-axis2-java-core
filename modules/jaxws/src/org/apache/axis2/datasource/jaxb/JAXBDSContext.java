@@ -306,7 +306,7 @@ public class JAXBDSContext {
 
         
         // Create an attachment unmarshaller
-        AttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller(createAttachmentContext(), xopEncodedStream.getMimePartProvider());
+        AttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller(createAttachmentContext(), xopEncodedStream.getAttachmentAccessor());
 
         if (aum != null) {
             if (DEBUG_ENABLED) {

@@ -141,7 +141,7 @@ public class SAAJConverterImpl implements SAAJConverter {
             builder = OMXMLBuilderFactory.createSOAPModelBuilder(
                     OMAbstractFactory.getMetaFactory(),
                     new DOMSource(saajEnvelope),
-                    new AttachmentsMimePartProvider(attachments));
+                    attachments);
         } else {
             // Get a SOAP OM Builder.
             builder = OMXMLBuilderFactory.createSOAPModelBuilder(new DOMSource(saajEnvelope));
