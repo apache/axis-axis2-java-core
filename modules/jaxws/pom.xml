@@ -213,10 +213,6 @@
                                 </artifact>
                                 <artifact>
                                     <groupId>org.apache.geronimo.specs</groupId>
-                                    <artifactId>geronimo-saaj_1.3_spec</artifactId>
-                                </artifact>
-                                <artifact>
-                                    <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-jaxws_2.2_spec</artifactId>
                                 </artifact>
                             </artifacts>

@@ -38,10 +38,6 @@
     </scm>
     <dependencies>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-saaj_1.3_spec</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-dom</artifactId>
             <scope>runtime</scope>
@@ -164,8 +160,10 @@
                             <separator>${path.separator}</separator>
                             <artifacts>
                                 <artifact>
+                                    <!-- TODO: make the test cases compatible with the SAAJ API in the JRE and remove this -->
                                     <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-saaj_1.3_spec</artifactId>
+                                    <version>1.0.1</version>
                                 </artifact>
                             </artifacts>
                         </configuration>

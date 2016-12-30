@@ -518,7 +518,6 @@
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <geronimo.spec.javamail.version>1.6</geronimo.spec.javamail.version>
         <geronimo.spec.metadata.version>1.1.2</geronimo.spec.metadata.version>
-        <geronimo.spec.saaj.version>1.0.1</geronimo.spec.saaj.version>
         <geronimo.spec.jaxws.version>1.0</geronimo.spec.jaxws.version>
         <google.gson.version>2.1</google.gson.version>
         <httpclient.version>4.5.2</httpclient.version>
@@ -802,11 +801,6 @@
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
                 <version>${geronimo.spec.metadata.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-saaj_1.3_spec</artifactId>
-                <version>${geronimo.spec.saaj.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
