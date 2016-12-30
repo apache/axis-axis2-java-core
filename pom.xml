@@ -1189,7 +1189,7 @@
                 <plugin>
                     <groupId>com.github.veithen.alta</groupId>
                     <artifactId>alta-maven-plugin</artifactId>
-                    <version>0.4</version>
+                    <version>0.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.mortbay.jetty</groupId>
