@@ -174,7 +174,6 @@
                 <include>*:*:jar</include>
             </includes>
             <excludes>
-                 <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</exclude>
                  <exclude>org.springframework:spring-beans:jar</exclude>
                  <exclude>org.springframework:spring-context:jar</exclude>
                  <exclude>org.springframework:spring-core:jar</exclude>

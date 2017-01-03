@@ -245,21 +245,6 @@
             </exclusions>
         </dependency>
         
-        <!-- Axis2 has always been shipped with Sun's implementations of
-             JavaMail and JAF, although Axiom depends on (and has been tested
-             with) Geronimo's implementations. This should probably reevaluated. -->
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${javax.mail.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
         <!-- Jalopy is used by the PrettyPrinter class in the kernel,
              but it is invoked using reflection (and only if it is
              found on the classpath). Therefore it is not automatically

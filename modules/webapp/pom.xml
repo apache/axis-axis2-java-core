@@ -154,15 +154,6 @@
             <version>${project.version}</version>
             <type>mar</type>
         </dependency>
-        
-        <!-- Axis2 has always been shipped with Sun's implementations of
-             JavaMail and JAF, although Axiom depends on (and has been tested
-             with) Geronimo's implementations. This should probably reevaluated. -->
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${javax.mail.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${project.version}</finalName>
@@ -276,7 +267,6 @@
                     <webXml>conf/web.xml</webXml>
                     <!-- This is basically the same list as in modules/distribution/src/main/assembly/bin-assembly.xml -->
                     <packagingExcludes>
-                        WEB-INF/lib/geronimo-javamail_1.4_spec-*.jar,
                         WEB-INF/lib/spring-beans-*.jar,
                         WEB-INF/lib/spring-context-*.jar,
                         WEB-INF/lib/spring-core-*.jar,
