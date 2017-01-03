@@ -25,8 +25,8 @@ import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
-import javax.mail.internet.ContentType;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.client.ClientOptions;
 import org.apache.axis2.transport.testkit.client.RequestResponseTestClient;
 import org.apache.axis2.transport.testkit.message.IncomingMessage;

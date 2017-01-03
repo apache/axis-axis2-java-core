@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.testkit.message;
 
-import javax.mail.internet.ContentType;
+import org.apache.axiom.mime.ContentType;
 
 public class IncomingMessage<M> {
     private final ContentType contentType;

@@ -22,8 +22,8 @@ package org.apache.axis2.transport.testkit.tests.async;
 import java.util.Arrays;
 import java.util.Random;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axis2.transport.testkit.channel.AsyncChannel;
 import org.apache.axis2.transport.testkit.client.AsyncTestClient;
 import org.apache.axis2.transport.testkit.endpoint.AsyncEndpoint;
@@ -34,7 +34,7 @@ public class BinaryTestCase extends AsyncMessageTestCase<byte[]> {
     private static final Random random = new Random();
     
     public BinaryTestCase(AsyncChannel channel, AsyncTestClient<byte[]> client, AsyncEndpoint<byte[]> endpoint, Object... resources) {
-        super(channel, client, endpoint, new ContentType("application", "octet-stream", null), null, resources);
+        super(channel, client, endpoint, new ContentType(MediaType.APPLICATION_OCTET_STREAM), null, resources);
     }
     
     @Override

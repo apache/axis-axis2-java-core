@@ -19,37 +19,29 @@
 
 package org.apache.axis2.transport.testkit.message;
 
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
-
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axis2.transport.http.HTTPConstants;
 
 public class XMLMessage {
     public enum Type {
-        SOAP11(SOAP11Constants.SOAP_11_CONTENT_TYPE),
-        SOAP12(SOAP12Constants.SOAP_12_CONTENT_TYPE),
-        POX("application/xml"),
-        SWA(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
+        SOAP11(MediaType.TEXT_XML),
+        SOAP12(MediaType.APPLICATION_SOAP_XML),
+        POX(MediaType.APPLICATION_XML),
+        SWA(MediaType.MULTIPART_RELATED);
         
-        private final String contentType;
+        private final MediaType contentType;
         
-        private Type(String contentType) {
+        private Type(MediaType contentType) {
             this.contentType = contentType;
         }
         
-        public ContentType getContentType() {
-            try {
-                return new ContentType(contentType);
-            } catch (ParseException ex) {
-                throw new Error(ex);
-            }
+        public MediaType getContentType() {
+            return contentType;
         }
     }
     
@@ -96,10 +88,10 @@ public class XMLMessage {
     }
     
     public static Type getTypeFromContentType(ContentType contentType) {
-        String baseType = contentType.getBaseType();
+        MediaType baseType = contentType.getMediaType();
         Type type = null;
         for (Type candidate : Type.values()) {
-            if (candidate.getContentType().getBaseType().equalsIgnoreCase(baseType)) {
+            if (candidate.getContentType().equals(baseType)) {
                 type = candidate;
                 break;
             }

@@ -19,8 +19,7 @@
 
 package org.apache.axis2.transport.testkit.tests.echo;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.channel.RequestResponseChannel;
 import org.apache.axis2.transport.testkit.client.RequestResponseTestClient;
 import org.apache.axis2.transport.testkit.endpoint.InOutEndpoint;

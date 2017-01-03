@@ -23,8 +23,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.client.AsyncTestClient;
 import org.apache.axis2.transport.testkit.client.ClientOptions;
 import org.apache.axis2.transport.testkit.message.RESTMessage;

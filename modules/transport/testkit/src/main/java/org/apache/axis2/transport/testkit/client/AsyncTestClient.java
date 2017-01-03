@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.testkit.client;
 
-import javax.mail.internet.ContentType;
+import org.apache.axiom.mime.ContentType;
 
 public interface AsyncTestClient<M> extends TestClient {
     void sendMessage(ClientOptions options, ContentType contentType, M message) throws Exception;

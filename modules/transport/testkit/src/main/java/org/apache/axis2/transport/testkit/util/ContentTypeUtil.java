@@ -19,36 +19,21 @@
 
 package org.apache.axis2.transport.testkit.util;
 
-import java.util.Enumeration;
-
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParameterList;
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.ContentTypeBuilder;
 
 public class ContentTypeUtil {
     private ContentTypeUtil() {}
     
     public static ContentType addCharset(ContentType contentType, String charset) {
-        ParameterList orgParamList = contentType.getParameterList();
-        ParameterList paramList = new ParameterList();
-        if (orgParamList != null) {
-            for (Enumeration<?> e = orgParamList.getNames(); e.hasMoreElements(); ) {
-                String name = (String)e.nextElement();
-                paramList.set(name, orgParamList.get(name));
-            }
-        }
-        paramList.set("charset", charset);
-        return new ContentType(contentType.getPrimaryType(), contentType.getSubType(), paramList);
+        ContentTypeBuilder builder = new ContentTypeBuilder(contentType);
+        builder.setParameter("charset", charset);
+        return builder.build();
     }
     
     public static ContentType removeCharset(ContentType contentType) {
-        ParameterList orgParamList = contentType.getParameterList();
-        ParameterList paramList = new ParameterList();
-        for (Enumeration<?> e = orgParamList.getNames(); e.hasMoreElements(); ) {
-            String name = (String)e.nextElement();
-            if (!name.equalsIgnoreCase("charset")) {
-                paramList.set(name, orgParamList.get(name));
-            }
-        }
-        return new ContentType(contentType.getPrimaryType(), contentType.getSubType(), paramList);
+        ContentTypeBuilder builder = new ContentTypeBuilder(contentType);
+        builder.removeParameter("charset");
+        return builder.build();
     }
 }

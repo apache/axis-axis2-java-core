@@ -19,8 +19,7 @@
 
 package org.apache.axis2.transport.testkit.tests.async;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.channel.AsyncChannel;
 import org.apache.axis2.transport.testkit.client.AsyncTestClient;
 import org.apache.axis2.transport.testkit.endpoint.AsyncEndpoint;

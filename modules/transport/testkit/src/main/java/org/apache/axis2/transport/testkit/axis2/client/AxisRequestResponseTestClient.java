@@ -19,10 +19,9 @@
 
 package org.apache.axis2.transport.testkit.axis2.client;
 
-import javax.mail.internet.ContentType;
-
 import junit.framework.Assert;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.testkit.axis2.MessageContextValidator;

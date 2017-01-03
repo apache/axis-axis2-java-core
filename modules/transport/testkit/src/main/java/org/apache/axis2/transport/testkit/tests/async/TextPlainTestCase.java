@@ -19,8 +19,8 @@
 
 package org.apache.axis2.transport.testkit.tests.async;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axis2.transport.testkit.MessageTestData;
 import org.apache.axis2.transport.testkit.channel.AsyncChannel;
 import org.apache.axis2.transport.testkit.client.AsyncTestClient;
@@ -33,7 +33,7 @@ public class TextPlainTestCase extends AsyncMessageTestCase<String> {
     private final MessageTestData data;
     
     public TextPlainTestCase(AsyncChannel channel, AsyncTestClient<String> client, AsyncEndpoint<String> endpoint, MessageTestData data, Object... resources) {
-        super(channel, client, endpoint, new ContentType("text", "plain", null), data.getCharset(), resources);
+        super(channel, client, endpoint, new ContentType(MediaType.TEXT_PLAIN), data.getCharset(), resources);
         this.data = data;
     }
     

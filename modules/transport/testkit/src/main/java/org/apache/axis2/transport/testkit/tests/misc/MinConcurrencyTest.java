@@ -22,9 +22,9 @@ package org.apache.axis2.transport.testkit.tests.misc;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;

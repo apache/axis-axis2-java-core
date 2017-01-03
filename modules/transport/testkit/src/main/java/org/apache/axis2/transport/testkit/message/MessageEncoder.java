@@ -24,10 +24,10 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 
 import javax.activation.DataHandler;
-import javax.mail.internet.ContentType;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -71,7 +71,7 @@ public interface MessageEncoder<T,U> {
         new MessageEncoder<XMLMessage,byte[]>() {
 
         public ContentType getContentType(ClientOptions options, ContentType contentType) throws Exception {
-            if (contentType.getBaseType().equals(XMLMessage.Type.SWA.getContentType().getBaseType())) {
+            if (contentType.getMediaType().equals(XMLMessage.Type.SWA.getContentType())) {
                 OMOutputFormat outputFormat = new OMOutputFormat();
                 outputFormat.setMimeBoundary(options.getMimeBoundary());
                 outputFormat.setRootContentId(options.getRootContentId());
