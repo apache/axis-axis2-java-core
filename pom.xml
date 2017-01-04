@@ -537,6 +537,7 @@
         <plexus.utils.version>1.4.9</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
         <servlet.api.version>2.3</servlet.api.version>
+        <slf4j.version>1.7.22</slf4j.version>
         <spring.version>2.5.1</spring.version>
         <tomcat.version>6.0.16</tomcat.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
@@ -778,6 +779,11 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commons.logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
