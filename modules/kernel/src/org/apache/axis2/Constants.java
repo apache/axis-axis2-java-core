@@ -198,7 +198,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
     public static final String VALUE_OPTIONAL = "optional";
+    @Deprecated
     public static final String TESTING_PATH = "target/test-resources/";
+    @Deprecated
     public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
     public static final char SERVICE_NAME_SPLIT_CHAR = ':';
     public static final String SERVICE_GROUP_ID = "ServiceGroupId";
