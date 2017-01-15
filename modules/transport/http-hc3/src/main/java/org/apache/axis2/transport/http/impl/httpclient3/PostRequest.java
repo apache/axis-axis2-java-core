@@ -60,37 +60,37 @@ class PostRequest implements Request {
          * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
          */
 
-        PostMethod postMethod = new PostMethod();
+        PostMethod method = new PostMethod();
         if (log.isTraceEnabled()) {
-            log.trace(Thread.currentThread() + " PostMethod " + postMethod + " / " + httpClient);
+            log.trace(Thread.currentThread() + " PostMethod " + method + " / " + httpClient);
         }
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, postMethod,
+        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
                 httpClient, soapActionString);
 
-        postMethod.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
+        method.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
                 soapActionString, sender.isChunked(), sender.isAllowedRetry()));
 
         if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
-            postMethod.setContentChunked(true);
+            method.setContentChunked(true);
         }
 
         String soapAction = messageFormatter.formatSOAPAction(msgContext, sender.getFormat(), soapActionString);
 
         if (soapAction != null && !msgContext.isDoingREST()) {
-            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+            method.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 
         /*
          * main excecution takes place..
          */
         try {
-            sender.executeMethod(httpClient, msgContext, url, postMethod);
-            sender.handleResponse(msgContext, postMethod);
+            sender.executeMethod(httpClient, msgContext, url, method);
+            sender.handleResponse(msgContext, method);
         } catch (IOException e) {
             log.info("Unable to sendViaPost to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         } finally {
-            sender.cleanup(msgContext, postMethod);
+            sender.cleanup(msgContext, method);
         }
     }
 }

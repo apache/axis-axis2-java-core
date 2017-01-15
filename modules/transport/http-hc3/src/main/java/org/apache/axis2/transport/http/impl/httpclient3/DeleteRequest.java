@@ -46,18 +46,18 @@ class DeleteRequest implements Request {
 
     @Override
     public void execute() throws AxisFault {
-        DeleteMethod deleteMethod = new DeleteMethod();
+        DeleteMethod method = new DeleteMethod();
         HttpClient httpClient = sender.getHttpClient(msgContext);
-        sender.populateCommonProperties(msgContext, url, deleteMethod, httpClient, soapActiionString);
+        sender.populateCommonProperties(msgContext, url, method, httpClient, soapActiionString);
 
         try {
-            sender.executeMethod(httpClient, msgContext, url, deleteMethod);
-            sender.handleResponse(msgContext, deleteMethod);
+            sender.executeMethod(httpClient, msgContext, url, method);
+            sender.handleResponse(msgContext, method);
         } catch (IOException e) {
             log.info("Unable to sendViaDelete to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         } finally {
-            sender.cleanup(msgContext, deleteMethod);
+            sender.cleanup(msgContext, method);
         }
     }
 }

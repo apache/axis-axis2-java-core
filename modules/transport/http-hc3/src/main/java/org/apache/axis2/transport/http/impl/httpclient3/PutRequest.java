@@ -60,33 +60,33 @@ class PutRequest implements Request {
          * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
          */
 
-        PutMethod putMethod = new PutMethod();
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, putMethod,
+        PutMethod method = new PutMethod();
+        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
                 httpClient, soapActionString);
 
-        putMethod.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
+        method.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
                 soapActionString, sender.isChunked(), sender.isAllowedRetry()));
 
         if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
-            putMethod.setContentChunked(true);
+            method.setContentChunked(true);
         }
 
         String soapAction = messageFormatter.formatSOAPAction(msgContext, sender.getFormat(), soapActionString);
         if (soapAction != null && !msgContext.isDoingREST()) {
-            putMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+            method.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 
         /*
          * main excecution takes place..
          */
         try {
-            sender.executeMethod(httpClient, msgContext, url, putMethod);
-            sender.handleResponse(msgContext, putMethod);
+            sender.executeMethod(httpClient, msgContext, url, method);
+            sender.handleResponse(msgContext, method);
         } catch (IOException e) {
             log.info("Unable to sendViaPut to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         } finally {
-            sender.cleanup(msgContext, putMethod);
+            sender.cleanup(msgContext, method);
         }
     }
 }

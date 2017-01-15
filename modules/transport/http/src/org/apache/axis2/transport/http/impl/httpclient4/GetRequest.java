@@ -49,9 +49,9 @@ class GetRequest implements Request {
 
     @Override
     public void execute() throws AxisFault {
-        HttpGet httpGet = new HttpGet();
+        HttpGet method = new HttpGet();
         AbstractHttpClient httpClient = sender.getHttpClient(msgContext);
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, httpGet,
+        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
                                                                      httpClient, soapActionString);
 
         // Need to have this here because we can have soap action when using the
@@ -60,7 +60,7 @@ class GetRequest implements Request {
                 .formatSOAPAction(msgContext, sender.getFormat(), soapActionString);
 
         if (soapAction != null && !msgContext.isDoingREST()) {
-            httpGet.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+            method.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 
         /*
@@ -68,7 +68,7 @@ class GetRequest implements Request {
          */
         HttpResponse response = null;
         try {
-            response = sender.executeMethod(httpClient, msgContext, url, httpGet);
+            response = sender.executeMethod(httpClient, msgContext, url, method);
             sender.handleResponse(msgContext, response);
         } catch (IOException e) {
             log.info("Unable to sendViaGet to url[" + url + "]", e);

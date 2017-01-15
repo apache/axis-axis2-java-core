@@ -61,16 +61,16 @@ class PostRequest implements Request {
          * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
          */
 
-        HttpPost postMethod = new HttpPost();
+        HttpPost method = new HttpPost();
         if (log.isTraceEnabled()) {
-            log.trace(Thread.currentThread() + " PostMethod " + postMethod + " / " + httpClient);
+            log.trace(Thread.currentThread() + " PostMethod " + method + " / " + httpClient);
         }
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, postMethod,
+        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
                                                                      httpClient, soapActionString);
         AxisRequestEntityImpl requestEntity =
                 new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
                                           soapActionString, sender.isChunked(), sender.isAllowedRetry());
-        postMethod.setEntity(requestEntity);
+        method.setEntity(requestEntity);
 
         if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
             requestEntity.setChunked(sender.isChunked());
@@ -79,7 +79,7 @@ class PostRequest implements Request {
         String soapAction = messageFormatter.formatSOAPAction(msgContext, sender.getFormat(), soapActionString);
 
         if (soapAction != null && !msgContext.isDoingREST()) {
-            postMethod.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+            method.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 
         /*
@@ -87,7 +87,7 @@ class PostRequest implements Request {
          */
         HttpResponse response = null;
         try {
-            response = sender.executeMethod(httpClient, msgContext, url, postMethod);
+            response = sender.executeMethod(httpClient, msgContext, url, method);
             sender.handleResponse(msgContext, response);
         } catch (IOException e) {
             log.info("Unable to sendViaPost to url[" + url + "]", e);
