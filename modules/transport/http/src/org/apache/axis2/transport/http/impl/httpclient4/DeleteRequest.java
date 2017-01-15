@@ -23,34 +23,20 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.impl.client.AbstractHttpClient;
 
-class DeleteRequest implements Request {
+class DeleteRequest extends RequestBase<HttpDelete> {
     private static final Log log = LogFactory.getLog(DeleteRequest.class);
 
-    private final HTTPSenderImpl sender;
-    private final MessageContext msgContext;
-    private final URL url;
-    private final String soapActionString;
-
-    DeleteRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, String soapActionString) {
-        this.sender = sender;
-        this.msgContext = msgContext;
-        this.url = url;
-        this.soapActionString = soapActionString;
+    DeleteRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, String soapActionString) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, new HttpDelete());
     }
 
     @Override
     public void execute() throws AxisFault {
-        HttpDelete method = new HttpDelete();
-        AbstractHttpClient httpClient = sender.getHttpClient(msgContext);
-        sender.populateCommonProperties(msgContext, url, method, httpClient, soapActionString);
-
         /*
          * main execution takes place..
          */

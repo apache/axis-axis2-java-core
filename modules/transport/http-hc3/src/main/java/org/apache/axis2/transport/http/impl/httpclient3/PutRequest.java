@@ -23,37 +23,20 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.Request;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class PutRequest implements Request {
+class PutRequest extends RequestBase<PutMethod> {
     private static final Log log = LogFactory.getLog(PutRequest.class);
 
-    private final HTTPSenderImpl sender;
-    private final String soapActionString;
-    private final MessageContext msgContext;
-    private final URL url;
-
-    PutRequest(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url) {
-        this.sender = sender;
-        this.soapActionString = soapActionString;
-        this.msgContext = msgContext;
-        this.url = url;
+    PutRequest(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, new PutMethod());
     }
 
     @Override
     public void execute() throws AxisFault {
-        HttpClient httpClient = sender.getHttpClient(msgContext);
-
-        PutMethod method = new PutMethod();
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
-                httpClient, soapActionString);
-
         method.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
                 soapActionString, sender.isChunked(), sender.isAllowedRetry()));
 

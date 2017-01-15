@@ -23,37 +23,21 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.AbstractHttpClient;
 
-class PutRequest implements Request {
+class PutRequest extends RequestBase<HttpPut> {
     private static final Log log = LogFactory.getLog(PutRequest.class);
 
-    private final HTTPSenderImpl sender;
-    private final URL url;
-    private final String soapActionString;
-    private final MessageContext msgContext;
-
-    PutRequest(HTTPSenderImpl sender, URL url, String soapActionString, MessageContext msgContext) {
-        this.sender = sender;
-        this.url = url;
-        this.soapActionString = soapActionString;
-        this.msgContext = msgContext;
+    PutRequest(HTTPSenderImpl sender, URL url, String soapActionString, MessageContext msgContext) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, new HttpPut());
     }
 
     @Override
     public void execute() throws AxisFault {
-        AbstractHttpClient httpClient = sender.getHttpClient(msgContext);
-
-        HttpPut method = new HttpPut();
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
-                                                                     httpClient, soapActionString);
         AxisRequestEntityImpl requestEntity =
                 new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
                                           soapActionString, sender.isChunked(), sender.isAllowedRetry());

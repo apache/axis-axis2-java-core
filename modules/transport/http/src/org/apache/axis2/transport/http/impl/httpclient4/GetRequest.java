@@ -23,37 +23,21 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.AbstractHttpClient;
 
-class GetRequest implements Request {
+class GetRequest extends RequestBase<HttpGet> {
     private static final Log log = LogFactory.getLog(GetRequest.class);
 
-    private final HTTPSenderImpl sender;
-    private final MessageContext msgContext;
-    private final String soapActionString;
-    private final URL url;
-
-    GetRequest(HTTPSenderImpl sender, MessageContext msgContext, String soapActionString, URL url) {
-        this.sender = sender;
-        this.msgContext = msgContext;
-        this.soapActionString = soapActionString;
-        this.url = url;
+    GetRequest(HTTPSenderImpl sender, MessageContext msgContext, String soapActionString, URL url) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, new HttpGet());
     }
 
     @Override
     public void execute() throws AxisFault {
-        HttpGet method = new HttpGet();
-        AbstractHttpClient httpClient = sender.getHttpClient(msgContext);
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
-                                                                     httpClient, soapActionString);
-
         // Need to have this here because we can have soap action when using the
         // soap response MEP
         String soapAction = messageFormatter

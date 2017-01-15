@@ -23,39 +23,23 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.Request;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class PostRequest implements Request {
+class PostRequest extends RequestBase<PostMethod> {
     private static final Log log = LogFactory.getLog(PostRequest.class);
 
-    private final HTTPSenderImpl sender;
-    private final URL url;
-    private final MessageContext msgContext;
-    private final String soapActionString;
-
-    PostRequest(HTTPSenderImpl sender, URL url, MessageContext msgContext, String soapActionString) {
-        this.sender = sender;
-        this.url = url;
-        this.msgContext = msgContext;
-        this.soapActionString = soapActionString;
+    PostRequest(HTTPSenderImpl sender, URL url, MessageContext msgContext, String soapActionString) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, new PostMethod());
     }
 
     @Override
     public void execute() throws AxisFault {
-        HttpClient httpClient = sender.getHttpClient(msgContext);
-
-        PostMethod method = new PostMethod();
         if (log.isTraceEnabled()) {
             log.trace(Thread.currentThread() + " PostMethod " + method + " / " + httpClient);
         }
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
-                httpClient, soapActionString);
 
         method.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
                 soapActionString, sender.isChunked(), sender.isAllowedRetry()));

@@ -23,40 +23,24 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.AbstractHttpClient;
 
-class PostRequest implements Request {
+class PostRequest extends RequestBase<HttpPost> {
     private static final Log log = LogFactory.getLog(PostRequest.class);
 
-    private final HTTPSenderImpl sender;
-    private final MessageContext msgContext;
-    private final URL url;
-    private final String soapActionString;
-
-    PostRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, String soapActionString) {
-        this.sender = sender;
-        this.msgContext = msgContext;
-        this.url = url;
-        this.soapActionString = soapActionString;
+    PostRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, String soapActionString) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, new HttpPost());
     }
 
     @Override
     public void execute() throws AxisFault {
-        AbstractHttpClient httpClient = sender.getHttpClient(msgContext);
-
-        HttpPost method = new HttpPost();
         if (log.isTraceEnabled()) {
             log.trace(Thread.currentThread() + " PostMethod " + method + " / " + httpClient);
         }
-        MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
-                                                                     httpClient, soapActionString);
         AxisRequestEntityImpl requestEntity =
                 new AxisRequestEntityImpl(messageFormatter, msgContext, sender.getFormat(),
                                           soapActionString, sender.isChunked(), sender.isAllowedRetry());
