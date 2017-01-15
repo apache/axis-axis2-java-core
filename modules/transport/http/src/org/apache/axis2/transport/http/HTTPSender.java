@@ -41,7 +41,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @param soapActiionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract void sendViaGet(MessageContext msgContext, URL url, String soapActiionString)
+    protected abstract Request prepareGet(MessageContext msgContext, URL url, String soapActiionString)
             throws AxisFault;
     
     /**
@@ -52,7 +52,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @param soapActiionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract void sendViaDelete(MessageContext msgContext, URL url, String soapActiionString)
+    protected abstract Request prepareDelete(MessageContext msgContext, URL url, String soapActiionString)
             throws AxisFault; 
     /**
      * Used to send a request via HTTP Post Method
@@ -62,7 +62,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @param soapActionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract void sendViaPost(MessageContext msgContext, URL url,
+    protected abstract Request preparePost(MessageContext msgContext, URL url,
                              String soapActionString) throws AxisFault;
 
 
@@ -74,7 +74,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @param soapActionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract void sendViaPut(MessageContext msgContext, URL url,
+    protected abstract Request preparePut(MessageContext msgContext, URL url,
                             String soapActionString) throws AxisFault;
 
      
@@ -104,21 +104,21 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         if ((httpMethod != null)) {
 
             if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-                this.sendViaGet(msgContext, url, soapActionString);
+                this.prepareGet(msgContext, url, soapActionString).execute();;
 
                 return;
             } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
-                this.sendViaDelete(msgContext, url, soapActionString);
+                this.prepareDelete(msgContext, url, soapActionString).execute();
 
                 return;
             } else if (Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
-                this.sendViaPut(msgContext, url, soapActionString);
+                this.preparePut(msgContext, url, soapActionString).execute();
 
                 return;
             }
         }
 
-        this.sendViaPost(msgContext, url, soapActionString);
+        this.preparePost(msgContext, url, soapActionString).execute();
     }   
 
     /**

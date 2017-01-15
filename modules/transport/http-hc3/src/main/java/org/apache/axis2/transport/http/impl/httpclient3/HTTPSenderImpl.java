@@ -46,6 +46,7 @@ import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
+import org.apache.axis2.transport.http.Request;
 import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Header;
@@ -92,31 +93,35 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected void sendViaGet(MessageContext msgContext, URL url, String soapActiionString)
+    protected Request prepareGet(final MessageContext msgContext, final URL url, final String soapActiionString)
             throws AxisFault {
-
-        GetMethod getMethod = new GetMethod();
-        HttpClient httpClient = getHttpClient(msgContext);
-        MessageFormatter messageFormatter = populateCommonProperties(msgContext, url, getMethod,
-                httpClient, soapActiionString);
-
-        // Need to have this here because we can have soap action when using the
-        // soap response MEP
-        String soapAction = messageFormatter
-                .formatSOAPAction(msgContext, format, soapActiionString);
-
-        if (soapAction != null && !msgContext.isDoingREST()) {
-            getMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
-        }
-        try {
-            executeMethod(httpClient, msgContext, url, getMethod);
-            handleResponse(msgContext, getMethod);
-        } catch (IOException e) {
-            log.info("Unable to sendViaGet to url[" + url + "]", e);
-            throw AxisFault.makeFault(e);
-        } finally {
-            cleanup(msgContext, getMethod);
-        }
+        return new Request() {
+            @Override
+            public void execute() throws AxisFault {
+                GetMethod getMethod = new GetMethod();
+                HttpClient httpClient = getHttpClient(msgContext);
+                MessageFormatter messageFormatter = populateCommonProperties(msgContext, url, getMethod,
+                        httpClient, soapActiionString);
+        
+                // Need to have this here because we can have soap action when using the
+                // soap response MEP
+                String soapAction = messageFormatter
+                        .formatSOAPAction(msgContext, format, soapActiionString);
+        
+                if (soapAction != null && !msgContext.isDoingREST()) {
+                    getMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+                }
+                try {
+                    executeMethod(httpClient, msgContext, url, getMethod);
+                    handleResponse(msgContext, getMethod);
+                } catch (IOException e) {
+                    log.info("Unable to sendViaGet to url[" + url + "]", e);
+                    throw AxisFault.makeFault(e);
+                } finally {
+                    cleanup(msgContext, getMethod);
+                }
+            }
+        };
     }
 
     protected void cleanup(MessageContext msgContext, Object httpMmethod) {
@@ -140,22 +145,26 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected void sendViaDelete(MessageContext msgContext, URL url, String soapActiionString)
+    protected Request prepareDelete(final MessageContext msgContext, final URL url, final String soapActiionString)
             throws AxisFault {
-
-        DeleteMethod deleteMethod = new DeleteMethod();
-        HttpClient httpClient = getHttpClient(msgContext);
-        populateCommonProperties(msgContext, url, deleteMethod, httpClient, soapActiionString);
-
-        try {
-            executeMethod(httpClient, msgContext, url, deleteMethod);
-            handleResponse(msgContext, deleteMethod);
-        } catch (IOException e) {
-            log.info("Unable to sendViaDelete to url[" + url + "]", e);
-            throw AxisFault.makeFault(e);
-        } finally {
-            cleanup(msgContext, deleteMethod);
-        }
+        return new Request() {
+            @Override
+            public void execute() throws AxisFault {
+                DeleteMethod deleteMethod = new DeleteMethod();
+                HttpClient httpClient = getHttpClient(msgContext);
+                populateCommonProperties(msgContext, url, deleteMethod, httpClient, soapActiionString);
+        
+                try {
+                    executeMethod(httpClient, msgContext, url, deleteMethod);
+                    handleResponse(msgContext, deleteMethod);
+                } catch (IOException e) {
+                    log.info("Unable to sendViaDelete to url[" + url + "]", e);
+                    throw AxisFault.makeFault(e);
+                } finally {
+                    cleanup(msgContext, deleteMethod);
+                }
+            }
+        };
     }
 
     /**
@@ -170,53 +179,57 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected void sendViaPost(MessageContext msgContext, URL url, String soapActionString)
+    protected Request preparePost(final MessageContext msgContext, final URL url, final String soapActionString)
             throws AxisFault {
-
-        HttpClient httpClient = getHttpClient(msgContext);
-
-        /*
-         * What's up with this, it never gets used anywhere?? --Glen String
-         * charEncoding = (String)
-         * msgContext.getProperty(Constants.Configuration
-         * .CHARACTER_SET_ENCODING);
-         * 
-         * if (charEncoding == null) { charEncoding =
-         * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
-         */
-
-        PostMethod postMethod = new PostMethod();
-        if (log.isTraceEnabled()) {
-            log.trace(Thread.currentThread() + " PostMethod " + postMethod + " / " + httpClient);
-        }
-        MessageFormatter messageFormatter = populateCommonProperties(msgContext, url, postMethod,
-                httpClient, soapActionString);
-
-        postMethod.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, format,
-                soapActionString, chunked, isAllowedRetry));
-
-        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
-            postMethod.setContentChunked(true);
-        }
-
-        String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
-
-        if (soapAction != null && !msgContext.isDoingREST()) {
-            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
-        }
-
-        /*
-         * main excecution takes place..
-         */
-        try {
-            executeMethod(httpClient, msgContext, url, postMethod);
-            handleResponse(msgContext, postMethod);
-        } catch (IOException e) {
-            log.info("Unable to sendViaPost to url[" + url + "]", e);
-            throw AxisFault.makeFault(e);
-        } finally {
-            cleanup(msgContext, postMethod);
-        }
+        return new Request() {
+            @Override
+            public void execute() throws AxisFault {
+                HttpClient httpClient = getHttpClient(msgContext);
+        
+                /*
+                 * What's up with this, it never gets used anywhere?? --Glen String
+                 * charEncoding = (String)
+                 * msgContext.getProperty(Constants.Configuration
+                 * .CHARACTER_SET_ENCODING);
+                 * 
+                 * if (charEncoding == null) { charEncoding =
+                 * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
+                 */
+        
+                PostMethod postMethod = new PostMethod();
+                if (log.isTraceEnabled()) {
+                    log.trace(Thread.currentThread() + " PostMethod " + postMethod + " / " + httpClient);
+                }
+                MessageFormatter messageFormatter = populateCommonProperties(msgContext, url, postMethod,
+                        httpClient, soapActionString);
+        
+                postMethod.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, format,
+                        soapActionString, chunked, isAllowedRetry));
+        
+                if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
+                    postMethod.setContentChunked(true);
+                }
+        
+                String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
+        
+                if (soapAction != null && !msgContext.isDoingREST()) {
+                    postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+                }
+        
+                /*
+                 * main excecution takes place..
+                 */
+                try {
+                    executeMethod(httpClient, msgContext, url, postMethod);
+                    handleResponse(msgContext, postMethod);
+                } catch (IOException e) {
+                    log.info("Unable to sendViaPost to url[" + url + "]", e);
+                    throw AxisFault.makeFault(e);
+                } finally {
+                    cleanup(msgContext, postMethod);
+                }
+            }
+        };
     }
 
     /**
@@ -231,49 +244,53 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected void sendViaPut(MessageContext msgContext, URL url, String soapActionString)
+    protected Request preparePut(final MessageContext msgContext, final URL url, final String soapActionString)
             throws AxisFault {
-
-        HttpClient httpClient = getHttpClient(msgContext);
-
-        /*
-         * Same deal - this value never gets used, why is it here? --Glen String
-         * charEncoding = (String)
-         * msgContext.getProperty(Constants.Configuration
-         * .CHARACTER_SET_ENCODING);
-         * 
-         * if (charEncoding == null) { charEncoding =
-         * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
-         */
-
-        PutMethod putMethod = new PutMethod();
-        MessageFormatter messageFormatter = populateCommonProperties(msgContext, url, putMethod,
-                httpClient, soapActionString);
-
-        putMethod.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, format,
-                soapActionString, chunked, isAllowedRetry));
-
-        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
-            putMethod.setContentChunked(true);
-        }
-
-        String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
-        if (soapAction != null && !msgContext.isDoingREST()) {
-            putMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
-        }
-
-        /*
-         * main excecution takes place..
-         */
-        try {
-            executeMethod(httpClient, msgContext, url, putMethod);
-            handleResponse(msgContext, putMethod);
-        } catch (IOException e) {
-            log.info("Unable to sendViaPut to url[" + url + "]", e);
-            throw AxisFault.makeFault(e);
-        } finally {
-            cleanup(msgContext, putMethod);
-        }
+        return new Request() {
+            @Override
+            public void execute() throws AxisFault {
+                HttpClient httpClient = getHttpClient(msgContext);
+        
+                /*
+                 * Same deal - this value never gets used, why is it here? --Glen String
+                 * charEncoding = (String)
+                 * msgContext.getProperty(Constants.Configuration
+                 * .CHARACTER_SET_ENCODING);
+                 * 
+                 * if (charEncoding == null) { charEncoding =
+                 * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
+                 */
+        
+                PutMethod putMethod = new PutMethod();
+                MessageFormatter messageFormatter = populateCommonProperties(msgContext, url, putMethod,
+                        httpClient, soapActionString);
+        
+                putMethod.setRequestEntity(new AxisRequestEntityImpl(messageFormatter, msgContext, format,
+                        soapActionString, chunked, isAllowedRetry));
+        
+                if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
+                    putMethod.setContentChunked(true);
+                }
+        
+                String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
+                if (soapAction != null && !msgContext.isDoingREST()) {
+                    putMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+                }
+        
+                /*
+                 * main excecution takes place..
+                 */
+                try {
+                    executeMethod(httpClient, msgContext, url, putMethod);
+                    handleResponse(msgContext, putMethod);
+                } catch (IOException e) {
+                    log.info("Unable to sendViaPut to url[" + url + "]", e);
+                    throw AxisFault.makeFault(e);
+                } finally {
+                    cleanup(msgContext, putMethod);
+                }
+            }
+        };
     }
 
     /**
