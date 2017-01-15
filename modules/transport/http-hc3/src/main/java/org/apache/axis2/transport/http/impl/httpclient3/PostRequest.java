@@ -50,16 +50,6 @@ class PostRequest implements Request {
     public void execute() throws AxisFault {
         HttpClient httpClient = sender.getHttpClient(msgContext);
 
-        /*
-         * What's up with this, it never gets used anywhere?? --Glen String
-         * charEncoding = (String)
-         * msgContext.getProperty(Constants.Configuration
-         * .CHARACTER_SET_ENCODING);
-         * 
-         * if (charEncoding == null) { charEncoding =
-         * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
-         */
-
         PostMethod method = new PostMethod();
         if (log.isTraceEnabled()) {
             log.trace(Thread.currentThread() + " PostMethod " + method + " / " + httpClient);

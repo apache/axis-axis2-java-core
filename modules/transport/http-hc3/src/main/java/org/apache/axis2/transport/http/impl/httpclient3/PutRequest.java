@@ -50,16 +50,6 @@ class PutRequest implements Request {
     public void execute() throws AxisFault {
         HttpClient httpClient = sender.getHttpClient(msgContext);
 
-        /*
-         * Same deal - this value never gets used, why is it here? --Glen String
-         * charEncoding = (String)
-         * msgContext.getProperty(Constants.Configuration
-         * .CHARACTER_SET_ENCODING);
-         * 
-         * if (charEncoding == null) { charEncoding =
-         * MessageContext.DEFAULT_CHAR_SET_ENCODING; }
-         */
-
         PutMethod method = new PutMethod();
         MessageFormatter messageFormatter = sender.populateCommonProperties(msgContext, url, method,
                 httpClient, soapActionString);
