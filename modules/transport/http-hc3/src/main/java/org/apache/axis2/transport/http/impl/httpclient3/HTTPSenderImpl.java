@@ -180,15 +180,8 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws IOException
      *             - Thrown in case an exception occurs
      */
-    protected void handleResponse(MessageContext msgContext, Object httpMethodBase)
+    protected void handleResponse(MessageContext msgContext, HttpMethodBase method)
             throws IOException {
-        HttpMethodBase method;
-        if (httpMethodBase instanceof HttpMethodBase) {
-            method = (HttpMethodBase) httpMethodBase;
-        } else {
-            log.trace("HttpMethodBase expected, but found - " + httpMethodBase);
-            return;
-        }
         int statusCode = method.getStatusCode();
         HTTPStatusCodeFamily family = getHTTPStatusCodeFamily(statusCode);
         log.trace("Handling response - " + statusCode);

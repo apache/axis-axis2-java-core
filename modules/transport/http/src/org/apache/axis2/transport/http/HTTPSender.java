@@ -77,17 +77,6 @@ public abstract class HTTPSender extends AbstractHTTPSender {
     protected abstract Request preparePut(MessageContext msgContext, URL url,
                             String soapActionString) throws AxisFault;
 
-     
-    /**
-     * Used to handle the HTTP Response
-     *
-     * @param msgContext - The MessageContext of the message
-     * @param method     - The HTTP method used
-     * @throws IOException - Thrown in case an exception occurs
-     */
-    protected abstract void handleResponse(MessageContext msgContext,
-                                Object httpMethodBase) throws IOException;
-    
     protected abstract void cleanup(MessageContext msgContext, Object httpMethod);
     
     
