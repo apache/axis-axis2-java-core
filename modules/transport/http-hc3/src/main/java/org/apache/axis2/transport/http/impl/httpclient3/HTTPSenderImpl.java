@@ -52,7 +52,6 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -68,7 +67,6 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -100,13 +98,6 @@ public class HTTPSenderImpl extends HTTPSender {
     protected Request prepareGet(final MessageContext msgContext, final URL url)
             throws AxisFault {
         return new RequestImpl(this, msgContext, url, null, new GetMethod());
-    }
-
-    protected void cleanup(MessageContext msgContext, HttpMethod httpMmethod) {
-        if (msgContext.isPropertyTrue(HTTPConstants.AUTO_RELEASE_CONNECTION)) {
-            log.trace("AutoReleasing " + httpMmethod);
-            ((HttpMethod) httpMmethod).releaseConnection();
-        }
     }
 
     /**
@@ -155,68 +146,6 @@ public class HTTPSenderImpl extends HTTPSender {
     protected Request preparePut(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
         return new RequestImpl(this, msgContext, url, requestEntity, new PutMethod());
-    }
-
-    /**
-     * Used to handle the HTTP Response
-     * 
-     * @param msgContext
-     *            - The MessageContext of the message
-     * @param method
-     *            - The HTTP method used
-     * @throws IOException
-     *             - Thrown in case an exception occurs
-     */
-    protected void handleResponse(MessageContext msgContext, HttpMethodBase method)
-            throws IOException {
-        int statusCode = method.getStatusCode();
-        HTTPStatusCodeFamily family = getHTTPStatusCodeFamily(statusCode);
-        log.trace("Handling response - " + statusCode);
-        if (statusCode == HttpStatus.SC_ACCEPTED) {
-            /* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
-             * of an in-only operation. In such a scenario, the HTTP response headers should be returned,
-             * i.e. session cookies. */
-            obtainHTTPHeaderInformation(method, msgContext);
-            // Since we don't expect any content with a 202 response, we must release the connection
-            method.releaseConnection();            
-        } else if (HTTPStatusCodeFamily.SUCCESSFUL.equals(family)) {
-            // Save the HttpMethod so that we can release the connection when cleaning up
-            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-            processResponse(method, msgContext);            
-        } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
-                || statusCode == HttpStatus.SC_BAD_REQUEST) {
-            // Save the HttpMethod so that we can release the connection when
-            // cleaning up
-            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-            Header contenttypeHeader = method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-            String value = null;
-            if (contenttypeHeader != null) {
-                value = contenttypeHeader.getValue();
-            }
-            OperationContext opContext = msgContext.getOperationContext();
-            if (opContext != null) {
-                MessageContext inMessageContext = opContext
-                        .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                if (inMessageContext != null) {
-                    inMessageContext.setProcessingFault(true);
-                }
-            }
-            if (value != null) {
-
-                processResponse(method, msgContext);
-            }
-
-            if (org.apache.axis2.util.Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
-                throw new AxisFault(Messages.getMessage("transportError",
-                        String.valueOf(statusCode), method.getStatusText()));
-            }
-        } else {
-            // Since we don't process the response, we must release the
-            // connection immediately
-            method.releaseConnection();
-            throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
-                    method.getStatusText()));
-        }
     }
 
     /**
@@ -683,41 +612,6 @@ public class HTTPSenderImpl extends HTTPSender {
 
             return httpClient;
         }
-    }
-
-    protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url,
-            HttpMethod method) throws IOException {
-        HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
-
-        // set the custom headers, if available
-        addCustomHeaders(method, msgContext);
-
-        // add compression headers if needed
-        if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {
-            method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING,
-                    HTTPConstants.COMPRESSION_GZIP);
-        }
-
-        if (msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST)) {
-            method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                    HTTPConstants.COMPRESSION_GZIP);
-        }
-
-        if (msgContext.getProperty(HTTPConstants.HTTP_METHOD_PARAMS) != null) {
-            HttpMethodParams params = (HttpMethodParams) msgContext
-                    .getProperty(HTTPConstants.HTTP_METHOD_PARAMS);
-            method.setParams(params);
-        }
-
-        String cookiePolicy = (String) msgContext.getProperty(HTTPConstants.COOKIE_POLICY);
-        if (cookiePolicy != null) {
-            method.getParams().setCookiePolicy(cookiePolicy);
-        }
-        HttpState httpState = (HttpState) msgContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);
-
-        setTimeouts(msgContext, method);
-
-        httpClient.executeMethod(config, method, httpState);
     }
 
     public void addCustomHeaders(HttpMethod method, MessageContext msgContext) {

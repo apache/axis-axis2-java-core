@@ -146,7 +146,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @param statusCode
      *            - The HTTP status code
      */
-    protected HTTPStatusCodeFamily getHTTPStatusCodeFamily(int statusCode) {
+    public HTTPStatusCodeFamily getHTTPStatusCodeFamily(int statusCode) {
         switch (statusCode / 100) {
         case 1:
             return HTTPStatusCodeFamily.INFORMATIONAL;
@@ -165,7 +165,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
     /**
      * The set of HTTP status code families.
      */
-    protected enum HTTPStatusCodeFamily {
+    public enum HTTPStatusCodeFamily {
         INFORMATIONAL, SUCCESSFUL, REDIRECTION, CLIENT_ERROR, SERVER_ERROR, OTHER
     }
 
