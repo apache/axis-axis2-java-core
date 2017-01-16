@@ -504,15 +504,12 @@ public class HTTPSenderImpl extends HTTPSender {
      */
     protected void populateCommonProperties(MessageContext msgContext, URL url,
                                                         HttpRequestBase httpMethod,
-                                                        AbstractHttpClient httpClient,
-                                                        MessageFormatter messageFormatter)
+                                                        AbstractHttpClient httpClient)
             throws AxisFault {
 
         if (isAuthenticationEnabled(msgContext)) {
             httpMethod.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
         }
-
-        url = messageFormatter.getTargetAddress(msgContext, format, url);
 
         try {
             httpMethod.setURI(url.toURI());

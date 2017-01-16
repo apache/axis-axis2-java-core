@@ -90,6 +90,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
 
         MessageFormatter messageFormatter = MessageProcessorSelector
                 .getMessageFormatter(msgContext);
+        url = messageFormatter.getTargetAddress(msgContext, format, url);
         
         Request request = null;
         if ((httpMethod != null)) {

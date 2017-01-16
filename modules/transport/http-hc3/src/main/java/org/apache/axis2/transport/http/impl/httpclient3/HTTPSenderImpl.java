@@ -534,14 +534,12 @@ public class HTTPSenderImpl extends HTTPSender {
      *             - Thrown in case an exception occurs
      */
     protected void populateCommonProperties(MessageContext msgContext, URL url,
-            HttpMethodBase httpMethod, HttpClient httpClient, MessageFormatter messageFormatter)
+            HttpMethodBase httpMethod, HttpClient httpClient)
             throws AxisFault {
 
         if (isAuthenticationEnabled(msgContext)) {
             httpMethod.setDoAuthentication(true);
         }
-
-        url = messageFormatter.getTargetAddress(msgContext, format, url);
 
         httpMethod.setPath(url.getPath());
 

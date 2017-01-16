@@ -44,8 +44,7 @@ abstract class RequestBase<T extends HttpRequestBase> implements Request {
         this.messageFormatter = messageFormatter;
         this.method = method;
         httpClient = sender.getHttpClient(msgContext);
-        sender.populateCommonProperties(msgContext, url, method,
-                httpClient, messageFormatter);
+        sender.populateCommonProperties(msgContext, url, method, httpClient);
     }
 
     @Override
