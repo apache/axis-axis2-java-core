@@ -95,24 +95,29 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         MessageFormatter messageFormatter = MessageProcessorSelector
                 .getMessageFormatter(msgContext);
         
+        Request request = null;
         if ((httpMethod != null)) {
 
             if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-                this.prepareGet(msgContext, url, soapActionString, messageFormatter).execute();
-
-                return;
+                request = prepareGet(msgContext, url, soapActionString, messageFormatter);
             } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
-                this.prepareDelete(msgContext, url, soapActionString, messageFormatter).execute();
-
-                return;
+                request = prepareDelete(msgContext, url, soapActionString, messageFormatter);
             } else if (Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
-                this.preparePut(msgContext, url, soapActionString, messageFormatter).execute();
-
-                return;
+                request = preparePut(msgContext, url, soapActionString, messageFormatter);
             }
         }
 
-        this.preparePost(msgContext, url, soapActionString, messageFormatter).execute();
+        if (request == null) {
+            request = preparePost(msgContext, url, soapActionString, messageFormatter);
+        }
+        
+        String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
+
+        if (soapAction != null && !msgContext.isDoingREST()) {
+            request.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+        }
+
+        request.execute();
     }   
 
     /**

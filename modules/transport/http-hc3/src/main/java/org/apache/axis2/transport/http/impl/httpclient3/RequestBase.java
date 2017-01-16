@@ -47,4 +47,9 @@ abstract class RequestBase<T extends HttpMethodBase> implements Request {
         sender.populateCommonProperties(msgContext, url, method,
                 httpClient, soapActionString, messageFormatter);
     }
+
+    @Override
+    public void setHeader(String name, String value) {
+        method.setRequestHeader(name, value);
+    }
 }

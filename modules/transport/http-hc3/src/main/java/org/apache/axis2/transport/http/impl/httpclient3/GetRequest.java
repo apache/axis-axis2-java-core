@@ -38,14 +38,6 @@ class GetRequest extends RequestBase<GetMethod> {
 
     @Override
     public void execute() throws AxisFault {
-        // Need to have this here because we can have soap action when using the
-        // soap response MEP
-        String soapAction = messageFormatter
-                .formatSOAPAction(msgContext, sender.getFormat(), soapActionString);
-
-        if (soapAction != null && !msgContext.isDoingREST()) {
-            method.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
-        }
         try {
             sender.executeMethod(httpClient, msgContext, url, method);
             sender.handleResponse(msgContext, method);

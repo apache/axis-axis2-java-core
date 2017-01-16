@@ -50,12 +50,6 @@ class PostRequest extends RequestBase<PostMethod> {
             method.setContentChunked(true);
         }
 
-        String soapAction = messageFormatter.formatSOAPAction(msgContext, sender.getFormat(), soapActionString);
-
-        if (soapAction != null && !msgContext.isDoingREST()) {
-            method.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
-        }
-
         /*
          * main excecution takes place..
          */
