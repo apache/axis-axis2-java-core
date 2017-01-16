@@ -45,7 +45,7 @@ abstract class RequestBase<T extends HttpRequestBase> implements Request {
         this.method = method;
         httpClient = sender.getHttpClient(msgContext);
         sender.populateCommonProperties(msgContext, url, method,
-                httpClient, soapActionString, messageFormatter);
+                httpClient, messageFormatter);
     }
 
     @Override

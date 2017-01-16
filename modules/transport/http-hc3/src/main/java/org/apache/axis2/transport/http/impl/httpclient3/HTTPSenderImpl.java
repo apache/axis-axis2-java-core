@@ -534,7 +534,7 @@ public class HTTPSenderImpl extends HTTPSender {
      *             - Thrown in case an exception occurs
      */
     protected void populateCommonProperties(MessageContext msgContext, URL url,
-            HttpMethodBase httpMethod, HttpClient httpClient, String soapActionString, MessageFormatter messageFormatter)
+            HttpMethodBase httpMethod, HttpClient httpClient, MessageFormatter messageFormatter)
             throws AxisFault {
 
         if (isAuthenticationEnabled(msgContext)) {
@@ -546,9 +546,6 @@ public class HTTPSenderImpl extends HTTPSender {
         httpMethod.setPath(url.getPath());
 
         httpMethod.setQueryString(url.getQuery());
-
-        httpMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                messageFormatter.getContentType(msgContext, format, soapActionString));
 
         httpMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
 

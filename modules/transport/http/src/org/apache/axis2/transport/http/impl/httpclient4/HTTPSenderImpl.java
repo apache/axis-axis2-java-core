@@ -505,7 +505,6 @@ public class HTTPSenderImpl extends HTTPSender {
     protected void populateCommonProperties(MessageContext msgContext, URL url,
                                                         HttpRequestBase httpMethod,
                                                         AbstractHttpClient httpClient,
-                                                        String soapActionString,
                                                         MessageFormatter messageFormatter)
             throws AxisFault {
 
@@ -520,9 +519,6 @@ public class HTTPSenderImpl extends HTTPSender {
         } catch (URISyntaxException e) {
             log.error("Error in URI : " + url, e);
         }
-
-        httpMethod.setHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                             messageFormatter.getContentType(msgContext, format, soapActionString));
 
         httpMethod.setHeader(HTTPConstants.HEADER_HOST, url.getHost());
 

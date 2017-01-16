@@ -107,6 +107,9 @@ public abstract class HTTPSender extends AbstractHTTPSender {
             request = preparePost(msgContext, url, soapActionString, messageFormatter);
         }
         
+        request.setHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                messageFormatter.getContentType(msgContext, format, soapActionString));
+
         String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
 
         if (soapAction != null && !msgContext.isDoingREST()) {
