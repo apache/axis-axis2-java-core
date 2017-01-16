@@ -19,10 +19,8 @@
 
 package org.apache.axis2.transport.http.impl.httpclient4;
 
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -87,21 +85,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-
 public class HTTPSenderImpl extends HTTPSender {
 
     private static final Log log = LogFactory.getLog(HTTPSenderImpl.class);
 
-    OMOutputFormat getFormat() {
-        return format;
-    }
-
     boolean isChunked() {
         return chunked;
-    }
-
-    boolean isAllowedRetry() {
-        return isAllowedRetry;
     }
 
     String getHttpVersion() {

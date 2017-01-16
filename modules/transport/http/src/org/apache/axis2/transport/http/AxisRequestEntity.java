@@ -58,9 +58,9 @@ public final class AxisRequestEntity  {
      *
      * @param messageFormatter
      */
-    public AxisRequestEntity(MessageFormatter messageFormatter,
-                             MessageContext msgContext, OMOutputFormat format, String soapAction,
-                             boolean chunked, boolean isAllowedRetry) {
+    AxisRequestEntity(MessageFormatter messageFormatter,
+                      MessageContext msgContext, OMOutputFormat format, String soapAction,
+                      boolean chunked, boolean isAllowedRetry) {
         this.messageFormatter = messageFormatter;
         this.messageContext = msgContext;
         this.chunked = chunked;

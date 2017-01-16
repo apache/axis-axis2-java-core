@@ -116,6 +116,12 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         request.execute();
     }   
 
+    public AxisRequestEntity buildRequestEntity(MessageFormatter messageFormatter, MessageContext msgContext,
+            String soapActionString) {
+        return new AxisRequestEntity(messageFormatter, msgContext, format,
+                soapActionString, chunked, isAllowedRetry);
+    }
+
     /**
      * Used to determine the family of HTTP status codes to which the given code
      * belongs.
