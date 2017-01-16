@@ -32,7 +32,7 @@ import org.apache.http.client.methods.HttpPut;
 class PutRequest extends RequestBase {
     private static final Log log = LogFactory.getLog(PutRequest.class);
 
-    PutRequest(HTTPSenderImpl sender, URL url, MessageContext msgContext, AxisRequestEntity requestEntity) throws AxisFault {
+    PutRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity) throws AxisFault {
         super(sender, msgContext, url, requestEntity, new HttpPut());
     }
 

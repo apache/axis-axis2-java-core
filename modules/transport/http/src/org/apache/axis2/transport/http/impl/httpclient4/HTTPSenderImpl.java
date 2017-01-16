@@ -162,7 +162,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request preparePut(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
-        return new PutRequest(this, url, msgContext, requestEntity);
+        return new PutRequest(this, msgContext, url, requestEntity);
     }
 
     /**

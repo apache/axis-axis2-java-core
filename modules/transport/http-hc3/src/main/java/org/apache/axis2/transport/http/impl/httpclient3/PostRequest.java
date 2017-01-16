@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 class PostRequest extends RequestBase {
     private static final Log log = LogFactory.getLog(PostRequest.class);
 
-    PostRequest(HTTPSenderImpl sender, URL url, MessageContext msgContext, AxisRequestEntity requestEntity) throws AxisFault {
+    PostRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity) throws AxisFault {
         super(sender, msgContext, url, requestEntity, new PostMethod());
     }
 
