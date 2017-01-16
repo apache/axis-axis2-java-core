@@ -28,7 +28,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.Request;
-import org.apache.axis2.transport.http.HTTPSender.HTTPStatusCodeFamily;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -136,7 +135,6 @@ final class RequestImpl implements Request {
     private void handleResponse(HttpResponse response)
             throws IOException {
         int statusCode = response.getStatusLine().getStatusCode();
-        HTTPStatusCodeFamily family = sender.getHTTPStatusCodeFamily(statusCode);
         log.trace("Handling response - " + statusCode);
         if (statusCode == HttpStatus.SC_ACCEPTED) {
             msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.TRUE);
@@ -148,7 +146,7 @@ final class RequestImpl implements Request {
             */
             sender.obtainHTTPHeaderInformation(response, msgContext);
 
-        } else if (HTTPStatusCodeFamily.SUCCESSFUL.equals(family)) {
+        } else if (statusCode >= 200 && statusCode < 300) {
             // We don't clean the response here because the response will be used afterwards
             msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.FALSE);
             sender.processResponse(response, msgContext);

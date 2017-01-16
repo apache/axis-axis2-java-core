@@ -28,7 +28,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.Request;
-import org.apache.axis2.transport.http.HTTPSender.HTTPStatusCodeFamily;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -126,7 +125,6 @@ final class RequestImpl implements Request {
 
     private void handleResponse() throws IOException {
         int statusCode = method.getStatusCode();
-        HTTPStatusCodeFamily family = sender.getHTTPStatusCodeFamily(statusCode);
         log.trace("Handling response - " + statusCode);
         if (statusCode == HttpStatus.SC_ACCEPTED) {
             /* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
@@ -135,7 +133,7 @@ final class RequestImpl implements Request {
             sender.obtainHTTPHeaderInformation(method, msgContext);
             // Since we don't expect any content with a 202 response, we must release the connection
             method.releaseConnection();            
-        } else if (HTTPStatusCodeFamily.SUCCESSFUL.equals(family)) {
+        } else if (statusCode >= 200 && statusCode < 300) {
             // Save the HttpMethod so that we can release the connection when cleaning up
             msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
             sender.processResponse(method, msgContext);
