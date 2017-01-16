@@ -27,7 +27,7 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class DeleteRequest extends RequestBase<DeleteMethod> {
+class DeleteRequest extends RequestBase {
     private static final Log log = LogFactory.getLog(DeleteRequest.class);
 
     DeleteRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url) throws AxisFault {

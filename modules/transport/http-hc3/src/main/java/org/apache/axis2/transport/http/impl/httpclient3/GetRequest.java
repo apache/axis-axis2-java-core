@@ -27,7 +27,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class GetRequest extends RequestBase<GetMethod> {
+class GetRequest extends RequestBase {
     private static final Log log = LogFactory.getLog(GetRequest.class);
     
     GetRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url) throws AxisFault {

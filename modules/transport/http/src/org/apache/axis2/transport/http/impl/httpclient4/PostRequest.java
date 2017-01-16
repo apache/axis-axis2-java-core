@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 
-class PostRequest extends RequestBase<HttpPost> {
+class PostRequest extends RequestBase {
     private static final Log log = LogFactory.getLog(PostRequest.class);
 
     PostRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity) throws AxisFault {

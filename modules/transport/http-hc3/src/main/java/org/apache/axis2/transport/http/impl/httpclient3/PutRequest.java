@@ -28,7 +28,7 @@ import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class PutRequest extends RequestBase<PutMethod> {
+class PutRequest extends RequestBase {
     private static final Log log = LogFactory.getLog(PutRequest.class);
 
     PutRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity) throws AxisFault {

@@ -28,7 +28,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class PostRequest extends RequestBase<PostMethod> {
+class PostRequest extends RequestBase {
     private static final Log log = LogFactory.getLog(PostRequest.class);
 
     PostRequest(HTTPSenderImpl sender, URL url, MessageContext msgContext, AxisRequestEntity requestEntity) throws AxisFault {

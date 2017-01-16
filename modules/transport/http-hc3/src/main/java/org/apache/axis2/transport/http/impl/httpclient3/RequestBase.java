@@ -29,14 +29,14 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 
-abstract class RequestBase<T extends HttpMethodBase> implements Request {
+abstract class RequestBase implements Request {
     protected final HTTPSenderImpl sender;
     protected final MessageContext msgContext;
     protected final URL url;
-    protected final T method;
+    protected final HttpMethodBase method;
     protected final HttpClient httpClient;
 
-    RequestBase(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, T method) throws AxisFault {
+    RequestBase(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, HttpMethodBase method) throws AxisFault {
         this.sender = sender;
         this.msgContext = msgContext;
         this.url = url;
