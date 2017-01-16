@@ -52,6 +52,7 @@ final class RequestImpl implements Request {
     protected final URL url;
     protected final HttpMethodBase method;
     protected final HttpClient httpClient;
+    private final HostConfiguration config;
 
     RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, HttpMethodBase method) throws AxisFault {
         this.sender = sender;
@@ -67,6 +68,12 @@ final class RequestImpl implements Request {
                 ((EntityEnclosingMethod)method).setContentChunked(true);
             }
         }
+        // TODO: this is fishy; it means that we may end up modifying a HostConfiguration from a cached HTTP client
+        HostConfiguration config = httpClient.getHostConfiguration();
+        if (config == null) {
+            config = new HostConfiguration();
+        }
+        this.config = config;
     }
 
     @Override
@@ -108,7 +115,7 @@ final class RequestImpl implements Request {
     }
 
     private void executeMethod() throws IOException {
-        HostConfiguration config = getHostConfiguration();
+        populateHostConfiguration();
 
         // add compression headers if needed
         if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {
@@ -203,7 +210,7 @@ final class RequestImpl implements Request {
      * @throws AxisFault
      *             if problems occur
      */
-    protected HostConfiguration getHostConfiguration() throws AxisFault {
+    protected void populateHostConfiguration() throws AxisFault {
 
         boolean isAuthenticationEnabled = sender.isAuthenticationEnabled(msgContext);
         int port = url.getPort();
@@ -216,13 +223,6 @@ final class RequestImpl implements Request {
                 port = 443;
             }
 
-        }
-
-        // to see the host is a proxy and in the proxy list - available in
-        // axis2.xml
-        HostConfiguration config = httpClient.getHostConfiguration();
-        if (config == null) {
-            config = new HostConfiguration();
         }
 
         // one might need to set his own socket factory. Let's allow that case
@@ -251,7 +251,5 @@ final class RequestImpl implements Request {
             }
             HTTPProxyConfigurator.configure(msgContext, httpClient, config);
         }
-
-        return config;
     }
 }

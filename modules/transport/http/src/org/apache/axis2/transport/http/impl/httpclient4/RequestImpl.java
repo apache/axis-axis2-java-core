@@ -57,6 +57,7 @@ final class RequestImpl implements Request {
     protected final URL url;
     protected final HttpRequestBase method;
     protected final AbstractHttpClient httpClient;
+    private final HttpHost httpHost;
 
     RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, HttpRequestBase method) throws AxisFault {
         this.sender = sender;
@@ -73,6 +74,16 @@ final class RequestImpl implements Request {
                 requestEntity.setChunked(sender.isChunked());
             }
         }
+        int port = url.getPort();
+        String protocol = url.getProtocol();
+        if (port == -1) {
+            if (HTTPTransportConstants.PROTOCOL_HTTP.equals(protocol)) {
+                port = 80;
+            } else if (HTTPTransportConstants.PROTOCOL_HTTPS.equals(protocol)) {
+                port = 443;
+            }
+        }
+        httpHost = new HttpHost(url.getHost(), port, url.getProtocol());
     }
 
     @Override
@@ -116,7 +127,7 @@ final class RequestImpl implements Request {
     }
 
     private HttpResponse executeMethod() throws IOException {
-        HttpHost httpHost = getHostConfiguration();
+        populateHostConfiguration();
 
         // add compression headers if needed
         if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {
@@ -220,22 +231,9 @@ final class RequestImpl implements Request {
      * @return a HostConfiguration set up with proxy information
      * @throws org.apache.axis2.AxisFault if problems occur
      */
-    private HttpHost getHostConfiguration() throws AxisFault {
+    private void populateHostConfiguration() throws AxisFault {
 
         boolean isAuthenticationEnabled = sender.isAuthenticationEnabled(msgContext);
-        int port = url.getPort();
-
-        String protocol = url.getProtocol();
-        if (port == -1) {
-            if (HTTPTransportConstants.PROTOCOL_HTTP.equals(protocol)) {
-                port = 80;
-            } else if (HTTPTransportConstants.PROTOCOL_HTTPS.equals(protocol)) {
-                port = 443;
-            }
-        }
-        // to see the host is a proxy and in the proxy list - available in
-        // axis2.xml
-        HttpHost hostConfig = new HttpHost(url.getHost(), port, url.getProtocol());
 
         // TODO : one might need to set his own socket factory. We have to allow that case as well.
 
@@ -251,7 +249,5 @@ final class RequestImpl implements Request {
             }
             HTTPProxyConfigurator.configure(msgContext, httpClient);
         }
-
-        return hostConfig;
     }
 }
