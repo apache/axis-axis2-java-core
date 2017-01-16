@@ -242,15 +242,6 @@ final class RequestImpl implements Request {
      * @throws org.apache.axis2.AxisFault if problems occur
      */
     private void populateHostConfiguration() throws AxisFault {
-
-        boolean isAuthenticationEnabled = sender.isAuthenticationEnabled(msgContext);
-
-        // TODO : one might need to set his own socket factory. We have to allow that case as well.
-
-        if (isAuthenticationEnabled) {
-            // Basic, Digest, NTLM and custom authentications.
-            setAuthenticationInfo();
-        }
         // proxy configuration
 
         if (HTTPProxyConfigurator.isProxyEnabled(msgContext, url)) {
@@ -266,77 +257,68 @@ final class RequestImpl implements Request {
      * or Basic Authentication. Apart from that user can change the priory or
      * add a custom authentication scheme.
      */
-    private void setAuthenticationInfo() throws AxisFault {
-        HTTPAuthenticator authenticator;
-        Object obj = msgContext.getProperty(HTTPConstants.AUTHENTICATE);
-        if (obj != null) {
-            if (obj instanceof HTTPAuthenticator) {
-                authenticator = (HTTPAuthenticator) obj;
+    @Override
+    public void enableAuthentication(HTTPAuthenticator authenticator) {
+        method.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
 
-                String username = authenticator.getUsername();
-                String password = authenticator.getPassword();
-                String host = authenticator.getHost();
-                String domain = authenticator.getDomain();
+        String username = authenticator.getUsername();
+        String password = authenticator.getPassword();
+        String host = authenticator.getHost();
+        String domain = authenticator.getDomain();
 
-                int port = authenticator.getPort();
-                String realm = authenticator.getRealm();
+        int port = authenticator.getPort();
+        String realm = authenticator.getRealm();
 
-                /* If retrying is available set it first */
-                sender.setAllowedRetry(authenticator.isAllowedRetry());
+        /* If retrying is available set it first */
+        sender.setAllowedRetry(authenticator.isAllowedRetry());
 
-                Credentials creds;
+        Credentials creds;
 
-                // TODO : Set preemptive authentication, but its not recommended in HC 4
+        // TODO : Set preemptive authentication, but its not recommended in HC 4
 
-                if (host != null) {
-                    if (domain != null) {
-                        /* Credentials for NTLM Authentication */
-                        httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
-                        creds = new NTCredentials(username, password, host, domain);
-                    } else {
-                        /* Credentials for Digest and Basic Authentication */
-                        creds = new UsernamePasswordCredentials(username, password);
-                    }
-                    httpClient.getCredentialsProvider().
-                            setCredentials(new AuthScope(host, port, realm), creds);
-                } else {
-                    if (domain != null) {
-                        /*
-                         * Credentials for NTLM Authentication when host is
-                         * ANY_HOST
-                         */
-                        httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
-                        creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
-                        httpClient.getCredentialsProvider().
-                                setCredentials(new AuthScope(AuthScope.ANY_HOST, port, realm),
-                                               creds);
-                    } else {
-                        /* Credentials only for Digest and Basic Authentication */
-                        creds = new UsernamePasswordCredentials(username, password);
-                        httpClient.getCredentialsProvider().
-                                setCredentials(new AuthScope(AuthScope.ANY), creds);
-                    }
-                }
-                /* Customizing the priority Order */
-                List schemes = authenticator.getAuthSchemes();
-                if (schemes != null && schemes.size() > 0) {
-                    List authPrefs = new ArrayList(3);
-                    for (int i = 0; i < schemes.size(); i++) {
-                        if (schemes.get(i) instanceof AuthPolicy) {
-                            authPrefs.add(schemes.get(i));
-                            continue;
-                        }
-                        String scheme = (String) schemes.get(i);
-                        authPrefs.add(authenticator.getAuthPolicyPref(scheme));
-
-                    }
-                    httpClient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authPrefs);
-                }
-
+        if (host != null) {
+            if (domain != null) {
+                /* Credentials for NTLM Authentication */
+                httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
+                creds = new NTCredentials(username, password, host, domain);
             } else {
-                throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
+                /* Credentials for Digest and Basic Authentication */
+                creds = new UsernamePasswordCredentials(username, password);
+            }
+            httpClient.getCredentialsProvider().
+                    setCredentials(new AuthScope(host, port, realm), creds);
+        } else {
+            if (domain != null) {
+                /*
+                 * Credentials for NTLM Authentication when host is
+                 * ANY_HOST
+                 */
+                httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
+                creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
+                httpClient.getCredentialsProvider().
+                        setCredentials(new AuthScope(AuthScope.ANY_HOST, port, realm),
+                                       creds);
+            } else {
+                /* Credentials only for Digest and Basic Authentication */
+                creds = new UsernamePasswordCredentials(username, password);
+                httpClient.getCredentialsProvider().
+                        setCredentials(new AuthScope(AuthScope.ANY), creds);
             }
         }
+        /* Customizing the priority Order */
+        List schemes = authenticator.getAuthSchemes();
+        if (schemes != null && schemes.size() > 0) {
+            List authPrefs = new ArrayList(3);
+            for (int i = 0; i < schemes.size(); i++) {
+                if (schemes.get(i) instanceof AuthPolicy) {
+                    authPrefs.add(schemes.get(i));
+                    continue;
+                }
+                String scheme = (String) schemes.get(i);
+                authPrefs.add(authenticator.getAuthPolicyPref(scheme));
 
+            }
+            httpClient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authPrefs);
+        }
     }
 }

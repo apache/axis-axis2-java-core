@@ -29,5 +29,6 @@ public interface Request {
     void setHeader(String name, String value);
     void addHeader(String name, String value);
     NamedValue[] getRequestHeaders();
+    void enableAuthentication(HTTPAuthenticator authenticator);
     void execute() throws AxisFault;
 }

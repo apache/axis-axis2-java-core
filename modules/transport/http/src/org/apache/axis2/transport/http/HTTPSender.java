@@ -143,6 +143,15 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         // set the custom headers, if available
         addCustomHeaders(msgContext, request);
         
+        Object obj = msgContext.getProperty(HTTPConstants.AUTHENTICATE);
+        if (obj != null) {
+            if (obj instanceof HTTPAuthenticator) {
+                request.enableAuthentication((HTTPAuthenticator) obj);
+            } else {
+                throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
+            }
+        }
+
         request.execute();
     }   
 

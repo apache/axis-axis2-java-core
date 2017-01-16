@@ -273,10 +273,6 @@ public class HTTPSenderImpl extends HTTPSender {
         }
     }
 
-    protected boolean isAuthenticationEnabled(MessageContext msgCtx) {
-        return (msgCtx.getProperty(HTTPConstants.AUTHENTICATE) != null);
-    }
-
     /**
      * Method used to copy all the common properties
      *
@@ -293,10 +289,6 @@ public class HTTPSenderImpl extends HTTPSender {
                                                         HttpRequestBase httpMethod,
                                                         AbstractHttpClient httpClient)
             throws AxisFault {
-
-        if (isAuthenticationEnabled(msgContext)) {
-            httpMethod.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
-        }
 
         try {
             httpMethod.setURI(url.toURI());
