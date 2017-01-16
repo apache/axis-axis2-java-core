@@ -22,9 +22,7 @@ package org.apache.axis2.transport.http.impl.httpclient3;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -35,7 +33,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
-import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.Request;
@@ -44,17 +41,10 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HeaderElement;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthPolicy;
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -72,6 +62,11 @@ public class HTTPSenderImpl extends HTTPSender {
 
     String getHttpVersion() {
         return httpVersion;
+    }
+
+    // TODO: this shouldn't be here (see AXIS2-4021)
+    void setAllowedRetry(boolean isAllowedRetry) {
+        this.isAllowedRetry = isAllowedRetry;
     }
 
     /**
@@ -279,91 +274,6 @@ public class HTTPSenderImpl extends HTTPSender {
 
     protected boolean isAuthenticationEnabled(MessageContext msgCtx) {
         return (msgCtx.getProperty(HTTPConstants.AUTHENTICATE) != null);
-    }
-
-    /*
-     * This will handle server Authentication, It could be either NTLM, Digest
-     * or Basic Authentication. Apart from that user can change the priory or
-     * add a custom authentication scheme.
-     */
-    protected void setAuthenticationInfo(HttpClient agent, MessageContext msgCtx,
-            HostConfiguration config) throws AxisFault {
-        HTTPAuthenticator authenticator;
-        Object obj = msgCtx.getProperty(HTTPConstants.AUTHENTICATE);
-        if (obj != null) {
-            if (obj instanceof HTTPAuthenticator) {
-                authenticator = (HTTPAuthenticator) obj;
-
-                String username = authenticator.getUsername();
-                String password = authenticator.getPassword();
-                String host = authenticator.getHost();
-                String domain = authenticator.getDomain();
-
-                int port = authenticator.getPort();
-                String realm = authenticator.getRealm();
-
-                /* If retrying is available set it first */
-                isAllowedRetry = authenticator.isAllowedRetry();
-
-                Credentials creds;
-
-                HttpState tmpHttpState = null;
-                HttpState httpState = (HttpState) msgCtx
-                        .getProperty(HTTPConstants.CACHED_HTTP_STATE);
-                if (httpState != null) {
-                    tmpHttpState = httpState;
-                } else {
-                    tmpHttpState = agent.getState();
-                }
-
-                agent.getParams().setAuthenticationPreemptive(
-                        authenticator.getPreemptiveAuthentication());
-
-                if (host != null) {
-                    if (domain != null) {
-                        /* Credentials for NTLM Authentication */
-                        creds = new NTCredentials(username, password, host, domain);
-                    } else {
-                        /* Credentials for Digest and Basic Authentication */
-                        creds = new UsernamePasswordCredentials(username, password);
-                    }
-                    tmpHttpState.setCredentials(new AuthScope(host, port, realm), creds);
-                } else {
-                    if (domain != null) {
-                        /*
-                         * Credentials for NTLM Authentication when host is
-                         * ANY_HOST
-                         */
-                        creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
-                        tmpHttpState.setCredentials(new AuthScope(AuthScope.ANY_HOST, port, realm),
-                                creds);
-                    } else {
-                        /* Credentials only for Digest and Basic Authentication */
-                        creds = new UsernamePasswordCredentials(username, password);
-                        tmpHttpState.setCredentials(new AuthScope(AuthScope.ANY), creds);
-                    }
-                }
-                /* Customizing the priority Order */
-                List schemes = authenticator.getAuthSchemes();
-                if (schemes != null && schemes.size() > 0) {
-                    List authPrefs = new ArrayList(3);
-                    for (int i = 0; i < schemes.size(); i++) {
-                        if (schemes.get(i) instanceof AuthPolicy) {
-                            authPrefs.add(schemes.get(i));
-                            continue;
-                        }
-                        String scheme = (String) schemes.get(i);
-                        authPrefs.add(authenticator.getAuthPolicyPref(scheme));
-
-                    }
-                    agent.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
-                }
-
-            } else {
-                throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
-            }
-        }
-
     }
 
     /**

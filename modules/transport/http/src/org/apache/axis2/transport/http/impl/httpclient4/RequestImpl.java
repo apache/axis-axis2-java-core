@@ -20,6 +20,8 @@ package org.apache.axis2.transport.http.impl.httpclient4;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -27,6 +29,7 @@ import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
+import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
@@ -40,8 +43,15 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.impl.auth.NTLMSchemeFactory;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
@@ -239,7 +249,7 @@ final class RequestImpl implements Request {
 
         if (isAuthenticationEnabled) {
             // Basic, Digest, NTLM and custom authentications.
-            sender.setAuthenticationInfo(httpClient, msgContext);
+            setAuthenticationInfo();
         }
         // proxy configuration
 
@@ -249,5 +259,84 @@ final class RequestImpl implements Request {
             }
             HTTPProxyConfigurator.configure(msgContext, httpClient);
         }
+    }
+
+    /*
+     * This will handle server Authentication, It could be either NTLM, Digest
+     * or Basic Authentication. Apart from that user can change the priory or
+     * add a custom authentication scheme.
+     */
+    private void setAuthenticationInfo() throws AxisFault {
+        HTTPAuthenticator authenticator;
+        Object obj = msgContext.getProperty(HTTPConstants.AUTHENTICATE);
+        if (obj != null) {
+            if (obj instanceof HTTPAuthenticator) {
+                authenticator = (HTTPAuthenticator) obj;
+
+                String username = authenticator.getUsername();
+                String password = authenticator.getPassword();
+                String host = authenticator.getHost();
+                String domain = authenticator.getDomain();
+
+                int port = authenticator.getPort();
+                String realm = authenticator.getRealm();
+
+                /* If retrying is available set it first */
+                sender.setAllowedRetry(authenticator.isAllowedRetry());
+
+                Credentials creds;
+
+                // TODO : Set preemptive authentication, but its not recommended in HC 4
+
+                if (host != null) {
+                    if (domain != null) {
+                        /* Credentials for NTLM Authentication */
+                        httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
+                        creds = new NTCredentials(username, password, host, domain);
+                    } else {
+                        /* Credentials for Digest and Basic Authentication */
+                        creds = new UsernamePasswordCredentials(username, password);
+                    }
+                    httpClient.getCredentialsProvider().
+                            setCredentials(new AuthScope(host, port, realm), creds);
+                } else {
+                    if (domain != null) {
+                        /*
+                         * Credentials for NTLM Authentication when host is
+                         * ANY_HOST
+                         */
+                        httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
+                        creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
+                        httpClient.getCredentialsProvider().
+                                setCredentials(new AuthScope(AuthScope.ANY_HOST, port, realm),
+                                               creds);
+                    } else {
+                        /* Credentials only for Digest and Basic Authentication */
+                        creds = new UsernamePasswordCredentials(username, password);
+                        httpClient.getCredentialsProvider().
+                                setCredentials(new AuthScope(AuthScope.ANY), creds);
+                    }
+                }
+                /* Customizing the priority Order */
+                List schemes = authenticator.getAuthSchemes();
+                if (schemes != null && schemes.size() > 0) {
+                    List authPrefs = new ArrayList(3);
+                    for (int i = 0; i < schemes.size(); i++) {
+                        if (schemes.get(i) instanceof AuthPolicy) {
+                            authPrefs.add(schemes.get(i));
+                            continue;
+                        }
+                        String scheme = (String) schemes.get(i);
+                        authPrefs.add(authenticator.getAuthPolicyPref(scheme));
+
+                    }
+                    httpClient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authPrefs);
+                }
+
+            } else {
+                throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
+            }
+        }
+
     }
 }
