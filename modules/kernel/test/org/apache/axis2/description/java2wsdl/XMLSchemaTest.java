@@ -122,8 +122,9 @@ public abstract class XMLSchemaTest extends TestCase {
     
    
     public String readWSDLFromFile(String path) throws Exception {
-        File file=new File(path);
-        XMLPrettyPrinter.prettify(file);    //this is used to correct unnecessary formatting in the file
+        // Don't do this; it will overwrite a file in the source tree (see AXIS2-5781).
+//        File file=new File(path);
+//        XMLPrettyPrinter.prettify(file);    //this is used to correct unnecessary formatting in the file
         return readFile(path);
     }
     
