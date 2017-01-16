@@ -23,7 +23,6 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,8 +30,8 @@ import org.apache.commons.logging.LogFactory;
 class DeleteRequest extends RequestBase<DeleteMethod> {
     private static final Log log = LogFactory.getLog(DeleteRequest.class);
 
-    DeleteRequest(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url, MessageFormatter messageFormatter) throws AxisFault {
-        super(sender, soapActionString, msgContext, url, messageFormatter, new DeleteMethod());
+    DeleteRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url) throws AxisFault {
+        super(sender, msgContext, url, null, new DeleteMethod());
     }
 
     @Override

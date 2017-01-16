@@ -40,10 +40,9 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      *
      * @param msgContext        - The MessageContext of the message
      * @param url               - The target URL
-     * @param soapActiionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract Request prepareGet(MessageContext msgContext, URL url, String soapActiionString, MessageFormatter messageFormatter)
+    protected abstract Request prepareGet(MessageContext msgContext, URL url)
             throws AxisFault;
     
     /**
@@ -51,21 +50,19 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      *
      * @param msgContext        - The MessageContext of the message
      * @param url               - The target URL
-     * @param soapActiionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract Request prepareDelete(MessageContext msgContext, URL url, String soapActiionString, MessageFormatter messageFormatter)
+    protected abstract Request prepareDelete(MessageContext msgContext, URL url)
             throws AxisFault; 
     /**
      * Used to send a request via HTTP Post Method
      *
      * @param msgContext       - The MessageContext of the message
      * @param url              - The target URL
-     * @param soapActionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
     protected abstract Request preparePost(MessageContext msgContext, URL url,
-                             String soapActionString, MessageFormatter messageFormatter) throws AxisFault;
+                             AxisRequestEntity requestEntity) throws AxisFault;
 
 
     /**
@@ -73,11 +70,10 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      *
      * @param msgContext       - The MessageContext of the message
      * @param url              - The target URL
-     * @param soapActionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
     protected abstract Request preparePut(MessageContext msgContext, URL url,
-                            String soapActionString, MessageFormatter messageFormatter) throws AxisFault;
+                            AxisRequestEntity requestEntity) throws AxisFault;
 
     public void send(MessageContext msgContext, URL url, String soapActionString)
             throws IOException {
@@ -96,16 +92,16 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         if ((httpMethod != null)) {
 
             if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-                request = prepareGet(msgContext, url, soapActionString, messageFormatter);
+                request = prepareGet(msgContext, url);
             } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
-                request = prepareDelete(msgContext, url, soapActionString, messageFormatter);
+                request = prepareDelete(msgContext, url);
             } else if (Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
-                request = preparePut(msgContext, url, soapActionString, messageFormatter);
+                request = preparePut(msgContext, url, buildRequestEntity(messageFormatter, msgContext, soapActionString));
             }
         }
 
         if (request == null) {
-            request = preparePost(msgContext, url, soapActionString, messageFormatter);
+            request = preparePost(msgContext, url, buildRequestEntity(messageFormatter, msgContext, soapActionString));
         }
         
         request.setHeader(HTTPConstants.HEADER_CONTENT_TYPE,
@@ -120,7 +116,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         request.execute();
     }   
 
-    public AxisRequestEntity buildRequestEntity(MessageFormatter messageFormatter, MessageContext msgContext,
+    private AxisRequestEntity buildRequestEntity(MessageFormatter messageFormatter, MessageContext msgContext,
             String soapActionString) {
         return new AxisRequestEntity(messageFormatter, msgContext, format,
                 soapActionString, chunked, isAllowedRetry);

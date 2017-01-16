@@ -84,9 +84,4 @@ public class AxisRequestEntityImpl implements HttpEntity {
     public boolean isRepeatable() {
         return entity.isRepeatable();
     }
-
-    // TODO: this should eventually disappear
-    public void setChunked(boolean chunked) {
-        entity.setChunked(chunked);
-    }
 }

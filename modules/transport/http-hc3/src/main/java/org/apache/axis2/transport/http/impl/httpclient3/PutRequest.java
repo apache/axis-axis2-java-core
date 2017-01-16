@@ -23,8 +23,7 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,19 +31,12 @@ import org.apache.commons.logging.LogFactory;
 class PutRequest extends RequestBase<PutMethod> {
     private static final Log log = LogFactory.getLog(PutRequest.class);
 
-    PutRequest(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url, MessageFormatter messageFormatter) throws AxisFault {
-        super(sender, soapActionString, msgContext, url, messageFormatter, new PutMethod());
+    PutRequest(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity) throws AxisFault {
+        super(sender, msgContext, url, requestEntity, new PutMethod());
     }
 
     @Override
     public void execute() throws AxisFault {
-        method.setRequestEntity(new AxisRequestEntityImpl(sender.buildRequestEntity(messageFormatter, msgContext,
-                soapActionString)));
-
-        if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
-            method.setContentChunked(true);
-        }
-
         /*
          * main excecution takes place..
          */

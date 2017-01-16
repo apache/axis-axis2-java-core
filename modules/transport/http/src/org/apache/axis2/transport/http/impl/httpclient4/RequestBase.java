@@ -22,29 +22,35 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.http.AxisRequestEntity;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.Request;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.AbstractHttpClient;
 
 abstract class RequestBase<T extends HttpRequestBase> implements Request {
     protected final HTTPSenderImpl sender;
-    protected final String soapActionString;
     protected final MessageContext msgContext;
     protected final URL url;
-    protected final MessageFormatter messageFormatter;
     protected final T method;
     protected final AbstractHttpClient httpClient;
 
-    RequestBase(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url, MessageFormatter messageFormatter, T method) throws AxisFault {
+    RequestBase(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, T method) throws AxisFault {
         this.sender = sender;
-        this.soapActionString = soapActionString;
         this.msgContext = msgContext;
         this.url = url;
-        this.messageFormatter = messageFormatter;
         this.method = method;
         httpClient = sender.getHttpClient(msgContext);
         sender.populateCommonProperties(msgContext, url, method, httpClient);
+        if (requestEntity != null) {
+            AxisRequestEntityImpl requestEntityAdapter = new AxisRequestEntityImpl(requestEntity);
+            ((HttpEntityEnclosingRequest)method).setEntity(requestEntityAdapter);
+    
+            if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
+                requestEntity.setChunked(sender.isChunked());
+            }
+        }
     }
 
     @Override

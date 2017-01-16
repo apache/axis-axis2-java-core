@@ -28,7 +28,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
@@ -105,9 +105,10 @@ public class HTTPSenderImpl extends HTTPSender {
      * @param soapActionString - The soapAction string of the request
      * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
      */
-    protected Request prepareGet(final MessageContext msgContext, final URL url, final String soapActionString, MessageFormatter messageFormatter)
+    @Override
+    protected Request prepareGet(final MessageContext msgContext, final URL url)
             throws AxisFault {
-        return new GetRequest(this, msgContext, soapActionString, url, messageFormatter);
+        return new GetRequest(this, msgContext, url);
     }
 
     protected void cleanup(MessageContext msgContext, HttpResponse response) {
@@ -132,9 +133,10 @@ public class HTTPSenderImpl extends HTTPSender {
      * @param soapActionString - The soapAction string of the request
      * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
      */
-    protected Request prepareDelete(final MessageContext msgContext, final URL url, final String soapActionString, MessageFormatter messageFormatter)
+    @Override
+    protected Request prepareDelete(final MessageContext msgContext, final URL url)
             throws AxisFault {
-        return new DeleteRequest(this, msgContext, url, soapActionString, messageFormatter);
+        return new DeleteRequest(this, msgContext, url);
     }
 
     /**
@@ -142,12 +144,12 @@ public class HTTPSenderImpl extends HTTPSender {
      *
      * @param msgContext       - The MessageContext of the message
      * @param url              - The target URL
-     * @param soapActionString - The soapAction string of the request
      * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
      */
-    protected Request preparePost(final MessageContext msgContext, final URL url, final String soapActionString, MessageFormatter messageFormatter)
+    @Override
+    protected Request preparePost(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
-        return new PostRequest(this, msgContext, url, soapActionString, messageFormatter);
+        return new PostRequest(this, msgContext, url, requestEntity);
     }
 
     /**
@@ -155,12 +157,12 @@ public class HTTPSenderImpl extends HTTPSender {
      *
      * @param msgContext       - The MessageContext of the message
      * @param url              - The target URL
-     * @param soapActionString - The soapAction string of the request
      * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
      */
-    protected Request preparePut(final MessageContext msgContext, final URL url, final String soapActionString, MessageFormatter messageFormatter)
+    @Override
+    protected Request preparePut(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
-        return new PutRequest(this, url, soapActionString, msgContext, messageFormatter);
+        return new PutRequest(this, url, msgContext, requestEntity);
     }
 
     /**
