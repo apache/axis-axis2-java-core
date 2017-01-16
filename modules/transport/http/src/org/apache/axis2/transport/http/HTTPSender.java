@@ -23,6 +23,8 @@ package org.apache.axis2.transport.http;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +43,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @param soapActiionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract Request prepareGet(MessageContext msgContext, URL url, String soapActiionString)
+    protected abstract Request prepareGet(MessageContext msgContext, URL url, String soapActiionString, MessageFormatter messageFormatter)
             throws AxisFault;
     
     /**
@@ -52,7 +54,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @param soapActiionString - The soapAction string of the request
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    protected abstract Request prepareDelete(MessageContext msgContext, URL url, String soapActiionString)
+    protected abstract Request prepareDelete(MessageContext msgContext, URL url, String soapActiionString, MessageFormatter messageFormatter)
             throws AxisFault; 
     /**
      * Used to send a request via HTTP Post Method
@@ -63,7 +65,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @throws AxisFault - Thrown in case an exception occurs
      */
     protected abstract Request preparePost(MessageContext msgContext, URL url,
-                             String soapActionString) throws AxisFault;
+                             String soapActionString, MessageFormatter messageFormatter) throws AxisFault;
 
 
     /**
@@ -75,7 +77,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
      * @throws AxisFault - Thrown in case an exception occurs
      */
     protected abstract Request preparePut(MessageContext msgContext, URL url,
-                            String soapActionString) throws AxisFault;
+                            String soapActionString, MessageFormatter messageFormatter) throws AxisFault;
 
     protected abstract void cleanup(MessageContext msgContext, Object httpMethod);
     
@@ -90,24 +92,27 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         String httpMethod =
                 (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
 
+        MessageFormatter messageFormatter = MessageProcessorSelector
+                .getMessageFormatter(msgContext);
+        
         if ((httpMethod != null)) {
 
             if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-                this.prepareGet(msgContext, url, soapActionString).execute();;
+                this.prepareGet(msgContext, url, soapActionString, messageFormatter).execute();
 
                 return;
             } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
-                this.prepareDelete(msgContext, url, soapActionString).execute();
+                this.prepareDelete(msgContext, url, soapActionString, messageFormatter).execute();
 
                 return;
             } else if (Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
-                this.preparePut(msgContext, url, soapActionString).execute();
+                this.preparePut(msgContext, url, soapActionString, messageFormatter).execute();
 
                 return;
             }
         }
 
-        this.preparePost(msgContext, url, soapActionString).execute();
+        this.preparePost(msgContext, url, soapActionString, messageFormatter).execute();
     }   
 
     /**

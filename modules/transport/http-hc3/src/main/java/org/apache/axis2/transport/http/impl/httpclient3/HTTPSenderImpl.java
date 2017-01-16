@@ -48,7 +48,6 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
-import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -105,9 +104,9 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected Request prepareGet(final MessageContext msgContext, final URL url, final String soapActiionString)
+    protected Request prepareGet(final MessageContext msgContext, final URL url, final String soapActiionString, MessageFormatter messageFormatter)
             throws AxisFault {
-        return new GetRequest(this, msgContext, soapActiionString, url);
+        return new GetRequest(this, msgContext, soapActiionString, url, messageFormatter);
     }
 
     protected void cleanup(MessageContext msgContext, Object httpMmethod) {
@@ -131,9 +130,9 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected Request prepareDelete(final MessageContext msgContext, final URL url, final String soapActiionString)
+    protected Request prepareDelete(final MessageContext msgContext, final URL url, final String soapActiionString, MessageFormatter messageFormatter)
             throws AxisFault {
-        return new DeleteRequest(this, soapActiionString, msgContext, url);
+        return new DeleteRequest(this, soapActiionString, msgContext, url, messageFormatter);
     }
 
     /**
@@ -148,9 +147,9 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected Request preparePost(final MessageContext msgContext, final URL url, final String soapActionString)
+    protected Request preparePost(final MessageContext msgContext, final URL url, final String soapActionString, MessageFormatter messageFormatter)
             throws AxisFault {
-        return new PostRequest(this, url, msgContext, soapActionString);
+        return new PostRequest(this, url, msgContext, soapActionString, messageFormatter);
     }
 
     /**
@@ -165,9 +164,9 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected Request preparePut(final MessageContext msgContext, final URL url, final String soapActionString)
+    protected Request preparePut(final MessageContext msgContext, final URL url, final String soapActionString, MessageFormatter messageFormatter)
             throws AxisFault {
-        return new PutRequest(this, soapActionString, msgContext, url);
+        return new PutRequest(this, soapActionString, msgContext, url, messageFormatter);
     }
 
     /**
@@ -545,16 +544,13 @@ public class HTTPSenderImpl extends HTTPSender {
      * @throws AxisFault
      *             - Thrown in case an exception occurs
      */
-    protected MessageFormatter populateCommonProperties(MessageContext msgContext, URL url,
-            HttpMethodBase httpMethod, HttpClient httpClient, String soapActionString)
+    protected void populateCommonProperties(MessageContext msgContext, URL url,
+            HttpMethodBase httpMethod, HttpClient httpClient, String soapActionString, MessageFormatter messageFormatter)
             throws AxisFault {
 
         if (isAuthenticationEnabled(msgContext)) {
             httpMethod.setDoAuthentication(true);
         }
-
-        MessageFormatter messageFormatter = MessageProcessorSelector
-                .getMessageFormatter(msgContext);
 
         url = messageFormatter.getTargetAddress(msgContext, format, url);
 
@@ -581,7 +577,6 @@ public class HTTPSenderImpl extends HTTPSender {
         if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
             httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
         }
-        return messageFormatter;
     }
 
     /**

@@ -23,6 +23,7 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.httpclient.methods.PutMethod;
@@ -32,8 +33,8 @@ import org.apache.commons.logging.LogFactory;
 class PutRequest extends RequestBase<PutMethod> {
     private static final Log log = LogFactory.getLog(PutRequest.class);
 
-    PutRequest(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url) throws AxisFault {
-        super(sender, soapActionString, msgContext, url, new PutMethod());
+    PutRequest(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url, MessageFormatter messageFormatter) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, messageFormatter, new PutMethod());
     }
 
     @Override

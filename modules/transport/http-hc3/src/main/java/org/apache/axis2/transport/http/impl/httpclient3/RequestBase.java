@@ -32,18 +32,19 @@ abstract class RequestBase<T extends HttpMethodBase> implements Request {
     protected final String soapActionString;
     protected final MessageContext msgContext;
     protected final URL url;
+    protected final MessageFormatter messageFormatter;
     protected final T method;
     protected final HttpClient httpClient;
-    protected final MessageFormatter messageFormatter;
 
-    RequestBase(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url, T method) throws AxisFault {
+    RequestBase(HTTPSenderImpl sender, String soapActionString, MessageContext msgContext, URL url, MessageFormatter messageFormatter, T method) throws AxisFault {
         this.sender = sender;
         this.soapActionString = soapActionString;
         this.msgContext = msgContext;
         this.url = url;
+        this.messageFormatter = messageFormatter;
         this.method = method;
         httpClient = sender.getHttpClient(msgContext);
-        messageFormatter = sender.populateCommonProperties(msgContext, url, method,
-                httpClient, soapActionString);
+        sender.populateCommonProperties(msgContext, url, method,
+                httpClient, soapActionString, messageFormatter);
     }
 }

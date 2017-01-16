@@ -23,6 +23,7 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
@@ -31,8 +32,8 @@ import org.apache.commons.logging.LogFactory;
 class GetRequest extends RequestBase<GetMethod> {
     private static final Log log = LogFactory.getLog(GetRequest.class);
     
-    GetRequest(HTTPSenderImpl sender, MessageContext msgContext, String soapActionString, URL url) throws AxisFault {
-        super(sender, soapActionString, msgContext, url, new GetMethod());
+    GetRequest(HTTPSenderImpl sender, MessageContext msgContext, String soapActionString, URL url, MessageFormatter messageFormatter) throws AxisFault {
+        super(sender, soapActionString, msgContext, url, messageFormatter, new GetMethod());
     }
 
     @Override
