@@ -38,7 +38,6 @@ import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
-import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Header;
@@ -60,7 +59,6 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -277,73 +275,6 @@ public class HTTPSenderImpl extends HTTPSender {
         if (opContext != null) {
             opContext.setProperty(MessageContext.TRANSPORT_IN, in);
         }
-    }
-
-    /**
-     * getting host configuration to support standard http/s, proxy and NTLM
-     * support
-     * 
-     * @param client
-     *            active HttpClient
-     * @param msgCtx
-     *            active MessageContext
-     * @param targetURL
-     *            the target URL
-     * @return a HostConfiguration set up with proxy information
-     * @throws AxisFault
-     *             if problems occur
-     */
-    protected HostConfiguration getHostConfiguration(HttpClient client, MessageContext msgCtx,
-            URL targetURL) throws AxisFault {
-
-        boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
-        int port = targetURL.getPort();
-
-        String protocol = targetURL.getProtocol();
-        if (port == -1) {
-            if (HTTPTransportConstants.PROTOCOL_HTTP.equals(protocol)) {
-                port = 80;
-            } else if (HTTPTransportConstants.PROTOCOL_HTTPS.equals(protocol)) {
-                port = 443;
-            }
-
-        }
-
-        // to see the host is a proxy and in the proxy list - available in
-        // axis2.xml
-        HostConfiguration config = client.getHostConfiguration();
-        if (config == null) {
-            config = new HostConfiguration();
-        }
-
-        // one might need to set his own socket factory. Let's allow that case
-        // as well.
-        Protocol protocolHandler = (Protocol) msgCtx.getOptions().getProperty(
-                HTTPConstants.CUSTOM_PROTOCOL_HANDLER);
-
-        // setting the real host configuration
-        // I assume the 90% case, or even 99% case will be no protocol handler
-        // case.
-        if (protocolHandler == null) {
-            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
-        } else {
-            config.setHost(targetURL.getHost(), port, protocolHandler);
-        }
-
-        if (isAuthenticationEnabled) {
-            // Basic, Digest, NTLM and custom authentications.
-            this.setAuthenticationInfo(client, msgCtx, config);
-        }
-        // proxy configuration
-
-        if (HTTPProxyConfigurator.isProxyEnabled(msgCtx, targetURL)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Configuring HTTP proxy.");
-            }
-            HTTPProxyConfigurator.configure(msgCtx, client, config);
-        }
-
-        return config;
     }
 
     protected boolean isAuthenticationEnabled(MessageContext msgCtx) {

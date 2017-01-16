@@ -28,6 +28,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Header;
@@ -39,6 +40,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -106,7 +108,7 @@ final class RequestImpl implements Request {
     }
 
     private void executeMethod() throws IOException {
-        HostConfiguration config = sender.getHostConfiguration(httpClient, msgContext, url);
+        HostConfiguration config = getHostConfiguration();
 
         // add compression headers if needed
         if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {
@@ -191,5 +193,65 @@ final class RequestImpl implements Request {
             log.trace("AutoReleasing " + method);
             method.releaseConnection();
         }
+    }
+
+    /**
+     * getting host configuration to support standard http/s, proxy and NTLM
+     * support
+     * 
+     * @return a HostConfiguration set up with proxy information
+     * @throws AxisFault
+     *             if problems occur
+     */
+    protected HostConfiguration getHostConfiguration() throws AxisFault {
+
+        boolean isAuthenticationEnabled = sender.isAuthenticationEnabled(msgContext);
+        int port = url.getPort();
+
+        String protocol = url.getProtocol();
+        if (port == -1) {
+            if (HTTPTransportConstants.PROTOCOL_HTTP.equals(protocol)) {
+                port = 80;
+            } else if (HTTPTransportConstants.PROTOCOL_HTTPS.equals(protocol)) {
+                port = 443;
+            }
+
+        }
+
+        // to see the host is a proxy and in the proxy list - available in
+        // axis2.xml
+        HostConfiguration config = httpClient.getHostConfiguration();
+        if (config == null) {
+            config = new HostConfiguration();
+        }
+
+        // one might need to set his own socket factory. Let's allow that case
+        // as well.
+        Protocol protocolHandler = (Protocol) msgContext.getOptions().getProperty(
+                HTTPConstants.CUSTOM_PROTOCOL_HANDLER);
+
+        // setting the real host configuration
+        // I assume the 90% case, or even 99% case will be no protocol handler
+        // case.
+        if (protocolHandler == null) {
+            config.setHost(url.getHost(), port, url.getProtocol());
+        } else {
+            config.setHost(url.getHost(), port, protocolHandler);
+        }
+
+        if (isAuthenticationEnabled) {
+            // Basic, Digest, NTLM and custom authentications.
+            sender.setAuthenticationInfo(httpClient, msgContext, config);
+        }
+        // proxy configuration
+
+        if (HTTPProxyConfigurator.isProxyEnabled(msgContext, url)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Configuring HTTP proxy.");
+            }
+            HTTPProxyConfigurator.configure(msgContext, httpClient, config);
+        }
+
+        return config;
     }
 }

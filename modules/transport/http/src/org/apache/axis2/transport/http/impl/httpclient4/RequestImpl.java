@@ -28,6 +28,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -115,7 +116,7 @@ final class RequestImpl implements Request {
     }
 
     private HttpResponse executeMethod() throws IOException {
-        HttpHost httpHost = sender.getHostConfiguration(httpClient, msgContext, url);
+        HttpHost httpHost = getHostConfiguration();
 
         // add compression headers if needed
         if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {
@@ -210,5 +211,47 @@ final class RequestImpl implements Request {
                 }
             }
         }
+    }
+
+    /**
+     * getting host configuration to support standard http/s, proxy and NTLM
+     * support
+     *
+     * @return a HostConfiguration set up with proxy information
+     * @throws org.apache.axis2.AxisFault if problems occur
+     */
+    private HttpHost getHostConfiguration() throws AxisFault {
+
+        boolean isAuthenticationEnabled = sender.isAuthenticationEnabled(msgContext);
+        int port = url.getPort();
+
+        String protocol = url.getProtocol();
+        if (port == -1) {
+            if (HTTPTransportConstants.PROTOCOL_HTTP.equals(protocol)) {
+                port = 80;
+            } else if (HTTPTransportConstants.PROTOCOL_HTTPS.equals(protocol)) {
+                port = 443;
+            }
+        }
+        // to see the host is a proxy and in the proxy list - available in
+        // axis2.xml
+        HttpHost hostConfig = new HttpHost(url.getHost(), port, url.getProtocol());
+
+        // TODO : one might need to set his own socket factory. We have to allow that case as well.
+
+        if (isAuthenticationEnabled) {
+            // Basic, Digest, NTLM and custom authentications.
+            sender.setAuthenticationInfo(httpClient, msgContext);
+        }
+        // proxy configuration
+
+        if (HTTPProxyConfigurator.isProxyEnabled(msgContext, url)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Configuring HTTP proxy.");
+            }
+            HTTPProxyConfigurator.configure(msgContext, httpClient);
+        }
+
+        return hostConfig;
     }
 }
