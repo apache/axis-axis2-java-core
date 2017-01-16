@@ -64,6 +64,10 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
@@ -95,7 +99,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request prepareGet(final MessageContext msgContext, final URL url)
             throws AxisFault {
-        return new GetRequest(this, msgContext, url);
+        return new RequestImpl(this, msgContext, url, null, new GetMethod());
     }
 
     protected void cleanup(MessageContext msgContext, HttpMethod httpMmethod) {
@@ -118,7 +122,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request prepareDelete(final MessageContext msgContext, final URL url)
             throws AxisFault {
-        return new DeleteRequest(this, msgContext, url);
+        return new RequestImpl(this, msgContext, url, null, new DeleteMethod());
     }
 
     /**
@@ -134,7 +138,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request preparePost(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
-        return new PostRequest(this, msgContext, url, requestEntity);
+        return new RequestImpl(this, msgContext, url, requestEntity, new PostMethod());
     }
 
     /**
@@ -150,7 +154,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request preparePut(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
-        return new PutRequest(this, msgContext, url, requestEntity);
+        return new RequestImpl(this, msgContext, url, requestEntity, new PutMethod());
     }
 
     /**

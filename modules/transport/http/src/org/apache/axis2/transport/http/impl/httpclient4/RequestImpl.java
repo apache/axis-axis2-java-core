@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.transport.http.impl.httpclient3;
+package org.apache.axis2.transport.http.impl.httpclient4;
 
+import java.io.IOException;
 import java.net.URL;
 
 import org.apache.axis2.AxisFault;
@@ -25,19 +26,25 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.Request;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 
-abstract class RequestBase implements Request {
+final class RequestImpl implements Request {
+    private static final Log log = LogFactory.getLog(RequestImpl.class);
+    
     protected final HTTPSenderImpl sender;
     protected final MessageContext msgContext;
     protected final URL url;
-    protected final HttpMethodBase method;
-    protected final HttpClient httpClient;
+    protected final HttpRequestBase method;
+    protected final AbstractHttpClient httpClient;
 
-    RequestBase(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, HttpMethodBase method) throws AxisFault {
+    RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, HttpRequestBase method) throws AxisFault {
         this.sender = sender;
         this.msgContext = msgContext;
         this.url = url;
@@ -45,21 +52,37 @@ abstract class RequestBase implements Request {
         httpClient = sender.getHttpClient(msgContext);
         sender.populateCommonProperties(msgContext, url, method, httpClient);
         if (requestEntity != null) {
-            ((EntityEnclosingMethod)method).setRequestEntity(new AxisRequestEntityImpl(requestEntity));
+            AxisRequestEntityImpl requestEntityAdapter = new AxisRequestEntityImpl(requestEntity);
+            ((HttpEntityEnclosingRequest)method).setEntity(requestEntityAdapter);
     
             if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
-                ((EntityEnclosingMethod)method).setContentChunked(true);
+                requestEntity.setChunked(sender.isChunked());
             }
         }
     }
 
     @Override
     public void enableHTTP10() {
-        httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
+        httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
+                HttpVersion.HTTP_1_0);
     }
 
     @Override
     public void setHeader(String name, String value) {
-        method.setRequestHeader(name, value);
+        method.setHeader(name, value);
+    }
+
+    @Override
+    public void execute() throws AxisFault {
+        HttpResponse response = null;
+        try {
+            response = sender.executeMethod(httpClient, msgContext, url, method);
+            sender.handleResponse(msgContext, response);
+        } catch (IOException e) {
+            log.info("Unable to send to url[" + url + "]", e);
+            throw AxisFault.makeFault(e);
+        } finally {
+            sender.cleanup(msgContext, response);
+        }
     }
 }

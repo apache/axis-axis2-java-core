@@ -49,6 +49,10 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.params.ClientPNames;
@@ -107,7 +111,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request prepareGet(final MessageContext msgContext, final URL url)
             throws AxisFault {
-        return new GetRequest(this, msgContext, url);
+        return new RequestImpl(this, msgContext, url, null, new HttpGet());
     }
 
     protected void cleanup(MessageContext msgContext, HttpResponse response) {
@@ -135,7 +139,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request prepareDelete(final MessageContext msgContext, final URL url)
             throws AxisFault {
-        return new DeleteRequest(this, msgContext, url);
+        return new RequestImpl(this, msgContext, url, null, new HttpDelete());
     }
 
     /**
@@ -148,7 +152,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request preparePost(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
-        return new PostRequest(this, msgContext, url, requestEntity);
+        return new RequestImpl(this, msgContext, url, requestEntity, new HttpPost());
     }
 
     /**
@@ -161,7 +165,7 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request preparePut(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
             throws AxisFault {
-        return new PutRequest(this, msgContext, url, requestEntity);
+        return new RequestImpl(this, msgContext, url, requestEntity, new HttpPut());
     }
 
     /**
