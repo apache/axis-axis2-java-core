@@ -19,9 +19,9 @@
 
 package org.apache.axis2.transport.http.impl.httpclient3;
 
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.axis2.transport.http.AxisRequestEntity;
 
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -30,21 +30,30 @@ import org.apache.commons.httpclient.methods.RequestEntity;
  * This Request Entity is used by the HTTPCommonsTransportSender. This wraps the
  * Axis2 message formatter object.
  */
-public class AxisRequestEntityImpl extends AxisRequestEntity implements RequestEntity {
-
-    /**
-     * Method calls to this request entity are delegated to the following Axis2
-     * message formatter object.
-     * 
-     * @param messageFormatter
-     */
-    public AxisRequestEntityImpl(MessageFormatter messageFormatter, MessageContext msgContext,
-            OMOutputFormat format, String soapAction, boolean chunked, boolean isAllowedRetry) {
-        super(messageFormatter, msgContext, format, soapAction, chunked, isAllowedRetry);
+public class AxisRequestEntityImpl implements RequestEntity {
+    private final AxisRequestEntity entity;
+    
+    public AxisRequestEntityImpl(AxisRequestEntity entity) {
+        this.entity = entity;
     }
 
+    @Override
+    public boolean isRepeatable() {
+        return entity.isRepeatable();
+    }
+
+    @Override
+    public void writeRequest(OutputStream outStream) throws IOException {
+        entity.writeRequest(outStream);
+    }
+
+    @Override
+    public long getContentLength() {
+        return entity.getContentLength();
+    }
+
+    @Override
     public String getContentType() {
-        return getContentTypeAsString();
+        return entity.getContentTypeAsString();
     }
-
 }

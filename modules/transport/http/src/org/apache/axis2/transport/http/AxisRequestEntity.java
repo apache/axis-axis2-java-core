@@ -36,7 +36,7 @@ import java.util.zip.GZIPOutputStream;
  * This Request Entity is used by the HTTPCommonsTransportSender. This wraps the
  * Axis2 message formatter object.
  */
-public abstract class AxisRequestEntity  {
+public final class AxisRequestEntity  {
 
     private MessageFormatter messageFormatter;
 
