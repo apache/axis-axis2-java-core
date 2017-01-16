@@ -43,7 +43,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -517,24 +516,6 @@ public class HTTPSenderImpl extends HTTPSender {
             httpMethod.setURI(url.toURI());
         } catch (URISyntaxException e) {
             log.error("Error in URI : " + url, e);
-        }
-
-        httpMethod.setHeader(HTTPConstants.HEADER_HOST, url.getHost());
-
-        if (msgContext.getOptions() != null && msgContext.getOptions().isManageSession()) {
-            // setting the cookie in the out path
-            Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
-
-            if (cookieString != null) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(cookieString);
-                httpMethod.setHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
-            }
-        }
-
-        if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
-            httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
-                                                HttpVersion.HTTP_1_0);
         }
     }
 

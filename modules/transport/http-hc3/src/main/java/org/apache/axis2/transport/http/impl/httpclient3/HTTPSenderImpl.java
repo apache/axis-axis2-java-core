@@ -58,7 +58,6 @@ import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
@@ -540,23 +539,6 @@ public class HTTPSenderImpl extends HTTPSender {
         httpMethod.setPath(url.getPath());
 
         httpMethod.setQueryString(url.getQuery());
-
-        httpMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
-
-        if (msgContext.getOptions() != null && msgContext.getOptions().isManageSession()) {
-            // setting the cookie in the out path
-            Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
-
-            if (cookieString != null) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(cookieString);
-                httpMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
-            }
-        }
-
-        if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
-            httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
-        }
     }
 
     /**

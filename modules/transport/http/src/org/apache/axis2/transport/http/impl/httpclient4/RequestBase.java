@@ -26,8 +26,10 @@ import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.Request;
 import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 
 abstract class RequestBase implements Request {
     protected final HTTPSenderImpl sender;
@@ -51,6 +53,12 @@ abstract class RequestBase implements Request {
                 requestEntity.setChunked(sender.isChunked());
             }
         }
+    }
+
+    @Override
+    public void enableHTTP10() {
+        httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
+                HttpVersion.HTTP_1_0);
     }
 
     @Override

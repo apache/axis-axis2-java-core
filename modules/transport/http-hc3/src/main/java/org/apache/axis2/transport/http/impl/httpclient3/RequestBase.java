@@ -27,6 +27,7 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.Request;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 
 abstract class RequestBase implements Request {
@@ -50,6 +51,11 @@ abstract class RequestBase implements Request {
                 ((EntityEnclosingMethod)method).setContentChunked(true);
             }
         }
+    }
+
+    @Override
+    public void enableHTTP10() {
+        httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
     }
 
     @Override

@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
  * Interface to prepare and execute an HTTP request.
  */
 public interface Request {
+    void enableHTTP10();
     void setHeader(String name, String value);
     void execute() throws AxisFault;
 }
