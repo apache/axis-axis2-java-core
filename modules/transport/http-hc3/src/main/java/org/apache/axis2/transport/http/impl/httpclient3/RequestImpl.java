@@ -23,6 +23,7 @@ import java.net.URL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
@@ -77,6 +78,21 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public void addHeader(String name, String value) {
+        method.addRequestHeader(name, value);
+    }
+
+    @Override
+    public NamedValue[] getRequestHeaders() {
+        Header[] headers = method.getRequestHeaders();
+        NamedValue[] result = new NamedValue[headers.length];
+        for (int i=0; i<headers.length; i++) {
+            result[i] = new NamedValue(headers[i].getName(), headers[i].getValue());
+        }
+        return result;
+    }
+
+    @Override
     public void execute() throws AxisFault {
         try {
             executeMethod();
@@ -91,9 +107,6 @@ final class RequestImpl implements Request {
 
     private void executeMethod() throws IOException {
         HostConfiguration config = sender.getHostConfiguration(httpClient, msgContext, url);
-
-        // set the custom headers, if available
-        sender.addCustomHeaders(method, msgContext);
 
         // add compression headers if needed
         if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {

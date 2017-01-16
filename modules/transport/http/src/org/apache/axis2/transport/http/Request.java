@@ -19,6 +19,7 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.NamedValue;
 
 /**
  * Interface to prepare and execute an HTTP request.
@@ -26,5 +27,7 @@ import org.apache.axis2.AxisFault;
 public interface Request {
     void enableHTTP10();
     void setHeader(String name, String value);
+    void addHeader(String name, String value);
+    NamedValue[] getRequestHeaders();
     void execute() throws AxisFault;
 }

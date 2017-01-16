@@ -19,13 +19,10 @@
 
 package org.apache.axis2.transport.http.impl.httpclient4;
 
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
@@ -69,19 +66,15 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HTTP;
 
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public class HTTPSenderImpl extends HTTPSender {
@@ -590,128 +583,6 @@ public class HTTPSenderImpl extends HTTPSender {
 
             return httpClient;
         }
-    }
-
-    public void addCustomHeaders(HttpRequestBase method, MessageContext msgContext) {
-
-        boolean isCustomUserAgentSet = false;
-        // set the custom headers, if available
-        Object httpHeadersObj = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
-        if (httpHeadersObj != null) {
-            if (httpHeadersObj instanceof List) {
-                List httpHeaders = (List) httpHeadersObj;
-                for (int i = 0; i < httpHeaders.size(); i++) {
-                    NamedValue nv = (NamedValue) httpHeaders.get(i);
-                    if (nv != null) {
-                        Header header = new BasicHeader(nv.getName(), nv.getValue());
-                        if (HTTPConstants.HEADER_USER_AGENT.equals(header.getName())) {
-                            isCustomUserAgentSet = true;
-                        }
-                        method.addHeader(header);
-                    }
-                }
-
-            }
-            if (httpHeadersObj instanceof Map) {
-                Map httpHeaders = (Map) httpHeadersObj;
-                for (Iterator iterator = httpHeaders.entrySet().iterator(); iterator.hasNext(); ) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    String key = (String) entry.getKey();
-                    String value = (String) entry.getValue();
-                    if (HTTPConstants.HEADER_USER_AGENT.equals(key)) {
-                        isCustomUserAgentSet = true;
-                    }
-                    method.addHeader(key, value);
-                }
-            }
-        }
-
-        // we have to consider the TRANSPORT_HEADERS map as well
-        Map transportHeaders = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-        if (transportHeaders != null) {
-            removeUnwantedHeaders(msgContext);
-
-            Set headerEntries = transportHeaders.entrySet();
-
-            for (Object headerEntry : headerEntries) {
-                if (headerEntry instanceof Map.Entry) {
-                    Header[] headers = method.getAllHeaders();
-
-                    boolean headerAdded = false;
-                    for (Header header : headers) {
-                        if (header.getName() != null
-                            && header.getName().equals(((Map.Entry) headerEntry).getKey())) {
-                            headerAdded = true;
-                            break;
-                        }
-                    }
-
-                    if (!headerAdded) {
-                        method.addHeader(((Map.Entry) headerEntry).getKey().toString(),
-                                         ((Map.Entry) headerEntry).getValue().toString());
-                    }
-                }
-            }
-        }
-
-        if (!isCustomUserAgentSet) {
-            String userAgentString = getUserAgent(msgContext);
-            method.setHeader(HTTPConstants.HEADER_USER_AGENT, userAgentString);
-        }
-
-    }
-
-    /**
-     * Remove unwanted headers from the transport headers map of outgoing
-     * request. These are headers which should be dictated by the transport and
-     * not the user. We remove these as these may get copied from the request
-     * messages
-     *
-     * @param msgContext the Axis2 Message context from which these headers should be
-     *                   removed
-     */
-    private void removeUnwantedHeaders(MessageContext msgContext) {
-        Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-
-        if (headers == null || headers.isEmpty()) {
-            return;
-        }
-
-        Iterator iter = headers.keySet().iterator();
-        while (iter.hasNext()) {
-            String headerName = (String) iter.next();
-            if (HTTP.CONN_DIRECTIVE.equalsIgnoreCase(headerName)
-                || HTTP.TRANSFER_ENCODING.equalsIgnoreCase(headerName)
-                || HTTP.DATE_HEADER.equalsIgnoreCase(headerName)
-                || HTTP.CONTENT_TYPE.equalsIgnoreCase(headerName)
-                || HTTP.CONTENT_LEN.equalsIgnoreCase(headerName)) {
-                iter.remove();
-            }
-        }
-    }
-
-    private String getUserAgent(MessageContext messageContext) {
-        String userAgentString = "Axis2";
-        boolean locked = false;
-        if (messageContext.getParameter(HTTPConstants.USER_AGENT) != null) {
-            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.USER_AGENT)
-                    .getParameterElement();
-            userAgentString = userAgentElement.getText().trim();
-            OMAttribute lockedAttribute = userAgentElement.getAttribute(new QName("locked"));
-            if (lockedAttribute != null) {
-                if (lockedAttribute.getAttributeValue().equalsIgnoreCase("true")) {
-                    locked = true;
-                }
-            }
-        }
-        // Runtime overing part
-        if (!locked) {
-            if (messageContext.getProperty(HTTPConstants.USER_AGENT) != null) {
-                userAgentString = (String) messageContext.getProperty(HTTPConstants.USER_AGENT);
-            }
-        }
-
-        return userAgentString;
     }
 
 }
