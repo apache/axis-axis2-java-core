@@ -121,15 +121,7 @@ public class HTTPSenderImpl extends HTTPSender {
         return new GetRequest(this, msgContext, soapActionString, url, messageFormatter);
     }
 
-    @Override
-    protected void cleanup(MessageContext msgContext, Object httpResponse) {
-        HttpResponse response;
-        if (httpResponse instanceof HttpResponse) {
-            response = (HttpResponse) httpResponse;
-        } else {
-            log.trace("HttpResponse expected, but found - " + httpResponse);
-            return;
-        }
+    protected void cleanup(MessageContext msgContext, HttpResponse response) {
         if (msgContext.isPropertyTrue(HTTPConstants.CLEANUP_RESPONSE)) {
             log.trace("Cleaning response : " + response);
             HttpEntity entity = response.getEntity();

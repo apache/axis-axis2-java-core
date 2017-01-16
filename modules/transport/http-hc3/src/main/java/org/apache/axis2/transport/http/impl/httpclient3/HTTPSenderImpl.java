@@ -109,12 +109,10 @@ public class HTTPSenderImpl extends HTTPSender {
         return new GetRequest(this, msgContext, soapActiionString, url, messageFormatter);
     }
 
-    protected void cleanup(MessageContext msgContext, Object httpMmethod) {
-        if (httpMmethod instanceof HttpMethod) {
-            if (msgContext.isPropertyTrue(HTTPConstants.AUTO_RELEASE_CONNECTION)) {
-                log.trace("AutoReleasing " + httpMmethod);
-                ((HttpMethod) httpMmethod).releaseConnection();
-            }
+    protected void cleanup(MessageContext msgContext, HttpMethod httpMmethod) {
+        if (msgContext.isPropertyTrue(HTTPConstants.AUTO_RELEASE_CONNECTION)) {
+            log.trace("AutoReleasing " + httpMmethod);
+            ((HttpMethod) httpMmethod).releaseConnection();
         }
     }
 
