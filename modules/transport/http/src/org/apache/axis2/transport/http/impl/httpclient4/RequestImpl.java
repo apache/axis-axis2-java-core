@@ -90,9 +90,6 @@ final class RequestImpl implements Request {
                 }
             };
             entityEnclosingRequest.setEntity(new AxisRequestEntityImpl(requestEntity));
-            if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
-                requestEntity.setChunked(sender.isChunked());
-            }
             method = entityEnclosingRequest;
         }
         sender.populateCommonProperties(msgContext, url, method, httpClient);

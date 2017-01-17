@@ -40,7 +40,7 @@ public final class AxisRequestEntity  {
 
     private MessageFormatter messageFormatter;
 
-    private boolean chunked = false;
+    private final boolean chunked;
 
     private MessageContext messageContext;
 
@@ -121,10 +121,6 @@ public final class AxisRequestEntity  {
 
     public boolean isChunked() {
         return chunked;
-    }
-
-    public void setChunked(boolean chunked) {
-        this.chunked = chunked;
     }
 
     public InputStream getRequestEntityContent() throws IOException {

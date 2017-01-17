@@ -358,14 +358,6 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
             // select the Message Sender depending on the REST status
             AbstractHTTPSender sender = createHTTPSender();
 
-            boolean chunked;
-            if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
-                chunked = JavaUtils.isTrueExplicitly(messageContext
-                        .getProperty(HTTPConstants.CHUNKED));
-            } else {
-                chunked = defaultChunked;
-            }
-
             String httpVersion;
             if (messageContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
                 httpVersion = (String) messageContext
@@ -373,6 +365,17 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
             } else {
                 httpVersion = defaultHttpVersion;
             }
+            
+            boolean chunked;
+            if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
+                chunked = false;
+            } else if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
+                chunked = JavaUtils.isTrueExplicitly(messageContext
+                        .getProperty(HTTPConstants.CHUNKED));
+            } else {
+                chunked = defaultChunked;
+            }
+
             // Following order needed to be preserved because,
             // HTTP/1.0 does not support chunk encoding
             sender.setChunked(chunked);
