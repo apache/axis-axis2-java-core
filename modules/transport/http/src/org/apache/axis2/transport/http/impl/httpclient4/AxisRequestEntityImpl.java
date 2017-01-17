@@ -42,7 +42,7 @@ public class AxisRequestEntityImpl implements HttpEntity {
 
     @Override
     public Header getContentType() {
-        return new BasicHeader(HTTPConstants.HEADER_CONTENT_TYPE, entity.getContentTypeAsString());
+        return new BasicHeader(HTTPConstants.HEADER_CONTENT_TYPE, entity.getContentType());
     }
 
     @Override

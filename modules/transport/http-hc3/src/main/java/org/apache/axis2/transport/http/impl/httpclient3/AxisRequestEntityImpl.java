@@ -54,6 +54,6 @@ public class AxisRequestEntityImpl implements RequestEntity {
 
     @Override
     public String getContentType() {
-        return entity.getContentTypeAsString();
+        return entity.getContentType();
     }
 }

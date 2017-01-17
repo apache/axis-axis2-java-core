@@ -50,7 +50,7 @@ public final class AxisRequestEntity  {
 
     private OMOutputFormat format;
 
-    private String soapAction;
+    private final String contentType;
 
     /**
      * Method calls to this request entity are delegated to the following Axis2
@@ -59,14 +59,14 @@ public final class AxisRequestEntity  {
      * @param messageFormatter
      */
     AxisRequestEntity(MessageFormatter messageFormatter,
-                      MessageContext msgContext, OMOutputFormat format, String soapAction,
+                      MessageContext msgContext, OMOutputFormat format, String contentType,
                       boolean chunked, boolean isAllowedRetry) {
         this.messageFormatter = messageFormatter;
         this.messageContext = msgContext;
         this.chunked = chunked;
         this.isAllowedRetry = isAllowedRetry;
         this.format = format;
-        this.soapAction = soapAction;
+        this.contentType = contentType;
     }
 
     public boolean isRepeatable() {
@@ -115,8 +115,8 @@ public final class AxisRequestEntity  {
         return bytes.length;
     }
 
-    public String getContentTypeAsString() {
-        return messageFormatter.getContentType(messageContext, format, soapAction);
+    public String getContentType() {
+        return contentType;
     }
 
     public boolean isChunked() {

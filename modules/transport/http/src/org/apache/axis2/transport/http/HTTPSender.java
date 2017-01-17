@@ -79,6 +79,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         MessageFormatter messageFormatter = MessageProcessorSelector
                 .getMessageFormatter(msgContext);
         url = messageFormatter.getTargetAddress(msgContext, format, url);
+        String contentType = messageFormatter.getContentType(msgContext, format, soapActionString);
         
         AxisRequestEntity requestEntity;
         if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)
@@ -87,7 +88,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         } else if (Constants.Configuration.HTTP_METHOD_POST.equalsIgnoreCase(httpMethod)
                 || Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
             requestEntity = new AxisRequestEntity(messageFormatter, msgContext, format,
-                    soapActionString, chunked, isAllowedRetry);
+                    contentType, chunked, isAllowedRetry);
         } else {
             throw new AxisFault("Unsupported HTTP method " + httpMethod);
         }
@@ -109,8 +110,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
             request.enableHTTP10();
         }
         
-        request.setHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                messageFormatter.getContentType(msgContext, format, soapActionString));
+        request.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType);
 
         String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
 
