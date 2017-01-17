@@ -37,10 +37,6 @@ import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.params.ClientPNames;
@@ -83,58 +79,10 @@ public class HTTPSenderImpl extends HTTPSender {
         this.isAllowedRetry = isAllowedRetry;
     }
 
-    /**
-     * Used to send a request via HTTP Get method
-     *
-     * @param msgContext        - The MessageContext of the message
-     * @param url               - The target URL
-     * @param soapActionString - The soapAction string of the request
-     * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
-     */
     @Override
-    protected Request prepareGet(final MessageContext msgContext, final URL url)
-            throws AxisFault {
-        return new RequestImpl(this, msgContext, url, null, new HttpGet());
-    }
-
-    /**
-     * Used to send a request via HTTP Delete Method
-     *
-     * @param msgContext        - The MessageContext of the message
-     * @param url               - The target URL
-     * @param soapActionString - The soapAction string of the request
-     * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
-     */
-    @Override
-    protected Request prepareDelete(final MessageContext msgContext, final URL url)
-            throws AxisFault {
-        return new RequestImpl(this, msgContext, url, null, new HttpDelete());
-    }
-
-    /**
-     * Used to send a request via HTTP Post Method
-     *
-     * @param msgContext       - The MessageContext of the message
-     * @param url              - The target URL
-     * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
-     */
-    @Override
-    protected Request preparePost(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
-            throws AxisFault {
-        return new RequestImpl(this, msgContext, url, requestEntity, new HttpPost());
-    }
-
-    /**
-     * Used to send a request via HTTP Put Method
-     *
-     * @param msgContext       - The MessageContext of the message
-     * @param url              - The target URL
-     * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
-     */
-    @Override
-    protected Request preparePut(final MessageContext msgContext, final URL url, AxisRequestEntity requestEntity)
-            throws AxisFault {
-        return new RequestImpl(this, msgContext, url, requestEntity, new HttpPut());
+    protected Request createRequest(MessageContext msgContext, String methodName, URL url,
+            AxisRequestEntity requestEntity) throws AxisFault {
+        return new RequestImpl(this, msgContext, methodName, url, requestEntity);
     }
 
     /**

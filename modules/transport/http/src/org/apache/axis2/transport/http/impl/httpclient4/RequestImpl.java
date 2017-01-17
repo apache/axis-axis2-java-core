@@ -38,7 +38,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -48,6 +47,7 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.params.ClientPNames;
@@ -69,21 +69,33 @@ final class RequestImpl implements Request {
     protected final AbstractHttpClient httpClient;
     private final HttpHost httpHost;
 
-    RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, HttpRequestBase method) throws AxisFault {
+    RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, final String methodName, URL url,
+            AxisRequestEntity requestEntity) throws AxisFault {
         this.sender = sender;
         this.msgContext = msgContext;
         this.url = url;
-        this.method = method;
         httpClient = sender.getHttpClient(msgContext);
-        sender.populateCommonProperties(msgContext, url, method, httpClient);
-        if (requestEntity != null) {
-            AxisRequestEntityImpl requestEntityAdapter = new AxisRequestEntityImpl(requestEntity);
-            ((HttpEntityEnclosingRequest)method).setEntity(requestEntityAdapter);
-    
+        if (requestEntity == null) {
+            method = new HttpRequestBase() {
+                @Override
+                public String getMethod() {
+                    return methodName;
+                }
+            };
+        } else {
+            HttpEntityEnclosingRequestBase entityEnclosingRequest = new HttpEntityEnclosingRequestBase() {
+                @Override
+                public String getMethod() {
+                    return methodName;
+                }
+            };
+            entityEnclosingRequest.setEntity(new AxisRequestEntityImpl(requestEntity));
             if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
                 requestEntity.setChunked(sender.isChunked());
             }
+            method = entityEnclosingRequest;
         }
+        sender.populateCommonProperties(msgContext, url, method, httpClient);
         int port = url.getPort();
         String protocol = url.getProtocol();
         if (port == -1) {

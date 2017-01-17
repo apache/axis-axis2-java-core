@@ -45,46 +45,25 @@ import javax.xml.namespace.QName;
 public abstract class HTTPSender extends AbstractHTTPSender {
 
     private static final Log log = LogFactory.getLog(HTTPSender.class);
-    /**
-     * Used to send a request via HTTP Get method
-     *
-     * @param msgContext        - The MessageContext of the message
-     * @param url               - The target URL
-     * @throws AxisFault - Thrown in case an exception occurs
-     */
-    protected abstract Request prepareGet(MessageContext msgContext, URL url)
-            throws AxisFault;
     
     /**
-     * Used to send a request via HTTP Delete Method
+     * Start a new HTTP request.
      *
-     * @param msgContext        - The MessageContext of the message
-     * @param url               - The target URL
-     * @throws AxisFault - Thrown in case an exception occurs
+     * @param msgContext
+     *            The MessageContext of the request message
+     * @param methodName
+     *            The HTTP method name
+     * @param url
+     *            The target URL
+     * @param requestEntity
+     *            The content of the request or {@code null} if the HTTP request shouldn't have any
+     *            content (e.g. for {@code GET} requests)
+     * @throws AxisFault
+     *            Thrown in case an exception occurs
      */
-    protected abstract Request prepareDelete(MessageContext msgContext, URL url)
-            throws AxisFault; 
-    /**
-     * Used to send a request via HTTP Post Method
-     *
-     * @param msgContext       - The MessageContext of the message
-     * @param url              - The target URL
-     * @throws AxisFault - Thrown in case an exception occurs
-     */
-    protected abstract Request preparePost(MessageContext msgContext, URL url,
-                             AxisRequestEntity requestEntity) throws AxisFault;
-
-
-    /**
-     * Used to send a request via HTTP Put Method
-     *
-     * @param msgContext       - The MessageContext of the message
-     * @param url              - The target URL
-     * @throws AxisFault - Thrown in case an exception occurs
-     */
-    protected abstract Request preparePut(MessageContext msgContext, URL url,
-                            AxisRequestEntity requestEntity) throws AxisFault;
-
+    protected abstract Request createRequest(MessageContext msgContext, String methodName, URL url,
+            AxisRequestEntity requestEntity) throws AxisFault;
+    
     public void send(MessageContext msgContext, URL url, String soapActionString)
             throws IOException {
 
@@ -93,26 +72,27 @@ public abstract class HTTPSender extends AbstractHTTPSender {
 
         String httpMethod =
                 (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
+        if (httpMethod == null) {
+            httpMethod = Constants.Configuration.HTTP_METHOD_POST;
+        }
 
         MessageFormatter messageFormatter = MessageProcessorSelector
                 .getMessageFormatter(msgContext);
         url = messageFormatter.getTargetAddress(msgContext, format, url);
         
-        Request request = null;
-        if ((httpMethod != null)) {
-
-            if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-                request = prepareGet(msgContext, url);
-            } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
-                request = prepareDelete(msgContext, url);
-            } else if (Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
-                request = preparePut(msgContext, url, buildRequestEntity(messageFormatter, msgContext, soapActionString));
-            }
+        AxisRequestEntity requestEntity;
+        if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)
+                || Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
+            requestEntity = null;
+        } else if (Constants.Configuration.HTTP_METHOD_POST.equalsIgnoreCase(httpMethod)
+                || Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
+            requestEntity = new AxisRequestEntity(messageFormatter, msgContext, format,
+                    soapActionString, chunked, isAllowedRetry);
+        } else {
+            throw new AxisFault("Unsupported HTTP method " + httpMethod);
         }
 
-        if (request == null) {
-            request = preparePost(msgContext, url, buildRequestEntity(messageFormatter, msgContext, soapActionString));
-        }
+        Request request = createRequest(msgContext, httpMethod, url, requestEntity);
 
         if (msgContext.getOptions() != null && msgContext.getOptions().isManageSession()) {
             // setting the cookie in the out path
@@ -152,12 +132,6 @@ public abstract class HTTPSender extends AbstractHTTPSender {
 
         request.execute();
     }   
-
-    private AxisRequestEntity buildRequestEntity(MessageFormatter messageFormatter, MessageContext msgContext,
-            String soapActionString) {
-        return new AxisRequestEntity(messageFormatter, msgContext, format,
-                soapActionString, chunked, isAllowedRetry);
-    }
 
     private void addCustomHeaders(MessageContext msgContext, Request request) {
     

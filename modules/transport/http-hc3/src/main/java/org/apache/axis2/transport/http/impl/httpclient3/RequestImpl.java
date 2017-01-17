@@ -62,20 +62,37 @@ final class RequestImpl implements Request {
     protected final HttpClient httpClient;
     private final HostConfiguration config;
 
-    RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, URL url, AxisRequestEntity requestEntity, HttpMethodBase method) throws AxisFault {
+    RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, final String methodName, URL url,
+            AxisRequestEntity requestEntity) throws AxisFault {
         this.sender = sender;
         this.msgContext = msgContext;
         this.url = url;
-        this.method = method;
         httpClient = sender.getHttpClient(msgContext);
-        sender.populateCommonProperties(msgContext, url, method, httpClient);
-        if (requestEntity != null) {
-            ((EntityEnclosingMethod)method).setRequestEntity(new AxisRequestEntityImpl(requestEntity));
-    
-            if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
-                ((EntityEnclosingMethod)method).setContentChunked(true);
+        if (requestEntity == null) {
+            method = new HttpMethodBase() {
+                @Override
+                public String getName() {
+                    return methodName;
+                }
+            };
+            // This mimicks GetMethod
+            if (methodName.equals(HTTPConstants.HTTP_METHOD_GET)) {
+                method.setFollowRedirects(true);
             }
+        } else {
+            EntityEnclosingMethod entityEnclosingMethod = new EntityEnclosingMethod() {
+                @Override
+                public String getName() {
+                    return methodName;
+                }
+            };
+            entityEnclosingMethod.setRequestEntity(new AxisRequestEntityImpl(requestEntity));
+            if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
+                entityEnclosingMethod.setContentChunked(true);
+            }
+            method = entityEnclosingMethod;
         }
+        sender.populateCommonProperties(msgContext, url, method, httpClient);
         // TODO: this is fishy; it means that we may end up modifying a HostConfiguration from a cached HTTP client
         HostConfiguration config = httpClient.getHostConfiguration();
         if (config == null) {
