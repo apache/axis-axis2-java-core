@@ -114,8 +114,6 @@ public abstract class HTTPSender extends AbstractHTTPSender {
             request = preparePost(msgContext, url, buildRequestEntity(messageFormatter, msgContext, soapActionString));
         }
 
-        request.setHeader(HTTPConstants.HEADER_HOST, url.getHost());
-
         if (msgContext.getOptions() != null && msgContext.getOptions().isManageSession()) {
             // setting the cookie in the out path
             Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
