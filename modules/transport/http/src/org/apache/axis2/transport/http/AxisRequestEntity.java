@@ -26,9 +26,7 @@ import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.JavaUtils;
 
 import javax.xml.stream.FactoryConfigurationError;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -123,10 +121,4 @@ public final class AxisRequestEntity  {
     public boolean isChunked() {
         return chunked;
     }
-
-    public InputStream getRequestEntityContent() throws IOException {
-        return new ByteArrayInputStream(messageFormatter.getBytes(messageContext, format));
-    }
-    
-    
 }
