@@ -44,12 +44,6 @@ public abstract class AbstractHTTPSender {
     protected TransportOutDescription proxyOutSetting = null;
     protected OMOutputFormat format = new OMOutputFormat();
 
-    /**
-     * isAllowedRetry will be using to check where the
-     * retry should be allowed or not.
-     */
-    protected boolean isAllowedRetry = false;
-
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }

@@ -80,7 +80,19 @@ public abstract class HTTPSender extends AbstractHTTPSender {
                 .getMessageFormatter(msgContext);
         url = messageFormatter.getTargetAddress(msgContext, format, url);
         String contentType = messageFormatter.getContentType(msgContext, format, soapActionString);
-        
+
+        HTTPAuthenticator authenticator;
+        Object obj = msgContext.getProperty(HTTPConstants.AUTHENTICATE);
+        if (obj == null) {
+            authenticator = null;
+        } else {
+            if (obj instanceof HTTPAuthenticator) {
+                authenticator = (HTTPAuthenticator) obj;
+            } else {
+                throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
+            }
+        }
+
         AxisRequestEntity requestEntity;
         if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)
                 || Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
@@ -88,7 +100,7 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         } else if (Constants.Configuration.HTTP_METHOD_POST.equalsIgnoreCase(httpMethod)
                 || Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
             requestEntity = new AxisRequestEntity(messageFormatter, msgContext, format,
-                    contentType, chunked, isAllowedRetry);
+                    contentType, chunked, authenticator != null && authenticator.isAllowedRetry());
         } else {
             throw new AxisFault("Unsupported HTTP method " + httpMethod);
         }
@@ -121,13 +133,8 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         // set the custom headers, if available
         addCustomHeaders(msgContext, request);
         
-        Object obj = msgContext.getProperty(HTTPConstants.AUTHENTICATE);
-        if (obj != null) {
-            if (obj instanceof HTTPAuthenticator) {
-                request.enableAuthentication((HTTPAuthenticator) obj);
-            } else {
-                throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
-            }
+        if (authenticator != null) {
+            request.enableAuthentication(authenticator);
         }
 
         request.execute();

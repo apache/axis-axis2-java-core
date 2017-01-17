@@ -46,7 +46,7 @@ public final class AxisRequestEntity  {
 
     private byte[] bytes;
 
-    private boolean isAllowedRetry;
+    private final boolean preserve;
 
     private OMOutputFormat format;
 
@@ -60,19 +60,20 @@ public final class AxisRequestEntity  {
      */
     AxisRequestEntity(MessageFormatter messageFormatter,
                       MessageContext msgContext, OMOutputFormat format, String contentType,
-                      boolean chunked, boolean isAllowedRetry) {
+                      boolean chunked, boolean preserve) {
         this.messageFormatter = messageFormatter;
         this.messageContext = msgContext;
         this.chunked = chunked;
-        this.isAllowedRetry = isAllowedRetry;
+        this.preserve = preserve;
         this.format = format;
         this.contentType = contentType;
     }
 
     public boolean isRepeatable() {
-        // All Axis2 request entity implementations were returning this true
-        // So we return true as defualt
-        return true;
+        // If chunking is disabled, we don't preserve the original SOAPEnvelope, but we store the
+        // serialized SOAPEnvelope in a byte array, which means that the entity can be written
+        // repeatedly.
+        return preserve || !chunked;
     }
 
     public void writeRequest(OutputStream outStream) throws IOException {
@@ -82,7 +83,7 @@ public final class AxisRequestEntity  {
         }
         try {
             if (chunked) {
-                messageFormatter.writeTo(messageContext, format, outStream, isAllowedRetry);
+                messageFormatter.writeTo(messageContext, format, outStream, preserve);
             } else {
                 if (bytes == null) {
                     bytes = messageFormatter.getBytes(messageContext, format);

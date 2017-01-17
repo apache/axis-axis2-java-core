@@ -278,9 +278,6 @@ final class RequestImpl implements Request {
         int port = authenticator.getPort();
         String realm = authenticator.getRealm();
 
-        /* If retrying is available set it first */
-        sender.setAllowedRetry(authenticator.isAllowedRetry());
-
         Credentials creds;
 
         // TODO : Set preemptive authentication, but its not recommended in HC 4

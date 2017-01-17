@@ -60,11 +60,6 @@ public class HTTPSenderImpl extends HTTPSender {
         return httpVersion;
     }
 
-    // TODO: this shouldn't be here (see AXIS2-4021)
-    void setAllowedRetry(boolean isAllowedRetry) {
-        this.isAllowedRetry = isAllowedRetry;
-    }
-
     @Override
     protected Request createRequest(MessageContext msgContext, String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
