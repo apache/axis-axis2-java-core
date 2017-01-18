@@ -94,13 +94,16 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         }
 
         AxisRequestEntity requestEntity;
+        boolean gzip;
         if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)
                 || Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
             requestEntity = null;
+            gzip = false;
         } else if (Constants.Configuration.HTTP_METHOD_POST.equalsIgnoreCase(httpMethod)
                 || Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
+            gzip = msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST);
             requestEntity = new AxisRequestEntity(messageFormatter, msgContext, format,
-                    contentType, chunked, authenticator != null && authenticator.isAllowedRetry());
+                    contentType, chunked, gzip, authenticator != null && authenticator.isAllowedRetry());
         } else {
             throw new AxisFault("Unsupported HTTP method " + httpMethod);
         }
@@ -130,6 +133,11 @@ public abstract class HTTPSender extends AbstractHTTPSender {
             request.setHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         }
 
+        if (gzip) {
+            request.setHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
+                    HTTPConstants.COMPRESSION_GZIP);
+        }
+        
         // set the custom headers, if available
         addCustomHeaders(msgContext, request);
         

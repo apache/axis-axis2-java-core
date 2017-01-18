@@ -19,13 +19,13 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axiom.blob.Blobs;
+import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.util.JavaUtils;
 
-import javax.xml.stream.FactoryConfigurationError;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
@@ -39,10 +39,12 @@ public final class AxisRequestEntity  {
     private MessageFormatter messageFormatter;
 
     private final boolean chunked;
+    
+    private final boolean gzip;
 
     private MessageContext messageContext;
 
-    private byte[] bytes;
+    private final MemoryBlob content;
 
     private final boolean preserve;
 
@@ -55,16 +57,30 @@ public final class AxisRequestEntity  {
      * message formatter object.
      *
      * @param messageFormatter
+     * @throws AxisFault 
      */
     AxisRequestEntity(MessageFormatter messageFormatter,
                       MessageContext msgContext, OMOutputFormat format, String contentType,
-                      boolean chunked, boolean preserve) {
+                      boolean chunked, boolean gzip, boolean preserve) throws AxisFault {
         this.messageFormatter = messageFormatter;
         this.messageContext = msgContext;
         this.chunked = chunked;
+        this.gzip = gzip;
         this.preserve = preserve;
         this.format = format;
         this.contentType = contentType;
+        if (chunked) {
+            content = null;
+        } else {
+            content = Blobs.createMemoryBlob();
+            OutputStream out = content.getOutputStream();
+            try {
+                internalWriteRequest(out);
+                out.close();
+            } catch (IOException ex) {
+                throw AxisFault.makeFault(ex);
+            }
+        }
     }
 
     public boolean isRepeatable() {
@@ -75,25 +91,23 @@ public final class AxisRequestEntity  {
     }
 
     public void writeRequest(OutputStream outStream) throws IOException {
-        Object gzip = messageContext.getOptions().getProperty(HTTPConstants.MC_GZIP_REQUEST);
-        if (gzip != null && JavaUtils.isTrueExplicitly(gzip) && chunked) {
+        if (chunked) {
+            internalWriteRequest(outStream);
+        } else {
+            content.writeTo(outStream);
+        }
+    }
+    
+    private void internalWriteRequest(OutputStream outStream) throws IOException {
+        if (gzip) {
             outStream = new GZIPOutputStream(outStream);
         }
         try {
-            if (chunked) {
-                messageFormatter.writeTo(messageContext, format, outStream, preserve);
-            } else {
-                if (bytes == null) {
-                    bytes = messageFormatter.getBytes(messageContext, format);
-                }
-                outStream.write(bytes);
-            }
-            if (outStream instanceof GZIPOutputStream) {
+            messageFormatter.writeTo(messageContext, format, outStream, preserve);
+            if (gzip) {
                 ((GZIPOutputStream) outStream).finish();
             }
             outStream.flush();
-        } catch (FactoryConfigurationError e) {
-            throw AxisFault.makeFault(e);
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
@@ -103,15 +117,9 @@ public final class AxisRequestEntity  {
     public long getContentLength() {
         if (chunked) {
             return -1;
+        } else {
+            return content.getSize();
         }
-        if (bytes == null) {
-            try {
-                bytes = messageFormatter.getBytes(messageContext, format);
-            } catch (AxisFault e) {
-                return -1;
-            }
-        }
-        return bytes.length;
     }
 
     public String getContentType() {

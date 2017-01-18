@@ -148,11 +148,6 @@ final class RequestImpl implements Request {
                     HTTPConstants.COMPRESSION_GZIP);
         }
 
-        if (msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST)) {
-            method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                    HTTPConstants.COMPRESSION_GZIP);
-        }
-
         if (msgContext.getProperty(HTTPConstants.HTTP_METHOD_PARAMS) != null) {
             HttpMethodParams params = (HttpMethodParams) msgContext
                     .getProperty(HTTPConstants.HTTP_METHOD_PARAMS);
