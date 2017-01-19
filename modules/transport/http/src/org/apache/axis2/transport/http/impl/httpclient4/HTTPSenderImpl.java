@@ -87,14 +87,8 @@ public class HTTPSenderImpl extends HTTPSender {
      *                   NOT!
      * @throws AxisFault if problems occur
      */
-    protected void obtainHTTPHeaderInformation(Object httpResponse, MessageContext msgContext)
+    protected void obtainHTTPHeaderInformation(HttpResponse response, MessageContext msgContext)
             throws AxisFault {
-        HttpResponse response;
-        if (httpResponse instanceof HttpResponse) {
-            response = (HttpResponse) httpResponse;
-        } else {
-            return;
-        }
         // Set RESPONSE properties onto the REQUEST message context. They will
         // need to be copied off the request context onto
         // the response context elsewhere, for example in the
