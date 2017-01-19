@@ -69,6 +69,7 @@ final class RequestImpl implements Request {
     protected final HttpRequestBase method;
     protected final AbstractHttpClient httpClient;
     private final HttpHost httpHost;
+    private boolean cleanupResponse;
 
     RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, final String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
@@ -181,7 +182,7 @@ final class RequestImpl implements Request {
         int statusCode = response.getStatusLine().getStatusCode();
         log.trace("Handling response - " + statusCode);
         if (statusCode == HttpStatus.SC_ACCEPTED) {
-            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.TRUE);
+            cleanupResponse = true;
             /*
             * When an HTTP 202 Accepted code has been received, this will be
             * the case of an execution of an in-only operation. In such a
@@ -192,12 +193,12 @@ final class RequestImpl implements Request {
 
         } else if (statusCode >= 200 && statusCode < 300) {
             // We don't clean the response here because the response will be used afterwards
-            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.FALSE);
+            cleanupResponse = false;
             sender.processResponse(response, msgContext);
 
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
                    || statusCode == HttpStatus.SC_BAD_REQUEST) {
-            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.TRUE);
+            cleanupResponse = true;
             Header contentTypeHeader = response.getFirstHeader(HTTPConstants.HEADER_CONTENT_TYPE);
             String value = null;
             if (contentTypeHeader != null) {
@@ -212,7 +213,7 @@ final class RequestImpl implements Request {
                 }
             }
             if (value != null) {
-                msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.FALSE);
+                cleanupResponse = false;
                 sender.processResponse(response, msgContext);
             }
 
@@ -223,14 +224,14 @@ final class RequestImpl implements Request {
                                    response.getStatusLine().toString()));
             }
         } else {
-            msgContext.setProperty(HTTPConstants.CLEANUP_RESPONSE, Boolean.TRUE);
+            cleanupResponse = true;
             throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
                                                     response.getStatusLine().toString()));
         }
     }
 
     private void cleanup(HttpResponse response) {
-        if (msgContext.isPropertyTrue(HTTPConstants.CLEANUP_RESPONSE)) {
+        if (cleanupResponse) {
             log.trace("Cleaning response : " + response);
             HttpEntity entity = response.getEntity();
             if (entity != null) {
