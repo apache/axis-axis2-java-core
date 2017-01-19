@@ -56,7 +56,6 @@ import org.apache.http.params.HttpParams;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -213,30 +212,6 @@ public class HTTPSenderImpl extends HTTPSender {
         OperationContext opContext = msgContext.getOperationContext();
         if (opContext != null) {
             opContext.setProperty(MessageContext.TRANSPORT_IN, in);
-        }
-    }
-
-    /**
-     * Method used to copy all the common properties
-     *
-     * @param msgContext       - The messageContext of the request message
-     * @param url              - The target URL
-     * @param httpMethod       - The http method used to send the request
-     * @param httpClient       - The httpclient used to send the request
-     * @param soapActionString - The soap action atring of the request message
-     * @return MessageFormatter - The messageFormatter for the relavent request
-     *         message
-     * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
-     */
-    protected void populateCommonProperties(MessageContext msgContext, URL url,
-                                                        HttpRequestBase httpMethod,
-                                                        AbstractHttpClient httpClient)
-            throws AxisFault {
-
-        try {
-            httpMethod.setURI(url.toURI());
-        } catch (URISyntaxException e) {
-            log.error("Error in URI : " + url, e);
         }
     }
 

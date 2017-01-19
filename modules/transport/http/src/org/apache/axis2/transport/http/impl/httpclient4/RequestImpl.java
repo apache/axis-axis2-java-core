@@ -19,6 +19,7 @@
 package org.apache.axis2.transport.http.impl.httpclient4;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,11 @@ final class RequestImpl implements Request {
             entityEnclosingRequest.setEntity(new AxisRequestEntityImpl(requestEntity));
             method = entityEnclosingRequest;
         }
-        sender.populateCommonProperties(msgContext, url, method, httpClient);
+        try {
+            method.setURI(url.toURI());
+        } catch (URISyntaxException ex) {
+            throw AxisFault.makeFault(ex);
+        }
         int port = url.getPort();
         String protocol = url.getProtocol();
         if (port == -1) {

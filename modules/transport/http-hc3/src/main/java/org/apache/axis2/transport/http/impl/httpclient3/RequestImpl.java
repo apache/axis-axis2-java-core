@@ -92,7 +92,8 @@ final class RequestImpl implements Request {
             }
             method = entityEnclosingMethod;
         }
-        sender.populateCommonProperties(msgContext, url, method, httpClient);
+        method.setPath(url.getPath());
+        method.setQueryString(url.getQuery());
         // TODO: this is fishy; it means that we may end up modifying a HostConfiguration from a cached HTTP client
         HostConfiguration config = httpClient.getHostConfiguration();
         if (config == null) {

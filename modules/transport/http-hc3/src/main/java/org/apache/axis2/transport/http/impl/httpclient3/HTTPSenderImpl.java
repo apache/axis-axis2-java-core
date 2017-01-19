@@ -206,33 +206,6 @@ public class HTTPSenderImpl extends HTTPSender {
     }
 
     /**
-     * Method used to copy all the common properties
-     * 
-     * @param msgContext
-     *            - The messageContext of the request message
-     * @param url
-     *            - The target URL
-     * @param httpMethod
-     *            - The http method used to send the request
-     * @param httpClient
-     *            - The httpclient used to send the request
-     * @param soapActionString
-     *            - The soap action atring of the request message
-     * @return MessageFormatter - The messageFormatter for the relavent request
-     *         message
-     * @throws AxisFault
-     *             - Thrown in case an exception occurs
-     */
-    protected void populateCommonProperties(MessageContext msgContext, URL url,
-            HttpMethodBase httpMethod, HttpClient httpClient)
-            throws AxisFault {
-
-        httpMethod.setPath(url.getPath());
-
-        httpMethod.setQueryString(url.getQuery());
-    }
-
-    /**
      * This is used to get the dynamically set time out values from the message
      * context. If the values are not available or invalid then the default
      * values or the values set by the configuration will be used
