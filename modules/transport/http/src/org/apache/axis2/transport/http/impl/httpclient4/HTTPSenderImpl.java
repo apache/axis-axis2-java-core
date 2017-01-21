@@ -182,33 +182,6 @@ public class HTTPSenderImpl extends HTTPSender {
         return cookie;
     }
 
-    protected void processResponse(HttpResponse response, MessageContext msgContext)
-            throws IOException {
-        obtainHTTPHeaderInformation(response, msgContext);
-
-        HttpEntity httpEntity = response.getEntity();
-        InputStream in = httpEntity.getContent();
-        if (in == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "InputStream"));
-        }
-        Header contentEncoding = httpEntity.getContentEncoding();
-        if (contentEncoding != null) {
-            if (contentEncoding.getValue().equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
-                in = new GZIPInputStream(in);
-                // If the content-encoding is identity we can basically ignore
-                // it.
-            } else if (!"identity".equalsIgnoreCase(contentEncoding.getValue())) {
-                throw new AxisFault("HTTP :" + "unsupported content-encoding of '"
-                                    + contentEncoding.getValue() + "' found");
-            }
-        }
-
-        OperationContext opContext = msgContext.getOperationContext();
-        if (opContext != null) {
-            opContext.setProperty(MessageContext.TRANSPORT_IN, in);
-        }
-    }
-
     /**
      * This is used to get the dynamically set time out values from the message
      * context. If the values are not available or invalid then the default

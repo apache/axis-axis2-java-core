@@ -19,10 +19,12 @@
 package org.apache.axis2.transport.http.impl.httpclient4;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -34,6 +36,7 @@ import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,7 +72,6 @@ final class RequestImpl implements Request {
     protected final HttpRequestBase method;
     protected final AbstractHttpClient httpClient;
     private final HttpHost httpHost;
-    private boolean cleanupResponse;
 
     RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, final String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
@@ -139,15 +141,11 @@ final class RequestImpl implements Request {
 
     @Override
     public void execute() throws AxisFault {
-        HttpResponse response = null;
         try {
-            response = executeMethod();
-            handleResponse(response);
+            handleResponse(executeMethod());
         } catch (IOException e) {
             log.info("Unable to send to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
-        } finally {
-            cleanup(response);
         }
     }
 
@@ -179,67 +177,78 @@ final class RequestImpl implements Request {
 
     private void handleResponse(HttpResponse response)
             throws IOException {
-        int statusCode = response.getStatusLine().getStatusCode();
-        log.trace("Handling response - " + statusCode);
-        if (statusCode == HttpStatus.SC_ACCEPTED) {
-            cleanupResponse = true;
-            /*
-            * When an HTTP 202 Accepted code has been received, this will be
-            * the case of an execution of an in-only operation. In such a
-            * scenario, the HTTP response headers should be returned, i.e.
-            * session cookies.
-            */
-            sender.obtainHTTPHeaderInformation(response, msgContext);
-
-        } else if (statusCode >= 200 && statusCode < 300) {
-            // We don't clean the response here because the response will be used afterwards
-            cleanupResponse = false;
-            sender.processResponse(response, msgContext);
-
-        } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
-                   || statusCode == HttpStatus.SC_BAD_REQUEST) {
-            cleanupResponse = true;
-            Header contentTypeHeader = response.getFirstHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-            String value = null;
-            if (contentTypeHeader != null) {
-                value = contentTypeHeader.getValue();
+        boolean cleanup = true;
+        try {
+            int statusCode = response.getStatusLine().getStatusCode();
+            log.trace("Handling response - " + statusCode);
+            boolean processResponse;
+            boolean fault;
+            if (statusCode == HttpStatus.SC_ACCEPTED) {
+                processResponse = false;
+                fault = false;
+            } else if (statusCode >= 200 && statusCode < 300) {
+                processResponse = true;
+                fault = false;
+            } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
+                       || statusCode == HttpStatus.SC_BAD_REQUEST) {
+                processResponse = true;
+                fault = true;
+            } else {
+                throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
+                                                        response.getStatusLine().toString()));
             }
-            OperationContext opContext = msgContext.getOperationContext();
-            if (opContext != null) {
-                MessageContext inMessageContext = opContext
-                        .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                if (inMessageContext != null) {
-                    inMessageContext.setProcessingFault(true);
+            sender.obtainHTTPHeaderInformation(response, msgContext);
+            if (processResponse) {
+                OperationContext opContext = msgContext.getOperationContext();
+                MessageContext inMessageContext = opContext == null ? null
+                        : opContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (opContext != null) {
+                    HttpEntity httpEntity = response.getEntity();
+                    if (httpEntity != null) {
+                        InputStream in = httpEntity.getContent();
+                        Header contentEncoding = httpEntity.getContentEncoding();
+                        if (contentEncoding != null) {
+                            if (contentEncoding.getValue().equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
+                                in = new GZIPInputStream(in);
+                                // If the content-encoding is identity we can basically ignore
+                                // it.
+                            } else if (!"identity".equalsIgnoreCase(contentEncoding.getValue())) {
+                                throw new AxisFault("HTTP :" + "unsupported content-encoding of '"
+                                                    + contentEncoding.getValue() + "' found");
+                            }
+                        }
+                        opContext.setProperty(MessageContext.TRANSPORT_IN, in);
+                        cleanup = false;
+                    }
+                }
+                if (fault) {
+                    if (inMessageContext != null) {
+                        inMessageContext.setProcessingFault(true);
+                    }
+                    if (Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
+                        throw new AxisFault(Messages.
+                                getMessage("transportError",
+                                           String.valueOf(statusCode),
+                                           response.getStatusLine().toString()));
+                    }
                 }
             }
-            if (value != null) {
-                cleanupResponse = false;
-                sender.processResponse(response, msgContext);
+        } finally {
+            if (cleanup) {
+                cleanup(response);
             }
-
-            if (org.apache.axis2.util.Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
-                throw new AxisFault(Messages.
-                        getMessage("transportError",
-                                   String.valueOf(statusCode),
-                                   response.getStatusLine().toString()));
-            }
-        } else {
-            cleanupResponse = true;
-            throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
-                                                    response.getStatusLine().toString()));
         }
+
     }
 
     private void cleanup(HttpResponse response) {
-        if (cleanupResponse) {
-            log.trace("Cleaning response : " + response);
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                try {
-                    EntityUtils.consume(entity);
-                } catch (IOException e) {
-                    log.error("Error while cleaning response : " + response, e);
-                }
+        log.trace("Cleaning response : " + response);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            try {
+                EntityUtils.consume(entity);
+            } catch (IOException e) {
+                log.error("Error while cleaning response : " + response, e);
             }
         }
     }
