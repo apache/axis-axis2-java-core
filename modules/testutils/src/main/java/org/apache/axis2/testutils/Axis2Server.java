@@ -50,11 +50,11 @@ public class Axis2Server extends ExternalResource {
     }
 
     public String getEndpoint(String serviceName) throws AxisFault {
-        return getConfigurationContext().getAxisConfiguration().getService(serviceName).getEPRs()[0];
+        return getEndpointReference(serviceName).getAddress();
     }
 
     public EndpointReference getEndpointReference(String serviceName) throws AxisFault {
-        return new EndpointReference(getEndpoint(serviceName));
+        return server.getEPRForService(serviceName, "localhost");
     }
 
     @Override
