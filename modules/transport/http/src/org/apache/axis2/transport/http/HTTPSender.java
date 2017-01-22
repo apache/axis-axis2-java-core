@@ -20,6 +20,7 @@
 package org.apache.axis2.transport.http;
 
 
+import org.apache.axiom.mime.Header;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -190,10 +191,10 @@ public abstract class HTTPSender extends AbstractHTTPSender {
     
             for (Object headerEntry : headerEntries) {
                 if (headerEntry instanceof Map.Entry) {
-                    NamedValue[] headers = request.getRequestHeaders();
+                    Header[] headers = request.getRequestHeaders();
     
                     boolean headerAdded = false;
-                    for (NamedValue header : headers) {
+                    for (Header header : headers) {
                         if (header.getName() != null
                                 && header.getName().equals(((Map.Entry) headerEntry).getKey())) {
                             headerAdded = true;

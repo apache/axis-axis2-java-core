@@ -23,9 +23,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.axiom.mime.Header;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
@@ -35,7 +35,6 @@ import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -118,11 +117,11 @@ final class RequestImpl implements Request {
     }
 
     @Override
-    public NamedValue[] getRequestHeaders() {
-        Header[] headers = method.getRequestHeaders();
-        NamedValue[] result = new NamedValue[headers.length];
+    public Header[] getRequestHeaders() {
+        org.apache.commons.httpclient.Header[] headers = method.getRequestHeaders();
+        Header[] result = new Header[headers.length];
         for (int i=0; i<headers.length; i++) {
-            result[i] = new NamedValue(headers[i].getName(), headers[i].getValue());
+            result[i] = new Header(headers[i].getName(), headers[i].getValue());
         }
         return result;
     }
@@ -185,7 +184,7 @@ final class RequestImpl implements Request {
             // Save the HttpMethod so that we can release the connection when
             // cleaning up
             msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-            Header contenttypeHeader = method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+            org.apache.commons.httpclient.Header contenttypeHeader = method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
             String value = null;
             if (contenttypeHeader != null) {
                 value = contenttypeHeader.getValue();
