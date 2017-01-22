@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.axiom.mime.Header;
@@ -40,6 +42,7 @@ import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -63,6 +66,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 final class RequestImpl implements Request {
+    private static final String[] COOKIE_HEADER_NAMES = { HTTPConstants.HEADER_SET_COOKIE, HTTPConstants.HEADER_SET_COOKIE2 };
+    
     private static final Log log = LogFactory.getLog(RequestImpl.class);
     
     protected final HTTPSenderImpl sender;
@@ -153,8 +158,30 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public String getResponseHeader(String name) {
+        org.apache.http.Header header = response.getFirstHeader(name);
+        return header == null ? null : header.getValue();
+    }
+
+    @Override
     public Header[] getResponseHeaders() {
         return convertHeaders(response.getAllHeaders());
+    }
+
+    @Override
+    public Map<String,String> getCookies() {
+        Map<String,String> cookies = null;
+        for (String name : COOKIE_HEADER_NAMES) {
+            for (org.apache.http.Header header : response.getHeaders(name)) {
+                for (HeaderElement element : header.getElements()) {
+                    if (cookies == null) {
+                        cookies = new HashMap<String,String>();
+                    }
+                    cookies.put(element.getName(), element.getValue());
+                }
+            }
+        }
+        return cookies;
     }
 
     @Override
@@ -215,7 +242,7 @@ final class RequestImpl implements Request {
                 throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
                                                         getStatusText()));
             }
-            sender.obtainHTTPHeaderInformation(this, response, msgContext);
+            sender.obtainHTTPHeaderInformation(this, msgContext);
             if (processResponse) {
                 OperationContext opContext = msgContext.getOperationContext();
                 MessageContext inMessageContext = opContext == null ? null

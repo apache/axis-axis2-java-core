@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.transport.http;
 
+import java.util.Map;
+
 import org.apache.axiom.mime.Header;
 import org.apache.axis2.AxisFault;
 
@@ -33,5 +35,7 @@ public interface Request {
     void execute() throws AxisFault;
     int getStatusCode();
     String getStatusText();
+    String getResponseHeader(String name);
     Header[] getResponseHeaders();
+    Map<String,String> getCookies();
 }

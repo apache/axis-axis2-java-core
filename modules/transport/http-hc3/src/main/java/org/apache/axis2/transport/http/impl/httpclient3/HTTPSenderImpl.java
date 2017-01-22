@@ -22,30 +22,23 @@ package org.apache.axis2.transport.http.impl.httpclient3;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
-import org.apache.axis2.transport.http.CommonsTransportHeaders;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.Request;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -67,115 +60,9 @@ public class HTTPSenderImpl extends HTTPSender {
         return new RequestImpl(this, msgContext, methodName, url, requestEntity);
     }
 
-    /**
-     * Collect the HTTP header information and set them in the message context
-     * 
-     * @param method
-     *            HttpMethodBase from which to get information
-     * @param msgContext
-     *            the MessageContext in which to place the information... OR
-     *            NOT!
-     * @throws AxisFault
-     *             if problems occur
-     */
-    protected void obtainHTTPHeaderInformation(Request request, HttpMethod method, MessageContext msgContext)
-            throws AxisFault {
-        // Set RESPONSE properties onto the REQUEST message context. They will
-        // need to be copied off the request context onto
-        // the response context elsewhere, for example in the
-        // OutInOperationClient.
-        Map transportHeaders = new CommonsTransportHeaders(request.getResponseHeaders());
-        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, transportHeaders);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
-                new Integer(request.getStatusCode()));
-        Header header = method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-
-        if (header != null) {
-            HeaderElement[] headers = header.getElements();
-            MessageContext inMessageContext = msgContext.getOperationContext().getMessageContext(
-                    WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-
-            Object contentType = header.getValue();
-            Object charSetEnc = null;
-
-            for (int i = 0; i < headers.length; i++) {
-                NameValuePair charsetEnc = headers[i]
-                        .getParameterByName(HTTPConstants.CHAR_SET_ENCODING);
-                if (charsetEnc != null) {
-                    charSetEnc = charsetEnc.getValue();
-                }
-            }
-
-            if (inMessageContext != null) {
-                inMessageContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
-                inMessageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                        charSetEnc);
-            } else {
-
-                // Transport details will be stored in a HashMap so that anybody
-                // interested can
-                // retrieve them
-                HashMap transportInfoMap = new HashMap();
-                transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentType);
-                transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-
-                // the HashMap is stored in the outgoing message.
-                msgContext
-                        .setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
-            }
-        }
-
-        String sessionCookie = null;
-        // Process old style headers first
-        Header[] cookieHeaders = method.getResponseHeaders(HTTPConstants.HEADER_SET_COOKIE);
-        String customCoookiId = (String) msgContext.getProperty(Constants.CUSTOM_COOKIE_ID);
-        for (int i = 0; i < cookieHeaders.length; i++) {
-            HeaderElement[] elements = cookieHeaders[i].getElements();
-            for (int e = 0; e < elements.length; e++) {
-                HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())
-                        || Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = processCookieHeader(element);
-                }
-                if (customCoookiId != null && customCoookiId.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = processCookieHeader(element);
-                }
-            }
-        }
-        // Overwrite old style cookies with new style ones if present
-        cookieHeaders = method.getResponseHeaders(HTTPConstants.HEADER_SET_COOKIE2);
-        for (int i = 0; i < cookieHeaders.length; i++) {
-            HeaderElement[] elements = cookieHeaders[i].getElements();
-            for (int e = 0; e < elements.length; e++) {
-                HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())
-                        || Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = processCookieHeader(element);
-                }
-                if (customCoookiId != null && customCoookiId.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = processCookieHeader(element);
-                }
-            }
-        }
-
-        if (sessionCookie != null) {
-            msgContext.getServiceContext().setProperty(HTTPConstants.COOKIE_STRING, sessionCookie);
-        }
-    }
-
-    private String processCookieHeader(HeaderElement element) {
-        String cookie = element.getName() + "=" + element.getValue();
-        NameValuePair[] parameters = element.getParameters();
-        for (int j = 0; parameters != null && j < parameters.length; j++) {
-            NameValuePair parameter = parameters[j];
-            cookie = cookie + "; " + parameter.getName() + "=" + parameter.getValue();
-        }
-        return cookie;
-    }
-
     protected void processResponse(Request request, HttpMethodBase httpMethod, MessageContext msgContext)
             throws IOException {
-        obtainHTTPHeaderInformation(request, httpMethod, msgContext);
+        obtainHTTPHeaderInformation(request, msgContext);
 
         InputStream in = httpMethod.getResponseBodyAsStream();
         if (in == null) {

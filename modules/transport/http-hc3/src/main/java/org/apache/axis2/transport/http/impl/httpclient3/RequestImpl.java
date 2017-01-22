@@ -21,7 +21,9 @@ package org.apache.axis2.transport.http.impl.httpclient3;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.axiom.mime.Header;
 import org.apache.axis2.AxisFault;
@@ -35,6 +37,7 @@ import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -52,6 +55,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 final class RequestImpl implements Request {
+    private static final String[] COOKIE_HEADER_NAMES = { HTTPConstants.HEADER_SET_COOKIE, HTTPConstants.HEADER_SET_COOKIE2 };
+
     private static final Log log = LogFactory.getLog(RequestImpl.class);
 
     protected final HTTPSenderImpl sender;
@@ -140,8 +145,30 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public String getResponseHeader(String name) {
+        org.apache.commons.httpclient.Header header = method.getResponseHeader(name);
+        return header == null ? null : header.getValue();
+    }
+
+    @Override
     public Header[] getResponseHeaders() {
         return convertHeaders(method.getResponseHeaders());
+    }
+
+    @Override
+    public Map<String,String> getCookies() {
+        Map<String,String> cookies = null;
+        for (String name : COOKIE_HEADER_NAMES) {
+            for (org.apache.commons.httpclient.Header header : method.getResponseHeaders(name)) {
+                for (HeaderElement element : header.getElements()) {
+                    if (cookies == null) {
+                        cookies = new HashMap<String,String>();
+                    }
+                    cookies.put(element.getName(), element.getValue());
+                }
+            }
+        }
+        return cookies;
     }
 
     @Override
@@ -190,7 +217,7 @@ final class RequestImpl implements Request {
             /* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
              * of an in-only operation. In such a scenario, the HTTP response headers should be returned,
              * i.e. session cookies. */
-            sender.obtainHTTPHeaderInformation(this, method, msgContext);
+            sender.obtainHTTPHeaderInformation(this, msgContext);
             // Since we don't expect any content with a 202 response, we must release the connection
             method.releaseConnection();            
         } else if (statusCode >= 200 && statusCode < 300) {

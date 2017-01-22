@@ -20,6 +20,7 @@
 package org.apache.axis2.transport.http;
 
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.Header;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -29,12 +30,18 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.MessageProcessorSelector;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -269,5 +276,67 @@ public abstract class HTTPSender extends AbstractHTTPSender {
         }
     
         return userAgentString;
+    }
+
+    public void obtainHTTPHeaderInformation(Request request, MessageContext msgContext) throws AxisFault {
+        // Set RESPONSE properties onto the REQUEST message context. They will
+        // need to be copied off the request context onto
+        // the response context elsewhere, for example in the
+        // OutInOperationClient.
+        msgContext.setProperty(
+                MessageContext.TRANSPORT_HEADERS,
+                new CommonsTransportHeaders(request.getResponseHeaders()));
+        msgContext.setProperty(
+                HTTPConstants.MC_HTTP_STATUS_CODE,
+                new Integer(request.getStatusCode()));
+        
+        String contentTypeString = request.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+        if (contentTypeString != null) {
+            ContentType contentType;
+            try {
+                contentType = new ContentType(contentTypeString);
+            } catch (ParseException ex) {
+                throw AxisFault.makeFault(ex);
+            }
+            String charSetEnc = contentType.getParameter(HTTPConstants.CHAR_SET_ENCODING);
+            MessageContext inMessageContext = msgContext.getOperationContext().getMessageContext(
+                    WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (inMessageContext != null) {
+                inMessageContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentTypeString);
+                inMessageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+            } else {
+                // Transport details will be stored in a HashMap so that anybody
+                // interested can
+                // retrieve them
+                Map<String,String> transportInfoMap = new HashMap<String,String>();
+                transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentTypeString);
+                transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+                // the HashMap is stored in the outgoing message.
+                msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
+            }
+        }
+
+        Map<String,String> cookies = request.getCookies();
+        if (cookies != null) {
+            String customCookieId = (String) msgContext.getProperty(Constants.CUSTOM_COOKIE_ID);
+            String cookieString = null;
+            if (customCookieId != null) {
+                cookieString = buildCookieString(cookies, customCookieId);
+            }
+            if (cookieString == null) {
+                cookieString = buildCookieString(cookies, Constants.SESSION_COOKIE);
+            }
+            if (cookieString == null) {
+                cookieString = buildCookieString(cookies, Constants.SESSION_COOKIE_JSESSIONID);
+            }
+            if (cookieString != null) {
+                msgContext.getServiceContext().setProperty(HTTPConstants.COOKIE_STRING, cookieString);
+            }
+        }
+    }
+
+    private String buildCookieString(Map<String,String> cookies, String name) {
+        String value = cookies.get(name);
+        return value == null ? null : name + "=" + value;
     }
 }
