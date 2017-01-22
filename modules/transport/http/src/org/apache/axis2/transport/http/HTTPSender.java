@@ -56,8 +56,8 @@ public abstract class HTTPSender {
 
     private static final Log log = LogFactory.getLog(HTTPSender.class);
     
-    protected boolean chunked = false;
-    protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+    private boolean chunked = false;
+    private String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
     protected TransportOutDescription proxyOutSetting = null;
     protected OMOutputFormat format = new OMOutputFormat();
     

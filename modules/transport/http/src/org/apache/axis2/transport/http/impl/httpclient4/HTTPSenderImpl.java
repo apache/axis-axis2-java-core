@@ -39,7 +39,6 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
@@ -50,14 +49,6 @@ import java.net.URL;
 public class HTTPSenderImpl extends HTTPSender {
 
     private static final Log log = LogFactory.getLog(HTTPSenderImpl.class);
-
-    boolean isChunked() {
-        return chunked;
-    }
-
-    String getHttpVersion() {
-        return httpVersion;
-    }
 
     @Override
     protected Request createRequest(MessageContext msgContext, String methodName, URL url,

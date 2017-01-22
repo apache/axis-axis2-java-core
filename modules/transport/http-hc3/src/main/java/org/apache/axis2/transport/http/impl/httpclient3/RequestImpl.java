@@ -91,9 +91,7 @@ final class RequestImpl implements Request {
                 }
             };
             entityEnclosingMethod.setRequestEntity(new AxisRequestEntityImpl(requestEntity));
-            if (!sender.getHttpVersion().equals(HTTPConstants.HEADER_PROTOCOL_10) && sender.isChunked()) {
-                entityEnclosingMethod.setContentChunked(true);
-            }
+            entityEnclosingMethod.setContentChunked(requestEntity.isChunked());
             method = entityEnclosingMethod;
         }
         method.setPath(url.getPath());

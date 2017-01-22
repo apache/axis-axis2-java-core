@@ -46,14 +46,6 @@ public class HTTPSenderImpl extends HTTPSender {
 
     private static final Log log = LogFactory.getLog(HTTPSenderImpl.class);
 
-    boolean isChunked() {
-        return chunked;
-    }
-
-    String getHttpVersion() {
-        return httpVersion;
-    }
-
     @Override
     protected Request createRequest(MessageContext msgContext, String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
