@@ -143,6 +143,16 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public int getStatusCode() {
+        return response.getStatusLine().getStatusCode();
+    }
+
+    @Override
+    public String getStatusText() {
+        return response.getStatusLine().getReasonPhrase();
+    }
+
+    @Override
     public Header[] getResponseHeaders() {
         return convertHeaders(response.getAllHeaders());
     }
@@ -187,7 +197,7 @@ final class RequestImpl implements Request {
     private void handleResponse() throws IOException {
         boolean cleanup = true;
         try {
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = getStatusCode();
             log.trace("Handling response - " + statusCode);
             boolean processResponse;
             boolean fault;
@@ -203,7 +213,7 @@ final class RequestImpl implements Request {
                 fault = true;
             } else {
                 throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
-                                                        response.getStatusLine().toString()));
+                                                        getStatusText()));
             }
             sender.obtainHTTPHeaderInformation(this, response, msgContext);
             if (processResponse) {
@@ -237,7 +247,7 @@ final class RequestImpl implements Request {
                         throw new AxisFault(Messages.
                                 getMessage("transportError",
                                            String.valueOf(statusCode),
-                                           response.getStatusLine().toString()));
+                                           getStatusText()));
                     }
                 }
             }

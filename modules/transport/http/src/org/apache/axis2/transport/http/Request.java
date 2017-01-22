@@ -31,5 +31,7 @@ public interface Request {
     Header[] getRequestHeaders();
     void enableAuthentication(HTTPAuthenticator authenticator);
     void execute() throws AxisFault;
+    int getStatusCode();
+    String getStatusText();
     Header[] getResponseHeaders();
 }

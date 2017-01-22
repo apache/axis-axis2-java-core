@@ -97,7 +97,7 @@ public class HTTPSenderImpl extends HTTPSender {
         Map transportHeaders = new CommonsTransportHeaders(request.getResponseHeaders());
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, transportHeaders);
         msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
-                               new Integer(response.getStatusLine().getStatusCode()));
+                               new Integer(request.getStatusCode()));
         Header header = response.getFirstHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
         if (header != null) {

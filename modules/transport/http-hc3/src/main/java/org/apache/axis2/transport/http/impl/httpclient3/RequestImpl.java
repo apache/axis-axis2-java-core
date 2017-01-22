@@ -130,6 +130,16 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public int getStatusCode() {
+        return method.getStatusCode();
+    }
+
+    @Override
+    public String getStatusText() {
+        return method.getStatusText();
+    }
+
+    @Override
     public Header[] getResponseHeaders() {
         return convertHeaders(method.getResponseHeaders());
     }
@@ -174,7 +184,7 @@ final class RequestImpl implements Request {
     }
 
     private void handleResponse() throws IOException {
-        int statusCode = method.getStatusCode();
+        int statusCode = getStatusCode();
         log.trace("Handling response - " + statusCode);
         if (statusCode == HttpStatus.SC_ACCEPTED) {
             /* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
@@ -212,14 +222,14 @@ final class RequestImpl implements Request {
 
             if (org.apache.axis2.util.Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
                 throw new AxisFault(Messages.getMessage("transportError",
-                        String.valueOf(statusCode), method.getStatusText()));
+                        String.valueOf(statusCode), getStatusText()));
             }
         } else {
             // Since we don't process the response, we must release the
             // connection immediately
             method.releaseConnection();
             throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
-                    method.getStatusText()));
+                    getStatusText()));
         }
     }
 
