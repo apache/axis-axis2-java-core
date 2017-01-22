@@ -24,10 +24,12 @@ import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.Header;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.NamedValue;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -50,10 +52,39 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 //TODO - It better if we can define these method in a interface move these into AbstractHTTPSender and get rid of this class.
-public abstract class HTTPSender extends AbstractHTTPSender {
+public abstract class HTTPSender {
 
     private static final Log log = LogFactory.getLog(HTTPSender.class);
     
+    protected boolean chunked = false;
+    protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+    protected TransportOutDescription proxyOutSetting = null;
+    protected OMOutputFormat format = new OMOutputFormat();
+    
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
+    }
+
+    public void setHttpVersion(String version) throws AxisFault {
+        if (version != null) {
+            if (HTTPConstants.HEADER_PROTOCOL_11.equals(version)) {
+                this.httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+            } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version)) {
+                this.httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+                // chunked is not possible with HTTP/1.0
+                this.chunked = false;
+            } else {
+                throw new AxisFault(
+                        "Parameter " + HTTPConstants.PROTOCOL_VERSION
+                                + " Can have values only HTTP/1.0 or HTTP/1.1");
+            }
+        }
+    }       
+
+    public void setFormat(OMOutputFormat format) {
+        this.format = format;
+    }
+
     /**
      * Start a new HTTP request.
      *

@@ -22,9 +22,9 @@ package org.apache.axis2.transport.http.impl.httpclient3;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.http.AbstractHTTPSender;
 import org.apache.axis2.transport.http.AbstractHTTPTransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
@@ -55,7 +55,7 @@ public class HTTPClient3TransportSender extends AbstractHTTPTransportSender {
     }
 
     @Override
-    protected AbstractHTTPSender createHTTPSender() {
+    protected HTTPSender createHTTPSender() {
         return new HTTPSenderImpl();
     }
 

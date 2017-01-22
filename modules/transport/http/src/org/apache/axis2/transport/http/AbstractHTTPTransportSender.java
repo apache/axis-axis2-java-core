@@ -356,7 +356,7 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
             URL url = new URL(toEPR.getAddress());
 
             // select the Message Sender depending on the REST status
-            AbstractHTTPSender sender = createHTTPSender();
+            HTTPSender sender = createHTTPSender();
 
             String httpVersion;
             if (messageContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
@@ -392,7 +392,7 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
         }
     }
 
-    protected abstract AbstractHTTPSender createHTTPSender();
+    protected abstract HTTPSender createHTTPSender();
 
     /**
      * @param actionString
