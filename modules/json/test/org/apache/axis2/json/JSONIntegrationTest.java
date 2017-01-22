@@ -80,7 +80,7 @@ public class JSONIntegrationTest implements JSONTestConstants {
 
     @Test
     public void testEchoOMWithJSONBadgerfish() throws Exception{
-    	doEchoOM("application/json/badgerfish", Constants.Configuration.HTTP_METHOD_POST);
+    	doEchoOM("application/json+badgerfish", Constants.Configuration.HTTP_METHOD_POST);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class JSONIntegrationTest implements JSONTestConstants {
     public void testPOJOServiceWithJSONBadgerfish() throws Exception {
         HttpURLConnection conn = (HttpURLConnection)new URL(server.getEndpoint("POJOService")).openConnection();
         conn.setDoOutput(true);
-        conn.addRequestProperty("Content-Type", "application/json/badgerfish");
+        conn.addRequestProperty("Content-Type", "application/json+badgerfish");
         Writer out = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
         // XML is: <sayHello xmlns="http://example.org"><myName>Joe</myName></sayHello>
         out.write("{ \"sayHello\" : { \"@xmlns\" : { \"$\" : \"http://example.org\" }, \"myName\" : { \"$\" : \"Joe\" } } }");

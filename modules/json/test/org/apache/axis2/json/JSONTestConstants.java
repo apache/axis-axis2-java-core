@@ -21,7 +21,7 @@ package org.apache.axis2.json;
 
 public interface JSONTestConstants {
 
-    public static final String CONTENT_TYPE_BADGERFISH = "application/json/badgerfish";
+    public static final String CONTENT_TYPE_BADGERFISH = "application/json+badgerfish";
     
     public static final String CONTENT_TYPE_MAPPED = "application/json";
     
