@@ -29,18 +29,20 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.NamedValue;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.MessageProcessorSelector;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.HttpStatus;
 import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 import javax.xml.namespace.QName;
 
@@ -184,7 +187,81 @@ public abstract class HTTPSender {
             request.enableAuthentication(authenticator);
         }
 
-        request.execute();
+        try {
+            request.execute();
+            boolean cleanup = true;
+            try {
+                int statusCode = request.getStatusCode();
+                log.trace("Handling response - " + statusCode);
+                boolean processResponse;
+                boolean fault;
+                if (statusCode == HttpStatus.SC_ACCEPTED) {
+                    processResponse = false;
+                    fault = false;
+                } else if (statusCode >= 200 && statusCode < 300) {
+                    processResponse = true;
+                    fault = false;
+                } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
+                           || statusCode == HttpStatus.SC_BAD_REQUEST) {
+                    processResponse = true;
+                    fault = true;
+                } else {
+                    throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
+                                                            request.getStatusText()));
+                }
+                obtainHTTPHeaderInformation(request, msgContext);
+                if (processResponse) {
+                    OperationContext opContext = msgContext.getOperationContext();
+                    MessageContext inMessageContext = opContext == null ? null
+                            : opContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                    if (opContext != null) {
+                        InputStream in = request.getResponseContent();
+                        if (in != null) {
+                            String contentEncoding = request.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
+                            if (contentEncoding != null) {
+                                if (contentEncoding.equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
+                                    in = new GZIPInputStream(in);
+                                    // If the content-encoding is identity we can basically ignore
+                                    // it.
+                                } else if (!"identity".equalsIgnoreCase(contentEncoding)) {
+                                    throw new AxisFault("HTTP :" + "unsupported content-encoding of '"
+                                                        + contentEncoding + "' found");
+                                }
+                            }
+                            opContext.setProperty(MessageContext.TRANSPORT_IN, in);
+                            // This implements the behavior of the HTTPClient 3.x based transport in
+                            // Axis2 1.7: if AUTO_RELEASE_CONNECTION is enabled, we set the input stream
+                            // in the message context, but we nevertheless release the connection.
+                            // It is unclear in which situation this would actually be the right thing
+                            // to do.
+                            if (msgContext.isPropertyTrue(HTTPConstants.AUTO_RELEASE_CONNECTION)) {
+                                log.debug("AUTO_RELEASE_CONNECTION enabled; are you sure that you really want that?");
+                            } else {
+                                cleanup = false;
+                            }
+                        }
+                    }
+                    if (fault) {
+                        if (inMessageContext != null) {
+                            inMessageContext.setProcessingFault(true);
+                        }
+                        if (Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
+                            throw new AxisFault(Messages.
+                                    getMessage("transportError",
+                                               String.valueOf(statusCode),
+                                               request.getStatusText()));
+                        }
+                    }
+                }
+            } finally {
+                if (cleanup) {
+                    request.releaseConnection();
+                }
+            }
+        } catch (IOException e) {
+            log.info("Unable to send to url[" + url + "]", e);
+            throw AxisFault.makeFault(e);
+        }
     }   
 
     private void addCustomHeaders(MessageContext msgContext, Request request) {
@@ -309,7 +386,7 @@ public abstract class HTTPSender {
         return userAgentString;
     }
 
-    public void obtainHTTPHeaderInformation(Request request, MessageContext msgContext) throws AxisFault {
+    private void obtainHTTPHeaderInformation(Request request, MessageContext msgContext) throws AxisFault {
         // Set RESPONSE properties onto the REQUEST message context. They will
         // need to be copied off the request context onto
         // the response context elsewhere, for example in the

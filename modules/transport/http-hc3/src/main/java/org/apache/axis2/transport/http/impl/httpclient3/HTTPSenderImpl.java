@@ -19,24 +19,17 @@
 
 package org.apache.axis2.transport.http.impl.httpclient3;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.Request;
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.logging.Log;
@@ -50,33 +43,6 @@ public class HTTPSenderImpl extends HTTPSender {
     protected Request createRequest(MessageContext msgContext, String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
         return new RequestImpl(this, msgContext, methodName, url, requestEntity);
-    }
-
-    protected void processResponse(Request request, HttpMethodBase httpMethod, MessageContext msgContext)
-            throws IOException {
-        obtainHTTPHeaderInformation(request, msgContext);
-
-        InputStream in = httpMethod.getResponseBodyAsStream();
-        if (in == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "InputStream"));
-        }
-        Header contentEncoding = httpMethod
-                .getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
-        if (contentEncoding != null) {
-            if (contentEncoding.getValue().equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
-                in = new GZIPInputStream(in);
-                // If the content-encoding is identity we can basically ignore
-                // it.
-            } else if (!"identity".equalsIgnoreCase(contentEncoding.getValue())) {
-                throw new AxisFault("HTTP :" + "unsupported content-encoding of '"
-                        + contentEncoding.getValue() + "' found");
-            }
-        }
-
-        OperationContext opContext = msgContext.getOperationContext();
-        if (opContext != null) {
-            opContext.setProperty(MessageContext.TRANSPORT_IN, in);
-        }
     }
 
     /**

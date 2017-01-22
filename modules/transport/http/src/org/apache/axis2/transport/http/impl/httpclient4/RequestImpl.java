@@ -26,27 +26,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.axiom.mime.Header;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.Request;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -185,17 +179,13 @@ final class RequestImpl implements Request {
     }
 
     @Override
-    public void execute() throws AxisFault {
-        try {
-            executeMethod();
-            handleResponse();
-        } catch (IOException e) {
-            log.info("Unable to send to url[" + url + "]", e);
-            throw AxisFault.makeFault(e);
-        }
+    public InputStream getResponseContent() throws IOException {
+        HttpEntity entity = response.getEntity();
+        return entity == null ? null : entity.getContent();
     }
 
-    private void executeMethod() throws IOException {
+    @Override
+    public void execute() throws IOException {
         populateHostConfiguration();
 
         // add compression headers if needed
@@ -221,72 +211,8 @@ final class RequestImpl implements Request {
         response = httpClient.execute(httpHost, method, localContext);
     }
 
-    private void handleResponse() throws IOException {
-        boolean cleanup = true;
-        try {
-            int statusCode = getStatusCode();
-            log.trace("Handling response - " + statusCode);
-            boolean processResponse;
-            boolean fault;
-            if (statusCode == HttpStatus.SC_ACCEPTED) {
-                processResponse = false;
-                fault = false;
-            } else if (statusCode >= 200 && statusCode < 300) {
-                processResponse = true;
-                fault = false;
-            } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
-                       || statusCode == HttpStatus.SC_BAD_REQUEST) {
-                processResponse = true;
-                fault = true;
-            } else {
-                throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
-                                                        getStatusText()));
-            }
-            sender.obtainHTTPHeaderInformation(this, msgContext);
-            if (processResponse) {
-                OperationContext opContext = msgContext.getOperationContext();
-                MessageContext inMessageContext = opContext == null ? null
-                        : opContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                if (opContext != null) {
-                    HttpEntity httpEntity = response.getEntity();
-                    if (httpEntity != null) {
-                        InputStream in = httpEntity.getContent();
-                        org.apache.http.Header contentEncoding = httpEntity.getContentEncoding();
-                        if (contentEncoding != null) {
-                            if (contentEncoding.getValue().equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
-                                in = new GZIPInputStream(in);
-                                // If the content-encoding is identity we can basically ignore
-                                // it.
-                            } else if (!"identity".equalsIgnoreCase(contentEncoding.getValue())) {
-                                throw new AxisFault("HTTP :" + "unsupported content-encoding of '"
-                                                    + contentEncoding.getValue() + "' found");
-                            }
-                        }
-                        opContext.setProperty(MessageContext.TRANSPORT_IN, in);
-                        cleanup = false;
-                    }
-                }
-                if (fault) {
-                    if (inMessageContext != null) {
-                        inMessageContext.setProcessingFault(true);
-                    }
-                    if (Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
-                        throw new AxisFault(Messages.
-                                getMessage("transportError",
-                                           String.valueOf(statusCode),
-                                           getStatusText()));
-                    }
-                }
-            }
-        } finally {
-            if (cleanup) {
-                cleanup(response);
-            }
-        }
-
-    }
-
-    private void cleanup(HttpResponse response) {
+    @Override
+    public void releaseConnection() {
         log.trace("Cleaning response : " + response);
         HttpEntity entity = response.getEntity();
         if (entity != null) {
