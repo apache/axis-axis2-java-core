@@ -71,6 +71,7 @@ final class RequestImpl implements Request {
     protected final HttpRequestBase method;
     protected final AbstractHttpClient httpClient;
     private final HttpHost httpHost;
+    private HttpResponse response;
 
     RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, final String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
@@ -141,14 +142,15 @@ final class RequestImpl implements Request {
     @Override
     public void execute() throws AxisFault {
         try {
-            handleResponse(executeMethod());
+            executeMethod();
+            handleResponse();
         } catch (IOException e) {
             log.info("Unable to send to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
     }
 
-    private HttpResponse executeMethod() throws IOException {
+    private void executeMethod() throws IOException {
         populateHostConfiguration();
 
         // add compression headers if needed
@@ -171,11 +173,10 @@ final class RequestImpl implements Request {
         sender.setTimeouts(msgContext, method);
         HttpContext localContext = new BasicHttpContext();
         // Why do we have add context here
-        return httpClient.execute(httpHost, method, localContext);
+        response = httpClient.execute(httpHost, method, localContext);
     }
 
-    private void handleResponse(HttpResponse response)
-            throws IOException {
+    private void handleResponse() throws IOException {
         boolean cleanup = true;
         try {
             int statusCode = response.getStatusLine().getStatusCode();
