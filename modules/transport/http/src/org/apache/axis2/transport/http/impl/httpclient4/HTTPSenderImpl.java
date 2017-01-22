@@ -26,6 +26,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.AxisRequestEntity;
+import org.apache.axis2.transport.http.CommonsTransportHeaders;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.Request;
@@ -87,13 +88,13 @@ public class HTTPSenderImpl extends HTTPSender {
      *                   NOT!
      * @throws AxisFault if problems occur
      */
-    protected void obtainHTTPHeaderInformation(HttpResponse response, MessageContext msgContext)
+    protected void obtainHTTPHeaderInformation(Request request, HttpResponse response, MessageContext msgContext)
             throws AxisFault {
         // Set RESPONSE properties onto the REQUEST message context. They will
         // need to be copied off the request context onto
         // the response context elsewhere, for example in the
         // OutInOperationClient.
-        Map transportHeaders = new HTTPTransportHeaders(response.getAllHeaders());
+        Map transportHeaders = new CommonsTransportHeaders(request.getResponseHeaders());
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, transportHeaders);
         msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
                                new Integer(response.getStatusLine().getStatusCode()));

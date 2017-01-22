@@ -129,14 +129,22 @@ final class RequestImpl implements Request {
         method.addHeader(name, value);
     }
 
-    @Override
-    public Header[] getRequestHeaders() {
-        org.apache.http.Header[] headers = method.getAllHeaders();
+    private static Header[] convertHeaders(org.apache.http.Header[] headers) {
         Header[] result = new Header[headers.length];
         for (int i=0; i<headers.length; i++) {
             result[i] = new Header(headers[i].getName(), headers[i].getValue());
         }
         return result;
+    }
+
+    @Override
+    public Header[] getRequestHeaders() {
+        return convertHeaders(method.getAllHeaders());
+    }
+
+    @Override
+    public Header[] getResponseHeaders() {
+        return convertHeaders(response.getAllHeaders());
     }
 
     @Override
@@ -197,7 +205,7 @@ final class RequestImpl implements Request {
                 throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
                                                         response.getStatusLine().toString()));
             }
-            sender.obtainHTTPHeaderInformation(response, msgContext);
+            sender.obtainHTTPHeaderInformation(this, response, msgContext);
             if (processResponse) {
                 OperationContext opContext = msgContext.getOperationContext();
                 MessageContext inMessageContext = opContext == null ? null

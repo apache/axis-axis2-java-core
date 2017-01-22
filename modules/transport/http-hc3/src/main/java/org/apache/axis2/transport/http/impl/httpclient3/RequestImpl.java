@@ -116,14 +116,22 @@ final class RequestImpl implements Request {
         method.addRequestHeader(name, value);
     }
 
-    @Override
-    public Header[] getRequestHeaders() {
-        org.apache.commons.httpclient.Header[] headers = method.getRequestHeaders();
+    private static Header[] convertHeaders(org.apache.commons.httpclient.Header[] headers) {
         Header[] result = new Header[headers.length];
         for (int i=0; i<headers.length; i++) {
             result[i] = new Header(headers[i].getName(), headers[i].getValue());
         }
         return result;
+    }
+
+    @Override
+    public Header[] getRequestHeaders() {
+        return convertHeaders(method.getRequestHeaders());
+    }
+
+    @Override
+    public Header[] getResponseHeaders() {
+        return convertHeaders(method.getResponseHeaders());
     }
 
     @Override
@@ -172,13 +180,13 @@ final class RequestImpl implements Request {
             /* When an HTTP 202 Accepted code has been received, this will be the case of an execution 
              * of an in-only operation. In such a scenario, the HTTP response headers should be returned,
              * i.e. session cookies. */
-            sender.obtainHTTPHeaderInformation(method, msgContext);
+            sender.obtainHTTPHeaderInformation(this, method, msgContext);
             // Since we don't expect any content with a 202 response, we must release the connection
             method.releaseConnection();            
         } else if (statusCode >= 200 && statusCode < 300) {
             // Save the HttpMethod so that we can release the connection when cleaning up
             msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-            sender.processResponse(method, msgContext);
+            sender.processResponse(this, method, msgContext);
         } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
                 || statusCode == HttpStatus.SC_BAD_REQUEST) {
             // Save the HttpMethod so that we can release the connection when
@@ -199,7 +207,7 @@ final class RequestImpl implements Request {
             }
             if (value != null) {
 
-                sender.processResponse(method, msgContext);
+                sender.processResponse(this, method, msgContext);
             }
 
             if (org.apache.axis2.util.Utils.isClientThreadNonBlockingPropertySet(msgContext)) {
