@@ -28,6 +28,11 @@
 <body>
 <h1>Using the SOAP Monitor</h1>
 
+<p><b>Warning: the SOAP Monitor uses a protocol based on Java serialization
+and is therefore vulnerable to attacks. It should be used exclusively as a
+development and debugging tool, but never be permanently enabled on production
+systems.</b></p>
+
 <p>Web service developers often want to see the SOAP messages that are being
 used to invoke the Web services, along with the results of those messages.
 The goal of the SOAP Monitor utility is to provide a way for the developers
