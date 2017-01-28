@@ -46,14 +46,14 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.impl.auth.NTLMSchemeFactory;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.util.EntityUtils;
 
 final class RequestImpl implements Request {
@@ -61,15 +61,16 @@ final class RequestImpl implements Request {
     
     private static final Log log = LogFactory.getLog(RequestImpl.class);
     
-    private final AbstractHttpClient httpClient;
+    private final HttpClient httpClient;
     private final MessageContext msgContext;
     private final URL url;
     private final HttpRequestBase method;
     private final HttpHost httpHost;
     private final RequestConfig.Builder requestConfig = RequestConfig.custom();
+    private final HttpClientContext clientContext = HttpClientContext.create();
     private HttpResponse response;
 
-    RequestImpl(AbstractHttpClient httpClient, MessageContext msgContext, final String methodName, URL url,
+    RequestImpl(HttpClient httpClient, MessageContext msgContext, final String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
         this.httpClient = httpClient;
         this.msgContext = msgContext;
@@ -206,9 +207,7 @@ final class RequestImpl implements Request {
 
         method.setConfig(requestConfig.build());
 
-        HttpContext localContext = new BasicHttpContext();
-        // Why do we have add context here
-        response = httpClient.execute(httpHost, method, localContext);
+        response = httpClient.execute(httpHost, method, clientContext);
     }
 
     @Override
@@ -238,7 +237,7 @@ final class RequestImpl implements Request {
             if (log.isDebugEnabled()) {
                 log.debug("Configuring HTTP proxy.");
             }
-            HTTPProxyConfigurator.configure(msgContext, httpClient, requestConfig);
+            HTTPProxyConfigurator.configure(msgContext, requestConfig, clientContext);
         }
     }
 
@@ -263,35 +262,35 @@ final class RequestImpl implements Request {
 
         // TODO : Set preemptive authentication, but its not recommended in HC 4
 
+        CredentialsProvider credsProvider = clientContext.getCredentialsProvider();
+        if (credsProvider == null) {
+            credsProvider = new BasicCredentialsProvider();
+            clientContext.setCredentialsProvider(credsProvider);
+        }
         if (host != null) {
             if (domain != null) {
                 /* Credentials for NTLM Authentication */
-                httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
                 creds = new NTCredentials(username, password, host, domain);
             } else {
                 /* Credentials for Digest and Basic Authentication */
                 creds = new UsernamePasswordCredentials(username, password);
             }
-            httpClient.getCredentialsProvider().
-                    setCredentials(new AuthScope(host, port, realm), creds);
+            credsProvider.setCredentials(new AuthScope(host, port, realm), creds);
         } else {
             if (domain != null) {
                 /*
                  * Credentials for NTLM Authentication when host is
                  * ANY_HOST
                  */
-                httpClient.getAuthSchemes().register("ntlm",new NTLMSchemeFactory());
                 creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
-                httpClient.getCredentialsProvider().
-                        setCredentials(new AuthScope(AuthScope.ANY_HOST, port, realm),
-                                       creds);
+                credsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, port, realm), creds);
             } else {
                 /* Credentials only for Digest and Basic Authentication */
                 creds = new UsernamePasswordCredentials(username, password);
-                httpClient.getCredentialsProvider().
-                        setCredentials(new AuthScope(AuthScope.ANY), creds);
+                credsProvider.setCredentials(new AuthScope(AuthScope.ANY), creds);
             }
         }
+        
         /* Customizing the priority Order */
         List schemes = authenticator.getAuthSchemes();
         if (schemes != null && schemes.size() > 0) {

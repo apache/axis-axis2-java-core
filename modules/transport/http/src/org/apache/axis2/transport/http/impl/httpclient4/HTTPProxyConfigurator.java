@@ -33,8 +33,12 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -57,12 +61,14 @@ public class HTTPProxyConfigurator {
      *
      * @param messageContext
      *            in message context for
-     * @param httpClient
-     *            instance
+     * @param requestConfig
+     *            the request configuration to fill in
+     * @param clientContext
+     *            the HTTP client context
      * @throws org.apache.axis2.AxisFault
      *             if Proxy settings are invalid
      */
-    public static void configure(MessageContext messageContext, AbstractHttpClient httpClient, RequestConfig.Builder requestConfig)
+    public static void configure(MessageContext messageContext, RequestConfig.Builder requestConfig, HttpClientContext clientContext)
             throws AxisFault {
 
         Credentials proxyCredentials = null;
@@ -142,8 +148,12 @@ public class HTTPProxyConfigurator {
         if (proxyCredentials != null) {
             // TODO : Set preemptive authentication, but its not recommended in HC 4
             requestConfig.setAuthenticationEnabled(true);
-
-            httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, proxyCredentials);
+            CredentialsProvider credsProvider = clientContext.getCredentialsProvider();
+            if (credsProvider == null) {
+                credsProvider = new BasicCredentialsProvider();
+                clientContext.setCredentialsProvider(credsProvider);
+            }
+            credsProvider.setCredentials(AuthScope.ANY, proxyCredentials);
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
             requestConfig.setProxy(proxy);
 

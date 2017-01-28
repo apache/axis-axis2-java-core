@@ -28,15 +28,15 @@ import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.client.HttpClient;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import java.net.URL;
 
@@ -50,14 +50,14 @@ public class HTTPSenderImpl extends HTTPSender {
         return new RequestImpl(getHttpClient(msgContext), msgContext, methodName, url, requestEntity);
     }
 
-    private AbstractHttpClient getHttpClient(MessageContext msgContext) {
+    private HttpClient getHttpClient(MessageContext msgContext) {
         ConfigurationContext configContext = msgContext.getConfigurationContext();
 
-        AbstractHttpClient httpClient = (AbstractHttpClient) msgContext
+        HttpClient httpClient = (HttpClient) msgContext
                 .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
 
         if (httpClient == null) {
-            httpClient = (AbstractHttpClient) configContext.
+            httpClient = (HttpClient) configContext.
                     getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
         }
 
@@ -66,11 +66,11 @@ public class HTTPSenderImpl extends HTTPSender {
         }
 
         synchronized (this) {
-            httpClient = (AbstractHttpClient) msgContext.
+            httpClient = (HttpClient) msgContext.
                     getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
 
             if (httpClient == null) {
-                httpClient = (AbstractHttpClient) configContext
+                httpClient = (HttpClient) configContext
                         .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
             }
 
@@ -78,28 +78,27 @@ public class HTTPSenderImpl extends HTTPSender {
                 return httpClient;
             }
 
-            ClientConnectionManager connManager = (ClientConnectionManager) msgContext
+            HttpClientConnectionManager connManager = (HttpClientConnectionManager) msgContext
                     .getProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
             if (connManager == null) {
-                connManager = (ClientConnectionManager) msgContext
+                connManager = (HttpClientConnectionManager) msgContext
                         .getProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
             }
             if (connManager == null) {
                 // reuse HttpConnectionManager
                 synchronized (configContext) {
-                    connManager = (ClientConnectionManager) configContext
+                    connManager = (HttpClientConnectionManager) configContext
                             .getProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
                     if (connManager == null) {
                         log.trace("Making new ConnectionManager");
-                        SchemeRegistry schemeRegistry = new SchemeRegistry();
-                        schemeRegistry.register(
-                                new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-                        schemeRegistry.register(
-                                new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
+                        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+                                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                                .register("https", SSLConnectionSocketFactory.getSocketFactory())
+                                .build();
 
-                        connManager = new PoolingClientConnectionManager(schemeRegistry);
-                        ((PoolingClientConnectionManager)connManager).setMaxTotal(200);
-                        ((PoolingClientConnectionManager)connManager).setDefaultMaxPerRoute(200);
+                        connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+                        ((PoolingHttpClientConnectionManager)connManager).setMaxTotal(200);
+                        ((PoolingHttpClientConnectionManager)connManager).setDefaultMaxPerRoute(200);
                         configContext.setProperty(
                                 HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, connManager);
                     }
@@ -109,12 +108,10 @@ public class HTTPSenderImpl extends HTTPSender {
              * Create a new instance of HttpClient since the way it is used here
              * it's not fully thread-safe.
              */
-            httpClient = new DefaultHttpClient(connManager);
-
-            //We don't need to set timeout for connection manager, since we are doing it below
-            // and its enough
-
-            return httpClient;
+            return HttpClientBuilder.create()
+                    .setConnectionManager(connManager)
+                    .setConnectionManagerShared(true)
+                    .build();
         }
     }
 
