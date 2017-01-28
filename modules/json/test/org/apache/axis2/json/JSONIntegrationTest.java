@@ -30,6 +30,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.ClientHelper;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -46,6 +47,9 @@ public class JSONIntegrationTest implements JSONTestConstants {
 
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/json");
+
+    @ClassRule
+    public static ClientHelper clientHelper = new ClientHelper(server);
 
     protected OMElement createEnvelope() throws Exception {
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -64,15 +68,12 @@ public class JSONIntegrationTest implements JSONTestConstants {
 
     private void doEchoOM(String messageType, String httpMethod) throws Exception{
     	OMElement payload = createEnvelope();
-        Options options = new Options();
-        options.setTo(server.getEndpointReference("EchoXMLService"));
+        ServiceClient sender = clientHelper.createServiceClient("EchoXMLService");
+        Options options = sender.getOptions();
         options.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setProperty(Constants.Configuration.HTTP_METHOD, httpMethod);
-//        ConfigurationContext clientConfigurationContext = ConfigurationContextFactory.createDefaultConfigurationContext();
-        ServiceClient sender = new ServiceClient(server.getConfigurationContext(), null);
         options.setAction(null);
-        sender.setOptions(options);
         OMElement result = sender.sendReceive(payload);
         OMElement ele = (OMElement)result.getFirstOMChild();
         compareWithCreatedOMText(ele.getText());

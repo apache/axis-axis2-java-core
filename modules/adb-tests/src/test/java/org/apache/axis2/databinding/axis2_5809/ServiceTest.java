@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.ClientHelper;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -30,9 +31,12 @@ public class ServiceTest {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/AXIS2-5809");
     
+    @ClassRule
+    public static ClientHelper clientHelper = new ClientHelper(server);
+    
     @Test
     public void testWithNormalResponse() throws Exception {
-        EchoServiceStub stub = new EchoServiceStub(server.getConfigurationContext(), server.getEndpoint("EchoService"));
+        EchoServiceStub stub = clientHelper.createStub(EchoServiceStub.class, "EchoService");
         for (int i=0; i<500; i++) {
             Echo request = new Echo();
             request.setContent("test");
@@ -42,7 +46,7 @@ public class ServiceTest {
     
     @Test
     public void testWithFault() throws Exception {
-        EchoServiceStub stub = new EchoServiceStub(server.getConfigurationContext(), server.getEndpoint("EchoService"));
+        EchoServiceStub stub = clientHelper.createStub(EchoServiceStub.class, "EchoService");
         for (int i=0; i<500; i++) {
             Echo request = new Echo();
             request.setContent("");
