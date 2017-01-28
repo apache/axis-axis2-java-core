@@ -21,20 +21,22 @@ package org.apache.axis2.testutils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.junit.rules.ExternalResource;
 
-public class Axis2Server extends ExternalResource {
-    private final String repositoryPath;
+public class Axis2Server extends AbstractAxis2Server {
     private int port = -1;
-    private ConfigurationContext configurationContext;
     private SimpleHTTPServer server;
 
     public Axis2Server(String repositoryPath) {
-        this.repositoryPath = repositoryPath;
+        super(repositoryPath);
     }
 
+    @Override
+    public boolean isSecure() {
+        return false;
+    }
+
+    @Override
     public int getPort() {
         if (port == -1) {
             throw new IllegalStateException();
@@ -42,34 +44,26 @@ public class Axis2Server extends ExternalResource {
         return port;
     }
 
-    public ConfigurationContext getConfigurationContext() {
-        if (configurationContext == null) {
-            throw new IllegalStateException();
-        }
-        return configurationContext;
-    }
-
+    @Override
     public String getEndpoint(String serviceName) throws AxisFault {
         return getEndpointReference(serviceName).getAddress();
     }
 
+    @Override
     public EndpointReference getEndpointReference(String serviceName) throws AxisFault {
         return server.getEPRForService(serviceName, "localhost");
     }
 
     @Override
-    protected void before() throws Throwable {
+    protected void startServer(ConfigurationContext configurationContext) throws Throwable {
         port = PortAllocator.allocatePort();
-        configurationContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
         server = new SimpleHTTPServer(configurationContext, port);
         server.start();
     }
 
     @Override
-    protected void after() {
+    protected void stopServer() {
         port = -1;
-        configurationContext = null;
         server.stop();
         server = null;
     }
