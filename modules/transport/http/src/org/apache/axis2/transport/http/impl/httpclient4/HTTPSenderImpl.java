@@ -55,47 +55,6 @@ public class HTTPSenderImpl extends HTTPSender {
         return new RequestImpl(this, msgContext, methodName, url, requestEntity);
     }
 
-    /**
-     * This is used to get the dynamically set time out values from the message
-     * context. If the values are not available or invalid then the default
-     * values or the values set by the configuration will be used
-     *
-     * @param msgContext the active MessageContext
-     * @param httpClient
-     */
-    protected void initializeTimeouts(MessageContext msgContext, AbstractHttpClient httpClient) {
-        // If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
-        // override the static config
-        Integer tempSoTimeoutProperty = (Integer) msgContext.getProperty(HTTPConstants.SO_TIMEOUT);
-        Integer tempConnTimeoutProperty = (Integer) msgContext
-                .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
-        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
-
-        if (tempConnTimeoutProperty != null) {
-            int connectionTimeout = tempConnTimeoutProperty.intValue();
-            // timeout for initial connection
-            httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
-                                                connectionTimeout);
-        } else {
-            // set timeout in client
-            if (timeout > 0) {
-                httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
-                                                    (int) timeout);
-            }
-        }
-
-        if (tempSoTimeoutProperty != null) {
-            int soTimeout = tempSoTimeoutProperty.intValue();
-            // SO_TIMEOUT -- timeout for blocking reads
-            httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, soTimeout);
-        } else {
-            // set timeout in client
-            if (timeout > 0) {
-                httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, (int) timeout);
-            }
-        }
-    }
-
     protected AbstractHttpClient getHttpClient(MessageContext msgContext) {
         ConfigurationContext configContext = msgContext.getConfigurationContext();
 
@@ -161,9 +120,6 @@ public class HTTPSenderImpl extends HTTPSender {
 
             //We don't need to set timeout for connection manager, since we are doing it below
             // and its enough
-
-            // Get the timeout values set in the runtime
-            initializeTimeouts(msgContext, httpClient);
 
             return httpClient;
         }
