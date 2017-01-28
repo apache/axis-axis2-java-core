@@ -29,7 +29,6 @@ import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -38,10 +37,6 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
 
 import java.net.URL;
 
@@ -114,9 +109,7 @@ public class HTTPSenderImpl extends HTTPSender {
              * Create a new instance of HttpClient since the way it is used here
              * it's not fully thread-safe.
              */
-            HttpParams clientParams = new BasicHttpParams();
-            clientParams.setParameter(CoreProtocolPNames.HTTP_ELEMENT_CHARSET, "UTF-8");
-            httpClient = new DefaultHttpClient(connManager, clientParams);
+            httpClient = new DefaultHttpClient(connManager);
 
             //We don't need to set timeout for connection manager, since we are doing it below
             // and its enough

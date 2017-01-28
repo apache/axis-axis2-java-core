@@ -46,17 +46,12 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.auth.NTLMSchemeFactory;
 import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -204,15 +199,9 @@ final class RequestImpl implements Request {
                              HTTPConstants.COMPRESSION_GZIP);
         }
 
-        if (msgContext.getProperty(HTTPConstants.HTTP_METHOD_PARAMS) != null) {
-            HttpParams params = (HttpParams) msgContext
-                    .getProperty(HTTPConstants.HTTP_METHOD_PARAMS);
-            method.setParams(params);
-        }
-
         String cookiePolicy = (String) msgContext.getProperty(HTTPConstants.COOKIE_POLICY);
         if (cookiePolicy != null) {
-            method.getParams().setParameter(ClientPNames.COOKIE_POLICY, cookiePolicy);
+            requestConfig.setCookieSpec(cookiePolicy);
         }
 
         method.setConfig(requestConfig.build());
@@ -249,7 +238,7 @@ final class RequestImpl implements Request {
             if (log.isDebugEnabled()) {
                 log.debug("Configuring HTTP proxy.");
             }
-            HTTPProxyConfigurator.configure(msgContext, httpClient);
+            HTTPProxyConfigurator.configure(msgContext, httpClient, requestConfig);
         }
     }
 
@@ -260,7 +249,7 @@ final class RequestImpl implements Request {
      */
     @Override
     public void enableAuthentication(HTTPAuthenticator authenticator) {
-        method.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
+        requestConfig.setAuthenticationEnabled(true);
 
         String username = authenticator.getUsername();
         String password = authenticator.getPassword();
@@ -316,7 +305,7 @@ final class RequestImpl implements Request {
                 authPrefs.add(authenticator.getAuthPolicyPref(scheme));
 
             }
-            httpClient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authPrefs);
+            requestConfig.setTargetPreferredAuthSchemes(authPrefs);
         }
     }
 }

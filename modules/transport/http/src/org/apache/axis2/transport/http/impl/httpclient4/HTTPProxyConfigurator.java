@@ -33,8 +33,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.AbstractHttpClient;
 
 import javax.xml.namespace.QName;
@@ -63,7 +62,7 @@ public class HTTPProxyConfigurator {
      * @throws org.apache.axis2.AxisFault
      *             if Proxy settings are invalid
      */
-    public static void configure(MessageContext messageContext, AbstractHttpClient httpClient)
+    public static void configure(MessageContext messageContext, AbstractHttpClient httpClient, RequestConfig.Builder requestConfig)
             throws AxisFault {
 
         Credentials proxyCredentials = null;
@@ -142,11 +141,11 @@ public class HTTPProxyConfigurator {
 
         if (proxyCredentials != null) {
             // TODO : Set preemptive authentication, but its not recommended in HC 4
-            httpClient.getParams().setParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
+            requestConfig.setAuthenticationEnabled(true);
 
             httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, proxyCredentials);
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            requestConfig.setProxy(proxy);
 
         }
     }
