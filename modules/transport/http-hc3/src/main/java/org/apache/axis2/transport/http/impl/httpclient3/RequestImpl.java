@@ -56,19 +56,17 @@ final class RequestImpl implements Request {
 
     private static final Log log = LogFactory.getLog(RequestImpl.class);
 
-    protected final HTTPSenderImpl sender;
-    protected final MessageContext msgContext;
-    protected final URL url;
-    protected final HttpMethodBase method;
-    protected final HttpClient httpClient;
+    private final HttpClient httpClient;
+    private final MessageContext msgContext;
+    private final URL url;
+    private final HttpMethodBase method;
     private final HostConfiguration config;
 
-    RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, final String methodName, URL url,
+    RequestImpl(HttpClient httpClient, MessageContext msgContext, final String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
-        this.sender = sender;
+        this.httpClient = httpClient;
         this.msgContext = msgContext;
         this.url = url;
-        httpClient = sender.getHttpClient(msgContext);
         if (requestEntity == null) {
             method = new HttpMethodBase() {
                 @Override
@@ -219,7 +217,7 @@ final class RequestImpl implements Request {
      * @throws AxisFault
      *             if problems occur
      */
-    protected void populateHostConfiguration() throws AxisFault {
+    private void populateHostConfiguration() throws AxisFault {
 
         int port = url.getPort();
 

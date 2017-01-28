@@ -65,20 +65,18 @@ final class RequestImpl implements Request {
     
     private static final Log log = LogFactory.getLog(RequestImpl.class);
     
-    protected final HTTPSenderImpl sender;
-    protected final MessageContext msgContext;
-    protected final URL url;
-    protected final HttpRequestBase method;
-    protected final AbstractHttpClient httpClient;
+    private final AbstractHttpClient httpClient;
+    private final MessageContext msgContext;
+    private final URL url;
+    private final HttpRequestBase method;
     private final HttpHost httpHost;
     private HttpResponse response;
 
-    RequestImpl(HTTPSenderImpl sender, MessageContext msgContext, final String methodName, URL url,
+    RequestImpl(AbstractHttpClient httpClient, MessageContext msgContext, final String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
-        this.sender = sender;
+        this.httpClient = httpClient;
         this.msgContext = msgContext;
         this.url = url;
-        httpClient = sender.getHttpClient(msgContext);
         if (requestEntity == null) {
             method = new HttpRequestBase() {
                 @Override

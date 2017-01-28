@@ -41,10 +41,10 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request createRequest(MessageContext msgContext, String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
-        return new RequestImpl(this, msgContext, methodName, url, requestEntity);
+        return new RequestImpl(getHttpClient(msgContext), msgContext, methodName, url, requestEntity);
     }
 
-    protected HttpClient getHttpClient(MessageContext msgContext) {
+    private HttpClient getHttpClient(MessageContext msgContext) {
         ConfigurationContext configContext = msgContext.getConfigurationContext();
 
         HttpClient httpClient = (HttpClient) msgContext
