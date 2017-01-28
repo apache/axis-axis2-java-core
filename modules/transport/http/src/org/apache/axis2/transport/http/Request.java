@@ -33,6 +33,8 @@ public interface Request {
     void addHeader(String name, String value);
     Header[] getRequestHeaders();
     void enableAuthentication(HTTPAuthenticator authenticator);
+    void setConnectionTimeout(int timeout);
+    void setSocketTimeout(int timeout);
     void execute() throws IOException;
     int getStatusCode();
     String getStatusText();

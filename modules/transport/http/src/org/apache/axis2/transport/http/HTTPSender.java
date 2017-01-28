@@ -187,6 +187,8 @@ public abstract class HTTPSender {
             request.enableAuthentication(authenticator);
         }
 
+        setTimeouts(msgContext, request);
+
         try {
             request.execute();
             boolean cleanup = true;
@@ -384,6 +386,40 @@ public abstract class HTTPSender {
         }
     
         return userAgentString;
+    }
+
+    /**
+     * This is used to get the dynamically set time out values from the message
+     * context. If the values are not available or invalid then the default
+     * values or the values set by the configuration will be used
+     * 
+     * @param msgContext
+     *            the active MessageContext
+     * @param request
+     *            request
+     */
+    private void setTimeouts(MessageContext msgContext, Request request) {
+        // If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
+        // override the static config
+        Integer tempSoTimeoutProperty = (Integer) msgContext.getProperty(HTTPConstants.SO_TIMEOUT);
+        Integer tempConnTimeoutProperty = (Integer) msgContext
+                .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
+
+        if (tempConnTimeoutProperty != null) {
+            // timeout for initial connection
+            request.setConnectionTimeout(tempConnTimeoutProperty);
+        }
+
+        if (tempSoTimeoutProperty != null) {
+            // SO_TIMEOUT -- timeout for blocking reads
+            request.setSocketTimeout(tempSoTimeoutProperty);
+        } else {
+            // set timeout in client
+            if (timeout > 0) {
+                request.setSocketTimeout((int) timeout);
+            }
+        }
     }
 
     private void obtainHTTPHeaderInformation(Request request, MessageContext msgContext) throws AxisFault {

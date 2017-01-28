@@ -130,6 +130,16 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public void setConnectionTimeout(int timeout) {
+        method.getParams().setParameter("http.connection.timeout", timeout);
+    }
+
+    @Override
+    public void setSocketTimeout(int timeout) {
+        method.getParams().setSoTimeout(timeout);
+    }
+
+    @Override
     public int getStatusCode() {
         return method.getStatusCode();
     }
@@ -192,8 +202,6 @@ final class RequestImpl implements Request {
             method.getParams().setCookiePolicy(cookiePolicy);
         }
         HttpState httpState = (HttpState) msgContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);
-
-        sender.setTimeouts(msgContext, method);
 
         httpClient.executeMethod(config, method, httpState);
     }

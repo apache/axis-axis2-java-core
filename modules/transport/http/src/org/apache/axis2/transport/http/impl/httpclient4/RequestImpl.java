@@ -53,6 +53,7 @@ import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.auth.NTLMSchemeFactory;
 import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
@@ -142,6 +143,16 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public void setConnectionTimeout(int timeout) {
+        method.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
+    }
+
+    @Override
+    public void setSocketTimeout(int timeout) {
+        method.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+    }
+
+    @Override
     public int getStatusCode() {
         return response.getStatusLine().getStatusCode();
     }
@@ -205,7 +216,6 @@ final class RequestImpl implements Request {
             method.getParams().setParameter(ClientPNames.COOKIE_POLICY, cookiePolicy);
         }
 
-        sender.setTimeouts(msgContext, method);
         HttpContext localContext = new BasicHttpContext();
         // Why do we have add context here
         response = httpClient.execute(httpHost, method, localContext);
