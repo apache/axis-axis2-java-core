@@ -47,6 +47,7 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
@@ -70,6 +71,7 @@ final class RequestImpl implements Request {
     private final URL url;
     private final HttpRequestBase method;
     private final HttpHost httpHost;
+    private final RequestConfig.Builder requestConfig = RequestConfig.custom();
     private HttpResponse response;
 
     RequestImpl(AbstractHttpClient httpClient, MessageContext msgContext, final String methodName, URL url,
@@ -113,8 +115,7 @@ final class RequestImpl implements Request {
 
     @Override
     public void enableHTTP10() {
-        httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
-                HttpVersion.HTTP_1_0);
+        method.setProtocolVersion(HttpVersion.HTTP_1_0);
     }
 
     @Override
@@ -142,12 +143,12 @@ final class RequestImpl implements Request {
 
     @Override
     public void setConnectionTimeout(int timeout) {
-        method.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
+        requestConfig.setConnectTimeout(timeout);
     }
 
     @Override
     public void setSocketTimeout(int timeout) {
-        method.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+        requestConfig.setSocketTimeout(timeout);
     }
 
     @Override
@@ -213,6 +214,8 @@ final class RequestImpl implements Request {
         if (cookiePolicy != null) {
             method.getParams().setParameter(ClientPNames.COOKIE_POLICY, cookiePolicy);
         }
+
+        method.setConfig(requestConfig.build());
 
         HttpContext localContext = new BasicHttpContext();
         // Why do we have add context here
