@@ -155,12 +155,10 @@
                                 <artifact>
                                     <groupId>org.apache.httpcomponents</groupId>
                                     <artifactId>httpcore-osgi</artifactId>
-                                    <version>4.2.1</version>
                                 </artifact>
                                 <artifact>
                                     <groupId>org.apache.httpcomponents</groupId>
                                     <artifactId>httpclient-osgi</artifactId>
-                                    <version>4.2.1</version>
                                 </artifact>
                             </artifacts>
                             <paxExam>${exam.version}</paxExam>
