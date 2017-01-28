@@ -31,6 +31,8 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Random;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -71,12 +73,9 @@ public class JettyServer extends AbstractAxis2Server {
     
     private final boolean secure;
     private File keyStoreFile;
-    private File trustStoreFile;
+    private SSLContext clientSslContext;
+    private SslContextFactory serverSslContextFactory;
     private Server server;
-    private boolean systemPropertiesSet;
-    private String savedTrustStore;
-    private String savedTrustStorePassword;
-    private String savedTrustStoreType;
     
     /**
      * Constructor.
@@ -108,6 +107,64 @@ public class JettyServer extends AbstractAxis2Server {
         }
     }
     
+    private void generateKeys() throws Exception {
+        SecureRandom random = new SecureRandom();
+        
+        // Generate key pair
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(1024, random);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+        
+        // Generate certificate
+        X500Name dn = new X500Name("cn=localhost,o=Apache");
+        BigInteger serial = BigInteger.valueOf(random.nextInt());
+        Date notBefore = new Date();
+        Date notAfter = new Date(notBefore.getTime() + 3600000L);
+        SubjectPublicKeyInfo subPubKeyInfo =  SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+        X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(dn, serial, notBefore, notAfter, dn, subPubKeyInfo);
+        X509CertificateHolder certHolder = certBuilder.build(new JcaContentSignerBuilder("SHA1WithRSA").build(privateKey));
+        X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHolder);
+        
+        // Build key store
+        keyStoreFile = File.createTempFile("keystore", "jks", null);
+        String keyStorePassword = generatePassword(random);
+        String keyPassword = generatePassword(random);
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(null, null);
+        keyStore.setKeyEntry(CERT_ALIAS, privateKey, keyPassword.toCharArray(), new X509Certificate[] { cert });
+        writeKeyStore(keyStore, keyStoreFile, keyStorePassword);
+        
+        // Build trust store
+        KeyStore trustStore = KeyStore.getInstance("JKS");
+        trustStore.load(null, null);
+        trustStore.setCertificateEntry(CERT_ALIAS, cert);
+        
+        serverSslContextFactory = new SslContextFactory();
+        serverSslContextFactory.setKeyStorePath(keyStoreFile.getAbsolutePath());
+        serverSslContextFactory.setKeyStorePassword(keyStorePassword);
+        serverSslContextFactory.setKeyManagerPassword(keyPassword);
+        serverSslContextFactory.setCertAlias(CERT_ALIAS);
+        
+        clientSslContext = SSLContext.getInstance("TLS");
+        TrustManagerFactory tmfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmfactory.init(trustStore);
+        clientSslContext.init(null, tmfactory.getTrustManagers(), null);
+    }
+    
+    @Override
+    public SSLContext getClientSSLContext() throws Exception {
+        if (secure) {
+            if (clientSslContext == null) {
+                generateKeys();
+            }
+            return clientSslContext;
+        } else {
+            return null;
+        }
+    }
+
     @Override
     protected void startServer(final ConfigurationContext configurationContext) throws Throwable {
         server = new Server();
@@ -116,58 +173,11 @@ public class JettyServer extends AbstractAxis2Server {
             SelectChannelConnector connector = new SelectChannelConnector();
             server.addConnector(connector);
         } else {
-            SecureRandom random = new SecureRandom();
-            
-            // Generate key pair
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(1024, random);
-            KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            PrivateKey privateKey = keyPair.getPrivate();
-            PublicKey publicKey = keyPair.getPublic();
-            
-            // Generate certificate
-            X500Name dn = new X500Name("cn=localhost,o=Apache");
-            BigInteger serial = BigInteger.valueOf(random.nextInt());
-            Date notBefore = new Date();
-            Date notAfter = new Date(notBefore.getTime() + 3600000L);
-            SubjectPublicKeyInfo subPubKeyInfo =  SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-            X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(dn, serial, notBefore, notAfter, dn, subPubKeyInfo);
-            X509CertificateHolder certHolder = certBuilder.build(new JcaContentSignerBuilder("SHA1WithRSA").build(privateKey));
-            X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHolder);
-            
-            // Build key store
-            keyStoreFile = File.createTempFile("keystore", "jks", null);
-            String keyStorePassword = generatePassword(random);
-            String keyPassword = generatePassword(random);
-            KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(null, null);
-            keyStore.setKeyEntry(CERT_ALIAS, privateKey, keyPassword.toCharArray(), new X509Certificate[] { cert });
-            writeKeyStore(keyStore, keyStoreFile, keyStorePassword);
-            
-            // Build trust store
-            trustStoreFile = File.createTempFile("truststore", "jks", null);
-            String trustStorePassword = generatePassword(random);
-            KeyStore trustStore = KeyStore.getInstance("JKS");
-            trustStore.load(null, null);
-            trustStore.setCertificateEntry(CERT_ALIAS, cert);
-            writeKeyStore(trustStore, trustStoreFile, trustStorePassword);
-            
-            SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStorePath(keyStoreFile.getAbsolutePath());
-            sslContextFactory.setKeyStorePassword(keyStorePassword);
-            sslContextFactory.setKeyManagerPassword(keyPassword);
-            sslContextFactory.setCertAlias(CERT_ALIAS);
-            SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(sslContextFactory);
-            
+            if (serverSslContextFactory == null) {
+                generateKeys();
+            }
+            SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(serverSslContextFactory);
             server.addConnector(sslConnector);
-            
-            savedTrustStore = System.getProperty("javax.net.ssl.trustStore");
-            System.setProperty("javax.net.ssl.trustStore", trustStoreFile.getAbsolutePath());
-            savedTrustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
-            System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
-            savedTrustStoreType = System.getProperty("javax.net.ssl.trustStoreType");
-            System.setProperty("javax.net.ssl.trustStoreType", "JKS");
-            systemPropertiesSet = true;
         }
         
         WebAppContext context = new WebAppContext();
@@ -224,35 +234,12 @@ public class JettyServer extends AbstractAxis2Server {
             }
             server = null;
         }
-        if (systemPropertiesSet) {
-            if (savedTrustStore != null) {
-                System.setProperty("javax.net.ssl.trustStore", savedTrustStore);
-            } else {
-                System.clearProperty("javax.net.ssl.trustStore");
-            }
-            if (savedTrustStorePassword != null) {
-                System.setProperty("javax.net.ssl.trustStorePassword", savedTrustStorePassword);    
-            } else {
-                System.clearProperty("javax.net.ssl.trustStorePassword");
-            }
-            if (savedTrustStoreType != null) {
-                System.setProperty("javax.net.ssl.trustStoreType", savedTrustStoreType);
-            } else {
-                System.clearProperty("javax.net.ssl.trustStoreType");
-            }
-            savedTrustStore = null;
-            savedTrustStorePassword = null;
-            savedTrustStoreType = null;
-            systemPropertiesSet = false;
-        }
         if (keyStoreFile != null) {
             keyStoreFile.delete();
             keyStoreFile = null;
         }
-        if (trustStoreFile != null) {
-            trustStoreFile.delete();
-            trustStoreFile = null;
-        }
+        clientSslContext = null;
+        serverSslContextFactory = null;
     }
 
     @Override

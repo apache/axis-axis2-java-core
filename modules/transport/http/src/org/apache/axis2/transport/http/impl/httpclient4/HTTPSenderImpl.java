@@ -37,8 +37,11 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContexts;
 
 import java.net.URL;
+
+import javax.net.ssl.SSLContext;
 
 public class HTTPSenderImpl extends HTTPSender {
 
@@ -91,9 +94,13 @@ public class HTTPSenderImpl extends HTTPSender {
                             .getProperty(HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
                     if (connManager == null) {
                         log.trace("Making new ConnectionManager");
+                        SSLContext sslContext = (SSLContext)configContext.getProperty(SSLContext.class.getName());
+                        if (sslContext == null) {
+                            sslContext = SSLContexts.createDefault();
+                        }
                         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                                .register("https", SSLConnectionSocketFactory.getSocketFactory())
+                                .register("https", new SSLConnectionSocketFactory(sslContext))
                                 .build();
 
                         connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
