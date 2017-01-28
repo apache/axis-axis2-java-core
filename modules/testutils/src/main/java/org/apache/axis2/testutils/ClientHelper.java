@@ -18,6 +18,10 @@
  */
 package org.apache.axis2.testutils;
 
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.Stub;
@@ -53,6 +57,13 @@ public class ClientHelper extends ExternalResource {
     public final ServiceClient createServiceClient(String serviceName) throws Exception {
         ServiceClient serviceClient = new ServiceClient(configurationContext, null);
         serviceClient.getOptions().setTo(server.getEndpointReference(serviceName));
+        configureServiceClient(serviceClient);
+        return serviceClient;
+    }
+
+    public final ServiceClient createServiceClient(String serviceName, QName wsdlServiceName, String portName) throws Exception {
+        ServiceClient serviceClient = new ServiceClient(configurationContext,
+                new URL(server.getEndpoint(serviceName) + "?wsdl"), wsdlServiceName, portName);
         configureServiceClient(serviceClient);
         return serviceClient;
     }
