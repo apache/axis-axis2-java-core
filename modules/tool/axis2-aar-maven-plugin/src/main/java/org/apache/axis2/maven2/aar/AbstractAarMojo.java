@@ -30,7 +30,6 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -157,12 +156,11 @@ public abstract class AbstractAarMojo
             copyMetaInfFile(wsdlFile, wsdlFileTarget, wsdlExistsBeforeCopyingClasses, "WSDL file");
 
             if (includeDependencies) {
-                Set artifacts = project.getArtifacts();
+                Set<Artifact> artifacts = project.getArtifacts();
 
-                List duplicates = findDuplicates(artifacts);
+                List<String> duplicates = findDuplicates(artifacts);
 
-                for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-                    Artifact artifact = (Artifact)iter.next();
+                for (Artifact artifact : artifacts) {
                     String targetFileName = getDefaultFinalName(artifact);
 
                     getLog().debug("Processing: " + targetFileName);
@@ -198,11 +196,10 @@ public abstract class AbstractAarMojo
      * @param artifacts set of artifacts
      * @return List of duplicated artifacts
      */
-    private List findDuplicates(Set artifacts) {
-        List duplicates = new ArrayList();
-        List identifiers = new ArrayList();
-        for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact)iter.next();
+    private List<String> findDuplicates(Set<Artifact> artifacts) {
+        List<String> duplicates = new ArrayList<String>();
+        List<String> identifiers = new ArrayList<String>();
+        for (Artifact artifact : artifacts) {
             String candidate = getDefaultFinalName(artifact);
             if (identifiers.contains(candidate)) {
                 duplicates.add(candidate);
