@@ -153,29 +153,17 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.0</version>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy</id>
                         <phase>generate-resources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>create-repository</goal>
                         </goals>
                         <configuration>
-                            <stripVersion>true</stripVersion>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.apache.axis2</groupId>
-                                    <artifactId>addressing</artifactId>
-                                    <version>${axis2.version}</version>
-                                    <type>mar</type>
-                                    <outputDirectory>
-                                        target/generated-resources/org/apache/axis2/transport/repo/modules
-                                    </outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/generated-resources/org/apache/axis2/transport/repo</outputDirectory>
+                            <generateFileLists>true</generateFileLists>
                         </configuration>
                     </execution>
                 </executions>
