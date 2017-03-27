@@ -164,6 +164,28 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-resources/org/apache/axis2/transport/repo</outputDirectory>
                             <generateFileLists>true</generateFileLists>
+                            <generatedAxis2xml>
+                                <messageFormatters>
+                                    <messageFormatter>
+                                        <contentType>text/plain</contentType>
+                                        <className>org.apache.axis2.format.PlainTextFormatter</className>
+                                    </messageFormatter>
+                                    <messageFormatter>
+                                        <contentType>application/octet-stream</contentType>
+                                        <className>org.apache.axis2.format.BinaryFormatter</className>
+                                    </messageFormatter>
+                                </messageFormatters>
+                                <messageBuilders>
+                                    <messageBuilder>
+                                        <contentType>text/plain</contentType>
+                                        <className>org.apache.axis2.format.PlainTextBuilder</className>
+                                    </messageBuilder>
+                                    <messageBuilder>
+                                        <contentType>application/octet-stream</contentType>
+                                        <className>org.apache.axis2.format.BinaryBuilder</className>
+                                    </messageBuilder>
+                                </messageBuilders>
+                            </generatedAxis2xml>
                         </configuration>
                     </execution>
                 </executions>

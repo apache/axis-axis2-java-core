@@ -104,11 +104,11 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     private File axis2xml;
     
     /**
-     * Specifies whether an <tt>axis2.xml</tt> file should be generated (Experimental).
+     * If present, an <tt>axis2.xml</tt> file will be generated (Experimental).
      * 
      * @parameter
      */
-    private boolean generateAxis2xml;
+    private GeneratedAxis2Xml generatedAxis2xml;
     
     /**
      * The directory (relative to the repository root) where the <tt>axis2.xml</tt> file will be
@@ -200,6 +200,15 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     
     protected abstract File[] getClassDirectories();
 
+    private void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
+        OMElement parent = root.getFirstChildWithName(new QName(localName + "s"));
+        for (MessageHandler handler : handlers) {
+            OMElement element = parent.getOMFactory().createOMElement(localName, null, parent);
+            element.addAttribute("contentType", handler.getContentType(), null);
+            element.addAttribute("class", handler.getClassName(), null);
+        }
+    }
+    
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         File inputDirectory = getInputDirectory();
@@ -288,7 +297,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 }
             }
         }
-        if (generateAxis2xml || axis2xml != null) {
+        if (generatedAxis2xml != null || axis2xml != null) {
             File targetDirectory = configurationDirectory == null
                     ? outputDirectory : new File(outputDirectory, configurationDirectory);
             targetDirectory.mkdirs();
@@ -317,7 +326,8 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                     }
                     try {
                         OMDocument axis2xmlDoc = OMXMLBuilderFactory.createOMBuilder(in).getDocument();
-                        for (Iterator<OMNode> it = axis2xmlDoc.getOMDocumentElement().getDescendants(false); it.hasNext(); ) {
+                        OMElement root = axis2xmlDoc.getOMDocumentElement();
+                        for (Iterator<OMNode> it = root.getDescendants(false); it.hasNext(); ) {
                             OMNode node = it.next();
                             if (node instanceof OMElement) {
                                 OMElement element = (OMElement)node;
@@ -331,6 +341,8 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                                 }
                             }
                         }
+                        addMessageHandlers(root, generatedAxis2xml.getMessageBuilders(), "messageBuilder");
+                        addMessageHandlers(root, generatedAxis2xml.getMessageFormatters(), "messageFormatter");
                         OutputStream out = new FileOutputStream(axis2xmlFile);
                         try {
                             axis2xmlDoc.serialize(out);
