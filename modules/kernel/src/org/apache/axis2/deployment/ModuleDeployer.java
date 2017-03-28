@@ -204,7 +204,7 @@ public class ModuleDeployer extends AbstractDeployer {
             AxisModule module = new AxisModule();
             module.setModuleClassLoader(deploymentClassLoader);
             module.setParent(axisConfig);
-            module.setArchiveName(deploymentFileData.getName());
+            module.setArchiveName(DescriptionBuilder.getShortFileName(deploymentFileData.getName()));
             populateModule(module, fileUrl);
             module.setFileName(fileUrl);
             DeploymentEngine.addNewModule(module, axisConfig);
