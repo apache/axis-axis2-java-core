@@ -141,7 +141,7 @@ public class HTTPProxyConfigurator {
         }
 
         String port = System.getProperty(HTTPTransportConstants.HTTP_PROXY_PORT);
-        if (port != null) {
+        if (port != null && !port.isEmpty()) {
             proxyPort = Integer.parseInt(port);
         }
 
