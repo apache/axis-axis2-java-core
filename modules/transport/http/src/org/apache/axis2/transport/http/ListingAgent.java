@@ -125,7 +125,7 @@ public class ListingAgent extends AbstractAgent {
             Iterator<AxisService> i = services.values().iterator();
             while (i.hasNext()) {
                 AxisService service = (AxisService) i.next();
-                InputStream stream = service.getClassLoader().getResourceAsStream("META-INF/" + schema);
+                InputStream stream = HTTPTransportUtils.getMetaInfResourceAsStream(service, schema);
                 if (stream != null) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");

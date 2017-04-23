@@ -22,7 +22,6 @@ package org.apache.axis2.transport.http;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler.InvocationResponse;
@@ -100,8 +99,7 @@ public class HTTPWorker implements Worker {
                             Iterator i = services.values().iterator();
                             while (i.hasNext()) {
                                 AxisService service = (AxisService) i.next();
-                                InputStream stream = service.getClassLoader().
-                                getResourceAsStream("META-INF/" + file);
+                                InputStream stream = HTTPTransportUtils.getMetaInfResourceAsStream(service, file);
                                 if (stream != null) {
                                     OutputStream out = response.getOutputStream();
                                     response.setContentType("text/xml");
@@ -205,8 +203,7 @@ public class HTTPWorker implements Worker {
                         schema.write(response.getOutputStream());
                         return;
                     } else {
-                        InputStream instream = service.getClassLoader()
-                            .getResourceAsStream(DeploymentConstants.META_INF + "/" + schemaName);
+                        InputStream instream = HTTPTransportUtils.getMetaInfResourceAsStream(service, schemaName);
                         
                         if (instream != null) {
                             response.setStatus(HttpStatus.SC_OK);
