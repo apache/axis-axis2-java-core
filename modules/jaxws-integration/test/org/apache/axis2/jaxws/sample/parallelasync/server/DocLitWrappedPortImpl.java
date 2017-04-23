@@ -58,14 +58,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
     //       the key is the request string
     //       the value is the object used to block on
     //
-    private static Hashtable sleepers = new Hashtable();
-
-    // intended to flag the need to cancel current requests being held (ie, sleeping)
-    // does not stop new requests
-    // not settable yet
-    // need to determine when to reset it when dealing with multiple operations
-    // currently reset when the sleepers table doesn't have any more requests
-    private static boolean doCancell = false;
+    private static Hashtable<String,Thread> sleepers = new Hashtable<String,Thread>();
 
     // strings used for logging
     private String myClassName = "DocLitWrappedPortImpl.";
@@ -84,13 +77,9 @@ public class DocLitWrappedPortImpl implements AsyncPort {
      */
     public void sleep(Holder<String> request) {
 
-        boolean cancelRequested = false;
+        String key = request.value;
 
-        String key = new String(request.value);
-        String msg = request.value;
-
-        String title = myClassName+"sleep("+msg+"): ";
-        String tid = " threadID ["+ Thread.currentThread().getId() + "] ";
+        String title = myClassName+"sleep("+key+"): ";
         //if (DEBUG)
         //{
         //    System.out.println(title + tid + "Enter");
@@ -123,7 +112,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
             //  - the wait is interrupted
             //  - a cancel occurs
 
-            while (sec > 0 && !doCancell) {
+            while (sec > 0) {
                 if (DEBUG)
                     TestLogger.logger.debug(title + "Sleeping on "
                             + " threadID [" + threadID + "]"
@@ -131,7 +120,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
                 sec--;
 
                 //msg.wait(500);
-                myThread.sleep(500);
+                Thread.sleep(500);
             }
 
         } 
@@ -150,13 +139,6 @@ public class DocLitWrappedPortImpl implements AsyncPort {
 
             // remove this request from the list
             sleepers.remove(key);
-
-            // for now, reset the cancellation flag when the list of 
-            // waiting requests go to zero
-            if (sleepers.isEmpty())
-            {
-                doCancell = false;
-            }
         }
 
     }
