@@ -131,7 +131,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
                 sec--;
 
                 //msg.wait(500);
-                myThread.sleep(500);
+                myThread.sleep(15000);
             }
 
         } 
