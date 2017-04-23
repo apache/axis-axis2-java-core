@@ -347,6 +347,22 @@ public class AsyncExecutorTests extends AbstractTestCase {
         }
     }
     
+    static void withRetry(Runnable runnable) throws InterruptedException {
+        int retries = 0;
+        while (true) {
+            try {
+                runnable.run();
+                return;
+            } catch (AssertionError ex) {
+                if (retries++ > 60) {
+                    throw ex;
+                } else {
+                    Thread.sleep(500);
+                }
+            }
+        }
+    }
+    
     /**
      * Thread that verifies the request sent by a different thread was recieved by the service and
      * then verify the response.  Another thread will have previously sent the request. Note that
@@ -380,21 +396,22 @@ public class AsyncExecutorTests extends AbstractTestCase {
         }
 
         private void receiveResponse() throws Exception {
-            String title = myClassName + " : ReceiveClientResponse : ";
-            String request1 = monitor.request;
+            final String title = myClassName + " : ReceiveClientResponse : ";
+            final String request1 = monitor.request;
             
             AsyncService service = new AsyncService();
-            AsyncPort port = getPort(service);
+            final AsyncPort port = getPort(service);
 
-            // wait a bit to make sure that the server has the request;
-            Thread.sleep(1000);
-            
-            // check the waiting request 
-            TestLogger.logger.debug(title + " port.isAsleep(" + request1 + ") #1 being submitted....");
-            String asleepWithCallback1 = port.isAsleep(request1);
-            TestLogger.logger.debug(
-                    title + " port.isAsleep(" + request1 + ") #1 = [" + asleepWithCallback1 + "]");
-            assertEquals(request1, asleepWithCallback1);
+            withRetry(new Runnable() {
+                public void run() {
+                    // check the waiting request 
+                    TestLogger.logger.debug(title + " port.isAsleep(" + request1 + ") #1 being submitted....");
+                    String asleepWithCallback1 = port.isAsleep(request1);
+                    TestLogger.logger.debug(
+                            title + " port.isAsleep(" + request1 + ") #1 = [" + asleepWithCallback1 + "]");
+                    assertEquals(request1, asleepWithCallback1);
+                }
+            });
             
             // wakeup the waiting request
             TestLogger.logger.debug(title + " port.wakeUp(request1) #1 being submitted....");
@@ -403,13 +420,15 @@ public class AsyncExecutorTests extends AbstractTestCase {
             assertEquals(request1, wake1);
             TestLogger.logger.debug(title + " port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
 
-            // wait a bit..
-            Thread.sleep(2000);
-
-            // check the Future
-            Future<?> sr1 = monitor.futureResponse;
+            final Future<?> sr1 = monitor.futureResponse;
             CallbackHandler<SleepResponse> sleepCallbackHandler1 = monitor.callbackHandler;
-            assertTrue("Response is not done!", sr1.isDone());
+            
+            withRetry(new Runnable() {
+                public void run() {
+                    // check the Future
+                    assertTrue("Response is not done!", sr1.isDone());
+                }
+            });
 
             // try to get the response
             try {
