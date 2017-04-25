@@ -273,12 +273,44 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>extract-resource-info</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                        <configuration>
+                            <docletArtifacts>
+                                <docletArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>axis2-transport-testkit</artifactId>
+                                    <version>${project.version}</version>
+                                </docletArtifact>
+                            </docletArtifacts>
+                            <doclet>org.apache.axis2.transport.testkit.doclet.ResourceInfoDoclet</doclet>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <show>private</show>
+                            <additionalparam>-out ${project.build.directory}/resource-info.dat</additionalparam>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>site-javadoc</id>
                         <phase>site</phase>
                         <goals>
                             <goal>javadoc-no-fork</goal>
                         </goals>
                         <configuration>
+                            <docletArtifacts>
+                                <docletArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>axis2-transport-testkit</artifactId>
+                                    <version>${project.version}</version>
+                                </docletArtifact>
+                            </docletArtifacts>
+                            <doclet>org.apache.axis2.transport.testkit.doclet.TestkitJavadocDoclet</doclet>
+                            <useStandardDocletOptions>true</useStandardDocletOptions>
+                            <additionalparam>
+                                -resource-info ${project.build.directory}/resource-info.dat
+                            </additionalparam>
                             <reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
                             <destDir>.</destDir>
                         </configuration>
