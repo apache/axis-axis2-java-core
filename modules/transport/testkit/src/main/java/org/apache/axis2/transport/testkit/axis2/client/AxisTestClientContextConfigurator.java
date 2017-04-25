@@ -22,6 +22,10 @@ package org.apache.axis2.transport.testkit.axis2.client;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 
+/**
+ * Resource used to determine whether a transport listener is required and to configure the
+ * transport.
+ */
 public interface AxisTestClientContextConfigurator {
     /**
      * Determine whether a transport listener is required on client side.
