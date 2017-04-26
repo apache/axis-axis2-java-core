@@ -60,7 +60,9 @@ public class TestkitJavadocDoclet {
             Resource resource = resourceInfo.getResource(qualifiedName);
             List<Dependency> dependencies = resource == null ? null : resource.getDependencies();
             if (dependencies != null || usedBy != null) {
-                StringBuilder buffer = new StringBuilder(clazz.getRawCommentText());
+                String rawCommentText = clazz.getRawCommentText();
+                StringBuilder buffer = new StringBuilder(
+                        rawCommentText.trim().length() == 0 ? "No documentation available." : rawCommentText);
                 buffer.append("<h2>Resource information</h2>");
                 if (usedBy != null) {
                     buffer.append("This resource is used by: ");
