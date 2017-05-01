@@ -1,4 +1,4 @@
-package org.apache.axis2.maven2.xsd2java;
+package org.apache.axis2.maven.xsd2java;
 
 import java.io.File;
 import java.util.ArrayList;
