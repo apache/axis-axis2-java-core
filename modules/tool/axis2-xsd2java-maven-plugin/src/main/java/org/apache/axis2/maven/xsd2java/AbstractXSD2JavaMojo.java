@@ -35,6 +35,7 @@ import org.xml.sax.InputSource;
 public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
     /**
      * The maven project.
+     * 
      * @parameter expression="${project}"
      * @readonly
      * @required
@@ -43,13 +44,15 @@ public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
 
     /**
      * The list of XSD files for which to generate the Java code.
+     * 
      * @parameter
-     * @required true
+     * @required
      */
     private File[] xsdFiles;
 
     /**
      * Mapping of namespaces to target Java packages.
+     * 
      * @parameter
      */
     private NamespaceMapping[] namespaceMappings;
