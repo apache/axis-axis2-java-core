@@ -19,6 +19,8 @@
 
 package org.apache.axis2.maven2.wsdl2code;
 
+import org.apache.axis2.maven.shared.NamespaceMapping;
+import org.apache.axis2.maven.shared.NamespaceMappingUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
@@ -249,7 +251,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * 
      * @parameter
      */
-    private NamespaceURIMapping[] namespaceURIs = null;
+    private NamespaceMapping[] namespaceURIs = null;
     
     /**
      * The charset encoding to use for generated source files.
@@ -340,21 +342,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
                 map.put(values[0].trim(), values[1].trim());
             }
         }
-        if (namespaceURIs != null) {
-            for (NamespaceURIMapping mapping : namespaceURIs) {
-                String uri = mapping.getUri();
-                if (uri == null) {
-                    throw new MojoFailureException(
-                            "A namespace to package mapping requires an uri child element.");
-                }
-                String uriPackageName = mapping.getPackageName();
-                if (uriPackageName == null) {
-                    throw new MojoFailureException(
-                            "A namespace to package mapping requires a packageName child element.");
-                }
-                map.put(uri, uriPackageName);
-            }
-        }
+        NamespaceMappingUtil.addToMap(namespaceURIs, map);
         return map;
     }
 
