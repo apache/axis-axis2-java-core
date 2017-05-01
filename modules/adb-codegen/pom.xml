@@ -124,9 +124,6 @@
 	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-compiler-plugin</artifactId>
 	            <configuration>
-	                <fork>true</fork>
-	                <meminitial>128m</meminitial>
-	                <maxmem>256m</maxmem>
                     <testExcludes>
                         <exclude>helper/org/apache/axis2/schema/testsuite/TestAnyType*Helper.java</exclude>
                     </testExcludes>
