@@ -43,7 +43,7 @@ public class XSD2JavaMojo extends AbstractMojo {
      * @parameter
      * @required true
      */
-    public File outputFolder;
+    private File outputDirectory;
 
     /**
      * Mapping of namespaces to target Java packages.
@@ -52,9 +52,9 @@ public class XSD2JavaMojo extends AbstractMojo {
     private NamespaceMapping[] namespaceMappings;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        outputFolder.mkdirs();
+        outputDirectory.mkdirs();
         CompilerOptions compilerOptions = new CompilerOptions();
-        compilerOptions.setOutputLocation(outputFolder);
+        compilerOptions.setOutputLocation(outputDirectory);
         compilerOptions.setGenerateAll(true);
         NamespaceMappingUtil.addToMap(namespaceMappings, compilerOptions.getNs2PackageMap());
         compilerOptions.setWriteOutput(true);

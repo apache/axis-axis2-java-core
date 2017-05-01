@@ -101,7 +101,7 @@
                             <goal>xsd2java</goal>
                         </goals>
                         <configuration>
-                            <outputFolder>${project.build.directory}/schema/src</outputFolder>
+                            <outputDirectory>${project.build.directory}/schema/src</outputDirectory>
                             <xsdFiles>
                                 <xsdFile>../adb-codegen/test-resources/xsd/simple_maxOccurs2.xsd</xsdFile>
                                 <xsdFile>../adb-codegen/test-resources/xsd/anonymous_complexType.xsd</xsdFile>

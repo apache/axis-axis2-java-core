@@ -38,7 +38,7 @@ To run the plugin, add the following section to your POM:
               </goals>
             </execution>
             <configuration>
-              <outputFolder>${project.build.directory}/generated-sources/java</outputFolder>
+              <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
               <xsdFiles>
                 <xsdFile>src/main/resources/xsd/attribute.xsd</xsdFile>
               </xsdFiles>
