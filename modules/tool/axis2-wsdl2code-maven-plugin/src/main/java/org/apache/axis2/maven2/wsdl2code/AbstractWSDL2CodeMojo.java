@@ -241,15 +241,21 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     /**
      * Map of namespace URI to packages. Example:
      * <pre>
-     * &lt;namespaceURIs>
-     *   &lt;namespaceURI>
+     * &lt;namespaceMappings>
+     *   &lt;namespaceMapping>
      *     &lt;uri>uri1&lt;/uri>
      *     &lt;packageName>package1&lt;/packageName>
-     *   &lt;/namespaceURI>
+     *   &lt;/namespaceMapping>
      *   ...
-     * &lt;/namespaceURI></pre>
+     * &lt;/namespaceMapping></pre>
      * 
      * @parameter
+     */
+    private NamespaceMapping[] namespaceMappings;
+    
+    /**
+     * @parameter
+     * @deprecated Use {@code namespaceMappings} instead.
      */
     private NamespaceMapping[] namespaceURIs = null;
     
@@ -343,6 +349,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
             }
         }
         NamespaceMappingUtil.addToMap(namespaceURIs, map);
+        NamespaceMappingUtil.addToMap(namespaceMappings, map);
         return map;
     }
 
