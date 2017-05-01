@@ -50,4 +50,4 @@ The XSD2Java Goal
   The plugin reads the specified XSD files and creates the matching Axis2 ADB Java bean classes.  The mapping from
   XSD target-namespaces to Java packages is specified with the <<<namespace2Packages>>> configuration element above.
 
-  See the detailed documentation on {{{configuration.html}properties}} for how to configure the goal.
+  See the detailed documentation on {{{./xsd2java-mojo.html}properties}} for how to configure the goal.

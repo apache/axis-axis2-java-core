@@ -39,7 +39,9 @@
         <menu name="Overview">
             <item name="Introduction" href="introduction.html"/>
             <item name="How to Use" href="howto.html"/>
-            <item name="Configuration" href="configuration.html"/>
+            <item name="Plugin Documentation" href="plugin-info.html">
+                <item name="xsd2java" href="xsd2java-mojo.html"/>
+            </item>
         </menu>
         ${reports}
     </body>

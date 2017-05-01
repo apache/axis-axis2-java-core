@@ -35,14 +35,14 @@ public class XSD2JavaMojo extends AbstractMojo {
     protected List<String> xsdFiles;
 
     /**
-     * The output directory to generate the source into.
+     * The output directory for the generated Java code.
      * @parameter
      * @required true
      */
     public File outputFolder;
 
     /**
-     * Specify namespaces explicitly for packages.
+     * Mapping of namespaces to target Java packages.
      * @parameter
      */
     protected List<String> namespace2Packages;
