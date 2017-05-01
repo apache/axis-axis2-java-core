@@ -22,7 +22,7 @@ public class XSD2JavaMojo extends AbstractMojo {
     /**
      * The maven project.
      * @parameter expression="${project}"
-     * @read-only
+     * @readonly
      * @required
      */
     protected MavenProject project;
