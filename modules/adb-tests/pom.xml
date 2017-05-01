@@ -43,6 +43,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- TODO: remove this when we switch to the axis2-xsd2java-maven plugin -->
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-local</artifactId>
             <version>${project.version}</version>
@@ -57,6 +64,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -78,6 +90,53 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <tasks unless="maven.test.skip">
+                                <property name="maven.junit.jvmargs" value="" />
+                                <path id="maven.dependency.classpath">
+                                    <path refid="maven.test.classpath" />
+                                </path>
+                                <property name="compiled.classes.dir" value="target/classes" />
+                                <!-- Theres got to be a better way to do this -->
+                                <property name="schema.source.dir" value="../adb-codegen/test-resources/xsd" />
+                                <property name="testsuite.source.dir" value="../adb-codegen/test-resources/testsuite" />
+                                <property name="schema.output.base.dir" value="target/schema" />
+                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
+                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
+                                <ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="." target="main" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/schema/src</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
@@ -350,6 +409,24 @@
                         <version>${jaxws.tools.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <testExcludes>
+                        <exclude>helper/org/apache/axis2/schema/testsuite/TestAnyType*Helper.java</exclude>
+                    </testExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <excludes>
+                        <exclude>org/apache/axis2/schema/innerparticleextension/TestInnerParticleExtension.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>

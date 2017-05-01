@@ -116,17 +116,7 @@
                 <configuration>
                     <excludes>
                         <exclude>org/apache/axis2/schema/ExtensionUtilityTest.java</exclude>
-                        <exclude>org/apache/axis2/schema/innerparticleextension/TestInnerParticleExtension.java</exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <testExcludes>
-                        <exclude>helper/org/apache/axis2/schema/testsuite/TestAnyType*Helper.java</exclude>
-                    </testExcludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -153,47 +143,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-test-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-                                <property name="maven.junit.jvmargs" value="" />
-                                <path id="maven.dependency.classpath">
-                                    <path refid="maven.compile.classpath" />
-                                </path>
-                                <property name="compiled.classes.dir" value="target/classes" />
-                                <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="test-resources/xsd" />
-                                <property name="testsuite.source.dir" value="test-resources/testsuite" />
-                                <property name="schema.output.base.dir" value="target/schema" />
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
-                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
-                                <ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="." target="main" />
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/target/schema/src</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
