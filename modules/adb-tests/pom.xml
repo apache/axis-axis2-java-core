@@ -250,12 +250,12 @@
                             <wsdlFile>src/test/wsdl/AXIS2-5750.wsdl</wsdlFile>
                             <syncMode>sync</syncMode>
                             <unpackClasses>true</unpackClasses>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://ise-online.com/FixedValueService/</uri>
                                     <packageName>org.apache.axis2.databinding.axis2_5750.client</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <packageName>org.apache.axis2.databinding.axis2_5750.client</packageName>
                             <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5750</outputDirectory>
                         </configuration>
@@ -269,12 +269,12 @@
                             <wsdlFile>src/test/wsdl/AXIS2-5758.wsdl</wsdlFile>
                             <syncMode>sync</syncMode>
                             <unpackClasses>true</unpackClasses>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://example.com/stockquote.xsd</uri>
                                     <packageName>org.apache.axis2.databinding.axis2_5758.client</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <packageName>org.apache.axis2.databinding.axis2_5758.client</packageName>
                             <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5758</outputDirectory>
                         </configuration>
@@ -288,12 +288,12 @@
                             <wsdlFile>src/test/wsdl/AXIS2-5799.wsdl</wsdlFile>
                             <syncMode>sync</syncMode>
                             <unpackClasses>true</unpackClasses>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>urn:echo</uri>
                                     <packageName>org.apache.axis2.databinding.axis2_5799.client</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <packageName>org.apache.axis2.databinding.axis2_5799.client</packageName>
                             <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5799</outputDirectory>
                         </configuration>
@@ -307,12 +307,12 @@
                             <wsdlFile>src/test/wsdl/AXIS2-5809.wsdl</wsdlFile>
                             <syncMode>sync</syncMode>
                             <unpackClasses>true</unpackClasses>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://apache.org/axis2/echo</uri>
                                     <packageName>org.apache.axis2.databinding.axis2_5809</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <packageName>org.apache.axis2.databinding.axis2_5809</packageName>
                             <generateServerSide>true</generateServerSide>
                             <generateAllClasses>true</generateAllClasses>

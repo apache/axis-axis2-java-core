@@ -187,12 +187,12 @@
                             <wsdlFile>test-resources/wsdl/echo.wsdl</wsdlFile>
                             <databindingName>adb</databindingName>
                             <generateServerSide>true</generateServerSide>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://test</uri>
                                     <packageName>server</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                         </configuration>
                     </execution>
                 </executions>

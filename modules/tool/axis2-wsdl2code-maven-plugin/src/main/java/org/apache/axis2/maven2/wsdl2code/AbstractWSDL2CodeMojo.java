@@ -19,6 +19,8 @@
 
 package org.apache.axis2.maven2.wsdl2code;
 
+import org.apache.axis2.maven.shared.NamespaceMapping;
+import org.apache.axis2.maven.shared.NamespaceMappingUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
@@ -239,17 +241,23 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     /**
      * Map of namespace URI to packages. Example:
      * <pre>
-     * &lt;namespaceURIs>
-     *   &lt;namespaceURI>
+     * &lt;namespaceMappings>
+     *   &lt;namespaceMapping>
      *     &lt;uri>uri1&lt;/uri>
      *     &lt;packageName>package1&lt;/packageName>
-     *   &lt;/namespaceURI>
+     *   &lt;/namespaceMapping>
      *   ...
-     * &lt;/namespaceURI></pre>
+     * &lt;/namespaceMapping></pre>
      * 
      * @parameter
      */
-    private NamespaceURIMapping[] namespaceURIs = null;
+    private NamespaceMapping[] namespaceMappings;
+    
+    /**
+     * @parameter
+     * @deprecated Use {@code namespaceMappings} instead.
+     */
+    private NamespaceMapping[] namespaceURIs = null;
     
     /**
      * The charset encoding to use for generated source files.
@@ -340,21 +348,8 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
                 map.put(values[0].trim(), values[1].trim());
             }
         }
-        if (namespaceURIs != null) {
-            for (NamespaceURIMapping mapping : namespaceURIs) {
-                String uri = mapping.getUri();
-                if (uri == null) {
-                    throw new MojoFailureException(
-                            "A namespace to package mapping requires an uri child element.");
-                }
-                String uriPackageName = mapping.getPackageName();
-                if (uriPackageName == null) {
-                    throw new MojoFailureException(
-                            "A namespace to package mapping requires a packageName child element.");
-                }
-                map.put(uri, uriPackageName);
-            }
-        }
+        NamespaceMappingUtil.addToMap(namespaceURIs, map);
+        NamespaceMappingUtil.addToMap(namespaceMappings, map);
         return map;
     }
 

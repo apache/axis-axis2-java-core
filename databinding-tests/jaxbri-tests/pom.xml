@@ -105,16 +105,16 @@
                             <generateServerSide>true</generateServerSide>
                             <generateServerSideInterface>true</generateServerSideInterface>
                             <generateServicesXml>true</generateServicesXml>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://www.example.org/data</uri>
                                     <packageName>org.apache.axis2.jaxbri.processor.data</packageName>
-                                </namespaceURI>
-                                <namespaceURI>
+                                </namespaceMapping>
+                                <namespaceMapping>
                                     <uri>http://www.example.org/ws</uri>
                                     <packageName>org.apache.axis2.jaxbri.processor.service</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <outputDirectory>${project.build.directory}/gen/processor</outputDirectory>
                         </configuration>
                     </execution>
@@ -125,16 +125,16 @@
                         </goals>
                         <configuration>
                             <wsdlFile>src/test/wsdl/processor.wsdl</wsdlFile>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://www.example.org/data</uri>
                                     <packageName>org.apache.axis2.jaxbri.processor.data</packageName>
-                                </namespaceURI>
-                                <namespaceURI>
+                                </namespaceMapping>
+                                <namespaceMapping>
                                     <uri>http://www.example.org/ws</uri>
                                     <packageName>org.apache.axis2.jaxbri.processor.client</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <outputDirectory>${project.build.directory}/gen/processor</outputDirectory>
                         </configuration>
                     </execution>
@@ -150,12 +150,12 @@
                             <generateServicesXml>true</generateServicesXml>
                             <generateAllClasses>true</generateAllClasses>
                             <packageName>org.apache.axis2.jaxbri.identityservice</packageName>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://www.example.org/identity</uri>
                                     <packageName>org.apache.axis2.jaxbri.identityservice</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <outputDirectory>${project.build.directory}/gen/identityservice</outputDirectory>
                         </configuration>
                     </execution>
@@ -171,12 +171,12 @@
                             <generateServicesXml>true</generateServicesXml>
                             <generateAllClasses>true</generateAllClasses>
                             <packageName>org.apache.axis2.jaxbri.mtom</packageName>
-                            <namespaceURIs>
-                                <namespaceURI>
+                            <namespaceMappings>
+                                <namespaceMapping>
                                     <uri>http://www.example.org/mtom/</uri>
                                     <packageName>org.apache.axis2.jaxbri.mtom</packageName>
-                                </namespaceURI>
-                            </namespaceURIs>
+                                </namespaceMapping>
+                            </namespaceMappings>
                             <outputDirectory>${project.build.directory}/gen/mtom</outputDirectory>
                         </configuration>
                     </execution>

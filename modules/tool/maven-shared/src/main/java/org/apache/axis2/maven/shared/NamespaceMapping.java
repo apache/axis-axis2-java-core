@@ -17,10 +17,10 @@
  * under the License.
  */
 
-package org.apache.axis2.maven2.wsdl2code;
+package org.apache.axis2.maven.shared;
 
 /** Data class for specifying URI->Package mappings. */
-public class NamespaceURIMapping {
+public class NamespaceMapping {
     private String uri, packageName;
 
     /** Returns the package name, to which the URI shall be mapped. */
