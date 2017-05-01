@@ -51,12 +51,42 @@ public class XSD2JavaMojo extends AbstractMojo {
      */
     private NamespaceMapping[] namespaceMappings;
 
+    /**
+     * The Java package to use for schema items without namespace.
+     * 
+     * @parameter
+     */
+    private String noNamespacePackageName;
+
+    /**
+     * @parameter
+     */
+    private String mapperClassPackage;
+
+    /**
+     * @parameter
+     */
+    private boolean helperMode;
+
+    /**
+     * @parameter
+     */
+    private String packageName;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         outputDirectory.mkdirs();
         CompilerOptions compilerOptions = new CompilerOptions();
         compilerOptions.setOutputLocation(outputDirectory);
         compilerOptions.setGenerateAll(true);
         NamespaceMappingUtil.addToMap(namespaceMappings, compilerOptions.getNs2PackageMap());
+        if (noNamespacePackageName != null) {
+            compilerOptions.getNs2PackageMap().put("", noNamespacePackageName);
+        }
+        compilerOptions.setMapperClassPackage(mapperClassPackage);
+        compilerOptions.setHelperMode(helperMode);
+        if (packageName != null) {
+            compilerOptions.setPackageName(packageName);
+        }
         compilerOptions.setWriteOutput(true);
         try {
             for (File xsdFile : xsdFiles) {

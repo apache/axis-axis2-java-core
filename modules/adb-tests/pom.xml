@@ -43,13 +43,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- TODO: remove this when we switch to the axis2-xsd2java-maven plugin -->
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-adb-codegen</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-local</artifactId>
             <version>${project.version}</version>
@@ -96,12 +89,12 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
+                        <id>xsd2java</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>xsd2java</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/schema/src</outputDirectory>
                             <xsdFiles>
                                 <xsdFile>../adb-codegen/test-resources/xsd/simple_maxOccurs2.xsd</xsdFile>
                                 <xsdFile>../adb-codegen/test-resources/xsd/anonymous_complexType.xsd</xsdFile>
@@ -149,36 +142,51 @@
                             </xsdFiles>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
                     <execution>
-                        <id>generate-test-sources</id>
+                        <id>xsd2java-nonamespace</id>
                         <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-                                <property name="maven.junit.jvmargs" value="" />
-                                <path id="maven.dependency.classpath">
-                                    <path refid="maven.test.classpath" />
-                                </path>
-                                <property name="compiled.classes.dir" value="target/classes" />
-                                <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="../adb-codegen/test-resources/xsd" />
-                                <property name="testsuite.source.dir" value="../adb-codegen/test-resources/testsuite" />
-                                <property name="schema.output.base.dir" value="target/schema" />
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
-                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
-                                <ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="." target="main" />
-                            </tasks>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>xsd2java</goal>
                         </goals>
+                        <configuration>
+                            <xsdFiles>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/nonamespace.xsd</xsdFile>
+                            </xsdFiles>
+                            <noNamespacePackageName>org.apache.axis2.schema.nonamespace</noNamespacePackageName>
+                            <mapperClassPackage>org.apache.axis2.schema.nonamespace</mapperClassPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xsd2java-helper-mode</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>xsd2java</goal>
+                        </goals>
+                        <configuration>
+                            <xsdFiles>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/testsuite.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/all.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/boolean.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/chameleon.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/choice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/decimal.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/default_value.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/enumeration.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/groups.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/innerchoice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/innerParticleExtension.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/unqualified.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/unqualified/companyservice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/names.xsd</xsdFile> <!-- compile only; no tests -->
+                            </xsdFiles>
+                            <helperMode>true</helperMode>
+                            <packageName>helper.</packageName>
+                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/schema/src</outputDirectory>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
