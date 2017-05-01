@@ -79,6 +79,14 @@ public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
      */
     private String packageName;
 
+    /**
+     * Specifies whether unexpected elements should be ignored (log warning) instead of creating an
+     * exception.
+     * 
+     * @parameter
+     */
+    private boolean ignoreUnexpected;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         File outputDirectory = getOutputDirectory();
         outputDirectory.mkdirs();
@@ -94,6 +102,7 @@ public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
         if (packageName != null) {
             compilerOptions.setPackageName(packageName);
         }
+        compilerOptions.setIgnoreUnexpected(ignoreUnexpected);
         compilerOptions.setWriteOutput(true);
         try {
             for (File xsdFile : xsdFiles) {

@@ -79,6 +79,11 @@
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -178,6 +183,18 @@
                             </xsdFiles>
                             <helperMode>true</helperMode>
                             <packageName>helper.</packageName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xsd2java-axis2-5771</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <xsdFiles>
+                                <xsdFile>src/test/xsd/AXIS2-5771.xsd</xsdFile>
+                            </xsdFiles>
+                            <ignoreUnexpected>true</ignoreUnexpected>
                         </configuration>
                     </execution>
                 </executions>

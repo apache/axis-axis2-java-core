@@ -1811,16 +1811,17 @@
                        </xsl:choose>
 
                     // handle unexpected enumeration values properly
-                    <xsl:if test="$ignoreunexpected">
-                        log.warn("Unexpected value " + value + " for enumeration <xsl:value-of select="$name"/>");
-                        return enumeration;
-                    </xsl:if>
-                    <xsl:if test="not($ignoreunexpected)">
-                        if (enumeration == null  <xsl:if test="$propertyType='string'">&amp;&amp; !((value == null) || (value.equals("")))</xsl:if>) {
-                            throw new java.lang.IllegalArgumentException();
-                        }
-                        return enumeration;
-                    </xsl:if>
+                    if (enumeration == null  <xsl:if test="$propertyType='string'">&amp;&amp; !((value == null) || (value.equals("")))</xsl:if>) {
+                        <xsl:choose>
+                            <xsl:when test="$ignoreunexpected">
+                                log.warn("Unexpected value " + value + " for enumeration <xsl:value-of select="$name"/>");
+                            </xsl:when>
+                            <xsl:otherwise>
+                                throw new java.lang.IllegalArgumentException();
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    }
+                    return enumeration;
                 }
                 public static <xsl:value-of select="$name"/> fromString(java.lang.String value,java.lang.String namespaceURI)
                       throws java.lang.IllegalArgumentException {
