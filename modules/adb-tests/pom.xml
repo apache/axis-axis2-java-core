@@ -90,9 +90,8 @@
                 <executions>
                     <execution>
                         <id>xsd2java</id>
-                        <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>xsd2java</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <xsdFiles>
@@ -144,9 +143,8 @@
                     </execution>
                     <execution>
                         <id>xsd2java-nonamespace</id>
-                        <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>xsd2java</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <xsdFiles>
@@ -158,9 +156,8 @@
                     </execution>
                     <execution>
                         <id>xsd2java-helper-mode</id>
-                        <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>xsd2java</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <xsdFiles>
@@ -181,27 +178,6 @@
                             </xsdFiles>
                             <helperMode>true</helperMode>
                             <packageName>helper.</packageName>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/schema/src</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/target/schema/src</source>
-                            </sources>
                         </configuration>
                     </execution>
                 </executions>

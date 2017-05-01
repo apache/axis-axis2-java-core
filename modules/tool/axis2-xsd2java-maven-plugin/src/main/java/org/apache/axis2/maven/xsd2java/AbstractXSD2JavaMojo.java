@@ -14,22 +14,14 @@ import org.apache.maven.project.MavenProject;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.xml.sax.InputSource;
 
-/**
- * Generates Java classes from the specified XSD schema files.
- *
- * @goal xsd2java
- * @phase generate-sources
- * @requiresDependencyResolution compile
- */
-public class XSD2JavaMojo extends AbstractMojo {
-
+public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
     /**
      * The maven project.
      * @parameter expression="${project}"
      * @readonly
      * @required
      */
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * The list of XSD files for which to generate the Java code.
@@ -37,13 +29,6 @@ public class XSD2JavaMojo extends AbstractMojo {
      * @required true
      */
     private File[] xsdFiles;
-
-    /**
-     * The output directory for the generated Java code.
-     * @parameter
-     * @required true
-     */
-    private File outputDirectory;
 
     /**
      * Mapping of namespaces to target Java packages.
@@ -74,6 +59,7 @@ public class XSD2JavaMojo extends AbstractMojo {
     private String packageName;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        File outputDirectory = getOutputDirectory();
         outputDirectory.mkdirs();
         CompilerOptions compilerOptions = new CompilerOptions();
         compilerOptions.setOutputLocation(outputDirectory);
@@ -97,5 +83,9 @@ public class XSD2JavaMojo extends AbstractMojo {
         } catch (SchemaCompilationException ex) {
             throw new MojoExecutionException("An error occurred during 'xsd2java' processing: " + ex.getMessage(), ex);
         }
+        addSourceRoot(project);
     }
+
+    protected abstract File getOutputDirectory();
+    protected abstract void addSourceRoot(MavenProject project);
 }

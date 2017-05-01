@@ -20,9 +20,11 @@
 Usage
 -----
 
-The XSD2Java plugin offers a single goal:
-
-* xsd2java (default): Reads one or more XSD-files class and generates the corresponding Java Axis2 ADB beans.
+axis2-xsd2java-maven-plugin offers two goals: `generate-sources` and `generate-test-sources`.
+Both read one or more XSD files and generate the corresponding ADB beans, but they differ in the phases in which they
+expect to be executed. Use `generate-sources` if the generated classes should become part of the
+artifact produced by the Maven module; use `generate-test-sources` if the generated code is only
+used by the unit tests.
 
 To run the plugin, add the following section to your POM:
 
@@ -34,11 +36,10 @@ To run the plugin, add the following section to your POM:
           <executions>
             <execution>
               <goals>
-                <goal>xsd2java</goal>
+                <goal>generate-sources</goal>
               </goals>
             </execution>
             <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
               <xsdFiles>
                 <xsdFile>src/main/resources/xsd/attribute.xsd</xsdFile>
               </xsdFiles>
@@ -55,14 +56,9 @@ To run the plugin, add the following section to your POM:
     </build>
 
 The plugin will be invoked automatically in the generate-sources
-phase. You can also invoke it directly from the command line by
-running the command
+phase.
 
-    mvn xsd2java:xsd2java
-
-# The XSD2Java Goal
-
-The plugin reads the specified XSD files and creates the matching Axis2 ADB Java bean classes.  The mapping from
+It reads the specified XSD files and creates the matching Axis2 ADB Java bean classes.  The mapping from
 XSD target-namespaces to Java packages is specified with the `namespaceMappings` configuration element above.
 
-See the detailed documentation on [properties](xsd2java-mojo.html) for how to configure the goal.
+See the detailed documentation on [properties](generate-sources-mojo.html) for how to configure the goal.
