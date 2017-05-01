@@ -1,14 +1,18 @@
 package org.apache.axis2.maven.xsd2java;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.axis2.schema.XSD2Java;
+import org.apache.axis2.maven.shared.NamespaceMapping;
+import org.apache.axis2.maven.shared.NamespaceMappingUtil;
+import org.apache.axis2.schema.CompilerOptions;
+import org.apache.axis2.schema.SchemaCompilationException;
+import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.xml.sax.InputSource;
 
 /**
  * Generates Java classes from the specified XSD schema files.
@@ -32,7 +36,7 @@ public class XSD2JavaMojo extends AbstractMojo {
      * @parameter
      * @required true
      */
-    protected List<String> xsdFiles;
+    private File[] xsdFiles;
 
     /**
      * The output directory for the generated Java code.
@@ -45,54 +49,23 @@ public class XSD2JavaMojo extends AbstractMojo {
      * Mapping of namespaces to target Java packages.
      * @parameter
      */
-    protected List<String> namespace2Packages;
+    private NamespaceMapping[] namespaceMappings;
 
-    /**
-     * Run the 'xsd2java' utility.
-     * @throws MojoExecutionException if an error occurs during processing
-     * @throws MojoFailureException if an error occurs during processing
-     */
     public void execute() throws MojoExecutionException, MojoFailureException {
-
-        String[] args = getCommandLineArgumentsForXSD2Java();
-
+        outputFolder.mkdirs();
+        CompilerOptions compilerOptions = new CompilerOptions();
+        compilerOptions.setOutputLocation(outputFolder);
+        compilerOptions.setGenerateAll(true);
+        NamespaceMappingUtil.addToMap(namespaceMappings, compilerOptions.getNs2PackageMap());
+        compilerOptions.setWriteOutput(true);
         try {
-            XSD2Java.main(args);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            for (File xsdFile : xsdFiles) {
+                XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
+                SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
+                compiler.compile(schemaCollection.read(new InputSource(xsdFile.toURI().toString())));
+            }
+        } catch (SchemaCompilationException ex) {
             throw new MojoExecutionException("An error occurred during 'xsd2java' processing: " + ex.getMessage(), ex);
         }
-
     }
-
-    /**
-     * Process the maven parameters to xsd2java command-line arguments
-     * @return the array of command line arguments
-     */
-    private String[] getCommandLineArgumentsForXSD2Java() {
-
-        final List<String> commandLineArguments = new ArrayList<String>();
-
-        // add the namespace-to-package mappings
-        if (namespace2Packages != null) {
-            for (String namespace2Package : namespace2Packages) {
-                commandLineArguments.add("-ns2p");
-                commandLineArguments.add(namespace2Package);
-            }
-        }
-
-        // add the XSD files
-        for (String xsdFile : xsdFiles) {
-            commandLineArguments.add(xsdFile);
-        }
-
-        // add the output path
-        commandLineArguments.add(outputFolder.getAbsolutePath());
-
-        final String[] args = commandLineArguments.toArray(new String[]{});
-
-        return args;
-
-    }
-
 }

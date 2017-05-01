@@ -38,13 +38,16 @@ To run the plugin, add the following section to your POM:
               </goals>
             </execution>
             <configuration>
-              <outputFolder>${project.basedir}/target/generated-sources/java</outputFolder>
+              <outputFolder>${project.build.directory}/generated-sources/java</outputFolder>
               <xsdFiles>
-                  <xsdFile>${project.basedir}/src/main/resources/xsd/attribute.xsd</xsdFile>
+                <xsdFile>src/main/resources/xsd/attribute.xsd</xsdFile>
               </xsdFiles>
-              <namespace2Packages>
-                  <namespace2Package>http://www.example.org/schema/test=org.example.schema.test</namespace2Package>
-              </namespace2Packages>
+              <namespaceMappings>
+                <namespaceMapping>
+                  <uri>http://www.example.org/schema/test</uri>
+                  <packageName>org.example.schema.test</packageName>
+                </namespaceMapping>
+              </namespaceMappings>
             </configuration>
           </executions>
         </plugin>
@@ -60,6 +63,6 @@ running the command
 # The XSD2Java Goal
 
 The plugin reads the specified XSD files and creates the matching Axis2 ADB Java bean classes.  The mapping from
-XSD target-namespaces to Java packages is specified with the `namespace2Packages` configuration element above.
+XSD target-namespaces to Java packages is specified with the `namespaceMappings` configuration element above.
 
 See the detailed documentation on [properties](xsd2java-mojo.html) for how to configure the goal.
