@@ -11,6 +11,18 @@
 
     <artifactId>axis2-xsd2java-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
+    <url>http://axis.apache.org/axis2/java/core/tools/maven-plugins/axis2-xsd2java-maven-plugin</url>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-xsd2java-maven-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-xsd2java-maven-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/tool/axis2-xsd2java-maven-plugin</url>
+    </scm>
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging/tools/maven-plugins/axis2-xsd2java-maven-plugin</url>
+        </site>
+    </distributionManagement>
 
     <dependencies>
         <dependency>

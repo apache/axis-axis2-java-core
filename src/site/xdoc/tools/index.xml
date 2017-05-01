@@ -109,6 +109,14 @@ WSDL.</p>
                         <p>This plugin creates Axis2 repositories from project dependencies.</p>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <a href="maven-plugins/axis2-xsd2java-maven-plugin/index.html">axis2-xsd2java-maven-plugin</a>
+                    </td>
+                    <td>
+                        <p>This plugin generates ADB beans from a set of XSD files.</p>
+                    </td>
+                </tr>
 			</tbody>
 		</table>
 		<p>The command line tools and Ant tasks are bundled with the Axis2 binary distribution.
