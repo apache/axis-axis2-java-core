@@ -115,15 +115,9 @@
                 <inherited>true</inherited>
                 <configuration>
                     <excludes>
-                        <exclude>**/*Abstract*.java</exclude>
-                        <exclude>**/*Util*.java</exclude>
-                        <exclude>**/*PhaseResolvingTest.java</exclude>
-                        <exclude>**/*UnionQNameTest.java</exclude>
-                        <exclude>**/*UnqualifiedTest.java</exclude>
+                        <exclude>org/apache/axis2/schema/ExtensionUtilityTest.java</exclude>
+                        <exclude>org/apache/axis2/schema/innerparticleextension/TestInnerParticleExtension.java</exclude>
                     </excludes>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
                 </configuration>
             </plugin>
 	        <plugin>
