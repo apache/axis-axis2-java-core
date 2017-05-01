@@ -218,6 +218,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-xsd2java-maven-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>simple-server-maven-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>

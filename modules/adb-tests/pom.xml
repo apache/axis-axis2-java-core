@@ -43,13 +43,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- TODO: remove this when we switch to the axis2-xsd2java-maven plugin -->
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-adb-codegen</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-local</artifactId>
             <version>${project.version}</version>
@@ -91,48 +84,100 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis2-xsd2java-maven-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>generate-test-sources</id>
-                        <phase>generate-test-sources</phase>
+                        <id>xsd2java</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
                         <configuration>
-                            <tasks unless="maven.test.skip">
-                                <property name="maven.junit.jvmargs" value="" />
-                                <path id="maven.dependency.classpath">
-                                    <path refid="maven.test.classpath" />
-                                </path>
-                                <property name="compiled.classes.dir" value="target/classes" />
-                                <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="../adb-codegen/test-resources/xsd" />
-                                <property name="testsuite.source.dir" value="../adb-codegen/test-resources/testsuite" />
-                                <property name="schema.output.base.dir" value="target/schema" />
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
-                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
-                                <ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="." target="main" />
-                            </tasks>
+                            <xsdFiles>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple_maxOccurs2.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/anonymous_complexType.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple_choice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple_particle_all.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple_maxOccurs.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple_anytype.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple-minoccurs0.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/complex-minoccurs0.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple-recursive-datatypes.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/mixed_minoccus0.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/simple/simpleType-All.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/xsd/derived/derivedType-All.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/testsuite.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/extensions.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/union.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/all.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/enumeration.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/restrictions.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/choice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/list.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/references.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/innerchoice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/attribute.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/boolean.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/particlemaxoccurs.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/innerParticles.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/default_namespaces.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/groups.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/base64binary.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/abstract.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/decimal.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/anytype.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/innerParticleExtension.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/union2.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/default_value.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/complexExtension.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/chameleon.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/nonamespace.xsd</xsdFile> <!-- compile only; no tests -->
+                                <xsdFile>../adb-codegen/test-resources/testsuite/unqualified.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/unqualified/companyservice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/names.xsd</xsdFile> <!-- compile only; no tests -->
+                                <xsdFile>../adb-codegen/test-resources/testsuite/std-schemas.xsd</xsdFile> <!-- compile only; no tests -->
+                                <xsdFile>../adb-codegen/test-resources/xsd/fixed_value.xsd</xsdFile>
+                            </xsdFiles>
                         </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
                     <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
+                        <id>xsd2java-nonamespace</id>
                         <goals>
-                            <goal>add-test-source</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
-                            <sources>
-                                <source>${basedir}/target/schema/src</source>
-                            </sources>
+                            <xsdFiles>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/nonamespace.xsd</xsdFile>
+                            </xsdFiles>
+                            <noNamespacePackageName>org.apache.axis2.schema.nonamespace</noNamespacePackageName>
+                            <mapperClassPackage>org.apache.axis2.schema.nonamespace</mapperClassPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xsd2java-helper-mode</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <xsdFiles>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/testsuite.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/all.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/boolean.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/chameleon.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/choice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/decimal.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/default_value.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/enumeration.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/groups.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/innerchoice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/innerParticleExtension.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/unqualified.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/unqualified/companyservice.xsd</xsdFile>
+                                <xsdFile>../adb-codegen/test-resources/testsuite/names.xsd</xsdFile> <!-- compile only; no tests -->
+                            </xsdFiles>
+                            <helperMode>true</helperMode>
+                            <packageName>helper.</packageName>
                         </configuration>
                     </execution>
                 </executions>

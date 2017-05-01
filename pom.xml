@@ -70,6 +70,7 @@
         <module>modules/tool/axis2-mar-maven-plugin</module>
         <module>modules/tool/axis2-repo-maven-plugin</module>
         <module>modules/tool/axis2-wsdl2code-maven-plugin</module>
+        <module>modules/tool/axis2-xsd2java-maven-plugin</module>
         <module>modules/tool/simple-server-maven-plugin</module>
         <module>modules/tool/archetype/quickstart</module>
         <module>modules/tool/archetype/quickstart-webapp</module>
