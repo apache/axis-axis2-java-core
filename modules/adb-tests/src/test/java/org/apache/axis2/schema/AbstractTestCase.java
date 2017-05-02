@@ -25,7 +25,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -103,7 +102,7 @@ public abstract class AbstractTestCase extends TestCase {
      * @param expected
      * @param actual
      */
-    public static void assertBeanEquals(Object expected, Object actual) {
+    public static void assertBeanEquals(Object expected, Object actual) throws Exception {
         if (expected == null) {
             assertNull(actual);
             return;
@@ -127,7 +126,7 @@ public abstract class AbstractTestCase extends TestCase {
         }
     }
     
-    private static void assertPropertyValueEquals(String message, Object expected, Object actual) {
+    private static void assertPropertyValueEquals(String message, Object expected, Object actual) throws Exception {
         if (expected == null) {
             assertNull(message, actual);
         } else {
@@ -195,18 +194,14 @@ public abstract class AbstractTestCase extends TestCase {
         return count;
     }
     
-    private static void assertDataHandlerEquals(DataHandler expected, DataHandler actual) {
-        try {
-            InputStream in1 = expected.getInputStream();
-            InputStream in2 = actual.getInputStream();
-            int b;
-            do {
-                b = in1.read();
-                assertEquals(b, in2.read());
-            } while (b != -1);
-        } catch (IOException ex) {
-            fail("Failed to read data handler");
-        }
+    private static void assertDataHandlerEquals(DataHandler expected, DataHandler actual) throws Exception {
+        InputStream in1 = expected.getInputStream();
+        InputStream in2 = actual.getInputStream();
+        int b;
+        do {
+            b = in1.read();
+            assertEquals(b, in2.read());
+        } while (b != -1);
     }
     
     public static Object toHelperModeBean(ADBBean bean) throws Exception {
