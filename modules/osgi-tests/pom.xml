@@ -126,11 +126,6 @@
                                     <version>1.2</version>
                                 </artifact>
                                 <artifact>
-                                    <groupId>org.apache.geronimo.specs</groupId>
-                                    <artifactId>geronimo-jaxrs_1.1_spec</artifactId>
-                                    <version>1.0</version>
-                                </artifact>
-                                <artifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
                                     <artifactId>org.apache.servicemix.bundles.commons-httpclient</artifactId>
                                     <version>3.1_7</version>
