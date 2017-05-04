@@ -80,10 +80,9 @@
                             org.apache.axis2.*;-split-package:=merge-last; version=1.5,
                         </Export-Package>
                         <Import-Package>
-                            !javax.xml.namespace,
+                            javax.xml.namespace,
                             !org.apache.axis2.*,
                             javax.ws.rs; version=1.0,
-                            javax.xml.namespace; version=0.0.0,
                             javax.servlet; version=2.4.0,
                             javax.servlet.http; version=2.4.0,
                             javax.transaction,
