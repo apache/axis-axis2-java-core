@@ -126,11 +126,6 @@
                                     <version>1.2</version>
                                 </artifact>
                                 <artifact>
-                                    <groupId>org.apache.geronimo.specs</groupId>
-                                    <artifactId>geronimo-jaxrs_1.1_spec</artifactId>
-                                    <version>1.0</version>
-                                </artifact>
-                                <artifact>
                                     <groupId>org.apache.servicemix.specs</groupId>
                                     <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
                                     <version>2.2.0</version>

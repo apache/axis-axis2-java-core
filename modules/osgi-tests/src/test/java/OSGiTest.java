@@ -64,7 +64,6 @@ public class OSGiTest {
                 url("link:classpath:org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec.link"),
                 url("link:classpath:org.apache.geronimo.specs.geronimo-javamail_1.4_spec.link"), // TODO: should no longer be necessary
                 url("link:classpath:org.apache.geronimo.specs.geronimo-servlet_2.5_spec.link"),
-                url("link:classpath:org.apache.geronimo.specs.geronimo-jaxrs_1.1_spec.link"), // TODO: shouldn't this be optional???
                 url("link:classpath:org.apache.servicemix.specs.stax-api-1.0.link"),
                 url("link:classpath:stax2-api.link"),
                 url("link:classpath:woodstox-core-asl.link"),
