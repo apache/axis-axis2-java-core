@@ -64,11 +64,6 @@
             <artifactId>xmlunit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
