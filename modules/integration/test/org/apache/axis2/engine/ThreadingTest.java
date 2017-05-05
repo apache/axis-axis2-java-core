@@ -21,42 +21,73 @@ package org.apache.axis2.engine;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.util.InvokerThread;
 import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ThreadingTest extends UtilServerBasedTestCase implements TestConstants {
-
-
     private static final Log log = LogFactory.getLog(ThreadingTest.class);
 
-    protected QName transportName = new QName("http://localhost/my",
-                                              "NullTransport");
+    private static class Invoker implements Runnable {
+        private final int threadNumber;
+        private final CountDownLatch latch;
+        private Exception thrownException;
 
-    protected AxisConfiguration engineRegistry;
-    protected MessageContext mc;
-    protected ServiceContext serviceContext;
-    protected AxisService service;
+        Invoker(int threadNumber, CountDownLatch latch) throws AxisFault {
+            this.threadNumber = threadNumber;
+            this.latch = latch;
+        }
 
-    protected boolean finish = false;
+        @Override
+        public void run() {
+            try {
+                log.info("Starting Thread number " + threadNumber + " .............");
+                OMElement payload = TestingUtils.createDummyOMElement();
+
+                Options options = new Options();
+                options.setTo(new EndpointReference("http://127.0.0.1:"
+                        + UtilServer.TESTING_PORT
+                        + "/axis2/services/EchoXMLService/echoOMElement"));
+                options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+                ServiceClient sender = new ServiceClient();
+                sender.setOptions(options);
+                OMElement result = sender.sendReceive(payload);
+
+                TestingUtils.compareWithCreatedOMElement(result);
+                log.info("Finishing Thread number " + threadNumber + " .....");
+            } catch (Exception axisFault) {
+                thrownException = axisFault;
+                log.error("Error has occured invoking the service ", axisFault);
+            }
+            latch.countDown();
+        }
+
+        Exception getThrownException() {
+            return thrownException;
+        }
+    }
 
     public static Test suite() {
         return getTestSetup(new TestSuite(ThreadingTest.class));
     }
 
     protected void setUp() throws Exception {
-        service =
+        AxisService service =
                 Utils.createSimpleService(serviceName,
                                           Echo.class.getName(),
                                           operationName);
@@ -69,41 +100,22 @@ public class ThreadingTest extends UtilServerBasedTestCase implements TestConsta
     }
 
     public void testEchoXMLSync() throws Exception {
-        int numberOfThreads = 5;
-        InvokerThread[] invokerThreads = new InvokerThread[numberOfThreads];
+        Invoker[] invokers = new Invoker[5];
+        CountDownLatch latch = new CountDownLatch(invokers.length);
 
-        for (int i = 0; i < numberOfThreads; i++) {
-            InvokerThread invokerThread = new InvokerThread(i + 1);
-            invokerThreads[i] = invokerThread;
-            invokerThread.start();
+        for (int i = 0; i < invokers.length; i++) {
+            Invoker invoker = new Invoker(i + 1, latch);
+            invokers[i] = invoker;
+            new Thread(invoker).start();
         }
 
-        boolean threadsAreRunning;
-        Calendar cal = new GregorianCalendar();
-        int min = cal.get(Calendar.MINUTE);
+        latch.await(30, TimeUnit.SECONDS);
 
-        do {
-            threadsAreRunning = false;
-            for (int i = 0; i < numberOfThreads; i++) {
-                if (invokerThreads[i].isAlive()) {
-                    threadsAreRunning = true;
-                    break;
-                }
-                Exception exception = invokerThreads[i].getThrownException();
-                if (exception != null) {
-                    throw new Exception("Exception thrown in thread " + i + " ....", exception);
-                }
+        for (Invoker invoker : invokers) {
+            Exception exception = invoker.getThrownException();
+            if (exception != null) {
+                throw exception;
             }
-
-            // waiting 3 seconds, if not finish, time out.
-            if (Math.abs(min - new GregorianCalendar().get(Calendar.MINUTE)) > 1) {
-                log.info("I'm timing out. Can't wait more than this to finish.");
-                fail("Timing out");
-            }
-
-            Thread.sleep(100);
-        } while (threadsAreRunning);
-
-        assertTrue(true);
+        }
     }
 }
