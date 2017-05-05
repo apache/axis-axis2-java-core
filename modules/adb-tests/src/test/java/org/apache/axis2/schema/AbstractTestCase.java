@@ -25,7 +25,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -55,6 +54,7 @@ import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPModelBuilder;
+import org.apache.axiom.testutils.io.IOTestUtils;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.HexBinary;
@@ -142,7 +142,9 @@ public abstract class AbstractTestCase extends TestCase {
             } else if (simpleJavaTypes.contains(type)) {
                 assertEquals("value for " + message, expected, actual);
             } else if (DataHandler.class.isAssignableFrom(type)) {
-                assertDataHandlerEquals((DataHandler)expected, (DataHandler)actual);
+                IOTestUtils.compareStreams(
+                        ((DataHandler)expected).getInputStream(), "expected",
+                        ((DataHandler)actual).getInputStream(), "actual");
             } else if (OMElement.class.isAssignableFrom(type)) {
                 assertTrue(isOMElementsEqual((OMElement)expected, (OMElement)actual));
             } else if (isADBBean(type)) {
@@ -192,16 +194,6 @@ public abstract class AbstractTestCase extends TestCase {
             }
         }
         return count;
-    }
-    
-    private static void assertDataHandlerEquals(DataHandler expected, DataHandler actual) throws Exception {
-        InputStream in1 = expected.getInputStream();
-        InputStream in2 = actual.getInputStream();
-        int b;
-        do {
-            b = in1.read();
-            assertEquals(b, in2.read());
-        } while (b != -1);
     }
     
     public static Object toHelperModeBean(ADBBean bean) throws Exception {
