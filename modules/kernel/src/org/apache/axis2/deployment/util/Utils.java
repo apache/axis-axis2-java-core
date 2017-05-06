@@ -151,27 +151,31 @@ public class Utils {
     }
 
     public static URL[] getURLsForAllJars(URL url, File tmpDir) {
-        FileInputStream fin = null;
         InputStream in = null;
         ZipInputStream zin = null;
         try {
             ArrayList<URL> array = new ArrayList<URL>();
             in = url.openStream();
-            String fileName = url.getFile();
-            int index = fileName.lastIndexOf('/');
-            if (index != -1) {
-                fileName = fileName.substring(index + 1);
-            }
-            final File f = createTempFile(fileName, in, tmpDir);
+            if (url.getProtocol().equals("file")) {
+                array.add(url);
+            } else {
+                String fileName = url.getFile();
+                int index = fileName.lastIndexOf('/');
+                if (index != -1) {
+                    fileName = fileName.substring(index + 1);
+                }
+                final File f = createTempFile(fileName, in, tmpDir);
+                in.close();
 
-            fin = org.apache.axis2.java.security.AccessController
-                    .doPrivileged(new PrivilegedExceptionAction<FileInputStream>() {
-                        public FileInputStream run() throws FileNotFoundException {
-                            return new FileInputStream(f);
-                        }
-                    });
-            array.add(f.toURI().toURL());
-            zin = new ZipInputStream(fin);
+                in = org.apache.axis2.java.security.AccessController
+                        .doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+                            public InputStream run() throws FileNotFoundException {
+                                return new FileInputStream(f);
+                            }
+                        });
+                array.add(f.toURI().toURL());
+            }
+            zin = new ZipInputStream(in);
 
             ZipEntry entry;
             String entryName;
@@ -193,13 +197,6 @@ public class Utils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch (IOException e) {
-                    //
-                }
-            }
             if (in != null) {
                 try {
                     in.close();
