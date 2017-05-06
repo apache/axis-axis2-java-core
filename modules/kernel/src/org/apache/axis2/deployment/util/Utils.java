@@ -155,7 +155,7 @@ public class Utils {
         InputStream in = null;
         ZipInputStream zin = null;
         try {
-            ArrayList array = new ArrayList();
+            ArrayList<URL> array = new ArrayList<URL>();
             in = url.openStream();
             String fileName = url.getFile();
             int index = fileName.lastIndexOf('/');
@@ -164,9 +164,9 @@ public class Utils {
             }
             final File f = createTempFile(fileName, in, tmpDir);
 
-            fin = (FileInputStream)org.apache.axis2.java.security.AccessController
-                    .doPrivileged(new PrivilegedExceptionAction() {
-                        public Object run() throws FileNotFoundException {
+            fin = org.apache.axis2.java.security.AccessController
+                    .doPrivileged(new PrivilegedExceptionAction<FileInputStream>() {
+                        public FileInputStream run() throws FileNotFoundException {
                             return new FileInputStream(f);
                         }
                     });
@@ -189,7 +189,7 @@ public class Utils {
                     array.add(f2.toURI().toURL());
                 }
             }
-            return (URL[])array.toArray(new URL[array.size()]);
+            return array.toArray(new URL[array.size()]);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -326,7 +326,7 @@ public class Utils {
             return null; // Shouldn't this just return the parent?
 
         try {
-            ArrayList urls = new ArrayList();
+            ArrayList<URL> urls = new ArrayList<URL>();
             urls.add(file.toURI().toURL());
 
             // lower case directory name
@@ -339,14 +339,14 @@ public class Utils {
 
             final URL urllist[] = new URL[urls.size()];
             for (int i = 0; i < urls.size(); i++) {
-                urllist[i] = (URL)urls.get(i);
+                urllist[i] = urls.get(i);
             }
             if (log.isDebugEnabled()) {
                 log.debug("Creating class loader with the following libraries: " + Arrays.asList(urllist));
             }
-            classLoader = (URLClassLoader)AccessController
-                    .doPrivileged(new PrivilegedAction() {
-                        public Object run() {
+            classLoader = AccessController
+                    .doPrivileged(new PrivilegedAction<DeploymentClassLoader>() {
+                        public DeploymentClassLoader run() {
                             return new DeploymentClassLoader(urllist, null, parent, isChildFirstClassLoading);
                         }
                     });
@@ -356,19 +356,19 @@ public class Utils {
         }
     }
 
-    private static boolean addFiles(ArrayList urls, final File libfiles)
+    private static boolean addFiles(ArrayList<URL> urls, final File libfiles)
             throws MalformedURLException {
-        Boolean exists = (Boolean)org.apache.axis2.java.security.AccessController
-                .doPrivileged(new PrivilegedAction() {
-                    public Object run() {
+        Boolean exists = org.apache.axis2.java.security.AccessController
+                .doPrivileged(new PrivilegedAction<Boolean>() {
+                    public Boolean run() {
                         return libfiles.exists();
                     }
                 });
         if (exists) {
             urls.add(libfiles.toURI().toURL());
-            File jarfiles[] = (File[])org.apache.axis2.java.security.AccessController
-                    .doPrivileged(new PrivilegedAction() {
-                        public Object run() {
+            File jarfiles[] = org.apache.axis2.java.security.AccessController
+                    .doPrivileged(new PrivilegedAction<File[]>() {
+                        public File[] run() {
                             return libfiles.listFiles();
                         }
                     });
@@ -733,8 +733,8 @@ public class Utils {
      * @param url base URL of a JAR to search
      * @return a List containing file names (Strings) of all files matching "[lL]ib/*.jar"
      */
-    public static List findLibJars(URL url) {
-        ArrayList embedded_jars = new ArrayList();
+    public static List<String> findLibJars(URL url) {
+        ArrayList<String> embedded_jars = new ArrayList<String>();
         try {
             ZipInputStream zin = new ZipInputStream(url.openStream());
             ZipEntry entry;
@@ -786,18 +786,18 @@ public class Utils {
                                            contextClassLoader, new ArrayList(), isChildFirstClassLoading);
     }
 
-    public static ClassLoader createClassLoader(ArrayList urls,
+    public static ClassLoader createClassLoader(ArrayList<URL> urls,
                                                 ClassLoader serviceClassLoader,
                                                 boolean extractJars,
                                                 File tmpDir,
                                                 boolean isChildFirstClassLoading) {
-        URL url = (URL)urls.get(0);
+        URL url = urls.get(0);
         if (extractJars) {
             try {
                 URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
                 urls.remove(0);
                 urls.addAll(0, Arrays.asList(urls1));
-                URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
+                URL[] urls2 = urls.toArray(new URL[urls.size()]);
                 return createDeploymentClassLoader(urls2, serviceClassLoader,
                                                    null, isChildFirstClassLoading);
             } catch (Exception e) {
@@ -808,8 +808,8 @@ public class Utils {
                 log.debug(e.getMessage(), e);
             }
         }
-        List embedded_jars = Utils.findLibJars(url);
-        URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
+        List<String> embedded_jars = Utils.findLibJars(url);
+        URL[] urls2 = urls.toArray(new URL[urls.size()]);
         return createDeploymentClassLoader(urls2, serviceClassLoader,
                                            embedded_jars, isChildFirstClassLoading);
     }
@@ -837,17 +837,17 @@ public class Utils {
                 log.debug(e.getMessage(), e);
             }
         }
-        List embedded_jars = Utils.findLibJars(urls[0]);
+        List<String> embedded_jars = Utils.findLibJars(urls[0]);
         return createDeploymentClassLoader(urls, serviceClassLoader,
                                            embedded_jars, isChildFirstClassLoading);
     }
 
     private static DeploymentClassLoader createDeploymentClassLoader(
             final URL[] urls, final ClassLoader serviceClassLoader,
-            final List embeddedJars, final boolean isChildFirstClassLoading) {
-        return (DeploymentClassLoader)AccessController
-                .doPrivileged(new PrivilegedAction() {
-                    public Object run() {
+            final List<String> embeddedJars, final boolean isChildFirstClassLoading) {
+        return AccessController
+                .doPrivileged(new PrivilegedAction<DeploymentClassLoader>() {
+                    public DeploymentClassLoader run() {
                         return new DeploymentClassLoader(urls, embeddedJars,
                                                          serviceClassLoader, isChildFirstClassLoading);
                     }

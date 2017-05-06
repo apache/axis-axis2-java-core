@@ -33,7 +33,6 @@ import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -43,7 +42,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
     private URL[] urls = null;
 
     // List of jar files inside the jars in the original url
-    private List embedded_jars;
+    private List<String> embedded_jars;
 
     private boolean isChildFirstClassLoading;
 
@@ -58,7 +57,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
      * @param parent parent classloader <code>ClassLoader</code>
      */
     public DeploymentClassLoader(URL[] urls,
-                                 List embedded_jars,
+                                 List<String> embedded_jars,
                                  ClassLoader parent,
                                  boolean isChildFirstClassLoading) {
         super(urls, parent);
@@ -76,8 +75,8 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
      * @return the resulting class
      * @exception ClassNotFoundException if the class could not be found
      */
-    protected Class findClass(String name) throws ClassNotFoundException {
-        Class clazz;
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        Class<?> clazz;
         try {
             clazz = super.findClass(name);
         } catch (ClassNotFoundException e) {
@@ -112,7 +111,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
         URL url = super.findResource(resource);
         if (url == null) {
             for (int i = 0; embedded_jars != null && i < embedded_jars.size(); i++) {
-                String libjar_name = (String) embedded_jars.get(i);
+                String libjar_name = embedded_jars.get(i);
                 try {
                     InputStream in = getJarAsStream(libjar_name);
                     ZipInputStream zin = new ZipInputStream(in);
@@ -143,14 +142,14 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
      * @exception IOException if an I/O exception occurs
      * @return an <code>Enumeration</code> of <code>URL</code>s
      */
-    public Enumeration findResources(String resource) throws IOException {
-        ArrayList resources = new ArrayList();
-        Enumeration e = super.findResources(resource);
+    public Enumeration<URL> findResources(String resource) throws IOException {
+        ArrayList<URL> resources = new ArrayList<URL>();
+        Enumeration<URL> e = super.findResources(resource);
         while (e.hasMoreElements()) {
             resources.add(e.nextElement());
         }
         for (int i = 0; embedded_jars != null && i < embedded_jars.size(); i++) {
-            String libjar_name = (String) embedded_jars.get(i);
+            String libjar_name = embedded_jars.get(i);
             try {
             InputStream in = getJarAsStream(libjar_name);
             ZipInputStream zin = new ZipInputStream(in);
@@ -183,7 +182,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
      */
     private byte[] getBytes(String resource) throws Exception {
         for (int i = 0; embedded_jars != null && i < embedded_jars.size(); i++) {
-            String libjar_name = (String) embedded_jars.get(i);
+            String libjar_name = embedded_jars.get(i);
             InputStream in = getJarAsStream(libjar_name);
             byte[] bytes = getBytes(in, resource);
             if(bytes != null) {
@@ -272,7 +271,7 @@ public class DeploymentClassLoader extends URLClassLoader implements BeanInfoCac
     }
 
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        Class c = null;
+        Class<?> c = null;
         if (!isChildFirstClassLoading) {
             c = super.loadClass(name, resolve);
         } else {
