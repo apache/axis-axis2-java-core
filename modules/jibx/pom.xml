@@ -56,18 +56,6 @@
         <dependency>
             <groupId>org.jibx</groupId>
             <artifactId>jibx-bind</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>bcel</groupId>
-                    <artifactId>bcel</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <!-- TODO: workaround for AXIS2-5704 while waiting for BCEL 6.0; see BCEL-173 -->
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>bcel-findbugs</artifactId>
-            <version>6.0</version>
         </dependency>
         <dependency>
             <groupId>org.jibx</groupId>
