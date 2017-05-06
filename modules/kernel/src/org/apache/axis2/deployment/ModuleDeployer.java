@@ -198,7 +198,7 @@ public class ModuleDeployer extends AbstractDeployer {
 
         try {
             ClassLoader deploymentClassLoader = Utils.createClassLoader(new URL[] { fileUrl },
-                    axisConfig.getModuleClassLoader(), true,
+                    axisConfig.getModuleClassLoader(),
                     (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                     axisConfig.isChildFirstClassLoading());
             AxisModule module = new AxisModule();

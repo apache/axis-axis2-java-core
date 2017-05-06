@@ -115,7 +115,6 @@ public class POJODeployer extends AbstractDeployer {
                     ClassLoader classLoader = Utils.createClassLoader(
                             urls,
                             configCtx.getAxisConfiguration().getSystemClassLoader(),
-                            true,
                             (File)configCtx.getAxisConfiguration().
                                     getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                             configCtx.getAxisConfiguration().isChildFirstClassLoading());

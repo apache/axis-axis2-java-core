@@ -86,7 +86,6 @@ public class JAXWSDeployer extends AbstractDeployer {
                 ClassLoader classLoader = Utils.createClassLoader(
                         urls,
                         axisConfig.getSystemClassLoader(),
-                        true,
                         (File) axisConfig.
                                 getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                         axisConfig.isChildFirstClassLoading());
@@ -145,7 +144,6 @@ public class JAXWSDeployer extends AbstractDeployer {
                 ClassLoader classLoader = Utils.createClassLoader(
                         urls,
                         axisConfig.getSystemClassLoader(),
-                        true,
                         (File) axisConfig.
                                 getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                         axisConfig.isChildFirstClassLoading());

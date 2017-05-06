@@ -777,25 +777,22 @@ public class Utils {
 
     public static ClassLoader createClassLoader(ArrayList<URL> urls,
                                                 ClassLoader serviceClassLoader,
-                                                boolean extractJars,
                                                 File tmpDir,
                                                 boolean isChildFirstClassLoading) {
         URL url = urls.get(0);
-        if (extractJars) {
-            try {
-                URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
-                urls.remove(0);
-                urls.addAll(0, Arrays.asList(urls1));
-                URL[] urls2 = urls.toArray(new URL[urls.size()]);
-                return createDeploymentClassLoader(urls2, serviceClassLoader,
-                                                   null, isChildFirstClassLoading);
-            } catch (Exception e) {
-                log
-                        .warn("Exception extracting jars into temporary directory : "
-                              + e.getMessage()
-                              + " : switching to alternate class loading mechanism");
-                log.debug(e.getMessage(), e);
-            }
+        try {
+            URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
+            urls.remove(0);
+            urls.addAll(0, Arrays.asList(urls1));
+            URL[] urls2 = urls.toArray(new URL[urls.size()]);
+            return createDeploymentClassLoader(urls2, serviceClassLoader,
+                                               null, isChildFirstClassLoading);
+        } catch (Exception e) {
+            log
+                    .warn("Exception extracting jars into temporary directory : "
+                          + e.getMessage()
+                          + " : switching to alternate class loading mechanism");
+            log.debug(e.getMessage(), e);
         }
         List<String> embedded_jars = Utils.findLibJars(url);
         URL[] urls2 = urls.toArray(new URL[urls.size()]);
@@ -810,21 +807,18 @@ public class Utils {
 
     public static ClassLoader createClassLoader(URL[] urls,
                                                 ClassLoader serviceClassLoader,
-                                                boolean extractJars,
                                                 File tmpDir,
                                                 boolean isChildFirstClassLoading) {
-        if (extractJars) {
-            try {
-                URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
-                return createDeploymentClassLoader(urls1, serviceClassLoader,
-                                                   null, isChildFirstClassLoading);
-            } catch (Exception e) {
-                log
-                        .warn("Exception extracting jars into temporary directory : "
-                              + e.getMessage()
-                              + " : switching to alternate class loading mechanism");
-                log.debug(e.getMessage(), e);
-            }
+        try {
+            URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
+            return createDeploymentClassLoader(urls1, serviceClassLoader,
+                                               null, isChildFirstClassLoading);
+        } catch (Exception e) {
+            log
+                    .warn("Exception extracting jars into temporary directory : "
+                          + e.getMessage()
+                          + " : switching to alternate class loading mechanism");
+            log.debug(e.getMessage(), e);
         }
         List<String> embedded_jars = Utils.findLibJars(urls[0]);
         return createDeploymentClassLoader(urls, serviceClassLoader,

@@ -300,7 +300,7 @@ public class ServiceDeployer extends AbstractDeployer {
             serviceGroup.setServiceGroupName(serviceName);
             ClassLoader serviceClassLoader = Utils
                     .createClassLoader(new URL[] { servicesURL }, axisConfig
-                            .getServiceClassLoader(), true, (File) axisConfig
+                            .getServiceClassLoader(), (File) axisConfig
                             .getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                             axisConfig.isChildFirstClassLoading());
             String metainf = "meta-inf";
