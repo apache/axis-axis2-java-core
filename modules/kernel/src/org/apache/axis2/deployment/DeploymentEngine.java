@@ -46,7 +46,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1157,9 +1156,9 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     private static void destroyClassLoader(ClassLoader classLoader) {
-        if (classLoader instanceof DeploymentClassLoader && classLoader instanceof Closeable) {
+        if (classLoader instanceof DeploymentClassLoader) {
             try {
-                ((Closeable)classLoader).close();
+                ((DeploymentClassLoader)classLoader).close();
             } catch (IOException ex) {
                 log.warn("Failed to destroy class loader " + classLoader, ex);
             }
