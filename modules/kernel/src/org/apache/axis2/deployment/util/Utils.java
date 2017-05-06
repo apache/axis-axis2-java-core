@@ -339,7 +339,7 @@ public class Utils {
             if (log.isDebugEnabled()) {
                 log.debug("Creating class loader with the following libraries: " + Arrays.asList(urllist));
             }
-            return createDeploymentClassLoader(urllist, parent, null, isChildFirstClassLoading);
+            return createDeploymentClassLoader(urllist, parent, isChildFirstClassLoading);
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         }
@@ -772,7 +772,7 @@ public class Utils {
                             }
                         });
         return createDeploymentClassLoader(new URL[]{serviceFile.toURI().toURL()},
-                                           contextClassLoader, new ArrayList(), isChildFirstClassLoading);
+                                           contextClassLoader, isChildFirstClassLoading);
     }
 
     public static ClassLoader createClassLoader(ArrayList<URL> urls,
@@ -780,24 +780,12 @@ public class Utils {
                                                 File tmpDir,
                                                 boolean isChildFirstClassLoading) {
         URL url = urls.get(0);
-        try {
-            URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
-            urls.remove(0);
-            urls.addAll(0, Arrays.asList(urls1));
-            URL[] urls2 = urls.toArray(new URL[urls.size()]);
-            return createDeploymentClassLoader(urls2, serviceClassLoader,
-                                               null, isChildFirstClassLoading);
-        } catch (Exception e) {
-            log
-                    .warn("Exception extracting jars into temporary directory : "
-                          + e.getMessage()
-                          + " : switching to alternate class loading mechanism");
-            log.debug(e.getMessage(), e);
-        }
-        List<String> embedded_jars = Utils.findLibJars(url);
+        URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
+        urls.remove(0);
+        urls.addAll(0, Arrays.asList(urls1));
         URL[] urls2 = urls.toArray(new URL[urls.size()]);
         return createDeploymentClassLoader(urls2, serviceClassLoader,
-                                           embedded_jars, isChildFirstClassLoading);
+                                           isChildFirstClassLoading);
     }
 
     public static File toFile(URL url) throws UnsupportedEncodingException {
@@ -809,29 +797,18 @@ public class Utils {
                                                 ClassLoader serviceClassLoader,
                                                 File tmpDir,
                                                 boolean isChildFirstClassLoading) {
-        try {
-            URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
-            return createDeploymentClassLoader(urls1, serviceClassLoader,
-                                               null, isChildFirstClassLoading);
-        } catch (Exception e) {
-            log
-                    .warn("Exception extracting jars into temporary directory : "
-                          + e.getMessage()
-                          + " : switching to alternate class loading mechanism");
-            log.debug(e.getMessage(), e);
-        }
-        List<String> embedded_jars = Utils.findLibJars(urls[0]);
-        return createDeploymentClassLoader(urls, serviceClassLoader,
-                                           embedded_jars, isChildFirstClassLoading);
+        URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
+        return createDeploymentClassLoader(urls1, serviceClassLoader,
+                                           isChildFirstClassLoading);
     }
 
     private static DeploymentClassLoader createDeploymentClassLoader(
             final URL[] urls, final ClassLoader serviceClassLoader,
-            final List<String> embeddedJars, final boolean isChildFirstClassLoading) {
+            final boolean isChildFirstClassLoading) {
         return AccessController
                 .doPrivileged(new PrivilegedAction<DeploymentClassLoader>() {
                     public DeploymentClassLoader run() {
-                        return new DeploymentClassLoader(urls, embeddedJars,
+                        return new DeploymentClassLoader(urls,
                                                          serviceClassLoader, isChildFirstClassLoading);
                     }
                 });
