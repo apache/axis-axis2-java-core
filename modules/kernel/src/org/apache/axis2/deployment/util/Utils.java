@@ -320,8 +320,6 @@ public class Utils {
      */
     public static ClassLoader getClassLoader(final ClassLoader parent, File file, final boolean isChildFirstClassLoading)
             throws DeploymentException {
-        URLClassLoader classLoader;
-
         if (file == null)
             return null; // Shouldn't this just return the parent?
 
@@ -344,13 +342,7 @@ public class Utils {
             if (log.isDebugEnabled()) {
                 log.debug("Creating class loader with the following libraries: " + Arrays.asList(urllist));
             }
-            classLoader = AccessController
-                    .doPrivileged(new PrivilegedAction<DeploymentClassLoader>() {
-                        public DeploymentClassLoader run() {
-                            return new DeploymentClassLoader(urllist, null, parent, isChildFirstClassLoading);
-                        }
-                    });
-            return classLoader;
+            return createDeploymentClassLoader(urllist, parent, null, isChildFirstClassLoading);
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         }
