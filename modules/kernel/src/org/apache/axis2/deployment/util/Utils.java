@@ -717,38 +717,6 @@ public class Utils {
     }
 
     /**
-     * Get names of all *.jar files inside the lib/ directory of a given jar URL
-     *
-     * @param url base URL of a JAR to search
-     * @return a List containing file names (Strings) of all files matching "[lL]ib/*.jar"
-     */
-    public static List<String> findLibJars(URL url) {
-        ArrayList<String> embedded_jars = new ArrayList<String>();
-        try {
-            ZipInputStream zin = new ZipInputStream(url.openStream());
-            ZipEntry entry;
-            String entryName;
-            while ((entry = zin.getNextEntry()) != null) {
-                entryName = entry.getName();
-                /**
-                 * if the entry name start with /lib and ends with .jar add it
-                 * to the the arraylist
-                 */
-                if (entryName != null
-                    && (entryName.startsWith("lib/") || entryName
-                        .startsWith("Lib/"))
-                    && entryName.endsWith(".jar")) {
-                    embedded_jars.add(entryName);
-                }
-            }
-            zin.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return embedded_jars;
-    }
-
-    /**
      * Add the Axis2 lifecycle / session methods to a pre-existing list of names that will be
      * excluded when generating schemas.
      *
