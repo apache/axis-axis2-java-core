@@ -743,30 +743,21 @@ public class Utils {
                                            contextClassLoader, isChildFirstClassLoading);
     }
 
-    public static ClassLoader createClassLoader(ArrayList<URL> urls,
-                                                ClassLoader serviceClassLoader,
-                                                File tmpDir,
-                                                boolean isChildFirstClassLoading) {
-        URL url = urls.get(0);
-        URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
-        urls.remove(0);
-        urls.addAll(0, Arrays.asList(urls1));
-        URL[] urls2 = urls.toArray(new URL[urls.size()]);
-        return createDeploymentClassLoader(urls2, serviceClassLoader,
-                                           isChildFirstClassLoading);
-    }
-
     public static File toFile(URL url) throws UnsupportedEncodingException {
         String path = URLDecoder.decode(url.getPath(), defaultEncoding);
         return new File(path.replace('/', File.separatorChar).replace('|', ':'));
     }
 
-    public static ClassLoader createClassLoader(URL[] urls,
+    public static ClassLoader createClassLoader(URL archiveUrl, URL[] extraUrls,
                                                 ClassLoader serviceClassLoader,
                                                 File tmpDir,
                                                 boolean isChildFirstClassLoading) {
-        URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
-        return createDeploymentClassLoader(urls1, serviceClassLoader,
+        List<URL> urls = new ArrayList<>();
+        urls.addAll(Arrays.asList(Utils.getURLsForAllJars(archiveUrl, tmpDir)));
+        if (extraUrls != null) {
+            urls.addAll(Arrays.asList(extraUrls));
+        }
+        return createDeploymentClassLoader(urls.toArray(new URL[urls.size()]), serviceClassLoader,
                                            isChildFirstClassLoading);
     }
 

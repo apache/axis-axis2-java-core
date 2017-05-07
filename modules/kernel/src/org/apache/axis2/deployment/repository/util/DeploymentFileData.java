@@ -123,8 +123,7 @@ public class DeploymentFileData {
                         throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
                                                                 this.file.getAbsolutePath()));
                     }
-                    urlsToLoadFrom = new URL[]{this.file.toURI().toURL()};
-                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, file, isChildFirstClassLoading);
+                    classLoader = Utils.createClassLoader(this.file.toURI().toURL(), null, parent, file, isChildFirstClassLoading);
                 } catch (Exception e) {
                     throw AxisFault.makeFault(e);
                 }

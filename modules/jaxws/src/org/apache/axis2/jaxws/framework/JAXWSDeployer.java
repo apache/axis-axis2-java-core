@@ -77,14 +77,14 @@ public class JAXWSDeployer extends AbstractDeployer {
             ClassLoader threadClassLoader = null;
             try {
                 threadClassLoader = Thread.currentThread().getContextClassLoader();
-                ArrayList<URL> urls = new ArrayList<URL>();
-                urls.add(repository);
+                List<URL> extraUrls = new ArrayList<>();
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
-                    urls.add(new File(webLocation).toURL());
+                    extraUrls.add(new File(webLocation).toURL());
                 }
                 ClassLoader classLoader = Utils.createClassLoader(
-                        urls,
+                        repository,
+                        extraUrls.toArray(new URL[extraUrls.size()]),
                         axisConfig.getSystemClassLoader(),
                         (File) axisConfig.
                                 getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
@@ -130,19 +130,19 @@ public class JAXWSDeployer extends AbstractDeployer {
             URL location = deploymentFileData.getFile().toURL();
             if (isJar(deploymentFileData.getFile())) {
                 log.info("Deploying artifact : " + deploymentFileData.getAbsolutePath());
-                ArrayList<URL> urls = new ArrayList<URL>();
-                urls.add(deploymentFileData.getFile().toURL());
-                urls.add(axisConfig.getRepository());
+                List<URL> extraUrls = new ArrayList<>();
+                extraUrls.add(axisConfig.getRepository());
 
                 // adding libs under jaxws deployment dir
-                addJaxwsLibs(urls, axisConfig.getRepository().getPath() + directory);
+                addJaxwsLibs(extraUrls, axisConfig.getRepository().getPath() + directory);
 
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
-                    urls.add(new File(webLocation).toURL());
+                    extraUrls.add(new File(webLocation).toURL());
                 }
                 ClassLoader classLoader = Utils.createClassLoader(
-                        urls,
+                        deploymentFileData.getFile().toURI().toURL(),
+                        extraUrls.toArray(new URL[extraUrls.size()]),
                         axisConfig.getSystemClassLoader(),
                         (File) axisConfig.
                                 getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
@@ -235,7 +235,7 @@ public class JAXWSDeployer extends AbstractDeployer {
      * @param jaxwsDepDirPath - jaxws deployment folder path
      * @throws Exception - on error while geting URLs of libs
      */
-    private void addJaxwsLibs(ArrayList<URL> urls, String jaxwsDepDirPath)
+    private void addJaxwsLibs(List<URL> urls, String jaxwsDepDirPath)
             throws Exception {
         File jaxwsDepDirLib = new File(jaxwsDepDirPath + File.separator + "lib");
         if (jaxwsDepDirLib.exists() && jaxwsDepDirLib.isDirectory()) {
