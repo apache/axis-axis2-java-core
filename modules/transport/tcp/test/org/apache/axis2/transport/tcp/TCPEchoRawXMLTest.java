@@ -25,7 +25,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -115,8 +114,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         AxisCallback callback = new AxisCallback() {
             public void onComplete(MessageContext msgCtx) {
                 try {
-                    msgCtx.getEnvelope().serialize(StAXUtils
-                            .createXMLStreamWriter(System.out));
+                    msgCtx.getEnvelope().serialize(System.out);
                 } catch (XMLStreamException e) {
                     onError(e);
                 } finally {
@@ -171,8 +169,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         sender.setOptions(options);
         OMElement result = sender.sendReceive(operationName, payload);
 
-        result.serialize(StAXUtils.createXMLStreamWriter(
-                System.out));
+        result.serialize(System.out);
         sender.cleanup();
     }
 
@@ -195,8 +192,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         sender.setOptions(options);
         OMElement result = sender.sendReceive(operationName, payloadElement);
 
-        result.serialize(StAXUtils.createXMLStreamWriter(
-                System.out));
+        result.serialize(System.out);
         sender.cleanup();
 
     }
@@ -235,8 +231,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         MessageContext response = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         SOAPEnvelope env = response.getEnvelope();
         assertNotNull(env);
-        env.getBody().serialize(StAXUtils.createXMLStreamWriter(
-                System.out));
+        env.getBody().serialize(System.out);
         sender.cleanup();
     }
 

@@ -20,7 +20,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
@@ -69,7 +68,7 @@ public class HandlerFailureTest extends LocalTestCase {
             ServiceClient sender = getClient(Echo.SERVICE_NAME, Echo.ECHO_OM_ELEMENT_OP_NAME);
             
             OMElement result = sender.sendReceive(TestingUtils.createDummyOMElement());
-            result.serializeAndConsume(StAXUtils.createXMLStreamWriter(System.out));
+            result.serializeAndConsume(System.out);
             fail("the test must fail due to the intentional failure of the \"culprit\" handler");
         } catch (AxisFault e) {
             log.info(e.getMessage());
