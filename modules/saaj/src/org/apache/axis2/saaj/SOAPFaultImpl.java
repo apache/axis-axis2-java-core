@@ -23,9 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP11Version;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
@@ -35,6 +33,7 @@ import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
+import org.apache.axiom.soap.SOAPVersion;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -63,7 +62,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
     }
 
     void setDefaults() throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             setFaultCode(SOAP11Constants.QNAME_SENDER_FAULTCODE);
         } else {
             setFaultCode(SOAP12Constants.QNAME_SENDER_FAULTCODE);
@@ -111,11 +110,11 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
 //        		localName = faultCode.substring(faultCode.indexOf(":")+1);
 //        	}
 
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             soapFactory = (SOAPFactory)this.omTarget.getOMFactory();
             soapFaultCode = soapFactory.createSOAPFaultCode(omTarget);
             soapFaultCode.setText(faultCode);
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             soapFactory = (SOAPFactory)this.omTarget.getOMFactory();
             soapFaultCode = soapFactory.createSOAPFaultCode(omTarget);
             SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
@@ -134,9 +133,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      */
     public String getFaultCode() {
         if (omTarget != null && omTarget.getCode() != null) {
-            if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+            if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
                 return omTarget.getCode().getText();
-            } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+            } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
                 return omTarget.getCode().getValue().getText();
             } else {
                 return null;
@@ -188,9 +187,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      * @see #getFaultString() getFaultString()
      */
     public void setFaultString(String faultString) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             setFaultString(faultString, null);
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             setFaultString(faultString, Locale.getDefault());
         }
     }
@@ -288,17 +287,17 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
     public void setFaultString(String faultString, Locale locale) throws SOAPException {
         if (this.omTarget.getReason() != null) {
             SOAPFaultReason reason = this.omTarget.getReason();
-            if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+            if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
                 reason.setText(faultString);
-            } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+            } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
                 addFaultReasonText(faultString, locale);
             }
         } else {
-            if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+            if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
                 SOAPFaultReason reason = ((SOAPFactory)this.omTarget
                         .getOMFactory()).createSOAPFaultReason(this.omTarget);
                 reason.setText(faultString);
-            } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+            } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
                 addFaultReasonText(faultString, locale);
             }
         }
@@ -318,9 +317,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      * @since SAAJ 1.2
      */
     public Locale getFaultStringLocale() {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             return this.faultReasonLocale;
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             Locale locale = null;
             try {
                 if (getFaultReasonLocales().hasNext()) {
@@ -353,9 +352,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
         if (locale == null) {
             throw new SOAPException("Received null for locale");
         }
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException("Not supported in SOAP 1.1");
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             removeDefaults();
             
             String existingReasonText = getFaultReasonText(locale);
@@ -405,7 +404,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
         if (subcode.getNamespaceURI() == null || subcode.getNamespaceURI().trim().length() == 0) {
             throw new SOAPException("Unqualified QName object : " + subcode);
         }
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         }
 
@@ -458,7 +457,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      *          - if this message does not support the SOAP 1.2 concept of Fault Node.
      */
     public String getFaultNode() {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Node");
         } else {
@@ -483,7 +482,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      * @since SAAJ 1.3
      */
     public Iterator getFaultReasonLocales() throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Reason");
         } else {
@@ -523,7 +522,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      * @since SAAJ 1.3
      */
     public String getFaultReasonText(Locale locale) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Reason");
         } else {
@@ -555,7 +554,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      */
 
     public Iterator getFaultReasonTexts() throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         }
 
@@ -578,7 +577,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      * @since SAAJ 1.3
      */
     public String getFaultRole() {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Reason");
         } else {
@@ -600,7 +599,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      *          - if this message does not support the SOAP 1.2 concept of Subcode.
      */
     public Iterator getFaultSubcodes() {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         }
         ArrayList faultSubcodes = new ArrayList();
@@ -630,7 +629,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      *          - if this message does not support the SOAP 1.2 concept of Subcode.
      */
     public void removeAllFaultSubcodes() {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         } else {
             omTarget.getCode().getSubCode().detach();
@@ -656,9 +655,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
         }
 
         org.apache.axiom.soap.SOAPFactory soapFactory = null;
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             soapFactory = (SOAPFactory)this.omTarget.getOMFactory();
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             if (!(qname.getNamespaceURI()
                     .equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE))) {
                 throw new SOAPException("Incorrect URI"
@@ -675,12 +674,12 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
                 .getPrefix();
 
         OMFactory factory = omTarget.getOMFactory();
-        if (((SOAPFactory)factory).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)factory).getSOAPVersion() == SOAPVersion.SOAP11) {
             soapFaultCode.setText(prefix + ":" + qname.getLocalPart());
             OMNamespace omNamespace = factory.createOMNamespace(qname.getNamespaceURI(),
                                                           qname.getPrefix());
             soapFaultCode.declareNamespace(omNamespace);
-        } else if (((SOAPFactory)factory).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)factory).getSOAPVersion() == SOAPVersion.SOAP12) {
             SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
             // don't just use the default prefix, use the passed one or the parent's
             soapFaultValue.setText(prefix + ":" + qname.getLocalPart());
@@ -705,7 +704,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
 
     public void setFaultNode(String s) throws SOAPException {
         SOAPFactory soapFactory = (SOAPFactory)this.omTarget.getOMFactory();
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException("message does not support " +
                     "the SOAP 1.2 concept of Fault Node");
         }
@@ -725,7 +724,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
      */
     public void setFaultRole(String uri) throws SOAPException {
         SOAPFactory soapFactory = (SOAPFactory)this.omTarget.getOMFactory();
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException("message does not support the " +
                     "SOAP 1.2 concept of Fault Role");
         }

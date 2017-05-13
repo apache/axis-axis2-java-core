@@ -21,10 +21,9 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAP11Version;
-import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.SOAPVersion;
 import org.apache.axis2.namespace.Constants;
 import org.w3c.dom.Element;
 
@@ -260,7 +259,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
     public SOAPHeaderElement addNotUnderstoodHeaderElement(QName qname) throws SOAPException {
         SOAPHeaderBlock soapHeaderBlock = null;
         OMNamespace ns = omTarget.getOMFactory().createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         } else {
             soapHeaderBlock = this.omTarget.addHeaderBlock(
@@ -325,9 +324,9 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
     }
 
     public SOAPElement addTextNode(String text) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             return super.addTextNode(text);
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             throw new SOAPException("Cannot add text node to SOAPHeader");
         } else {
             return null;

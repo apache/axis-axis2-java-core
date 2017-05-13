@@ -25,9 +25,9 @@ import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.OMMultipartWriter;
-import org.apache.axiom.soap.SOAP11Version;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPVersion;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -393,7 +393,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 }
                 format.setRootContentId(rootContentId);
 
-                format.setSOAP11(((SOAPFactory)((SOAPEnvelopeImpl) soapPart.getEnvelope()).omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton());
+                format.setSOAP11(((SOAPFactory)((SOAPEnvelopeImpl) soapPart.getEnvelope()).omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11);
                 
                 //Double save the content-type in case anything is updated
                 mimeHeaders.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType.build().toString());

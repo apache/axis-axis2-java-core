@@ -21,9 +21,8 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAP11Version;
-import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPVersion;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -516,9 +515,9 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
     }
 
     public QName createQName(String localName, String prefix) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             return super.createQName(localName, prefix);
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             if (this.omTarget.findNamespaceURI(prefix) == null) {
                 throw new SOAPException("Only Namespace Qualified elements are allowed");
             } else {
