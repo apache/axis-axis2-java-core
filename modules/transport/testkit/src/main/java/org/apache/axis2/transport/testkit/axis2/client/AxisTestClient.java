@@ -26,7 +26,6 @@ import junit.framework.AssertionFailedError;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.mime.ContentType;
-import org.apache.axiom.mime.ContentTypeBuilder;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -77,7 +76,7 @@ public class AxisTestClient implements TestClient, MessageExchangeValidator {
 
     public ContentType getContentType(ClientOptions options, ContentType contentType) {
         // TODO: this may be incorrect in some cases
-        ContentTypeBuilder builder = new ContentTypeBuilder(contentType);
+        ContentType.Builder builder = contentType.toBuilder();
         String charset = options.getCharset();
         if (charset == null) {
             builder.setParameter("charset", charset);
