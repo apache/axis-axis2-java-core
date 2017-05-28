@@ -131,10 +131,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     protected HashMap<String,MessageReceiver> processMessageReceivers(OMElement messageReceivers)
             throws DeploymentException {
         HashMap<String,MessageReceiver> mr_mep = new HashMap<String,MessageReceiver>();
-        Iterator msgReceivers = messageReceivers.getChildrenWithName(new QName(
+        Iterator<OMElement> msgReceivers = messageReceivers.getChildrenWithName(new QName(
                 TAG_MESSAGE_RECEIVER));
         while (msgReceivers.hasNext()) {
-            OMElement msgReceiver = (OMElement) msgReceivers.next();
+            OMElement msgReceiver = msgReceivers.next();
             final OMElement tempMsgReceiver = msgReceiver;
             MessageReceiver receiver = null;
             try {
@@ -164,10 +164,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     protected HashMap<String,MessageReceiver> processMessageReceivers(ClassLoader loader,
                                               OMElement element) throws DeploymentException {
         HashMap<String,MessageReceiver> meps = new HashMap<String,MessageReceiver>();
-        Iterator iterator = element.getChildrenWithName(new QName(
+        Iterator<OMElement> iterator = element.getChildrenWithName(new QName(
                 TAG_MESSAGE_RECEIVER));
         while (iterator.hasNext()) {
-            OMElement receiverElement = (OMElement) iterator.next();
+            OMElement receiverElement = iterator.next();
             MessageReceiver receiver = loadMessageReceiver(loader,
                                                            receiverElement);
             OMAttribute mepAtt = receiverElement
@@ -216,10 +216,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     protected HashMap processMessageBuilders(OMElement messageBuildersElement)
             throws DeploymentException {
         HashMap builderSelector = new HashMap();
-        Iterator msgBuilders = messageBuildersElement
+        Iterator<OMElement> msgBuilders = messageBuildersElement
                 .getChildrenWithName(new QName(TAG_MESSAGE_BUILDER));
         while (msgBuilders.hasNext()) {
-            OMElement msgBuilderElement = (OMElement) msgBuilders.next();
+            OMElement msgBuilderElement = msgBuilders.next();
             OMAttribute builderName = msgBuilderElement.getAttribute(new QName(TAG_CLASS_NAME));
             String className = builderName.getAttributeValue();
             Class builderClass = null;
@@ -254,10 +254,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     protected HashMap processMessageFormatters(OMElement messageFormattersElement)
             throws DeploymentException {
         HashMap messageFormatters = new HashMap();
-        Iterator msgFormatters = messageFormattersElement
+        Iterator<OMElement> msgFormatters = messageFormattersElement
                 .getChildrenWithName(new QName(TAG_MESSAGE_FORMATTER));
         while (msgFormatters.hasNext()) {
-            OMElement msgFormatterElement = (OMElement) msgFormatters.next();
+            OMElement msgFormatterElement = msgFormatters.next();
             OMElement tempMsgFormatter = msgFormatterElement;
             OMAttribute formatterName = tempMsgFormatter.getAttribute(new QName(TAG_CLASS_NAME));
             String className = formatterName.getAttributeValue();
@@ -327,11 +327,11 @@ public class DescriptionBuilder implements DeploymentConstants {
             return flow;
         }
 
-        Iterator handlers = flowelement.getChildrenWithName(new QName(
+        Iterator<OMElement> handlers = flowelement.getChildrenWithName(new QName(
                 TAG_HANDLER));
 
         while (handlers.hasNext()) {
-            OMElement handlerElement = (OMElement) handlers.next();
+            OMElement handlerElement = handlers.next();
 
             flow.addHandler(processHandler(handlerElement, parent));
         }
@@ -459,7 +459,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                 }
             }
 
-            Iterator parameters = handler_element
+            Iterator<OMElement> parameters = handler_element
                     .getChildrenWithName(new QName(TAG_PARAMETER));
 
             try {
@@ -586,11 +586,11 @@ public class DescriptionBuilder implements DeploymentConstants {
      */
     protected void processActionMappings(OMElement operation,
                                          AxisOperation op_descrip) {
-        Iterator mappingIterator = operation.getChildrenWithName(new QName(
+        Iterator<OMElement> mappingIterator = operation.getChildrenWithName(new QName(
                 Constants.ACTION_MAPPING));
         ArrayList mappingList = new ArrayList();
         while (mappingIterator.hasNext()) {
-            OMElement mappingElement = (OMElement) mappingIterator.next();
+            OMElement mappingElement = mappingIterator.next();
             String inputActionString = mappingElement.getText().trim();
             if (log.isTraceEnabled()) {
                 log.trace("Input Action Mapping found: " + inputActionString);
@@ -614,10 +614,10 @@ public class DescriptionBuilder implements DeploymentConstants {
             }
             op_descrip.setOutputAction(outputActionString);
         }
-        Iterator faultActionsIterator = operation
+        Iterator<OMElement> faultActionsIterator = operation
                 .getChildrenWithName(new QName(Constants.FAULT_ACTION_MAPPING));
         while (faultActionsIterator.hasNext()) {
-            OMElement faultMappingElement = (OMElement) faultActionsIterator
+            OMElement faultMappingElement = faultActionsIterator
                     .next();
             String faultActionString = faultMappingElement.getText().trim();
             String faultActionName = faultMappingElement

@@ -740,9 +740,9 @@ class XMLSpineImpl implements XMLSpine {
             return null;
         }
         QName qName = new QName(namespace, localPart);
-        Iterator it = om.getChildrenWithName(qName);
+        Iterator<OMElement> it = om.getChildrenWithName(qName);
         if (it != null && it.hasNext()) {
-            return (OMElement)it.next();
+            return it.next();
         }
         return null;
     }

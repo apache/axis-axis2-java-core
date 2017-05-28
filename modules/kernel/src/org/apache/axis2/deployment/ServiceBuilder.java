@@ -121,7 +121,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 				}
 			}
 
-			Iterator itr = service_element.getChildrenWithName(new QName(
+			Iterator<OMElement> itr = service_element.getChildrenWithName(new QName(
 					TAG_PARAMETER));
 			processParameters(itr, service, service.getParent());
 
@@ -240,13 +240,12 @@ public class ServiceBuilder extends DescriptionBuilder {
 				// when this is doing AxisService.getSchemaTargetNamespace will
 				// be overridden
 				// This will be <mapping/> with @namespace and @package
-				Iterator mappingIterator = schemaElement
+				Iterator<OMElement> mappingIterator = schemaElement
 						.getChildrenWithName(new QName(MAPPING));
 				if (mappingIterator != null) {
 					Map<String,String> pkg2nsMap = new Hashtable<String,String>();
 					while (mappingIterator.hasNext()) {
-						OMElement mappingElement = (OMElement) mappingIterator
-								.next();
+						OMElement mappingElement = mappingIterator.next();
 						OMAttribute namespaceAttribute = mappingElement
 								.getAttribute(new QName(ATTRIBUTE_NAMESPACE));
 						OMAttribute packageAttribute = mappingElement
@@ -323,7 +322,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 			}
 
 			// processing service-wide modules which required to engage globally
-			Iterator moduleRefs = service_element
+			Iterator<OMElement> moduleRefs = service_element
 					.getChildrenWithName(new QName(TAG_MODULE));
 
 			processModuleRefs(moduleRefs);
@@ -332,11 +331,11 @@ public class ServiceBuilder extends DescriptionBuilder {
 			OMElement transports = service_element
 					.getFirstChildWithName(new QName(TAG_TRANSPORTS));
 			if (transports != null) {
-				Iterator transport_itr = transports
+				Iterator<OMElement> transport_itr = transports
 						.getChildrenWithName(new QName(TAG_TRANSPORT));
 				ArrayList<String> trs = new ArrayList<String>();
 				while (transport_itr.hasNext()) {
-					OMElement trsEle = (OMElement) transport_itr.next();
+					OMElement trsEle = transport_itr.next();
 					String transportName = trsEle.getText().trim();
 					if (axisConfig.getTransportIn(transportName) == null) {
                         log.warn("Service [ " + service.getName()
@@ -357,7 +356,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 				service.setExposedTransports(trs);
 			}
 			// processing operations
-			Iterator operationsIterator = service_element
+			Iterator<OMElement> operationsIterator = service_element
 					.getChildrenWithName(new QName(TAG_OPERATION));
 			ArrayList ops = processOperations(operationsIterator);
 
@@ -421,7 +420,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 			// Need to call the same logic towice
 			setDefaultMessageReceivers();
-			Iterator moduleConfigs = service_element
+			Iterator<OMElement> moduleConfigs = service_element
 					.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 			processServiceModuleConfig(moduleConfigs, service, service);
 
@@ -490,14 +489,14 @@ public class ServiceBuilder extends DescriptionBuilder {
 	 *            OMElement for the packageMappingElement
 	 */
 	private void processTypeMappings(OMElement packageMappingElement) {
-		Iterator elementItr = packageMappingElement
+		Iterator<OMElement> elementItr = packageMappingElement
 				.getChildrenWithName(new QName(TAG_MAPPING));
 		TypeTable typeTable = service.getTypeTable();
 		if (typeTable == null) {
 			typeTable = new TypeTable();
 		}
 		while (elementItr.hasNext()) {
-			OMElement mappingElement = (OMElement) elementItr.next();
+			OMElement mappingElement = elementItr.next();
 			String packageName = mappingElement.getAttributeValue(new QName(
 					TAG_PACKAGE_NAME));
 			String qName = mappingElement
@@ -608,10 +607,10 @@ public class ServiceBuilder extends DescriptionBuilder {
 	 */
 	private ArrayList<String> processExcludeOperations(OMElement excludeOperations) {
 		ArrayList<String> exOps = new ArrayList<String>();
-		Iterator excludeOp_itr = excludeOperations
+		Iterator<OMElement> excludeOp_itr = excludeOperations
 				.getChildrenWithName(new QName(TAG_OPERATION));
 		while (excludeOp_itr.hasNext()) {
-			OMElement opName = (OMElement) excludeOp_itr.next();
+			OMElement opName = excludeOp_itr.next();
 			exOps.add(opName.getText().trim());
 		}
 		return exOps;
@@ -632,18 +631,18 @@ public class ServiceBuilder extends DescriptionBuilder {
 			AxisMessage message = operation.getMessage(label
 					.getAttributeValue());
 
-			Iterator parameters = messageElement.getChildrenWithName(new QName(
+			Iterator<OMElement> parameters = messageElement.getChildrenWithName(new QName(
 					TAG_PARAMETER));
 
 			// processing <wsp:Policy> .. </..> elements
-			Iterator policyElements = PolicyUtil.getPolicyChildren(messageElement);
+			Iterator<OMElement> policyElements = PolicyUtil.getPolicyChildren(messageElement);
 
 			if (policyElements != null) {
 				processPolicyElements(policyElements, message.getPolicySubject());
 			}
 
 			// processing <wsp:PolicyReference> .. </..> elements
-			Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(messageElement);
+			Iterator<OMElement> policyRefElements = PolicyUtil.getPolicyRefChildren(messageElement);
 
 			if (policyRefElements != null) {
 				processPolicyRefElements(policyRefElements, message.getPolicySubject());
@@ -701,7 +700,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 				String module = moduleName_att.getAttributeValue();
 				ModuleConfiguration moduleConfiguration = new ModuleConfiguration(
 						module, parent);
-				Iterator parameters = moduleConfig
+				Iterator<OMElement> parameters = moduleConfig
 						.getChildrenWithName(new QName(TAG_PARAMETER));
 
 				processParameters(parameters, moduleConfiguration, parent);
@@ -807,7 +806,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 			}
 
 			// Operation Parameters
-			Iterator parameters = operation.getChildrenWithName(new QName(
+			Iterator<OMElement> parameters = operation.getChildrenWithName(new QName(
 					TAG_PARAMETER));
 			processParameters(parameters, op_descrip, service);
 			// To process wsamapping;
@@ -830,13 +829,13 @@ public class ServiceBuilder extends DescriptionBuilder {
 			}
 
 			// Process Module Refs
-			Iterator modules = operation.getChildrenWithName(new QName(
+			Iterator<OMElement> modules = operation.getChildrenWithName(new QName(
 					TAG_MODULE));
 
 			processOperationModuleRefs(modules, op_descrip);
 
 			// processing Messages
-			Iterator messages = operation.getChildrenWithName(new QName(
+			Iterator<OMElement> messages = operation.getChildrenWithName(new QName(
 					TAG_MESSAGE));
 
 			processMessages(messages, op_descrip);
@@ -847,7 +846,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 				info.setOperationPhases(op_descrip);
 			}
-			Iterator moduleConfigs = operation.getChildrenWithName(new QName(
+			Iterator<OMElement> moduleConfigs = operation.getChildrenWithName(new QName(
 					TAG_MODULE_CONFIG));
 			processOperationModuleConfig(moduleConfigs, op_descrip, op_descrip);
 			// adding the operation
@@ -871,7 +870,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 				String module = moduleName_att.getAttributeValue();
 				ModuleConfiguration moduleConfiguration = new ModuleConfiguration(
 						module, parent);
-				Iterator parameters = moduleConfig
+				Iterator<OMElement> parameters = moduleConfig
 						.getChildrenWithName(new QName(TAG_PARAMETER));
 
 				processParameters(parameters, moduleConfiguration, parent);
@@ -893,11 +892,11 @@ public class ServiceBuilder extends DescriptionBuilder {
 			service.addDataLocatorClassNames(DRConstants.SERVICE_LEVEL,
 					className);
 		}
-		Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(
+		Iterator<OMElement> iterator = dataLocatorElement.getChildrenWithName(new QName(
 				DRConstants.DIALECT_LOCATOR_ELEMENT));
 
 		while (iterator.hasNext()) {
-			OMElement locatorElement = (OMElement) iterator.next();
+			OMElement locatorElement = iterator.next();
 			OMAttribute dialect = locatorElement.getAttribute(new QName(
 					DRConstants.DIALECT_ATTRIBUTE));
 			OMAttribute dialectclass = locatorElement.getAttribute(new QName(

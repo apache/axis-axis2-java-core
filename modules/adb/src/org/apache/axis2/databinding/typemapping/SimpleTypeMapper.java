@@ -173,7 +173,7 @@ public class SimpleTypeMapper {
     }
 
     public static ArrayList getArrayList(OMElement element, String localName) {
-        Iterator childitr = element.getChildrenWithName(new QName(localName));
+        Iterator<OMElement> childitr = element.getChildrenWithName(new QName(localName));
         ArrayList list = new ArrayList();
         while (childitr.hasNext()) {
             Object o = childitr.next();
@@ -183,10 +183,10 @@ public class SimpleTypeMapper {
     }
 
     public static HashSet getHashSet(OMElement element, String localName) {
-        Iterator childitr = element.getChildrenWithName(new QName(localName));
+        Iterator<OMElement> childitr = element.getChildrenWithName(new QName(localName));
         final HashSet list = new HashSet();
         while (childitr.hasNext()) {
-            OMElement o = (OMElement) childitr.next();
+            OMElement o = childitr.next();
             list.add(o.getText());
         }
         return list;

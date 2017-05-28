@@ -271,7 +271,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
       */
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
-        Iterator childIter = omTarget.getChildrenWithName(qName);
+        Iterator<OMElement> childIter = omTarget.getChildrenWithName(qName);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
@@ -420,7 +420,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     public Iterator getChildElements(QName qname) {
-        Iterator childIter = omTarget.getChildrenWithName(qname);
+        Iterator<OMElement> childIter = omTarget.getChildrenWithName(qname);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));

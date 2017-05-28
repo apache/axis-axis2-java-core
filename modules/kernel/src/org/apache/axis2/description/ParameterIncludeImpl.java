@@ -164,13 +164,13 @@ public class ParameterIncludeImpl
      * @throws AxisFault
      */
     public void deserializeParameters(OMElement parameters) throws AxisFault {
-        Iterator iterator =
+        Iterator<OMElement> iterator =
                 parameters.getChildrenWithName(new QName(DeploymentConstants.TAG_PARAMETER));
 
         while (iterator.hasNext()) {
 
             // this is to check whether some one has locked the parmeter at the top level
-            OMElement parameterElement = (OMElement) iterator.next();
+            OMElement parameterElement = iterator.next();
             Parameter parameter = new Parameter();
 
             // setting parameterElement

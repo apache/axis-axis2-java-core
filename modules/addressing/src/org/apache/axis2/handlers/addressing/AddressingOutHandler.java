@@ -568,7 +568,7 @@ public class AddressingOutHandler extends AbstractTemplatedHandler implements Ad
         	if (multipleHeaders) {
         		if (replaceHeaders) {
         			QName qname = new QName(addressingNamespace, name, WSA_DEFAULT_PREFIX);
-        			Iterator iterator = header.getChildrenWithName(qname);
+        			Iterator<OMElement> iterator = header.getChildrenWithName(qname);
         			while (iterator.hasNext()) {
         				iterator.next();
         				iterator.remove();

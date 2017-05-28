@@ -1710,7 +1710,7 @@ public class BeanUtil {
      * Fix for AXIS2-5090. Use siblings with same QName instead of look for
      * children because list elements available on same level.
      */
-    Iterator parts = omElement.getParent().getChildrenWithName(partName);
+    Iterator<OMElement> parts = omElement.getParent().getChildrenWithName(partName);
     return processGenericsElement(parameter, omElement, helper, parts,
         objectSupplier, generictype);
     }

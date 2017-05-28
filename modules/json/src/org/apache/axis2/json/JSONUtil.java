@@ -35,8 +35,8 @@ public final class JSONUtil {
         Object value = service.getParameterValue("xmlToJsonNamespaceMap");
         if (value != null) {
             if (value instanceof OMElement && ((OMElement)value).getLocalName().equals("mappings")) {
-                for (Iterator it = ((OMElement)value).getChildrenWithName(new QName("mapping")); it.hasNext(); ) {
-                    OMElement mapping = (OMElement)it.next();
+                for (Iterator<OMElement> it = ((OMElement)value).getChildrenWithName(new QName("mapping")); it.hasNext(); ) {
+                    OMElement mapping = it.next();
                     ns2jnsMap.put(mapping.getAttributeValue(new QName("xmlNamespace")),
                                   mapping.getAttributeValue(new QName("jsonNamespace")));
                 }

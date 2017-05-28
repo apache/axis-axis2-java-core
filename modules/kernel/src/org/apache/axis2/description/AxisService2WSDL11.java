@@ -1310,10 +1310,10 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			OMElement definitionElement) {
 		QName bindingName = axisBinding.getName();
 		QName name = new QName("name");
-		for (Iterator iterator = definitionElement
+		for (Iterator<OMElement> iterator = definitionElement
 				.getChildrenWithName(new QName(wsdl.getNamespaceURI(),
 						BINDING_LOCAL_NAME)); iterator.hasNext();) {
-			OMElement element = (OMElement) iterator.next();
+			OMElement element = iterator.next();
 			String value = element.getAttributeValue(name);
 			if (bindingName.getLocalPart().equals(value)) {
 				return true;

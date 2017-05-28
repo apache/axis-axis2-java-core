@@ -786,11 +786,11 @@ public class Utils {
         if (excludeBeanProperty != null) {
             OMElement parameterElement = excludeBeanProperty
                     .getParameterElement();
-            Iterator bneasItr = parameterElement.getChildrenWithName(new QName(
+            Iterator<OMElement> bneasItr = parameterElement.getChildrenWithName(new QName(
                     "bean"));
             ExcludeInfo excludeInfo = new ExcludeInfo();
             while (bneasItr.hasNext()) {
-                OMElement bean = (OMElement)bneasItr.next();
+                OMElement bean = bneasItr.next();
                 String clazz = bean.getAttributeValue(new QName(
                         DeploymentConstants.TAG_CLASS_NAME));
                 String excludePropertees = bean.getAttributeValue(new QName(
@@ -1172,10 +1172,10 @@ public class Utils {
                 policyComponents.add(policyRef);
             }
 
-            for (Iterator policySubjects = appliesToElem
+            for (Iterator<OMElement> policySubjects = appliesToElem
                     .getChildrenWithName(new QName("policy-subject")); policySubjects
                     .hasNext();) {
-                OMElement policySubject = (OMElement)policySubjects.next();
+                OMElement policySubject = policySubjects.next();
                 String identifier = policySubject.getAttributeValue(new QName(
                         "identifier"));
 

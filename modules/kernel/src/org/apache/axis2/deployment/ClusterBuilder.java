@@ -130,9 +130,9 @@ public class ClusterBuilder extends DescriptionBuilder {
                 return;
             }
 
-            for (Iterator iter = lbEle.getChildrenWithName(new QName("applicationDomain"));
+            for (Iterator<OMElement> iter = lbEle.getChildrenWithName(new QName("applicationDomain"));
                  iter.hasNext();) {
-                OMElement omElement = (OMElement) iter.next();
+                OMElement omElement = iter.next();
                 String domainName = omElement.getAttributeValue(new QName("name")).trim();
                 String handlerClass = omElement.getAttributeValue(new QName("agent")).trim();
                 String descAttrib = omElement.getAttributeValue(new QName("description"));
@@ -265,9 +265,9 @@ public class ClusterBuilder extends DescriptionBuilder {
                         replicationEle.getFirstChildWithName(new QName(TAG_DEFAULTS));
                 if (defaultsEle != null) {
                     List<String> defaults = new ArrayList<String>();
-                    for (Iterator iter = defaultsEle.getChildrenWithName(new QName(TAG_EXCLUDE));
+                    for (Iterator<OMElement> iter = defaultsEle.getChildrenWithName(new QName(TAG_EXCLUDE));
                          iter.hasNext();) {
-                        OMElement excludeEle = (OMElement) iter.next();
+                        OMElement excludeEle = iter.next();
                         OMAttribute nameAtt = excludeEle.getAttribute(new QName(ATTRIBUTE_NAME));
                         defaults.add(nameAtt.getAttributeValue());
                     }
@@ -275,15 +275,15 @@ public class ClusterBuilder extends DescriptionBuilder {
                 }
 
                 // Process specifics
-                for (Iterator iter = replicationEle.getChildrenWithName(new QName(TAG_CONTEXT));
+                for (Iterator<OMElement> iter = replicationEle.getChildrenWithName(new QName(TAG_CONTEXT));
                      iter.hasNext();) {
-                    OMElement contextEle = (OMElement) iter.next();
+                    OMElement contextEle = iter.next();
                     String ctxClassName =
                             contextEle.getAttribute(new QName(ATTRIBUTE_CLASS)).getAttributeValue();
                     List<String> excludes = new ArrayList<String>();
-                    for (Iterator iter2 = contextEle.getChildrenWithName(new QName(TAG_EXCLUDE));
+                    for (Iterator<OMElement> iter2 = contextEle.getChildrenWithName(new QName(TAG_EXCLUDE));
                          iter2.hasNext();) {
-                        OMElement excludeEle = (OMElement) iter2.next();
+                        OMElement excludeEle = iter2.next();
                         OMAttribute nameAtt = excludeEle.getAttribute(new QName(ATTRIBUTE_NAME));
                         excludes.add(nameAtt.getAttributeValue());
                     }

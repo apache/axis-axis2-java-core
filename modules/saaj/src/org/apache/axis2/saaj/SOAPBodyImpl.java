@@ -21,6 +21,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPVersion;
 import org.w3c.dom.Document;
@@ -561,7 +562,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         return super.addTextNode(text);
     }
 
-    private Iterator getChildren(Iterator childIter) {
+    private Iterator getChildren(Iterator<? extends OMNode> childIter) {
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             org.w3c.dom.Node domNode = (org.w3c.dom.Node)childIter.next();

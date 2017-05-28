@@ -21,6 +21,7 @@ package org.apache.axis2.handlers.addressing;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -303,7 +304,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         assertEquals("http://whatever.org", defaultEnvelope.getHeader()
                 .getFirstChildWithName(Final.QNAME_WSA_TO).getText());
-        Iterator iterator =
+        Iterator<OMElement> iterator =
                 defaultEnvelope.getHeader().getChildrenWithName(Final.QNAME_WSA_RELATES_TO);
         int i = 0;
         while (iterator.hasNext()) {
@@ -346,7 +347,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         assertEquals("http://whatever.org", defaultEnvelope.getHeader()
                 .getFirstChildWithName(Final.QNAME_WSA_TO).getText());
-        Iterator iterator =
+        Iterator<OMElement> iterator =
                 defaultEnvelope.getHeader().getChildrenWithName(Final.QNAME_WSA_RELATES_TO);
         int i = 0;
         while (iterator.hasNext()) {
@@ -384,7 +385,7 @@ public class AddressingOutHandlerTest extends XMLTestCase implements AddressingC
 
         assertEquals("http://oldEPR.org", defaultEnvelope.getHeader()
                 .getFirstChildWithName(Final.QNAME_WSA_TO).getText());
-        Iterator iterator =
+        Iterator<OMElement> iterator =
                 defaultEnvelope.getHeader().getChildrenWithName(Final.QNAME_WSA_RELATES_TO);
         int i = 0;
         while (iterator.hasNext()) {

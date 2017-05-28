@@ -60,25 +60,25 @@ public class OSGiServiceGroupBuilder extends ServiceGroupBuilder {
         try {
 
             // Processing service level parameters
-            Iterator itr = serviceElement.getChildrenWithName(new QName(TAG_PARAMETER));
+            Iterator<OMElement> itr = serviceElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
 
-            Iterator moduleConfigs =
+            Iterator<OMElement> moduleConfigs =
                     serviceElement.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
                                        axisServiceGroup);
 
             // processing service-wide modules which required to engage globally
-            Iterator moduleRefs = serviceElement.getChildrenWithName(new QName(TAG_MODULE));
+            Iterator<OMElement> moduleRefs = serviceElement.getChildrenWithName(new QName(TAG_MODULE));
 
             processModuleRefs(moduleRefs, axisServiceGroup);
 
-            Iterator serviceitr = serviceElement.getChildrenWithName(new QName(TAG_SERVICE));
+            Iterator<OMElement> serviceitr = serviceElement.getChildrenWithName(new QName(TAG_SERVICE));
 
             while (serviceitr.hasNext()) {
-                OMElement service = (OMElement) serviceitr.next();
+                OMElement service = serviceitr.next();
                 OMAttribute serviceNameatt = service.getAttribute(new QName(ATTRIBUTE_NAME));
                 if (serviceNameatt == null) {
                     throw new DeploymentException(

@@ -241,12 +241,12 @@ public class MexUtil {
 			return forms;
 		
 		OMElement mexConfig = mexParm.getParameterElement();
-		Iterator ite = mexConfig.getChildrenWithName(new QName(
+		Iterator<OMElement> ite = mexConfig.getChildrenWithName(new QName(
 				MexConstants.MEX_CONFIG.OUTPUT_FORM_PARM));
 		String dialectForm_configured = null;
 		String serviceForm_configured = null;
 		while (ite.hasNext()) {
-			OMElement elem = (OMElement) ite.next();
+			OMElement elem = ite.next();
 			String form_value = elem.getAttributeValue(new QName(
 					MexConstants.MEX_CONFIG.FORMS_PARM));
 			String dialect_value = elem.getAttributeValue(new QName(

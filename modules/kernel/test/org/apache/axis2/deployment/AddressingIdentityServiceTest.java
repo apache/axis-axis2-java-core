@@ -224,8 +224,8 @@ public class AddressingIdentityServiceTest extends TestCase {
     private OMElement findPort(OMElement serviceElement, String portName) {
         QName portQName = new QName(WSDLConstants.WSDL1_1_NAMESPACE, Java2WSDLConstants.PORT);
         
-        for (@SuppressWarnings("rawtypes")Iterator portIter = serviceElement.getChildrenWithName(portQName); portIter.hasNext(); ) {
-            OMElement portElement = (OMElement) portIter.next();
+        for (Iterator<OMElement> portIter = serviceElement.getChildrenWithName(portQName); portIter.hasNext(); ) {
+            OMElement portElement = portIter.next();
             if (portName.equals(portElement.getAttributeValue(new QName("", Java2WSDLConstants.ATTRIBUTE_NAME)))) {
                 return portElement;
             }
