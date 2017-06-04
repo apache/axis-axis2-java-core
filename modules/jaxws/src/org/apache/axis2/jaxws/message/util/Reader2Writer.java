@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.StringWriter;
 import java.util.Iterator;
 
 /**
@@ -86,24 +84,5 @@ public class Reader2Writer {
             }
             reader.close();
         }
-    }
-
-    /**
-     * Utility method to write the reader contents to a String
-     * @return String
-     */
-    public String getAsString() throws XMLStreamException {
-        StringWriter sw = new StringWriter();
-        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
-
-        // Write the reader to the writer
-        outputTo(writer);
-
-        // Flush the writer and get the String
-        writer.flush();
-        sw.flush();
-        String str = sw.toString();
-        writer.close();
-        return str;
     }
 }
