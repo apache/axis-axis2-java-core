@@ -30,7 +30,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.databinding.XMLStringBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -69,18 +68,6 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
         super(omElement, null, qName, factory);
     }
 
-    private String _getBOFromReader(XMLStreamReader reader, Void busContext)
-            throws XMLStreamException {
-        // Create a Reader2Writer converter and get the output as a String
-        Reader2Writer r2w;
-        if ((busContext == null) && (omElement != null) && (omElement.isComplete())) {
-            r2w = new Reader2Writer(reader, false);
-        } else {
-            r2w = new Reader2Writer(reader);
-        }
-        return r2w.getAsString();
-    }
-    
     @Override
     protected String _getBOFromOM(OMElement omElement, Void busContext)
         throws XMLStreamException, WebServiceException {
@@ -92,7 +79,7 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
                 return ((StringOMDataSource) ds).getObject();
             }
         }
-        return _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
+        return omElement.toStringWithConsume();
     }
 
     @Override

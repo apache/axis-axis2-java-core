@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.message.databinding.impl;
 
+import org.apache.axiom.blob.Blobs;
+import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMSourcedElement;
@@ -30,7 +32,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.SourceBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,8 +49,8 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * SourceBlock
@@ -109,32 +110,6 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         super(omElement, null, qName, factory);
     }
 
-    private Source _getBOFromReader(XMLStreamReader reader, Void busContext)
-            throws XMLStreamException {
-
-        // Best solution is to use a StAXSource
-        // However StAXSource is not widely accepted.  
-        // For now, a StreamSource is always returned
-        /*
-        if (staxSource != null) {
-            try {
-                // TODO Constructor should be statically cached for performance
-                Constructor c =
-                        staxSource.getDeclaredConstructor(new Class[] { XMLStreamReader.class });
-                return c.newInstance(new Object[] { reader });
-            } catch (Exception e) {
-            }
-        }
-        */
-
-        // TODO StreamSource is not performant...work is needed here to make this faster
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String text = r2w.getAsString();
-        StringReader sr = new StringReader(text);
-        return new StreamSource(sr);
-
-    }
-    
     @Override
     protected Source _getBOFromOM(OMElement omElement, Void busContext)
         throws XMLStreamException, WebServiceException {
@@ -157,16 +132,19 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         }
         
         // Transform reader into business object
-        if (!hasFault) {
-            busObject = _getBOFromReader(omElement.getXMLStreamReader(false), busContext);
+        MemoryBlob blob = Blobs.createMemoryBlob();
+        OutputStream out = blob.getOutputStream();
+        try {
+            if (!hasFault) {
+                omElement.serializeAndConsume(out);
+            } else {
+                omElement.serialize(out);
+            }
+            out.close();
+        } catch (IOException ex) {
+            throw new XMLStreamException(ex);
         }
-        else {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            omElement.serialize(baos);
-            
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            busObject = new StreamSource(bais);
-        }
+        busObject = new StreamSource(blob.getInputStream());
         return busObject;
     }
 
