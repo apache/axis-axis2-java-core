@@ -25,7 +25,6 @@ import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.datasource.SourceDataSource;
-import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.SourceBlock;
@@ -45,13 +44,12 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * SourceBlock
@@ -71,26 +69,6 @@ import java.security.PrivilegedExceptionAction;
 public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlock {
 
     private static final Log log = LogFactory.getLog(SourceBlockImpl.class);
-    private static Class<?> staxSource = null;
-
-    static {
-        try {
-            // Dynamically discover if StAXSource is available
-            staxSource = forName("javax.xml.transform.stax.StAXSource");
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("StAXSource is not present in the JDK.  " +
-                                "This is acceptable.  Processing continues");
-            }
-        }
-        try {
-            // Woodstox does not work with StAXSource
-            if(XMLInputFactory.newInstance().getClass().getName().indexOf("wstx")!=-1){
-                staxSource = null;
-            }
-        } catch (Exception e){
-        }
-    }
 
     /**
      * Constructor called from factory
@@ -107,7 +85,7 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         if (busObject instanceof DOMSource ||
                 busObject instanceof SAXSource ||
                 busObject instanceof StreamSource ||
-                (busObject.getClass().equals(staxSource)) ||
+                busObject instanceof StAXSource ||
                 busObject instanceof JAXBSource) {
             // Okay, these are supported Source objects
             if (log.isDebugEnabled()) {
@@ -294,32 +272,6 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
         return false;  // The source could be a text or element etc.
     }
 
-    /**
-     * Return the class for this name
-     * @return Class
-     */
-    private static Class<?> forName(final String className) throws ClassNotFoundException {
-        // NOTE: This method must remain private because it uses AccessController
-        Class<?> cl = null;
-        try {
-            cl = AccessController.doPrivileged(
-                    new PrivilegedExceptionAction<Class<?>>() {
-                        @Override
-                        public Class<?> run() throws ClassNotFoundException {
-                            return Class.forName(className);
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (ClassNotFoundException)e.getException();
-        }
-
-        return cl;
-    }
-    
     @Override
     public void close() {
         return; // Nothing to close
