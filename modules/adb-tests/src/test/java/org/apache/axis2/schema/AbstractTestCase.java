@@ -42,6 +42,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -51,6 +52,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.ds.AbstractPushOMDataSource;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPModelBuilder;
@@ -324,14 +326,26 @@ public abstract class AbstractTestCase extends TestCase {
     // Approach 3: Serialize the bean as the child of an element that declares a default namespace.
     // If ADB behaves correctly, this should not have any impact. A failure here may be an indication
     // of an incorrect usage of XMLStreamWriter#writeStartElement(String).
-    private static void testSerializeDeserializeWrapped(Object bean, Object expectedResult) throws Exception {
+    private static void testSerializeDeserializeWrapped(final Object bean, Object expectedResult) throws Exception {
         StringWriter sw = new StringWriter();
-        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
-        writer.writeStartElement("", "root", "urn:test");
-        writer.writeDefaultNamespace("urn:test");
-        ADBBeanUtil.serialize(bean, writer);
-        writer.writeEndElement();
-        writer.flush();
+        OMAbstractFactory.getOMFactory().createOMElement(new AbstractPushOMDataSource() {
+            @Override
+            public boolean isDestructiveWrite() {
+                return false;
+            }
+            
+            @Override
+            public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+                writer.writeStartElement("", "root", "urn:test");
+                writer.writeDefaultNamespace("urn:test");
+                try {
+                    ADBBeanUtil.serialize(bean, writer);
+                } catch (Exception ex) {
+                    throw new XMLStreamException(ex);
+                }
+                writer.writeEndElement();
+            }
+        }).serialize(sw);
         OMElement omElement3 = OMXMLBuilderFactory.createOMBuilder(new StringReader(sw.toString())).getDocumentElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement3.getFirstElement().getXMLStreamReader()));
     }

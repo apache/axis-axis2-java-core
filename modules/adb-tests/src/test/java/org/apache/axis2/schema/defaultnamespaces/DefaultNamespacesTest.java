@@ -20,13 +20,11 @@
 package org.apache.axis2.schema.defaultnamespaces;
 
 import junit.framework.TestCase;
-import org.apache.axiom.om.util.StAXUtils;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
 
 public class DefaultNamespacesTest extends TestCase {
     private static final String NS_URI = TestElement1.MY_QNAME.getNamespaceURI();
@@ -54,17 +52,10 @@ public class DefaultNamespacesTest extends TestCase {
 
 
         testElement1.setTestElement1(testChildType);
-        StringWriter stringWriter = new StringWriter();
 
-        XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(stringWriter);
-        testElement1.getTestElement1().serialize(new QName(NS_URI, "TestElement1", "ns1"),
-                xmlStreamWriter);
-        xmlStreamWriter.flush();
-        xmlStreamWriter.close();
-        String omElementString = stringWriter.toString();
-        System.out.println("OM String ==> " + omElementString);
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-        TestElement1 result = TestElement1.Factory.parse(xmlReader);
+        OMElement omElement = testElement1.getTestElement1().getOMElement(new QName(NS_URI, "TestElement1", "ns1"),
+                OMAbstractFactory.getOMFactory());
+        TestElement1 result = TestElement1.Factory.parse(omElement.getXMLStreamReader());
         assertTrue(result.getTestElement1() instanceof TestChildType);
         TestChildType resultType = (TestChildType) result.getTestElement1();
         assertEquals(resultType.getParam1(), new QName(NS_URI, "param1"));
