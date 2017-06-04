@@ -19,14 +19,11 @@
 
 package org.apache.axis2.jaxws.xmlhttp;
 
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.testutils.Axis2Server;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
@@ -35,8 +32,8 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPBinding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -45,8 +42,6 @@ import java.io.InputStream;
 public class DispatchXMessageSourceTests {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo");
-
-    private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageSourceProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageSourceProviderPort");
@@ -77,12 +72,7 @@ public class DispatchXMessageSourceTests {
         Source outSource = dispatch.invoke(inSource);
         
         // Prepare the response content for checking
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(outSource);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String response = r2w.getAsString();
-        
-        assertTrue(response != null);
-        assertTrue(request.equals(response));
+        assertAbout(xml()).that(outSource).hasSameContentAs(XML_TEXT);
         
         // Test a second time to verify
         stream = new ByteArrayInputStream(request.getBytes());
@@ -91,12 +81,7 @@ public class DispatchXMessageSourceTests {
         outSource = dispatch.invoke(inSource);
         
         // Prepare the response content for checking
-        reader = inputFactory.createXMLStreamReader(outSource);
-        r2w = new Reader2Writer(reader);
-        response = r2w.getAsString();
-        
-        assertTrue(response != null);
-        assertTrue(request.equals(response));
+        assertAbout(xml()).that(outSource).hasSameContentAs(XML_TEXT);
     }
     
     @Test
@@ -115,10 +100,7 @@ public class DispatchXMessageSourceTests {
         dispatch.getRequestContext().put(MessageContext.HTTP_REQUEST_METHOD, "GET"); 
         Source outSource = dispatch.invoke(null);
         
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(outSource);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String response = r2w.getAsString();        
-        assertEquals(GET_RESPONSE, response);     
+        assertAbout(xml()).that(outSource).hasSameContentAs(GET_RESPONSE);
         
         // this should fail again
         dispatch.getRequestContext().remove(MessageContext.HTTP_REQUEST_METHOD);
