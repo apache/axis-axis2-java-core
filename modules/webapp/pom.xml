@@ -154,6 +154,16 @@
             <version>${project.version}</version>
             <type>mar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-spec</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-impl</artifactId>
+            <version>1.2.5</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${project.version}</finalName>
