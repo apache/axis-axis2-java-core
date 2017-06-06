@@ -57,4 +57,12 @@ public class AxisAdminServletITCase {
         tester.submit();
         assertThat(tester.getSessionId()).isNotEqualTo(sessionId);
     }
+
+    @Test
+    public void testEditServiceParameters() {
+        tester.clickLinkWithText("Edit Parameters");
+        tester.selectOption("axisService", "Version");
+        tester.clickButtonWithText(" Edit Parameters ");
+        tester.assertTextFieldEquals("Version_ServiceClass", "sample.axisversion.Version");
+    }
 }

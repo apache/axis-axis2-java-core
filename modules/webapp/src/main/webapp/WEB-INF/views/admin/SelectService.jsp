@@ -27,31 +27,27 @@
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
 
   <%
-      String action ="";
       String buttonName="" ;
       String status = (String)request.getSession().getAttribute(Constants.SELECT_SERVICE_TYPE);
       String heading = "";
       String disc = "";
       if(status != null && status.equals("MODULE")) {
-          action = "engageToOperation";
           buttonName = " View Operations";
           heading = "Select a service to view operation specific chains";
           disc = "Select an Axis service from the combo and click on the 'View Operations' button to view operation specific Chains.";
       } else if(status != null && status.equals("VIEW")){
           buttonName = " View ";
-          action = "viewOperationSpecificChains";
           heading = "Select a service to view service handlers";
           disc = "Select an Axis service from the combo and click on the 'View' button to view service handlers.";
       } else if (status != null && status.equals("SERVICE_PARAMETER")){
           buttonName = " Edit Parameters ";
-          action = "editServiceParameters"; // Constants.EDIR_SERVICE_PARA;
           heading = "Select a Service to Edit Parameters";
           disc = "Select an Axis service from the combo and click on the 'Edit Parameters' button to edit parameters.";
       }
   %>
 <h1><%=heading%></h1>
 <p><%=disc%></p>
-<form method="get" name="selectServiceForm" action="<c:url value="<%="axis2-admin/"+action%>"/>">
+<form method="get" name="selectServiceForm" action="<c:url value="axis2-admin/${requestScope.action}"/>">
 <table summary="main content table" border="0" style="width: 50%" cellspacing="1" cellpadding="1">
          <tr>
         <td style="width: 35%">Select a Service :</td><td style="width:65%">
