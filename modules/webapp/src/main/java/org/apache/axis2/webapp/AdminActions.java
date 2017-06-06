@@ -71,6 +71,7 @@ final class AdminActions {
     private static final String DEACTIVATE_SERVICE = "deactivateService";
     private static final String ACTIVATE_SERVICE = "activateService";
     private static final String EDIT_SERVICE_PARAMETERS = "editServiceParameters";
+    private static final String VIEW_OPERATION_SPECIFIC_CHAINS = "viewOperationSpecificChains";
 
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
@@ -447,6 +448,7 @@ final class AdminActions {
     public View selectServiceParaEdit(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
+        req.setAttribute("action", EDIT_SERVICE_PARAMETERS);
         return new View(SELECT_SERVICE_JSP_NAME);
     }
 
@@ -454,6 +456,7 @@ final class AdminActions {
     public View listOperation(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
+        req.setAttribute("action", ENGAGE_TO_OPERATION);
         return new View(SELECT_SERVICE_JSP_NAME);
     }
 
@@ -501,7 +504,7 @@ final class AdminActions {
         return new View("viewGlobalChains.jsp");
     }
 
-    @Action(name="viewOperationSpecificChains")
+    @Action(name=VIEW_OPERATION_SPECIFIC_CHAINS)
     public View viewOperationSpecificChains(HttpServletRequest req) throws AxisFault {
         String service = req.getParameter("axisService");
 
@@ -624,7 +627,7 @@ final class AdminActions {
     public View selectService(HttpServletRequest req) {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
-
+        req.setAttribute("action", VIEW_OPERATION_SPECIFIC_CHAINS);
         return new View(SELECT_SERVICE_JSP_NAME);
     }
 }
