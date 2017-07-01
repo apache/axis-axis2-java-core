@@ -491,7 +491,6 @@
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <bsf.version>2.4.0</bsf.version>
-        <commons.codec.version>1.3</commons.codec.version>
         <commons.fileupload.version>1.3.3</commons.fileupload.version>
         <commons.httpclient.version>3.1</commons.httpclient.version>
         <commons.io.version>2.1</commons.io.version>
@@ -765,11 +764,6 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commons.logging.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons.codec.version}</version>
             </dependency>
 
             <dependency>
