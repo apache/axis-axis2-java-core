@@ -18,29 +18,31 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.axis2</groupId>
-    <artifactId>axis2-aar-plugin-configuration-test1</artifactId>
-    <version>SNAPSHOT</version>
+    <parent>
+        <groupId>@pom.groupId@</groupId>
+        <artifactId>axis2</artifactId>
+        <version>@pom.version@</version>
+    </parent>
+    <artifactId>axis2-aar-plugin-basic-test1</artifactId>
     <name>Test 1 of the axis2-wsdl2code-maven-plugin</name>
     <build>
+        <finalName>test1</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.axis2</groupId>
-                <artifactId>axis2-aar-maven-plugin</artifactId>
-                <version>SNAPSHOT</version>
-                <configuration>
-                    <servicesXmlFile>target/test-classes/services.xml</servicesXmlFile>
-                    <wsdlFile>target/test-classes/simple.wsdl</wsdlFile>
-                    <wsdlFileName>SimpleService.wsdl</wsdlFileName>
-                    <fileSets>
-                        <fileSet>
-                            <directory>target/test-classes/AdditionalDir</directory>
-                            <outputDirectory>META-INF/docs</outputDirectory>
-                        </fileSet>
-                    </fileSets>
-                </configuration>
+                <groupId>@pom.groupId@</groupId>
+               	<artifactId>axis2-aar-maven-plugin</artifactId>
+                <version>@pom.version@</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>aar</goal>
+                        </goals>
+                        <configuration/>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -18,21 +17,11 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
-<project>
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.axis2</groupId>
-    <artifactId>axis2-aar-plugin-basic-test1</artifactId>
-    <version>SNAPSHOT</version>
-    <name>Test 1 of the axis2-wsdl2code-maven-plugin</name>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.axis2</groupId>
-               	<artifactId>axis2-aar-maven-plugin</artifactId>
-                <version>SNAPSHOT</version>
-                <configuration/>
-            </plugin>
-        </plugins>
-    </build>
-</project>
+<serviceGroup>
+    <service name="SimpleService">
+        <parameter name="ServiceClass">sample.SimpleService</parameter>
+        <operation name="helloService">
+            <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
+        </operation>
+    </service>
+</serviceGroup>
