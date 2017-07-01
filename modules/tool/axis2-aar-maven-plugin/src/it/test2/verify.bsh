@@ -1,0 +1,5 @@
+import java.io.*;
+
+if (!new File(basedir, "target/test2.aar").exists()) {
+    throw new IllegalStateException("The build didn't generate the expected output file");
+}

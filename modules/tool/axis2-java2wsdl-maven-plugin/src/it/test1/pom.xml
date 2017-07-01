@@ -21,19 +21,29 @@
 
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.axis2</groupId>
+    <parent>
+        <groupId>@pom.groupId@</groupId>
+        <artifactId>axis2</artifactId>
+        <version>@pom.version@</version>
+    </parent>
     <artifactId>axis2-wsdl2code-maven-plugin-test1</artifactId>
-    <version>SNAPSHOT</version>
     <name>Test 1 of the axis2-wsdl2code-maven-plugin</name>
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.axis2</groupId>
+                <groupId>@pom.groupId@</groupId>
                 <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
-                <version>SNAPSHOT</version>
-                <configuration>
-                    <className>org.apache.axis2.maven2.java2wsdl.test.Adder</className>
-                </configuration>
+                <version>@pom.version@</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java2wsdl</goal>
+                        </goals>
+                        <configuration>
+                            <className>org.apache.axis2.maven2.java2wsdl.test.Adder</className>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
