@@ -40,11 +40,6 @@ public class JavaPrettyPrinterExtension extends AbstractPrettyPrinterExtension {
      * @param file
      */
     protected void prettifyFile(File file) {
-        // Special case jaxbri generated package-info.java 
-        // as jalopy corrupts the package level annotations
-        if (file.getName().equals("package-info.java")) {
-            return;
-        }
         PrettyPrinter.prettify(file);
     }
 }
