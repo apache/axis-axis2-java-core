@@ -21,24 +21,36 @@
 
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.axis2.maven2</groupId>
+    <parent>
+        <groupId>@pom.groupId@</groupId>
+        <artifactId>axis2</artifactId>
+        <version>@pom.version@</version>
+    </parent>
     <artifactId>axis2-wsdl2code-maven-plugin-test1</artifactId>
-    <version>SNAPSHOT</version>
     <name>Test 2 of the axis2-wsdl2code-maven-plugin to test
         schema import with space character in wsdl location path</name>
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.axis2</groupId>
+                <groupId>@pom.groupId@</groupId>
                 <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-                <version>SNAPSHOT</version>
-                <configuration>
-                    <generateServerSide>true</generateServerSide>
-                    <generateServerSideInterface>true</generateServerSideInterface>
-                    <generateAllClasses>true</generateAllClasses>
-                    <generateServicesXml>true</generateServicesXml>
-                    <packageName>demo2</packageName>
-                </configuration>
+                <version>@pom.version@</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsdl2code</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFile>src/main/axis2/test dir/service.wsdl</wsdlFile>
+                            <syncMode>both</syncMode>
+                            <generateServerSide>true</generateServerSide>
+                            <generateServerSideInterface>true</generateServerSideInterface>
+                            <generateAllClasses>true</generateAllClasses>
+                            <generateServicesXml>true</generateServicesXml>
+                            <packageName>demo2</packageName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
