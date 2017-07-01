@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-tools</artifactId>            
+            <artifactId>jaxws-tools</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>com.sun.xml.ws</groupId>
@@ -68,13 +68,13 @@
             </exclusions>
         </dependency>
         <dependency>
-        	<groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>           
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
              <groupId>com.sun.xml.ws</groupId>
-             <artifactId>jaxws-rt</artifactId>            
+             <artifactId>jaxws-rt</artifactId>
              <scope>test</scope>
         </dependency>
         <dependency>
@@ -82,11 +82,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-	<dependency>
-	        <groupId>xmlunit</groupId>
-	        <artifactId>xmlunit</artifactId>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
             <scope>test</scope>
-	 </dependency>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -143,10 +143,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
-                <configuration>                  
+                <configuration>
                     <includes>
-                        <include>**/*Test.java</include>                       
-                    </includes>                    
+                        <include>**/*Test.java</include>
+                    </includes>
                 </configuration>
             </plugin>
 
@@ -214,7 +214,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/templates</outputDirectory>
-                            <resources>          
+                            <resources>
                                 <resource>
                                     <directory>../adb-codegen/src</directory>
                                     <includes>
@@ -239,8 +239,8 @@
                                         <include>**/*.xsl</include>
                                     </includes>
                                 </resource>
-                            </resources>              
-                        </configuration>            
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
