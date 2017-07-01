@@ -18,10 +18,10 @@
   ~ under the License.
   -->
 <serviceGroup>
-	<service name="SimpleService">
-		<parameter name="ServiceClass">sample.SimpleService</parameter>
-		<operation name="helloService">
-			<messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
-		</operation>
-	</service>
+    <service name="SimpleService">
+        <parameter name="ServiceClass">sample.SimpleService</parameter>
+        <operation name="helloService">
+            <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
+        </operation>
+    </service>
 </serviceGroup>

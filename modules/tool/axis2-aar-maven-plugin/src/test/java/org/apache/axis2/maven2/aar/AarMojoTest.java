@@ -23,22 +23,22 @@ import java.io.File;
 
 public class AarMojoTest extends AbstractAarTest {
 
-	public void testAarMojoGoal() throws Exception {
+    public void testAarMojoGoal() throws Exception {
 
-		AarMojo mojo = (AarMojo) getAarMojoGoal("aar",
-				"target/test-classes/aar-plugin-config-1.xml");
-		mojo.execute();
-		String aarName = "target/axis2-aar-plugin-basic-test1.aar";
-		assertTrue(" Can not find " + aarName, new File(aarName).exists());
-	}
+        AarMojo mojo = (AarMojo) getAarMojoGoal("aar",
+                "target/test-classes/aar-plugin-config-1.xml");
+        mojo.execute();
+        String aarName = "target/axis2-aar-plugin-basic-test1.aar";
+        assertTrue(" Can not find " + aarName, new File(aarName).exists());
+    }
 
-	public void testAarMojoGoalConfiguration() throws Exception {
+    public void testAarMojoGoalConfiguration() throws Exception {
 
-		AarMojo mojo = (AarMojo) getAarMojoGoal("aar",
-				"target/test-classes/aar-plugin-config-2.xml");
-		mojo.execute();
-		String aarName = "target/axis2-aar-plugin-configuration-test1.aar";
-		assertTrue(" Can not find " + aarName, new File(aarName).exists());
-	}
+        AarMojo mojo = (AarMojo) getAarMojoGoal("aar",
+                "target/test-classes/aar-plugin-config-2.xml");
+        mojo.execute();
+        String aarName = "target/axis2-aar-plugin-configuration-test1.aar";
+        assertTrue(" Can not find " + aarName, new File(aarName).exists());
+    }
 
 }

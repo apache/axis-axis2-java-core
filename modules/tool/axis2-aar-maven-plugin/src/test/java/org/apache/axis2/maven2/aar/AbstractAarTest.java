@@ -34,35 +34,35 @@ import org.codehaus.plexus.util.ReaderFactory;
 
 public abstract class AbstractAarTest extends AbstractMojoTestCase {
 
-	public Mojo getAarMojoGoal(String goal, String testPom) throws Exception {
+    public Mojo getAarMojoGoal(String goal, String testPom) throws Exception {
 
-		File pom = new File(getBasedir(), testPom);
-		MavenXpp3Reader pomReader = new MavenXpp3Reader();
-		MavenProject project = new MavenProject();
-		Model model = pomReader.read(ReaderFactory.newXmlReader(pom));
-		// Set project properties.
-		setVariableValueToObject(project, "model", model);
-		setVariableValueToObject(project, "file", pom);
-		Artifact artifact = new DefaultArtifact(model.getGroupId(),
-				model.getArtifactId(),
-				VersionRange.createFromVersionSpec("SNAPSHOT"), null, "aar",
-				null, (new DefaultArtifactHandlerStub("aar", null)));
-		artifact.setBaseVersion("SNAPSHOT");
-		artifact.setVersion("SNAPSHOT");
-		setVariableValueToObject(project, "artifact", artifact);
-		// Create and set Mojo properties.
-		Mojo mojo = lookupMojo(goal, pom);
-		setVariableValueToObject(mojo, "aarDirectory", new File(getBasedir(),
-				"target/aar"));
-		setVariableValueToObject(mojo, "aarName", model.getArtifactId());
-		setVariableValueToObject(mojo, "outputDirectory", "target");
-		setVariableValueToObject(mojo, "project", project);
-		// Use some classes only for testing.
-		setVariableValueToObject(mojo, "classesDirectory", new File(
-				getBasedir(), "target/classes"));
-		assertNotNull(mojo);
-		return mojo;
+        File pom = new File(getBasedir(), testPom);
+        MavenXpp3Reader pomReader = new MavenXpp3Reader();
+        MavenProject project = new MavenProject();
+        Model model = pomReader.read(ReaderFactory.newXmlReader(pom));
+        // Set project properties.
+        setVariableValueToObject(project, "model", model);
+        setVariableValueToObject(project, "file", pom);
+        Artifact artifact = new DefaultArtifact(model.getGroupId(),
+                model.getArtifactId(),
+                VersionRange.createFromVersionSpec("SNAPSHOT"), null, "aar",
+                null, (new DefaultArtifactHandlerStub("aar", null)));
+        artifact.setBaseVersion("SNAPSHOT");
+        artifact.setVersion("SNAPSHOT");
+        setVariableValueToObject(project, "artifact", artifact);
+        // Create and set Mojo properties.
+        Mojo mojo = lookupMojo(goal, pom);
+        setVariableValueToObject(mojo, "aarDirectory", new File(getBasedir(),
+                "target/aar"));
+        setVariableValueToObject(mojo, "aarName", model.getArtifactId());
+        setVariableValueToObject(mojo, "outputDirectory", "target");
+        setVariableValueToObject(mojo, "project", project);
+        // Use some classes only for testing.
+        setVariableValueToObject(mojo, "classesDirectory", new File(
+                getBasedir(), "target/classes"));
+        assertNotNull(mojo);
+        return mojo;
 
-	}
+    }
 
 }
