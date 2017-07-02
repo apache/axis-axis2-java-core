@@ -91,7 +91,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-jibx</artifactId>
+            <artifactId>axis2-jibx-codegen</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

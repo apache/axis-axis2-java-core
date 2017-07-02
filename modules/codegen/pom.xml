@@ -239,7 +239,7 @@
                                     </includes>
                                 </resource>
                                 <resource>
-                                    <directory>../jibx/src</directory>
+                                    <directory>../jibx-codegen/src</directory>
                                     <includes>
                                         <include>**/*.xsl</include>
                                     </includes>

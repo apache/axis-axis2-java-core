@@ -49,6 +49,7 @@
         <module>modules/integration</module>
         <module>modules/java2wsdl</module>
         <module>modules/jibx</module>
+        <module>modules/jibx-codegen</module>
         <module>modules/json</module>
         <module>modules/kernel</module>
         <module>modules/mex</module>
