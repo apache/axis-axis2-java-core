@@ -140,16 +140,11 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>jalopy</groupId>
-            <artifactId>jalopy</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
         </dependency>
         <dependency>
-            <!-- Maven supports SLF4J, so use it. Note that Jalopy depends on log4j, but log4j-over-slf4j
-                 doesn't work since Jalopy uses reflection to manipulate log4j loggers. -->
+            <!-- Maven supports SLF4J, so use it. -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
