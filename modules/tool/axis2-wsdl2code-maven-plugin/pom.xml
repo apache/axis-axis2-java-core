@@ -140,6 +140,18 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-jibx-codegen</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
         </dependency>
@@ -147,6 +159,11 @@
             <!-- Maven supports SLF4J, so use it. -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <!-- JiBX uses log4j -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
     </dependencies>
     <build>
