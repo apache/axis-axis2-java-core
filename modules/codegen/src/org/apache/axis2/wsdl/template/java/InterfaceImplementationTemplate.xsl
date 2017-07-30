@@ -315,7 +315,7 @@
                     <xsl:for-each select="fault/param[@type!='']">
                         ,<xsl:value-of select="@name"/>
                     </xsl:for-each>{
-              org.apache.axis2.context.MessageContext _messageContext = null;
+              org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
               try{
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
@@ -325,9 +325,6 @@
               <xsl:for-each select="optionParam">
                   addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
               </xsl:for-each>
-
-              // create a message context
-              _messageContext = new org.apache.axis2.context.MessageContext();
 
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
@@ -923,7 +920,7 @@
                     </xsl:for-each>
                 </xsl:if>
                 {
-                org.apache.axis2.context.MessageContext _messageContext = null;
+                org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 
                 <xsl:if test="$mep='11'">try {</xsl:if>
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
@@ -937,7 +934,6 @@
 
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axiom.soap.SOAPEnvelope env = null;
-                 _messageContext = new org.apache.axis2.context.MessageContext();
 
                 <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                                     <xsl:choose>
