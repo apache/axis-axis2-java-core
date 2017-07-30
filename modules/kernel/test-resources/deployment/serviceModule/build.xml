@@ -21,11 +21,11 @@
 
 <project basedir="." default="jar">
     <property name="src" location="."/>
-    <property name="build" location="build"/>
+    <property name="root" location="../../../"/>
+    <property name="build" location="${root}/target/build"/>
     <property name="build.classes" location="${build}/classes"/>
     <property name="build.lib" location="${build}/lib"/>
     <property name="lib" location="lib"/>
-    <property name="root" location="../../../"/>
     <property name="jar.dir" location="${root}/target/test-resources/InvalidDeployment/modules/"/>
 
     <path id="axis.test.classpath">
