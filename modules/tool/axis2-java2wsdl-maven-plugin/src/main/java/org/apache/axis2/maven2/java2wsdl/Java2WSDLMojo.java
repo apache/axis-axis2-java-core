@@ -229,15 +229,15 @@ public class Java2WSDLMojo extends AbstractMojo {
                         Java2WSDLConstants.OUTPUT_FILENAME_OPTION,
                         outputFile.getName() );
 
-        Artifact artifact = project.getArtifact();
-        Set artifacts = project.getArtifacts();
-        String[] artifactFileNames = new String[artifacts.size() + (artifact == null ? 0 : 1)];
+        Artifact projectArtifact = project.getArtifact();
+        Set<Artifact> artifacts = project.getArtifacts();
+        String[] artifactFileNames = new String[artifacts.size() + (projectArtifact == null ? 0 : 1)];
         int j = 0;
-        for(Iterator i = artifacts.iterator(); i.hasNext(); j++) {
-            artifactFileNames[j] = ((Artifact) i.next()).getFile().getAbsolutePath();
+        for (Artifact artifact : artifacts) {
+            artifactFileNames[j++] = artifact.getFile().getAbsolutePath();
         }
-        if(artifact != null) {
-            File file = artifact.getFile();
+        if(projectArtifact != null) {
+            File file = projectArtifact.getFile();
             if(file != null){
                 artifactFileNames[j] = file.getAbsolutePath();
             }
