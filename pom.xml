@@ -1273,17 +1273,17 @@
                     </configuration>
                 </plugin>
                 
-                <!-- Use 1.5.2 versions of the aar and mar plugins in order to avoid
+                <!-- Use released versions of the aar and mar plugins in order to avoid
                      the chicken and egg problem. -->
                 <plugin>
                     <groupId>org.apache.axis2</groupId>
                     <artifactId>axis2-aar-maven-plugin</artifactId>
-                    <version>1.5.2</version>
+                    <version>1.7.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.axis2</groupId>
                     <artifactId>axis2-mar-maven-plugin</artifactId>
-                    <version>1.5.2</version>
+                    <version>1.7.5</version>
                 </plugin>
                 
                 <!-- No chicken and egg problem here because the plugin doesn't expose
