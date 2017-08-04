@@ -1278,12 +1278,12 @@
                 <plugin>
                     <groupId>org.apache.axis2</groupId>
                     <artifactId>axis2-aar-maven-plugin</artifactId>
-                    <version>1.7.5</version>
+                    <version>1.7.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.axis2</groupId>
                     <artifactId>axis2-mar-maven-plugin</artifactId>
-                    <version>1.7.5</version>
+                    <version>1.7.6</version>
                 </plugin>
                 
                 <!-- No chicken and egg problem here because the plugin doesn't expose
