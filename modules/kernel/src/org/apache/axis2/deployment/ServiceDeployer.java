@@ -246,17 +246,10 @@ public class ServiceDeployer extends AbstractDeployer {
         }
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         StringWriter errorWriter = new StringWriter();
-        int index = servicesURL.getPath().lastIndexOf(File.separator);
-         String serviceFile;
-         if(index > 0){
-             serviceFile = servicesURL.getPath().substring(index);
-         } else {
-             serviceFile = servicesURL.getPath();
-         }
          ArrayList<AxisService> servicelist =
          populateService(serviceGroup,
          servicesURL,
-         serviceFile.substring(0, serviceFile.indexOf(".aar")));
+         DescriptionBuilder.getShortFileName(deploymentFileData.getName()));
          try {
             DeploymentEngine.addServiceGroup(serviceGroup, servicelist, servicesURL, null,
              axisConfig);
