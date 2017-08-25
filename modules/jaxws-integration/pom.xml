@@ -605,19 +605,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>xjc-AnyType</id>
-                        <goals>
-                            <goal>testXjc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceType>WSDL</sourceType>
-                            <testSources>
-                                <testSource>test-resources/wsdl/AnyType.wsdl</testSource>
-                            </testSources>
-                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/AnyType</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>xjc-MessageContext</id>
                         <goals>
                             <goal>testXjc</goal>
@@ -724,6 +711,18 @@
                             <wsdlFiles>
                                 <wsdlFile>${basedir}/src/test/repository/services/BookStoreService/META-INF/SOAPActionTest.wsdl</wsdlFile>
                             </wsdlFiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsimport-AnyType</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/anytype/META-INF/AnyType.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.apache.axis2.jaxws.anytype</packageName>
                         </configuration>
                     </execution>
                 </executions>

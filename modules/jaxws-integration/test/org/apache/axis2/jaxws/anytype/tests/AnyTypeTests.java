@@ -20,8 +20,8 @@
 package org.apache.axis2.jaxws.anytype.tests;
 
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
-import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessageService;
+import org.apache.axis2.jaxws.anytype.AnyTypeMessagePortType;
+import org.apache.axis2.jaxws.anytype.AnyTypeMessageService;
 import org.apache.axis2.testutils.Axis2Server;
 import org.junit.ClassRule;
 import org.junit.Test;
