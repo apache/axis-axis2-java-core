@@ -115,7 +115,7 @@ public class WSDLWrapperTest extends TestCase {
                       .createConfigurationContextFromFileSystem(null, axis2xml)
                       .getAxisConfiguration();
 
-            WSDLDefinitionWrapper passthru = new WSDLDefinitionWrapper(def1, testResourceFile1.toURL(), false);
+            WSDLDefinitionWrapper passthru = new WSDLDefinitionWrapper(def1, testResourceFile1.toURI().toURL(), false);
 
             Definition def_passthru = passthru.getUnwrappedDefinition();
             String def_passthru_str = def_passthru.toString();
@@ -123,7 +123,7 @@ public class WSDLWrapperTest extends TestCase {
             String def_passthru_namespace = def_passthru.getTargetNamespace();
             Types def_passthru_types = def_passthru.getTypes();
 
-            WSDLDefinitionWrapper serialize = new WSDLDefinitionWrapper(def1, testResourceFile1.toURL(), axisCfg); 
+            WSDLDefinitionWrapper serialize = new WSDLDefinitionWrapper(def1, testResourceFile1.toURI().toURL(), axisCfg); 
 
             Definition def_serialize = serialize.getUnwrappedDefinition();
             String def_serialize_str = def_serialize.toString();
@@ -131,7 +131,7 @@ public class WSDLWrapperTest extends TestCase {
             String def_serialize_namespace = def_serialize.getTargetNamespace();
             Types def_serialize_types = def_serialize.getTypes();
 
-            WSDLDefinitionWrapper reload = new WSDLDefinitionWrapper(def1, testResourceFile1.toURL(), 2); 
+            WSDLDefinitionWrapper reload = new WSDLDefinitionWrapper(def1, testResourceFile1.toURI().toURL(), 2); 
 
             Definition def_reload = reload.getUnwrappedDefinition();
             String def_reload_str = def_reload.toString();

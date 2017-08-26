@@ -62,9 +62,9 @@ public class ScriptModuleTest extends TestCase {
         AxisConfiguration axisConfig = new AxisConfiguration();
         URL url = getClass().getClassLoader().getResource("org/apache/axis2/scripting/testrepo/test.js");
         File dir = Utils.toFile(url).getParentFile();
-        axisConfig.setRepository(dir.getParentFile().toURL());
+        axisConfig.setRepository(dir.getParentFile().toURI().toURL());
         axisConfig.addParameter(new Parameter("scriptServicesDir", dir.getName()));
-        assertEquals(dir.toURL(), module.getScriptServicesDirectory(axisConfig).toURL());
+        assertEquals(dir.toURI().toURL(), module.getScriptServicesDirectory(axisConfig).toURI().toURL());
     }
 
 //    public void testCreateService() throws AxisFault {
@@ -80,7 +80,7 @@ public class ScriptModuleTest extends TestCase {
         AxisConfiguration axisConfig = new AxisConfiguration();
         URL url = getClass().getClassLoader().getResource("org/apache/axis2/scripting/testrepo/test.js");
         File dir = Utils.toFile(url).getParentFile();
-        axisConfig.setRepository(dir.getParentFile().toURL());
+        axisConfig.setRepository(dir.getParentFile().toURI().toURL());
         axisConfig.addParameter(new Parameter("scriptServicesDir", dir.getName()));
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
 

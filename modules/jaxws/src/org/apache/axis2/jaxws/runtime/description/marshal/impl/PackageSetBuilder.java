@@ -880,7 +880,7 @@ public class PackageSetBuilder {
                                 String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
                                 String wsdlLocationPath = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
                                 File file = new File(wsdlLocationPath);
-                                URL url = file.toURL();
+                                URL url = file.toURI().toURL();
                                 if(log.isDebugEnabled()){
                                     log.debug("Reading WSDL from URL:" +url.toString());
                                 }

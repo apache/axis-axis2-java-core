@@ -239,7 +239,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             if (wsdlFile != null) {
                 try {
                     WSDLReader wsdlReader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
-                    InputStream is = wsdlFile.toURL().openStream();
+                    InputStream is = wsdlFile.toURI().toURL().openStream();
                     Definition definition = wsdlReader.readWSDL(localOutputDirectory,
                             new InputSource(is));
                     try {
@@ -331,7 +331,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             List<File> schemaFiles = getSchemaFiles(localOutputDirectory);
             for (File schemaFile : schemaFiles) {
                 // generate dom document for current schema file
-                Document parsedDoc = fac.newDocumentBuilder().parse(schemaFile.toURL().toString());
+                Document parsedDoc = fac.newDocumentBuilder().parse(schemaFile.toURI().toURL().toString());
                 // read the schema through XmlSchema
                 XmlSchema doc = schemaCollection.read(parsedDoc.getDocumentElement(),
                         UIDGenerator.generateUID());

@@ -45,7 +45,7 @@ public class ServiceClientTest extends Assert {
         if (basedir == null) {
             basedir = ".";
         }
-        URL zipUrl = new File(basedir, "target/test-zip.zip").toURL();
+        URL zipUrl = new File(basedir, "target/test-zip.zip").toURI().toURL();
         URL wsdlUrl = new URL("jar:" + zipUrl + "!/test.wsdl");
         ServiceClient serviceClient = new ServiceClient(configContext, wsdlUrl, new QName("urn:test", "EchoService"), "EchoPort");
         List<XmlSchema> schemas = serviceClient.getAxisService().getSchema();

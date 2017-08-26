@@ -80,7 +80,7 @@ public class JAXWSDeployer extends AbstractDeployer {
                 List<URL> extraUrls = new ArrayList<>();
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
-                    extraUrls.add(new File(webLocation).toURL());
+                    extraUrls.add(new File(webLocation).toURI().toURL());
                 }
                 ClassLoader classLoader = Utils.createClassLoader(
                         repository,
@@ -91,7 +91,7 @@ public class JAXWSDeployer extends AbstractDeployer {
                         axisConfig.isChildFirstClassLoading());
                 Thread.currentThread().setContextClassLoader(classLoader);
                 JAXWSDeployerSupport deployerSupport = new JAXWSDeployerSupport(configCtx, directory);
-                deployerSupport.deployClasses("JAXWS-Builtin", file.toURL(), Thread.currentThread().getContextClassLoader(), classList);
+                deployerSupport.deployClasses("JAXWS-Builtin", file.toURI().toURL(), Thread.currentThread().getContextClassLoader(), classList);
             } catch (NoClassDefFoundError e) {
                 if (log.isDebugEnabled()) {
                     log.debug(Messages.getMessage("deployingexception", e.getMessage()), e);
@@ -127,7 +127,7 @@ public class JAXWSDeployer extends AbstractDeployer {
         try {
             threadClassLoader = Thread.currentThread().getContextClassLoader();
             String groupName = deploymentFileData.getName();
-            URL location = deploymentFileData.getFile().toURL();
+            URL location = deploymentFileData.getFile().toURI().toURL();
             if (isJar(deploymentFileData.getFile())) {
                 log.info("Deploying artifact : " + deploymentFileData.getAbsolutePath());
                 List<URL> extraUrls = new ArrayList<>();
@@ -138,7 +138,7 @@ public class JAXWSDeployer extends AbstractDeployer {
 
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
-                    extraUrls.add(new File(webLocation).toURL());
+                    extraUrls.add(new File(webLocation).toURI().toURL());
                 }
                 ClassLoader classLoader = Utils.createClassLoader(
                         deploymentFileData.getFile().toURI().toURL(),

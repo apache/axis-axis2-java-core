@@ -987,7 +987,7 @@ public class ClientMetadataTest extends TestCase {
         String wsdlLocation = getWsdlLocation(wsdlFileName);
         try {
             File file = new File(wsdlLocation);
-            url = file.toURL();
+            url = file.toURI().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             fail("Exception converting WSDL file to URL: " + e.toString());
