@@ -123,11 +123,11 @@
                             <tasks unless="maven.test.skip">
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -ss -ssi -sd -o ${project.build.directory}/gen/Test01 -u -uri src/test/wsdl/Test01.wsdl" />
+                                    <arg line="-d jaxbri -ss -ssi -sd -o '${project.build.directory}/gen/Test01' -u -uri src/test/wsdl/Test01.wsdl" />
                                 </java>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
-                                    <arg line="-d jaxbri -o ${project.build.directory}/gen/Test01 -u -uri src/test/wsdl/Test01.wsdl" />
+                                    <arg line="-d jaxbri -o '${project.build.directory}/gen/Test01' -u -uri src/test/wsdl/Test01.wsdl" />
                                 </java>
                             </tasks>
                         </configuration>
