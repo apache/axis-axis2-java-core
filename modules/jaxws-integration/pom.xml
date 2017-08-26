@@ -416,7 +416,7 @@
                         <configuration>
                             <sourceType>WSDL</sourceType>
                             <testSources>
-                                <testSource>test-resources/wsdl/gorilla_dlw.wsdl</testSource>
+                                <testSource>test/org/apache/axis2/jaxws/proxy/gorilla_dlw/META-INF/gorilla_dlw.wsdl</testSource>
                             </testSources>
                             <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/gorilla_dlw</outputDirectory>
                         </configuration>
