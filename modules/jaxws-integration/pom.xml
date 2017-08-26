@@ -632,19 +632,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>xjc-shapes</id>
-                        <goals>
-                            <goal>testXjc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceType>WSDL</sourceType>
-                            <testSources>
-                                <testSource>test-resources/wsdl/shapes.wsdl</testSource>
-                            </testSources>
-                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/shapes</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>xjc-rpclitenum</id>
                         <goals>
                             <goal>testXjc</goal>
@@ -723,6 +710,17 @@
                                 <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/anytype/META-INF/AnyType.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.jaxws.anytype</packageName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsimport-shapes</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/polymorphic/shape/META-INF/shapes.wsdl</wsdlFile>
+                            </wsdlFiles>
                         </configuration>
                     </execution>
                 </executions>
