@@ -65,7 +65,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      */
     public GorillaInterface getProxy() throws MalformedURLException {
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         Object proxy =service.getPort(portName, GorillaInterface.class);
         BindingProvider p = (BindingProvider)proxy; 
@@ -81,7 +81,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      */
     public Dispatch<String> getDispatch() throws MalformedURLException {
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         service.addPort(portName, null, axisEndpoint);
         Dispatch<String> dispatch = service.createDispatch(portName, String.class, Service.Mode.PAYLOAD);

@@ -47,7 +47,7 @@ public class BareDocLitNoArgService
             String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
             wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
             File file = new File(wsdlLocation);
-            url = file.toURL();
+            url = file.toURI().toURL();
 //            url = new URL("file:/test/org/apache/axis2/jaxws/sample/doclitbarenoarg/META-INF/doclitbarenoarg.wsdl");
         } catch (MalformedURLException e) {
             e.printStackTrace();

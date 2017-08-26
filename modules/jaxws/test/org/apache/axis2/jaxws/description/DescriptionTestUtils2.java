@@ -61,7 +61,7 @@ public class DescriptionTestUtils2 {
         URL wsdlURL = null;
         String urlString = getWSDLLocation(wsdlFileName);
         try {
-            wsdlURL = new File(urlString).getAbsoluteFile().toURL();
+            wsdlURL = new File(urlString).getAbsoluteFile().toURI().toURL();
         } catch (Exception e) {
             TestLogger.logger.debug(
                     "Caught exception creating WSDL URL :" + urlString + "; exception: " +

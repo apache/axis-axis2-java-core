@@ -247,7 +247,7 @@ public class DescriptionFactoryImplTests extends TestCase {
             String sep = "/";
             configLoc = sep + "test-resources" + sep + "test-handler.xml";
             String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
-            is = new File(baseDir + configLoc).toURL().openStream();
+            is = new File(baseDir + configLoc).toURI().toURL().openStream();
         }
         catch(Exception e) {
             e.printStackTrace();

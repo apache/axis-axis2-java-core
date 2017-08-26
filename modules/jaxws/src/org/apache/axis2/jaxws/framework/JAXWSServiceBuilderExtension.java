@@ -106,7 +106,7 @@ public class JAXWSServiceBuilderExtension extends AbstractServiceBuilderExtensio
                             .getServiceClassNameFromMetaData(serviceMetaData);
                 }
 
-                return deployerSupport.deployClasses(deploymentFileData.getFile().toURL(),
+                return deployerSupport.deployClasses(deploymentFileData.getFile().toURI().toURL(),
                         deploymentFileData.getClassLoader(), listOfClasses);
 
             } catch (AxisFault e) {

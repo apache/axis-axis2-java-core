@@ -175,7 +175,7 @@ public class WSDL2JavaGenerator {
 			
 			String baseUri;
 			if ("file".equals(url.getProtocol())){
-				baseUri = new File(url.getFile()).getParentFile().toURL().toExternalForm();
+				baseUri = new File(url.getFile()).getParentFile().toURI().toURL().toExternalForm();
 			}else{
 				baseUri = url.toExternalForm().substring(0,
 						url.toExternalForm().lastIndexOf("/")

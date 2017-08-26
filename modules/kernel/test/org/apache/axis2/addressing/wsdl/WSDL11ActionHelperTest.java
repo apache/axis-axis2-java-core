@@ -48,7 +48,7 @@ public class WSDL11ActionHelperTest extends TestCase {
         reader.setFeature("javax.wsdl.verbose", false);
 
         URL wsdlFile = new File(AbstractTestCase.basedir + testWSDLFile)
-                .toURL();//getClass().getClassLoader().getResource(testWSDLFile);
+                .toURI().toURL();//getClass().getClassLoader().getResource(testWSDLFile);
         definition = reader.readWSDL(wsdlFile.toString());
     }
 

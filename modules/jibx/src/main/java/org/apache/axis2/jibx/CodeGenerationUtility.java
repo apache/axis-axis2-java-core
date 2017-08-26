@@ -243,7 +243,7 @@ public class CodeGenerationUtility {
                 // added work in finding the namespaces.
                 ValidationContext vctx = BindingElement.newValidationContext();
                 binding = BindingElement.readBinding(new FileInputStream(file), path, vctx);
-                binding.setBaseUrl(file.toURL());
+                binding.setBaseUrl(file.toURI().toURL());
                 vctx.setBindingRoot(binding);
                 IncludePrevalidationVisitor ipv = new IncludePrevalidationVisitor(vctx);
                 vctx.tourTree(binding, ipv);

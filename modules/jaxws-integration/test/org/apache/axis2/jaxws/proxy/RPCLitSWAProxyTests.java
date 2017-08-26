@@ -80,7 +80,7 @@ public class RPCLitSWAProxyTests extends AbstractTestCase {
     public RPCLitSWA getProxy() throws MalformedURLException {
         File wsdl= new File(wsdlLocation);
         assertTrue("WSDL does not exist:" + wsdlLocation,wsdl.exists());
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(wsdlUrl, serviceName);
         Object proxy =service.getPort(portName, RPCLitSWA.class);
         BindingProvider p = (BindingProvider)proxy; 
@@ -96,7 +96,7 @@ public class RPCLitSWAProxyTests extends AbstractTestCase {
      */
     public Dispatch<String> getDispatch() throws MalformedURLException {
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         service.addPort(portName, null, axisEndpoint);
         Dispatch<String> dispatch = service.createDispatch(portName, String.class, 

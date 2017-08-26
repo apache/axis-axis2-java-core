@@ -51,10 +51,10 @@ public class XMLCatalogTests extends TestCase {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         Document doc = documentBuilderFactory.newDocumentBuilder().
-                parse(file.toURL().toString());
+                parse(file.toURI().toURL().toString());
 
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(doc,file.toURL().toString(),null);
+        XmlSchema schema = schemaCol.read(doc,file.toURI().toURL().toString(),null);
         assertNotNull(schema);
 
         assertNotNull(schema.getTypeByName(new QName("http://soapinterop.org/xsd2","SOAPStruct")));
@@ -72,10 +72,10 @@ public class XMLCatalogTests extends TestCase {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         Document doc = documentBuilderFactory.newDocumentBuilder().
-                parse(file.toURL().toString());
+                parse(file.toURI().toURL().toString());
 
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(doc,file.toURL().toString(),null);
+        XmlSchema schema = schemaCol.read(doc,file.toURI().toURL().toString(),null);
         assertNotNull(schema);
 
         assertNotNull(schema.getTypeByName(new QName("http://soapinterop.org/xsd2","SOAPStruct")));
@@ -96,11 +96,11 @@ public class XMLCatalogTests extends TestCase {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         Document doc = documentBuilderFactory.newDocumentBuilder().
-                parse(file.toURL().toString());
+                parse(file.toURI().toURL().toString());
 
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
         schemaCol.setSchemaResolver(new CatalogURIResolver(catalogManager));
-        XmlSchema schema = schemaCol.read(doc,file.toURL().toString(),null);
+        XmlSchema schema = schemaCol.read(doc,file.toURI().toURL().toString(),null);
         assertNotNull(schema);
 
         assertNotNull(schema.getTypeByName(new QName("http://soapinterop.org/xsd2","SOAPStruct")));
@@ -123,7 +123,7 @@ public class XMLCatalogTests extends TestCase {
                 fail();
             }
                File file = new File(wsdlLocation);
-               url = file.toURL();
+               url = file.toURI().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             fail();

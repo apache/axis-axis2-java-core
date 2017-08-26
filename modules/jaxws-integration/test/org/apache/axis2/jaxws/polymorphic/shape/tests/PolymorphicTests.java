@@ -100,7 +100,7 @@ public class PolymorphicTests extends AbstractTestCase {
 				fail();
 			}
 			File file = new File(wsdlLocation);
-			url = file.toURL();
+			url = file.toURI().toURL();
 			WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
 			org.apache.axis2.jaxws.wsdl.SchemaReader sr= new SchemaReaderImpl();
 			Set<String> set= sr.readPackagesFromSchema(wsdlWrapper.getDefinition());
@@ -149,7 +149,7 @@ public class PolymorphicTests extends AbstractTestCase {
 				fail();
 			}
 			File file = new File(wsdlLocation);
-			url = file.toURL();
+			url = file.toURI().toURL();
 			WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
 			org.apache.axis2.jaxws.wsdl.SchemaReader sr= new SchemaReaderImpl();
 			Set<String> set= sr.readPackagesFromSchema(wsdlWrapper.getDefinition());
