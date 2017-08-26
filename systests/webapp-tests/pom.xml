@@ -35,6 +35,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>echo</artifactId>
+            <version>${project.version}</version>
+            <type>aar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.truth</groupId>
             <artifactId>truth</artifactId>
             <scope>test</scope>
@@ -69,6 +76,7 @@
                 <artifactId>alta-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>war-location</id>
                         <goals>
                             <goal>generate-properties</goal>
                         </goals>
@@ -82,6 +90,22 @@
                                     <type>war</type>
                                 </artifact>
                             </artifacts>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>aar-location</id>
+                        <goals>
+                            <goal>generate-test-resources</goal>
+                        </goals>
+                        <configuration>
+                            <name>echo-service-location.txt</name>
+                            <value>%file%</value>
+                            <dependencySet>
+                                <scope>test</scope>
+                                <includes>
+                                    <include>*:echo:aar:*</include>
+                                </includes>
+                            </dependencySet>
                         </configuration>
                     </execution>
                 </executions>

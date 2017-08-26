@@ -81,7 +81,7 @@
 <p>Service Description : <%=serviceDescription%><br>
 Service EPR : <%=prefix + axisService.getName()%><br>
 Service Status : <%=axisService.isActive() ? "Active" : "InActive"%>
-<form method="post" action="<c:url value="axis2-admin/deleteService"/>"><input type="hidden" name="serviceName" value="<%=serviceName%>"><input type="submit" value="Remove Service"></form></p>
+<form name="<%=serviceName%>" method="post" action="<c:url value="axis2-admin/deleteService"/>"><input type="hidden" name="serviceName" value="<%=serviceName%>"><input type="submit" value="Remove Service"></form></p>
 <%
     Collection engagedModules = axisService.getEngagedModules();
     String moduleName;

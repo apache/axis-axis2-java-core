@@ -20,6 +20,7 @@ package org.apache.axis2.webapp;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,6 +57,33 @@ public class AxisAdminServletITCase {
         tester.setTextField("password", "axis2");
         tester.submit();
         assertThat(tester.getSessionId()).isNotEqualTo(sessionId);
+    }
+
+    @Test
+    public void testUploadRemoveService() throws Exception {
+        tester.clickLinkWithText("Upload Service");
+        String echoServiceLocation = IOUtils.toString(AxisAdminServletITCase.class.getResource("/echo-service-location.txt"));
+        tester.setTextField("filename", echoServiceLocation);
+        tester.clickButtonWithText(" Upload ");
+        tester.assertMatch("File echo-.+\\.aar successfully uploaded");
+        int attempt = 0;
+        while (true) {
+            attempt++;
+            tester.clickLinkWithText("Available Services");
+            try {
+                tester.assertFormPresent("Echo");
+                break;
+            } catch (AssertionError ex) {
+                if (attempt < 30) {
+                    Thread.sleep(1000);
+                } else {
+                    throw ex;
+                } 
+            }
+        }
+        tester.setWorkingForm("Echo");
+        tester.submit();
+        tester.assertTextPresent("Service 'Echo' has been successfully removed.");
     }
 
     @Test
