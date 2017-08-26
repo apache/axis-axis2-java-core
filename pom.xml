@@ -1232,9 +1232,16 @@
                     <version>3.3.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>net.ju-n.maven.plugins</groupId>
+                    <groupId>net.nicoulaj.maven.plugins</groupId>
                     <artifactId>checksum-maven-plugin</artifactId>
-                    <version>1.2</version>
+                    <version>1.5</version>
+                    <configuration>
+                        <algorithms>
+                            <algorithm>MD5</algorithm>
+                            <algorithm>SHA-1</algorithm>
+                            <algorithm>SHA-512</algorithm>
+                        </algorithms>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
