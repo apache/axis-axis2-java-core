@@ -138,6 +138,20 @@
             <artifactId>commons-httpclient</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SOAP12TestServiceB</artifactId>
+            <version>${project.version}</version>
+            <type>aar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SOAP12TestServiceC</artifactId>
+            <version>${project.version}</version>
+            <type>aar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -360,6 +374,8 @@
                             <outputDirectory>target/Repository</outputDirectory>
                             <axis2xml>conf/axis2.xml</axis2xml>
                             <modules>addressing</modules>
+                            <includeServices>true</includeServices>
+                            <services>SOAP12TestServiceB,SOAP12TestServiceC</services>
                         </configuration>
                     </execution>
                     <execution>

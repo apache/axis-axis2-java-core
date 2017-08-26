@@ -86,8 +86,6 @@
 
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleB" />
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleC" />
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceB" />
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceC" />
 	</target>
 
 	<target name="rpc-wsdl-codegen">

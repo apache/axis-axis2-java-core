@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -21,28 +21,30 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2</artifactId>
+        <artifactId>systests</artifactId>
         <version>1.8.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>systests</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>SOAP12TestServiceB</artifactId>
+    <packaging>aar</packaging>
     <url>http://axis.apache.org/axis2/java/core/</url>
-
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-aar-maven-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
-                    <skip>true</skip>
+                    <servicesXmlFile>services.xml</servicesXmlFile>
+                    <includeDependencies>false</includeDependencies>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-    
-    <modules>
-        <module>SOAP12TestServiceB</module>
-        <module>SOAP12TestServiceC</module>
-        <module>webapp-tests</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>
