@@ -91,7 +91,7 @@ final class AdminActions {
         try {
             if (configContext.getAxisConfiguration().getRepository() != null) {
                 File repoDir =
-                        new File(configContext.getAxisConfiguration().getRepository().getFile());
+                        new File(configContext.getAxisConfiguration().getRepository().toURI());
                 serviceDir = new File(repoDir, "services");
                 if (!serviceDir.exists()) {
                     serviceDir.mkdirs();
