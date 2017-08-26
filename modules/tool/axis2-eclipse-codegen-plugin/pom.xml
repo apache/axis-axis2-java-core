@@ -256,7 +256,7 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>net.ju-n.maven.plugins</groupId>
+                        <groupId>net.nicoulaj.maven.plugins</groupId>
                         <artifactId>checksum-maven-plugin</artifactId>
                         <executions>
                             <execution>
