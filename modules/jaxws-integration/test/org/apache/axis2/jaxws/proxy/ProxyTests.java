@@ -23,9 +23,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
-import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
-import org.test.proxy.doclitwrapped.ReturnType;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.DocLitWrappedProxy;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.ProxyDocLitWrappedService;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.ReturnType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;

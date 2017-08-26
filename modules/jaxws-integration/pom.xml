@@ -721,6 +721,18 @@
                             <packageName>org.apache.axis2.jaxws.proxy.doclitnonwrapped</packageName>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>wsimport-ProxyDocLitWrapped</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.apache.axis2.jaxws.proxy.doclitwrapped</packageName>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
