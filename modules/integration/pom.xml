@@ -140,6 +140,20 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>SOAP12TestModuleB</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SOAP12TestModuleC</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>SOAP12TestServiceB</artifactId>
             <version>${project.version}</version>
             <type>aar</type>
@@ -373,7 +387,7 @@
                         <configuration>
                             <outputDirectory>target/Repository</outputDirectory>
                             <axis2xml>conf/axis2.xml</axis2xml>
-                            <modules>addressing</modules>
+                            <modules>addressing,SOAP12TestModuleB,SOAP12TestModuleC</modules>
                             <includeServices>true</includeServices>
                             <services>SOAP12TestServiceB,SOAP12TestServiceC</services>
                         </configuration>
