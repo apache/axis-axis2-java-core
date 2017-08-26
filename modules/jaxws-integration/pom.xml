@@ -367,19 +367,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>xjc-ProxyDocLitnonWrapped</id>
-                        <goals>
-                            <goal>testXjc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceType>WSDL</sourceType>
-                            <testSources>
-                                <testSource>test-resources/wsdl/ProxyDocLitnonWrapped.wsdl</testSource>
-                            </testSources>
-                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/ProxyDocLitnonWrapped</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>xjc-samplemtomjpeg</id>
                         <goals>
                             <goal>testXjc</goal>
@@ -720,6 +707,18 @@
                                 <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/nonanonymous/complextype/META-INF/EchoMessage.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.jaxws.nonanonymous.complextype</packageName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsimport-proxy_doclit_unwr</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/proxy/doclitnonwrapped/META-INF/proxy_doclit_unwr.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.apache.axis2.jaxws.proxy.doclitnonwrapped</packageName>
                         </configuration>
                     </execution>
                 </executions>
