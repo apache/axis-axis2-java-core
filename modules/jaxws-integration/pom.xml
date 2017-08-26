@@ -579,19 +579,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>xjc-EchoMessage</id>
-                        <goals>
-                            <goal>testXjc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceType>WSDL</sourceType>
-                            <testSources>
-                                <testSource>test-resources/wsdl/EchoMessage.wsdl</testSource>
-                            </testSources>
-                            <outputDirectory>${project.build.directory}/generated-test-sources/jaxb/EchoMessage</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>xjc-resourceinjection</id>
                         <goals>
                             <goal>testXjc</goal>
@@ -721,6 +708,18 @@
                             <wsdlFiles>
                                 <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/polymorphic/shape/META-INF/shapes.wsdl</wsdlFile>
                             </wsdlFiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsimport-EchoMessage</id>
+                        <goals>
+                            <goal>wsimport-test</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/test/org/apache/axis2/jaxws/nonanonymous/complextype/META-INF/EchoMessage.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.apache.axis2.jaxws.nonanonymous.complextype</packageName>
                         </configuration>
                     </execution>
                 </executions>
