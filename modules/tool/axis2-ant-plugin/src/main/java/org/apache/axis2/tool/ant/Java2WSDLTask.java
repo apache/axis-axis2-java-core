@@ -278,8 +278,6 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
 
             Thread.currentThread().setContextClassLoader(cl);
 
-            if (outputLocation != null) cl.addPathElement(outputLocation);
-
             new Java2WSDLCodegenEngine(commandLineOptions).generate();
             Thread.currentThread().setContextClassLoader(conextClassLoader);
         } catch (Throwable e) {
