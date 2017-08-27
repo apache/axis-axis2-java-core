@@ -215,15 +215,17 @@
             <outputDirectory>webapp</outputDirectory>
             <unpackOptions>
                 <includes>
-                    <include>WEB-INF/**/*</include>
+                    <include>org/apache/axis2/soapmonitor/applet/**/*</include>
+                    <include>WEB-INF/classes/**/*</include>
+                    <include>WEB-INF/include/**/*</include>
+                    <include>WEB-INF/lib/taglibs-standard-impl-*.jar</include>
+                    <include>WEB-INF/lib/taglibs-standard-spec-*.jar</include>
+                    <include>WEB-INF/lib/axis2-soapmonitor-servlet-*.jar</include>
+                    <include>WEB-INF/tags/**/*</include>
+                    <include>WEB-INF/views/**/*</include>
+                    <include>WEB-INF/web.xml</include>
                     <include>axis2-web/**/*</include>
                 </includes>
-                <excludes>
-                    <exclude>WEB-INF/conf/**/*</exclude>
-                    <exclude>WEB-INF/lib/**/*</exclude>
-                    <exclude>WEB-INF/services/**/*</exclude>
-                    <exclude>WEB-INF/modules/**/*</exclude>
-                </excludes>
             </unpackOptions>
         </dependencySet>
     </dependencySets>

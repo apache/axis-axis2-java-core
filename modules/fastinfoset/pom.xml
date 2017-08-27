@@ -74,11 +74,7 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-codegen</artifactId>
-            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
@@ -215,7 +211,7 @@
                                 <mkdir dir="${wsdl.output.base.dir}/simpleAddService" />
 
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath refid="maven.test.classpath" />
                                     <classpath location="${compiled.classes.dir}" />
                                     <arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or" />
                                 </java>

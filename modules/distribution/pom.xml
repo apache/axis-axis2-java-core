@@ -186,6 +186,12 @@
             <version>${project.version}</version>
             <type>mar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxws-mar</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+        </dependency>
         
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -323,6 +329,28 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>war-location</id>
+                        <goals>
+                            <goal>generate-properties</goal>
+                        </goals>
+                        <configuration>
+                            <name>webapp</name>
+                            <value>%file%</value>
+                            <dependencySet>
+                                <scope>test</scope>
+                                <includes>
+                                    <include>*:axis2-webapp:war:*</include>
+                                </includes>
+                            </dependencySet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
@@ -343,6 +371,39 @@
                             </scripts>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>check-webapp-content</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script>
+                                    import java.util.jar.*
+                                    
+                                    def jar = new JarInputStream(new FileInputStream("${webapp}"))
+                                    def expected = new HashSet()
+                                    def entry
+                                    while(entry = jar.nextJarEntry) {
+                                        expected.add(entry.name)
+                                    }
+                                    jar.close()
+                                    
+                                    jar = new JarInputStream(new FileInputStream("${project.build.directory}/axis2-${project.version}/dist/axis2.war"))
+                                    while(entry = jar.nextJarEntry) {
+                                        if (!expected.remove(entry.name)) {
+                                            throw new Error("Unexpected entry in Web app: " + entry.name)
+                                        }
+                                    }
+                                    if (!expected.empty) {
+                                        throw new Error("Missing entries in Web app: " + expected)
+                                    }
+                                    jar.close()
+                                </script>
+                            </scripts>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -355,6 +416,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/tmp-repository</outputDirectory>
+                            <stripServiceVersion>false</stripServiceVersion>
                             <generateFileLists>true</generateFileLists>
                         </configuration>
                     </execution>
@@ -428,6 +490,9 @@
                         <configuration>
                             <tasks>
                                 <unzip src="${project.build.directory}/axis2-${project.version}-bin.zip" dest="${project.build.directory}" />
+                                
+                                <!-- Build the web app -->
+                                <ant dir="${project.build.directory}/axis2-${project.version}/webapp" useNativeBasedir="true" />
                                 
                                 <!-- Test of the databinding sample -->
                                 <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding" />
