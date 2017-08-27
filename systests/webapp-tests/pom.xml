@@ -83,13 +83,12 @@
                         <configuration>
                             <name>webapp</name>
                             <value>%file%</value>
-                            <artifacts>
-                                <artifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>axis2-webapp</artifactId>
-                                    <type>war</type>
-                                </artifact>
-                            </artifacts>
+                            <dependencySet>
+                                <scope>test</scope>
+                                <includes>
+                                    <include>*:axis2-webapp:war:*</include>
+                                </includes>
+                            </dependencySet>
                         </configuration>
                     </execution>
                     <execution>
