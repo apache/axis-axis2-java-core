@@ -54,7 +54,7 @@ public class ArchiveDeployer {
         StringBuilder buffer = new StringBuilder(artifact.getArtifactId());
         if (!stripVersion) {
             buffer.append("-");
-            buffer.append(artifact.getVersion());
+            buffer.append(artifact.getBaseVersion());
         }
         buffer.append(".");
         buffer.append(artifact.getType());
