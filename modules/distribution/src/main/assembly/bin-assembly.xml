@@ -170,6 +170,9 @@
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory>lib</outputDirectory>
+            <!-- Use artifact.baseVersion instead of artifact.version to avoid inconsistency with
+                 the Web app built by Maven. This only affects snapshot builds. -->
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <includes>
                 <include>*:*:jar</include>
             </includes>
