@@ -104,10 +104,9 @@ final class AdminActions {
         }
     }
 
-    protected void populateSessionInformation(HttpServletRequest req) {
+    protected void populateRequestAttributes(HttpServletRequest req) {
         HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+        req.setAttribute(Constants.SERVICE_MAP, services);
     }
 
     @Action(name=INDEX)
@@ -354,7 +353,7 @@ final class AdminActions {
         Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
 
 
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
@@ -446,7 +445,7 @@ final class AdminActions {
 
     @Action(name="selectServiceParaEdit")
     public View selectServiceParaEdit(HttpServletRequest req) {
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
         req.setAttribute("action", EDIT_SERVICE_PARAMETERS);
         return new View(SELECT_SERVICE_JSP_NAME);
@@ -454,7 +453,7 @@ final class AdminActions {
 
     @Action(name="listOperation")
     public View listOperation(HttpServletRequest req) {
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
         req.setAttribute("action", ENGAGE_TO_OPERATION);
         return new View(SELECT_SERVICE_JSP_NAME);
@@ -462,7 +461,7 @@ final class AdminActions {
 
     @Action(name=ACTIVATE_SERVICE)
     public View activateService(HttpServletRequest req) {
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
         return new View("activateService.jsp");
     }
 
@@ -480,7 +479,7 @@ final class AdminActions {
 
     @Action(name=DEACTIVATE_SERVICE)
     public View deactivateService(HttpServletRequest req) {
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
         return new View("deactivateService.jsp");
     }
 
@@ -526,7 +525,7 @@ final class AdminActions {
     @Action(name="listServiceGroups")
     public View listServiceGroups(HttpServletRequest req) {
         Iterator<AxisServiceGroup> serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, serviceGroups);
 
         return new View("listServiceGroups.jsp");
@@ -534,7 +533,7 @@ final class AdminActions {
 
     @Action(name=LIST_SERVICES)
     public View listServices(HttpServletRequest req) {
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
                                       configContext.getAxisConfiguration().getFaultyServices());
 
@@ -625,7 +624,7 @@ final class AdminActions {
 
     @Action(name="selectService")
     public View selectService(HttpServletRequest req) {
-        populateSessionInformation(req);
+        populateRequestAttributes(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
         req.setAttribute("action", VIEW_OPERATION_SPECIFIC_CHAINS);
         return new View(SELECT_SERVICE_JSP_NAME);

@@ -53,7 +53,7 @@
         <td style="width: 35%">Select a Service :</td><td style="width:65%">
             <select name="axisService">
             <%
-                HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+                HashMap services = (HashMap)request.getAttribute(Constants.SERVICE_MAP);
                 Collection serviceCol =  services.values();
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
                     AxisService axisService = (AxisService)iterator.next();
@@ -61,7 +61,6 @@
             %> <option value="<%=serviceName%>"><%=serviceName%></option>
              <%
                 }
-                request.getSession().setAttribute(Constants.SERVICE_MAP,null);
              %>
              </select>
            </td>

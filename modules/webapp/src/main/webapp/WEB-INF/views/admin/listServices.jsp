@@ -39,8 +39,7 @@
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getAttribute(Constants.SERVICE_PATH) + "/";
 %>
 <%
-    HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);
-    request.getSession().setAttribute(Constants.SERVICE_MAP, null);
+    HashMap serviceMap = (HashMap) request.getAttribute(Constants.SERVICE_MAP);
     Hashtable errornessservice = (Hashtable) request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
     boolean status = false;
     if (serviceMap != null && !serviceMap.isEmpty()) {

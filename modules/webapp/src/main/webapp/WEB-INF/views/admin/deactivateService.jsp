@@ -35,7 +35,7 @@
   </tr>
   <tr>
 <%
-HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+HashMap services = (HashMap)request.getAttribute(Constants.SERVICE_MAP);
 Collection col = services.values();
 String html = "";
 int count = 0;
@@ -48,7 +48,6 @@ for (Iterator iterator = col.iterator(); iterator.hasNext();) {
 		html += axisServices.getName() + "</option>";
 	}
 }
-request.getSession().setAttribute(Constants.SERVICE_MAP,null);
 if (count > 0) {
 %>
 
