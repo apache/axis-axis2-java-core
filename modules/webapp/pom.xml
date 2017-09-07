@@ -127,6 +127,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <!-- Not required for the Maven build, but necessary to avoid errors when
+                 importing the project into an IDE. -->
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-mtompolicy</artifactId>
             <version>${project.version}</version>
