@@ -143,20 +143,22 @@
             </build>
         </profile>
         <profile>
-            <id>doclint-java8-disable</id>
+            <id>doclint-java7</id>
+            <activation>
+                <jdk>(,1.8)</jdk>
+            </activation>
+            <properties>
+                <javadoc.nolint.param />
+            </properties>
+        </profile>
+        <profile>
+            <id>doclint-java8</id>
             <activation>
                 <jdk>[1.8,)</jdk>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <javadoc.nolint.param>-Xdoclint:none</javadoc.nolint.param>
+            </properties>
         </profile>
     </profiles>
     <mailingLists>
@@ -1126,6 +1128,7 @@
                     <version>2.10.3</version>
                     <configuration>
                         <detectOfflineLinks>false</detectOfflineLinks>
+                        <additionalparam>${javadoc.nolint.param}</additionalparam>
                     </configuration>
                 </plugin>
                 <plugin>

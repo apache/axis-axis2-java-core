@@ -314,6 +314,7 @@
                             <doclet>org.apache.axis2.transport.testkit.doclet.TestkitJavadocDoclet</doclet>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                             <additionalparam>
+                                ${javadoc.nolint.param}
                                 -resource-info ${project.build.directory}/resource-info.dat
                             </additionalparam>
                             <reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
