@@ -25,7 +25,6 @@
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
-<c:set var="services" value="${requestScope.configContext.axisConfiguration.services}"/>
 <h1>Deactivate Service</h1>
 <form method="post" name="serviceInActivate" action="<c:url value="axis2-admin/doDeactivateService"/>">
   <table summary="main content table" style="width: 100%"  border="0">
@@ -36,19 +35,20 @@
   </tr>
   <tr>
 <%
-HashMap services = (HashMap)pageContext.getAttribute("services");
-Collection col = services.values();
 String html = "";
 int count = 0;
-
-for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-	AxisService axisServices = (AxisService) iterator.next();
+%>
+<c:forEach var="service" items="${requestScope.configContext.axisConfiguration.services.values()}">
+<%
+	AxisService axisServices = (AxisService) pageContext.getAttribute("service");
 	if(axisServices.isActive()){
 		count++;
 		html += "<option value='" + axisServices.getName() + "'>";
 		html += axisServices.getName() + "</option>";
 	}
-}
+%>
+</c:forEach>
+<%
 if (count > 0) {
 %>
 

@@ -25,7 +25,6 @@
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
-<c:set var="services" value="${requestScope.configContext.axisConfiguration.services}"/>
 
   <%
       String buttonName="" ;
@@ -53,16 +52,9 @@
          <tr>
         <td style="width: 35%">Select a Service :</td><td style="width:65%">
             <select name="axisService">
-            <%
-                HashMap services = (HashMap)pageContext.getAttribute("services");
-                Collection serviceCol =  services.values();
-                for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
-                    AxisService axisService = (AxisService)iterator.next();
-                    String serviceName = axisService.getName();
-            %> <option value="<%=serviceName%>"><%=serviceName%></option>
-             <%
-                }
-             %>
+                <c:forEach var="service" items="${requestScope.configContext.axisConfiguration.services.values()}">
+                    <option value="${service.name}"><c:out value="${service.name}"/></option>
+                </c:forEach>
              </select>
            </td>
         </tr>

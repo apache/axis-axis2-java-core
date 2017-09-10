@@ -29,7 +29,6 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<c:set var="services" value="${requestScope.configContext.axisConfiguration.services}"/>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -45,12 +44,12 @@
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getAttribute(Constants.SERVICE_PATH) + "/";
 %>
 <%
-    HashMap serviceMap = (HashMap) pageContext.getAttribute("services");
     Hashtable errornessservice = (Hashtable) request.getAttribute(Constants.ERROR_SERVICE_MAP);
     boolean status = false;
-    if (serviceMap != null && !serviceMap.isEmpty()) {
-        for (Iterator iterator = serviceMap.values().iterator(); iterator.hasNext();) {
-            AxisService axisService = (AxisService) iterator.next();
+%>
+<c:forEach var="service" items="${requestScope.configContext.axisConfiguration.services.values()}">
+<%
+            AxisService axisService = (AxisService) pageContext.getAttribute("service");
             if (!Utils.isHiddenService(axisService)) {
             Iterator opItr = axisService.getOperations();
             String serviceName = axisService.getName();
@@ -82,8 +81,9 @@
 <%
             status = true;
             }
-        }
-    }
+%>
+</c:forEach>
+<%
     if (errornessservice != null) {
         if (errornessservice.size() > 0) {
             request.setAttribute(Constants.IS_FAULTY, Constants.IS_FAULTY);

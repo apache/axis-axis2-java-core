@@ -30,24 +30,20 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
-<c:set var="services" value="${requestScope.configContext.axisConfiguration.services}"/>
 
 <h1>Available Services</h1>
 <t:status/>
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getAttribute(Constants.SERVICE_PATH) + "/";
 %>
 <%
-    HashMap serviceMap = (HashMap) pageContext.getAttribute("services");
     Hashtable errornessservice = (Hashtable) request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
     boolean status = false;
-    if (serviceMap != null && !serviceMap.isEmpty()) {
-        Iterator operations;
-        String serviceName;
-        Collection servicecol = serviceMap.values();
-        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
-            AxisService axisService = (AxisService) iterator.next();
-            operations = axisService.getOperations();
-            serviceName = axisService.getName();
+%>
+<c:forEach var="service" items="${requestScope.configContext.axisConfiguration.services.values()}">
+<%
+            AxisService axisService = (AxisService) pageContext.getAttribute("service");
+            Iterator operations = axisService.getOperations();
+            String serviceName = axisService.getName();
 %><h2><a style="color:blue" href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></h2>
 <%
     String serviceDescription = axisService.getDocumentation();
@@ -127,8 +123,9 @@ Service Status : <%=axisService.isActive() ? "Active" : "InActive"%>
 </ul>
 <%
             status = true;
-        }
-    }
+%>
+</c:forEach>
+<%
     if (errornessservice != null) {
         if (errornessservice.size() > 0) {
             request.getSession().setAttribute(Constants.IS_FAULTY, Constants.IS_FAULTY);
