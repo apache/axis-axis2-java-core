@@ -49,17 +49,11 @@
     Hashtable errornessservice = (Hashtable) request.getAttribute(Constants.ERROR_SERVICE_MAP);
     boolean status = false;
     if (serviceMap != null && !serviceMap.isEmpty()) {
-        Iterator opItr;
-        //HashMap operations;
-        String serviceName;
-        Collection servicecol = serviceMap.values();
-        // Collection operationsList;
-        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = serviceMap.values().iterator(); iterator.hasNext();) {
             AxisService axisService = (AxisService) iterator.next();
             if (!Utils.isHiddenService(axisService)) {
-            opItr = axisService.getOperations();
-            //operationsList = operations.values();
-            serviceName = axisService.getName();
+            Iterator opItr = axisService.getOperations();
+            String serviceName = axisService.getName();
 %><h2><a style="color:blue" href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></h2>
 <%
     String serviceDescription = axisService.getDocumentation();
