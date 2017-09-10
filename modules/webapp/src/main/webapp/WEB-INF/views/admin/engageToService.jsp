@@ -28,6 +28,7 @@
          %>
 <%@ page import="org.apache.axis2.util.Utils" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
+<c:set var="services" value="${requestScope.configContext.axisConfiguration.services}"/>
 <h1>Engage Module for a Service</h1>
 
 <p>To engage a module for a axis service,</p>
@@ -86,7 +87,7 @@
                 <select name="axisService">
                     <%
 
-                        HashMap services = (HashMap)request.getAttribute(Constants.SERVICE_MAP);
+                        HashMap services = (HashMap)pageContext.getAttribute("services");
                         Collection serviceCol =  services.values();
                         for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
                             AxisService axisService = (AxisService)iterator.next();

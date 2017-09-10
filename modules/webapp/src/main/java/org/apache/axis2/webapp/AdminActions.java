@@ -47,7 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +104,7 @@ final class AdminActions {
     }
 
     protected void populateRequestAttributes(HttpServletRequest req) {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.setAttribute(Constants.SERVICE_MAP, services);
+        req.setAttribute("configContext", configContext);
     }
 
     @Action(name=INDEX)

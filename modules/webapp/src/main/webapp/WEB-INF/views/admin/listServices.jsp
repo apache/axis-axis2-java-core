@@ -30,13 +30,14 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="/WEB-INF/include/adminheader.jsp"/>
+<c:set var="services" value="${requestScope.configContext.axisConfiguration.services}"/>
 
 <h1>Available Services</h1>
 <t:status/>
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getAttribute(Constants.SERVICE_PATH) + "/";
 %>
 <%
-    HashMap serviceMap = (HashMap) request.getAttribute(Constants.SERVICE_MAP);
+    HashMap serviceMap = (HashMap) pageContext.getAttribute("services");
     Hashtable errornessservice = (Hashtable) request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
     boolean status = false;
     if (serviceMap != null && !serviceMap.isEmpty()) {

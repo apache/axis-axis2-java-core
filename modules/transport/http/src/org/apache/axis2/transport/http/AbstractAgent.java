@@ -153,8 +153,7 @@ public class AbstractAgent {
     }
 
     protected void populateRequestAttributes(HttpServletRequest req) {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.setAttribute(Constants.SERVICE_MAP, services);
+        req.setAttribute("configContext", configContext);
         req.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
     }
 }
