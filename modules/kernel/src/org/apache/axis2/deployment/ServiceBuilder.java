@@ -152,6 +152,9 @@ public class ServiceBuilder extends DescriptionBuilder {
             // process service description
             OMElement descriptionElement = service_element
                     .getFirstChildWithName(new QName(TAG_DESCRIPTION));
+            if (descriptionElement == null) {
+                descriptionElement = service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION_ALT));
+            }
             if (descriptionElement != null) {
                 OMElement descriptionValue = descriptionElement
                         .getFirstElement();

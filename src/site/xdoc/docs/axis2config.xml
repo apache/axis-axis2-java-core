@@ -301,7 +301,7 @@ inside the servlet container. A very simple services.xml is shown below:</font><
     class="fully qualified name the service lifecycle class"   
     targetNamespace="target namespace for the service"&gt;
     
-    &lt;Description&gt; The description of the service  &lt;/Description&gt;  
+    &lt;description&gt; The description of the service  &lt;/description&gt;  
 
     &lt;transports&gt; 
         &lt;transport&gt;HTTP&lt;/transport&gt;

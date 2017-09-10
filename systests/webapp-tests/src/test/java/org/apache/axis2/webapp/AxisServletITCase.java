@@ -30,6 +30,7 @@ public class AxisServletITCase {
         tester.beginAt("/");
         tester.clickLinkWithExactText("Services");
         tester.assertLinkPresentWithExactText("Version");
+        tester.assertTextPresent("Service Description : This service is to get the running Axis version");
     }
 
     /**

@@ -148,7 +148,9 @@ public class ModuleBuilder extends DescriptionBuilder {
             // Process service description
             OMElement descriptionElement =
                     moduleElement.getFirstChildWithName(new QName(TAG_DESCRIPTION));
-
+            if (descriptionElement == null) {
+                descriptionElement = moduleElement.getFirstChildWithName(new QName(TAG_DESCRIPTION_ALT));
+            }
             if (descriptionElement != null) {
                 OMElement descriptionValue = descriptionElement.getFirstElement();
 

@@ -41,6 +41,7 @@ public class AxisAdminServletITCase {
     public void testAvailableServices() {
         tester.clickLinkWithText("Available Services");
         tester.assertMatch("Service EPR : http://localhost:[0-9]+/axis2/services/Version");
+        tester.assertTextPresent("Service Description : This service is to get the running Axis version");
     }
 
     /**
