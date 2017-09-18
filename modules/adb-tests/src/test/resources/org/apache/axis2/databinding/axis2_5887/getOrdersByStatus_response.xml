@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="webservice/xtc/plugins/Speed4Trade/com">
+	<SOAP-ENV:Body>
+		<ns1:getOrdersByStatusResponse>
+			<orders/>
+		</ns1:getOrdersByStatusResponse>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

@@ -321,6 +321,25 @@
                             <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5809</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>wsdl2code-axis2-5887</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFile>src/test/wsdl/AXIS2-5887.wsdl</wsdlFile>
+                            <syncMode>sync</syncMode>
+                            <unpackClasses>true</unpackClasses>
+                            <namespaceMappings>
+                                <namespaceMapping>
+                                    <uri>webservice/xtc/plugins/Speed4Trade/com</uri>
+                                    <packageName>org.apache.axis2.databinding.axis2_5887.client</packageName>
+                                </namespaceMapping>
+                            </namespaceMappings>
+                            <packageName>org.apache.axis2.databinding.axis2_5887.client</packageName>
+                            <outputDirectory>${project.build.directory}/wsdl2code/AXIS2-5887</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <databindingName>adb</databindingName>
