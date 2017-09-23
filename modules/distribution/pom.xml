@@ -447,7 +447,7 @@
                 <executions>
                     <execution>
                         <id>clean-test-files</id>
-                        <phase>integration-test</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>clean</goal>
                         </goals>
