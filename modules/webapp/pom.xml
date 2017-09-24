@@ -356,8 +356,6 @@
                         WEB-INF/lib/spring-context-*.jar,
                         WEB-INF/lib/spring-core-*.jar,
                         WEB-INF/lib/spring-web-*.jar,
-                        WEB-INF/lib/ant-*.jar,
-                        WEB-INF/lib/ant-launcher-*.jar,
                         WEB-INF/lib/aopalliance-*.jar,
                         WEB-INF/lib/bsf-*.jar,
                         WEB-INF/lib/FastInfoset-*.jar,

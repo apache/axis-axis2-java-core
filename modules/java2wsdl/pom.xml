@@ -46,10 +46,6 @@
             <artifactId>axis2-transport-local</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-        </dependency>
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
