@@ -1286,7 +1286,9 @@ public class ConverterUtil {
      * @return 0 if equal , + value if greater than , - value if less than
      */
     public static int compare(int intValue, String value) {
-        return intValue - Integer.parseInt(value);
+        int other = Integer.parseInt(value);
+        return intValue < other ? -1 : (intValue == other ? 0 : 1);
+
     }
 
     /**
