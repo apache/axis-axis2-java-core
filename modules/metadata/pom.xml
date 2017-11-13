@@ -219,6 +219,17 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- Work around a problem in jaxb2-maven-plugin which confuses compile sources
+                     and test sources, causing test sources to be included in the source JAR.
+                     Should be fixed by https://github.com/mojohaus/jaxb2-maven-plugin/pull/94. -->
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>org/test/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
