@@ -340,11 +340,10 @@
                 </executions>
                 <configuration>
                     <additionalJOption>-J-Xmx256m</additionalJOption>
+                    <detectJavaApiLink>false</detectJavaApiLink>
                     <links>
-                        <link>http://docs.oracle.com/javase/1.5.0/docs/api/</link>
-                        <link>http://docs.oracle.com/javaee/5/api/</link>
+                        <link>https://docs.oracle.com/javase/7/docs/api/</link>
                         <link>http://ws.apache.org/axiom/apidocs/</link>
-                        <link>http://jaxen.org/apidocs/</link>
                     </links>
                     <includeDependencySources>true</includeDependencySources>
                     <dependencySourceIncludes>
