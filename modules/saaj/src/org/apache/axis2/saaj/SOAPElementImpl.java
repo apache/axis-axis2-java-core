@@ -166,7 +166,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
       */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         SOAPElementImpl<OMElement> childEle =
-                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElementNS(null, localName));
+                (SOAPElementImpl<OMElement>)getOwnerDocument().createElementNS(null, localName);
         childEle.target.setUserData(SAAJ_NODE, childEle, null);
         target.appendChild(childEle.target);
         childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
