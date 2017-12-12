@@ -129,11 +129,8 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
     public SOAPHeader addHeader() throws SOAPException {
         org.apache.axiom.soap.SOAPHeader header = omTarget.getHeader();
         if (header == null) {
-            SOAPHeaderImpl saajSOAPHeader;
             header = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPHeader(omTarget);
-            saajSOAPHeader = new SOAPHeaderImpl(header);
-            ((Element)omTarget.getHeader()).setUserData(SAAJ_NODE, saajSOAPHeader, null);
-            return saajSOAPHeader;
+            return new SOAPHeaderImpl(header);
         } else {
             throw new SOAPException("Header already present, can't set header again without " +
                     "deleting the existing header. " +
@@ -158,7 +155,6 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
             body = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPBody(omTarget);
             SOAPBodyImpl saajSOAPBody = new SOAPBodyImpl(body);
             saajSOAPBody.setParentElement(this);
-            ((Element)omTarget.getBody()).setUserData(SAAJ_NODE, saajSOAPBody, null);
             return saajSOAPBody;
         } else {
             throw new SOAPException("Body already present, can't set body again without " +

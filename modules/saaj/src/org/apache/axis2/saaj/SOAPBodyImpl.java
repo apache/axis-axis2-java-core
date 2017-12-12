@@ -64,9 +64,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         }
         SOAPBodyElementImpl<OMElement> childEle =
                 new SOAPBodyElementImpl<OMElement>((OMElement)target.getOwnerDocument().createElementNS(null, localName));
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
         return childEle;
     }
@@ -81,10 +79,8 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
                 new SOAPBodyElementImpl<OMElement>(
                         (OMElement)target.getOwnerDocument().createElementNS(namespaceURI,
                                                                         localName));
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -96,12 +92,10 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
 
         SOAPBodyElementImpl<?> childEle = toSOAPBodyElement(child);
 
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
             childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
         }
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -146,12 +140,10 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
             }
         }
 
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
             childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
         }
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -180,10 +172,8 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
                     (OMElement)target.getOwnerDocument().createElementNS(uri,
                                                                     prefix + ":" + localName));
         }
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         childEle.omTarget.setNamespace(omTarget.getOMFactory().createOMNamespace(uri, prefix));
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
         childEle.setParentElement(this);
         return childEle;
@@ -205,7 +195,6 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         // set default fault code and string
         saajSOAPFault.setDefaults();
         
-        ((Element)omTarget.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
         return saajSOAPFault;
     }
 
@@ -505,11 +494,9 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
                                                                     qname.getPrefix() + ":" +
                                                                             qname.getLocalPart()));
         }
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         childEle.omTarget.setNamespace(omTarget.getOMFactory().createOMNamespace(qname.getNamespaceURI(), qname.getPrefix()));
 
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
         childEle.setParentElement(this);
         return childEle;
@@ -576,14 +563,9 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
 
                         SOAPFactory omFactory = (SOAPFactory)this.omTarget.getOMFactory();
                         org.apache.axiom.soap.SOAPFault fault = omFactory.createSOAPFault(omTarget);
-                        SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
-                        ((Element)omTarget.getFault())
-                                .setUserData(SAAJ_NODE, saajSOAPFault, null);
-                        childElements.add(saajSOAPFault);
+                        childElements.add(new SOAPFaultImpl(fault));
                     } else {
-                        SOAPBodyElement saajBodyEle = new SOAPBodyElementImpl<OMElement>((OMElement)domNode);
-                        domNode.setUserData(SAAJ_NODE, saajBodyEle, null);
-                        childElements.add(saajBodyEle);
+                        childElements.add(new SOAPBodyElementImpl<OMElement>((OMElement)domNode));
                     }
                 }
             } else {

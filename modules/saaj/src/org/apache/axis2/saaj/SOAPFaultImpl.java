@@ -260,7 +260,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
         SOAPFactory factory = (SOAPFactory)this.omTarget.getOMFactory();
         omDetail = factory.createSOAPFaultDetail(this.omTarget);
         Detail saajDetail = new DetailImpl(omDetail);
-        ((Element)omTarget.getDetail()).setUserData(SAAJ_NODE, saajDetail, null);
         isDetailAdded = true;
         return saajDetail;
     }
@@ -749,9 +748,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
             org.w3c.dom.Node saajNode = toSAAJNode(domNode);
             if (!(saajNode instanceof SOAPFaultElement)) {
                 // silently replace node, as per saaj 1.2 spec
-                SOAPFaultElement bodyEle = new SOAPFaultElementImpl<OMElement>((OMElement)domNode);
-                domNode.setUserData(SAAJ_NODE, bodyEle, null);
-                childElements.add(bodyEle);
+                childElements.add(new SOAPFaultElementImpl<OMElement>((OMElement)domNode));
             } else {
                 childElements.add(saajNode);
             }
