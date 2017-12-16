@@ -147,46 +147,23 @@ public abstract class ProxyNode<T extends org.w3c.dom.Node, S extends OMInformat
         } else if (domNode instanceof org.w3c.dom.Comment) {
             return new CommentImpl((OMComment)domNode);
         } else if (domNode instanceof SOAPBody) {
-            javax.xml.soap.SOAPBody saajSOAPBody =
-                    new org.apache.axis2.saaj.SOAPBodyImpl((SOAPBody)domNode);
-            domNode.setUserData(SAAJ_NODE, saajSOAPBody, null);
-            return saajSOAPBody;
+            return new org.apache.axis2.saaj.SOAPBodyImpl((SOAPBody)domNode);
         } else if (domNode instanceof SOAPEnvelope) {
-            javax.xml.soap.SOAPEnvelope saajEnvelope
-                    = new org.apache.axis2.saaj.SOAPEnvelopeImpl((SOAPEnvelope)domNode);
-            domNode.setUserData(SAAJ_NODE, saajEnvelope, null);
-            return saajEnvelope;
+            return new org.apache.axis2.saaj.SOAPEnvelopeImpl((SOAPEnvelope)domNode);
         } else if (domNode instanceof SOAPFaultNode) {
-            javax.xml.soap.SOAPFaultElement saajSOAPFaultEle
-                    = new org.apache.axis2.saaj.SOAPFaultElementImpl<SOAPFaultNode>((SOAPFaultNode)domNode);
-            domNode.setUserData(SAAJ_NODE, saajSOAPFaultEle, null);
-            return saajSOAPFaultEle;
+            return new org.apache.axis2.saaj.SOAPFaultElementImpl<SOAPFaultNode>((SOAPFaultNode)domNode);
         } else if (domNode instanceof SOAPFaultDetail) {
-            javax.xml.soap.Detail saajDetail
-                    = new org.apache.axis2.saaj.DetailImpl((SOAPFaultDetail)domNode);
-            domNode.setUserData(SAAJ_NODE, saajDetail, null);
-            return saajDetail;
+            return new org.apache.axis2.saaj.DetailImpl((SOAPFaultDetail)domNode);
         } else if (domNode instanceof SOAPFault) {
-            javax.xml.soap.SOAPFault saajSOAPFault
-                    = new org.apache.axis2.saaj.SOAPFaultImpl((SOAPFault)domNode);
-            domNode.setUserData(SAAJ_NODE, saajSOAPFault, null);
-            return saajSOAPFault;
+            return new org.apache.axis2.saaj.SOAPFaultImpl((SOAPFault)domNode);
         } else if (domNode instanceof SOAPHeaderBlock) {
-            javax.xml.soap.SOAPHeaderElement saajSOAPHeaderEle
-                    = new org.apache.axis2.saaj.SOAPHeaderElementImpl((SOAPHeaderBlock)domNode);
-            domNode.setUserData(SAAJ_NODE, saajSOAPHeaderEle, null);
-            return saajSOAPHeaderEle;
+            return new org.apache.axis2.saaj.SOAPHeaderElementImpl((SOAPHeaderBlock)domNode);
         } else if (domNode instanceof SOAPHeader) {
-            javax.xml.soap.SOAPHeader saajSOAPHeader
-                    = new org.apache.axis2.saaj.SOAPHeaderImpl((SOAPHeader)domNode);
-            domNode.setUserData(SAAJ_NODE, saajSOAPHeader, null);
-            return saajSOAPHeader;
+            return new org.apache.axis2.saaj.SOAPHeaderImpl((SOAPHeader)domNode);
         } else if (domNode instanceof Document) {
             return new SAAJDocument((OMDocument)domNode);
         } else { // instanceof org.apache.axis2.om.impl.dom.ElementImpl
-            SOAPElementImpl<OMElement> saajSOAPElement = new SOAPElementImpl<OMElement>((OMElement)domNode);
-            domNode.setUserData(SAAJ_NODE, saajSOAPElement, null);
-            return saajSOAPElement;
+            return new SOAPElementImpl<OMElement>((OMElement)domNode);
         }
     }
     
@@ -354,12 +331,10 @@ public abstract class ProxyNode<T extends org.w3c.dom.Node, S extends OMInformat
 
         SOAPElementImpl<OMElement> childEle = (SOAPElementImpl<OMElement>)child;
         
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
             childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
         }
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement((SOAPElement)this);
         return childEle;
     }

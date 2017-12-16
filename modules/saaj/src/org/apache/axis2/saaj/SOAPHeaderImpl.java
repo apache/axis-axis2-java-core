@@ -76,8 +76,6 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
         OMNamespace ns = omTarget.getOMFactory().createOMNamespace(uri, prefix);
         SOAPHeaderBlock headerBlock = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPHeaderBlock(localName, ns, omTarget);
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
-        target.setUserData(SAAJ_NODE, this, null);
-        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -98,8 +96,6 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
         SOAPHeaderBlock headerBlock = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPHeaderBlock(
                 soapElement.getLocalName(), ns, omTarget);
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
-        target.setUserData(SAAJ_NODE, this, null);
-        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -111,11 +107,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
         SOAPHeaderBlock headerBlock = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPHeaderBlock(
                 child.getLocalName(), ns, omTarget);
      
-        target.setUserData(SAAJ_NODE, this, null);
-        
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         copyContents(soapHeaderElement, child);
-        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -144,8 +137,6 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
                 name.getLocalName(), ns, omTarget);
 
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
-        target.setUserData(SAAJ_NODE, this, null);
-        soapHeaderElement.target.setUserData(SAAJ_NODE, soapHeaderElement, null);
         soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
@@ -352,9 +343,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
                 childElements.add(saajNode);
             } else if (!(saajNode instanceof SOAPHeaderElement)) {
                 // silently replace node, as per saaj 1.2 spec
-                SOAPHeaderElement headerEle = new SOAPHeaderElementImpl((SOAPHeaderBlock)domNode);
-                domNode.setUserData(SAAJ_NODE, headerEle, null);
-                childElements.add(headerEle);
+                childElements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock)domNode));
             } else {
                 childElements.add(saajNode);
             }
