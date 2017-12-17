@@ -89,7 +89,7 @@ public class XmlNodeGenerator {
         XmlSchemaType schemaType = element.getSchemaType();
         if (schemaTypeName != null) {
             xmlNode = new XmlNode(element.getName(), targetNamespace, false, (element.getMaxOccurs() == 1 ? false : true), schemaTypeName.getLocalPart());
-            parentNode.addChildtoList(xmlNode);
+            parentNode.addChildToList(xmlNode);
             if (("http://www.w3.org/2001/XMLSchema").equals(schemaTypeName.getNamespaceURI())) {
             } else {
                 XmlSchema schemaOfType;
@@ -105,7 +105,7 @@ public class XmlNodeGenerator {
             }
         }else if (schemaType != null) {
             xmlNode = new XmlNode(element.getName(), targetNamespace, false, (element.getMaxOccurs() == 1 ? false : true), schemaType.getQName().getLocalPart());
-            parentNode.addChildtoList(xmlNode);
+            parentNode.addChildToList(xmlNode);
             processSchemaType(schemaType, xmlNode, schema);
         }
     }

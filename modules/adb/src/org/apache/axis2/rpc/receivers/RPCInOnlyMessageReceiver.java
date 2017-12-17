@@ -20,6 +20,7 @@
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
@@ -46,8 +47,11 @@ public class RPCInOnlyMessageReceiver extends AbstractMessageReceiver {
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
-            OMElement methodElement = inMessage.getEnvelope().getBody()
-                    .getFirstElement();
+            SOAPBody body = inMessage.getEnvelope().getBody();
+            if(body==null){
+                throw new AxisFault("SOAP body is missing in the request" );
+            }
+            OMElement methodElement = body.getFirstElement();
 
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;

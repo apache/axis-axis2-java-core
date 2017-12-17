@@ -30,7 +30,6 @@ import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.gson.factory.JsonConstant;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -38,7 +37,7 @@ import java.io.UnsupportedEncodingException;
 public class JsonBuilder implements Builder {
     public OMElement processDocument(InputStream inputStream, String s, MessageContext messageContext) throws AxisFault {
         messageContext.setProperty(JsonConstant.IS_JSON_STREAM , true);
-        JsonReader jsonReader = null;
+        JsonReader jsonReader;
         String charSetEncoding=null;
            try {
                charSetEncoding = (String) messageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
@@ -51,8 +50,6 @@ public class JsonBuilder implements Builder {
                return soapEnvelope;
            } catch (UnsupportedEncodingException e) {
                throw new AxisFault(charSetEncoding + " encoding is may not supported by json inputStream ", e);
-           } catch (IOException e) {
-               throw new AxisFault("IOException while processing JsonReader ", e);
            }
     }
 

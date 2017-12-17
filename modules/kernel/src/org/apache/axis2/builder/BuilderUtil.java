@@ -22,7 +22,6 @@ package org.apache.axis2.builder;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.lifecycle.LifecycleManager;
 import org.apache.axiom.attachments.lifecycle.impl.LifecycleManagerImpl;
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
@@ -60,6 +59,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.util.MultipleEntryHashMap;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchemaAll;
@@ -193,6 +193,9 @@ public class BuilderUtil {
                             }
                         }
                     }
+                }else {
+                    throw new AxisFault(xmlSchemaElement.getName() + " message element in schema should follow the " +
+                            "(Internationalized Resource Identifier)IRI ) style to process request in REST style");
                 }
             }
         }
@@ -617,7 +620,7 @@ public class BuilderUtil {
             log.info("OMException in getSOAPBuilder", e);
             try {
                 log.info("Remaining input stream :[" +
-                         new String(IOUtils.getStreamAsByteArray(in), encoding) + "]");
+                         new String(IOUtils.toByteArray(in), encoding) + "]");
             } catch (IOException e1) {
                 // Nothing here?
             }
@@ -638,7 +641,7 @@ public class BuilderUtil {
             log.info("OMException in getSOAPBuilder", e);
             try {
                 log.info("Remaining input stream :[" +
-                         new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc) + "]");
+                         new String(IOUtils.toByteArray(inStream), charSetEnc) + "]");
             } catch (IOException e1) {
                 // Nothing here?
             }
@@ -658,7 +661,7 @@ public class BuilderUtil {
             log.info("OMException in getSOAPBuilder", e);
             try {
                 log.info("Remaining input stream :[" +
-                         new String(IOUtils.getStreamAsByteArray(inStream)) + "]");
+                         new String(IOUtils.toByteArray(inStream)) + "]");
             } catch (IOException e1) {
                 // Nothing here?
             }
@@ -679,7 +682,7 @@ public class BuilderUtil {
             log.info("OMException in getSOAPBuilder", e);
             try {
                 log.info("Remaining input stream :[" +
-                         new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc) + "]");
+                         new String(IOUtils.toByteArray(inStream), charSetEnc) + "]");
             } catch (IOException e1) {
                 // Nothing here?
             }

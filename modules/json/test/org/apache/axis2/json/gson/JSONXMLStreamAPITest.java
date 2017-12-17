@@ -36,9 +36,7 @@ public class JSONXMLStreamAPITest {
 
     @Before
     public void setUp()throws Exception {
-        String baseDir = System.getProperty("basedir" , ".").toString();
-//        UtilServer.start((baseDir + "target/repo"), (baseDir + "test-resources/json/conf/axis2_json.xml"));
-        UtilServer.start("target/repo", "test-conf/axis2_json.xml");
+        UtilServer.start("target/repo", "test-repository/gson/axis2.xml");
 
     }
 
@@ -87,29 +85,17 @@ public class JSONXMLStreamAPITest {
                 "{\"author\":\"Jhon_4\",\"numOfPages\":175,\"publisher\":\"Foxier\",\"reviewers\":[\"rev1\",\"rev2\"," +
                 "\"rev3\"]}],\"staff\":50}}}";
 
-        String actualResponse = post(echoLibrary, echoLibURL, contentType, charSet);
+        String actualResponse = UtilTest.post(echoLibrary, echoLibURL, contentType, charSet);
         Assert.assertNotNull(actualResponse);
         Assert.assertEquals(echoLibraryResponse , actualResponse);
 
-        String actualRespose_2 = post(getLibrary, getLibURL, contentType, charSet);
+        String actualRespose_2 = UtilTest.post(getLibrary, getLibURL, contentType, charSet);
         Assert.assertNotNull(actualRespose_2);
         Assert.assertEquals(getLibraryResponse, actualRespose_2);
 
     }
 
 
-       public String post(String jsonString, String strURL, String contentType, String charSet)
-               throws IOException {
-           PostMethod post = new PostMethod(strURL);
-           RequestEntity entity = new StringRequestEntity(jsonString, contentType, charSet);
-           post.setRequestEntity(entity);
-           HttpClient httpclient = new HttpClient();
-           try {
-               int result = httpclient.executeMethod(post);
-               return post.getResponseBodyAsString();
-           }finally {
-               post.releaseConnection();
-           }
-       }
+
 
 }

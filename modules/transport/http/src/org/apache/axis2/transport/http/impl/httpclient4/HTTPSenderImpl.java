@@ -433,19 +433,28 @@ public class HTTPSenderImpl extends HTTPSender {
         // Process old style headers first
         Header[] cookieHeaders = response.getHeaders(HTTPConstants.HEADER_SET_COOKIE);
         String customCoookiId = (String) msgContext.getProperty(Constants.CUSTOM_COOKIE_ID);
-        for (int i = 0; i < cookieHeaders.length; i++) {
-            HeaderElement[] elements = cookieHeaders[i].getElements();
-            for (int e = 0; e < elements.length; e++) {
-                HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())
-                    || Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = processCookieHeader(element);
-                }
-                if (customCoookiId != null && customCoookiId.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = processCookieHeader(element);
-                }
-            }
-        }
+
+        // The following only check for JSESSIONID / axis_session / custom-cookie-id from the Set-Cookie header.
+        // But it will ignore if there are other Set-Cookie values, which may cause issues at client level,
+        // when invoking via a load-balancer, which expect some specific Cookie value.
+        // So the correct fix is to add whatever the value(s) in the Set-Cookie header as session cookie.
+
+//        for (int i = 0; i < cookieHeaders.length; i++) {
+//            HeaderElement[] elements = cookieHeaders[i].getElements();
+//            for (int e = 0; e < elements.length; e++) {
+//                HeaderElement element = elements[e];
+//                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())
+//                    || Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
+//                    sessionCookie = processCookieHeader(element);
+//                }
+//                if (customCoookiId != null && customCoookiId.equalsIgnoreCase(element.getName())) {
+//                    sessionCookie = processCookieHeader(element);
+//                }
+//            }
+//        }
+
+        sessionCookie = processSetCookieHeaders(cookieHeaders);
+
         // Overwrite old style cookies with new style ones if present
         cookieHeaders = response.getHeaders(HTTPConstants.HEADER_SET_COOKIE2);
         for (int i = 0; i < cookieHeaders.length; i++) {
@@ -462,7 +471,7 @@ public class HTTPSenderImpl extends HTTPSender {
             }
         }
 
-        if (sessionCookie != null) {
+        if (sessionCookie != null  && !sessionCookie.equals("")) {
             msgContext.getServiceContext().setProperty(HTTPConstants.COOKIE_STRING, sessionCookie);
         }
     }
@@ -473,6 +482,24 @@ public class HTTPSenderImpl extends HTTPSender {
         for (int j = 0; parameters != null && j < parameters.length; j++) {
             NameValuePair parameter = parameters[j];
             cookie = cookie + "; " + parameter.getName() + "=" + parameter.getValue();
+        }
+        return cookie;
+    }
+
+    private String processSetCookieHeaders(Header[] headers) {
+        String cookie = "";
+        for (Header header : headers) {
+            if (!cookie.equals("")) {
+                cookie = cookie + ";";
+            }
+            HeaderElement[] elements = header.getElements();
+            for (HeaderElement element : elements) {
+                cookie = cookie + element.getName() + "=" + element.getValue();
+                NameValuePair[] parameters = element.getParameters();
+                for (NameValuePair parameter : parameters) {
+                    cookie = cookie + "; " + parameter.getName() + "=" + parameter.getValue();
+                }
+            }
         }
         return cookie;
     }

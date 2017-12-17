@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document>
+    <properties>
+        <title>XMPP transport</title>
+    </properties>
+    <body>
+        <section name="Introduction">
+            <p>The XMPP transport allows to send and receive chat messages.</p>
+        </section>
+        <section name="Transport listener">
+          <subsection name="Configuration">
+    <pre xml:space="preserve">&lt;transportReceiver name="xmpp" class="org.apache.axis2.transport.xmpp.XMPPListener"&gt;
+   &lt;!-- Account details for google talk --&gt;
+   &lt;parameter name="GoogleServer"&gt;
+      &lt;parameter name="transport.xmpp.ServerUrl"&gt;talk.google.com&lt;/parameter&gt;
+      &lt;parameter name="transport.xmpp.ServerAccountUserName"&gt;axis2.xmpp.account1&lt;/parameter&gt;
+      &lt;parameter name="transport.xmpp.ServerAccountPassword"&gt;apacheaxis2&lt;/parameter&gt;
+      &lt;parameter name="transport.xmpp.ServerType"&gt;transport.xmpp.ServerType.GoogleTalk&lt;/parameter&gt;
+   &lt;/parameter&gt;
+&lt;/transportReceiver&gt;</pre>
+          </subsection>
+          <subsection name="Transport Specific Parameters">
+            <p>Following transport specific service parameters are used:</p>
+            <table class="bodyTable">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Required</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>transport.xmpp.ServerUrl</td>
+                    <td>Yes</td>
+                    <td>The server url of the XMPP server</td>
+                </tr>
+                <tr>
+                    <td>transport.xmpp.ServerAccountUserName</td>
+                    <td>Yes</td>
+                    <td>The user name of the XMPP account</td>
+                </tr>
+                <tr>
+                    <td>transport.xmpp.ServerAccountPassword</td>
+                    <td>Yes</td>
+                    <td>The password for the XMPP account.</td>
+                </tr>
+                <tr>
+                    <td>transport.xmpp.ServerType</td>
+                    <td>Yes</td>
+                    <td>The type of XMPP server</td>
+                </tr>
+            </table>
+          </subsection>
+        </section>
+        <section name="Transport sender">
+            <subsection name="Configuration">
+    <pre xml:space="preserve">&lt;transportSender name="xmpp" class="org.apache.axis2.transport.xmpp.XMPPSender"&gt;
+&lt;/transportSender&gt;</pre>
+            </subsection>
+        </section>
+    </body>
+</document>

@@ -27,6 +27,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -87,8 +88,11 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                 method = null;
             }
             AxisService service = inMessage.getAxisService();
-            OMElement methodElement = inMessage.getEnvelope().getBody()
-                    .getFirstElement();
+            SOAPBody body = inMessage.getEnvelope().getBody();
+            if(body==null){
+                 throw new AxisFault("SOAP body is missing in the request" );
+            }
+            OMElement methodElement = body.getFirstElement();
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
 

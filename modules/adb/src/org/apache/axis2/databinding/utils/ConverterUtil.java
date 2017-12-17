@@ -20,7 +20,6 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axiom.util.base64.Base64Utils;
@@ -59,6 +58,7 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -1390,7 +1390,7 @@ public class ConverterUtil {
 				return "";
 			}
 			inStream = dataHandler.getDataSource().getInputStream();
-			byte[] data = IOUtils.getStreamAsByteArray(inStream);
+			byte[] data = IOUtils.toByteArray(inStream);
 			return Base64Utils.encode(data);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

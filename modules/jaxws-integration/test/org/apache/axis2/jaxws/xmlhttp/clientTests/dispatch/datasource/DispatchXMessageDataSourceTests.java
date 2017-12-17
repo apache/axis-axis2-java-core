@@ -23,7 +23,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.attachments.impl.BufferUtils;
 import org.apache.axiom.util.UIDGenerator;
 

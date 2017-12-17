@@ -40,6 +40,7 @@
         <xsl:variable name="hasParticleType" select="@hasParticleType"/>
         <xsl:variable name="usewrapperclasses" select="@usewrapperclasses"/>
         <xsl:variable name="ignoreunexpected" select="@ignoreunexpected"/>
+        <xsl:variable name="abstractType" select="@isAbstract"/>
 
         <!-- write the class header. this should be done only when unwrapped -->
 
@@ -1766,7 +1767,7 @@
             <xsl:variable name="shortTypeName"
                select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
 
-            <xsl:if test="$simple and not(@attribute) and not(enumFacet)">
+            <xsl:if test="$simple and not($abstractType) and not(@attribute) and not(enumFacet)">
                 public static <xsl:value-of select="$name"/> fromString(java.lang.String value,
                                                     java.lang.String namespaceURI){
                     <xsl:value-of select="$name"/> returnValue = new  <xsl:value-of select="$name"/>();

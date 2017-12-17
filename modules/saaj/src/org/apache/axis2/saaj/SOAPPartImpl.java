@@ -20,6 +20,8 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMMetaFactory;
 import org.apache.axiom.om.impl.MTOMConstants;
@@ -52,8 +54,6 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.w3c.dom.UserDataHandler;
 
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
@@ -71,9 +71,11 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Iterator;
 
 public class SOAPPartImpl extends SOAPPart {
@@ -146,25 +148,29 @@ public class SOAPPartImpl extends SOAPPart {
             soapFactory = metaFactory.getSOAP11Factory();
             soapEnvelopeNamespaceURI = null;
         } else {
-            String baseType = contentType.getBaseType().toLowerCase();
-            String soapContentType;
-            if (baseType.equals(MTOMConstants.MTOM_TYPE)) {
+            MediaType baseType = contentType.getMediaType();
+            MediaType soapContentType;
+            if (baseType.equals(MediaType.APPLICATION_XOP_XML)) {
                 isMTOM = true;
                 String typeParam = contentType.getParameter("type");
                 if (typeParam == null) {
                     throw new SOAPException("Missing 'type' parameter in XOP content type");
                 } else {
-                    soapContentType = typeParam.toLowerCase();
+                    try {
+                        soapContentType = new ContentType(typeParam).getMediaType();
+                    } catch (ParseException ex) {
+                        throw new SOAPException("Failed to parse the 'type' parameter", ex);
+                    }
                 }
             } else {
                 isMTOM = false;
                 soapContentType = baseType;
             }
             
-            if (soapContentType.equals(HTTPConstants.MEDIA_TYPE_TEXT_XML)) {
+            if (soapContentType.equals(MediaType.TEXT_XML)) {
                 soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                 soapFactory = metaFactory.getSOAP11Factory();
-            } else if (soapContentType.equals(HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML)) {
+            } else if (soapContentType.equals(MediaType.APPLICATION_SOAP_XML)) {
                 soapEnvelopeNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                 soapFactory = metaFactory.getSOAP12Factory();
             } else {

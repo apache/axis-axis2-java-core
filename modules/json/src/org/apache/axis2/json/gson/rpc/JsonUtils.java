@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.gson.factory;
+package org.apache.axis2.json.gson.rpc;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;

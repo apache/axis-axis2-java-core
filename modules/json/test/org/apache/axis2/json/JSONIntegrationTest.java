@@ -30,18 +30,12 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.testutils.PortAllocator;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.Utils;
+import org.apache.axis2.testutils.UtilServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -50,46 +44,23 @@ import java.net.URL;
 
 public class JSONIntegrationTest implements JSONTestConstants {
 
-    private static AxisService service;
-
     private String expectedString;
-
-    private static SimpleHTTPServer server;
-
-    private static ConfigurationContext configurationContext;
 
     private static EndpointReference echoTargetEPR;
     private static String pojoUri;
 
     @BeforeClass
     public static void startServer() throws Exception {
-        int testingPort = PortAllocator.allocatePort();
+        UtilServer.start("test-repository/json", "test-repository/json/axis2.xml");
         echoTargetEPR = new EndpointReference(
-                "http://127.0.0.1:" + (testingPort)
+                "http://127.0.0.1:" + UtilServer.TESTING_PORT
                         + "/axis2/services/EchoXMLService/echoOM");
-        pojoUri = "http://127.0.0.1:" + testingPort + "/axis2/services/POJOService";
-
-        File configFile =
-                new File(System.getProperty("basedir", ".") + "/test-resources/axis2.xml");
-        configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                System.getProperty("basedir", ".") + "/test-repository",
-                configFile.getAbsolutePath());
-        server = new SimpleHTTPServer(configurationContext, testingPort);
-        try {
-            server.start();
-        } finally {
-
-        }
-        service = Utils.createSimpleService(serviceName,
-                                            org.apache.axis2.json.Echo.class.getName(),
-                                            operationName);
-        server.getConfigurationContext().getAxisConfiguration().addService(
-                service);
+        pojoUri = "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/POJOService";
     }
 
     @AfterClass
     public static void stopServer() throws Exception {
-		server.stop();
+		UtilServer.stop();
     }
 
     protected OMElement createEnvelope() throws Exception {
@@ -115,7 +86,7 @@ public class JSONIntegrationTest implements JSONTestConstants {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setProperty(Constants.Configuration.HTTP_METHOD, httpMethod);
 //        ConfigurationContext clientConfigurationContext = ConfigurationContextFactory.createDefaultConfigurationContext();
-        ServiceClient sender = new ServiceClient(configurationContext, null);
+        ServiceClient sender = new ServiceClient(UtilServer.getConfigurationContext(), null);
         options.setAction(null);
         sender.setOptions(options);
         options.setTo(echoTargetEPR);

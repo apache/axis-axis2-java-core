@@ -95,7 +95,12 @@ Guide</a></li>
 Transport sender</a></li>
 <li>18.2 <a href="servlet-transport.html">HTTP
 servlet transport</a></li>
-<li>18.3 <a href="transport_howto.html">Custom
+<li>18.3 <a href="jms-transport.html">JMS Transport</a></li>
+<li>18.4 <a href="tcp-transport.html">TCP Transport</a></li>
+<li>18.5 <a href="mail-transport.html">Mail Transport</a></li>
+<li>18.6 <a href="udp-transport.html">UDP Transport</a></li>
+<li>18.7 <a href="xmpp-transport.html">XMPP Transport</a></li>
+<li>18.8 <a href="transport_howto.html">Custom
 Transport</a></li>
 </ul>
 </li>

@@ -22,6 +22,7 @@
 <%@ page import="org.apache.axis2.description.AxisService" %>
 <%@ page import="org.apache.axis2.description.Parameter" %>
 <%@ page import="org.apache.axis2.engine.AxisConfiguration" %>
+<%@ page import="org.apache.axis2.util.Utils" %>
 <%@ page import="org.apache.axis2.util.JavaUtils" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Enumeration" %>
@@ -56,6 +57,7 @@
         // Collection operationsList;
         for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
             AxisService axisService = (AxisService) iterator.next();
+            if (!Utils.isHiddenService(axisService)) {
             opItr = axisService.getOperations();
             //operationsList = operations.values();
             serviceName = axisService.getName();
@@ -104,6 +106,7 @@
     %></ul>
 <%
             status = true;
+            }
         }
     }
     if (errornessservice != null) {
