@@ -19,6 +19,13 @@
 
 package org.apache.axis2.description.java2wsdl;
 
+import junit.framework.TestCase;
+import org.apache.axis2.util.XMLPrettyPrinter;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.custommonkey.xmlunit.Diff;
+
+import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,15 +34,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
-
-import javax.xml.transform.stream.StreamSource;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.util.XMLPrettyPrinter;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.custommonkey.xmlunit.Diff;
 
 public abstract class XMLSchemaTest extends TestCase {
 
@@ -79,7 +77,7 @@ public abstract class XMLSchemaTest extends TestCase {
             while (file.exists()) {
                 InputStream is = new FileInputStream(file);
                 XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-                XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+                XmlSchema schema = schemaCol.read(new StreamSource(is));
                 schemas.add(schema);
                 i++;
                 file = new File(SampleSchemasDirectory + "sampleSchema" + i
@@ -93,7 +91,7 @@ public abstract class XMLSchemaTest extends TestCase {
                 + ".xsd");
         InputStream is = new FileInputStream(file);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         return schema;
     }
     
@@ -114,7 +112,7 @@ public abstract class XMLSchemaTest extends TestCase {
     public String readXMLfromSchemaFile(String path) throws Exception {
         InputStream is = new FileInputStream(path);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         schema.write(stream);
         return stream.toString();

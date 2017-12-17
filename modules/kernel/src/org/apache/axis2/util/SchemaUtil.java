@@ -22,12 +22,11 @@ package org.apache.axis2.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * 
@@ -49,22 +48,17 @@ public class SchemaUtil {
         }
         map.put(key, schema);
 
-        XmlSchemaObjectCollection includes = schema.getIncludes();
-        if (includes != null) {
-            Iterator tempIterator = includes.getIterator();
-            while (tempIterator.hasNext()) {
-                Object o = tempIterator.next();
-                if (o instanceof XmlSchemaImport) {
-                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
-                    if (schema1 != null) {
-                        traverseSchemas(schema1, map);
-                    }
+        for (XmlSchemaExternal external : schema.getExternals()) {
+            if (external instanceof XmlSchemaImport) {
+                XmlSchema schema1 = external.getSchema();
+                if (schema1 != null) {
+                    traverseSchemas(schema1, map);
                 }
-                if (o instanceof XmlSchemaInclude) {
-                    XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
-                    if (schema1 != null) {
-                        traverseSchemas(schema1, map);
-                    }
+            }
+            if (external instanceof XmlSchemaInclude) {
+                XmlSchema schema1 = external.getSchema();
+                if (schema1 != null) {
+                    traverseSchemas(schema1, map);
                 }
             }
         }

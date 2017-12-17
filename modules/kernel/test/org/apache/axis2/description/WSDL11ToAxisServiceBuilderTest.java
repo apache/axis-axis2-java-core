@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -31,7 +30,6 @@ import javax.xml.namespace.QName;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 
 import junit.framework.TestCase;
 
@@ -85,9 +83,7 @@ public class WSDL11ToAxisServiceBuilderTest extends TestCase {
         // Iterate over all schema documents
         for (int i = 0; i < schemaDocuments.size(); i++) {
             XmlSchema schemaDocument = (XmlSchema)schemaDocuments.get(i);
-            XmlSchemaObjectCollection items = schemaDocument.getItems();
-            for (Iterator itemsIt = items.getIterator(); itemsIt.hasNext();) {
-                XmlSchemaObject xmlSchemaObject = (XmlSchemaObject)itemsIt.next();
+            for (XmlSchemaObject xmlSchemaObject : schemaDocument.getItems()) {
                 // Check only XML schema elements
                 if (xmlSchemaObject instanceof XmlSchemaElement) {
                     QName elementName = ((XmlSchemaElement)xmlSchemaObject).getQName();

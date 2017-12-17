@@ -29,10 +29,8 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
 import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -43,7 +41,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axiom.soap.SOAPProcessingException;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -65,9 +62,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaGroupBase;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
 import javax.activation.DataHandler;
@@ -84,7 +81,6 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.Iterator;
 import java.util.Map;
 
 public class BuilderUtil {
@@ -138,58 +134,50 @@ public class BuilderUtil {
                     XmlSchemaComplexType complexType = ((XmlSchemaComplexType)schemaType);
                     XmlSchemaParticle particle = complexType.getParticle();
                     if (particle instanceof XmlSchemaSequence || particle instanceof XmlSchemaAll) {
-                        XmlSchemaGroupBase xmlSchemaGroupBase = (XmlSchemaGroupBase)particle;
-                        Iterator iterator = xmlSchemaGroupBase.getItems().getIterator();
 
-                        // now we need to know some information from the binding operation.
+                        if (particle instanceof XmlSchemaSequence) {
+                            XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
+                            // now we need to know some information from the binding operation.
 
-                        while (iterator.hasNext()) {
-                            XmlSchemaElement innerElement = (XmlSchemaElement)iterator.next();
-                            QName qName = innerElement.getQName();
-                            // ignoring the elements without proper type and minoccurs zero
-                            if ((innerElement.getSchemaTypeName() == null) && (innerElement.getMinOccurs() == 0)){
-                                continue;
-                            }
-                            if (qName == null && innerElement.getSchemaTypeName()
-                                    .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
-                                createSOAPMessageWithoutSchema(soapFactory, bodyFirstChild,
-                                                               requestParameterMap);
-                                break;
-                            }
-                            long minOccurs = innerElement.getMinOccurs();
-                            boolean nillable = innerElement.isNillable();
-                            String name =
-                                    qName != null ? qName.getLocalPart() : innerElement.getName();
-                            Object value;
-                            OMNamespace ns = (qName == null ||
-                                              qName.getNamespaceURI() == null
-                                              || qName.getNamespaceURI().length() == 0) ?
-                                    null : soapFactory.createOMNamespace(
-                                    qName.getNamespaceURI(), null);
+                            for (XmlSchemaSequenceMember sequenceMember : sequence.getItems()) {
 
-                            // FIXME changed
-                            while ((value = requestParameterMap.get(name)) != null) {
-                                addRequestParameter(soapFactory,
-                                                    bodyFirstChild, ns, name, value);
-                                minOccurs--;
-                            }
-                            if (minOccurs > 0) {
-                                if (nillable) {
-
-                                    OMNamespace xsi = soapFactory.createOMNamespace(
-                                            Constants.URI_DEFAULT_SCHEMA_XSI,
-                                            Constants.NS_PREFIX_SCHEMA_XSI);
-                                    OMAttribute omAttribute =
-                                            soapFactory.createOMAttribute("nil", xsi, "true");
-                                    soapFactory.createOMElement(name, ns,
-                                                                bodyFirstChild)
-                                            .addAttribute(omAttribute);
-
-                                } else {
-                                    throw new AxisFault("Required element " + qName +
-                                                        " defined in the schema can not be" +
-                                                        " found in the request");
+                                XmlSchemaElement innerElement = (XmlSchemaElement) sequenceMember;
+                                QName qName = innerElement.getQName();
+                                // ignoring the elements without proper type and minoccurs zero
+                                if ((innerElement.getSchemaTypeName() == null) &&
+                                    (innerElement.getMinOccurs() == 0)) {
+                                    continue;
                                 }
+                                if (qName == null && innerElement.getSchemaTypeName()
+                                        .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
+                                    createSOAPMessageWithoutSchema(soapFactory, bodyFirstChild,
+                                                                   requestParameterMap);
+                                    break;
+                                }
+                                checkMinOccurs(innerElement, qName, soapFactory, requestParameterMap,
+                                               bodyFirstChild);
+                            }
+                        } else {
+                            XmlSchemaAll sequence = (XmlSchemaAll) particle;
+                            // now we need to know some information from the binding operation.
+
+                            for (XmlSchemaSequenceMember sequenceMember : sequence.getItems()) {
+
+                                XmlSchemaElement innerElement = (XmlSchemaElement) sequenceMember;
+                                QName qName = innerElement.getQName();
+                                // ignoring the elements without proper type and minoccurs zero
+                                if ((innerElement.getSchemaTypeName() == null) &&
+                                    (innerElement.getMinOccurs() == 0)) {
+                                    continue;
+                                }
+                                if (qName == null && innerElement.getSchemaTypeName()
+                                        .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
+                                    createSOAPMessageWithoutSchema(soapFactory, bodyFirstChild,
+                                                                   requestParameterMap);
+                                    break;
+                                }
+                                checkMinOccurs(innerElement, qName, soapFactory, requestParameterMap,
+                                               bodyFirstChild);
                             }
                         }
                     }
@@ -200,6 +188,48 @@ public class BuilderUtil {
             }
         }
         return soapEnvelope;
+    }
+
+    private static void checkMinOccurs(XmlSchemaElement innerElement, QName qName,
+                                       SOAPFactory soapFactory,
+                                       MultipleEntryHashMap requestParameterMap,
+                                       OMElement bodyFirstChild)
+            throws AxisFault {
+        long minOccurs = innerElement.getMinOccurs();
+        boolean nillable = innerElement.isNillable();
+        String name =
+                qName != null ? qName.getLocalPart() : innerElement.getName();
+        Object value;
+        OMNamespace ns = (qName == null ||
+                          qName.getNamespaceURI() == null
+                          || qName.getNamespaceURI().length() == 0) ?
+                         null : soapFactory.createOMNamespace(
+                qName.getNamespaceURI(), null);
+
+        // FIXME changed
+        while ((value = requestParameterMap.get(name)) != null) {
+            addRequestParameter(soapFactory,
+                                bodyFirstChild, ns, name, value);
+            minOccurs--;
+        }
+        if (minOccurs > 0) {
+            if (nillable) {
+
+                OMNamespace xsi = soapFactory.createOMNamespace(
+                        Constants.URI_DEFAULT_SCHEMA_XSI,
+                        Constants.NS_PREFIX_SCHEMA_XSI);
+                OMAttribute omAttribute =
+                        soapFactory.createOMAttribute("nil", xsi, "true");
+                soapFactory.createOMElement(name, ns,
+                                            bodyFirstChild)
+                        .addAttribute(omAttribute);
+
+            } else {
+                throw new AxisFault("Required element " + qName +
+                                    " defined in the schema can not be" +
+                                    " found in the request");
+            }
+        }
     }
 
     public static void createSOAPMessageWithoutSchema(SOAPFactory soapFactory,

@@ -113,12 +113,12 @@
             <artifactId>xmlbeans</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.schema</groupId>
-            <artifactId>XmlSchema</artifactId>
+            <groupId>org.apache.ws.xmlschema</groupId>
+            <artifactId>xmlschema-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.woden</groupId>
-            <artifactId>woden-core</artifactId>
+            <artifactId>woden-impl-commons</artifactId>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

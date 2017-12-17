@@ -31,7 +31,6 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.json.gson.factory.JsonConstant;
@@ -80,7 +79,7 @@ public class JSONMessageHandlerTest {
         String fileName = "test-resources/custom_schema/testSchema_2.xsd";
         InputStream is = new FileInputStream(fileName);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
 
 
         QName elementQName = new QName("http://test.json.axis2.apache.org" ,"echoPerson");

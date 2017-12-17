@@ -72,7 +72,6 @@ import org.apache.woden.wsdl20.Description;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 
@@ -107,6 +106,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.URISyntaxException;
@@ -988,8 +988,13 @@ public class AxisService extends AxisDescription {
 	public void printSchema(OutputStream out) throws AxisFault {
 		for (int i = 0; i < schemaList.size(); i++) {
 			XmlSchema schema = addNameSpaces(i);
-			schema.write(out);
-		}
+            try {
+                schema.write(out);
+            } catch (UnsupportedEncodingException e) {
+                log.error("Error while printing schema ", e);
+                throw new AxisFault(e.getMessage(), e);
+            }
+        }
 	}
 
 	public XmlSchema getSchema(int index) {
@@ -1291,17 +1296,12 @@ public class AxisService extends AxisDescription {
     }
 
 	private void updateSchemaLocation(XmlSchema schema) throws AxisFault {
-        XmlSchemaObjectCollection includes = schema.getIncludes();
-        for (int j = 0; j < includes.getCount(); j++) {
-            Object item = includes.getItem(j);
-            if (item instanceof XmlSchemaExternal) {
-                XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
-                XmlSchema s = xmlSchemaExternal.getSchema();
-                updateSchemaLocation(s, xmlSchemaExternal);
-            }
+        for (XmlSchemaExternal xmlSchemaExternal : schema.getExternals()) {
+            XmlSchema s = xmlSchemaExternal.getSchema();
+            updateSchemaLocation(s, xmlSchemaExternal);
         }
     }
-	   
+
 	private void updateSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal) throws AxisFault {
         if (s != null) {
             String schemaLocation = xmlSchemaExternal.getSchemaLocation();
@@ -2786,15 +2786,9 @@ public class AxisService extends AxisDescription {
 		// first traversal - fill the hashtable
 		for (int i = 0; i < schemas.size(); i++) {
 			XmlSchema schema = (XmlSchema) schemas.get(i);
-			XmlSchemaObjectCollection includes = schema.getIncludes();
-
-			for (int j = 0; j < includes.getCount(); j++) {
-				Object item = includes.getItem(j);
-				XmlSchema s;
-				if (item instanceof XmlSchemaExternal) {
-					XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
-					s = externalSchema.getSchema();
-
+			for (XmlSchemaExternal externalSchema : schema.getExternals()) {
+				if (externalSchema != null) {
+                    XmlSchema s = externalSchema.getSchema();
 					if (s != null
 							&& getScheamLocationWithDot(
 									sourceURIToNewLocationMap, s) == null) {
@@ -2878,22 +2872,16 @@ public class AxisService extends AxisDescription {
 	 * @param parentSchema
 	 * @param nameTable
 	 */
-	private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable,
-			Hashtable importedScheams, Hashtable sourceURIToNewLocationMap) {
-		XmlSchemaObjectCollection includes = parentSchema.getIncludes();
-		for (int j = 0; j < includes.getCount(); j++) {
-			Object item = includes.getItem(j);
-			if (item instanceof XmlSchemaExternal) {
-				XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
-				XmlSchema s = xmlSchemaExternal.getSchema();
-				adjustSchemaLocation(s, xmlSchemaExternal, nameTable,
-						importedScheams, sourceURIToNewLocationMap);
-			}
-		}
+    private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable,
+                                  Hashtable importedScheams, Hashtable sourceURIToNewLocationMap) {
+        for (XmlSchemaExternal xmlSchemaExternal : parentSchema.getExternals()) {
+            XmlSchema s = xmlSchemaExternal.getSchema();
+            adjustSchemaLocation(s, xmlSchemaExternal, nameTable,
+                                 importedScheams, sourceURIToNewLocationMap);
+        }
+    }
 
-	}
-		
-	/**
+    /**
 	 * Adjusts a given schema location
 	 * 
 	 * @param s
@@ -3401,7 +3389,7 @@ public class AxisService extends AxisDescription {
     /**
      * returns a axisService given a input Stream of WSDL2.0 document.
      * 
-     * @param Description
+     * @param description
      *            WSDL description
      * @param wsdlServiceName
      * @param endPoint

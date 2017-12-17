@@ -29,7 +29,7 @@ import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -213,25 +213,19 @@ public class AxisServiceTopElementSchemaGenerator {
             xmlSchemaElement = schema.getElementByName(elementQName);
             if (xmlSchemaElement == null) {
                 // try to find in an import or an include
-                XmlSchemaObjectCollection includes = schema.getIncludes();
-                if (includes != null) {
-                    Iterator includesIter = includes.getIterator();
-                    Object object;
-                    while (includesIter.hasNext()) {
-                        object = includesIter.next();
-                        if (object instanceof XmlSchemaImport) {
-                            org.apache.ws.commons.schema.XmlSchema schema1 =
-                                    ((XmlSchemaImport) object).getSchema();
-                            xmlSchemaElement = getSchemaElement(schema1,elementQName);
-                        }
-                        if (object instanceof XmlSchemaInclude) {
-                            org.apache.ws.commons.schema.XmlSchema schema1 =
-                                    ((XmlSchemaInclude) object).getSchema();
-                            xmlSchemaElement = getSchemaElement(schema1,elementQName);
-                        }
-                        if (xmlSchemaElement != null){
-                            break;
-                        }
+                for (XmlSchemaObject object : schema.getExternals()) {
+                    if (object instanceof XmlSchemaImport) {
+                        org.apache.ws.commons.schema.XmlSchema schema1 =
+                                ((XmlSchemaImport) object).getSchema();
+                        xmlSchemaElement = getSchemaElement(schema1, elementQName);
+                    }
+                    if (object instanceof XmlSchemaInclude) {
+                        org.apache.ws.commons.schema.XmlSchema schema1 =
+                                ((XmlSchemaInclude) object).getSchema();
+                        xmlSchemaElement = getSchemaElement(schema1, elementQName);
+                    }
+                    if (xmlSchemaElement != null) {
+                        break;
                     }
                 }
             }

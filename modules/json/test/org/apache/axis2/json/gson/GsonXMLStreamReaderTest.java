@@ -50,7 +50,7 @@ public class GsonXMLStreamReaderTest {
         String fileName = "test-resources/custom_schema/testSchema_1.xsd";
         InputStream is = new FileInputStream(fileName);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         List<XmlSchema> schemaList = new ArrayList<XmlSchema>();
         schemaList.add(schema);
         QName elementQName = new QName("http://www.w3schools.com", "response");

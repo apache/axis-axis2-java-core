@@ -419,7 +419,7 @@ public class CodeGenerationUtility {
         return pkg;
     }
 
-    private static String getSchemaAsString(XmlSchema schema) {
+    private static String getSchemaAsString(XmlSchema schema) throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         schema.write(baos);
         return baos.toString();

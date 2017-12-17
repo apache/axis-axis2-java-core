@@ -25,8 +25,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -46,9 +46,9 @@ import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
@@ -398,41 +398,38 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 }
                 inMessageElementQname = schemaElement.getQName();
                 XmlSchemaType type = schemaElement.getSchemaType();
-                if (type != null && type instanceof XmlSchemaComplexType){
+                if (type != null && type instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
                     XmlSchemaParticle particle = complexType.getParticle();
-                    if (particle != null && particle instanceof XmlSchemaSequence){
+                    if (particle != null && particle instanceof XmlSchemaSequence) {
                         XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
-                        XmlSchemaObjectCollection schemaObjectCollection =
-                                xmlSchemaSequence.getItems();
-                        if (schemaObjectCollection != null) {
-                            Iterator iterator = schemaObjectCollection.getIterator();
-                            while (iterator.hasNext()) {
-                                Object next = iterator.next();
-                                if (!(next instanceof XmlSchemaElement)) {
-                                    return new URI [0];
+                        if (!xmlSchemaSequence.getItems().isEmpty()) {
+                            for (XmlSchemaSequenceMember member : xmlSchemaSequence.getItems()) {
+
+                                if (!(member instanceof XmlSchemaElement)) {
+                                    return new URI[0];
                                 }
-                                XmlSchemaElement innerElement = (XmlSchemaElement) next;
-                                if (innerElement.getRefName() != null) {
-                                    return new URI [0];
+                                XmlSchemaElement innerElement = (XmlSchemaElement) member;
+                                if (innerElement.getRef().getTargetQName() != null) {
+                                    return new URI[0];
                                 }
                                 if (innerElement.getMinOccurs() != 1 ||
-                                        innerElement.getMaxOccurs() != 1) {
+                                    innerElement.getMaxOccurs() != 1) {
                                     isMultipart = false;
                                 }
                                 XmlSchemaType schemaType = innerElement.getSchemaType();
                                 QName innerElementQName = innerElement.getSchemaTypeName();
                                 if (schemaType instanceof XmlSchemaSimpleType) {
                                     if (Constants.XSD_QNAME.equals(innerElementQName) ||
-                                            Constants.XSD_NOTATION.equals(innerElementQName) ||
-                                            Constants.XSD_HEXBIN.equals(innerElementQName) ||
-                                            Constants.XSD_BASE64.equals(innerElementQName)) {
-                                            isIRI = false;
+                                        Constants.XSD_NOTATION.equals(innerElementQName) ||
+                                        Constants.XSD_HEXBIN.equals(innerElementQName) ||
+                                        Constants.XSD_BASE64.equals(innerElementQName)) {
+                                        isIRI = false;
                                     }
                                 } else {
                                     isIRI = false;
                                 }
-                                if (Constants.XSD_ANY.equals(innerElementQName) && iterator.hasNext()) {
+                                if (Constants.XSD_ANY.equals(innerElementQName)) {
                                     isRPC = false;
                                 }
                                 String name = innerElement.getName();
@@ -444,11 +441,11 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                             }
                         }
                     } else {
-                        return new URI [0];
+                        return new URI[0];
                     }
                 } else {
-                        return new URI [0];
-                    }
+                    return new URI[0];
+                }
             } else {
                 return new URI [0];
             }
@@ -479,19 +476,15 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                     XmlSchemaParticle particle = complexType.getParticle();
                     if (particle != null && particle instanceof XmlSchemaSequence) {
                         XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
-                        XmlSchemaObjectCollection schemaObjectCollection =
-                                xmlSchemaSequence.getItems();
-                        if (schemaObjectCollection != null) {
-                            Iterator iterator = schemaObjectCollection.getIterator();
-                            while (iterator.hasNext()) {
-                                Object next = iterator.next();
-                                if (!(next instanceof XmlSchemaElement)) {
+                        if (!xmlSchemaSequence.getItems().isEmpty()) {
+                            for (XmlSchemaSequenceMember member : xmlSchemaSequence.getItems()) {
+                                if (!(member instanceof XmlSchemaElement)) {
                                     isRPC = false;
                                 }
-                                XmlSchemaElement innerElement = (XmlSchemaElement) next;
+                                XmlSchemaElement innerElement = (XmlSchemaElement) member;
                                 QName schemaTypeName = innerElement.getSchemaTypeName();
                                 String name = innerElement.getName();
-                                if (innerElement.getRefName() != null) {
+                                if (innerElement.getRef().getTargetQName() != null) {
                                     isRPC = false;
                                 }
                                 if (outMessageElementDetails.get(name) != null) {
@@ -500,7 +493,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                 QName inMessageElementType =
                                         (QName) inMessageElementDetails.get(name);
                                 if (inMessageElementType != null &&
-                                        inMessageElementType != schemaTypeName) {
+                                    inMessageElementType != schemaTypeName) {
                                     isRPC = false;
                                 }
                                 outMessageElementDetails.put(name, schemaTypeName);

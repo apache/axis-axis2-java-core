@@ -19,6 +19,13 @@
 
 package org.apache.axis2.schema;
 
+import junit.framework.TestCase;
+import org.apache.axis2.util.XMLPrettyPrinter;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.custommonkey.xmlunit.Diff;
+
+import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,17 +33,9 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.transform.stream.StreamSource;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.util.XMLPrettyPrinter;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.custommonkey.xmlunit.Diff;
 
 public abstract class XMLSchemaTest extends TestCase {
 
@@ -85,7 +84,7 @@ public abstract class XMLSchemaTest extends TestCase {
                 if (excludeList == null || !excludeList.contains(i)) {
                     InputStream is = new FileInputStream(file);
                     XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-                    XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+                    XmlSchema schema = schemaCol.read(new StreamSource(is));
                     schemas.add(schema);
                 }
             } else {
@@ -98,7 +97,7 @@ public abstract class XMLSchemaTest extends TestCase {
         File file = new File(SampleSchemasDirectory + "sampleSchema" + id + ".xsd");
         InputStream is = new FileInputStream(file);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         return schema;
     }
     
@@ -107,7 +106,7 @@ public abstract class XMLSchemaTest extends TestCase {
                 + ".xsd");
         InputStream is = new FileInputStream(file);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         return schema;
     }
      
@@ -129,7 +128,7 @@ public abstract class XMLSchemaTest extends TestCase {
     public String readXMLfromSchemaFile(String path) throws Exception {
         InputStream is = new FileInputStream(path);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         schema.write(stream);
         is.close();
@@ -150,7 +149,7 @@ public abstract class XMLSchemaTest extends TestCase {
         fileWriter.close();        
     }
     
-    public String schemaToString(XmlSchema schema){
+    public String schemaToString(XmlSchema schema) throws UnsupportedEncodingException {
         ByteArrayOutputStream stream=new ByteArrayOutputStream();
         schema.write(stream);
         return stream.toString();
@@ -160,7 +159,7 @@ public abstract class XMLSchemaTest extends TestCase {
         File file = new File(path);
         InputStream is = new FileInputStream(file);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
         return schema;
     }
     

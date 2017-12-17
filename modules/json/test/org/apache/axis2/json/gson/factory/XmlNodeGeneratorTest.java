@@ -21,9 +21,7 @@ package org.apache.axis2.json.gson.factory;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.xml.namespace.QName;
@@ -44,7 +42,7 @@ public class XmlNodeGeneratorTest {
         String fileName = "test-resources/custom_schema/testSchema_2.xsd";
         InputStream is = new FileInputStream(fileName);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-        XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+        XmlSchema schema = schemaCol.read(new StreamSource(is));
 
         List<XmlSchema> schemaList = new ArrayList<XmlSchema>();
         schemaList.add(schema);

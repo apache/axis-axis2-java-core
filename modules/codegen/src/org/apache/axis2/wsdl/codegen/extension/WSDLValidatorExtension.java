@@ -38,12 +38,12 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
 
         for (int i = 0; i < schemaList.size(); i++) {
             XmlSchema s = (XmlSchema)schemaList.get(i);
-            if (s.getIncludes().getCount() != 0) {
+            if (!s.getExternals().isEmpty()) {
                 //there are some included - now see whether there are any
                 //elements or types declared!
-                if (s.getElements().getCount() == 0 &&
-                        s.getSchemaTypes().getCount() == 0 &&
-                        s.getGroups().getCount() == 0 &&
+                if (s.getElements().isEmpty()&&
+                        s.getSchemaTypes().isEmpty() &&
+                        s.getGroups().isEmpty() &&
                         s.getTargetNamespace() == null) {
                     // if there's no targetNamespace there's probably no name, but try it anyway
                     throw new CodeGenerationException(

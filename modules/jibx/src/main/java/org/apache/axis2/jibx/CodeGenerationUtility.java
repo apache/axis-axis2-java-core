@@ -33,9 +33,9 @@ import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
@@ -715,7 +715,7 @@ public class CodeGenerationUtility {
         boolean complex = false;
         if (type instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType ctype = (XmlSchemaComplexType)type;
-            if (ctype.getAttributes().getCount() != 0) {
+            if (!ctype.getAttributes().isEmpty()) {
                 throw new RuntimeException("Cannot unwrap element " +
                         qname + ": attributes not allowed on type to be unwrapped");
             }
@@ -736,18 +736,18 @@ public class CodeGenerationUtility {
 
                 // add child param element matching each child of wrapper element
                 QName opName = msg.getAxisOperation().getName();
-                XmlSchemaObjectCollection items = sequence.getItems();
                 boolean first = true;
-                for (Iterator iter = items.getIterator(); iter.hasNext();) {
+                for (XmlSchemaSequenceMember member : sequence.getItems()) {
 
                     // check that child item obeys the unwrapping rules
-                    XmlSchemaParticle item = (XmlSchemaParticle)iter.next();
+                    XmlSchemaParticle item = (XmlSchemaParticle)member;
+
                     if (!(item instanceof XmlSchemaElement)) {
                         throw new RuntimeException("Cannot unwrap element " +
                                 qname + ": only element items allowed in sequence");
                     }
                     XmlSchemaElement element = (XmlSchemaElement)item;
-                    QName refname = element.getRefName();
+                    QName refname = element.getRef().getTargetQName();
                     QName typename = element.getSchemaTypeName();
                     if (refname == null && typename == null) {
                         throw new RuntimeException("Cannot unwrap element " +
