@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.server.dispatcher;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.context.listener.ContextListenerUtils;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -307,8 +306,6 @@ public class ProviderDispatcher extends JavaDispatcher {
                     }
                 }
                 if (providerType.equals(OMElement.class)) {
-                    //Register the ContextListener for performance.
-                    ContextListenerUtils.registerProviderOMListener(request);
                     // TODO avoid call to message.getValue due to
                     // current unnecessary message transformation in
                     // message.getValue.  Once message.getValue is fixed,

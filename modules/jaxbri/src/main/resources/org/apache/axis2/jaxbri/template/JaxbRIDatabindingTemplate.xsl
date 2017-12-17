@@ -208,11 +208,7 @@
             org.apache.axiom.om.OMElement param,
             java.lang.Class type) throws org.apache.axis2.AxisFault{
             try {
-                javax.xml.bind.JAXBContext context = wsContext;
-                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
-                org.apache.axiom.util.jaxb.UnmarshallerAdapter adapter = org.apache.axiom.util.jaxb.JAXBUtils.getUnmarshallerAdapter(param.getXMLStreamReaderWithoutCaching());
-                unmarshaller.setAttachmentUnmarshaller(adapter.getAttachmentUnmarshaller());
-                return unmarshaller.unmarshal(adapter.getReader(), type).getValue();
+                return param.unmarshal(wsContext, null, type, false).getValue();
             } catch (javax.xml.bind.JAXBException bex){
                 throw org.apache.axis2.AxisFault.makeFault(bex);
             }

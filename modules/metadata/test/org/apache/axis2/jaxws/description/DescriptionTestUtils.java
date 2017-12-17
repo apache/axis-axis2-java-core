@@ -21,9 +21,9 @@
 package org.apache.axis2.jaxws.description;
 
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.wsdl.WSDLUtil;
 
 import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,7 +57,7 @@ public class DescriptionTestUtils {
         String urlString = getWSDLLocation(wsdlFileName);
         // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
         try {
-            wsdlURL = new File(urlString).getAbsoluteFile().toURL();
+            wsdlURL = new File(urlString).getAbsoluteFile().toURI().toURL();
         } catch (Exception e) {
             System.out.println("Caught exception creating WSDL URL :" + urlString +
                     "; exception: " + e.toString());
@@ -68,8 +68,7 @@ public class DescriptionTestUtils {
     static public Definition createWSDLDefinition(URL wsdlURL) {
         Definition wsdlDefinition = null;
         try {
-            WSDLFactory factory = WSDLFactory.newInstance();
-            WSDLReader reader = factory.newWSDLReader();
+        	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
             wsdlDefinition = reader.readWSDL(wsdlURL.toString());
             wsdlDefinition.setDocumentBaseURI(wsdlURL.toString());
         }

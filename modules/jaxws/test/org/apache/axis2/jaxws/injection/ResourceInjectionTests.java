@@ -28,92 +28,65 @@ import org.apache.axis2.jaxws.unitTest.TestLogger;
 import javax.xml.ws.WebServiceContext;
 
 public class ResourceInjectionTests extends TestCase {
-    String axisEndpoint = "http://localhost:6060/axis2/services/ResourceInjectionService.ResourceInjectionPortTypeImplPort";
-
     private Object resource = new WebServiceContextImpl();
 
-    public void testInjectionOnField(){
+    public void testInjectionOnField() throws Exception {
         Object serviceInstance = new ResourceInjectionTestImpl1();
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-        try{
-            ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
-            injector.inject(resource, serviceInstance);
-            ResourceInjectionTestImpl1 serviceImpl =(ResourceInjectionTestImpl1)serviceInstance;
-            assertNotNull(serviceImpl.ctx);
-            TestLogger.logger.debug("Resource Injected on Field");
-            TestLogger.logger.debug("------------------------------");
-        }catch(Exception e){
-            e.printStackTrace();
-            fail();
-        }
+        ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
+        injector.inject(resource, serviceInstance);
+        ResourceInjectionTestImpl1 serviceImpl =(ResourceInjectionTestImpl1)serviceInstance;
+        assertNotNull(serviceImpl.ctx);
+        TestLogger.logger.debug("Resource Injected on Field");
+        TestLogger.logger.debug("------------------------------");
     }
 
-    public void testInjectionOnMethod(){
+    public void testInjectionOnMethod() throws Exception {
         Object serviceInstance = new ResourceInjectionTestImpl2();
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-        try{
-            ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
-            injector.inject(resource, serviceInstance);
-            ResourceInjectionTestImpl2 serviceImpl =(ResourceInjectionTestImpl2)serviceInstance;
-            assertNotNull(serviceImpl.ctx);
-            TestLogger.logger.debug("Resource Injected on Method");
-            TestLogger.logger.debug("------------------------------");
-        }catch(Exception e){
-            e.printStackTrace();
-            fail();
-        }
+        ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
+        injector.inject(resource, serviceInstance);
+        ResourceInjectionTestImpl2 serviceImpl =(ResourceInjectionTestImpl2)serviceInstance;
+        assertNotNull(serviceImpl.ctx);
+        TestLogger.logger.debug("Resource Injected on Method");
+        TestLogger.logger.debug("------------------------------");
     }
 
-    public void testInjectionOnPrivateField(){
+    public void testInjectionOnPrivateField() throws Exception {
         Object serviceInstance = new ResourceInjectionTestImpl3();
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-        try{
-            ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
-            injector.inject(resource, serviceInstance);
-            ResourceInjectionTestImpl3 serviceImpl =(ResourceInjectionTestImpl3)serviceInstance;
-            assertNotNull(serviceImpl.getCtx());
-            TestLogger.logger.debug("Resource Injected on Private Field");
-            TestLogger.logger.debug("------------------------------");
-        }catch(Exception e){
-            e.printStackTrace();
-            fail();
-        }
+        ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
+        injector.inject(resource, serviceInstance);
+        ResourceInjectionTestImpl3 serviceImpl =(ResourceInjectionTestImpl3)serviceInstance;
+        assertNotNull(serviceImpl.getCtx());
+        TestLogger.logger.debug("Resource Injected on Private Field");
+        TestLogger.logger.debug("------------------------------");
     }
 
-    public void testInjectionOnProvateMethod(){
+    public void testInjectionOnProvateMethod() throws Exception {
         Object serviceInstance = new ResourceInjectionTestImpl4();
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-        try{
-            ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
-            injector.inject(resource, serviceInstance);
-            ResourceInjectionTestImpl4 serviceImpl =(ResourceInjectionTestImpl4)serviceInstance;
-            assertNotNull(serviceImpl.getCtx());
-            TestLogger.logger.debug("Resource Injected using private Method");
-            TestLogger.logger.debug("------------------------------");
-        }catch(Exception e){
-            e.printStackTrace();
-            fail();
-        }
+        ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
+        injector.inject(resource, serviceInstance);
+        ResourceInjectionTestImpl4 serviceImpl =(ResourceInjectionTestImpl4)serviceInstance;
+        assertNotNull(serviceImpl.getCtx());
+        TestLogger.logger.debug("Resource Injected using private Method");
+        TestLogger.logger.debug("------------------------------");
     }
 
-    public void testTypedResourceInjectionOnField(){
+    public void testTypedResourceInjectionOnField() throws Exception {
         Object serviceInstance = new ResourceInjectionTestImpl5();
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-        try{
-            ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
-            injector.inject(resource, serviceInstance);
-            ResourceInjectionTestImpl5 serviceImpl =(ResourceInjectionTestImpl5)serviceInstance;
-            assertNotNull(serviceImpl.ctx);
-            TestLogger.logger.debug("Resource Injected on Field");
-            TestLogger.logger.debug("------------------------------");
-        }catch(Exception e){
-            e.printStackTrace();
-            fail();
-        }
+        ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
+        injector.inject(resource, serviceInstance);
+        ResourceInjectionTestImpl5 serviceImpl =(ResourceInjectionTestImpl5)serviceInstance;
+        assertNotNull(serviceImpl.ctx);
+        TestLogger.logger.debug("Resource Injected on Field");
+        TestLogger.logger.debug("------------------------------");
     }
 }

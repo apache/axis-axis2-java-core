@@ -127,18 +127,9 @@ using WSDL</li>
 <li>Easily retrieve the WSDL for a service</li>
 <li>Send and receive SOAP messages with attachments</li>
 <li>Create or utilize a REST-based Web service</li>
-<li>Create or utilize services that take advantage of the <a href=
+<li>Create or utilize services that take advantage of <a href=
 "http://www.oasis-open.org/committees/download.php/16790/wss-v1.1-spec-os-SOAPMessageSecurity.pdf">
-WS-Security</a>, <a href=
-"http://xml.coverpages.org/ws-reliablemessaging20030313.pdf">WS-ReliableMessaging</a>,
-<a href="http://www.w3.org/2002/ws/addr/">WS-Addressing</a>,
-<a href=
-"http://docs.oasis-open.org/ws-tx/wscoor/2006/06">WS-Coordination</a>,
-and <a href=
-"http://docs.oasis-open.org/ws-tx/wsat/2006/06">
-WS-Atomic Transaction</a> recommendations</li>
-<li>Use Axis2's modular structure to easily add support for new
-recommendations as they emerge</li>
+WS-Security</a> and <a href="http://www.w3.org/2002/ws/addr/">WS-Addressing</a></li>
 </ul>
 <p>Many more features exist as well, but this user guide
 concentrates on showing you how to accomplish the first five tasks
@@ -207,8 +198,7 @@ are executed within the phases. You can also add your own phases
 and handlers.</p>
 <p>Handlers come from "modules" that can be plugged into a running
 Axis2 system. These modules, such as Rampart, which provides an
-implementation of WS-Security, and Sandesha, which provides an
-implementation of WS-ReliableMessaging, are the main extensibility
+implementation of WS-Security, are the main extensibility
 mechanisms in Axis2.</p>
 <a name="distributions" id="distributions"></a>
 <h2>Axis2 Distributions</h2>

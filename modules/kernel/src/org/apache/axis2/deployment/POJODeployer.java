@@ -105,17 +105,16 @@ public class POJODeployer extends AbstractDeployer {
                 List<String> classList = Utils.getListOfClasses(deploymentFileData);
                 ArrayList<AxisService> axisServiceList = new ArrayList<AxisService>();
                 for (String className : classList) {
-                    ArrayList<URL> urls = new ArrayList<URL>();
-                    urls.add(deploymentFileData.getFile().toURI().toURL());
-                    urls.add(configCtx.getAxisConfiguration().getRepository());
+                    List<URL> extraUrls = new ArrayList<>();
+                    extraUrls.add(configCtx.getAxisConfiguration().getRepository());
                     String webLocation = DeploymentEngine.getWebLocationString();
                     if (webLocation != null) {
-                        urls.add(new File(webLocation).toURI().toURL());
+                        extraUrls.add(new File(webLocation).toURI().toURL());
                     }
                     ClassLoader classLoader = Utils.createClassLoader(
-                            urls,
+                            deploymentFileData.getFile().toURI().toURL(),
+                            extraUrls.toArray(new URL[extraUrls.size()]),
                             configCtx.getAxisConfiguration().getSystemClassLoader(),
-                            true,
                             (File)configCtx.getAxisConfiguration().
                                     getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                             configCtx.getAxisConfiguration().isChildFirstClassLoading());

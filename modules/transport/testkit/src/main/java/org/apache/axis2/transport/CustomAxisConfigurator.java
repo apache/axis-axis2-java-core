@@ -21,7 +21,6 @@ package org.apache.axis2.transport;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.axis2.AxisFault;
@@ -32,19 +31,16 @@ import org.apache.axis2.util.Loader;
 
 public class CustomAxisConfigurator extends DeploymentEngine implements AxisConfigurator {
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
-        InputStream configStream = Loader.getResourceAsStream("org/apache/axis2/transport/axis2.xml");
+        URL axis2Url = Loader.getResource("org/apache/axis2/transport/repo/axis2.xml");
         try {
-            axisConfig = populateAxisConfiguration(configStream);
-        } finally {
+            InputStream configStream = axis2Url.openStream();
             try {
+                axisConfig = populateAxisConfiguration(configStream);
+            } finally {
                 configStream.close();
-            } catch (IOException ex) {
-                throw AxisFault.makeFault(ex);
             }
-        }
-        try {
-            loadRepositoryFromURL(new URL(Loader.getResource("org/apache/axis2/transport/repo/__root__"), "."));
-        } catch (MalformedURLException ex) {
+            loadRepositoryFromURL(new URL(axis2Url, "."));
+        } catch (IOException ex) {
             throw AxisFault.makeFault(ex);
         }
         axisConfig.setConfigurator(this);

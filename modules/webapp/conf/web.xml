@@ -19,13 +19,15 @@
   ~ under the License.
   -->
 
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
-
-<web-app>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
     <display-name>Apache-Axis2</display-name>
     <servlet>
-        <servlet-name>AxisServlet</servlet-name>
         <display-name>Apache-Axis Servlet</display-name>
+        <servlet-name>AxisServlet</servlet-name>
         <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
         <!--<init-param>-->
         <!--<param-name>axis2.xml.path</param-name>-->
@@ -40,15 +42,14 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-        <servlet-name>AxisAdminServlet</servlet-name>
         <display-name>Apache-Axis AxisAdmin Servlet (Web Admin)</display-name>
-        <servlet-class>
-            org.apache.axis2.webapp.AxisAdminServlet</servlet-class>
+        <servlet-name>AxisAdminServlet</servlet-name>
+        <servlet-class>org.apache.axis2.webapp.AxisAdminServlet</servlet-class>
     </servlet>
     
     <!-- servlet>
-        <servlet-name>SOAPMonitorService</servlet-name>
         <display-name>SOAPMonitorService</display-name>
+        <servlet-name>SOAPMonitorService</servlet-name>
         <servlet-class>org.apache.axis2.soapmonitor.servlet.SOAPMonitorService</servlet-class>
         <init-param>
             <param-name>SOAPMonitorPort</param-name>

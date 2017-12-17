@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>osgi-tests</artifactId>
+    <name>Apache Axis2 - OSGi Tests</name>
+    <url>http://axis.apache.org/axis2/java/core/</url>
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/osgi-tests</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/osgi-tests</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/osgi-tests</url>
+    </scm>
+    <properties>
+        <exam.version>3.4.0</exam.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>org.apache.axis2.osgi</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>5.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-native</artifactId>
+            <version>${exam.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-link-assembly</artifactId>
+            <version>${exam.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-testutils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-test-resources</goal>
+                        </goals>
+                        <configuration>
+                            <name>%bundle.symbolicName%.link</name>
+                            <value>%url%</value>
+                            <dependencySet>
+                                <scope>test</scope>
+                            </dependencySet>
+                            <artifacts>
+                                <artifact>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.http.jetty</artifactId>
+                                    <version>2.2.2</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.http.whiteboard</artifactId>
+                                    <version>2.2.2</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.configadmin</artifactId>
+                                    <version>1.8.0</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.wsdl4j</artifactId>
+                                    <version>1.6.2_6</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-servlet_2.5_spec</artifactId>
+                                    <version>1.2</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.commons-httpclient</artifactId>
+                                    <version>3.1_7</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.commons-codec</artifactId>
+                                    <version>1.3_5</version>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpcore-osgi</artifactId>
+                                </artifact>
+                                <artifact>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpclient-osgi</artifactId>
+                                </artifact>
+                            </artifacts>
+                            <paxExam>${exam.version}</paxExam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

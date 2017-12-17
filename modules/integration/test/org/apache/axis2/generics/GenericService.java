@@ -40,7 +40,10 @@ public class GenericService {
         return persons.get(0);
     }
 
+// See generics.wsdl
+/*
     public void processStringArray(List<String[]> values) {
 
     }
+*/
 }

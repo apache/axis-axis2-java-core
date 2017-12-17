@@ -23,8 +23,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -37,10 +37,7 @@ import org.apache.axis2.integration.RPCLocalTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.wsdl.WSDLConstants;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 public class MultirefTest extends RPCLocalTestCase {
@@ -389,11 +386,7 @@ public class MultirefTest extends RPCLocalTestCase {
     }
 
     private OMElement getOMElement(String str, OMFactory fac) throws Exception {
-        StAXOMBuilder staxOMBuilder;
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
-                ByteArrayInputStream(str.getBytes()));
-        staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        return staxOMBuilder.getDocumentElement();
+        return OMXMLBuilderFactory.createOMBuilder(fac, new StringReader(str)).getDocumentElement();
     }
 
 
@@ -472,17 +465,7 @@ public class MultirefTest extends RPCLocalTestCase {
                 "    <item0>ghi</item0>\n" +
                 "    <item0>klm</item0>\n" +
                 "</reference>";
-        StAXOMBuilder staxOMBuilder;
-        try {
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
-                    ByteArrayInputStream(str.getBytes()));
-            staxOMBuilder = new
-                    StAXOMBuilder(fac, xmlReader);
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        } catch (FactoryConfigurationError factoryConfigurationError) {
-            throw AxisFault.makeFault(factoryConfigurationError);
-        }
+        OMXMLParserWrapper staxOMBuilder = OMXMLBuilderFactory.createOMBuilder(fac, new StringReader(str));
         envelope.getBody().addChild(staxOMBuilder.getDocumentElement());
 
         MessageContext reqMessageContext = new MessageContext();

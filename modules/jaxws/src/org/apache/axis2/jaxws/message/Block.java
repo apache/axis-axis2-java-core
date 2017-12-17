@@ -44,7 +44,7 @@ import javax.xml.ws.WebServiceException;
  * longer valid after the message is called. (i.e. the implementation does not need to cache the
  * information)
  */
-public interface Block extends OMDataSourceExt {
+public interface Block<T,C> extends OMDataSourceExt {
 
     /**
      * Get a reference to the Business Object represented by this Block

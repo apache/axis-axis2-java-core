@@ -21,7 +21,8 @@ package org.apache.axis2.jaxws.message;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
@@ -136,7 +137,7 @@ public class FaultTests extends TestCase {
 		// OM
 		StringReader sr = new StringReader(sampleSOAP11FaultEnvelope1);
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+		SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
 		OMElement omElement = builder.getSOAPEnvelope();
 		
 		// The JAX-WS layer creates a Message from the OM
@@ -172,8 +173,7 @@ public class FaultTests extends TestCase {
 			// OM
 			StringReader sr = new StringReader(sampleSOAP11FaultEnvelope2);
 			XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-			StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow,
-					null);
+	        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
 			OMElement omElement = builder.getSOAPEnvelope();
 
 			// The JAX-WS layer creates a Message from the OM
@@ -228,7 +228,7 @@ public class FaultTests extends TestCase {
 		// OM
 		StringReader sr = new StringReader(sampleSOAP12FaultEnvelope1);
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+		SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
 		OMElement omElement = builder.getSOAPEnvelope();
 		
 		// The JAX-WS layer creates a Message from the OM
@@ -261,7 +261,7 @@ public class FaultTests extends TestCase {
         // OM
         StringReader sr = new StringReader(sampleSOAP12FaultEnvelope2);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
         
         // The JAX-WS layer creates a Message from the OM

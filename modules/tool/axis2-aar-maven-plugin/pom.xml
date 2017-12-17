@@ -23,9 +23,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-aar-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
+            <artifactId>maven-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -56,13 +56,19 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- Maven supports SLF4J -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
@@ -71,6 +77,12 @@
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/tool/axis2-aar-maven-plugin</developerConnection>
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/tool/axis2-aar-maven-plugin</url>
     </scm>
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging/tools/maven-plugins/axis2-aar-maven-plugin</url>
+        </site>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>
@@ -94,6 +106,22 @@
                     <goalPrefix>axis2</goalPrefix>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <developers>
@@ -109,4 +137,16 @@
             <email>john.pfeifer@hnpsolutions.com</email>
         </contributor>
     </contributors>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports />
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

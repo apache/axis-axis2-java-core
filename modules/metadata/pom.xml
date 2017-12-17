@@ -23,9 +23,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-metadata</artifactId>
     <name>Apache Axis2 - Metadata</name>
@@ -64,10 +64,6 @@
                     <groupId>javax.xml</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -158,24 +154,23 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>generate-properties</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
+                            <artifacts>
+                                <artifact>
                                     <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-jaxws_2.2_spec</artifactId>
-                                    <type>jar</type>
-                                 </artifactItem>
-                            </artifactItems>
-                            <overWrite>true</overWrite>
-                            <outputDirectory>${project.build.directory}/endorsed</outputDirectory>
-                            <stripVersion>true</stripVersion>
+                                 </artifact>
+                            </artifacts>
+                            <name>jaxws.bootclasspath</name>
+                            <value>%file%</value>
+                            <separator>${path.separator}</separator>
                         </configuration>
                     </execution>
                 </executions>
@@ -185,11 +180,8 @@
                 <inherited>true</inherited>
                 <configuration>
                     <compilerArgument>
-                        -Xbootclasspath/p:${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar   
+                        -Xbootclasspath/p:${jaxws.bootclasspath}
                     </compilerArgument>
-                    <compilerVersion>1.5</compilerVersion>
-                    <source>1.5</source>
-                    <target>1.5</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -209,38 +201,38 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>testXjc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceType>WSDL</sourceType>
+                            <testSources>
+                                <testSource>test-resources/wsdl/ProxyDocLitWrapped.wsdl</testSource>
+                            </testSources>
+                            <packageName>org.test.proxy.doclitwrapped</packageName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Work around a problem in jaxb2-maven-plugin which confuses compile sources
+                     and test sources, causing test sources to be included in the source JAR.
+                     Should be fixed by https://github.com/mojohaus/jaxb2-maven-plugin/pull/94. -->
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>org/test/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>gen-ts</id>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-                                <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="test-resources/xsd" />
-                                <property name="wsdl.source.dir" value="test-resources/wsdl" />
-                                <property name="schema.output.base.dir" value="target/schema" />
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
-                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
-                                <!-- make the dirs -->
-                                <mkdir dir="${schema.output.base.dir}" />
-                                <mkdir dir="${schema.generated.src.dir}" />
-                                <mkdir dir="${schema.generated.classes.dir}" />
-                                <!-- Run JAXB schema compiler with designated schemas -->
-                                <echo>Generating JAX-B classes from XSDs</echo>
-                                <echo>Generating java from ProxyDocLitWrapped.wsdl</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
-                                    <classpath location="${compiled.classes.dir}" />
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl" />
-                                </java>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
                     <execution>
                         <id>build-repo</id>
                         <phase>test-compile</phase>
@@ -264,29 +256,11 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/target/schema/src</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
                     <argLine>
-                        -Xbootclasspath/p:${project.build.directory}/endorsed/geronimo-jaxws_2.2_spec.jar   
+                        -Xbootclasspath/p:${jaxws.bootclasspath}
                     </argLine>
                     <includes>
                         <include>**/*Tests.java</include>

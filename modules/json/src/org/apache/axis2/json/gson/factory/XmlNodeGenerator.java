@@ -19,6 +19,8 @@
 
 package org.apache.axis2.json.gson.factory;
 
+import org.apache.axis2.AxisFault;
+import org.apache.ws.commons.schema.utils.XmlSchemaRef;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
@@ -52,7 +54,7 @@ public class XmlNodeGenerator {
     public XmlNodeGenerator() {
     }
 
-    private void processSchemaList() {
+    private void processSchemaList() throws AxisFault {
         // get the operation schema and process.
         XmlSchema operationSchema = getXmlSchema(elementQname);
         XmlSchemaElement messageElement = operationSchema.getElementByName(elementQname.getLocalPart());
@@ -81,7 +83,7 @@ public class XmlNodeGenerator {
         }
     }
 
-    private void processElement(XmlSchemaElement element, XmlNode parentNode , XmlSchema schema) {
+    private void processElement(XmlSchemaElement element, XmlNode parentNode , XmlSchema schema) throws AxisFault {
         String targetNamespace = schema.getTargetNamespace();
         XmlNode xmlNode;
         QName schemaTypeName = element.getSchemaTypeName();
@@ -106,11 +108,34 @@ public class XmlNodeGenerator {
             xmlNode = new XmlNode(element.getName(), targetNamespace, false, (element.getMaxOccurs() == 1 ? false : true), schemaType.getQName().getLocalPart());
             parentNode.addChildToList(xmlNode);
             processSchemaType(schemaType, xmlNode, schema);
+        }else if (element.getRef() != null) {
+            // Handle ref element
+            XmlSchemaRef xmlSchemaRef = element.getRef();
+            QName targetQname = xmlSchemaRef.getTargetQName();
+            if (targetQname == null) {
+                throw new AxisFault("target QName is null while processing ref:" + element.getName());
+            }
+            getXmlSchema(targetQname);
+            xmlNode = new XmlNode(targetQname.getLocalPart(), targetNamespace, false, (element.getMaxOccurs() != 1), targetQname.getLocalPart());
+            parentNode.addChildToList(xmlNode);
+            if (("http://www.w3.org/2001/XMLSchema").equals(targetQname.getNamespaceURI())) {
+            } else {
+                XmlSchema schemaOfType;
+                // see whether Schema type is in the same schema
+                XmlSchemaType childSchemaType = schema.getTypeByName(targetQname.getLocalPart());
+                if (childSchemaType == null) {
+                    schemaOfType = getXmlSchema(targetQname);
+                    childSchemaType = schemaOfType.getTypeByName(targetQname.getLocalPart());
+                } else {
+                    schemaOfType = schema;
+                }
+                processSchemaType(childSchemaType, xmlNode, schemaOfType);
+            }
         }
     }
 
 
-    private void processSchemaType(XmlSchemaType xmlSchemaType , XmlNode parentNode , XmlSchema schema) {
+    private void processSchemaType(XmlSchemaType xmlSchemaType , XmlNode parentNode , XmlSchema schema) throws AxisFault {
         if (xmlSchemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType complexType = (XmlSchemaComplexType)xmlSchemaType;
             XmlSchemaParticle particle = complexType.getParticle();
@@ -162,9 +187,13 @@ public class XmlNodeGenerator {
     }
 
 
-    public XmlNode getMainXmlNode() {
+    public XmlNode getMainXmlNode() throws AxisFault {
         if (mainXmlNode == null) {
-            processSchemaList();
+            try {
+                processSchemaList();
+            } catch (AxisFault axisFault) {
+                throw new AxisFault("Error while creating intermeidate xml structure ", axisFault);
+            }
         }
         return mainXmlNode;
     }

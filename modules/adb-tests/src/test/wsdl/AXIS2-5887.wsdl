@@ -1,0 +1,2536 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:tns="webservice/xtc/plugins/Speed4Trade/com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="webservice" targetNamespace="webservice/xtc/plugins/Speed4Trade/com" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="webservice/xtc/plugins/Speed4Trade/com">
+	<xsd:complexType name="Product">
+		<xsd:sequence>
+
+			<xsd:element name="productdata" type="tns:Productdata"
+				maxOccurs="1" minOccurs="0">
+			</xsd:element>
+
+			<xsd:element name="descriptions"
+				type="tns:ProductDescription" maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+
+			<xsd:element name="xselling" type="tns:Xsell"
+				maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+
+			<xsd:element name="prodcategories" type="tns:ProdKat"
+				maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+
+			<xsd:element name="attributes" type="tns:Attribute"
+				maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+
+			<xsd:element name="specialdata" type="tns:Specialdata"
+				minOccurs="0" maxOccurs="1">
+			</xsd:element>
+
+
+			<xsd:element name="personaloffers" type="tns:PersonalOffer"
+				minOccurs="0" maxOccurs="unbounded">
+			</xsd:element>
+			<xsd:element name="deletePictures" type="xsd:boolean"
+				nillable="true">
+			</xsd:element>
+			<xsd:element name="useVariants" type="xsd:boolean" nillable="true"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductDescription">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+
+					<xsd:element name="products_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="language_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="products_name"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_description"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_short_description"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_keywords"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_meta_title"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_meta_description"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_meta_keywords"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_url"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_viewed"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="Xsell">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="ID" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="products_xsell_grp_name_id"
+						type="xsd:int" nillable="false">
+					</xsd:element>
+					<xsd:element name="xsell_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="sort_order" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_model" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="ProdKat">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="products_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="categories_id" type="xsd:int" nillable="false"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="Attribute">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="products_attributes_id"
+						type="xsd:int" nillable="false">
+					</xsd:element>
+					<xsd:element name="products_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="options_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="options_values_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="options_values_price"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="price_prefix" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="attributes_model"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="attributes_stock" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="options_values_weight"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="weight_prefix" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="sortorder" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="parent_products_id"
+						type="xsd:int">
+					</xsd:element>
+					<xsd:element name="options_name" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="options_values_name" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="CustomField">
+		<xsd:sequence>	
+			<xsd:element name="feldname" type="xsd:string"></xsd:element>
+			<xsd:element name="wert" type="xsd:string" nillable="true"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Key">
+		<xsd:sequence>
+			<xsd:element name="keyfeld" type="xsd:string"></xsd:element>
+			<xsd:element name="wert" type="xsd:int"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="Productdata">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="products_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="products_ean" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_quantity" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_shippingtime"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_model" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+
+
+
+
+					<xsd:element name="products_sort" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+
+					<xsd:element name="products_price" type="xsd:double"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_discount_allowed"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_date_added"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_last_modified"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_date_available"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_weight"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_status"
+						type="xsd:boolean" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_tax_class_id"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="product_template"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="options_template"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="manufacturers_id" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_ordered" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_fsk18" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_vpe" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_vpe_status"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_vpe_value"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_startpage"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_startpage_sort"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="images" type="tns:ProductImage"
+						maxOccurs="unbounded" minOccurs="0">
+					</xsd:element>
+					<xsd:element name="products_variant_standard"
+						type="xsd:int" nillable="false">
+					</xsd:element>
+
+					<xsd:element name="permissions"
+						type="tns:GroupPermission" minOccurs="0" maxOccurs="unbounded">
+					</xsd:element>
+					<xsd:element name="shipping_category" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="manufacturers_name"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_shipping_name" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="xtcBase">
+    	<xsd:sequence>
+        	<xsd:element name="customFields" type="tns:CustomField" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+            
+	<xsd:complexType name="BaseRequest">
+		<xsd:sequence>
+			<xsd:element name="username" type="xsd:string"></xsd:element>
+			<xsd:element name="password" type="xsd:string"></xsd:element>
+			<xsd:element name="version" type="xsd:string"></xsd:element>
+			<xsd:element name="isDebug" type="xsd:boolean" nillable="true"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Order">
+		<xsd:sequence>
+			<xsd:element name="orderdata" type="tns:Orderdata"
+				maxOccurs="1" minOccurs="0">
+			</xsd:element>
+			<xsd:element name="orders_products"
+				type="tns:Orders_products" maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+			<xsd:element name="orders_products_attributes"
+				type="tns:Orders_products_attributes" maxOccurs="unbounded"
+				minOccurs="0">
+			</xsd:element>
+			<xsd:element name="orders_status_history"
+				type="tns:Orders_status_history" maxOccurs="unbounded"
+				minOccurs="0">
+			</xsd:element>
+			<xsd:element name="orders_total" type="tns:Orders_total"
+				maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Orderdata">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="orders_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="customers_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="customers_cid" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_vat_id"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_status" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_status_name"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_status_image"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_status_discount"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_name" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_firstname"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_lastname"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_company"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_street_address"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_suburb"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_city" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_postcode"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_state"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_country"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_telephone"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_email_address"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_address_format_id"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_name" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_firstname"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_lastname"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_company"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_street_address"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_suburb"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_city" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_postcode"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_state" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_country"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_country_iso_code_2"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="delivery_address_format_id"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_name" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_firstname"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_lastname"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_company"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_street_address"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_suburb" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_city" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_postcode"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_state" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_country"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_country_iso_code_2"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="billing_address_format_id"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="payment_method" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="cc_type" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="cc_owner" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="cc_number" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="cc_expires" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="cc_start" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="cc_issue" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="cc_cvv" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="comments" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="last_modified"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="date_purchased"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="orders_status" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="orders_date_finished"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="currency" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="currency_value" type="xsd:double"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="account_type" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="payment_class" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="shipping_method"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="shipping_class" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="customers_ip" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="language" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="afterbuy_success" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="afterbuy_id" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="refferers_id" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="conversion_type" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="orders_ident_key"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="banktransfer_owner"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="banktransfer_number"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="banktransfer_bankname"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="banktransfer_blz"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+
+	<xsd:complexType name="Orders_products">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="orders_products_id"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="orders_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="products_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="products_model"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_name"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_price"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_discount_made"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_shipping_time"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="final_price" type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_tax"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_quantity"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="allow_tax" type="xsd:int" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="Orders_products_attributes">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="orders_products_attributes_id"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="orders_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="orders_products_id"
+						type="xsd:int" nillable="false">
+					</xsd:element>
+					<xsd:element name="products_options"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_options_values"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="options_values_price"
+						type="xsd:double" nillable="true">
+					</xsd:element>
+					<xsd:element name="price_prefix"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="Orders_status_history">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="orders_status_history_id"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="orders_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="orders_status_id"
+						type="xsd:int" nillable="false">
+					</xsd:element>
+					<xsd:element name="date_added"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="customer_notified"
+						type="xsd:int" nillable="true">
+					</xsd:element>
+					<xsd:element name="comments" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="Orders_total">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="orders_total_id" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="orders_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="title" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="text" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="value" type="xsd:double"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="class" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="sort_order" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="coupon_code" type="xsd:string"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="coupon_type" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="OrdersStatus">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="orders_status_id"
+						type="xsd:int" nillable="false">
+					</xsd:element>
+					<xsd:element name="language_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="orders_status_name" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+
+	<xsd:complexType name="ProductImage">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="id" type="xsd:int" nillable="true"></xsd:element>
+					<xsd:element name="nummer" type="xsd:int" nillable="true"></xsd:element>
+					<xsd:element name="filename" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="binary_popup" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="binary_thumbnail" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="binary_info" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Categories">
+		<xsd:sequence>
+			<xsd:element name="categories" type="tns:Category" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Category">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="categories_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+
+					<xsd:element name="parent_id" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="categories_status" type="xsd:int"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="categories_template"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+
+
+
+
+					<xsd:element name="listing_template"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="sort_order" type="xsd:int"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="products_sorting"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="products_sorting2"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="date_added" type="xsd:dateTime"
+						nillable="false">
+					</xsd:element>
+					<xsd:element name="last_modified"
+						type="xsd:dateTime" nillable="false">
+					</xsd:element>
+					<xsd:element name="image" type="tns:CategoryImage"
+						nillable="true">
+					</xsd:element>
+					<xsd:element name="descriptions"
+						type="tns:CategoryDescriptions" maxOccurs="unbounded"
+						minOccurs="0" nillable="true">
+					</xsd:element>
+
+					<xsd:element name="permissions"
+						type="tns:GroupPermission" minOccurs="0" maxOccurs="unbounded">
+					</xsd:element>
+					<xsd:element name="level" type="xsd:int" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="CategoryDescriptions">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="categories_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="language_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="categories_name" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="categories_heading_title" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="categories_description" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="categories_meta_title" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="categories_meta_description" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="categories_meta_keywords" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="CategoryImage">
+		<xsd:sequence>
+			<xsd:element name="filename" type="xsd:string" nillable="false"></xsd:element>
+			<xsd:element name="binary" type="xsd:string" nillable="false"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Manufacturers">
+		<xsd:sequence>
+			<xsd:element name="manufacturers" type="tns:Manufacturer"
+				maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Manufacturer">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="manufacturers_id"
+						type="xsd:int" nillable="false">
+					</xsd:element>
+					<xsd:element name="manufacturers_name"
+						type="xsd:string" nillable="true">
+					</xsd:element>
+					<xsd:element name="date_added"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="last_modified"
+						type="xsd:dateTime" nillable="true">
+					</xsd:element>
+					<xsd:element name="image"
+						type="tns:ManufacturerImage" nillable="true">
+					</xsd:element>
+
+					<xsd:element name="info"
+						type="tns:ManufacturersInfo" maxOccurs="unbounded"
+						minOccurs="0">
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="ManufacturerImage">
+		<xsd:sequence>
+			<xsd:element name="filename" type="xsd:string" nillable="true"></xsd:element>
+			<xsd:element name="binary" type="xsd:string" nillable="true"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ManufacturersInfo">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="manufacturers_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="languages_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="manufacturers_meta_title" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="manufacturers_meta_description" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="manufacturers_meta_keywords" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="manufacturers_url" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="url_clicked" type="xsd:int" nillable="true"></xsd:element>
+					<xsd:element name="date_last_click" type="xsd:dateTime" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="OrdersStatusArray">
+		<xsd:sequence>
+			<xsd:element name="ordersstatusarray" type="tns:OrdersStatus" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ShippingStatusArray">
+		<xsd:sequence>
+			<xsd:element name="shippingstatusarray" type="tns:ShippingStatus" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductsVpeArray">
+		<xsd:sequence>
+			<xsd:element name="productsvpearray" type="tns:ProductsVpe" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ShippingStatus">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="shipping_status_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="language_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="shipping_status_name" type="xsd:string" nillable="true"></xsd:element>
+					<xsd:element name="shipping_status_image"
+						type="tns:ShippingStatusImage" nillable="true">
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="ProductsVpe">
+		<xsd:complexContent>
+			<xsd:extension base="tns:xtcBase">
+				<xsd:sequence>
+					<xsd:element name="products_vpe_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="language_id" type="xsd:int" nillable="false"></xsd:element>
+					<xsd:element name="products_vpe_name" type="xsd:string" nillable="true"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="ShippingStatusImage">
+		<xsd:sequence>
+			<xsd:element name="filename" type="xsd:string" nillable="true"></xsd:element>
+			<xsd:element name="binary" type="xsd:string" nillable="true"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="LanguagesArray">
+		<xsd:sequence>
+			<xsd:element name="languagesarray" type="tns:Languages"
+				minOccurs="0" maxOccurs="unbounded">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+            <xsd:complexType name="Languages">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="languages_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="name" type="xsd:string"
+            					nillable="true">
+            				</xsd:element>
+            				<xsd:element name="code" type="xsd:string"
+            					nillable="true">
+            				</xsd:element>
+            				<xsd:element name="image" type="xsd:string"
+            					nillable="true">
+            				</xsd:element>
+            				<xsd:element name="directory"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="sort_order"
+            					type="xsd:int" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="language_charset"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="is_default"
+            					type="xsd:int" nillable="true">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="CustomerStatus">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="customers_status_id"
+					            			type="xsd:int" nillable="false">
+					            		</xsd:element>
+					            		<xsd:element name="language_id" type="xsd:int"
+					            			nillable="false">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_name"
+					            			type="xsd:string" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_public"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_min_order"
+					            			type="xsd:int" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_max_order"
+					            			type="xsd:int" nillable="true">
+					            		</xsd:element>
+					
+					                    <xsd:element name="customers_status_image_filename" type="xsd:string" nillable="true"></xsd:element>
+					                    <xsd:element name="customers_status_discount"
+					            			type="xsd:double" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element
+					            			name="customers_status_ot_discount_flag"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_ot_discount"
+					            			type="xsd:double" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element
+					            			name="customers_status_graduated_prices"
+					            			type="xsd:string" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_show_price"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_show_price_tax"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_add_tax_ot"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element
+					            			name="customers_status_payment_unallowed"
+					            			type="xsd:string" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element
+					            			name="customers_status_shipping_unallowed"
+					            			type="xsd:string" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element
+					            			name="customers_status_discount_attributes"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_fsk18"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_fsk18_display"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_write_reviews"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					            		<xsd:element name="customers_status_read_reviews"
+					            			type="xsd:boolean" nillable="true">
+					            		</xsd:element>
+					
+					                    <xsd:element name="customers_status_image" type="xsd:string" nillable="true">
+            		</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="CustomerStatusArray">
+            	<xsd:sequence>
+            		<xsd:element name="customerstatusarray"
+            			type="tns:CustomerStatus" maxOccurs="unbounded">
+            		</xsd:element>
+
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Products">
+            	<xsd:sequence>
+            		<xsd:element name="products" type="tns:Product"
+            			minOccurs="1" maxOccurs="unbounded">
+            		</xsd:element>
+            		<xsd:element name="dataCount" type="xsd:int" nillable="true"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Specialdata">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="specials_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="products_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="specials_quantity"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element
+            					name="specials_new_products_price" type="xsd:double"
+            					nillable="false">
+            				</xsd:element>
+            				<xsd:element name="specials_date_added"
+            					type="xsd:dateTime" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="specials_last_modified"
+            					type="xsd:dateTime" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="expires_date"
+            					type="xsd:dateTime" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="date_status_change"
+            					type="xsd:dateTime" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="status"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+
+            <xsd:complexType name="VariantOption">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="products_options_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="language_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="products_options_name"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element
+            					name="products_options_sortorder" type="xsd:int"
+            					nillable="true">
+            				</xsd:element>
+            				<xsd:element name="products_options_type"
+            					type="xsd:int" nillable="true">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="VariantValue">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element
+            					name="products_options_values_id" type="xsd:int"
+            					nillable="false">
+            				</xsd:element>
+            				<xsd:element name="language_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element
+            					name="products_options_values_name" type="xsd:string"
+            					nillable="true">
+            				</xsd:element>
+            				<xsd:element
+            					name="products_options_values_sortorder" type="xsd:int"
+            					nillable="true">
+            				</xsd:element>
+            				<xsd:element name="products_options_id"
+            					type="xsd:int" nillable="true">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+
+            <xsd:complexType name="VariantOptionValueMap">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element
+            					name="products_options_values_to_products_options_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="products_options_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="products_options_values_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="VariantOptionArray">
+            	<xsd:sequence>
+            		<xsd:element name="optionsarray" type="tns:VariantOption" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="VariantValueArray">
+            	<xsd:sequence>
+            		<xsd:element name="valuesarray" type="tns:VariantValue" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="VariantOptionValueMapArray">
+            	<xsd:sequence>
+            		<xsd:element name="mappingarray" type="tns:VariantOptionValueMap" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="PersonalOffer">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="price_id" type="xsd:int"
+            					nillable="false">
+            				</xsd:element>
+            				<xsd:element name="products_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="quantity" type="xsd:int"
+            					nillable="false">
+            				</xsd:element>
+            				<xsd:element name="personal_offer"
+            					type="xsd:double" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="group_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+
+            <xsd:complexType name="ProductIds">
+            	<xsd:sequence>
+            		<xsd:element name="productIds" type="xsd:int" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Coupons">
+            	<xsd:sequence>
+            		<xsd:element name="coupons" type="tns:Coupon" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="Coupon">
+            	<xsd:complexContent>
+		  <xsd:extension base="tns:xtcBase">
+	  	    <xsd:sequence>
+				
+            		<xsd:element name="coupon_id" type="xsd:int"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_type" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_code" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_amount" type="xsd:double"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_minimum_order"
+            			type="xsd:double" nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_start_date"
+            			type="xsd:dateTime" nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_expire_date"
+            			type="xsd:dateTime" nillable="true">
+            		</xsd:element>
+            		<xsd:element name="uses_per_coupon" type="xsd:int"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="uses_per_user" type="xsd:int"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="restrict_to_products"
+            			type="xsd:string" nillable="true">
+            		</xsd:element>
+            		<xsd:element name="restrict_to_categories"
+            			type="xsd:string" nillable="true">
+            		</xsd:element>
+            		<xsd:element name="restrict_to_customers"
+            			type="xsd:string" nillable="true">
+            		</xsd:element>
+            		<xsd:element name="coupon_active" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="date_created" type="xsd:dateTime"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="date_modified"
+            			type="xsd:dateTime">
+            		</xsd:element>
+                    <xsd:element name="descriptions"
+            			type="tns:CouponDescription" minOccurs="0"
+            			maxOccurs="unbounded">
+            		</xsd:element>
+            	</xsd:sequence>
+	      </xsd:extension>
+	     </xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="CouponDescription">
+            	<xsd:complexContent>
+		  <xsd:extension base="tns:xtcBase">
+		    <xsd:sequence>
+            		<xsd:element name="coupon_id" type="xsd:int"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="language_id" type="xsd:int"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_name" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="coupon_description" type="xsd:string" nillable="true"></xsd:element>
+            	    </xsd:sequence>
+		  </xsd:extension>
+		</xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="Quantity">
+            	<xsd:sequence>
+            		<xsd:element name="products_id" type="xsd:int"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="quantity" type="xsd:int"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="update_specials" type="xsd:boolean" nillable="true"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Quantities">
+            	<xsd:sequence>
+            		<xsd:element name="quantities" type="tns:Quantity" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Orders">
+            	<xsd:sequence>
+            		<xsd:element name="orders" type="tns:Order" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="RequestResponse">
+            	<xsd:sequence>
+            		<xsd:element name="key" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="value" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="errormsg" type="xsd:string" nillable="true"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="RequestResponseArray">
+            	<xsd:sequence>
+            		<xsd:element name="response" type="tns:RequestResponse" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="GroupPermission">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="groupId" type="xsd:int"
+            					nillable="false">
+            				</xsd:element>
+            				<xsd:element name="valid"
+            					type="xsd:boolean" nillable="false">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+
+            <xsd:complexType name="CommonData">
+            	<xsd:sequence>
+            		<xsd:element name="table" type="xsd:string"></xsd:element>
+            		<xsd:element name="fields" type="tns:Field"
+            			nillable="true" minOccurs="0" maxOccurs="unbounded">
+            		</xsd:element>
+
+            		<xsd:element name="querytype" type="xsd:string" nillable="true"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Field">
+            	<xsd:sequence>
+            		<xsd:element name="name" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            		<xsd:element name="value" type="xsd:string"
+            			nillable="false">
+            		</xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="CommonDataArray">
+            	<xsd:sequence>
+            		<xsd:element name="commondataarray" type="tns:CommonData" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Pictures"></xsd:complexType>
+        
+            <xsd:complexType name="Picture">
+            	<xsd:sequence>
+            		<xsd:element name="filename" type="xsd:string"></xsd:element>
+                    <xsd:element name="server_position" type="xsd:string"></xsd:element>
+                    <xsd:element name="binary_source"
+            			type="xsd:base64Binary">
+            		</xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="AdditionalTable">
+            	<xsd:sequence>
+            		<xsd:element name="name" type="xsd:string"></xsd:element>
+            		<xsd:element name="keys" type="tns:Field" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="AdditionalTables">
+            	<xsd:sequence>
+            		<xsd:element name="tables" type="tns:AdditionalTable" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Orders_common"></xsd:complexType>
+        
+            <xsd:complexType name="CustomerArray">
+            	<xsd:sequence>
+            		<xsd:element name="customerarray" type="tns:Customer" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="Customer">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="customers_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_cid"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="customers_vat_id"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="customers_vat_id_status"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+
+            				<xsd:element name="customers_status"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_gender"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_firstname"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_lastname"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_dob"
+            					type="xsd:dateTime" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_email_address"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element
+            					name="customers_default_address_id" type="xsd:int"
+            					nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_telephone"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_fax"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="customers_password"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+
+
+
+            				<xsd:element name="delete_user"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="account_type"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="password_request_key"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="payment_unallowed"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="shipping_unallowed"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="refferers_id"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_date_added"
+            					type="xsd:dateTime" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="customers_last_modified"
+            					type="xsd:dateTime" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="addressbookarray"
+            					type="tns:AddressBook" minOccurs="0" maxOccurs="unbounded">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="AddressBook">
+            	<xsd:complexContent>
+            		<xsd:extension base="tns:xtcBase">
+            			<xsd:sequence>
+            				<xsd:element name="address_book_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="customers_id"
+            					type="xsd:int" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="entry_gender"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="entry_company"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="entry_firstname"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="entry_lastname"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="entry_street_address"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="entry_suburb"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="entry_postcode"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="entry_city"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="entry_state"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="entry_country_iso"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            				<xsd:element name="address_date_added"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="address_last_modified"
+            					type="xsd:string" nillable="true">
+            				</xsd:element>
+            				<xsd:element name="address_class"
+            					type="xsd:string" nillable="false">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:extension>
+            	</xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="CommonDocument">
+            	<xsd:sequence>
+            		<xsd:element name="filename" type="xsd:string"></xsd:element>
+            		<xsd:element name="content"
+            			type="xsd:base64Binary">
+            		</xsd:element>
+            		<xsd:element name="savepath" type="xsd:string"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="CommonDocumentArray">
+            	<xsd:sequence>
+            		<xsd:element name="commondocumentarray" type="tns:CommonDocument" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Templates">
+            	<xsd:sequence>
+            		<xsd:element name="names" type="tns:Template" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Template">
+            	<xsd:sequence>
+            		<xsd:element name="name" type="xsd:string" nillable="true"></xsd:element>
+            		<xsd:element name="type" type="xsd:int" nillable="false"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="VariantData">
+            	<xsd:sequence>
+            		<xsd:element name="options"
+            			type="tns:VariantOption" minOccurs="0" maxOccurs="unbounded">
+            		</xsd:element>
+            		<xsd:element name="values"
+            			type="tns:VariantValue" minOccurs="0" maxOccurs="unbounded">
+            		</xsd:element>
+            		<xsd:element name="mappings" type="tns:VariantOptionValueMap" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            	</xsd:sequence>
+            </xsd:complexType>
+</xsd:schema></wsdl:types>
+    <wsdl:message name="getProductRequest">
+    	<wsdl:part name="id" type="xsd:int"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getProductResponse">
+    	<wsdl:part name="product" type="tns:Product"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveProductsRequest">
+    	<wsdl:part name="products" type="tns:Products"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveProductsResponse">
+    	<wsdl:part name="success" type="tns:RequestResponseArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getOrdersByStatusRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="statusid" type="xsd:int"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getOrdersByStatusResponse">
+    	<wsdl:part name="orders" type="tns:Orders"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveOrdersRequest">
+    	<wsdl:part name="orders" type="tns:Orders"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveOrdersResponse">
+    	<wsdl:part name="success" type="tns:RequestResponseArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="deleteProductsRequest">
+    	<wsdl:part name="productIds" type="tns:ProductIds"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="deleteProductsResponse">
+    	<wsdl:part name="success" type="tns:RequestResponseArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="deleteOrderRequest">
+    	<wsdl:part name="id" type="xsd:int"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="deleteOrderResponse">
+    	<wsdl:part name="success" type="xsd:boolean"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCategoriesRequest">
+    	<wsdl:part name="categories" type="tns:Categories"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="delete" type="xsd:boolean"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCategoriesResponse">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCategoriesRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCategoriesResponse">
+    	<wsdl:part name="categories" type="tns:Categories"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveManufacturersRequest">
+    	<wsdl:part name="manufacturers" type="tns:Manufacturers"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveManufacturersResponse">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getManufacturersRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getManufacturersResponse">
+    	<wsdl:part name="manufacturers" type="tns:Manufacturers"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveOrdersStatusRequest">
+    	<wsdl:part name="ordersstatusarray" type="tns:OrdersStatusArray"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveOrdersStatusResponse">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getOrdersStatusRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getOrdersStatusResponse">
+    	<wsdl:part name="ordersstatusarray" type="tns:OrdersStatusArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveShippingStatusRequest">
+    	<wsdl:part name="shippingstatusarray" type="tns:ShippingStatusArray"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveShippingStatusResponse">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getShippingStatusRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="defaultId" type="xsd:int"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getShippingStatusResponse">
+    	<wsdl:part name="shippingstatusarray" type="tns:ShippingStatusArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveProductsVpeRequest">
+    	<wsdl:part name="productsvpearray" type="tns:ProductsVpeArray"></wsdl:part>
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveProductsVpeResponse">
+    	<wsdl:part name="success" type="xsd:boolean"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getProductsVpeRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getProductsVpeResponse">
+    	<wsdl:part name="productsvpearray" type="tns:ProductsVpeArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="checkLoginRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="checkLoginResponse">
+    	<wsdl:part name="success" type="xsd:boolean"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getLanguagesRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getLanguagesResponse">
+    	<wsdl:part name="languagesarray"
+    		type="tns:LanguagesArray">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCustomerStatusRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCustomerStatusResponse">
+    	<wsdl:part name="customerstatusarray" type="tns:CustomerStatusArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveVariantDataRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="optionsarray" type="tns:VariantOptionArray"></wsdl:part>
+    	<wsdl:part name="valuesarray" type="tns:VariantValueArray"></wsdl:part>
+    	<wsdl:part name="mappingarray"
+    		type="tns:VariantOptionValueMapArray">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveVariantDataResponse">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveGutscheineRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="coupons" type="tns:Coupons"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveGutscheineResponse">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateBestandRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="quantities" type="tns:Quantities"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateBestandResponse">
+    	<wsdl:part name="success" type="xsd:boolean"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveOrderStatusHistoryRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="orderstatushistory"
+    		type="tns:Orders_status_history">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveOrderStatusHistoryResponse">
+    	<wsdl:part name="success" type="xsd:boolean"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateCustomerStatusRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="customersid" type="xsd:int"></wsdl:part>
+    	<wsdl:part name="customerstatusid" type="xsd:int"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateCustomerStatusResponse">
+    	<wsdl:part name="success" type="xsd:boolean"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCustomerStatusRequest">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="customerstatusarray"
+    		type="tns:CustomerStatusArray">
+    	</wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCustomerStatusResponse">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="NewOperationRequest">
+    	<wsdl:part name="NewOperationRequest" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="NewOperationResponse">
+    	<wsdl:part name="NewOperationResponse" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="NewOperationRequest1">
+    	<wsdl:part name="NewOperationRequest1" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="NewOperationResponse1">
+    	<wsdl:part name="NewOperationResponse1" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCommonDataRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="commondataarray" type="tns:CommonDataArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCommonDataResponse2">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCommonDataRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="tables" type="tns:AdditionalTables"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCommonDataResponse2">
+    	<wsdl:part name="commondataarray" type="tns:CommonDataArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCustomersRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="customerarray" type="tns:CustomerArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCustomersResponse2">
+    	<wsdl:part name="success" type="tns:RequestResponseArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCommonDocumentsRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="commondocumentarray" type="tns:CommonDocumentArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="saveCommonDocumentsResponse2">
+    	<wsdl:part name="success" type="tns:RequestResponseArray"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getWebserviceVersionRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getWebserviceVersionResponse2">
+    	<wsdl:part name="version" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="changeEmailRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="oldEmail" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="newEmail" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="changeEmailResponse2">
+    	<wsdl:part name="success" type="tns:RequestResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCategoryTemplatesRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getCategoryTemplatesResponse2">
+    	<wsdl:part name="templates" type="tns:Templates"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getProductsRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="limitStart" type="xsd:int"></wsdl:part>
+    	<wsdl:part name="limitEnd" type="xsd:int"></wsdl:part>
+    	<wsdl:part name="defaultId" type="xsd:int"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getProductsResponse2">
+    	<wsdl:part name="products" type="tns:Products"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getVariantDataRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    	<wsdl:part name="type" type="xsd:int"></wsdl:part>
+    	<wsdl:part name="defaultId" type="xsd:int"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getVariantDataResponse2">
+    	<wsdl:part name="variantdata" type="tns:VariantData"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getProductTemplatesRequest2">
+    	<wsdl:part name="baseRequest" type="tns:BaseRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getProductTemplatesResponse2">
+    	<wsdl:part name="templates" type="tns:Templates"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="xtcPortType">
+    	<wsdl:operation name="getProduct">
+    		<wsdl:input message="tns:getProductRequest"></wsdl:input>
+    		<wsdl:output message="tns:getProductResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveProducts">
+    		<wsdl:input message="tns:saveProductsRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveProductsResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="deleteProducts">
+    		<wsdl:input message="tns:deleteProductsRequest"></wsdl:input>
+    		<wsdl:output message="tns:deleteProductsResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="getOrdersByStatus">
+    		<wsdl:input message="tns:getOrdersByStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:getOrdersByStatusResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveOrders">
+    		<wsdl:input message="tns:saveOrdersRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveOrdersResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="deleteOrder">
+    		<wsdl:input message="tns:deleteOrderRequest"></wsdl:input>
+    		<wsdl:output message="tns:deleteOrderResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveCategories">
+    		<wsdl:input message="tns:saveCategoriesRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveCategoriesResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="getCategories">
+    		<wsdl:input message="tns:getCategoriesRequest"></wsdl:input>
+    		<wsdl:output message="tns:getCategoriesResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveManufacturers">
+    		<wsdl:input message="tns:saveManufacturersRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveManufacturersResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="getManufacturers">
+    		<wsdl:input message="tns:getManufacturersRequest"></wsdl:input>
+    		<wsdl:output message="tns:getManufacturersResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveOrdersStatus">
+    		<wsdl:input message="tns:saveOrdersStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveOrdersStatusResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="getOrdersStatus">
+    		<wsdl:input message="tns:getOrdersStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:getOrdersStatusResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveShippingStatus">
+    		<wsdl:input message="tns:saveShippingStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveShippingStatusResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="getShippingStatus">
+    		<wsdl:input message="tns:getShippingStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:getShippingStatusResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveProductsVpe">
+    		<wsdl:input message="tns:saveProductsVpeRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveProductsVpeResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="getProductsVpe">
+    		<wsdl:input message="tns:getProductsVpeRequest"></wsdl:input>
+    		<wsdl:output message="tns:getProductsVpeResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="checkLogin">
+    		<wsdl:input message="tns:checkLoginRequest"></wsdl:input>
+    		<wsdl:output message="tns:checkLoginResponse"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getLanguages">
+    		<wsdl:input message="tns:getLanguagesRequest"></wsdl:input>
+    		<wsdl:output message="tns:getLanguagesResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="getCustomerStatus">
+    		<wsdl:input message="tns:getCustomerStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:getCustomerStatusResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveVariantData">
+    		<wsdl:input message="tns:saveVariantDataRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveVariantDataResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="saveGutscheine">
+    		<wsdl:input message="tns:saveGutscheineRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveGutscheineResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="updateBestand">
+    		<wsdl:input message="tns:updateBestandRequest"></wsdl:input>
+    		<wsdl:output message="tns:updateBestandResponse"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveOrderStatusHistory">
+    		<wsdl:input message="tns:saveOrderStatusHistoryRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveOrderStatusHistoryResponse"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="updateCustomerStatus">
+    		<wsdl:input message="tns:updateCustomerStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:updateCustomerStatusResponse"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCustomerStatus">
+    		<wsdl:input message="tns:saveCustomerStatusRequest"></wsdl:input>
+    		<wsdl:output message="tns:saveCustomerStatusResponse"></wsdl:output>
+    	</wsdl:operation>
+
+    	<wsdl:operation name="saveCommonData">
+    		<wsdl:input message="tns:saveCommonDataRequest2"></wsdl:input>
+    		<wsdl:output message="tns:saveCommonDataResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getCommonData">
+    		<wsdl:input message="tns:getCommonDataRequest2"></wsdl:input>
+    		<wsdl:output message="tns:getCommonDataResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCustomers">
+    		<wsdl:input message="tns:saveCustomersRequest2"></wsdl:input>
+    		<wsdl:output message="tns:saveCustomersResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCommonDocuments">
+    		<wsdl:input message="tns:saveCommonDocumentsRequest2"></wsdl:input>
+    		<wsdl:output message="tns:saveCommonDocumentsResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getWebserviceVersion">
+    		<wsdl:input message="tns:getWebserviceVersionRequest2"></wsdl:input>
+    		<wsdl:output message="tns:getWebserviceVersionResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="changeEmail">
+    		<wsdl:input message="tns:changeEmailRequest2"></wsdl:input>
+    		<wsdl:output message="tns:changeEmailResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getCategoryTemplates">
+    		<wsdl:input message="tns:getCategoryTemplatesRequest2"></wsdl:input>
+    		<wsdl:output message="tns:getCategoryTemplatesResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getProducts">
+    		<wsdl:input message="tns:getProductsRequest2"></wsdl:input>
+    		<wsdl:output message="tns:getProductsResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getVariantData">
+    		<wsdl:input message="tns:getVariantDataRequest2"></wsdl:input>
+    		<wsdl:output message="tns:getVariantDataResponse2"></wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getProductTemplates">
+    		<wsdl:input message="tns:getProductTemplatesRequest2"></wsdl:input>
+    		<wsdl:output message="tns:getProductTemplatesResponse2"></wsdl:output>
+    	</wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="xtcBinding" type="tns:xtcPortType">
+
+    	<soap:binding style="rpc"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<wsdl:operation name="getProduct">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getProduct" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveOrders">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveOrders" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+
+
+    	<wsdl:operation name="deleteProducts">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/deleteProducts" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+
+    	<wsdl:operation name="saveProducts">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveProducts" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+
+    	<wsdl:operation name="saveVariantData">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveVariantData" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="getOrdersByStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getOrdersByStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="deleteOrder">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/deleteOrder" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCategories">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveCategories" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getCategories">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getCategories" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveManufacturers">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveManufacturers" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getManufacturers">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getManufacturers" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveOrdersStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveOrdersStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="getOrdersStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getOrdersStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveShippingStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveShippingStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="getShippingStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getShippingStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="saveProductsVpe">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveProductsVpe" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="getProductsVpe">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getProductsVpe" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="checkLogin">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/checkLogin" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getLanguages">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getLanguages" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="getCustomerStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getCustomerStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="saveGutscheine">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveGutscheine" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+
+    	</wsdl:operation>
+    	<wsdl:operation name="updateBestand">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/updateBestand" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveOrderStatusHistory">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveOrderStatusHistory" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="updateCustomerStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/updateCustomerStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCustomerStatus">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveCustomerStatus" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCommonData">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveCommonData" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getCommonData">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getCommonData" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCustomers">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveCustomers" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="saveCommonDocuments">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/saveCommonDocuments" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getWebserviceVersion">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getWebserviceVersion" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="changeEmail">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/changeEmail" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getCategoryTemplates">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getCategoryTemplates" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getProducts">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getProducts" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getVariantData">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getVariantData" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="getProductTemplates">
+
+    		<soap:operation
+    			soapAction="webservice/xtc/plugins/Speed4Trade/com/getProductTemplates" />
+    		<wsdl:input>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:input>
+    		<wsdl:output>
+
+    			<soap:body use="literal"
+    				namespace="webservice/xtc/plugins/Speed4Trade/com" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="xtcService">
+		<wsdl:port name="xtcPort" binding="tns:xtcBinding">
+			<soap:address location="http://entwicklung-xamp5/shops/WS-Build/xtcm_105/branches/3.4.9/s4t/server.php" />
+		</wsdl:port>
+	</wsdl:service></wsdl:definitions>

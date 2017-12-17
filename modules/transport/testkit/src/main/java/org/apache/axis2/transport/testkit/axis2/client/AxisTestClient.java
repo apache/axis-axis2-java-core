@@ -19,13 +19,13 @@
 
 package org.apache.axis2.transport.testkit.axis2.client;
 
-import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -44,7 +44,6 @@ import org.apache.axis2.transport.testkit.name.Name;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.apache.axis2.transport.testkit.util.ContentTypeUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -77,12 +76,12 @@ public class AxisTestClient implements TestClient, MessageExchangeValidator {
 
     public ContentType getContentType(ClientOptions options, ContentType contentType) {
         // TODO: this may be incorrect in some cases
+        ContentType.Builder builder = contentType.toBuilder();
         String charset = options.getCharset();
         if (charset == null) {
-            return contentType;
-        } else {
-            return ContentTypeUtil.addCharset(contentType, options.getCharset());
+            builder.setParameter("charset", charset);
         }
+        return builder.build();
     }
 
     public void beforeSend() throws Exception {

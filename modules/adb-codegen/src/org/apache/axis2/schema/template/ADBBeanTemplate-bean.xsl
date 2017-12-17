@@ -1811,16 +1811,17 @@
                        </xsl:choose>
 
                     // handle unexpected enumeration values properly
-                    <xsl:if test="$ignoreunexpected">
-                        log.warn("Unexpected value " + value + " for enumeration <xsl:value-of select="$name"/>");
-                        return enumeration;
-                    </xsl:if>
-                    <xsl:if test="not($ignoreunexpected)">
-                        if (enumeration == null  <xsl:if test="$propertyType='string'">&amp;&amp; !((value == null) || (value.equals("")))</xsl:if>) {
-                            throw new java.lang.IllegalArgumentException();
-                        }
-                        return enumeration;
-                    </xsl:if>
+                    if (enumeration == null  <xsl:if test="$propertyType='string'">&amp;&amp; !((value == null) || (value.equals("")))</xsl:if>) {
+                        <xsl:choose>
+                            <xsl:when test="$ignoreunexpected">
+                                log.warn("Unexpected value " + value + " for enumeration <xsl:value-of select="$name"/>");
+                            </xsl:when>
+                            <xsl:otherwise>
+                                throw new java.lang.IllegalArgumentException();
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    }
+                    return enumeration;
                 }
                 public static <xsl:value-of select="$name"/> fromString(java.lang.String value,java.lang.String namespaceURI)
                       throws java.lang.IllegalArgumentException {
@@ -2155,14 +2156,12 @@
                             <xsl:variable name="loopBoolName">loopDone<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="startQname">startQname<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="stateMachineName">stateMachine<xsl:value-of select="position()"/></xsl:variable>
-                            <xsl:variable name="builderName">builder<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                             <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
                             <xsl:variable name="particleClassType" select="@particleClassType"></xsl:variable>
 
                             <xsl:variable name="propQName">new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")</xsl:variable>
-                            <xsl:variable name="propQName2">new javax.xml.namespace.QName("","<xsl:value-of select="$propertyName"/>")</xsl:variable>
 
                            <xsl:choose>
                                 <xsl:when test="$unordered and not($choice and $hasParticleType)">  <!-- One property per iteration if unordered -->
@@ -2187,7 +2186,7 @@
                                          we have to sollow an excpetions : todo find a better solsution-->
                                          try{
                                     </xsl:if>
-                                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple) and not($particleClassType)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName()) || <xsl:value-of select="$propQName2"/>.equals(reader.getName()) </xsl:if>){
+                                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple) and not($particleClassType)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
                                 </xsl:otherwise>
                             </xsl:choose>
 
@@ -2310,14 +2309,7 @@
                                              while (!<xsl:value-of select="$loopBoolName"/>){
                                                  event = reader.getEventType();
                                                  if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
-
-                                                      // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
-                                                         = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                                              new org.apache.axis2.util.StreamWrapper(reader), reader.getName());
-
-                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
-                                                        reader.next();
+                                                       <xsl:value-of select="$listName"/>.add(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, true));
                                                         if (reader.isEndElement()) {
                                                             // we have two countinuos end elements
                                                            <xsl:value-of select="$loopBoolName"/> = true;
@@ -2474,12 +2466,7 @@
                                                           }else{
                                                       </xsl:if>
 
-                                                      // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
-                                                         = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                                              new org.apache.axis2.util.StreamWrapper(reader), <xsl:value-of select="$startQname"/>);
-
-                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement().getFirstElement());
+                                                       <xsl:value-of select="$listName"/>.add(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, false).getFirstElement());
                                                        <xsl:if test="@nillable">}</xsl:if>
                                                  } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
                                                             !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
@@ -2643,16 +2630,8 @@
                                 <xsl:when test="@any">
                                     <!--No concerns of being nillable here. if it's ours and if the nillable attribute was present
                                         we would have outputted a null already-->
-                                     <!--This can be any element and we may not know the name. so we pick the name of the element from the parser-->
-                                     //use the QName from the parser as the name for the builder
-                                     javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = reader.getName();
 
-                                     // We need to wrap the reader so that it produces a fake START_DOCUMENT event
-                                     // this is needed by the builder classes
-                                     org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> =
-                                         new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                             new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
-                                     object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$builderName"/>.getOMElement());
+                                     object.set<xsl:value-of select="$javaName"/>(org.apache.axis2.databinding.utils.FactoryUtil.extractElement(reader, false));
                                      <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                          reader.next();
                                      </xsl:if>

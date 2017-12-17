@@ -21,6 +21,8 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -560,5 +562,8 @@ public class ConverterUtilTest extends TestCase {
 
     }
 
-
+    public void testCompareInt() {
+        // https://stackoverflow.com/questions/46372764/axis2-adb-and-mininclusive-2147483648
+        assertThat(ConverterUtil.compare(3, "-2147483648")).isGreaterThan(0);
+    }
 }

@@ -54,7 +54,7 @@ public class ValidateAxis2XMLTest extends TestCase {
             SAXParser parser = factory.newSAXParser();
 
             //validate against the given schemaURL
-            parser.setProperty(extSchemaProp, xsdSource.toURL().toString());
+            parser.setProperty(extSchemaProp, xsdSource.toURI().toURL().toString());
 
             // parse (validates) the xml
             parser.parse(xmlSource, new DefaultHandler());

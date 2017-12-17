@@ -20,38 +20,18 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMNode;
 import org.w3c.dom.DOMException;
 
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Text;
 
-public class TextImplEx extends SAAJNode<org.w3c.dom.Text,OMText> implements Text {
-    private org.w3c.dom.Node previousSibling;
-    private org.w3c.dom.Node nextSibling;
-
-    public TextImplEx(String data, SOAPElement parent) {
-        this(OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getOMFactory().createOMText(data), parent);
+public class TextImplEx extends NodeImpl<org.w3c.dom.CharacterData,OMNode> implements Text {
+    public TextImplEx(String data) {
+        this(OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getOMFactory().createOMText(data));
     }
 
-    public TextImplEx(OMText textNode, SOAPElement parent) {
-        super((org.w3c.dom.Text)textNode, textNode);
-        this.parentElement = parent;
-    }
-
-    public TextImplEx(String data, SOAPElement parent,
-                      org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
-        this(data, parent);
-        this.previousSibling = prevSibling;
-        this.nextSibling = nextSibling;
-    }
-
-    public void setNextSibling(org.w3c.dom.Node nextSibling) {
-        this.nextSibling = nextSibling;
-    }
-
-    public void setPreviousSibling(org.w3c.dom.Node previousSibling) {
-        this.previousSibling = previousSibling;
+    public TextImplEx(OMNode textNode) {
+        super((org.w3c.dom.CharacterData)textNode, textNode);
     }
 
     /**
@@ -61,7 +41,7 @@ public class TextImplEx extends SAAJNode<org.w3c.dom.Text,OMText> implements Tex
      *         otherwise
      */
     public boolean isComment() {
-        String value = omTarget.getText();
+        String value = target.getData();
         return value.startsWith("<!--") && value.endsWith("-->");
     }
 
@@ -80,12 +60,11 @@ public class TextImplEx extends SAAJNode<org.w3c.dom.Text,OMText> implements Tex
      *                      <br>NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
      */
     public org.w3c.dom.Text splitText(int offset) throws DOMException {
-        return target.splitText(offset);
+        return ((Text)target).splitText(offset);
     }
 
     public boolean isElementContentWhitespace() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return ((org.w3c.dom.Text)target).isElementContentWhitespace();
     }
 
     public String getWholeText() {
@@ -233,16 +212,6 @@ public class TextImplEx extends SAAJNode<org.w3c.dom.Text,OMText> implements Tex
 
     public String toString() {
         return getValue();
-    }
-
-
-    public org.w3c.dom.Node getNextSibling() {
-        return toSAAJNode(nextSibling);
-    }
-
-
-    public org.w3c.dom.Node getPreviousSibling() {
-        return toSAAJNode(previousSibling);
     }
 
     public int getLength() {

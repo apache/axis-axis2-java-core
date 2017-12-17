@@ -20,7 +20,11 @@
 package org.apache.axis2.jaxws.wsdl;
 
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensionRegistry;
+import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+
+import org.apache.axis2.wsdl.WSDLUtil;
 
 /**
  * An instance of this class will be registered with the MetadataFactoryRegistry
@@ -38,6 +42,15 @@ public class WSDLReaderConfiguratorImpl implements WSDLReaderConfigurator {
 		// prevent the WSDLReader instance from using the System.out
 		// stream for messages and logging
 		reader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+		
+		WSDLFactory factory = WSDLFactory.newInstance();
+		ExtensionRegistry extRegistry = reader.getExtensionRegistry();
+		if (extRegistry == null) {
+			extRegistry = factory.newPopulatedExtensionRegistry();
+		}
+		
+		WSDLUtil.registerDefaultExtensionAttributeTypes(extRegistry);
+		reader.setExtensionRegistry(extRegistry);
 	}
 
 }

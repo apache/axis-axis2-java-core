@@ -18,23 +18,13 @@
  */
 package org.apache.axis2.jaxws.api;
 
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.WebServiceException;
-
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
-import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Value of the Constants.JAXWS_MESSAGE_ACCESSOR property 
+ * Value of the {@link org.apache.axis2.jaxws.Constants#JAXWS_MESSAGE_ACCESSOR} property.
  * Allows a user to gain access to certain Message information
  * that are not exposed by the Message on the
  * javax.xml.ws.handler.MessageContext
@@ -63,15 +53,7 @@ public class MessageAccessor {
         
         if (msg != null) {
             try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                OMOutputFormat format = new OMOutputFormat();
-                String charSetEncoding = (String) mc.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-                charSetEncoding = (charSetEncoding == null) ? "UTF-8" : charSetEncoding;
-                format.setCharSetEncoding(charSetEncoding);
-                MTOMXMLStreamWriter writer  = new MTOMXMLStreamWriter(baos, format);
-                msg.outputTo(writer, false);
-                writer.flush();
-                text =  baos.toString(charSetEncoding);
+                text = msg.getAsOMElement().toString();
             } catch (Throwable t) {
                 if (log.isDebugEnabled()) {
                     log.debug("Cannot access message as string", t);
@@ -83,12 +65,5 @@ public class MessageAccessor {
             log.debug("Exit MessageAccessor");
         }
         return text;
-    }
-  
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return getMessageAsString();
     }
 }

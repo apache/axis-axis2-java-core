@@ -230,7 +230,7 @@ public class AddressingProviderTests extends AbstractTestCase {
         String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
         wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();    
         File file = new File(wsdlLocation);
-        return file.toURL();
+        return file.toURI().toURL();
     }
     
 }

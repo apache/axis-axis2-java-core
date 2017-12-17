@@ -31,9 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-class CodegenConfigLoader implements CommandLineOptionConstants {
-
-    public static void loadConfig(CodeGenConfiguration config, Map<String,CommandLineOption> optionMap) {
+public class CodegenConfigLoader implements CommandLineOptionConstants {
+    public static void loadConfig(CodeGenConfiguration config, Map<String,CommandLineOption> optionMap) throws CodeGenerationException {
         String outputLocation = "."; //default output directory is the current working directory
         CommandLineOption commandLineOption = loadOption(WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                                                          WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG,
@@ -326,7 +325,7 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             }
         }
 
-
+        config.loadWsdl(optionMap.get(WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION).getOptionValue());
     }
 
     private static CommandLineOption loadOption(String shortOption, String longOption,

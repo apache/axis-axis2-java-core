@@ -19,9 +19,6 @@
 
 package org.apache.axis2.transport.http.impl.httpclient4;
 
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.http.Header;
@@ -36,46 +33,57 @@ import java.io.OutputStream;
  * This Request Entity is used by the HttpComponentsTransportSender. This wraps the
  * Axis2 message formatter object.
  */
-public class AxisRequestEntityImpl extends AxisRequestEntity implements HttpEntity {
+public class AxisRequestEntityImpl implements HttpEntity {
+    private final AxisRequestEntity entity;
 
-    /**
-     * Method calls to this request entity are delegated to the following Axis2
-     * message formatter object.
-     *
-     * @param messageFormatter
-     * @param msgContext
-     * @param format
-     * @param soapAction
-     * @param chunked
-     * @param isAllowedRetry
-     */
-    public AxisRequestEntityImpl(MessageFormatter messageFormatter, MessageContext msgContext,
-            OMOutputFormat format, String soapAction, boolean chunked, boolean isAllowedRetry) {
-        super(messageFormatter, msgContext, format, soapAction, chunked, isAllowedRetry);
+    public AxisRequestEntityImpl(AxisRequestEntity entity) {
+        this.entity = entity;
     }
 
+    @Override
     public Header getContentType() {
-        return new BasicHeader(HTTPConstants.HEADER_CONTENT_TYPE, getContentTypeAsString());
+        return new BasicHeader(HTTPConstants.HEADER_CONTENT_TYPE, entity.getContentType());
     }
 
+    @Override
     public Header getContentEncoding() {
         return null;
     }
 
+    @Override
     public InputStream getContent() throws IOException {
-        return getRequestEntityContent();
+        // Implementations are allowed to throw UnsupportedOperationException and this method is
+        // never called for outgoing requests anyway.
+        throw new UnsupportedOperationException();
     }
 
+    @Override
     public void writeTo(OutputStream outputStream) throws IOException {
-        writeRequest(outputStream);
+        entity.writeRequest(outputStream);
     }
 
+    @Override
     public boolean isStreaming() {
         return false;
     }
 
+    @Override
     public void consumeContent() {
-        // TODO: Handle this correctly
+        // We don't need to do anything here.
     }
 
+    @Override
+    public long getContentLength() {
+        return entity.getContentLength();
+    }
+
+    @Override
+    public boolean isChunked() {
+        return entity.isChunked();
+    }
+
+    @Override
+    public boolean isRepeatable() {
+        return entity.isRepeatable();
+    }
 }

@@ -23,9 +23,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
-import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
-import org.test.proxy.doclitwrapped.ReturnType;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.DocLitWrappedProxy;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.ProxyDocLitWrappedService;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.ReturnType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
@@ -82,7 +82,7 @@ public class ProxyTests extends AbstractTestCase {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("Test Name: " + getName());
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName); 
         Object proxy =service.getPort(portName, DocLitWrappedProxy.class);
         TestLogger.logger.debug(">>Invoking Binding Provider property");
@@ -108,7 +108,7 @@ public class ProxyTests extends AbstractTestCase {
         TestLogger.logger.debug("---------------------------------------");
         
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         String request = new String("some string request"); 
         Object proxy =service.getPort(portName, DocLitWrappedProxy.class);
@@ -133,7 +133,7 @@ public class ProxyTests extends AbstractTestCase {
         }
         TestLogger.logger.debug("---------------------------------------");
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(wsdlUrl, serviceName);
         String request = new String("some string request"); 
         Object proxy =service.getPort(portName, DocLitWrappedProxy.class);
@@ -159,7 +159,7 @@ public class ProxyTests extends AbstractTestCase {
         TestLogger.logger.debug("---------------------------------------");
         
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         String request = new String("some string request"); 
         Object proxy =service.getPort(portName, DocLitWrappedProxy.class);
@@ -182,7 +182,7 @@ public class ProxyTests extends AbstractTestCase {
         TestLogger.logger.debug("---------------------------------------");
         
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         DocLitWrappedProxy proxy =service.getPort(portName, DocLitWrappedProxy.class);
         
@@ -220,7 +220,7 @@ public class ProxyTests extends AbstractTestCase {
             return;
         }
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         String request = new String("some string request"); 
         
@@ -250,7 +250,7 @@ public class ProxyTests extends AbstractTestCase {
             return;
         }
         File wsdl= new File(wsdlLocation); 
-        URL wsdlUrl = wsdl.toURL(); 
+        URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         
         String request = new String("some string request"); 

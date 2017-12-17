@@ -21,6 +21,7 @@ package org.apache.axis2.wsdl.util;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
@@ -45,7 +46,6 @@ import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.ExtensionRegistry;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -1517,8 +1517,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
         try {
             reader = (WSDLReader) AccessController.doPrivileged(new PrivilegedExceptionAction() {
                 public Object run() throws WSDLException {
-                    WSDLFactory factory = WSDLFactory.newInstance();
-                    return factory.newWSDLReader();
+                    return WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
                 }
             });
         } catch (PrivilegedActionException e) {

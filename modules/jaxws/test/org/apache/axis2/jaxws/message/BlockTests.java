@@ -25,7 +25,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
@@ -36,7 +37,6 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.unitTest.TestLogger;
 import org.w3c.dom.Document;
@@ -61,6 +61,10 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
+
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -122,10 +126,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -161,10 +162,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -196,9 +194,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -345,8 +341,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
+        String newText = OMXMLBuilderFactory.createStAXOMBuilder(reader).getDocumentElement().toString();
         assertTrue(newText.contains("Hello World"));
         assertTrue(newText.contains("echoString"));
 
@@ -394,8 +389,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
+        String newText = OMXMLBuilderFactory.createStAXOMBuilder(reader).getDocumentElement().toString();
         assertTrue(newText.contains("Hello World"));
         assertTrue(newText.contains("echoString"));
 
@@ -627,7 +621,7 @@ public class BlockTests extends TestCase {
         // what occurs on the outbound JAX-WS dispatch<OMElement> client
         StringReader sr = new StringReader(sampleText);
         XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXOMBuilder builder = new StAXOMBuilder(inputReader);  
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(inputReader);  
         OMElement om = builder.getDocumentElement();
         Block block = f.createFrom(om, null, null);
 
@@ -641,10 +635,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
 
@@ -662,7 +653,7 @@ public class BlockTests extends TestCase {
         // what occurs on the outbound JAX-WS dispatch<OMElement> client
         StringReader sr = new StringReader(sampleText);
         XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXOMBuilder builder = new StAXOMBuilder(inputReader);  
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(inputReader);  
         OMElement om = builder.getDocumentElement();
         Block block = f.createFrom(om, null, null);
 
@@ -683,10 +674,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -754,10 +742,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -795,10 +780,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -835,9 +817,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -867,11 +847,7 @@ public class BlockTests extends TestCase {
         assertTrue(block.isConsumed());
 
         // Check the String for accuracy
-        XMLStreamReader reader = inputFactory.createXMLStreamReader((Source) bo);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(bo).hasSameContentAs(sampleText);
     }
 
     /**
@@ -907,11 +883,7 @@ public class BlockTests extends TestCase {
         assertTrue(block.isConsumed());
 
         // Check the String for accuracy
-        XMLStreamReader reader = inputFactory.createXMLStreamReader((Source) bo);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(bo).hasSameContentAs(sampleText);
     }
 
     /**
@@ -949,11 +921,7 @@ public class BlockTests extends TestCase {
         assertTrue(block.isConsumed());
 
         // Check the String for accuracy
-        XMLStreamReader reader = inputFactory.createXMLStreamReader((Source) bo);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
-
+        assertAbout(xml()).that(bo).hasSameContentAs(sampleText);
     }
     /*
      * Testing JAXBSource, Creating Source Block using JAXBSource and then
@@ -1026,9 +994,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(echoSample.equals(newText));
+        assertAbout(xml()).that(reader).hasSameContentAs(echoSample);
     }
     /**
      * Create a Block representing a DOMSource instance and simulate an 
@@ -1072,9 +1038,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
     /**
@@ -1110,9 +1074,7 @@ public class BlockTests extends TestCase {
 
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String newText = r2w.getAsString();
-        assertTrue(sampleText.equals(newText));
+        assertAbout(xml()).that(reader).hasSameContentAs(sampleText);
     }
 
 }

@@ -24,10 +24,10 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 
 import javax.activation.DataHandler;
-import javax.mail.internet.ContentType;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -37,7 +37,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.axis2.transport.testkit.client.ClientOptions;
-import org.apache.axis2.transport.testkit.util.ContentTypeUtil;
 
 public interface MessageEncoder<T,U> {
     MessageEncoder<XMLMessage,AxisMessage> XML_TO_AXIS =
@@ -71,13 +70,13 @@ public interface MessageEncoder<T,U> {
         new MessageEncoder<XMLMessage,byte[]>() {
 
         public ContentType getContentType(ClientOptions options, ContentType contentType) throws Exception {
-            if (contentType.getBaseType().equals(XMLMessage.Type.SWA.getContentType().getBaseType())) {
+            if (contentType.getMediaType().equals(XMLMessage.Type.SWA.getContentType())) {
                 OMOutputFormat outputFormat = new OMOutputFormat();
                 outputFormat.setMimeBoundary(options.getMimeBoundary());
                 outputFormat.setRootContentId(options.getRootContentId());
                 return new ContentType(outputFormat.getContentTypeForSwA(SOAP12Constants.SOAP_12_CONTENT_TYPE));
             } else {
-                return ContentTypeUtil.addCharset(contentType, options.getCharset());
+                return contentType.toBuilder().setParameter("charset", options.getCharset()).build();
             }
         }
 
@@ -169,7 +168,7 @@ public interface MessageEncoder<T,U> {
         new MessageEncoder<String,byte[]>() {
 
         public ContentType getContentType(ClientOptions options, ContentType contentType) {
-            return ContentTypeUtil.addCharset(contentType, options.getCharset());
+            return contentType.toBuilder().setParameter("charset", options.getCharset()).build();
         }
 
         public byte[] encode(ClientOptions options, String message) throws Exception {

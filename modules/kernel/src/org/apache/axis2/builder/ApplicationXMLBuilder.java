@@ -22,7 +22,6 @@ package org.apache.axis2.builder;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -49,13 +48,8 @@ public class ApplicationXMLBuilder implements Builder {
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         if (inputStream != null) {
             try {
-                // Apply a detachable inputstream.  This can be used later
-                // to (a) get the length of the incoming message or (b)
-                // free transport resources.
-                DetachableInputStream is = new DetachableInputStream(inputStream);
-                messageContext.setProperty(Constants.DETACHABLE_INPUT_STREAM, is);
                 
-                PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
+                PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream);
                 int b;
                 if ((b = pushbackInputStream.read()) > 0) {
                     pushbackInputStream.unread(b);
@@ -63,6 +57,7 @@ public class ApplicationXMLBuilder implements Builder {
                             BuilderUtil.createPOXBuilder(pushbackInputStream,
                                     (String) messageContext.getProperty(
                                             Constants.Configuration.CHARACTER_SET_ENCODING));
+                    messageContext.setProperty(Constants.BUILDER, builder);
                     OMElement documentElement = builder.getDocumentElement(true);
                     SOAPBody body = soapEnvelope.getBody();
                     body.addChild(documentElement);

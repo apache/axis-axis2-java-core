@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMSourcedElement;
-import org.apache.axiom.om.OMXMLStreamReader;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
@@ -46,14 +45,12 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * JAXBBlockImpl <p/> A Block containing a JAXB business object (either a JAXBElement or an object
  * with @XmlRootElement).
  */
-public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
+public class JAXBBlockImpl extends BlockImpl<Object,JAXBBlockContext> implements JAXBBlock {
 
     private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
 
@@ -87,28 +84,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         super(omElement, busContext, qName, factory);
     }
 
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
-        throws XMLStreamException, WebServiceException {
-        // Get the JAXBBlockContext. All of the necessry information is recorded on it
-        JAXBBlockContext ctx = (JAXBBlockContext) busContext;
-        
-        try {
-            busObject = ctx.unmarshal(reader);
-        } catch (JAXBException je) {
-            if (DEBUG_ENABLED) {
-                try {
-                    log.debug("JAXBContext for unmarshal failure:" + 
-                              ctx.getJAXBContext(ctx.getClassLoader()));
-                } catch (Exception e) {
-                }
-            }
-            throw ExceptionFactory.makeWebServiceException(je);
-        }
-        return busObject;
-    }
-    
     @Override
-    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+    protected Object _getBOFromOM(OMElement omElement, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         
         // Shortcut to get business object from existing data source
@@ -133,7 +110,19 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 return ((JAXBBlockImpl) ds).getObject();
             }
         }
-        return super._getBOFromOM(omElement, busContext);
+        
+        try {
+            return busContext.unmarshal(omElement);
+        } catch (JAXBException je) {
+            if (DEBUG_ENABLED) {
+                try {
+                    log.debug("JAXBContext for unmarshal failure:" + 
+                              busContext.getJAXBContext(busContext.getClassLoader()));
+                } catch (Exception e) {
+                }
+            }
+            throw ExceptionFactory.makeWebServiceException(je);
+        }
     }
 
     /**
@@ -143,7 +132,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @throws XMLStreamException
      * @throws WebServiceException
      */
-    private byte[] _getBytesFromBO(Object busObj, Object busContext, String encoding)
+    private byte[] _getBytesFromBO(Object busObj, JAXBBlockContext busContext, String encoding)
         throws XMLStreamException, WebServiceException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -161,37 +150,23 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
 
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(Object busObj, JAXBBlockContext busContext)
         throws XMLStreamException, WebServiceException {
         ByteArrayInputStream baos =
                 new ByteArrayInputStream(_getBytesFromBO(busObj, busContext, "utf-8"));
         return StAXUtils.createXMLStreamReader(baos, "utf-8");
     }
     
-    protected XMLStreamReader _getReaderFromOM(OMElement omElement) {
-        XMLStreamReader reader;
-        if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
-            reader = omElement.getXMLStreamReaderWithoutCaching();
-        } else {
-            reader = omElement.getXMLStreamReader();
-        }
-        if (reader instanceof OMXMLStreamReader) {
-            ((OMXMLStreamReader)reader).setInlineMTOM(false);  // Optimize attachment usage
-        }
-        return reader;
-    }
-
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    @Override
+    protected void _outputFromBO(Object busObject, JAXBBlockContext busContext, XMLStreamWriter writer)
         throws XMLStreamException, WebServiceException {
-        JAXBBlockContext ctx = (JAXBBlockContext) busContext;
-        
         try {
-            ctx.marshal(busObject, writer);
+            busContext.marshal(busObject, writer);
         } catch (JAXBException je) {
             if (DEBUG_ENABLED) {
                 try {
                     log.debug("JAXBContext for marshal failure:" + 
-                              ctx.getJAXBContext(ctx.getClassLoader()));
+                              busContext.getJAXBContext(busContext.getClassLoader()));
                 } catch (Exception e) {
                 }
             }
@@ -199,26 +174,17 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         }
     }
 
+    @Override
     public boolean isElementData() {
         return true;
     }
     
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        try {
-            byte[] bytes= _getBytesFromBO(
-                                          getBusinessObject(false), 
-                                          busContext, 
-                                          encoding);
-            return new ByteArrayInputStream(bytes);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -227,14 +193,17 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return false;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return false;
     }
     
+    @Override
     public OMDataSourceExt copy() throws OMException {
         
         if (DEBUG_ENABLED) {
@@ -244,19 +213,10 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                                   (JAXBDSContext) this.getBusinessContext());
     }
 
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        try {
-            return _getBytesFromBO(getBusinessObject(false), 
-                                   busContext, 
-                                   encoding);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
+    @Override
     public void setParent(Message message) {
         if (busContext != null) {
-            ((JAXBBlockContext) busContext).setMessage(message);
+            busContext.setMessage(message);
         }
         super.setParent(message);
     }

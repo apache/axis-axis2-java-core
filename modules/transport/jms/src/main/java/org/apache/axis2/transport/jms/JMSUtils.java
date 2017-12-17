@@ -20,7 +20,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.builder.SOAPBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.MessageProcessorSelector;
@@ -431,9 +430,17 @@ public class JMSUtils extends BaseUtils {
         throws JMSException {
 
         if (dest instanceof Queue) {
-            return ((QueueSession) session).createReceiver((Queue) dest, messageSelector);
+            if (session instanceof QueueSession) {
+                return ((QueueSession) session).createReceiver((Queue) dest, messageSelector);
+            } else {
+                return session.createConsumer(dest, messageSelector);
+            }
         } else {
-            return ((TopicSession) session).createSubscriber((Topic) dest, messageSelector, false);
+            if (session instanceof TopicSession) {
+                return ((TopicSession) session).createSubscriber((Topic) dest, messageSelector, false);
+            } else {
+                return session.createConsumer(dest, messageSelector);
+            }
         }
     }
 
@@ -714,7 +721,10 @@ public class JMSUtils extends BaseUtils {
                         "dynamicTopics/" : "dynamicQueues/") + destinationName);
             } catch (NamingException x) {
                 log.warn("Cannot locate destination : " + destinationName);
-                throw x;
+                // Rethrow the original exception. If we get here this most likely means that
+                // the JMS provider doesn't support dynamic(Queues|Topics) and we should simply
+                // report the original lookup failure.
+                throw e;
             }
         } catch (NamingException e) {
             log.warn("Cannot locate destination : " + destinationName, e);

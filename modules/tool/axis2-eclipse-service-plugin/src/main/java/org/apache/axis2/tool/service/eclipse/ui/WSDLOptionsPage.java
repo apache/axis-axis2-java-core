@@ -197,7 +197,7 @@ public class WSDLOptionsPage extends AbstractServiceWizardPage {
         //get a URL from the class file location
         try {
             String classFileLocation = getClassFileLocation();
-            URL classFileURL = new File(classFileLocation).toURL();
+            URL classFileURL = new File(classFileLocation).toURI().toURL();
             ClassLoader loader = new URLClassLoader(new URL[] { classFileURL });
 
             Class clazz = loader.loadClass(classNameTextBox.getText());

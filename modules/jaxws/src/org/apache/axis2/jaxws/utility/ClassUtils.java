@@ -316,33 +316,38 @@ public class ClassUtils {
      * 
      */
     public static Set<Class> getClasses(Type type, Set<Class> list) {
-    	if (list == null) {
-    		list = new HashSet<Class>();
-    	}
-    	try {
-    		if (type instanceof Class) {
-    			list.add( (Class)type);
-    		}
-    		if (type instanceof ParameterizedType) {
-    			ParameterizedType pt = (ParameterizedType) type;
-    			getClasses(pt.getRawType(), list);
-    			Type types[] = pt.getActualTypeArguments();
-    			if (types != null) {
-    				for (int i=0; i<types.length; i++) {
-    					getClasses(types[i], list);
-    				}
-    			}
-    		} 
-    		if (type instanceof GenericArrayType) {
-    			GenericArrayType gat = (GenericArrayType) type;
-    			getClasses(gat.getGenericComponentType(), list);
-    		}
-    	} catch (Throwable t) {
-    		if (log.isDebugEnabled()) {
-    			log.debug("Problem occurred in getClasses. Processing continues " + t);
-    		}
-    	}
-    	return list;
+        if (list == null) {
+            list = new HashSet<Class>();
+        }
+        try {
+            if (type instanceof Class) {
+                Class<?> clazz = (Class<?>)type;
+                if (clazz.isArray()) {
+                    getClasses(clazz.getComponentType(), list);
+                } else {
+                    list.add(clazz);
+                }
+            }
+            if (type instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) type;
+                getClasses(pt.getRawType(), list);
+                Type types[] = pt.getActualTypeArguments();
+                if (types != null) {
+                    for (int i=0; i<types.length; i++) {
+                        getClasses(types[i], list);
+                    }
+                }
+            } 
+            if (type instanceof GenericArrayType) {
+                GenericArrayType gat = (GenericArrayType) type;
+                getClasses(gat.getGenericComponentType(), list);
+            }
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Problem occurred in getClasses. Processing continues " + t);
+            }
+        }
+        return list;
     }
     
 }

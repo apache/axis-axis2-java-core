@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service name="Echo">
+    <parameter name="ServiceClass">org.apache.axis2.sample.echo.EchoImpl</parameter>
+
+    <!-- Configure SPN using addressingIdentity extensibility element -->
+    <parameter name="addressingIdentity">
+        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+            <Upn>bob@EXAMPLE.COM</Upn>
+        </Identity>
+    </parameter>
+    
+</service>

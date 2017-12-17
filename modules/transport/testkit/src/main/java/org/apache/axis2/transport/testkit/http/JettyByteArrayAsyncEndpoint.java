@@ -23,11 +23,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.Enumeration;
 
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
-
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.message.IncomingMessage;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.Transient;

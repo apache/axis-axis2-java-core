@@ -20,10 +20,9 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.soap.SOAP11Version;
-import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPVersion;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -130,12 +129,8 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
     public SOAPHeader addHeader() throws SOAPException {
         org.apache.axiom.soap.SOAPHeader header = omTarget.getHeader();
         if (header == null) {
-            SOAPHeaderImpl saajSOAPHeader;
             header = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPHeader(omTarget);
-            saajSOAPHeader = new SOAPHeaderImpl(header);
-            saajSOAPHeader.setParentElement(this);
-            ((Element)omTarget.getHeader()).setUserData(SAAJ_NODE, saajSOAPHeader, null);
-            return saajSOAPHeader;
+            return new SOAPHeaderImpl(header);
         } else {
             throw new SOAPException("Header already present, can't set header again without " +
                     "deleting the existing header. " +
@@ -160,7 +155,6 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
             body = ((SOAPFactory)this.omTarget.getOMFactory()).createSOAPBody(omTarget);
             SOAPBodyImpl saajSOAPBody = new SOAPBodyImpl(body);
             saajSOAPBody.setParentElement(this);
-            ((Element)omTarget.getBody()).setUserData(SAAJ_NODE, saajSOAPBody, null);
             return saajSOAPBody;
         } else {
             throw new SOAPException("Body already present, can't set body again without " +
@@ -184,7 +178,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      * on Envelop
      */
     public SOAPElement addAttribute(Name name, String value) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             if ("encodingStyle".equals(name.getLocalName())) {
                 throw new SOAPException(
                         "SOAP1.2 does not allow encodingStyle attribute to be set " +
@@ -199,9 +193,9 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      * element
      */
     public SOAPElement addChildElement(Name name) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             throw new SOAPException("Cannot add elements after body element");
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             //Let elements to be added any where.
             return super.addChildElement(name);
         }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:ns="http://tempuri.org" 
+    xmlns:bindings="http://tempuri.org/bindings"
+    xmlns:types="http://tempuri.org/types"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" 
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    targetNamespace="http://tempuri.org">
+    
+    <wsdl:documentation>EchoService</wsdl:documentation>
+    
+    <wsp:Policy 
+        xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+        xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+        wsu:Id="usingAddressingPolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsaws:UsingAddressing xmlns:wsaws="http://schemas.xmlsoap.org/ws/2004/08/addressing" />
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    
+    <wsdl:import namespace="http://tempuri.org/bindings" location="EchoBindings.wsdl" />
+    
+    <wsdl:types>
+        <xs:schema targetNamespace="http://tempuri.org/imports">
+            <xs:import schemaLocation="EchoTypes.xsd" namespace="http://tempuri.org/types" />
+        </xs:schema>
+    </wsdl:types>
+    
+    <wsdl:message name="echoRequest">
+        <wsdl:part name="parameters" element="types:echo"/>
+    </wsdl:message>
+    <wsdl:message name="echoResponse">
+        <wsdl:part name="parameters" element="types:echoResponse"/>
+    </wsdl:message>
+    
+    <wsdl:portType name="EchoServicePortType">
+        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#usingAddressingPolicy"/>
+        <wsdl:operation name="echo">
+            <wsdl:input message="ns:echoRequest" wsaw:Action="urn:custom:echo"/>
+            <wsdl:output message="ns:echoResponse" wsaw:Action="urn:custom:echoResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:service name="EchoService">
+        <wsdl:port name="EchoServiceHttpSoap12Endpoint" binding="bindings:EchoServiceSoap12Binding">
+            <soap12:address location="http://localhost:9083/wsstack/services/EchoService.EchoServiceHttpSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="EchoServiceHttpEndpoint" binding="bindings:EchoServiceHttpBinding">
+            <http:address location="http://localhost:9083/wsstack/services/EchoService.EchoServiceHttpEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

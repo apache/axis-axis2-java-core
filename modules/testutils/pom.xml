@@ -21,9 +21,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-testutils</artifactId>
     <name>Apache Axis2 - Test Utilities</name>
@@ -38,6 +38,16 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-http</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>7.6.15.v20140411</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.49</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -99,7 +99,7 @@ public class ModuleWSDLLocator extends BaseWSDLLocator implements WSDLLocator {
         if (is == null) {
             try {
                 File file = new File(importPath);
-                is = file.toURL().openStream();
+                is = file.toURI().toURL().openStream();
             }
             catch (Throwable t) {
                 // No FFDC required
@@ -156,7 +156,7 @@ public class ModuleWSDLLocator extends BaseWSDLLocator implements WSDLLocator {
         if (is == null) {
             try {
                 File file = new File(wsdlLocation);
-                streamURL = file.toURL();
+                streamURL = file.toURI().toURL();
                 is = streamURL.openStream();
                 is.close();
             }

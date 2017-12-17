@@ -95,12 +95,12 @@ public class PingMessageReceiver extends AbstractInOutMessageReceiver implements
 
         if (!serviceLevel && element != null) {
             //Operations to be pinged has been specified in the ping request
-            Iterator<?> elementIterator = pingRequestElement.getChildrenWithName(new QName(TAG_OPERATION));
+            Iterator<OMElement> elementIterator = pingRequestElement.getChildrenWithName(new QName(TAG_OPERATION));
             ArrayList<AxisOperation> operationList = new ArrayList<AxisOperation>();
             AxisOperation axisOperation;
 
             while (elementIterator.hasNext()) {
-                OMElement opElement = (OMElement) elementIterator.next();
+                OMElement opElement = elementIterator.next();
                 String operationName = opElement.getText();
                 axisOperation = inMessage.getAxisService().getOperation(new QName(operationName));
 

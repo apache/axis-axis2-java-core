@@ -23,9 +23,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-java2wsdl</artifactId>
     <name>Apache Axis2 - Java2WSDL</name>
@@ -46,10 +46,6 @@
             <artifactId>axis2-transport-local</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-        </dependency>
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
@@ -60,10 +56,6 @@
         <dependency>
             <groupId>org.apache.ws.xmlschema</groupId>
             <artifactId>xmlschema-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>
@@ -100,6 +92,11 @@
              <groupId>com.sun.xml.ws</groupId>
              <artifactId>jaxws-rt</artifactId>            
              <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
@@ -184,8 +181,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>test</phase>
@@ -193,25 +190,27 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                import groovy.xml.*
-                                
-                                if (project.properties['maven.test.skip']) {
-                                    println 'Tests are skipped'
-                                    return
-                                }
-                                
-                                def parser = new XmlParser()
-                                def wsdl = new Namespace('http://schemas.xmlsoap.org/wsdl/')
-                                def xs = new Namespace('http://www.w3.org/2001/XMLSchema')
-
-                                println 'Checking p2n.wsdl'
-                                
-                                def wsdlDoc = parser.parse(new File(project.build.directory, "java2wsdl/p2n.wsdl"))
-                                def namespaces = wsdlDoc[wsdl.types][xs.schema].'@targetNamespace'
-                                assert namespaces.contains('http://www.example.org/calculator')
-                                assert namespaces.contains('http://www.example.org/calculator-service')
-                            </source>
+                            <scripts>
+                                <script>
+                                    import groovy.xml.*
+                                    
+                                    if (System.properties['maven.test.skip']) {
+                                        println 'Tests are skipped'
+                                        return
+                                    }
+                                    
+                                    def parser = new XmlParser()
+                                    def wsdl = new Namespace('http://schemas.xmlsoap.org/wsdl/')
+                                    def xs = new Namespace('http://www.w3.org/2001/XMLSchema')
+    
+                                    println 'Checking p2n.wsdl'
+                                    
+                                    def wsdlDoc = parser.parse(new File(project.build.directory, "java2wsdl/p2n.wsdl"))
+                                    def namespaces = wsdlDoc[wsdl.types][xs.schema].'@targetNamespace'
+                                    assert namespaces.contains('http://www.example.org/calculator')
+                                    assert namespaces.contains('http://www.example.org/calculator-service')
+                                </script>
+                            </scripts>
                         </configuration>
                     </execution>
                 </executions>

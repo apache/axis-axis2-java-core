@@ -23,6 +23,7 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -41,6 +42,15 @@ import java.io.IOException;
  */
 public class MarMojo extends AbstractMarMojo
 {
+    /**
+     * The Maven Session
+     *
+     * @required
+     * @readonly
+     * @parameter expression="${session}"
+     */
+    private MavenSession session;
+    
     /**
      * The directory for the generated mar.
      * 
@@ -138,7 +148,7 @@ public class MarMojo extends AbstractMarMojo
         jarArchiver.addDirectory( marDirectory );
 
         // create archive
-        archiver.createArchive( project, archive );
+        archiver.createArchive(session, project, archive);
 
         if ( classifier != null )
         {

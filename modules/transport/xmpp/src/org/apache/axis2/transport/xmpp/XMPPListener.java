@@ -163,7 +163,7 @@ public class XMPPListener implements TransportListener {
      * @param ip
      */    
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-    	String domainName = serverCredentials.getDomainName() == null? serverCredentials.getDomainName()
+    	String domainName = serverCredentials.getDomainName() != null? serverCredentials.getDomainName()
     			: serverCredentials.getServerUrl();
         return new EndpointReference[]{new EndpointReference(XMPPConstants.XMPP_PREFIX +
         		serverCredentials.getAccountName() +"@"+ domainName +"/services/" + serviceName)};

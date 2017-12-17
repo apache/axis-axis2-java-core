@@ -105,7 +105,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             OMAttribute moduleClassAtt = moduleElement.getAttribute(new QName(TAG_CLASS_NAME));
             // processing Parameters
             // Processing service level parameters
-            Iterator<?> itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
+            Iterator<OMElement> itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, module, module.getParent());
 
@@ -148,7 +148,9 @@ public class ModuleBuilder extends DescriptionBuilder {
             // Process service description
             OMElement descriptionElement =
                     moduleElement.getFirstChildWithName(new QName(TAG_DESCRIPTION));
-
+            if (descriptionElement == null) {
+                descriptionElement = moduleElement.getFirstChildWithName(new QName(TAG_DESCRIPTION_ALT));
+            }
             if (descriptionElement != null) {
                 OMElement descriptionValue = descriptionElement.getFirstElement();
 
@@ -222,7 +224,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // processing Operations
-            Iterator<?> op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));
+            Iterator<OMElement> op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));
             List<AxisOperation> operations = processOperations(op_itr);
 
             for (AxisOperation op : operations) {

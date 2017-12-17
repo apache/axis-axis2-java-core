@@ -26,8 +26,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
-import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessageService;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;

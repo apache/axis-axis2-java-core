@@ -40,21 +40,7 @@ import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaFacet;
-import org.apache.ws.commons.schema.XmlSchemaForm;
-import org.apache.ws.commons.schema.XmlSchemaFractionDigitsFacet;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
-import org.apache.ws.commons.schema.XmlSchemaTotalDigitsFacet;
+import org.apache.ws.commons.schema.*;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 
 import javax.xml.namespace.QName;
@@ -355,7 +341,7 @@ public class SchemaGenerator implements CorbaConstants {
             } else if (dataType instanceof UnionType) {
                 XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema, false);
                 XmlSchemaChoice choice = new XmlSchemaChoice();
-                List<XmlSchemaObject> items = choice.getItems();
+                List<XmlSchemaChoiceMember> items = choice.getItems();
 
                 UnionType unionType = (UnionType) dataType;
                 Member[] members = unionType.getMembers();

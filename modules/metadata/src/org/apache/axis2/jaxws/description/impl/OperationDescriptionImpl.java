@@ -1010,7 +1010,12 @@ class OperationDescriptionImpl
             syncOperationDescription = opDesc;
         }
         if (log.isDebugEnabled()) {
-            log.debug("Synchronous operationDescription: " + syncOperationDescription);
+            if (syncOperationDescription != null) {
+                // Just log the operation name here, to avoid an infinite loop
+                log.debug("Synchronous operationDescription: " + syncOperationDescription.getOperationName());
+            } else {
+                log.debug("Synchronous operationDescription: null");
+            }
         }
         return syncOperationDescription;
     }
@@ -2167,7 +2172,7 @@ class OperationDescriptionImpl
                 WSDL4JWrapper wsdl4j = null;
                 try {
                     File file = new File(wsdlLocation);
-                    URL url = file.toURL();
+                    URL url = file.toURI().toURL();
                     wsdl4j = new WSDL4JWrapper(url, true, 2);  // In this context, limit the wsdl memory
                     def = wsdl4j.getDefinition();
                 } catch (Throwable t) {
@@ -2268,7 +2273,7 @@ class OperationDescriptionImpl
             string.append(sameline);
             string.append("SOAP Use: " + getSoapBindingUse());
             string.append(sameline);
-            string.append("SOAP Paramater Style: " + getSoapBindingParameterStyle());
+            string.append("SOAP Parameter Style: " + getSoapBindingParameterStyle());
             //
             string.append(newline);
             string.append("Result name: " + getResultName());
@@ -2293,7 +2298,7 @@ class OperationDescriptionImpl
             string.append(newline);
             string.append("Java method name: " + getJavaMethodName());
             string.append(newline);
-            string.append("Java paramaters: " + Arrays.toString(getJavaParameters()));
+            string.append("Java parameters: " + Arrays.toString(getJavaParameters()));
             string.append(newline);
             string.append("Service Implementation method: " + getMethodFromServiceImpl());
             string.append(newline);
@@ -2308,7 +2313,7 @@ class OperationDescriptionImpl
                     string.append("Parameter Description: " + paramDesc.toString());
                 }
             } else {
-                string.append("No Paramater Descriptions");
+                string.append("No Parameter Descriptions");
             }
 
             string.append(newline);

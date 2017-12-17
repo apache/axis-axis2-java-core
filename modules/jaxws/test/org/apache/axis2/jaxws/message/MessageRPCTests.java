@@ -22,8 +22,9 @@ package org.apache.axis2.jaxws.message;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -261,7 +262,7 @@ public class MessageRPCTests extends TestCase {
         // simulates what Axis2 will be doing with the inbound message. 
         StringReader sr = new StringReader(sampleJAXBEnvelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
         
         // Create a SOAP 1.1 Message from the sample incoming XML
@@ -339,7 +340,7 @@ public class MessageRPCTests extends TestCase {
         // simulates what Axis2 will be doing with the inbound message. 
         StringReader sr = new StringReader(xml);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
         
         // Create a SOAP 1.1 Message from the sample incoming XML

@@ -19,49 +19,39 @@
 
 package org.apache.axis2.jaxws.anytype.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
-import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessageService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.anytype.AnyTypeMessagePortType;
+import org.apache.axis2.jaxws.anytype.AnyTypeMessageService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 import javax.xml.ws.BindingProvider;
 
-public class AnyTypeTests extends AbstractTestCase {
+public class AnyTypeTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
     
-	String axisEndpoint = "http://localhost:6060/axis2/services/AnyTypeMessageService.AnyTypeMessagePortTypeImplPort";
-	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(AnyTypeTests.class));
-    }
-
+    @Test
     public void testAnyTypeElementinWrappedWSDL(){
-        TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
-        
         // Run test a few times to ensure correct 
         _testAnyTypeElementinWrappedWSDL();
         _testAnyTypeElementinWrappedWSDL();
         _testAnyTypeElementinWrappedWSDL();
-        
-        System.out.print("---------------------------------");
     }
     
     public void _testAnyTypeElementinWrappedWSDL(){
-        try{
-            AnyTypeMessageService service = new AnyTypeMessageService();
-            AnyTypeMessagePortType portType = service.getAnyTypePort();
-            BindingProvider p = (BindingProvider) portType;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        AnyTypeMessageService service = new AnyTypeMessageService();
+        AnyTypeMessagePortType portType = service.getAnyTypePort();
+        BindingProvider p = (BindingProvider) portType;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                "http://localhost:" + server.getPort() + "/axis2/services/AnyTypeMessageService.AnyTypeMessagePortTypeImplPort");
 
-            String req = new String("Request as String");
-            Object response = portType.echoMessage(req);
-            assertTrue(response instanceof String);
-            TestLogger.logger.debug("Response =" + response);
-        }catch(Exception e){
-            e.printStackTrace();
-            fail();
-        }
+        String req = new String("Request as String");
+        Object response = portType.echoMessage(req);
+        assertTrue(response instanceof String);
+        TestLogger.logger.debug("Response =" + response);
     }
 }

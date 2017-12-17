@@ -43,7 +43,7 @@ public class ClassLoadingTestBean {
                     if (classPathEntry.startsWith("http://")) {
                         urls[i] = new URL(classPathEntry);
                     } else {
-                        urls[i] = new File(classPathEntry).toURL();
+                        urls[i] = new File(classPathEntry).toURI().toURL();
                     }
                 }
             } catch (MalformedURLException e) {

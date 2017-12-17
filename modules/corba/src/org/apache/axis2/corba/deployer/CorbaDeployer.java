@@ -95,7 +95,7 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
             AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
             serviceGroup.setServiceGroupClassLoader(deploymentFileData.getClassLoader());
             ArrayList serviceList = processService(deploymentFileData, serviceGroup, configCtx);
-            DeploymentEngine.addServiceGroup(serviceGroup, serviceList, deploymentFileData.getFile().toURL(), deploymentFileData, axisConfig);
+            DeploymentEngine.addServiceGroup(serviceGroup, serviceList, deploymentFileData.getFile().toURI().toURL(), deploymentFileData, axisConfig);
             name = deploymentFileData.getName();
             super.deploy(deploymentFileData);
             log.info("Deploying " + name);
@@ -155,7 +155,7 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
             throws DeploymentException {
         try {
             // Processing service level parameters
-            Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
+            Iterator<OMElement> itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(itr, service, service.getParent());
 
             // process service description
@@ -242,9 +242,9 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
             ArrayList excludeops = null;
             if (excludeOperations != null) {
                 excludeops = new ArrayList();
-                Iterator excludeOp_itr = excludeOperations.getChildrenWithName(new QName(TAG_OPERATION));
+                Iterator<OMElement> excludeOp_itr = excludeOperations.getChildrenWithName(new QName(TAG_OPERATION));
                 while (excludeOp_itr.hasNext()) {
-                    OMElement opName = (OMElement) excludeOp_itr.next();
+                    OMElement opName = excludeOp_itr.next();
                     excludeops.add(opName.getText().trim());
                 }
             }
@@ -253,9 +253,9 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
             }
 
             // processing service-wide modules which required to engage globally
-            Iterator moduleRefs = service_element.getChildrenWithName(new QName(TAG_MODULE));
+            Iterator<OMElement> moduleRefs = service_element.getChildrenWithName(new QName(TAG_MODULE));
             while (moduleRefs.hasNext()) {
-                OMElement moduleref = (OMElement) moduleRefs.next();
+                OMElement moduleref = moduleRefs.next();
                 OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
                 String refName = moduleRefAttribute.getAttributeValue();
                 axisConfig.addGlobalModuleRef(refName);
@@ -287,10 +287,10 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
             // processing transports
             OMElement transports = service_element.getFirstChildWithName(new QName(TAG_TRANSPORTS));
             if (transports != null) {
-                Iterator transport_itr = transports.getChildrenWithName(new QName(TAG_TRANSPORT));
+                Iterator<OMElement> transport_itr = transports.getChildrenWithName(new QName(TAG_TRANSPORT));
                 ArrayList trs = new ArrayList();
                 while (transport_itr.hasNext()) {
-                    OMElement trsEle = (OMElement) transport_itr.next();
+                    OMElement trsEle = transport_itr.next();
                     String tarnsportName = trsEle.getText().trim();
                     trs.add(tarnsportName);
                 }
@@ -333,9 +333,9 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
 
     protected HashMap processMessageReceivers(ClassLoader loader, OMElement element) throws DeploymentException {
         HashMap meps = new HashMap();
-        Iterator iterator = element.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
+        Iterator<OMElement> iterator = element.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
         while (iterator.hasNext()) {
-            OMElement receiverElement = (OMElement) iterator.next();
+            OMElement receiverElement = iterator.next();
             OMAttribute receiverName = receiverElement.getAttribute(new QName(TAG_CLASS_NAME));
             String className = receiverName.getAttributeValue();
             MessageReceiver receiver = loadMessageReceiver(loader, className);

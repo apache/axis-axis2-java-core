@@ -19,8 +19,8 @@
 
 package org.apache.axis2.engine;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.StringReader;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
@@ -30,11 +30,10 @@ import junit.framework.TestSuite;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.OperationClient;
@@ -147,10 +146,7 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
                         "         <m:echoIn xmlns:m=\"http://example.org/echo\" />  \n" +
                         "      </env:Body>\n" +
                         "   </env:Envelope>";
-        return (SOAPEnvelope)new StAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(
-                new ByteArrayInputStream(soap.getBytes())),
-                                                      SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)
-                .getDocumentElement();
+        return OMXMLBuilderFactory.createSOAPModelBuilder(new StringReader(soap)).getSOAPEnvelope();
     }
 
     private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {
@@ -198,8 +194,8 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
 
             sender.sendReceive(payload).toString();
         } catch (AxisFault axisFault) {
-            assertTrue(axisFault.getFaultCodeElement().toString()
-                    .indexOf(FaultHandler.M_FAULT_EXCEPTION) > -1);
+            assertEquals(FaultHandler.FAULT_EXCEPTION, axisFault.getFaultCode());
+            assertEquals(FaultHandler.FAULT_EXCEPTION, axisFault.getFaultCodeElement().getValueAsQName());
             assertTrue(axisFault.getFaultDetailElement().toString()
                     .indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
             assertTrue(axisFault.getFaultReasonElement().toString()

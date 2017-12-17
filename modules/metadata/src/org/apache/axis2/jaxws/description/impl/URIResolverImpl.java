@@ -256,7 +256,7 @@ public class URIResolverImpl implements URIResolver {
                 streamURL = (URL) AccessController.doPrivileged(
                         new PrivilegedExceptionAction() {
                             public Object run() throws MalformedURLException {
-                                return file.toURL();
+                                return file.toURI().toURL();
                             }
                         }
                 );

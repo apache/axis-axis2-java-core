@@ -45,12 +45,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -509,40 +503,10 @@ public class XMLUtils {
      * @throws Exception
      */
     public static OMElement toOM(Element element) throws Exception {
-        return toOM(element, true);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(element, true);
+        builder.detach();
+        return builder.getDocumentElement();
     }
-    
-    /**
-     * Convert DOM Element into a fully built OMElement
-     * @param element
-     * @param buildAll if true, full OM tree is immediately built. if false, caller is responsible 
-     * for building the tree and closing the parser.
-     * @return
-     * @throws Exception
-     */
-    public static OMElement toOM(Element element, boolean buildAll) throws Exception {
-
-        Source source = new DOMSource(element);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Result result = new StreamResult(baos);
-
-        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-        xformer.transform(source, result);
-
-        ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
-
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(is);
-        builder.setCache(true);
-
-        OMElement omElement = builder.getDocumentElement();
-        if (buildAll) {
-            omElement.build();
-            builder.close();
-        }
-        return omElement;
-    }
-
 
     /**
      * Converts a given OMElement to a DOM Element.
@@ -588,7 +552,6 @@ public class XMLUtils {
      */
     public static OMNode toOM(InputStream inputStream, boolean buildAll) throws XMLStreamException {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(inputStream);
-        builder.setCache(true);
         OMNode omNode = builder.getDocumentElement();
         
         if (buildAll) {
@@ -623,7 +586,6 @@ public class XMLUtils {
      */
     public static OMNode toOM(Reader reader, boolean buildAll) throws XMLStreamException {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(reader);
-        builder.setCache(true);
         OMNode omNode = builder.getDocumentElement();
         
         if (buildAll) {

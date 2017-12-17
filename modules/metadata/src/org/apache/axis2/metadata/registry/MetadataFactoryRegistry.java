@@ -99,7 +99,7 @@ public class MetadataFactoryRegistry {
                 url = classLoader.getResource(configurationFileLoc);
                 if(url == null) {
                     File file = new File(configurationFileLoc);
-                    url = file.toURL();
+                    url = file.toURI().toURL();
                 }
                 // the presence of this file is optional
                 if(url != null) {

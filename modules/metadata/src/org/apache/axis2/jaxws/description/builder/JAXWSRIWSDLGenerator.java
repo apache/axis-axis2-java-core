@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.util.CatalogURIResolver;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -47,7 +48,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.ws.WebServiceException;
@@ -238,9 +238,8 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
         for (File wsdlFile : wsdlFiles) {
             if (wsdlFile != null) {
                 try {
-                    WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-                    WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
-                    InputStream is = wsdlFile.toURL().openStream();
+                    WSDLReader wsdlReader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
+                    InputStream is = wsdlFile.toURI().toURL().openStream();
                     Definition definition = wsdlReader.readWSDL(localOutputDirectory,
                             new InputSource(is));
                     try {
@@ -332,7 +331,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             List<File> schemaFiles = getSchemaFiles(localOutputDirectory);
             for (File schemaFile : schemaFiles) {
                 // generate dom document for current schema file
-                Document parsedDoc = fac.newDocumentBuilder().parse(schemaFile.toURL().toString());
+                Document parsedDoc = fac.newDocumentBuilder().parse(schemaFile.toURI().toURL().toString());
                 // read the schema through XmlSchema
                 XmlSchema doc = schemaCollection.read(parsedDoc.getDocumentElement(),
                         UIDGenerator.generateUID());

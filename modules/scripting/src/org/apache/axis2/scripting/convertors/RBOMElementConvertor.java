@@ -20,12 +20,11 @@
 package org.apache.axis2.scripting.convertors;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.bsf.BSFEngine;
 import org.apache.bsf.BSFException;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 
 /**
  * OMElementConvertor for Ruby scripts
@@ -57,17 +56,8 @@ public class RBOMElementConvertor implements OMElementConvertor {
     }
 
     public OMElement fromScript(Object o) {
-        try {
-
-            byte[] xmlBytes = o.toString().getBytes();
-            StAXOMBuilder builder = new StAXOMBuilder(new ByteArrayInputStream(xmlBytes));
-            OMElement omElement = builder.getDocumentElement();
-
-            return omElement;
-
-        } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        }
+        return OMXMLBuilderFactory.createOMBuilder(
+                new StringReader(o.toString())).getDocumentElement();
     }
 
     public void setEngine(BSFEngine e) {

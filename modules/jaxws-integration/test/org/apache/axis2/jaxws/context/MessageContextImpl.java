@@ -35,7 +35,7 @@ public class MessageContextImpl implements MessageContext {
     @Resource
     WebServiceContext ctxt;
     
-    public static WebServiceContext webServiceContext = null;
+    public static volatile WebServiceContext webServiceContext = null;
 
     public void isPropertyPresent(
             Holder<String> propertyName,

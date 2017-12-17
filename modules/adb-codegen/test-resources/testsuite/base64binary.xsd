@@ -36,7 +36,7 @@
             </xs:complexType>
         </xs:element>
 
-        <xs:element name="TestBase64BinaryOnbounded">
+        <xs:element name="TestBase64BinaryUnbounded">
             <xs:complexType>
                 <xs:sequence>
                     <xs:element name="param" type="xs:base64Binary" maxOccurs="unbounded"/>

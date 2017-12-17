@@ -26,8 +26,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axis2.transport.testkit.client.AsyncTestClient;
 import org.apache.axis2.transport.testkit.client.ClientOptions;
 import org.apache.axis2.transport.testkit.name.Name;
@@ -60,7 +60,7 @@ public class JavaNetClient implements AsyncTestClient<byte[]> {
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setRequestProperty("Content-Type", contentType.toString());
-            if(contentType.getBaseType().equals("text/xml")){
+            if(contentType.getMediaType().equals(MediaType.TEXT_XML)){
                 connection.setRequestProperty("SOAPAction", "");
             }
             OutputStream out = connection.getOutputStream();

@@ -28,12 +28,12 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.internet.ContentType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import junit.framework.Assert;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.client.ClientOptions;
 import org.apache.axis2.transport.testkit.client.RequestResponseTestClient;
 import org.apache.axis2.transport.testkit.message.IncomingMessage;

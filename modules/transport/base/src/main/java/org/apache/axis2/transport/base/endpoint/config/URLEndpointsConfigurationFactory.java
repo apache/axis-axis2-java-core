@@ -37,11 +37,11 @@ public class URLEndpointsConfigurationFactory {
     private static final Log log = LogFactory.getLog(URLEndpointsConfigurationFactory.class);
 
     public URLEndpointsConfiguration create(OMElement element) throws AxisFault {
-        Iterator iterator = element.getChildrenWithName(new QName(URLEndpointsConfiguration.ENDPOINT));
+        Iterator<OMElement> iterator = element.getChildrenWithName(new QName(URLEndpointsConfiguration.ENDPOINT));
         URLEndpointsConfiguration configuration = new URLEndpointsConfiguration();
         URLEndpointFactory fac = new URLEndpointFactory();
         while (iterator.hasNext()) {
-            OMElement endpoint = (OMElement) iterator.next();
+            OMElement endpoint = iterator.next();
 
             URLEndpoint epr = fac.create(endpoint);
             configuration.addEndpoint(epr);
@@ -63,11 +63,11 @@ public class URLEndpointsConfigurationFactory {
         OMElement element = OMXMLBuilderFactory.createOMBuilder(is).getDocumentElement();
         element.build();
 
-        Iterator iterator = element.getChildrenWithName(new QName(URLEndpointsConfiguration.ENDPOINT));
+        Iterator<OMElement> iterator = element.getChildrenWithName(new QName(URLEndpointsConfiguration.ENDPOINT));
         URLEndpointsConfiguration configuration = new URLEndpointsConfiguration();
         URLEndpointFactory fac = new URLEndpointFactory();
         while (iterator.hasNext()) {
-            OMElement endpoint = (OMElement) iterator.next();
+            OMElement endpoint = iterator.next();
 
             URLEndpoint epr = fac.create(endpoint);
             configuration.addEndpoint(epr);

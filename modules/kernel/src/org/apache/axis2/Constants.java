@@ -20,6 +20,10 @@
 
 package org.apache.axis2;
 
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.TransportUtils;
+
 /**
  * Class Constants
  */
@@ -160,7 +164,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String SINGLE_SERVICE = "singleservice";
 
-    public static final String SERVICE_MAP = "servicemap";
     public static final String SERVICE_ROOT = "serviceRoot";
     public static final String SERVICE_PATH = "servicePath";
     public static final String SERVICE_HANDLERS = "serviceHandlers";
@@ -194,7 +197,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
     public static final String VALUE_OPTIONAL = "optional";
+    @Deprecated
     public static final String TESTING_PATH = "target/test-resources/";
+    @Deprecated
     public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
     public static final char SERVICE_NAME_SPLIT_CHAR = ':';
     public static final String SERVICE_GROUP_ID = "ServiceGroupId";
@@ -258,12 +263,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     
     
     /**
-     * On inbound requests, the detachable input stream can be queried to get
-     * the inbound length.  It can also be "detached" from the inbound http stream
-     * to allow resources to be freed.
+     * The {@link OMXMLParserWrapper Axiom builder} of the message in a message context.
+     * 
+     * @see TransportUtils#detachInputStream(MessageContext)
      */
-    public static final String DETACHABLE_INPUT_STREAM = 
-        "org.apache.axiom.om.util.DetachableInputStream";
+    public static final String BUILDER = OMXMLParserWrapper.class.getName();
 
     /** SOAP Role Configuration */
     public static final String SOAP_ROLE_CONFIGURATION_ELEMENT = "SOAPRoleConfiguration";

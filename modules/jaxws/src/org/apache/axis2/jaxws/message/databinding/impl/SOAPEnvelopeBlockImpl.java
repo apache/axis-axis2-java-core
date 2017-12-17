@@ -23,34 +23,28 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.message.util.SOAPElementReader;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * 
  *
  */
-public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBlock {
+public class SOAPEnvelopeBlockImpl extends BlockImpl<SOAPEnvelope,Void> implements SOAPEnvelopeBlock {
 
     /**
      * Called by SOAPEnvelopeBlockFactory
@@ -60,11 +54,11 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
      * @param qName
      * @param factory
      */
-    public SOAPEnvelopeBlockImpl(Object busObject, Object busContext,
+    public SOAPEnvelopeBlockImpl(SOAPEnvelope busObject,
                                  QName qName, BlockFactory factory) {
         super(busObject,
-              busContext,
-              (qName == null) ? getQName((SOAPEnvelope)busObject) : qName,
+              null,
+              (qName == null) ? getQName(busObject) : qName,
               factory);
     }
 
@@ -76,19 +70,16 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
      * @param qName
      * @param factory
      */
-    public SOAPEnvelopeBlockImpl(OMElement omElement, Object busContext,
+    public SOAPEnvelopeBlockImpl(OMElement omElement,
                                  QName qName, BlockFactory factory) {
-        super(omElement, busContext, qName, factory);
+        super(omElement, null, qName, factory);
     }
 
-    /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.impl.BlockImpl#_getBOFromReader(javax.xml.stream.XMLStreamReader, java.lang.Object)
-      */
     @Override
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected SOAPEnvelope _getBOFromOM(OMElement omElement, Void busContext)
             throws XMLStreamException, WebServiceException {
         MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
-        Message message = mf.createFrom(reader, null);
+        Message message = mf.createFrom(omElement.getXMLStreamReader(false), null);
         SOAPEnvelope env = message.getAsSOAPEnvelope();
         this.setQName(getQName(env));
         return env;
@@ -98,16 +89,16 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
       * @see org.apache.axis2.jaxws.message.impl.BlockImpl#_getReaderFromBO(java.lang.Object, java.lang.Object)
       */
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(SOAPEnvelope busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
-        return new SOAPElementReader((SOAPElement)busObj);
+        return OMXMLBuilderFactory.createOMBuilder(new DOMSource(busObj)).getDocument().getXMLStreamReader(false);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.impl.BlockImpl#_outputFromBO(java.lang.Object, java.lang.Object, javax.xml.stream.XMLStreamWriter)
       */
     @Override
-    protected void _outputFromBO(Object busObject, Object busContext,
+    protected void _outputFromBO(SOAPEnvelope busObject, Void busContext,
                                  XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
         XMLStreamReader reader = _getReaderFromBO(busObject, busContext);
@@ -124,19 +115,17 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
         return new QName(env.getNamespaceURI(), env.getLocalName(), env.getPrefix());
     }
 
+    @Override
     public boolean isElementData() {
         return true;
     }
     
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        byte[] bytes = getXMLBytes(encoding);
-        return new ByteArrayInputStream(bytes);
-    }
-
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -145,26 +134,13 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return false;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return false;
-    }
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OMOutputFormat format = new OMOutputFormat();
-        format.setCharSetEncoding(encoding);
-        try {
-            serialize(baos, format);
-            baos.flush();
-            return baos.toByteArray();
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        } catch (IOException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
     }
 }

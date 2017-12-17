@@ -19,16 +19,14 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axiom.blob.Blobs;
+import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.util.JavaUtils;
 
-import javax.xml.stream.FactoryConfigurationError;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -36,65 +34,80 @@ import java.util.zip.GZIPOutputStream;
  * This Request Entity is used by the HTTPCommonsTransportSender. This wraps the
  * Axis2 message formatter object.
  */
-public abstract class AxisRequestEntity  {
+public final class AxisRequestEntity  {
 
     private MessageFormatter messageFormatter;
 
-    private boolean chunked = false;
+    private final boolean chunked;
+    
+    private final boolean gzip;
 
     private MessageContext messageContext;
 
-    private byte[] bytes;
+    private final MemoryBlob content;
 
-    private boolean isAllowedRetry;
+    private final boolean preserve;
 
     private OMOutputFormat format;
 
-    private String soapAction;
+    private final String contentType;
 
     /**
      * Method calls to this request entity are delegated to the following Axis2
      * message formatter object.
      *
      * @param messageFormatter
+     * @throws AxisFault 
      */
-    public AxisRequestEntity(MessageFormatter messageFormatter,
-                             MessageContext msgContext, OMOutputFormat format, String soapAction,
-                             boolean chunked, boolean isAllowedRetry) {
+    AxisRequestEntity(MessageFormatter messageFormatter,
+                      MessageContext msgContext, OMOutputFormat format, String contentType,
+                      boolean chunked, boolean gzip, boolean preserve) throws AxisFault {
         this.messageFormatter = messageFormatter;
         this.messageContext = msgContext;
         this.chunked = chunked;
-        this.isAllowedRetry = isAllowedRetry;
+        this.gzip = gzip;
+        this.preserve = preserve;
         this.format = format;
-        this.soapAction = soapAction;
+        this.contentType = contentType;
+        if (chunked) {
+            content = null;
+        } else {
+            content = Blobs.createMemoryBlob();
+            OutputStream out = content.getOutputStream();
+            try {
+                internalWriteRequest(out);
+                out.close();
+            } catch (IOException ex) {
+                throw AxisFault.makeFault(ex);
+            }
+        }
     }
 
     public boolean isRepeatable() {
-        // All Axis2 request entity implementations were returning this true
-        // So we return true as defualt
-        return true;
+        // If chunking is disabled, we don't preserve the original SOAPEnvelope, but we store the
+        // serialized SOAPEnvelope in a byte array, which means that the entity can be written
+        // repeatedly.
+        return preserve || !chunked;
     }
 
     public void writeRequest(OutputStream outStream) throws IOException {
-        Object gzip = messageContext.getOptions().getProperty(HTTPConstants.MC_GZIP_REQUEST);
-        if (gzip != null && JavaUtils.isTrueExplicitly(gzip) && chunked) {
+        if (chunked) {
+            internalWriteRequest(outStream);
+        } else {
+            content.writeTo(outStream);
+        }
+    }
+    
+    private void internalWriteRequest(OutputStream outStream) throws IOException {
+        if (gzip) {
             outStream = new GZIPOutputStream(outStream);
         }
         try {
-            if (chunked) {
-                messageFormatter.writeTo(messageContext, format, outStream, isAllowedRetry);
-            } else {
-                if (bytes == null) {
-                    bytes = messageFormatter.getBytes(messageContext, format);
-                }
-                outStream.write(bytes);
-            }
-            if (outStream instanceof GZIPOutputStream) {
+            messageFormatter.writeTo(messageContext, format, outStream, preserve);
+            if (gzip) {
                 ((GZIPOutputStream) outStream).finish();
             }
             outStream.flush();
-        } catch (FactoryConfigurationError e) {
-            throw AxisFault.makeFault(e);
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
@@ -104,32 +117,16 @@ public abstract class AxisRequestEntity  {
     public long getContentLength() {
         if (chunked) {
             return -1;
+        } else {
+            return content.getSize();
         }
-        if (bytes == null) {
-            try {
-                bytes = messageFormatter.getBytes(messageContext, format);
-            } catch (AxisFault e) {
-                return -1;
-            }
-        }
-        return bytes.length;
     }
 
-    public String getContentTypeAsString() {
-        return messageFormatter.getContentType(messageContext, format, soapAction);
+    public String getContentType() {
+        return contentType;
     }
 
     public boolean isChunked() {
         return chunked;
     }
-
-    public void setChunked(boolean chunked) {
-        this.chunked = chunked;
-    }
-
-    public InputStream getRequestEntityContent() throws IOException {
-        return new ByteArrayInputStream(messageFormatter.getBytes(messageContext, format));
-    }
-    
-    
 }

@@ -19,11 +19,16 @@
 
 package org.apache.axis2.context.externalize;
 
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
@@ -37,6 +42,9 @@ import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.OutputStream;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Utility to read/write the Message of a MessageContext
@@ -169,6 +177,42 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         }
     }
     
+    private static OMXMLParserWrapper getAttachmentsBuilder(MessageContext msgContext,
+                InputStream inStream, String contentTypeString,
+                boolean isSOAP)
+            throws OMException, XMLStreamException, FactoryConfigurationError {
+        Attachments attachments = BuilderUtil.createAttachmentsMap(msgContext, inStream, contentTypeString);
+        String charSetEncoding = BuilderUtil.getCharSetEncoding(attachments.getRootPartContentType());
+
+        if ((charSetEncoding == null)
+            || "null".equalsIgnoreCase(charSetEncoding)) {
+            charSetEncoding = MessageContext.UTF_8;
+        }
+        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                               charSetEncoding);
+
+        // Setting the Attachments map to new SwA API
+        msgContext.setAttachmentMap(attachments);
+
+        if (isSOAP) {
+            if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.MTOM_TYPE)) {
+                return OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
+            } else {
+                return OMXMLBuilderFactory.createSOAPModelBuilder(attachments.getRootPartInputStream(), charSetEncoding);
+            }
+
+        }
+        // To handle REST XOP case
+        else {
+            if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
+                return OMXMLBuilderFactory.createOMBuilder(StAXParserConfiguration.DEFAULT, attachments);
+            } else {
+                return OMXMLBuilderFactory.createOMBuilder(attachments.getRootPartInputStream(), charSetEncoding);
+            }
+        }
+    }
+
     /**
      * Read the Message
      * @param in
@@ -231,17 +275,11 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         try {
             if (optimized) {
                 boolean isSOAP = true;
-                builder =
-                    BuilderUtil.getAttachmentsBuilder(mc,
-                                                      mis,
-                                                      optimizedContentType,
-                                                      isSOAP);
+                builder = getAttachmentsBuilder(mc, mis, optimizedContentType, isSOAP);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
-                envelope.buildWithAttachments();
             } else {
                 builder = OMXMLBuilderFactory.createSOAPModelBuilder(mis, charSetEnc);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
-                envelope.build();
             }
         } catch (Exception ex) {
             // TODO: what to do if can't get the XML stream reader
@@ -251,9 +289,8 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
                       + ex.getClass().getName() + " : " + ex.getLocalizedMessage() + "]", ex);
             envelope = null;
         } finally {
-            if (builder != null) {
-                builder.close();
-            }
+            // Prepare the builder to close the underlying stream
+            builder.detach();
             // Close the message input stream.  This will ensure that the
             // underlying stream is advanced past the message.
             mis.close();

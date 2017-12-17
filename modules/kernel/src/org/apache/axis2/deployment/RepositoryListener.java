@@ -167,7 +167,13 @@ public class RepositoryListener implements DeploymentConstants {
             classPath = ".";
         }
         File root = new File(classPath);
-        File[] files = root.listFiles();
+        File[] files;
+        try {
+            files = root.listFiles();
+        } catch (SecurityException ex) {
+            // Ignore
+            files = null;
+        }
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];

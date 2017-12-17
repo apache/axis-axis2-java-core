@@ -38,13 +38,9 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-
 
 /**
  * Class ParameterIncludeImpl
@@ -88,15 +84,13 @@ public class ParameterIncludeImpl
     /**
      * Field parmeters
      */
-    protected Map<String, Parameter> parameters;
+    private final HashMap<String, Parameter> parameters;
 
     /**
      * Constructor ParameterIncludeImpl.
      */
     public ParameterIncludeImpl() {
-        // Use a capacity large enough to prevent
-        // resizing
-        parameters = new HashMap<String, Parameter>(64);
+        parameters = new HashMap<String, Parameter>();
     }
 
     /**
@@ -108,26 +102,6 @@ public class ParameterIncludeImpl
         if (param != null) {
             synchronized (parameters) {
                 parameters.put(param.getName(), param);
-                try {
-                    parameters.put(param.getName(), param);
-                } catch (ConcurrentModificationException cme) {
-                    // The ParameteterIncludeImpl is supposed to be immutable after it is populated.
-                    // But alas, sometimes the callers forget and try to add new items.  If
-                    // this occurs, swap over to the slower ConcurrentHashMap and continue.
-                    if (log.isDebugEnabled()) {
-                        log.debug("ConcurrentModificationException Occured...changing to ConcurrentHashMap");
-                        log.debug("The exception is: " + cme);
-                    }
-
-                    Map newMap = new ConcurrentHashMap(parameters);
-                    newMap.put(param.getName(), param);
-                    parameters = newMap;
-                }
-
-                if (DEBUG_ENABLED) {
-                    this.debugParameterAdd(param);
-                }
-
             }
             
             if (DEBUG_ENABLED) {
@@ -138,22 +112,8 @@ public class ParameterIncludeImpl
 
     public void removeParameter(Parameter param) throws AxisFault {
         synchronized (parameters) {
-            try {
-                parameters.remove(param.getName());
-            } catch (ConcurrentModificationException cme) {
-                // The ParameteterIncludeImpl is supposed to be immutable after it is populated.
-                // But alas, sometimes the callers forget and try to add new items.  If
-                // this occurs, swap over to the slower ConcurrentHashMap and continue.
-                if (log.isDebugEnabled()) {
-                    log.debug("ConcurrentModificationException Occured...changing to ConcurrentHashMap");
-                    log.debug("The exception is: " + cme);
-                }
-
-                Map newMap = new ConcurrentHashMap(parameters);
-                newMap.remove(param.getName());
-                parameters = newMap;
-            }
-        } 
+            parameters.remove(param.getName());
+        }
     }
 
     /**
@@ -164,13 +124,13 @@ public class ParameterIncludeImpl
      * @throws AxisFault
      */
     public void deserializeParameters(OMElement parameters) throws AxisFault {
-        Iterator iterator =
+        Iterator<OMElement> iterator =
                 parameters.getChildrenWithName(new QName(DeploymentConstants.TAG_PARAMETER));
 
         while (iterator.hasNext()) {
 
             // this is to check whether some one has locked the parmeter at the top level
-            OMElement parameterElement = (OMElement) iterator.next();
+            OMElement parameterElement = iterator.next();
             Parameter parameter = new Parameter();
 
             // setting parameterElement
@@ -220,11 +180,13 @@ public class ParameterIncludeImpl
      * @return Returns parameter.
      */
     public Parameter getParameter(String name) {
-        return parameters.get(name);
+        synchronized (parameters) {
+            return parameters.get(name);
+        }
     }
 
     public ArrayList<Parameter> getParameters() {
-        synchronized(parameters) {
+        synchronized (parameters) {
             return new ArrayList<Parameter>(parameters.values());
         }
     }

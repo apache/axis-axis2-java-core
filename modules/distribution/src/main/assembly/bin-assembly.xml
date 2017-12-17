@@ -114,7 +114,6 @@
                 <include>LICENSE.txt</include>
                 <include>NOTICE.txt</include>
                 <include>README.txt</include>
-                <include>release-notes.html</include>
             </includes>
             <filtered>true</filtered>
         </fileSet>
@@ -124,6 +123,7 @@
             <directory>../../modules/samples</directory>
             <outputDirectory>samples</outputDirectory>
             <includes>
+                <include>pom.xml</include>
                 <include>databinding/**/*</include>
                 <include>faulthandling/**/*</include>
                 <include>jaxws-calculator/**/*</include>
@@ -145,6 +145,7 @@
                 <include>quickstartxmlbeans/**/*</include>
                 <include>servicelifecycle/**/*</include>
                 <include>soapwithattachments/**/*</include>
+                <include>transport/**/*</include>
                 <include>userguide/**/*</include>
                 <include>version/**/*</include>
                 <include>wsdl/**/*</include>
@@ -158,16 +159,24 @@
         </fileSet>
     </fileSets>
     
+    <files>
+        <file>
+            <source>../../src/site/markdown/release-notes/${release_version}.md</source>
+            <destName>RELEASE-NOTE.txt</destName>
+        </file>
+    </files>
+    
     <dependencySets>
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory>lib</outputDirectory>
+            <!-- Use artifact.baseVersion instead of artifact.version to avoid inconsistency with
+                 the Web app built by Maven. This only affects snapshot builds. -->
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <includes>
                 <include>*:*:jar</include>
             </includes>
             <excludes>
-                 <exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec:jar</exclude>
-                 <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</exclude>
                  <exclude>org.springframework:spring-beans:jar</exclude>
                  <exclude>org.springframework:spring-context:jar</exclude>
                  <exclude>org.springframework:spring-core:jar</exclude>
@@ -207,7 +216,14 @@
             <outputDirectory>webapp</outputDirectory>
             <unpackOptions>
                 <includes>
+                    <include>org/apache/axis2/soapmonitor/applet/**/*</include>
                     <include>WEB-INF/classes/**/*</include>
+                    <include>WEB-INF/include/**/*</include>
+                    <include>WEB-INF/lib/taglibs-standard-impl-*.jar</include>
+                    <include>WEB-INF/lib/taglibs-standard-spec-*.jar</include>
+                    <include>WEB-INF/lib/axis2-soapmonitor-servlet-*.jar</include>
+                    <include>WEB-INF/tags/**/*</include>
+                    <include>WEB-INF/views/**/*</include>
                     <include>WEB-INF/web.xml</include>
                     <include>axis2-web/**/*</include>
                 </includes>

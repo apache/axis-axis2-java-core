@@ -22,7 +22,7 @@ import javax.jms.Message;
 import junit.framework.TestCase;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.description.AxisService;
@@ -42,7 +42,7 @@ public class ContentTypeRuleTest extends TestCase {
         
         InputStream in = ContentTypeRuleTest.class.getResourceAsStream(getName() + ".xml");
         try {
-            OMElement element = new StAXOMBuilder(in).getDocumentElement();
+            OMElement element = OMXMLBuilderFactory.createOMBuilder(in).getDocumentElement();
             new ServiceBuilder(cfgCtx, service).populateService(element);
         } finally {
             in.close();

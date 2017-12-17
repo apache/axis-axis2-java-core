@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -36,7 +37,7 @@ import org.apache.axis2.transport.testkit.name.Name;
 // TODO: maybe we should use XMLUnit to construct these kind of tests
 public class LargeSOAPAsyncMessageTestCase extends AsyncMessageTestCase<XMLMessage> {
     public LargeSOAPAsyncMessageTestCase(AsyncChannel channel, AsyncTestClient<XMLMessage> client, AsyncEndpoint<XMLMessage> endpoint, Object... resources) {
-        super(channel, client, endpoint, XMLMessage.Type.SOAP11.getContentType(), "UTF-8", resources);
+        super(channel, client, endpoint, new ContentType(XMLMessage.Type.SOAP11.getContentType()), "UTF-8", resources);
     }
     
     @Override

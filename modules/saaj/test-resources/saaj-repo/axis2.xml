@@ -51,7 +51,7 @@
     <!-- Transport Outs -->
     <!-- ================================================= -->
 
-  <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+  <transportSender name="http" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender">
             <parameter name="PROTOCOL">HTTP/1.1</parameter>
     </transportSender>
     <transportSender name="local" class="org.apache.axis2.transport.local.LocalTransportSender"/>

@@ -19,8 +19,7 @@
 
 package org.apache.axis2.transport.testkit.axis2.endpoint;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.testkit.axis2.AxisServiceConfigurator;
 import org.apache.axis2.transport.testkit.client.ClientOptions;

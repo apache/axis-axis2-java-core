@@ -29,7 +29,6 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -43,12 +42,18 @@ import org.apache.axis2.jaxws.unitTest.TestLogger;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
+import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPMessage;
+
+import static com.google.common.truth.Truth.assertThat;
+
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -104,7 +109,7 @@ public class MTOMSerializationTests extends TestCase {
         
         OMElement payload = createPayload();
         
-        SOAPFactory factory = new SOAP11Factory();
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = factory.createSOAPEnvelope();
         SOAPBody body = factory.createSOAPBody(env);
         
@@ -198,7 +203,13 @@ public class MTOMSerializationTests extends TestCase {
         msg.setMTOMEnabled(true);
         
         // Convert message to SAAJ to simulate an outbound handler
-        msg.getAsSOAPMessage();
+        SOAPMessage saajMessage = msg.getAsSOAPMessage();
+        
+        // SAAJ is expected to have an XOP encoded representation of the message
+        SOAPElement imageData = (SOAPElement)saajMessage.getSOAPBody().getElementsByTagNameNS("*", "imageData").item(0);
+        Node child = imageData.getFirstChild();
+        assertThat(child.getNodeType()).isEqualTo(Node.ELEMENT_NODE);
+        assertThat(child.getLocalName()).isEqualTo("Include");
         
         // Now convert it back to AXIOM
         

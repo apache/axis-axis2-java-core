@@ -22,6 +22,6 @@ package org.apache.axis2.jaxws.message.databinding;
 import org.apache.axis2.jaxws.message.Block;
 
 /** JAXBBlock Block represented by a JAXB object */
-public interface JAXBBlock extends Block {
+public interface JAXBBlock extends Block<Object,JAXBBlockContext> {
 
 }

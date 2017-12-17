@@ -37,8 +37,7 @@ public class SOAPBuilderTest extends AbstractTestCase {
     }
 
     /**
-     * Simple test the makes sure SOAPBuilder builds a document and
-     * has a content length
+     * Simple test the makes sure SOAPBuilder builds a document
      * @throws Exception
      */
     public void test() throws Exception {
@@ -49,6 +48,5 @@ public class SOAPBuilderTest extends AbstractTestCase {
         OMElement envelope = soapBuilder.processDocument(fis, "text/xml", mc);
         assertTrue(envelope != null);
         assertTrue(envelope instanceof SOAPEnvelope);
-        assertTrue(mc.getInboundContentLength() > 2000);
     }
 }

@@ -95,7 +95,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
             // processing Parameters
             // Processing service level parameters
-            Iterator itr = config_element.getChildrenWithName(new QName(TAG_PARAMETER));
+            Iterator<OMElement> itr = config_element.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, axisConfig, axisConfig);
 
@@ -111,19 +111,19 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 }
             }
             // Process Module refs
-            Iterator moduleitr =
+            Iterator<OMElement> moduleitr =
                     config_element.getChildrenWithName(new QName(DeploymentConstants.TAG_MODULE));
 
             processModuleRefs(moduleitr, axisConfig);
 
             // Processing Transport Senders
-            Iterator trs_senders =
+            Iterator<OMElement> trs_senders =
                     config_element.getChildrenWithName(new QName(TAG_TRANSPORT_SENDER));
 
             processTransportSenders(trs_senders);
 
             // Processing Transport Receivers
-            Iterator trs_Reivers =
+            Iterator<OMElement> trs_Reivers =
                     config_element.getChildrenWithName(new QName(TAG_TRANSPORT_RECEIVER));
 
             processTransportReceivers(trs_Reivers);
@@ -139,22 +139,22 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             processThreadContextMigrators(axisConfig, threadContextMigrators);
 
             // Process Observers
-            Iterator obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
+            Iterator<OMElement> obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
 
             processObservers(obs_ittr);
 
             // Processing Phase orders
-            Iterator phaseorders = config_element.getChildrenWithName(new QName(TAG_PHASE_ORDER));
+            Iterator<OMElement> phaseorders = config_element.getChildrenWithName(new QName(TAG_PHASE_ORDER));
 
             processPhaseOrders(phaseorders);
 
-            Iterator moduleConfigs =
+            Iterator<OMElement> moduleConfigs =
                     config_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processModuleConfig(moduleConfigs, axisConfig, axisConfig);
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = PolicyUtil.getPolicyChildren(config_element);
+            Iterator<OMElement> policyElements = PolicyUtil.getPolicyChildren(config_element);
 
             if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(policyElements,
@@ -162,7 +162,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = PolicyUtil.getPolicyRefChildren(config_element);
+            Iterator<OMElement> policyRefElements = PolicyUtil.getPolicyRefChildren(config_element);
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(policyElements,
@@ -187,7 +187,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement transactionElement = config_element.getFirstChildWithName(new QName(TAG_TRANSACTION));
             if (transactionElement != null) {
                 ParameterInclude transactionParameters = new ParameterIncludeImpl();
-                Iterator parameters = transactionElement.getChildrenWithName(new QName(TAG_PARAMETER));
+                Iterator<OMElement> parameters = transactionElement.getChildrenWithName(new QName(TAG_PARAMETER));
                 processParameters(parameters, transactionParameters, null);
 
                 TransactionConfiguration txcfg = null;
@@ -270,7 +270,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 }
             }
             //Processing deployers.
-            Iterator deployerItr = config_element.getChildrenWithName(new QName(DEPLOYER));
+            Iterator<OMElement> deployerItr = config_element.getChildrenWithName(new QName(DEPLOYER));
             if (deployerItr != null) {
                 processDeployers(deployerItr);
             }
@@ -290,9 +290,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
     private void processTargetResolvers(AxisConfiguration axisConfig, OMElement targetResolvers) {
         if (targetResolvers != null) {
-            Iterator iterator = targetResolvers.getChildrenWithName(new QName(TAG_TARGET_RESOLVER));
+            Iterator<OMElement> iterator = targetResolvers.getChildrenWithName(new QName(TAG_TARGET_RESOLVER));
             while (iterator.hasNext()) {
-                OMElement targetResolver = (OMElement) iterator.next();
+                OMElement targetResolver = iterator.next();
                 OMAttribute classNameAttribute =
                         targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
                 String className = classNameAttribute.getAttributeValue();
@@ -313,9 +313,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
     private void processThreadContextMigrators(AxisConfiguration axisConfig, OMElement targetResolvers) {
         if (targetResolvers != null) {
-            Iterator iterator = targetResolvers.getChildrenWithName(new QName(TAG_THREAD_CONTEXT_MIGRATOR));
+            Iterator<OMElement> iterator = targetResolvers.getChildrenWithName(new QName(TAG_THREAD_CONTEXT_MIGRATOR));
             while (iterator.hasNext()) {
-                OMElement threadContextMigrator = (OMElement) iterator.next();
+                OMElement threadContextMigrator = iterator.next();
                 OMAttribute listIdAttribute =
                     threadContextMigrator.getAttribute(new QName(TAG_LIST_ID));
                 String listId = listIdAttribute.getAttributeValue();
@@ -358,9 +358,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     	if (soaproleconfigElement != null) {
     		final boolean isUltimateReceiever = JavaUtils.isTrue(soaproleconfigElement.getAttributeValue(new QName(Constants.SOAP_ROLE_IS_ULTIMATE_RECEIVER_ATTRIBUTE)), true);
     		ArrayList roles = new ArrayList();
-    		Iterator iterator = soaproleconfigElement.getChildrenWithName(new QName(Constants.SOAP_ROLE_ELEMENT));
+    		Iterator<OMElement> iterator = soaproleconfigElement.getChildrenWithName(new QName(Constants.SOAP_ROLE_ELEMENT));
     		while (iterator.hasNext()) {
-    			OMElement roleElement = (OMElement) iterator.next();
+    			OMElement roleElement = iterator.next();
     			roles.add(roleElement.getText());
     		}
     		final List unmodifiableRoles = Collections.unmodifiableList(roles);
@@ -421,9 +421,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             deployer.setDirectory(directory);
             deployer.setExtension(extension);
             
-            for (Iterator<?> itr = element.getChildrenWithName(new QName(
+            for (Iterator<OMElement> itr = element.getChildrenWithName(new QName(
                     TAG_SERVICE_BUILDER_EXTENSION)); itr.hasNext();) {
-                OMElement serviceBuilderEle = (OMElement) itr.next();
+                OMElement serviceBuilderEle = itr.next();
                 String serviceBuilderClass = serviceBuilderEle.getAttributeValue(new QName(
                         TAG_CLASS_NAME));
                 String serviceBuilderName = serviceBuilderEle.getAttributeValue(new QName(
@@ -476,7 +476,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(module, parent);
-                Iterator parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
+                Iterator<OMElement> parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(parameters, moduleConfiguration, parent);
                 config.addModuleConfig(moduleConfiguration);
@@ -527,7 +527,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 observer = (AxisObserver) observerclass.newInstance();
                 // processing Parameters
                 // Processing service level parameters
-                Iterator itr = observerelement.getChildrenWithName(new QName(TAG_PARAMETER));
+                Iterator<OMElement> itr = observerelement.getChildrenWithName(new QName(TAG_PARAMETER));
                 processParameters(itr, observer, axisConfig);
                 // initialization
                 try {
@@ -546,10 +546,10 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
     private ArrayList processPhaseList(OMElement phaseOrders) throws DeploymentException {
         ArrayList phaselist = new ArrayList();
-        Iterator phases = phaseOrders.getChildrenWithName(new QName(TAG_PHASE));
+        Iterator<OMElement> phases = phaseOrders.getChildrenWithName(new QName(TAG_PHASE));
 
         while (phases.hasNext()) {
-            OMElement phaseelement = (OMElement) phases.next();
+            OMElement phaseelement = phases.next();
             String phaseName =
                     phaseelement.getAttribute(new QName(ATTRIBUTE_NAME)).getAttributeValue();
             String phaseClass = phaseelement.getAttributeValue(new QName(TAG_CLASS_NAME));
@@ -564,10 +564,10 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             phase.setName(phaseName);
 
-            Iterator handlers = phaseelement.getChildrenWithName(new QName(TAG_HANDLER));
+            Iterator<OMElement> handlers = phaseelement.getChildrenWithName(new QName(TAG_HANDLER));
 
             while (handlers.hasNext()) {
-                OMElement omElement = (OMElement) handlers.next();
+                OMElement omElement = handlers.next();
                 HandlerDescription handler = processHandler(omElement, axisConfig, phaseName);
 
                 handler.getRules().setPhaseName(phaseName);
@@ -616,9 +616,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
     private void processDefaultModuleVersions(OMElement defaultVersions)
             throws DeploymentException {
-        Iterator moduleVersions = defaultVersions.getChildrenWithName(new QName(TAG_MODULE));
+        Iterator<OMElement> moduleVersions = defaultVersions.getChildrenWithName(new QName(TAG_MODULE));
         while (moduleVersions.hasNext()) {
-            OMElement omElement = (OMElement) moduleVersions.next();
+            OMElement omElement = moduleVersions.next();
             String name = omElement.getAttributeValue(new QName(ATTRIBUTE_NAME));
             if (name == null) {
                 throw new DeploymentException(Messages.getMessage("modulenamecannotbenull"));
@@ -670,7 +670,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     }
                 }
                 try {
-                    Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
+                    Iterator<OMElement> itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
                     processParameters(itr, transportIN, axisConfig);
                     // adding to axis2 config
                     axisConfig.addTransportIn(transportIN);
@@ -717,7 +717,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     // process Parameters
                     // processing Parameters
                     // Processing service level parameters
-                    Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
+                    Iterator<OMElement> itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
 
                     processParameters(itr, transportout, axisConfig);
                     // adding to axis2 config
@@ -760,11 +760,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             axisConfig.addDataLocatorClassNames(DRConstants.GLOBAL_LEVEL,
                                                 className);
         }
-        Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(
+        Iterator<OMElement> iterator = dataLocatorElement.getChildrenWithName(new QName(
                 DRConstants.DIALECT_LOCATOR_ELEMENT));
 
         while (iterator.hasNext()) {
-            OMElement locatorElement = (OMElement) iterator.next();
+            OMElement locatorElement = iterator.next();
             OMAttribute dialect = locatorElement.getAttribute(new QName(
                     DRConstants.DIALECT_ATTRIBUTE));
             OMAttribute dialectclass = locatorElement.getAttribute(new QName(

@@ -23,8 +23,10 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.ds.custombuilder.CustomBuilderSupport;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
@@ -438,7 +440,7 @@ public class MessageTests extends TestCase {
         // OM
         StringReader sr = new StringReader(sampleEnvelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
 
         // The JAX-WS layer creates a Message from the OM
@@ -497,7 +499,7 @@ public class MessageTests extends TestCase {
         // OM
         StringReader sr = new StringReader(sampleEnvelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
 
         // The JAX-WS layer creates a Message from the OM
@@ -571,7 +573,7 @@ public class MessageTests extends TestCase {
         // OM
         StringReader sr = new StringReader(sampleEnvelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
 
         // The JAX-WS layer creates a Message from the OM
@@ -633,7 +635,7 @@ public class MessageTests extends TestCase {
         // OM
         StringReader sr = new StringReader(sampleEnvelopeNoHeader);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
         
         // The JAX-WS layer creates a Message from the OM
@@ -901,14 +903,14 @@ public class MessageTests extends TestCase {
         // simulates what Axis2 will be doing with the inbound message. 
         StringReader sr = new StringReader(sampleJAXBEnvelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
         
         JAXBDSContext jds = null;
         if (installJAXBCustomBuilder) {
             jds = new JAXBDSContext(EchoStringResponse.class.getPackage().getName());
             JAXBCustomBuilder jcb = new JAXBCustomBuilder(jds);
-            builder.registerCustomBuilderForPayload(jcb);
+            ((CustomBuilderSupport)builder).registerCustomBuilder(jcb, jcb);
         }
         
         // Create a SOAP 1.1 Message from the sample incoming XML
@@ -1019,7 +1021,7 @@ public class MessageTests extends TestCase {
         if (persist == SAVE_AND_PERSIST) {
             sr = new StringReader(saveMsgText);
             XMLStreamReader saveMsgReader = inputFactory.createXMLStreamReader(sr);
-            builder = new StAXSOAPModelBuilder(saveMsgReader, null);
+            builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(saveMsgReader);
             omElement = builder.getSOAPEnvelope();
             m = mf.createFrom(omElement, null);
         } 

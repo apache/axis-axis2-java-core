@@ -189,6 +189,9 @@
 	</wsdl:message>
 
 	<wsdl:portType name="DocLitWrappedProxy">
+        <jaxws:bindings xmlns:jaxws="http://java.sun.com/xml/ns/jaxws">
+            <jaxws:enableAsyncMapping>true</jaxws:enableAsyncMapping>
+        </jaxws:bindings>
 
 		<wsdl:operation name="oneWayVoid">
 			<wsdl:input message="tns:oneWayVoidRequest" />

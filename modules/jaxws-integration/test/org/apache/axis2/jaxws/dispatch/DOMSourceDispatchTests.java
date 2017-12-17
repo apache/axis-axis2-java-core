@@ -21,16 +21,15 @@ package org.apache.axis2.jaxws.dispatch;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Dispatch;
@@ -38,6 +37,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.util.concurrent.Future;
 
 /**
@@ -45,9 +45,6 @@ import java.util.concurrent.Future;
  * javax.xml.transform.dom.DOMSource 
  */
 public class DOMSourceDispatchTests extends AbstractTestCase{
-
-    private static final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
     public static Test suite() {
         return getTestSetup(new TestSuite(DOMSourceDispatchTests.class));
     }
@@ -467,9 +464,8 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
      * @return
      */
     private String createStringFromSource(Source input) throws Exception {
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(input);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String text = r2w.getAsString();
-        return text;
+        StringWriter sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(input).getDocument().serializeAndConsume(sw);
+        return sw.toString();
     }
 }

@@ -246,17 +246,10 @@ public class ServiceDeployer extends AbstractDeployer {
         }
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         StringWriter errorWriter = new StringWriter();
-        int index = servicesURL.getPath().lastIndexOf(File.separator);
-         String serviceFile;
-         if(index > 0){
-             serviceFile = servicesURL.getPath().substring(index);
-         } else {
-             serviceFile = servicesURL.getPath();
-         }
          ArrayList<AxisService> servicelist =
          populateService(serviceGroup,
          servicesURL,
-         serviceFile.substring(0, serviceFile.indexOf(".aar")));
+         DescriptionBuilder.getShortFileName(deploymentFileData.getName()));
          try {
             DeploymentEngine.addServiceGroup(serviceGroup, servicelist, servicesURL, null,
              axisConfig);
@@ -299,8 +292,8 @@ public class ServiceDeployer extends AbstractDeployer {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             ClassLoader serviceClassLoader = Utils
-                    .createClassLoader(new URL[] { servicesURL }, axisConfig
-                            .getServiceClassLoader(), true, (File) axisConfig
+                    .createClassLoader(servicesURL, null, axisConfig
+                            .getServiceClassLoader(), (File) axisConfig
                             .getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                             axisConfig.isChildFirstClassLoading());
             String metainf = "meta-inf";

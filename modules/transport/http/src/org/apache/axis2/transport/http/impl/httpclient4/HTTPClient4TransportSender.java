@@ -19,31 +19,43 @@
 
 package org.apache.axis2.transport.http.impl.httpclient4;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.http.AbstractHTTPSender;
-import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.transport.http.AbstractHTTPTransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.HTTPTransportConstants;
-import org.apache.axis2.transport.http.HTTPTransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * The Class HTTPClient4TransportSender use HC HTTPClient 4.X. 
  */
-public class HTTPClient4TransportSender extends CommonsHTTPTransportSender implements
-                                                                           HTTPTransportSender {
+public class HTTPClient4TransportSender extends AbstractHTTPTransportSender {
 
     private static final Log log = LogFactory.getLog(HTTPClient4TransportSender.class);
 
     @Override
     public void cleanup(MessageContext msgContext) throws AxisFault {
-        // We don't need to call cleanup here because httpclient4 releases
-        // the connection and cleanup automatically
-        // TODO : Don't do this if we're not on the right thread! Can we confirm?
         log.trace("cleanup() releasing connection");
+        
+        OperationContext opContext = msgContext.getOperationContext();
+        if (opContext != null) {
+            InputStream in = (InputStream)opContext.getProperty(MessageContext.TRANSPORT_IN);
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    // Ignore
+                }
+            }
+        }
+        
         // guard against multiple calls
         msgContext.removeProperty(HTTPConstants.HTTP_METHOD);
 
@@ -56,7 +68,7 @@ public class HTTPClient4TransportSender extends CommonsHTTPTransportSender imple
 
 
     @Override
-    protected AbstractHTTPSender createHTTPSender() {
+    protected HTTPSender createHTTPSender() {
         return new HTTPSenderImpl();
     }
 

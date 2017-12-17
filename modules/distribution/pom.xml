@@ -21,9 +21,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>org.apache.axis2</groupId>
@@ -70,6 +70,11 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jibx</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jibx-codegen</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -186,6 +191,12 @@
             <version>${project.version}</version>
             <type>mar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxws-mar</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+        </dependency>
         
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -245,24 +256,6 @@
             </exclusions>
         </dependency>
         
-        <!-- Axis2 has always been shipped with Sun's implementations of
-             JavaMail and JAF, although Axiom depends on (and has been tested
-             with) Geronimo's implementations. This should probably reevaluated. -->
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${javax.mail.version}</version>
-        </dependency>
-        
-        <!-- Jalopy is used by the PrettyPrinter class in the kernel,
-             but it is invoked using reflection (and only if it is
-             found on the classpath). Therefore it is not automatically
-             added as a transitive dependency. -->
-        <dependency>
-            <groupId>jalopy</groupId>
-            <artifactId>jalopy</artifactId>
-        </dependency>
-        
         <!-- None of the Axis2 artifacts should have a dependency on log4j
              because we don't want to impose a particular logging implementation
              on our users. However, for the binary distribution, we need to
@@ -281,7 +274,9 @@
         </dependency>
         
         <!-- These are needed to run JAX-WS tools -->
-        <dependency>
+        <!-- TODO: don't add them unless you also add the corresponding license files
+                   (and check that inclusion of these dependencies conforms to ASF policies) -->
+        <!-- dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <exclusions>
@@ -299,12 +294,28 @@
             <groupId>org.jvnet.staxex</groupId>
             <artifactId>stax-ex</artifactId>
             <version>1.4</version>           
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.stream.buffer</groupId>
             <artifactId>streambuffer</artifactId>
             <version>1.2</version>           
-        </dependency>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency -->
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -315,21 +326,79 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>war-location</id>
+                        <goals>
+                            <goal>generate-properties</goal>
+                        </goals>
+                        <configuration>
+                            <name>webapp</name>
+                            <value>%file%</value>
+                            <dependencySet>
+                                <scope>test</scope>
+                                <includes>
+                                    <include>*:axis2-webapp:war:*</include>
+                                </includes>
+                            </dependencySet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>generate-timestamp</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                import java.util.Date 
-                                import java.text.MessageFormat 
-                                project.properties['buildTimestamp'] = MessageFormat.format("{0,date,dd-MM-yyyy}", new Date())
-                            </source>
+                            <scripts>
+                                <script>
+                                    import java.util.Date 
+                                    import java.text.MessageFormat 
+                                    project.properties['buildTimestamp'] = MessageFormat.format("{0,date,dd-MM-yyyy}", new Date())
+                                    project.properties['release_version'] = project.version.replaceAll("-SNAPSHOT", "")
+                                </script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>check-webapp-content</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script>
+                                    import java.util.jar.*
+                                    
+                                    def jar = new JarInputStream(new FileInputStream(project.properties['webapp']))
+                                    def expected = new HashSet()
+                                    def entry
+                                    while(entry = jar.nextJarEntry) {
+                                        expected.add(entry.name)
+                                    }
+                                    jar.close()
+                                    
+                                    jar = new JarInputStream(new FileInputStream(new File(project.build.directory, "axis2-" + project.version + "/dist/axis2.war")))
+                                    while(entry = jar.nextJarEntry) {
+                                        if (!expected.remove(entry.name)) {
+                                            throw new Error("Unexpected entry in Web app: " + entry.name)
+                                        }
+                                    }
+                                    if (!expected.empty) {
+                                        throw new Error("Missing entries in Web app: " + expected)
+                                    }
+                                    jar.close()
+                                </script>
+                            </scripts>
                         </configuration>
                     </execution>
                 </executions>
@@ -344,6 +413,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/tmp-repository</outputDirectory>
+                            <stripServiceVersion>false</stripServiceVersion>
                             <generateFileLists>true</generateFileLists>
                         </configuration>
                     </execution>
@@ -371,6 +441,27 @@
                 </executions>
             </plugin>
             
+            <!-- Always remove files from a previous run of the integration tests. -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-test-files</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.build.directory}/axis2-${project.version}</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Prepare some additional dependencies required by specific samples. We could
                  also do this by invoking the relevant download.jars targets in the provided
                  ant scripts, but this may cause issues with HTTP proxies and has the disadvantage
@@ -391,11 +482,6 @@
                                     <groupId>org.codehaus.castor</groupId>
                                     <artifactId>castor</artifactId>
                                     <version>1.0.4</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>net.java.dev.stax-utils</groupId>
-                                    <artifactId>stax-utils</artifactId>
-                                    <version>20060502</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>xerces</groupId>
@@ -423,15 +509,18 @@
                             <tasks>
                                 <unzip src="${project.build.directory}/axis2-${project.version}-bin.zip" dest="${project.build.directory}" />
                                 
+                                <!-- Build the web app -->
+                                <ant dir="${project.build.directory}/axis2-${project.version}/webapp" useNativeBasedir="true" />
+                                
                                 <!-- Test of the databinding sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding"/>
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding" />
                                 
                                 <!-- Test of the mtom sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.service"/>
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.client"/>
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.service" />
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.client" />
                                 
                                 <!-- Test of the faulthandling sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/faulthandling" target="generate.service"/>
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/faulthandling" target="generate.service" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -439,7 +528,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
-                <version>1.5</version>
                 <executions>
                     <execution>
                         <id>build-maven-samples</id>
@@ -450,7 +538,7 @@
                         <configuration>
                             <projectsDirectory>${project.build.directory}/axis2-${project.version}/samples</projectsDirectory>
                             <pomIncludes>
-                                <pomInclude>*/pom.xml</pomInclude>
+                                <pomInclude>pom.xml</pomInclude>
                             </pomIncludes>
                             <streamLogs>true</streamLogs>
                         </configuration>
@@ -478,10 +566,15 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <configuration>
-                            <createChecksum>true</createChecksum>
-                        </configuration>
+                        <groupId>net.nicoulaj.maven.plugins</groupId>
+                        <artifactId>checksum-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>artifacts</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

@@ -19,16 +19,10 @@
 
 package org.apache.axis2.saaj.util;
 
-import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMMetaFactory;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -38,10 +32,13 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
+import javax.xml.transform.stax.StAXSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /** Utility class for the Axis2-WSS4J Module */
 public class SAAJUtil {
@@ -53,28 +50,9 @@ public class SAAJUtil {
      * @return the DOM Document of the given SOAP Envelope
      */
     public static Document getDocumentFromSOAPEnvelope(org.apache.axiom.soap.SOAPEnvelope env) {
-        env.build();
-
-        //Check the namespace and find SOAP version and factory
-        String nsURI;
-        OMMetaFactory metaFactory = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM);
-        SOAPFactory factory;
-        if (env.getNamespace().getNamespaceURI()
-                .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-            nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = metaFactory.getSOAP11Factory();
-        } else {
-            nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = metaFactory.getSOAP12Factory();
-        }
-
-        StAXSOAPModelBuilder stAXSOAPModelBuilder =
-                new StAXSOAPModelBuilder(env.getXMLStreamReader(), factory, nsURI);
-        SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
-        envelope.build();
-
-        Element envElem = (Element)envelope;
-        return envElem.getOwnerDocument();
+        return (Document)OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+                OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM),
+                env.getXMLStreamReader()).getSOAPMessage();
     }
 
     /**
@@ -84,46 +62,20 @@ public class SAAJUtil {
      * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
      */
     public static Element toDOOMSOAPEnvelope(org.apache.axiom.soap.SOAPEnvelope env) {
-        env.build();
-
-        //Check the namespace and find SOAP version and factory
-        String nsURI;
-        OMMetaFactory metaFactory = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM);
-        SOAPFactory factory;
-        if (env.getNamespace().getNamespaceURI()
-                .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-            nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = metaFactory.getSOAP11Factory();
-        } else {
-            nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = metaFactory.getSOAP11Factory();
-        }
-
-        StAXSOAPModelBuilder stAXSOAPModelBuilder =
-                new StAXSOAPModelBuilder(env.getXMLStreamReader(), factory, nsURI);
-        SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
-        envelope.build();
-
-        return (Element)envelope;
+        return (Element)OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+                OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM),
+                env.getXMLStreamReader()).getSOAPEnvelope();
     }
 
     public static org.apache.axiom.soap.SOAPEnvelope
             getSOAPEnvelopeFromDOOMDocument(org.w3c.dom.Document doc) {
-
-        OMElement docElem = (OMElement)doc.getDocumentElement();
-        StAXSOAPModelBuilder stAXSOAPModelBuilder =
-                new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
-        return stAXSOAPModelBuilder.getSOAPEnvelope();
+        return OMXMLBuilderFactory.createStAXSOAPModelBuilder(((OMElement)doc.getDocumentElement()).getXMLStreamReader()).getSOAPEnvelope();
     }
 
 
     public static org.apache.axiom.soap.SOAPEnvelope
             toOMSOAPEnvelope(org.w3c.dom.Element elem) {
-
-        OMElement docElem = (OMElement)elem;
-        StAXSOAPModelBuilder stAXSOAPModelBuilder =
-                new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
-        return stAXSOAPModelBuilder.getSOAPEnvelope();
+        return OMXMLBuilderFactory.createStAXSOAPModelBuilder(((OMElement)elem).getXMLStreamReader()).getSOAPEnvelope();
     }
     
     /**
@@ -136,8 +88,7 @@ public class SAAJUtil {
      */
     public static org.apache.axiom.soap.SOAPEnvelope toOMSOAPEnvelope(
             javax.xml.soap.SOAPMessage message) throws SOAPException {
-        
-        Attachments attachments = new Attachments();
+        final Map<String,DataHandler> attachments = new HashMap<String,DataHandler>();
         for (Iterator it = message.getAttachments(); it.hasNext(); ) {
             AttachmentPart attachment = (AttachmentPart)it.next();
             String contentId = attachment.getContentId();
@@ -149,12 +100,18 @@ public class SAAJUtil {
                 if (contentId.startsWith("<") && contentId.endsWith(">")) {
                     contentId = contentId.substring(1, contentId.length()-1);
                 }
-                attachments.addDataHandler(contentId, dh);
+                attachments.put(contentId, dh);
             }
         }
         OMElement docElem = (OMElement)message.getSOAPPart().getDocumentElement();
-        MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(docElem.getXMLStreamReader(), attachments);
-        return builder.getSOAPEnvelope();
+        OMAttachmentAccessor attachmentAccessor = new OMAttachmentAccessor() {
+            @Override
+            public DataHandler getDataHandler(String contentID) {
+                return attachments.get(contentID);
+            }
+        };
+        return OMXMLBuilderFactory.createSOAPModelBuilder(OMAbstractFactory.getMetaFactory(),
+                new StAXSource(docElem.getXMLStreamReader()), attachmentAccessor).getSOAPEnvelope();
     }
 
     /**

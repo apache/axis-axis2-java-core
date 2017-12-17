@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.message.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
@@ -36,7 +37,7 @@ import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -151,13 +152,7 @@ public class XMLFaultUtils {
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         SOAPFaultCode soapCode = soapFault.getCode();
-        QName codeQName = null;
-        if (isSoap11) {
-            codeQName = soapCode.getTextAsQName();
-        } else {
-            codeQName = soapCode.getValue().getTextAsQName();
-        }
-        XMLFaultCode code = XMLFaultCode.fromQName(codeQName);
+        XMLFaultCode code = XMLFaultCode.fromQName(soapCode.getValueAsQName());
 
         // Get the primary reason text
         // TODO what if this fails
@@ -187,9 +182,7 @@ public class XMLFaultUtils {
 
             // Walk the nested sub codes and collect the qnames
             while (soapSubCode != null) {
-                SOAPFaultValue soapSubCodeValue = soapSubCode.getValue();
-                QName qName = soapSubCodeValue.getTextAsQName();
-                list.add(qName);
+                list.add(soapSubCode.getValueAsQName());
                 soapSubCode = soapSubCode.getSubCode();
             }
 
@@ -366,7 +359,7 @@ public class XMLFaultUtils {
         
         SOAPEnvelope dummyEnv = (SOAPEnvelope) m.getAsOMElement();        
         
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(dummyEnv.getXMLStreamReaderWithoutCaching());
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(dummyEnv.getXMLStreamReaderWithoutCaching());
         SOAPEnvelope newEnv = (SOAPEnvelope) builder.getDocumentElement();
         
         SOAPBody body = newEnv.getBody();

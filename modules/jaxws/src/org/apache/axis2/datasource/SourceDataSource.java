@@ -19,10 +19,8 @@
 
 package org.apache.axis2.datasource;
 
-
-import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.ds.OMDataSourceExtBase;
+import org.apache.axiom.om.ds.AbstractPullOMDataSource;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,23 +42,16 @@ import java.io.UnsupportedEncodingException;
 /**
  * OMDataSource backed by a source
  */
-public class SourceDataSource extends OMDataSourceExtBase {
+public class SourceDataSource extends AbstractPullOMDataSource {
     private static final Log log = LogFactory.getLog(SourceDataSource.class);
-    Source data;
+
+    private final Source data;
 
     public SourceDataSource(Source data) {
-        super();
         this.data = data;
     }
 
-    public void close() {
-    }
-
-    public OMDataSourceExt copy() {
-        return null;
-    }
-
-    public Object getObject() {
+    public Source getObject() {
         return data;
     }
 
@@ -68,14 +59,14 @@ public class SourceDataSource extends OMDataSourceExtBase {
 
         try {
             String encoding = "utf-8";
-            InputStream is = new ByteArrayInputStream(getXMLBytes(encoding));
+            InputStream is = new ByteArrayInputStream(getContent(encoding));
             return StAXUtils.createXMLStreamReader(is, encoding);
         } catch (UnsupportedEncodingException e) {
             throw new XMLStreamException(e);
         }
     }
 
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
+    private byte[] getContent(String encoding) throws UnsupportedEncodingException {
         if (log.isDebugEnabled()) {
             log.debug("Start getXMLBytes");
         }
@@ -113,10 +104,6 @@ public class SourceDataSource extends OMDataSourceExtBase {
         return false;
     }
 
-    public boolean isDestructiveWrite() {
-        return false;
-    }
-    
     private static byte[] getBytesFromStream(InputStream is) throws IOException {
         // TODO This code assumes that available is the length of the stream.
         byte[] bytes = new byte[is.available()];

@@ -19,8 +19,7 @@
 
 package org.apache.axis2.transport.testkit.client;
 
-import javax.mail.internet.ContentType;
-
+import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.name.Key;
 
 @Key("client")

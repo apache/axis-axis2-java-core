@@ -20,12 +20,12 @@
 package org.apache.axis2.tool.codegen.eclipse.util;
 
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.WSDLUtil;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class WSDLPropertyReader {
     private Definition wsdlDefinition = null;
     
 	public void readWSDL(String filepath) throws WSDLException {
-		WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+		WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
 		wsdlDefinition = reader.readWSDL(filepath); 
 	}
 	

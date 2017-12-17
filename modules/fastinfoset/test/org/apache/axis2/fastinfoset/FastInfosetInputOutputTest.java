@@ -21,20 +21,24 @@ package org.apache.axis2.fastinfoset;
 
 import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
 import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
+
+import org.apache.axiom.blob.Blobs;
+import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.custommonkey.xmlunit.XMLTestCase;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.junit.Test;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 
-public class FastInfosetInputOutputTest extends XMLTestCase {
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
+import java.io.FileInputStream;
+import java.io.OutputStream;
+
+public class FastInfosetInputOutputTest {
 
     /**
      * This is to test how fast infoset interoperate with Axiom.
@@ -46,32 +50,27 @@ public class FastInfosetInputOutputTest extends XMLTestCase {
      * <p/>
      * Then the initial XML file and the last XML will be compared to see whether they are the same.
      */
+    @Test
     public void testInputOutput() throws Exception {
         String inputFile = "pom.xml";
-        File outputFile = new File("target/output.xml");
-        File tempFile = new File("target/test.bin");
 
-        try {
-            // first let's read the xml document in to Axiom
-            OMElement element = new StAXOMBuilder(inputFile).getDocumentElement();
+        // first let's read the xml document in to Axiom
+        OMElement element = OMXMLBuilderFactory.createOMBuilder(
+                new FileInputStream(inputFile)).getDocumentElement();
 
-            // output it using binary xml outputter
-            XMLStreamWriter streamWriter = new StAXDocumentSerializer(new FileOutputStream(tempFile));
-            streamWriter.writeStartDocument();
-            element.serializeAndConsume(streamWriter);
-            streamWriter.writeEndDocument();
+        // output it using binary xml outputter
+        MemoryBlob blob = Blobs.createMemoryBlob();
+        OutputStream out = blob.getOutputStream();
+        XMLStreamWriter streamWriter = new StAXDocumentSerializer(out);
+        streamWriter.writeStartDocument();
+        element.serialize(streamWriter);
+        streamWriter.writeEndDocument();
+        out.close();
 
-            // now let's read the binary file in to Axiom
-            XMLStreamReader streamReader = new StAXDocumentParser(new FileInputStream(tempFile));
-            StAXBuilder builder = new StAXOMBuilder(streamReader);
-            builder.getDocumentElement().serialize(new FileWriter(outputFile));
+        // now let's read the binary file in to Axiom
+        XMLStreamReader streamReader = new StAXDocumentParser(blob.getInputStream());
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(streamReader);
 
-            // let's see this is the same that we fed in to this test initially
-            assertXMLEqual(new FileReader(inputFile), new FileReader(outputFile));
-
-        } finally {
-            if (outputFile.exists()) outputFile.delete();
-            if (tempFile.exists()) tempFile.delete();
-        }
+        assertAbout(xml()).that(builder.getDocumentElement()).hasSameContentAs(element);
     }
 }

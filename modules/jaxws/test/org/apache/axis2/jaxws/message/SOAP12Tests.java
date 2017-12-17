@@ -22,11 +22,11 @@ package org.apache.axis2.jaxws.message;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.unitTest.TestLogger;
 import org.apache.log4j.BasicConfigurator;
@@ -101,8 +101,7 @@ public class SOAP12Tests extends TestCase {
         
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReader());
-        String newText = r2w.getAsString();
+        String newText = OMXMLBuilderFactory.createStAXOMBuilder(om.getXMLStreamReader()).getDocumentElement().toString();
         TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleText));
         assertTrue(newText.contains("soap"));
@@ -146,8 +145,7 @@ public class SOAP12Tests extends TestCase {
         
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReaderWithoutCaching());
-        String newText = r2w.getAsString();
+        String newText = OMXMLBuilderFactory.createStAXOMBuilder(om.getXMLStreamReaderWithoutCaching()).getDocumentElement().toString();
         TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleText));
         assertTrue(newText.contains("soap"));
@@ -170,7 +168,7 @@ public class SOAP12Tests extends TestCase {
         // OM
         StringReader sr = new StringReader(sampleSoap12Envelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
         
         // The JAX-WS layer creates a Message from the OM
@@ -208,7 +206,7 @@ public class SOAP12Tests extends TestCase {
         // OM
         StringReader sr = new StringReader(sampleSoap12Envelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
         OMElement omElement = builder.getSOAPEnvelope();
         
         // The JAX-WS layer creates a Message from the OM

@@ -19,9 +19,9 @@
 
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.soap.SOAP11Version;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.SOAPVersion;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
@@ -96,7 +96,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl<SOAPHeaderBlock> impl
      *                       - if this message does not support the SOAP 1.2 concept of Fault Role.
      */
     public void setRole(String uri) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         } else {
             this.omTarget.setRole(uri);
@@ -104,7 +104,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl<SOAPHeaderBlock> impl
     }
 
     public String getRole() {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         } else {
             return this.omTarget.getRole();
@@ -125,7 +125,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl<SOAPHeaderBlock> impl
      *                       support the SOAP 1.2 concept of Relay attribute.
      */
     public void setRelay(boolean flag) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         } else {
             this.omTarget.setRelay(flag);
@@ -133,7 +133,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl<SOAPHeaderBlock> impl
     }
 
     public boolean getRelay() {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             throw new UnsupportedOperationException();
         } else {
             return this.omTarget.getRelay();

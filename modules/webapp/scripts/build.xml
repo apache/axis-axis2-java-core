@@ -72,15 +72,21 @@
 		<war destfile="dist/axis2.war" webxml="webapp/WEB-INF/web.xml">
 			<lib dir="lib">
 				<include name="**" />
+				<exclude name="endorsed/**" />
 				<exclude name="**servlet**" />
-				<exclude name="ant*.jar" />
-				<exclude name="axis2-adb-codegen*.jar"/>
+				<exclude name="axis2-ant-plugin-*.jar" />
+				<exclude name="axis2-*-codegen-*.jar"/>
+				<exclude name="axis2-java2wsdl-*.jar"/>
 				<!-- codegen is required for Rampart because of AXIS2-4265 -->
 				<!-- exclude name="axis2-codegen*.jar"/ -->
-				<exclude name="jibx-bind*.jar"/>
+				<exclude name="commons-cli-*.jar" />
+				<exclude name="jibx-bind-*.jar" />
+				<exclude name="bcel-*.jar" />
+				<exclude name="qdox-*.jar" />
 			</lib>
 			<webinf dir="${temp}/WEB-INF" />
 			<fileset dir="${temp}">
+				<include name="org/apache/axis2/soapmonitor/applet/**/*" />
 				<include name="**/axis2-web/**" />
 			</fileset>
 		</war>

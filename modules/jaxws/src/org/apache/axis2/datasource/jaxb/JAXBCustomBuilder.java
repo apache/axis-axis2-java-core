@@ -21,27 +21,22 @@ package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMSourcedElement;
-import org.apache.axiom.om.impl.builder.CustomBuilder;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.jaxws.Constants;
+import org.apache.axiom.om.ds.custombuilder.CustomBuilder;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * JAXBCustomBuilder creates an OMSourcedElement backed by a JAXBDataSource
  * for the specified namespace and localPart.
  */
-public class JAXBCustomBuilder implements CustomBuilder {
+public class JAXBCustomBuilder implements CustomBuilder, CustomBuilder.Selector {
 
     private static final Log log = LogFactory.getLog(JAXBCustomBuilder.class);
     
@@ -57,33 +52,17 @@ public class JAXBCustomBuilder implements CustomBuilder {
         JAXBCustomBuilderMonitor.updateTotalBuilders();
     }
 
-
-    public OMElement create(String namespace, 
-                            String localPart, 
-                            OMContainer parent,
-                            XMLStreamReader reader, 
-                            OMFactory factory) throws OMException {
-        
-        if (log.isDebugEnabled()) {
-            log.debug("create namespace = " + namespace);
-            log.debug("  localPart = " + localPart);
-            log.debug("  reader = " + reader.getClass());
-        }
-        
-        // There are some situations where we want to use normal
-        // unmarshalling, so return null
-        if (!shouldUnmarshal(namespace, localPart)) {
-            JAXBCustomBuilderMonitor.updateTotalFailedCreates();
-            return null;
-        }
+    @Override
+    public OMDataSource create(OMElement element) throws OMException {
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("create namespace = " + element.getNamespaceURI());
+                log.debug("  localPart = " + element.getLocalName());
+            }
+        
             // Create an OMSourcedElement backed by an unmarshalled JAXB object
             
-            // Currently we cannot control how the unmarshaller will emit the prefix
-            // So if the value of the prefix is needed, full expansion is necessary.
-            OMNamespace ns = factory.createOMNamespace(namespace, null);
-            
-            Object jaxb = jdsContext.unmarshal(reader);
+            Object jaxb = jdsContext.unmarshal(element);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully unmarshalled jaxb object " + jaxb);
             }
@@ -92,48 +71,31 @@ public class JAXBCustomBuilder implements CustomBuilder {
             if (log.isDebugEnabled()) {
                 log.debug("The JAXBDataSource is " + ds);
             }
-            OMSourcedElement omse = factory.createOMElement(ds, localPart, ns);
-            
-            parent.addChild(omse);
             JAXBCustomBuilderMonitor.updateTotalCreates();
-            return omse;
+            return ds;
         } catch (JAXBException e) {
             JAXBCustomBuilderMonitor.updateTotalFailedCreates();
             throw new OMException(e);
         }
     }
     
-    /**
-     * @param namespace
-     * @param localPart
-     * @return true if this ns and local part is acceptable for unmarshalling
-     */
-    private boolean shouldUnmarshal(String namespace, String localPart) {
-        boolean isHighFidelity = HandlerUtils.isHighFidelity(jdsContext.getMessageContext());
-
-        if (isHighFidelity) {
-            if (log.isDebugEnabled()) {
+    @Override
+    public boolean accepts(OMContainer parent, int depth, String namespaceURI, String localName) {
+        if (parent instanceof OMDocument || parent instanceof SOAPBody) {
+            boolean shouldUnmarshal;
+            if (HandlerUtils.isHighFidelity(jdsContext.getMessageContext())) {
                 log.debug("JAXB payload streaming disabled because high fidelity messages are requested.");
+                shouldUnmarshal = false;
+            } else {
+                // Don't unmarshal if this looks like encrypted data
+                shouldUnmarshal = !localName.equals("EncryptedData");
             }
-            return false;
-
-        }
-        
-        // Don't unmarshall SOAPFaults or anything else in the SOAP 
-        // namespace.
-        // Don't unmarshall elements that are unqualified
-        if (localPart == null || namespace == null || namespace.length() == 0 ||
-            SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE.equals(namespace) ||
-            SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(namespace)) {
+            if (!shouldUnmarshal) {
+                JAXBCustomBuilderMonitor.updateTotalFailedCreates();
+            }
+            return shouldUnmarshal;
+        } else {
             return false;
         }
-       
-        // Don't unmarshal if this looks like encrypted data
-        if (localPart.equals("EncryptedData")) {
-            return false;
-        }
-        
-        return true;
-                
     }
 }

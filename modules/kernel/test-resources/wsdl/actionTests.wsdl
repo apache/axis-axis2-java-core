@@ -77,6 +77,34 @@
 			<wsdl:fault name="echoFault" message="tns:echoechoFault1" wsaw:Action="http://example.org/action/echoFault"></wsdl:fault>
 		</wsdl:operation>
 	</wsdl:portType>
+	<wsdl:portType name="withWSAWActionURI">
+        <wsdl:operation name="echo">
+            <wsdl:input message="tns:echoRequest1" wsaw:Action="tns:actiontest/action/echoIn"></wsdl:input>
+            <wsdl:output message="tns:echoResponse1" wsaw:Action="tns:actiontest/action/echoOut"></wsdl:output>
+            <wsdl:fault name="echoFault" message="tns:echoechoFault1" wsaw:Action="tns:actiontest/action/echoFault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="withWSAActionURI" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+        <wsdl:operation name="echo">
+            <wsdl:input message="tns:echoRequest1" wsa:Action="tns:actiontest/action/echoIn"></wsdl:input>
+            <wsdl:output message="tns:echoResponse1" wsa:Action="tns:actiontest/action/echoOut"></wsdl:output>
+            <wsdl:fault name="echoFault" message="tns:echoechoFault1" wsa:Action="tns:actiontest/action/echoFault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="withWSAMActionURI" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata">
+        <wsdl:operation name="echo">
+            <wsdl:input message="tns:echoRequest1" wsam:Action="tns:actiontest/action/echoIn"></wsdl:input>
+            <wsdl:output message="tns:echoResponse1" wsam:Action="tns:actiontest/action/echoOut"></wsdl:output>
+            <wsdl:fault name="echoFault" message="tns:echoechoFault1" wsam:Action="tns:actiontest/action/echoFault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="withWSASubmissionActionURI" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+        <wsdl:operation name="echo">
+            <wsdl:input message="tns:echoRequest1" wsa:Action="tns:actiontest/action/echoIn"></wsdl:input>
+            <wsdl:output message="tns:echoResponse1" wsa:Action="tns:actiontest/action/echoOut"></wsdl:output>
+            <wsdl:fault name="echoFault" message="tns:echoechoFault1" wsa:Action="tns:actiontest/action/echoFault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
 	<wsdl:portType name="withoutWSAWActionNoName">
 		<wsdl:operation name="echo">
 			<wsdl:input message="tns:echoRequest2"></wsdl:input>

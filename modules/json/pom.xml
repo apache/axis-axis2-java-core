@@ -23,9 +23,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-json</artifactId>
     <name>Apache Axis2 - JSON</name>
@@ -71,9 +71,23 @@
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-truth</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -119,10 +133,10 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.test.classpath"/>
-                                    <arg line="-ss -sd -u -or -o ${project.build.directory}/gen -uri test-wsdl/LibraryService.wsdl"/>
+                                    <classpath refid="maven.test.classpath" />
+                                    <arg line="-ss -sd -u -or -o '${project.build.directory}/gen' -uri test-wsdl/LibraryService.wsdl" />
                                 </java>
-                                <delete file="${project.build.directory}/gen/src/org/apache/axis2/json/adb/LibraryServiceSkeleton.java"/>
+                                <delete file="${project.build.directory}/gen/src/org/apache/axis2/json/adb/LibraryServiceSkeleton.java" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -147,6 +161,33 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>json-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <inputDirectory>test-repository/json</inputDirectory>
+                            <outputDirectory>${project.build.directory}/repo/json</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>gson-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <inputDirectory>test-repository/gson</inputDirectory>
+                            <outputDirectory>${project.build.directory}/repo/gson</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -156,11 +197,8 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                            <outputDirectory>${project.build.directory}/repo/gson</outputDirectory>
                             <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
                                 <resource>
                                     <directory>${project.build.directory}/gen/resources</directory>
                                     <targetPath>services/json_adb_test.aar/META-INF</targetPath>

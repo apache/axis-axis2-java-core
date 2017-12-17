@@ -18,19 +18,16 @@
  */
 package org.apache.axis2.saaj;
 
-import javax.xml.soap.SOAPElement;
-
+import org.apache.axiom.om.OMComment;
 import org.w3c.dom.Comment;
 
 public class CommentImpl extends TextImplEx implements Comment {
-
-    public CommentImpl(String data, SOAPElement parent) {
-        super(data, parent);
+    public CommentImpl(OMComment textNode) {
+        super(textNode);
     }
 
-    public CommentImpl(String data, SOAPElement parent,
-                       org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
-        super(data, parent, prevSibling, nextSibling);
+    public CommentImpl(String data) {
+        super(data);
     }
 
     public boolean isComment() {

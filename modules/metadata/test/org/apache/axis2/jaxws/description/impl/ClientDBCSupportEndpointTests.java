@@ -277,7 +277,7 @@ public class ClientDBCSupportEndpointTests extends TestCase {
                 fail("Exception creating File(WSDL): " + e.toString());
             }
             File file = new File(wsdlLocation);
-            url = file.toURL();
+            url = file.toURI().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             fail("Exception converting WSDL file to URL: " + e.toString());

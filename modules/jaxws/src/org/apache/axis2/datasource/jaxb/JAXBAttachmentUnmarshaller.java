@@ -19,28 +19,151 @@
 
 package org.apache.axis2.datasource.jaxb;
 
-import org.apache.axiom.util.stax.xop.MimePartProvider;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axiom.om.OMAttachmentAccessor;
+import org.apache.axiom.om.OMException;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
+import javax.xml.bind.attachment.AttachmentUnmarshaller;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * JAXBAttachmentUnmarshaller
- * <p/>
- * An implementation of the <link>javax.xml.bind.attachment.AttachmentUnmarshaller</link> that is
- * used for deserializing XOP elements into their corresponding binary data packages.
+ * Implementation of the {@link AttachmentUnmarshaller} class that handles the attachments provided
+ * by Axiom through the {@link MimePartProvider} interface. It should be noted that while Axiom only
+ * handles attachments referenced using XOP, {@link AttachmentUnmarshaller} is also used to retrieve
+ * attachments from SwA messages. Hence the {@link #getDataHandlerForSwA(String)} method.
  */
-public class JAXBAttachmentUnmarshaller extends AbstractJAXBAttachmentUnmarshaller {
-    private final MessageContext msgContext;
+public final class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
 
-    public JAXBAttachmentUnmarshaller(MimePartProvider mimePartProvider,
-            MessageContext msgContext) {
-        super(mimePartProvider);
-        this.msgContext = msgContext;
+    private static final Log log = LogFactory.getLog(JAXBAttachmentUnmarshaller.class);
+
+    private final AttachmentContext context;
+    private final OMAttachmentAccessor attachmentAccessor;
+
+    public JAXBAttachmentUnmarshaller(AttachmentContext context, OMAttachmentAccessor attachmentAccessor) {
+        this.context = context;
+        this.attachmentAccessor = attachmentAccessor;
     }
 
-    @Override
-    protected DataHandler getDataHandlerForSwA(String blobcid) {
-        return msgContext.getAttachment(blobcid);
+    public final boolean isXOPPackage() {
+        
+        // Any message that is received might contain MTOM.
+        // So always return true.
+        boolean value = true;
+    
+        if (log.isDebugEnabled()){ 
+            log.debug("isXOPPackage returns " + value);
+        }
+        return value;
+    }
+
+    public final byte[] getAttachmentAsByteArray(String cid) {
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to retrieve attachment [" + cid + "] as a byte[]");
+        }
+        DataHandler dh = getAttachmentAsDataHandler(cid);
+        if (dh != null) {
+            try {
+                return convert(dh);
+            } catch (IOException ioe) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception occurred while getting the byte[] " + ioe);
+                }
+                throw new OMException(ioe);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("returning null byte[]");
+        }
+        return null;
+    }
+
+    public final DataHandler getAttachmentAsDataHandler(String cid) {
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to retrieve attachment [" + cid + "] as a DataHandler");
+        }
+
+        DataHandler dh = getDataHandler(cid);
+        if (dh != null) {
+            return dh;
+        } else {
+            String cid2 = getNewCID(cid);
+            if (log.isDebugEnabled()) {
+                log.debug("A dataHandler was not found for [" + cid + "] trying [" + cid2 + "]");
+            }
+            dh = getDataHandler(cid2);
+            if (dh != null) {
+                return dh;
+            }
+        }
+        // No Data Handler found
+        throw new OMException(Messages.getMessage("noDataHandler", cid));
+    }
+    
+    /**
+     * @param cid
+     * @return cid with translated characters
+     */
+    private String getNewCID(String cid) {
+        String cid2 = cid;
+
+        try {
+            cid2 = java.net.URLDecoder.decode(cid, "UTF-8");
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("getNewCID decoding " + cid + " as UTF-8 decoding error: " + e);
+            }
+        }
+        return cid2;
+    }
+
+    /**
+     * Read the bytes from the DataHandler
+     * 
+     * @param dh
+     * @return byte[]
+     * @throws IOException
+     */
+    private byte[] convert(DataHandler dh) throws IOException {
+        if (log.isDebugEnabled()) {
+            log.debug("Reading byte[] from DataHandler " + dh);
+        }
+        InputStream is = dh.getInputStream();
+        if (log.isDebugEnabled()) {
+            log.debug("DataHandler InputStream " + is);
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] b = new byte[1024];
+        int num = is.read(b);
+        if (log.isDebugEnabled()) {
+            if (num <= 0) {
+                log.debug("DataHandler InputStream contains no data. num=" + num);
+            }
+        }
+        while (num > 0) {
+            baos.write(b, 0, num);
+            num = is.read(b);
+        }
+        return baos.toByteArray();
+    }
+    
+    private DataHandler getDataHandler(String cid) {
+        String blobcid = cid;
+        if (blobcid.startsWith("cid:")) {
+            blobcid = blobcid.substring(4);
+        }
+        DataHandler dh = attachmentAccessor.getDataHandler(blobcid);
+        if (dh == null) {
+            dh = context.getDataHandlerForSwA(blobcid);
+        }
+        if (dh != null) {
+            JAXBAttachmentUnmarshallerMonitor.addBlobCID(blobcid);
+        }
+        return dh;
     }
 }

@@ -20,7 +20,6 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
@@ -193,50 +192,6 @@ public class SOAPPartTest extends Assert {
         assertTrue(node == null);
         
         SOAPElement e = sp.getParentElement();
-        assertTrue(node == null);
-    }
-    
-    /**
-     * Check parent processing of SOAPMessage
-     */
-    // TODO: check why this fails with Sun's SAAJ implementation
-    @Test
-    public void test_parentAccess2() throws Exception {
-
-        MessageFactory mf = MessageFactory.newInstance();
-        SOAPMessage m = mf.createMessage();
-        SOAPPart sp = m.getSOAPPart();
-        SOAPEnvelope se = sp.getEnvelope();
-        Node node = se.getParentNode();
-        assertTrue(node == sp);
-        node = node.getParentNode();
-        assertTrue(node == null);
-
-        SOAPElement e = se.getParentElement();
-        assertTrue(node == null);
-    }
-    
-    /**
-     * Check parent processing of SOAPMessage
-     */
-    @Validated @Test
-    public void test_parentAccess3() throws Exception {
-
-        SOAP11Factory axiomSF = new SOAP11Factory();
-        org.apache.axiom.soap.SOAPEnvelope axiomSE = axiomSF.createSOAPEnvelope();
-        org.apache.axiom.soap.SOAPMessage axiomSM = axiomSF.createSOAPMessage();
-        axiomSM.setSOAPEnvelope(axiomSE);
-        
-        SOAPEnvelopeImpl se = new SOAPEnvelopeImpl(axiomSE);
-        SOAPMessageImpl sm = new SOAPMessageImpl(se);
-        SOAPPartImpl sp = new SOAPPartImpl(sm, se);
-        
-        Node node = se.getParentNode();
-        assertTrue(node == sp);
-        node = node.getParentNode();
-        assertTrue(node == null);
-
-        SOAPElement e = se.getParentElement();
         assertTrue(node == null);
     }
     

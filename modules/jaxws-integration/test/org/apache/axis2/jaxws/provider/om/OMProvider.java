@@ -19,8 +19,9 @@
 package org.apache.axis2.jaxws.provider.om;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -32,8 +33,6 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
@@ -65,7 +64,7 @@ public class OMProvider implements Provider<OMElement> {
 
 
     private static String response = "<invokeOp>Hello Dispatch OM</invokeOp>";
-    private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
     public OMElement invoke(OMElement om) throws SOAPFaultException{
         try{
             StringReader sr = null;
@@ -83,8 +82,7 @@ public class OMProvider implements Provider<OMElement> {
            }else{
                sr = new StringReader(SOAP11_ENVELOPE_HEAD+"null request"+SOAP11_ENVELOPE_TAIL);
            }
-            XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-            StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inputReader, null); 
+            SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(sr); 
             SOAPEnvelope responseOM = (SOAPEnvelope) builder.getDocumentElement();
 
             return responseOM;

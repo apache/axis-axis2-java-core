@@ -197,21 +197,14 @@ public class ModuleDeployer extends AbstractDeployer {
         }
 
         try {
-            ClassLoader deploymentClassLoader = Utils.createClassLoader(new URL[] { fileUrl },
-                    axisConfig.getModuleClassLoader(), true,
+            ClassLoader deploymentClassLoader = Utils.createClassLoader(fileUrl, null,
+                    axisConfig.getModuleClassLoader(),
                     (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                     axisConfig.isChildFirstClassLoading());
             AxisModule module = new AxisModule();
             module.setModuleClassLoader(deploymentClassLoader);
             module.setParent(axisConfig);
-            int index = fileUrl.getPath().lastIndexOf(File.separator);
-            String moduleFile;
-            if(index > 0){
-                moduleFile = fileUrl.getPath().substring(index);                
-            } else {
-                moduleFile = fileUrl.getPath();                
-            }            
-            module.setArchiveName(moduleFile);
+            module.setArchiveName(DescriptionBuilder.getShortFileName(deploymentFileData.getName()));
             populateModule(module, fileUrl);
             module.setFileName(fileUrl);
             DeploymentEngine.addNewModule(module, axisConfig);

@@ -676,7 +676,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					WSDLSerializationUtil.addExtensionElement(fac, port,
 							SOAP_ADDRESS, LOCATION, (endpointURL == null) ? ""
 									: endpointURL, soap);
-					generateEPRElement(fac, port, endpointURL);
+					generateEPRElement(axisEndpoint, fac, port, endpointURL);
 					addPolicyAsExtElement(axisEndpoint, port);
 					service.addChild(modifyPort(port));
 					if (isAlreadyAdded(axisBinding, definition)) {
@@ -726,7 +726,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					WSDLSerializationUtil.addExtensionElement(fac, port,
 							SOAP_ADDRESS, LOCATION, (endpointURL == null) ? ""
 									: endpointURL, soap12);
-					generateEPRElement(fac, port, endpointURL);
+					generateEPRElement(axisEndpoint, fac, port, endpointURL);
 					addPolicyAsExtElement(axisEndpoint, port);
 					service.addChild(modifyPort(port));
 					if (isAlreadyAdded(axisBinding, definition)) {
@@ -1310,10 +1310,10 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			OMElement definitionElement) {
 		QName bindingName = axisBinding.getName();
 		QName name = new QName("name");
-		for (Iterator iterator = definitionElement
+		for (Iterator<OMElement> iterator = definitionElement
 				.getChildrenWithName(new QName(wsdl.getNamespaceURI(),
 						BINDING_LOCAL_NAME)); iterator.hasNext();) {
-			OMElement element = (OMElement) iterator.next();
+			OMElement element = iterator.next();
 			String value = element.getAttributeValue(name);
 			if (bindingName.getLocalPart().equals(value)) {
 				return true;
@@ -1351,27 +1351,61 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
             }
 	}
 	
-	/**
-	 * Generate the Identity element according to the WS-AddressingAndIdentity if the 
-	 * AddressingConstants.IDENTITY_PARAMETER parameter is set. 
-	 * http://schemas.xmlsoap.org/ws/2006/02/addressingidentity/ 
-	 */
-	
-	private void generateIdentityElement(OMFactory fac,OMElement epr, Parameter wsaIdParam) {
-	    
-	    // Create the Identity element
-	    OMElement identity = fac.createOMElement(AddressingConstants.QNAME_IDENTITY);
-	    OMElement keyInfo = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_KEY_INFO);
-	    OMElement x509Data = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_X509_DATA);
-	    OMElement x509cert = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_X509_CERT);
-	    x509cert.setText((String)wsaIdParam.getValue());
-	    
-	    x509Data.addChild(x509cert);
-	    keyInfo.addChild(x509Data);
-	    identity.addChild(keyInfo);
-	    
-	    epr.addChild(identity);
-	    
+    /**
+     * Generate a &lt;wsid:Identity&gt; element according to the <a
+     * href="http://www.oasis-open.org/committees/download.php/29516/ws-addressingandidentity.doc"
+     * >WS-AddressingAndIdentity specification</a> and add it as a child of the given
+     * <code>epr</code> &lt;wsa:EndpointReference&gt; element.
+     * <p>
+     * If none of the <code>identityParameter</code> and <code>x509CertIdentityParameter</code>
+     * configures a valid value, this method will skip creating and adding an identity element.
+     * </p>
+     * 
+     * @param fac
+     *            A factory to use for creating OMElements.
+     * @param epr
+     *            The endpoint reference element to add the generated identity element to. Must not
+     *            be <code>null</code>.
+     * @param identity
+     *            An optional &lt;wsid:Identity&gt; OMElement to clone and use, instead of
+     *            generating a new one.
+     * @param x509CertIdentityParameter
+     *            An optional parameter that may contain a &lt;ds:X509Certificate&gt; String literal
+     *            value to set as key info in the created identity element.
+     */
+    private void generateIdentityElement(OMFactory fac, OMElement epr, OMElement identity, Parameter x509CertIdentityParameter) {
+        if (identity != null) {
+            identity = identity.cloneOMElement();
+            epr.addChild(identity);
+        }
+            
+        if (x509CertIdentityParameter != null && x509CertIdentityParameter.getValue() != null) {
+            if (identity == null) {
+                identity = fac.createOMElement(AddressingConstants.QNAME_IDENTITY);
+                epr.addChild(identity);
+            }
+            
+            OMElement keyInfo = identity.getFirstChildWithName(AddressingConstants.QNAME_IDENTITY_KEY_INFO);
+            if (keyInfo == null) {
+                keyInfo = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_KEY_INFO);
+                identity.addChild(keyInfo);
+            }
+            
+            OMElement x509Data = keyInfo.getFirstChildWithName(AddressingConstants.QNAME_IDENTITY_X509_DATA);
+            if (x509Data == null) {
+                x509Data = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_X509_DATA);
+                keyInfo.addChild(x509Data);
+            }
+            
+            OMElement x509cert = x509Data.getFirstChildWithName(AddressingConstants.QNAME_IDENTITY_X509_CERT);
+            if (x509cert == null) {
+                x509cert = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_X509_CERT);
+                x509Data.addChild(x509cert);
+            }
+            
+            String x509CertValue = (String) x509CertIdentityParameter.getValue();
+            x509cert.setText(x509CertValue);
+        }
 	}
 	
 	
@@ -1384,12 +1418,15 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
          * </wsa:EndpointReference>
 	 * 
 	 */
-	private void generateEPRElement(OMFactory fac, OMElement port, String endpointURL){
+	private void generateEPRElement(AxisEndpoint endpoint, OMFactory fac, OMElement port, String endpointURL){
+	    //an optional String parameter that contains x509 certificate information 
+	    Parameter x509CertIdentityParameter = axisService.getParameter(AddressingConstants.IDENTITY_PARAMETER);
 	    
-	    Parameter parameter = axisService.getParameter(AddressingConstants.IDENTITY_PARAMETER);
-	            
-	    // If the parameter is not set, return
-	    if (parameter == null || parameter.getValue() == null) {
+	    //an optional OMElement parameter that represents an <wsid:Identity> element
+	    OMElement identityElement = AddressingHelper.getAddressingIdentityParameterValue(endpoint);
+
+	    if ((x509CertIdentityParameter == null || x509CertIdentityParameter.getValue() == null) && identityElement == null) {
+	        //none of these is configured, for backward compatibility do not generate anything and return
 	        return;
 	    }
 	    
@@ -1401,7 +1438,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	    wsaEpr.addChild(address);
 	    
 	    // This will generate the identity element if the service parameter is set
-	    generateIdentityElement(fac, wsaEpr, parameter);
+	    generateIdentityElement(fac, wsaEpr, identityElement, x509CertIdentityParameter);
 	    
 	    port.addChild(wsaEpr);   
 	    

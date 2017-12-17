@@ -27,11 +27,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.activation.DataHandler;
-import javax.mail.internet.ContentType;
 
 import junit.framework.Assert;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;

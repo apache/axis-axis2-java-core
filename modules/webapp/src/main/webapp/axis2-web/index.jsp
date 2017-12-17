@@ -17,17 +17,17 @@
   ~ under the License.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" session="false" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <jsp:include page="include/httpbase.jsp"/>
+    <jsp:include page="/WEB-INF/include/httpbase.jsp"/>
     <title>Axis 2 - Home</title>
     <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
   </head>
 
   <body>
-    <jsp:include page="include/header.inc"/>
+    <jsp:include page="/WEB-INF/include/header.inc"/>
     <br>
 
     <h1>Welcome!</h1>
@@ -54,6 +54,6 @@
         Console for administering this Axis2 installation.
       </li>
     </ul>
-    <jsp:include page="include/footer.inc"/>
+    <jsp:include page="/WEB-INF/include/footer.inc"/>
   </body>
 </html>

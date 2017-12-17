@@ -512,11 +512,6 @@ public class HTTPConstants {
     public static final String AUTO_RELEASE_CONNECTION = "AutoReleaseConnection" ;
 
     /**
-     * Cleanup response
-     */
-    public static final String CLEANUP_RESPONSE = "CleanupResponse";
-
-    /**
      * Method getBytes.
      *
      * @param data

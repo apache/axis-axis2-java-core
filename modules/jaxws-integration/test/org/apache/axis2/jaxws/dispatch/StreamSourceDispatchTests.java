@@ -21,12 +21,11 @@ package org.apache.axis2.jaxws.dispatch;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
@@ -35,6 +34,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.concurrent.Future;
 
 /**
@@ -43,10 +43,6 @@ import java.util.concurrent.Future;
  *
  */
 public class StreamSourceDispatchTests extends AbstractTestCase {
-
-    private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-    
-    
     public static Test suite() {
         return getTestSetup(new TestSuite(StreamSourceDispatchTests.class));
     }
@@ -75,9 +71,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
 		assertNotNull(response);
         
         // Prepare the response content for checking
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String responseText = r2w.getAsString();
+        StringWriter sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        String responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -96,9 +92,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
         
         // Prepare the response content for checking
-        reader = inputFactory.createXMLStreamReader(response);
-        r2w = new Reader2Writer(reader);
-        responseText = r2w.getAsString();
+        sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -131,9 +127,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
 
         // Prepare the response content for checking
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String responseText = r2w.getAsString();
+        StringWriter sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        String responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -151,9 +147,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
 
         // Prepare the response content for checking
-        reader = inputFactory.createXMLStreamReader(response);
-        r2w = new Reader2Writer(reader);
-        responseText = r2w.getAsString();
+        sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -197,9 +193,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
         
         // Prepare the response content for checking
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String responseText = r2w.getAsString();
+        StringWriter sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        String responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -226,9 +222,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
         
         // Prepare the response content for checking
-        reader = inputFactory.createXMLStreamReader(response);
-        r2w = new Reader2Writer(reader);
-        responseText = r2w.getAsString();
+        sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -272,9 +268,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
 
         // Prepare the response content for checking
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String responseText = r2w.getAsString();
+        StringWriter sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        String responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -306,9 +302,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
 
         // Prepare the response content for checking
-        reader = inputFactory.createXMLStreamReader(response);
-        r2w = new Reader2Writer(reader);
-        responseText = r2w.getAsString();
+        sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -348,9 +344,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
         
         // Prepare the response content for checking
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String responseText = r2w.getAsString();
+        StringWriter sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        String responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -376,9 +372,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
         
         // Prepare the response content for checking
-        reader = inputFactory.createXMLStreamReader(response);
-        r2w = new Reader2Writer(reader);
-        responseText = r2w.getAsString();
+        sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -419,9 +415,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
 
         // Prepare the response content for checking
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
-        Reader2Writer r2w = new Reader2Writer(reader);
-        String responseText = r2w.getAsString();
+        StringWriter sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        String responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -448,9 +444,9 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertNotNull(response);
 
         // Prepare the response content for checking
-        reader = inputFactory.createXMLStreamReader(response);
-        r2w = new Reader2Writer(reader);
-        responseText = r2w.getAsString();
+        sw = new StringWriter();
+        OMXMLBuilderFactory.createOMBuilder(response).getDocument().serializeAndConsume(sw);
+        responseText = sw.toString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct

@@ -23,9 +23,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-fastinfoset</artifactId>
     <name>Apache Axis2 - Fast Infoset</name>
@@ -54,10 +54,6 @@
             <artifactId>commons-logging</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
         </dependency>
@@ -69,24 +65,13 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-codegen</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
@@ -105,8 +90,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-truth</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -170,14 +155,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-repo-maven-plugin</artifactId>
                 <executions>
@@ -200,9 +177,6 @@
                         <phase>generate-test-sources</phase>
                         <configuration>
                             <tasks unless="maven.test.skip">
-                                <!-- Set a property that can be picked up from the ant build.xml's -->
-                                <property name="maven.class.path" refid="maven.runtime.classpath" />
-                                <property name="maven.test.path" refid="maven.compile.classpath" />
                                 <mkdir dir="target/test-classes" />
 
                                 <property name="axis2.home" value="${basedir}/target" />
@@ -224,7 +198,7 @@
                                 <echo>Generating the WSDL</echo>
                                 <java classname="org.apache.ws.java2wsdl.Java2WSDL" fork="true">
                                     <classpath>
-                                        <path refid="maven.dependency.classpath" />
+                                        <path refid="maven.test.classpath" />
                                         <pathelement location="target/test-classes" />
                                     </classpath>
                                     <arg line="-o target/test-classes -of SimpleAddService.wsdl -efd unqualified -cn org.apache.axis2.fastinfoset.SimpleAddService" />
@@ -234,7 +208,7 @@
                                 <mkdir dir="${wsdl.output.base.dir}/simpleAddService" />
 
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.runtime.classpath" />
+                                    <classpath refid="maven.test.classpath" />
                                     <classpath location="${compiled.classes.dir}" />
                                     <arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or" />
                                 </java>

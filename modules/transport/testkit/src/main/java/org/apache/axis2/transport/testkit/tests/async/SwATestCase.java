@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -46,7 +47,7 @@ public class SwATestCase extends AsyncMessageTestCase<XMLMessage> {
     private String contentID;
     
     public SwATestCase(AsyncChannel channel, AsyncTestClient<XMLMessage> client, AsyncEndpoint<XMLMessage> endpoint, Object... resources) {
-        super(channel, client, endpoint, XMLMessage.Type.SWA.getContentType(), "UTF-8", resources);
+        super(channel, client, endpoint, new ContentType(XMLMessage.Type.SWA.getContentType()), "UTF-8", resources);
     }
     
     @Override

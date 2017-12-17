@@ -24,7 +24,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -98,7 +99,7 @@ public class SAAJConverterTests extends TestCase {
 		// Bootstrap: Create an OM SOAPEnvelope from the sample text
 		StringReader sr = new StringReader(sampleEnvelope);
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+		SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
 		org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
 		
 		// Step 1: Get the SAAJConverter object from the Factory
@@ -137,7 +138,7 @@ public class SAAJConverterTests extends TestCase {
 		// Bootstrap: Create an OM SOAPEnvelope from the sample text.
 		StringReader sr = new StringReader(sampleEnvelope);
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+		SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
 		org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
 		
 		// Bootstrap: Get an OMElement from the body
@@ -203,7 +204,7 @@ public class SAAJConverterTests extends TestCase {
 		// Bootstrap: Create an OM SOAPEnvelope from the sample text
 		StringReader sr = new StringReader(sampleEnvelope1);
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+		SOAPModelBuilder builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(inflow);
 		org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
 		
 		// Step 1: Get the SAAJConverter object from the Factory

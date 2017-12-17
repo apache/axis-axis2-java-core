@@ -23,7 +23,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -59,7 +58,7 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
                 createConfigurationContextFromFileSystem(null, null);
     }
 
-    public void testServiceCreate() throws AxisFault {
+    public void test() throws Exception {
         AxisConfiguration axisConfig = configContext.getAxisConfiguration();
         AxisService axisService =
                 AxisService.createService("org.apache.axis2.rest.StockService", axisConfig);
@@ -133,10 +132,6 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
         axisConfig.addService(axisService);
         assertEquals("StockService", axisService.getName());
 
-    }
-
-    public void testRESTMethods() throws AxisFault {
-
         HttpClient httpClient = new HttpClient();
 
         String url1 = "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
@@ -153,10 +148,6 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
             OMElement returnElem = response.getFirstChildWithName(new QName("return"));
             assertEquals("IBM stock added with value : 34.7", returnElem.getText());
 
-        } catch (Exception e) {
-            System.err.println("Error occurred while trying to invoke method: " + e.getMessage());
-            e.printStackTrace();
-            fail("Caught exception " + e.toString());
         } finally {
             method1.releaseConnection();
         }
@@ -176,10 +167,6 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
             OMElement returnElem = response.getFirstChildWithName(new QName("return"));
             assertEquals("34.7", returnElem.getText());
 
-        } catch (Exception e) {
-            System.err.println("Error occurred while trying to invoke method: " + e.getMessage());
-            e.printStackTrace();
-            fail("Caught exception " + e.toString());
         } finally {
             method2.releaseConnection();
         }

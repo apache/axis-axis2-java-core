@@ -24,13 +24,9 @@ import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMMetaFactory;
-import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -61,7 +57,6 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -139,14 +134,12 @@ public class SOAPPartImpl extends SOAPPart {
 
         String charset;
         boolean isMTOM;
-        String soapEnvelopeNamespaceURI;
         OMMetaFactory metaFactory = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM);
         SOAPFactory soapFactory;
         if (contentType == null) {
             charset = null;
             isMTOM = false;
-            soapFactory = metaFactory.getSOAP11Factory();
-            soapEnvelopeNamespaceURI = null;
+            soapFactory = null;
         } else {
             MediaType baseType = contentType.getMediaType();
             MediaType soapContentType;
@@ -168,10 +161,8 @@ public class SOAPPartImpl extends SOAPPart {
             }
             
             if (soapContentType.equals(MediaType.TEXT_XML)) {
-                soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                 soapFactory = metaFactory.getSOAP11Factory();
             } else if (soapContentType.equals(MediaType.APPLICATION_SOAP_XML)) {
-                soapEnvelopeNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                 soapFactory = metaFactory.getSOAP12Factory();
             } else {
                 throw new SOAPException("Unrecognized content type '" + soapContentType + "'");
@@ -180,31 +171,18 @@ public class SOAPPartImpl extends SOAPPart {
             charset = contentType.getParameter("charset");
         }
         
-        XMLStreamReader streamReader;
-        try {
-            if (charset != null) {
-            	streamReader = StAXUtils.createXMLStreamReader(inputStream, charset);
-            } else {
-            	streamReader = StAXUtils.createXMLStreamReader(inputStream);                	
-            }
-        } catch (XMLStreamException e) {
-            throw new SOAPException(e);
-        }
-
-        StAXSOAPModelBuilder builder;
+        SOAPModelBuilder builder;
         if (isMTOM && attachments != null) {
-            builder = new MTOMStAXSOAPModelBuilder(streamReader,
-                                                   soapFactory,
-                                                   attachments,
-                                                   soapEnvelopeNamespaceURI);
+            builder = OMXMLBuilderFactory.createSOAPModelBuilder(metaFactory, attachments);
         } else {
-            builder = new StAXSOAPModelBuilder(streamReader,
-                                               soapFactory,
-                                               soapEnvelopeNamespaceURI);
+            builder = OMXMLBuilderFactory.createSOAPModelBuilder(metaFactory, inputStream, charset);
         }
         
         try {
             org.apache.axiom.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
+            if (soapFactory != null && soapEnvelope.getOMFactory() != soapFactory) {
+                throw new SOAPException("SOAP version of message doesn't match Content-Type");
+            }
             envelope = new SOAPEnvelopeImpl(soapEnvelope);
             envelope.omTarget.build();
             this.document = envelope.getOwnerDocument();
@@ -354,9 +332,8 @@ public class SOAPPartImpl extends SOAPPart {
                 reader = inputFactory.createXMLStreamReader(is);
             }
 
-            StAXSOAPModelBuilder builder1 = new StAXSOAPModelBuilder(reader,
-                                                (SOAPFactory)this.envelope.omTarget
-                                                        .getOMFactory(), null);
+            SOAPModelBuilder builder1 = OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+                    envelope.omTarget.getOMFactory().getMetaFactory(), reader);
 
             envelope = new SOAPEnvelopeImpl(builder1.getSOAPEnvelope());
             envelope.omTarget.build();
@@ -1192,7 +1169,7 @@ public class SOAPPartImpl extends SOAPPart {
     	throw new IllegalStateException("Cannot set value of SOAPPart.");
     }
     
-    javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode) {
-        return SAAJNode.toSAAJNode(domNode, this);
+    Node toSAAJNode(org.w3c.dom.Node domNode) {
+        return ProxyNode.toSAAJNode(domNode, this);
     }
 }

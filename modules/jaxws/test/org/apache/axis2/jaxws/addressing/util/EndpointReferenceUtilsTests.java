@@ -22,7 +22,8 @@ package org.apache.axis2.jaxws.addressing.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.addressing.EndpointReference;
@@ -84,7 +85,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
     public void test200508ConversionStartingFromAxis2() throws Exception {
         XMLStreamReader parser =
             XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(EPR200508));
-        StAXOMBuilder builder = new StAXOMBuilder(parser);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(parser);
         OMElement omElement = builder.getDocumentElement();
         
         EndpointReference axis2EPR =
@@ -125,7 +126,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
     public void test200408ConversionStartingFromAxis2() throws Exception {
         XMLStreamReader parser =
             XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(EPR200408));
-        StAXOMBuilder builder = new StAXOMBuilder(parser);
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(parser);
         OMElement omElement = builder.getDocumentElement();
         
         EndpointReference axis2EPR =

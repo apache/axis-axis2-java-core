@@ -14,7 +14,6 @@ Pre-Requisites
  * Install Apache Ant 1.6.2 or later.
  * Please create a directory named lib under the directory that contains this file.
  * Download the following libraries and drop them into the new lib directory:
-   * Latest stax-utils jar from https://stax-utils.dev.java.net/servlets/ProjectDocumentList?folderID=1106
    * Version 1.0.4 of Castor jar from http://dist.codehaus.org/castor/1.0.4/castor-1.0.4.jar.
      (The latest releases of castor are available at http://www.castor.org/download.html, but this example may not run 	
      with versions later than 1.0.4)

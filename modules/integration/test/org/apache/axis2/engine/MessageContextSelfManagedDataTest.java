@@ -44,8 +44,8 @@ import org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -238,9 +238,9 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         transportOut = new TransportOutDescription("null");
         transportOut2 = new TransportOutDescription("happy");
         transportOut3 = new TransportOutDescription("golucky");
-        transportOut.setSender(new CommonsHTTPTransportSender());
-        transportOut2.setSender(new CommonsHTTPTransportSender());
-        transportOut3.setSender(new CommonsHTTPTransportSender());
+        transportOut.setSender(new HTTPClient4TransportSender());
+        transportOut2.setSender(new HTTPClient4TransportSender());
+        transportOut3.setSender(new HTTPClient4TransportSender());
         axisConfiguration.addTransportOut(transportOut3);
         axisConfiguration.addTransportOut(transportOut2);
         axisConfiguration.addTransportOut(transportOut);

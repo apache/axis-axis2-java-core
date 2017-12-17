@@ -119,11 +119,11 @@ public class AxisDataLocatorImpl implements AxisDataLocator {
     * caching ServiceData for Axis2 Data Locators
     */
     private void cachingServiceData(OMElement e) {
-        Iterator i = e.getChildrenWithName(new QName(
+        Iterator<OMElement> i = e.getChildrenWithName(new QName(
                 DRConstants.SERVICE_DATA.DATA));
         String saveKey = "";
         while (i.hasNext()) {
-            ServiceData data = new ServiceData((OMElement) i.next());
+            ServiceData data = new ServiceData(i.next());
             saveKey = data.getDialect();
 
             String identifier = data.getIdentifier();

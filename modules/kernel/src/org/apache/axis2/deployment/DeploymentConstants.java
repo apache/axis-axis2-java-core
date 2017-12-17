@@ -95,7 +95,9 @@ public interface DeploymentConstants {
     String TAG_EXTRACT_SERVICE_ARCHIVE = "extractServiceArchive";
     String TAG_DISPATCH_ORDER = "dispatchOrder";
     String TAG_DISPATCHER = "dispatcher";
-    String TAG_DESCRIPTION = "Description";
+    String TAG_DESCRIPTION = "description";
+    // Alternate description tag; see AXIS2-5884
+    String TAG_DESCRIPTION_ALT = "Description";
     String TAG_CLASS_NAME = "class";
     String TAG_LIST_ID = "listId";
     String TAG_EXCLUDE_PROPERTIES= "excludeProperties";

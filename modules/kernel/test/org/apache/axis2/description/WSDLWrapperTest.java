@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
@@ -33,7 +34,6 @@ import org.xml.sax.SAXParseException;
 import javax.wsdl.Definition;
 import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -115,7 +115,7 @@ public class WSDLWrapperTest extends TestCase {
                       .createConfigurationContextFromFileSystem(null, axis2xml)
                       .getAxisConfiguration();
 
-            WSDLDefinitionWrapper passthru = new WSDLDefinitionWrapper(def1, testResourceFile1.toURL(), false);
+            WSDLDefinitionWrapper passthru = new WSDLDefinitionWrapper(def1, testResourceFile1.toURI().toURL(), false);
 
             Definition def_passthru = passthru.getUnwrappedDefinition();
             String def_passthru_str = def_passthru.toString();
@@ -123,7 +123,7 @@ public class WSDLWrapperTest extends TestCase {
             String def_passthru_namespace = def_passthru.getTargetNamespace();
             Types def_passthru_types = def_passthru.getTypes();
 
-            WSDLDefinitionWrapper serialize = new WSDLDefinitionWrapper(def1, testResourceFile1.toURL(), axisCfg); 
+            WSDLDefinitionWrapper serialize = new WSDLDefinitionWrapper(def1, testResourceFile1.toURI().toURL(), axisCfg); 
 
             Definition def_serialize = serialize.getUnwrappedDefinition();
             String def_serialize_str = def_serialize.toString();
@@ -131,7 +131,7 @@ public class WSDLWrapperTest extends TestCase {
             String def_serialize_namespace = def_serialize.getTargetNamespace();
             Types def_serialize_types = def_serialize.getTypes();
 
-            WSDLDefinitionWrapper reload = new WSDLDefinitionWrapper(def1, testResourceFile1.toURL(), 2); 
+            WSDLDefinitionWrapper reload = new WSDLDefinitionWrapper(def1, testResourceFile1.toURI().toURL(), 2); 
 
             Definition def_reload = reload.getUnwrappedDefinition();
             String def_reload_str = def_reload.toString();
@@ -148,7 +148,7 @@ public class WSDLWrapperTest extends TestCase {
 
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
 
         // switch off the verbose mode for all usecases
         reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);

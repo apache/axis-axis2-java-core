@@ -20,15 +20,14 @@
 package org.apache.axis2.scripting.convertors;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.xmlbeans.XmlObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Wrapper;
 import org.mozilla.javascript.xml.XMLObject;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * JSObjectConvertor converts between OMElements and JavaScript E4X XML objects
@@ -76,16 +75,10 @@ public class JSOMElementConvertor extends DefaultOMElementConvertor {
         Scriptable jsXML = (Scriptable) ScriptableObject.callMethod((Scriptable) o, "copy", new Object[0]);
         Wrapper wrapper = (Wrapper) ScriptableObject.callMethod((XMLObject)jsXML, "getXmlObject", new Object[0]);
         XmlObject xmlObject = (XmlObject)wrapper.unwrap();
-        try {
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(xmlObject.newInputStream());
+        OMElement omElement = builder.getDocumentElement();
 
-            StAXOMBuilder builder = new StAXOMBuilder(xmlObject.newInputStream());
-            OMElement omElement = builder.getDocumentElement();
-
-            return omElement;
-
-        } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        }
+        return omElement;
     }
 
 }

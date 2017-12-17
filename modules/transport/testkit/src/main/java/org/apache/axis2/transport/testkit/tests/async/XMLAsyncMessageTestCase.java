@@ -21,6 +21,7 @@ package org.apache.axis2.transport.testkit.tests.async;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -39,7 +40,7 @@ public class XMLAsyncMessageTestCase extends AsyncMessageTestCase<XMLMessage> {
     private final MessageTestData data;
     
     public XMLAsyncMessageTestCase(AsyncChannel channel, AsyncTestClient<XMLMessage> client, AsyncEndpoint<XMLMessage> endpoint, XMLMessage.Type xmlMessageType, MessageTestData data, Object... resources) {
-        super(channel, client, endpoint, xmlMessageType.getContentType(), data.getCharset(), resources);
+        super(channel, client, endpoint, new ContentType(xmlMessageType.getContentType()), data.getCharset(), resources);
         this.xmlMessageType = xmlMessageType;
         this.data = data;
     }

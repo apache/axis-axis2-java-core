@@ -29,60 +29,15 @@ import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaAny;
-import org.apache.ws.commons.schema.XmlSchemaAnyAttribute;
-import org.apache.ws.commons.schema.XmlSchemaAttribute;
-import org.apache.ws.commons.schema.XmlSchemaAttributeGroup;
-import org.apache.ws.commons.schema.XmlSchemaAttributeGroupMember;
-import org.apache.ws.commons.schema.XmlSchemaAttributeGroupRef;
-import org.apache.ws.commons.schema.XmlSchemaAttributeOrGroupRef;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexContent;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaContent;
-import org.apache.ws.commons.schema.XmlSchemaContentModel;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaExternal;
-import org.apache.ws.commons.schema.XmlSchemaFacet;
-import org.apache.ws.commons.schema.XmlSchemaGroup;
-import org.apache.ws.commons.schema.XmlSchemaGroupParticle;
-import org.apache.ws.commons.schema.XmlSchemaGroupRef;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
-import org.apache.ws.commons.schema.XmlSchemaTotalDigitsFacet;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.utils.XmlSchemaObjectBase;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +66,9 @@ public class SchemaCompiler {
     //the list of processedElements for the outer elements
     private HashMap<QName, String> processedElementMap;
 
-    private HashMap<XmlSchemaElement, BeanWriterMetaInfoHolder> processedAnonymousComplexTypesMap;
+    //need to use IdentityHashMap to store processedAnonymousComplexTypes
+    //because the key used with the map, XmlSchemaElement, is not immutable
+    private IdentityHashMap<XmlSchemaElement, BeanWriterMetaInfoHolder> processedAnonymousComplexTypesMap;
 
     //we need this map to keep the referenced elements. these elements need to be kept seperate
     //to avoid conflicts
@@ -211,7 +168,7 @@ public class SchemaCompiler {
         processedElementMap = new HashMap<QName, String>();
         simpleTypesMap = new HashMap<QName, String>();
         processedElementList = new ArrayList<QName>();
-        processedAnonymousComplexTypesMap = new HashMap<XmlSchemaElement, BeanWriterMetaInfoHolder>();
+        processedAnonymousComplexTypesMap = new IdentityHashMap<XmlSchemaElement, BeanWriterMetaInfoHolder>();
         changedTypeMap = new HashMap<QName, QName>();
         processedTypeMetaInfoMap = new HashMap<QName, BeanWriterMetaInfoHolder>();
         processedElementRefMap = new HashMap<QName, String>();
@@ -227,10 +184,6 @@ public class SchemaCompiler {
 
         //load the base types
         baseSchemaTypeMap = SchemaPropertyLoader.getTypeMapperInstance().getTypeMap();
-        // adding all the soap encoding schema classes
-        processedTypemap.putAll(SchemaPropertyLoader.getTypeMapperInstance().getSoapEncodingTypesMap());
-
-
     }
 
     /**
@@ -546,7 +499,7 @@ public class SchemaCompiler {
             // register the fixed value if present
             if (xsElt.getFixedValue() != null) {
                 metainf.registerDefaultValue(xsElt.getQName(), xsElt.getFixedValue());
-                metainf.setFixed(true);
+                metainf.registerFixedQName(xsElt.getQName());
             }
 
             if (isBinary(xsElt)) {
@@ -662,7 +615,7 @@ public class SchemaCompiler {
                     String className = findClassName(schemaType.getQName(),
                                                      isArray(xsElt));
 
-                    innerElementMap.put(xsElt.getQName(), className);
+                    innerElementMap.put(xsElt.getWireName(), className);
 
                     // always store the class name in the element meta Info itself
                     // this details only needed by the unwrappig to set the complex type
@@ -685,7 +638,7 @@ public class SchemaCompiler {
                     //the anon map. we've to write it just like we treat a referenced type(giving due
                     //care that this is meant to be an attribute in some class)
 
-                    QName generatedTypeName = generateTypeQName(xsElt.getQName(), parentSchema);
+                    QName generatedTypeName = generateTypeQName(xsElt.getWireName(), parentSchema);
 
                     if (schemaType instanceof XmlSchemaComplexType) {
                         //set a name
@@ -707,7 +660,7 @@ public class SchemaCompiler {
                         processedAnonymousComplexTypesMap.remove(xsElt);
                         String className = findClassName(schemaType.getQName(), isArray(xsElt));
                         innerElementMap.put(
-                                xsElt.getQName(),
+                                xsElt.getWireName(),
                                 className);
 
                         //store in the schema map to retrive in the unwrapping
@@ -734,7 +687,7 @@ public class SchemaCompiler {
                         processedAnonymousComplexTypesMap.remove(xsElt);
                         String className = findClassName(schemaType.getQName(), isArray(xsElt));
                         innerElementMap.put(
-                                xsElt.getQName(),
+                                xsElt.getWireName(),
                                 className);
 
                         //store in the schema map
@@ -875,7 +828,7 @@ public class SchemaCompiler {
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
                     //since this is a inner element we should add it to the inner element map
-                    innerElementMap.put(xsElt.getQName(), className);
+                    innerElementMap.put(xsElt.getWireName(), className);
                     // set the class name to be used in unwrapping
                     xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                                       className);
@@ -886,7 +839,7 @@ public class SchemaCompiler {
                 //this type is not found at all. we'll just register it with whatever the class name we can comeup with
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
-                    innerElementMap.put(xsElt.getQName(), className);
+                    innerElementMap.put(xsElt.getWireName(), className);
                     // set the class name to be used in unwrapping
                     xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                                       className);
@@ -901,7 +854,7 @@ public class SchemaCompiler {
             if (isOuter) {
                 this.nillableElementList.add(xsElt.getQName());
             } else {
-                localNillableList.add(xsElt.getQName());
+                localNillableList.add(xsElt.getWireName());
             }
         }
 
@@ -1880,17 +1833,17 @@ public class SchemaCompiler {
 
         QName schemaTypeName = att.getSchemaTypeName();
         if (schemaTypeName != null) {
-            if (att.getQName() != null) {
+            if (att.getWireName() != null) {
                 if (baseSchemaTypeMap.containsKey(schemaTypeName)) {
 
-                    metainf.registerMapping(att.getQName(), schemaTypeName,
+                    metainf.registerMapping(att.getWireName(), schemaTypeName,
                                             baseSchemaTypeMap.get(schemaTypeName).toString(),
                                             SchemaConstants.ATTRIBUTE_TYPE);
 
                     // add optional attribute status if set
                     String use = att.getUse().toString();
                     if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                        metainf.addtStatus(att.getWireName(), SchemaConstants.OPTIONAL_TYPE);
                     }
 
                     String className = findClassName(schemaTypeName, false);
@@ -1900,11 +1853,11 @@ public class SchemaCompiler {
                             className);
                     // set the default value
                     if (att.getDefaultValue() != null) {
-                        metainf.registerDefaultValue(att.getQName(), att.getDefaultValue());
+                        metainf.registerDefaultValue(att.getWireName(), att.getDefaultValue());
                     }
                     if (att.getFixedValue() != null) {
-                        metainf.registerDefaultValue(att.getQName(), att.getFixedValue());
-                        metainf.setFixed(true);
+                        metainf.registerDefaultValue(att.getWireName(), att.getFixedValue());
+                        metainf.registerFixedQName(att.getWireName());
                     }
                     // after
                 } else {
@@ -1925,14 +1878,14 @@ public class SchemaCompiler {
                                     //process simple type
                                     processSimpleSchemaType(simpleType, null, resolvedSchema, null);
                                 }
-                                metainf.registerMapping(att.getQName(),
+                                metainf.registerMapping(att.getWireName(),
                                                         schemaTypeName,
                                                         processedTypemap.get(schemaTypeName).toString(),
                                                         SchemaConstants.ATTRIBUTE_TYPE);
                                 // add optional attribute status if set
                                 String use = att.getUse().toString();
                                 if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                                    metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                                    metainf.addtStatus(att.getWireName(), SchemaConstants.OPTIONAL_TYPE);
                                 }
                             }
 
@@ -1967,7 +1920,7 @@ public class SchemaCompiler {
         } else {
             // this attribute refers to a custom type, probably one of the extended simple types.
             // with the inline schema definition
-            QName attributeQName = att.getQName();
+            QName attributeQName = att.getWireName();
             if (attributeQName != null) {
                 XmlSchemaSimpleType attributeSimpleType = att.getSchemaType();
                 XmlSchema resolvedSchema = parentSchema;
@@ -2007,14 +1960,14 @@ public class SchemaCompiler {
                         processSimpleSchemaType(attributeSimpleType, null, resolvedSchema,
                                                 schemaTypeQName);
                     }
-                    metainf.registerMapping(att.getQName(),
+                    metainf.registerMapping(att.getWireName(),
                                             schemaTypeQName,
                                             processedTypemap.get(schemaTypeQName).toString(),
                                             SchemaConstants.ATTRIBUTE_TYPE);
                     // add optional attribute status if set
                     String use = att.getUse().toString();
                     if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                        metainf.addtStatus(att.getWireName(), SchemaConstants.OPTIONAL_TYPE);
                     }
                 } else {
                     // TODO: handle the case when no attribute type specifed
@@ -2080,11 +2033,11 @@ public class SchemaCompiler {
             }
 
         } else if (particle instanceof XmlSchemaAll) {
-            List<XmlSchemaElement> items = ((XmlSchemaAll) particle).getItems();
+            List<XmlSchemaAllMember> items = ((XmlSchemaAll) particle).getItems();
             processSchemaAllItems(parentElementQName, items, metainfHolder, false, parentSchema);
         } else if (particle instanceof XmlSchemaChoice) {
             XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) particle;
-            List<XmlSchemaObject> items = ((XmlSchemaChoice) particle).getItems();
+            List<XmlSchemaChoiceMember> items = ((XmlSchemaChoice) particle).getItems();
 
             if ((xmlSchemaChoice.getMaxOccurs() > 1)) {
                 // we have to process many sequence types
@@ -2173,18 +2126,18 @@ public class SchemaCompiler {
                          boolean order,
                          XmlSchema parentSchema) throws SchemaCompilationException {
 
-        Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap =
-                new LinkedHashMap<XmlSchemaObject, Boolean>();
+        Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap =
+                new LinkedHashMap<XmlSchemaObjectBase, Boolean>();
         Map processedElementTypeMap = new LinkedHashMap(); // TODO: not sure what is the correct generic type here
         List<QName> localNillableList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, QName> particleQNameMap = new HashMap<XmlSchemaObject, QName>();
+        Map<XmlSchemaObjectBase, QName> particleQNameMap = new HashMap<XmlSchemaObjectBase, QName>();
 
         // this list is used to keep the details of the
         // elements within a choice withing sequence
         List<QName> innerChoiceElementList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, Integer> elementOrderMap = new HashMap<XmlSchemaObject, Integer>();
+        Map<XmlSchemaObjectBase, Integer> elementOrderMap = new HashMap<XmlSchemaObjectBase, Integer>();
 
         int sequenceCounter = 0;
         for (XmlSchemaSequenceMember member : items) {
@@ -2202,26 +2155,26 @@ public class SchemaCompiler {
     }
 
     private void processChoiceItems(QName parentElementQName,
-                                    List<XmlSchemaObject> items,
+                                    List<XmlSchemaChoiceMember> items,
                                     BeanWriterMetaInfoHolder metainfHolder,
                                     boolean order,
                                     XmlSchema parentSchema) throws SchemaCompilationException {
 
-        Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap =
-                new LinkedHashMap<XmlSchemaObject, Boolean>();
+        Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap =
+                new LinkedHashMap<XmlSchemaObjectBase, Boolean>();
         Map processedElementTypeMap = new LinkedHashMap(); // TODO: not sure what is the correct generic type here
         List<QName> localNillableList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, QName> particleQNameMap = new HashMap<XmlSchemaObject, QName>();
+        Map<XmlSchemaObjectBase, QName> particleQNameMap = new HashMap<XmlSchemaObjectBase, QName>();
 
         // this list is used to keep the details of the
         // elements within a choice withing sequence
         List<QName> innerChoiceElementList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, Integer> elementOrderMap = new HashMap<XmlSchemaObject, Integer>();
+        Map<XmlSchemaObjectBase, Integer> elementOrderMap = new HashMap<XmlSchemaObjectBase, Integer>();
 
         int sequenceCounter = 0;
-        for (XmlSchemaObject item : items) {
+        for (XmlSchemaChoiceMember item : items) {
             //recursively process the element
             processElements(parentElementQName, item, processedElementArrayStatusMap,
                             processedElementTypeMap, elementOrderMap, localNillableList,
@@ -2236,26 +2189,26 @@ public class SchemaCompiler {
 
 
     private void processSchemaAllItems(QName parentElementQName,
-                                       List<XmlSchemaElement> items,
+                                       List<XmlSchemaAllMember> items,
                                        BeanWriterMetaInfoHolder metainfHolder,
                                        boolean order,
                                        XmlSchema parentSchema) throws SchemaCompilationException {
 
-        Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap =
-                new LinkedHashMap<XmlSchemaObject, Boolean>();
+        Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap =
+                new LinkedHashMap<XmlSchemaObjectBase, Boolean>();
         Map processedElementTypeMap = new LinkedHashMap(); // TODO: not sure what is the correct generic type here
         List<QName> localNillableList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, QName> particleQNameMap = new HashMap<XmlSchemaObject, QName>();
+        Map<XmlSchemaObjectBase, QName> particleQNameMap = new HashMap<XmlSchemaObjectBase, QName>();
 
         // this list is used to keep the details of the
         // elements within a choice withing sequence
         List<QName> innerChoiceElementList = new ArrayList<QName>();
 
-        Map<XmlSchemaObject, Integer> elementOrderMap = new HashMap<XmlSchemaObject, Integer>();
+        Map<XmlSchemaObjectBase, Integer> elementOrderMap = new HashMap<XmlSchemaObjectBase, Integer>();
 
         int sequenceCounter = 0;
-        for (XmlSchemaObject item : items) {
+        for (XmlSchemaAllMember item : items) {
             //recursively process the element
             processElements(parentElementQName, item, processedElementArrayStatusMap,
                             processedElementTypeMap, elementOrderMap, localNillableList,
@@ -2270,31 +2223,31 @@ public class SchemaCompiler {
 
 
     private void addProcessedItemsToMetaInfoHolder(
-            Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap,
+            Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap,
             Map processedElementTypeMap,
             List<QName> innerChoiceElementList,
-            Map<XmlSchemaObject, Integer> elementOrderMap,
+            Map<XmlSchemaObjectBase, Integer> elementOrderMap,
             List<QName> localNillableList,
-            Map<XmlSchemaObject, QName> particleQNameMap,
+            Map<XmlSchemaObjectBase, QName> particleQNameMap,
             BeanWriterMetaInfoHolder metainfHolder,
             boolean order,
             XmlSchema parentSchema) throws SchemaCompilationException {
 
         // loop through the processed items and add them to the matainf object
         int startingItemNumberOrder = metainfHolder.getOrderStartPoint();
-        for (XmlSchemaObject child : processedElementArrayStatusMap.keySet()) {
+        for (XmlSchemaObjectBase child : processedElementArrayStatusMap.keySet()) {
 
             // process the XmlSchemaElement
             if (child instanceof XmlSchemaElement) {
                 XmlSchemaElement elt = (XmlSchemaElement) child;
                 QName referencedQName = null;
 
-                if (elt.getQName() != null) {
-                    referencedQName = elt.getQName();
+                if (elt.getWireName() != null) {
+                    referencedQName = elt.getWireName();
                     QName schemaTypeQName = elt.getSchemaType() != null ?
                                             elt.getSchemaType().getQName() : elt.getSchemaTypeName();
                     if (schemaTypeQName != null) {
-                        String clazzName = (String) processedElementTypeMap.get(elt.getQName());
+                        String clazzName = (String) processedElementTypeMap.get(elt.getWireName());
                         metainfHolder.registerMapping(referencedQName,
                                                       schemaTypeQName,
                                                       clazzName,
@@ -2312,7 +2265,7 @@ public class SchemaCompiler {
                         // register the default value as well
                         if (elt.getFixedValue() != null) {
                             metainfHolder.registerDefaultValue(referencedQName, elt.getFixedValue());
-                            metainfHolder.setFixed(true);
+                            metainfHolder.registerFixedQName(referencedQName);
                         }
                     }
                 }
@@ -2380,13 +2333,13 @@ public class SchemaCompiler {
                 }
 
                 //get the nillable state and register that on the metainf holder
-                if (localNillableList.contains(elt.getQName())) {
-                    metainfHolder.registerNillableQName(elt.getQName());
+                if (localNillableList.contains(elt.getWireName())) {
+                    metainfHolder.registerNillableQName(elt.getWireName());
                 }
 
                 //get the binary state and add that to the status map
                 if (isBinary(elt)) {
-                    metainfHolder.addtStatus(elt.getQName(),
+                    metainfHolder.addtStatus(elt.getWireName(),
                                              SchemaConstants.BINARY_TYPE);
                 }
                 // process the XMLSchemaAny
@@ -2500,12 +2453,12 @@ public class SchemaCompiler {
 
     }
 
-    private void processElements(QName parentElementQName, XmlSchemaObject item,
-                                 Map<XmlSchemaObject, Boolean> processedElementArrayStatusMap,
+    private void processElements(QName parentElementQName, XmlSchemaObjectBase item,
+                                 Map<XmlSchemaObjectBase, Boolean> processedElementArrayStatusMap,
                                  Map processedElementTypeMap,
-                                 Map<XmlSchemaObject, Integer> elementOrderMap,
+                                 Map<XmlSchemaObjectBase, Integer> elementOrderMap,
                                  List<QName> localNillableList,
-                                 Map<XmlSchemaObject, QName> particleQNameMap,
+                                 Map<XmlSchemaObjectBase, QName> particleQNameMap,
                                  boolean order, int sequenceCounter,
                                  XmlSchema parentSchema) throws SchemaCompilationException {
 

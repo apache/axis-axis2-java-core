@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -230,18 +231,18 @@ public class AxisFault extends RemoteException {
         }
 
         if (soapFaultReason != null) {
-            message = soapFaultReason.getText();
+            message = soapFaultReason.getFaultReasonText(Locale.ENGLISH);
         }
 
         if (soapFaultCode != null) {
             // This works the same regardless of SOAP version
-            faultCode = soapFaultCode.getTextAsQName();
+            faultCode = soapFaultCode.getValueAsQName();
 
             SOAPFaultSubCode subCode = soapFaultCode.getSubCode();
             if (subCode != null) {
                 faultSubCodes = new ArrayList<QName>();
                 while (subCode != null) {
-                    faultSubCodes.add(subCode.getValue().getTextAsQName());
+                    faultSubCodes.add(subCode.getValueAsQName());
                     subCode = subCode.getSubCode();
                 }
             }
@@ -380,7 +381,7 @@ public class AxisFault extends RemoteException {
         if (faultReasonList.size() >= 1) {
             return faultReasonList.get(0).getText();
         } else if (soapFaultReason != null) {
-            return soapFaultReason.getText();
+            return soapFaultReason.getFaultReasonText(Locale.ENGLISH);
         }
 
         return null;

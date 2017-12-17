@@ -63,7 +63,7 @@ public class TransportDeployer extends AbstractDeployer {
             element.build();
             AxisConfigBuilder builder = new AxisConfigBuilder(axisConfig);
             // Processing Transport Receivers
-            Iterator trs_Reivers =
+            Iterator<OMElement> trs_Reivers =
                     element.getChildrenWithName(new QName(DeploymentConstants.TAG_TRANSPORT_RECEIVER));
             ArrayList transportReceivers = builder.processTransportReceivers(trs_Reivers);
             for (int i = 0; i < transportReceivers.size(); i++) {
@@ -76,7 +76,7 @@ public class TransportDeployer extends AbstractDeployer {
             }
 
             // Processing Transport Senders
-            Iterator trs_senders =
+            Iterator<OMElement> trs_senders =
                     element.getChildrenWithName(new QName(DeploymentConstants.TAG_TRANSPORT_SENDER));
 
             builder.processTransportSenders(trs_senders);

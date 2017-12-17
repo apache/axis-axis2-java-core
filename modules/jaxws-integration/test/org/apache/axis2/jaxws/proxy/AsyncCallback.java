@@ -46,8 +46,8 @@ public class AsyncCallback implements AsyncHandler {
                 TestLogger.logger.debug(">>Return String = " + type.getReturnStr());
                 return;
             }
-            if(obj instanceof org.test.proxy.doclitnonwrapped.ReturnType){
-                org.test.proxy.doclitnonwrapped.ReturnType returnType = (org.test.proxy.doclitnonwrapped.ReturnType)obj;
+            if(obj instanceof org.apache.axis2.jaxws.proxy.doclitnonwrapped.ReturnType){
+                org.apache.axis2.jaxws.proxy.doclitnonwrapped.ReturnType returnType = (org.apache.axis2.jaxws.proxy.doclitnonwrapped.ReturnType)obj;
                 TestLogger.logger.debug(">>Return String = " + returnType.getReturnStr());
                 return;
             }

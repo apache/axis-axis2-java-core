@@ -19,44 +19,30 @@
 
 package org.apache.axis2.jaxws.message.databinding.impl;
 
-import org.apache.axiom.attachments.impl.BufferUtils;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axis2.datasource.SourceDataSource;
-import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.builder.DataSourceBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * SourceBlock
@@ -64,7 +50,7 @@ import java.security.PrivilegedExceptionAction;
  * Block containing a business object that is a javax.activation.DataSource
  * <p/>
  */
-public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
+public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements DataSourceBlock {
 
     private static final Log log = LogFactory.getLog(DataSourceBlockImpl.class);
 
@@ -78,11 +64,6 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
     DataSourceBlockImpl(DataSource busObject, QName qName, BlockFactory factory)
             throws WebServiceException {
         super(busObject, null, qName, factory);
-        // Check validity of DataSource
-        if (!(busObject instanceof DataSource)) {
-            throw ExceptionFactory.makeWebServiceException(
-                    Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
-        }
     }
 
 
@@ -97,16 +78,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
         super(omElement, null, qName, factory);
     }
 
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, WebServiceException {
-        Reader2Writer r2w = new Reader2Writer(reader);
-        try {
-            return new ByteArrayDataSource(r2w.getAsString(), "application/octet-stream");
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
-
-    }
-
+    @Override
     public OMElement getOMElement() throws XMLStreamException, WebServiceException {
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMNamespace ns = factory.createOMNamespace("", "");
@@ -114,17 +86,18 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
     }
 
     @Override
-    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+    protected DataSource _getBOFromOM(OMElement omElement, Void busContext)
         throws XMLStreamException, WebServiceException {
-        Object busObject;
+        DataSource busObject;
         
         // Shortcut to get business object from existing data source
-        if (omElement instanceof OMSourcedElement) {
-            OMDataSource ds = ((OMSourcedElement) omElement).getDataSource();
-            if (ds instanceof SourceDataSource) {
-                return ((SourceDataSource) ds).getObject();
-            }
-        }
+        // TODO: incorrect (wrong type)
+//        if (omElement instanceof OMSourcedElement) {
+//            OMDataSource ds = ((OMSourcedElement) omElement).getDataSource();
+//            if (ds instanceof SourceDataSource) {
+//                return ((SourceDataSource) ds).getObject();
+//            }
+//        }
         
         // If the message is a fault, there are some special gymnastics that we have to do
         // to get this working for all of the handler scenarios.  
@@ -136,7 +109,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
         
         // Transform reader into business object
         if (!hasFault) {
-            busObject = ((OMSourcedElement)omElement).getDataSource();
+            busObject = (DataSourceBuilder.ByteArrayDataSourceEx)((OMSourcedElement)omElement).getDataSource();
         }
         else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -147,18 +120,10 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
     }
 
     @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(DataSource busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         try {
-            if (busObj instanceof DataSource) {
-                XMLInputFactory f = StAXUtils.getXMLInputFactory();
-
-                XMLStreamReader reader = f.createXMLStreamReader(((DataSource)busObj).getInputStream());
-                StAXUtils.releaseXMLInputFactory(f);
-                return reader;
-            }
-            throw ExceptionFactory.makeWebServiceException(
-                    Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
+            return StAXUtils.createXMLStreamReader(busObj.getInputStream());
         } catch (Exception e) {
             String className = (busObj == null) ? "none" : busObj.getClass().getName();
             throw ExceptionFactory
@@ -166,16 +131,8 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
         }
     }
     
-    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        try {
-            BufferUtils.inputStream2OutputStream(((DataSource)busObject).getInputStream(), output);
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
-    }
-    
     @Override
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(DataSource busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
         // There is no fast way to output the Source to a writer, so get the reader
         // and pass use the default reader->writer.
@@ -195,7 +152,7 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
 
 
     @Override
-    protected Object _getBOFromBO(Object busObject, Object busContext, boolean consume) {
+    protected DataSource _getBOFromBO(DataSource busObject, Void busContext, boolean consume) {
         if (consume) {
             return busObject;
         } else {
@@ -205,50 +162,17 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
         }
     }
 
+    @Override
     public boolean isElementData() {
         return false;  // The source could be a text or element etc.
     }
 
-    /**
-     * Return the class for this name
-     * @return Class
-     */
-    private static Class forName(final String className) throws ClassNotFoundException {
-        // NOTE: This method must remain private because it uses AccessController
-        Class cl = null;
-        try {
-            cl = (Class)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Class.forName(className);
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (ClassNotFoundException)e.getException();
-        }
-
-        return cl;
-    }
-    
-    
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        try {
-            byte[] bytes = (byte[]) 
-                ConvertUtils.convert(getBusinessObject(false), byte[].class);
-            return new ByteArrayInputStream(bytes);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -257,29 +181,13 @@ public class DataSourceBlockImpl extends BlockImpl implements DataSourceBlock {
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return true;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return true;
-    }
-
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        if (log.isDebugEnabled()) {
-            log.debug("Start getXMLBytes");
-        }
-        byte[] bytes = null;
-        try {
-            bytes = (byte[]) 
-                ConvertUtils.convert(getBusinessObject(false), byte[].class);
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("End getXMLBytes");
-        }
-        return bytes;
     }
 }

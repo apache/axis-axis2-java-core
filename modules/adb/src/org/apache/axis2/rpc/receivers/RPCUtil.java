@@ -41,6 +41,7 @@ import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
 
+import javax.activation.DataHandler;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -355,7 +356,7 @@ public class RPCUtil {
                         } else {
                             resElemt = fac.createOMElement(partName, null);
                         }
-                        OMText text = fac.createOMText(resObject, true);
+                        OMText text = fac.createOMText((DataHandler)resObject, true);
                         resElemt.addChild(text);
                         envelope.getBody().addChild(resElemt);
                     } else {
@@ -514,7 +515,7 @@ public class RPCUtil {
                     	
                     } else if (SimpleTypeMapper.isDataHandler(resObject.getClass())) {
                         OMElement resElemt = fac.createOMElement(method.getName() + "Response", ns);
-                        OMText text = fac.createOMText(resObject, true);
+                        OMText text = fac.createOMText((DataHandler)resObject, true);
                         OMElement returnElement;
                         if (service.isElementFormDefault()) {
                             returnElement = fac.createOMElement(Constants.RETURN_WRAPPER, ns);

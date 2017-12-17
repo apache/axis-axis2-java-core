@@ -23,8 +23,10 @@ import junit.framework.TestCase;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Javac;
@@ -169,7 +171,9 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase {
         Map optionMap = fillOptionMap(wsdlFile, outputLocation);
         CommandLineOptionParser parser =
                 new CommandLineOptionParser(optionMap);
-        new CodeGenerationEngine(parser).generate();
+        CodeGenConfiguration config = new CodeGenConfiguration();
+        CodegenConfigLoader.loadConfig(config, parser.getAllOptions());
+        new CodeGenerationEngine(config).generate();
     }
 
     /** @param outputLocation  */

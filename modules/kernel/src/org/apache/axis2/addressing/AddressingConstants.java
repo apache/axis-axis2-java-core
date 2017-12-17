@@ -116,6 +116,12 @@ public interface AddressingConstants {
     static final String REFERENCE_PARAMETER_PARAMETER = "referenceParameters";
 
     /**
+     * Used to attach any &lt;wsid:Identity> OMElement found in an EPR embedded in a WSDL to an
+     * AxisEndpoint object.
+     */
+    static final String ADDRESSING_IDENTITY_PARAMETER = "addressingIdentity";
+    
+    /**
      * This parameter is used to decide whether the reference parameters in an inbound request
      * message are to be processed or not.
      */
@@ -145,6 +151,8 @@ public interface AddressingConstants {
     static final String IDENTITY_KEY_INFO = "KeyInfo";
     static final String IDENTITY_X509_DATA = "X509Data";
     static final String IDENTITY_X509_CERT = "X509Certificate";
+    static final String IDENTITY_SPN = "Spn";
+    static final String IDENTITY_UPN = "Upn";
     
     static final String IDENTITY_PARAMETER = "WSAddressingAndIdentity";
     
@@ -152,6 +160,8 @@ public interface AddressingConstants {
     static final QName QNAME_IDENTITY_KEY_INFO = new QName(XML_SIG_NS,IDENTITY_KEY_INFO,XML_SIG_PREFIX);
     static final QName QNAME_IDENTITY_X509_DATA = new QName(XML_SIG_NS,IDENTITY_X509_DATA,XML_SIG_PREFIX);
     static final QName QNAME_IDENTITY_X509_CERT = new QName(XML_SIG_NS,IDENTITY_X509_CERT,XML_SIG_PREFIX);
+    static final QName QNAME_IDENTITY_SPN = new QName(ADDRESSING_IDENTITY_NS, IDENTITY_SPN, ADDRESSING_IDENTITY_PREFIX);
+    static final QName QNAME_IDENTITY_UPN = new QName(ADDRESSING_IDENTITY_NS, IDENTITY_UPN, ADDRESSING_IDENTITY_PREFIX);
     
     interface Final {
 

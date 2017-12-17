@@ -41,7 +41,7 @@ public abstract class AbstractSchemaCompilerTester extends TestCase {
     protected  XmlSchema currentSchema;
     protected File outputFolder = null;
 
-    private static String TEMP_OUT_FOLDER="temp_compile";
+    private static String TEMP_OUT_FOLDER="target/temp_compile";
 
     protected void setUp() throws Exception {
         //load the current Schema through a file

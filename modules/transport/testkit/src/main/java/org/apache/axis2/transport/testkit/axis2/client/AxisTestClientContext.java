@@ -35,15 +35,6 @@ import org.apache.axis2.transport.testkit.tests.Transient;
 /**
  * Resource maintaining the {@link ConfigurationContext} for {@link AxisTestClient}
  * instances.
- * <p>
- * Dependencies:
- * <dl>
- *   <dt>{@link TransportDescriptionFactory} (1)</dt>
- *   <dd>Used to create transport descriptions.</dd>
- *   <dt>{@link AxisTestClientContextConfigurator} (0..*)</dt>
- *   <dd>Used to determine whether a transport listener is required and to
- *       configure the transport.</dd>
- * </dl>
  */
 public class AxisTestClientContext {
     public static final AxisTestClientContext INSTANCE = new AxisTestClientContext();

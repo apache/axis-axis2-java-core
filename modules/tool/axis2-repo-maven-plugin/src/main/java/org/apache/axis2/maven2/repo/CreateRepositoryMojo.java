@@ -33,11 +33,24 @@ import org.apache.maven.artifact.Artifact;
  */
 public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
     /**
+     * Input directory with additional files to be copied to the repository.
+     * 
+     * @parameter default-value="src/main/repository"
+     */
+    private File inputDirectory;
+    
+    /**
      * The output directory where the repository will be created.
      * 
      * @parameter default-value="${project.build.directory}/repository"
      */
     private File outputDirectory;
+    
+    /**
+     * @parameter expression="${project.build.outputDirectory}"
+     * @readonly
+     */
+    private File buildOutputDirectory;
     
     @Override
     protected String getScope() {
@@ -45,7 +58,17 @@ public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
     }
 
     @Override
+    protected File getInputDirectory() {
+        return inputDirectory;
+    }
+
+    @Override
     protected File getOutputDirectory() {
         return outputDirectory;
+    }
+
+    @Override
+    protected File[] getClassDirectories() {
+        return new File[] { buildOutputDirectory };
     }
 }

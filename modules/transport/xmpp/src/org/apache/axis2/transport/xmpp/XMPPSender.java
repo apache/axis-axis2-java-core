@@ -47,13 +47,7 @@ import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.XMPPConnection;
@@ -351,8 +345,6 @@ public class XMPPSender extends AbstractHandler implements TransportSender {
                                     .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
                                 break;
                             }
-                            long minOccurs = innerElement.getMinOccurs();
-                            boolean nillable = innerElement.isNillable();
                             String name =
                                     qName != null ? qName.getLocalPart() : innerElement.getName();
                             String type = innerElement.getSchemaTypeName().toString();
@@ -360,14 +352,13 @@ public class XMPPSender extends AbstractHandler implements TransportSender {
                         }
                     }  else {
                         XmlSchemaAll xmlSchemaAll = (XmlSchemaAll) particle;
-                        for (XmlSchemaElement innerElement : xmlSchemaAll.getItems()) {
+                        for (XmlSchemaAllMember member : xmlSchemaAll.getItems()) {
+							XmlSchemaElement innerElement = (XmlSchemaElement) member;
                             QName qName = innerElement.getQName();
                             if (qName == null && innerElement.getSchemaTypeName()
                                     .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
                                 break;
                             }
-                            long minOccurs = innerElement.getMinOccurs();
-                            boolean nillable = innerElement.isNillable();
                             String name =
                                     qName != null ? qName.getLocalPart() : innerElement.getName();
                             String type = innerElement.getSchemaTypeName().toString();

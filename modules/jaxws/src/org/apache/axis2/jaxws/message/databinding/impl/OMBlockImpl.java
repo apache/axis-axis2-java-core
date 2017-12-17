@@ -20,7 +20,6 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.databinding.OMBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -30,14 +29,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /** OMBlockImpl Block with a business object that is an OMElement */
-public class OMBlockImpl extends BlockImpl implements OMBlock {
+public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {
 
 
     /**
@@ -47,57 +41,47 @@ public class OMBlockImpl extends BlockImpl implements OMBlock {
      * @param factory
      */
     OMBlockImpl(OMElement busObject, BlockFactory factory) {
-        super(busObject,
-              null,
+        super(null,
+              busObject,
               busObject.getQName(),
               factory);
     }
 
     @Override
-    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+    protected XMLStreamReader _getReaderFromBO(OMElement busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
-        // Take a shortcut and return the OMElement
-        return this.getOMElement();
-    }
-
-    @Override
-    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
-            throws XMLStreamException, WebServiceException {
-        OMElement om = (OMElement)busObj;
-        return om.getXMLStreamReader();
+        return busObj.getXMLStreamReader();
     }
     
     @Override
-    protected Object _getBOFromOM(OMElement om, Object busContext)
+    protected OMElement _getBOFromOM(OMElement om, Void busContext)
         throws XMLStreamException, WebServiceException {
         return om;
     }
     
     @Override
-    protected OMElement _getOMFromBO(Object busObject, Object busContext)
+    protected OMElement _getOMFromBO(OMElement busObject, Void busContext)
         throws XMLStreamException, WebServiceException {
-        return (OMElement) busObject;
+        return busObject;
     }
 
     @Override
-    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+    protected void _outputFromBO(OMElement busObject, Void busContext, XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException {
-        OMElement om = (OMElement)busObject;
-        om.serialize(writer);
+        busObject.serialize(writer);
     }
 
+    @Override
     public boolean isElementData() {
         return true;
     }
+
+    @Override
     public void close() {
         return; // Nothing to close
     }
 
-    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
-        byte[] bytes = getXMLBytes(encoding);
-        return new ByteArrayInputStream(bytes);
-    }
-
+    @Override
     public Object getObject() {
         try {
             return getBusinessObject(false);
@@ -106,26 +90,13 @@ public class OMBlockImpl extends BlockImpl implements OMBlock {
         }
     }
 
+    @Override
     public boolean isDestructiveRead() {
         return false;
     }
 
+    @Override
     public boolean isDestructiveWrite() {
         return false;
-    }
-
-    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OMOutputFormat format = new OMOutputFormat();
-        format.setCharSetEncoding(encoding);
-        try {
-            serialize(baos, format);
-            baos.flush();
-            return baos.toByteArray();
-        } catch (XMLStreamException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        } catch (IOException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
     }
 }

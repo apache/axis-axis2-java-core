@@ -21,13 +21,10 @@
 package org.apache.axis2.wsdl.codegen;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.wsdl.codegen.XMLSchemaTest;
-import org.apache.axis2.util.CommandLineOption;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.junit.Test;
 
@@ -55,8 +52,7 @@ public class CodeGenConfigurationTest extends XMLSchemaTest{
     
     @Test
     public void testGetSchemaListForAllServices(){
-        Map<String, CommandLineOption> optionMap = new HashMap<String, CommandLineOption>();
-        CodeGenConfiguration configuration = new CodeGenConfiguration(optionMap);
+        CodeGenConfiguration configuration = new CodeGenConfiguration();
         configuration.addAxisService(service);
         List<XmlSchema> list=configuration.getSchemaListForAllServices();
         assertEquals(schemas.get(0), list.get(0));

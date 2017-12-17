@@ -25,7 +25,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -102,8 +101,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             AxisCallback callback = new AxisCallback() {
                 public void onComplete(MessageContext msgCtx) {
                     try {
-                        msgCtx.getEnvelope().serializeAndConsume(StAXUtils
-                                .createXMLStreamWriter(System.out));
+                        msgCtx.getEnvelope().serializeAndConsume(System.out);
                     } catch (XMLStreamException e) {
                         onError(e);
                     } finally {

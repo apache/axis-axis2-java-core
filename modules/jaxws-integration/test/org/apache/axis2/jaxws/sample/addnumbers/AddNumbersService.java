@@ -51,7 +51,7 @@ public class AddNumbersService
         		e.printStackTrace();
         	}
         	File file = new File(wsdlLocation);
-        	url = file.toURL();
+        	url = file.toURI().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

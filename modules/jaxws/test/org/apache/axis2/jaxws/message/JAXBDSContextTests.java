@@ -20,53 +20,23 @@
 package org.apache.axis2.jaxws.message;
 
 import junit.framework.TestCase;
+
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
+import org.apache.axiom.om.ds.AbstractPushOMDataSource;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
-import org.apache.axis2.datasource.jaxb.JAXBDataSource;
-import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
-import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
-import org.apache.axis2.jaxws.message.factory.BlockFactory;
-import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
-import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
-import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
-import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.unitTest.TestLogger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 import test.Data;
 import test.ObjectFactory;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.util.JAXBSource;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
+
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.TreeSet;
 
 /**
@@ -75,21 +45,6 @@ import java.util.TreeSet;
  * These are not client/server tests.
  */
 public class JAXBDSContextTests extends TestCase {
-
-    
-    private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-    private static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-
-
-    public JAXBDSContextTests() {
-        super();
-    }
-
-    public JAXBDSContextTests(String arg0) {
-        super(arg0);
-    }
-
-    
     /**
      * Create a Block representing an JAXB and simulate a 
      * normal Dispatch<JAXB> flow
@@ -100,7 +55,7 @@ public class JAXBDSContextTests extends TestCase {
         // Create a JAXBDSContext for the package containing Data
         TreeSet<String> packages = new TreeSet<String>();
         packages.add(Data.class.getPackage().getName());
-        JAXBDSContext context = new JAXBDSContext(packages);
+        final JAXBDSContext context = new JAXBDSContext(packages);
         
         TestLogger.logger.debug(context.getJAXBContext().toString());
         
@@ -114,21 +69,31 @@ public class JAXBDSContextTests extends TestCase {
         
         // Create a JAXBElement
         QName qName = new QName("urn://sample", "data");
-        JAXBElement jaxbElement = new JAXBElement(qName, Data.class, value);
+        final JAXBElement<Data> jaxbElement = new JAXBElement<Data>(qName, Data.class, value);
 
         // Create a writer
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OMOutputFormat format = new OMOutputFormat();
         format.setDoOptimize(true);
-        MTOMXMLStreamWriter writer = new MTOMXMLStreamWriter(baos, format);
         
         // Marshal the value
-        writer.writeStartDocument();
-        writer.writeStartElement("root");
-        context.marshal(jaxbElement, writer);
-        writer.writeEndElement();
-        writer.writeEndDocument();
-        writer.flush();
+        OMAbstractFactory.getOMFactory().createOMElement(new AbstractPushOMDataSource() {
+            @Override
+            public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+                writer.writeStartElement("", "root", "");
+                try {
+                    context.marshal(jaxbElement, writer);
+                } catch (JAXBException ex) {
+                    throw new OMException(ex);
+                }
+                writer.writeEndElement();
+            }
+            
+            @Override
+            public boolean isDestructiveWrite() {
+                return false;
+            }
+        }).serialize(baos, format);
         
         assertTrue(baos.toString().indexOf("Hello World") > 0);
         assertTrue(baos.toString().indexOf("</root>") > 0);
@@ -144,7 +109,7 @@ public class JAXBDSContextTests extends TestCase {
         // Create a JAXBDSContext for the package containing Data
         TreeSet<String> packages = new TreeSet<String>();
         packages.add(Data.class.getPackage().getName());
-        JAXBDSContext context = new JAXBDSContext(packages);
+        final JAXBDSContext context = new JAXBDSContext(packages);
         
         TestLogger.logger.debug(context.getJAXBContext().toString());
         
@@ -166,20 +131,31 @@ public class JAXBDSContextTests extends TestCase {
         // an OccurrenceArray
         QName qName = new QName("urn://sample", "data");
         OccurrenceArray occurrenceArray = new OccurrenceArray(value);
-        JAXBElement jaxbElement = new JAXBElement(qName, Data[].class, occurrenceArray);
+        final JAXBElement jaxbElement = new JAXBElement(qName, Data[].class, occurrenceArray);
 
         // Create a writer
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OMOutputFormat format = new OMOutputFormat();
         format.setDoOptimize(true);
-        MTOMXMLStreamWriter writer = new MTOMXMLStreamWriter(baos, format);
         
         // Marshal the value
-        writer.writeStartElement("root");
-        context.marshal(jaxbElement, writer);
-        writer.writeEndElement();
-
-        writer.flush();
+        OMAbstractFactory.getOMFactory().createOMElement(new AbstractPushOMDataSource() {
+            @Override
+            public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+                writer.writeStartElement("", "root", "");
+                try {
+                    context.marshal(jaxbElement, writer);
+                } catch (JAXBException ex) {
+                    throw new OMException(ex);
+                }
+                writer.writeEndElement();
+            }
+            
+            @Override
+            public boolean isDestructiveWrite() {
+                return false;
+            }
+        }).serialize(baos, format);
         
         String outputText = baos.toString();
         String subText = outputText;

@@ -17,12 +17,7 @@ package org.apache.axis2.osgi;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.engine.AxisConfigurator;
-import org.apache.axis2.osgi.deployment.OSGiConfigurationContextFactory;
 import org.apache.axis2.transport.http.AxisServlet;
-import org.apache.axis2.transport.http.ListingAgent;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -34,34 +29,36 @@ import javax.servlet.ServletException;
  */
 public class OSGiAxisServlet extends AxisServlet {
 
-    private BundleContext context;
+    private ConfigurationContext configurationContext;
 
-    /**
-     * OSGiAxisServlet needs an referenc to OSGi environmentb
-     *
-     * @param context BundleContext
-     */
-    public OSGiAxisServlet(BundleContext context) {
-        this.context = context;
+    public OSGiAxisServlet(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
     }
 
+    @Override
+    protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
+        return configurationContext;
+    }
+
+    @Override
+    protected void initTransports() throws AxisFault {
+        // Not sure if this is correct, but the original OSGiAxisServlet code effectively skipped
+        // the invocation of the initTransports method.
+    }
 
     public void init(ServletConfig servletConfig) throws ServletException {
-        this.servletConfig = servletConfig;
-        ServiceReference reference =
-                context.getServiceReference(ConfigurationContext.class.getName());
-        if (reference == null) {
-            throw new ServletException(
-                    "An instance of ConfigurationContext is not available to continue the proccess.");
-        }
-        configContext = (ConfigurationContext) context.getService(reference);
-        axisConfiguration = configContext.getAxisConfiguration();
-        agent = new ListingAgent(configContext);
-        initParams();
+        super.init(servletConfig);
         ServletContext servletContext = servletConfig.getServletContext();
         if (servletContext != null) {
             servletContext.setAttribute(this.getClass().getName(), this);
         }
 
+    }
+
+    @Override
+    public void destroy() {
+        // Do nothing. This prevents AxisServlet from terminating the configuration context.
+        // The configuration context is terminated by OSGiConfigurationContextFactory, and
+        // invoking the terminate method twice (potentially concurrently) causes problems.
     }
 }

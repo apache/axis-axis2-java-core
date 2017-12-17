@@ -55,7 +55,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.*;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.classloader.BeanInfoCache;
@@ -68,16 +67,7 @@ import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.StreamWrapper;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.traversal.DocumentTraversal;
-import org.w3c.dom.traversal.NodeFilter;
-import org.w3c.dom.traversal.TreeWalker;
-
 
 public class BeanUtil {
    
@@ -209,11 +199,11 @@ public class BeanUtil {
                     propertyQnameValueList.add(
                             value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if(SimpleTypeMapper.isDomDocument(ptype)){
-                	addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                    addTypeQname(elemntNameSpace, propertyQnameValueList, property,
                             beanName, processingDocLitBare);
-                	OMFactory fac = OMAbstractFactory.getOMFactory();
-                    propertyQnameValueList.add(convertDOMtoOM(fac, value));            	
-                	
+                    OMFactory fac = OMAbstractFactory.getOMFactory();
+                    propertyQnameValueList.add(convertDOMtoOM(fac, value));
+                    
                 } else if (ptype.isArray()) {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         if (value != null) {
@@ -250,39 +240,39 @@ public class BeanUtil {
                                 } else {
                                     propertyQName = new QName(propertyName);
 
-                                }                                                    
+                                }
                                 
-								if (SimpleTypeMapper
-										.isObjectArray(o.getClass())
-										|| SimpleTypeMapper
-												.isMultidimensionalObjectArray(o
-														.getClass())) {
-									/**
-            						 * If it is a Object[] we need to add instance type
-            						 * attributes to the response message.
-            						 * Copied from ADBXMLStreamReaderImpl. 
-            						 * For inner Arrary Complex types we use the special local name array - "array"
-            						 */
-								    QName itemName;
-								    if (qualified) {
-								        itemName = new QName(elemntNameSpace.getNamespaceURI(),
-	                                            Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
-	                                            elemntNameSpace.getPrefix()); 								        
-								    } else {
-								        itemName = new QName(Constants.INNER_ARRAY_COMPLEX_TYPE_NAME); 								        
-								    }            						           						
-    								propertyQnameValueList.add(getOMElement(propertyQName , (Object[]) o,
-            								itemName, qualified, typeTable));                                	
+                                if (SimpleTypeMapper
+                                        .isObjectArray(o.getClass())
+                                        || SimpleTypeMapper
+                                                .isMultidimensionalObjectArray(o
+                                                        .getClass())) {
+                                    /**
+                                     * If it is a Object[] we need to add instance type
+                                     * attributes to the response message.
+                                     * Copied from ADBXMLStreamReaderImpl. 
+                                     * For inner Arrary Complex types we use the special local name array - "array"
+                                     */
+                                    QName itemName;
+                                    if (qualified) {
+                                        itemName = new QName(elemntNameSpace.getNamespaceURI(),
+                                                Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
+                                                elemntNameSpace.getPrefix());
+                                    } else {
+                                        itemName = new QName(Constants.INNER_ARRAY_COMPLEX_TYPE_NAME);
+                                    }
+                                    propertyQnameValueList.add(getOMElement(propertyQName , (Object[]) o,
+                                            itemName, qualified, typeTable));
                                 } else {
-                                	if(SimpleTypeMapper.isObjectArray(value.getClass())){
-                                		OMFactory fac = OMAbstractFactory.getOMFactory();
-                                    	OMElement element = fac.createOMElement(propertyQName);
-                                    	element.addChild(fac.createOMText(SimpleTypeMapper.getStringValue(o)));  
-                                    	addInstanceTypeAttribute(fac, element, o, typeTable);
-                                    	propertyQnameValueList.add(element);
-                                	} else {
-                                		propertyQnameValueList.add(o);                                 		
-                                	}                                	
+                                    if(SimpleTypeMapper.isObjectArray(value.getClass())){
+                                        OMFactory fac = OMAbstractFactory.getOMFactory();
+                                        OMElement element = fac.createOMElement(propertyQName);
+                                        element.addChild(fac.createOMText(SimpleTypeMapper.getStringValue(o)));  
+                                        addInstanceTypeAttribute(fac, element, o, typeTable);
+                                        propertyQnameValueList.add(element);
+                                    } else {
+                                        propertyQnameValueList.add(o);
+                                    }
                                 }
                                
                             }
@@ -294,70 +284,69 @@ public class BeanUtil {
                     }
                 } else  if (SimpleTypeMapper.isCollection(ptype) && value != null) { 
                     if (typeTable != null) {
-                	OMFactory fac = OMAbstractFactory.getOMFactory();					
-			QName qNamefortheType = null;					
-			qNamefortheType = (QName) typeTable
-				.getComplexSchemaMap().get(getClassName(beanClass));					
-			Type genericType = property.getReadMethod().getGenericReturnType();
-			OMElement collection = BeanUtil.getCollectionElement(
-					fac, genericType,
-					(Collection) value, propertyName,null,
-					qNamefortheType,typeTable,
-					qualified);					
-//			addTypeQname(elemntNameSpace, propertyQnameValueList,
-//					property, beanName, processingDocLitBare);
-			Iterator childItr = collection.getChildren();
-			while(childItr.hasNext()){						
-				addTypeQname(elemntNameSpace, propertyQnameValueList,
-						property, beanName, processingDocLitBare);
-				propertyQnameValueList.add(childItr.next());						
-			}	
-                	
+                        OMFactory fac = OMAbstractFactory.getOMFactory();
+                        QName qNamefortheType = null;
+                        qNamefortheType = (QName) typeTable
+                                .getComplexSchemaMap().get(getClassName(beanClass));
+                        Type genericType = property.getReadMethod().getGenericReturnType();
+                        OMElement collection = BeanUtil.getCollectionElement(
+                                fac, genericType,
+                                (Collection) value, propertyName,null,
+                                qNamefortheType,typeTable,
+                                qualified);
+//                      addTypeQname(elemntNameSpace, propertyQnameValueList,
+//                              property, beanName, processingDocLitBare);
+                        Iterator childItr = collection.getChildren();
+                        while(childItr.hasNext()){
+                            addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                    property, beanName, processingDocLitBare);
+                            propertyQnameValueList.add(childItr.next());
+                        }
+                    
                     } else {
-                	 Collection<?> objList = (Collection<?>) value;
-                         if (objList != null && objList.size() > 0) {
-                             //this was given error , when the array.size = 0
-                             // and if the array contain simple type , then the ADBPullParser asked
-                             // PullParser from That simpel type
-                             for (Object o : objList) {
-                                 if (SimpleTypeMapper.isSimpleType(o)) {
-                                     addTypeQname(elemntNameSpace, propertyQnameValueList,
-                                                  property, beanName, processingDocLitBare);
-                                     propertyQnameValueList.add(o);
-                                 } else {
-                                     addTypeQname(elemntNameSpace, propertyQnameValueList,
-                                                  property, beanName, processingDocLitBare);
-                                     propertyQnameValueList.add(o);
-                                 }
-                             }
+                        Collection<?> objList = (Collection<?>) value;
+                        if (objList != null && objList.size() > 0) {
+                            //this was given error , when the array.size = 0
+                            // and if the array contain simple type , then the ADBPullParser asked
+                            // PullParser from That simpel type
+                            for (Object o : objList) {
+                                if (SimpleTypeMapper.isSimpleType(o)) {
+                                    addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                            property, beanName, processingDocLitBare);
+                                    propertyQnameValueList.add(o);
+                                } else {
+                                    addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                            property, beanName, processingDocLitBare);
+                                    propertyQnameValueList.add(o);
+                                }
+                            }
 
-                         } else {
-                             addTypeQname(elemntNameSpace, propertyQnameValueList, property,
-                                          beanName, processingDocLitBare);
-                             propertyQnameValueList.add(value);
-                         }
+                        } else {
+                            addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                    beanName, processingDocLitBare);
+                            propertyQnameValueList.add(value);
+                        }
                     }
-                          
-									
+                    
                 } else if (SimpleTypeMapper.isMap(ptype) && value != null) {
-					OMFactory fac = OMAbstractFactory.getOMFactory();
-					QName qNamefortheType = (QName) typeTable
-							.getComplexSchemaMap().get(getClassName(beanClass));
-					OMNamespace ns = fac.createOMNamespace(
-										qNamefortheType.getNamespaceURI(),
-										qNamefortheType.getPrefix());
-					List<OMElement> mapEntries = getMapElement(fac,
-							ptype, (Map) value, typeTable, qualified);
-					OMElement map = fac.createOMElement(propertyName,
-										qNamefortheType.getNamespaceURI(),
-										qNamefortheType.getPrefix());
-					for (OMElement ele : mapEntries) {
-						map.addChild(ele);
-					}
-					addTypeQname(elemntNameSpace, propertyQnameValueList,
-							property, beanName, processingDocLitBare);
-					propertyQnameValueList.add(map);
-				} else if (SimpleTypeMapper.isEnum(ptype)){
+                    OMFactory fac = OMAbstractFactory.getOMFactory();
+                    QName qNamefortheType = (QName) typeTable
+                            .getComplexSchemaMap().get(getClassName(beanClass));
+                    OMNamespace ns = fac.createOMNamespace(
+                                        qNamefortheType.getNamespaceURI(),
+                                        qNamefortheType.getPrefix());
+                    List<OMElement> mapEntries = getMapElement(fac,
+                            ptype, (Map) value, typeTable, qualified);
+                    OMElement map = fac.createOMElement(propertyName,
+                                        qNamefortheType.getNamespaceURI(),
+                                        qNamefortheType.getPrefix());
+                    for (OMElement ele : mapEntries) {
+                        map.addChild(ele);
+                    }
+                    addTypeQname(elemntNameSpace, propertyQnameValueList,
+                            property, beanName, processingDocLitBare);
+                    propertyQnameValueList.add(map);
+                } else if (SimpleTypeMapper.isEnum(ptype)){
                     addTypeQname(elemntNameSpace, propertyQnameValueList, property,
                                  beanName, processingDocLitBare);
                     propertyQnameValueList.add(
@@ -365,13 +354,13 @@ public class BeanUtil {
                 }else {
                     addTypeQname(elemntNameSpace, propertyQnameValueList, property,
                                  beanName, processingDocLitBare);
-					if (Object.class.equals(ptype)) {
-						//this is required to match this element prefix as
-						//root element's prefix.
-						QName qNamefortheType = (QName) typeTable
-								.getComplexSchemaMap().get(
-										getClassName(beanClass));
-						OMFactory fac = OMAbstractFactory.getOMFactory();
+                    if (Object.class.equals(ptype) && value != null) {
+                        //this is required to match this element prefix as
+                        //root element's prefix.
+                        QName qNamefortheType = (QName) typeTable
+                                .getComplexSchemaMap().get(
+                                        getClassName(beanClass));
+                        OMFactory fac = OMAbstractFactory.getOMFactory();
                         QName elementName;
                         OMElement element;
                         if (elemntNameSpace != null) {
@@ -381,26 +370,26 @@ public class BeanUtil {
                                     qNamefortheType.getPrefix());
                         } else {
                             elementName = new QName(property.getName());
-                        }					
-						
-						if(SimpleTypeMapper.isSimpleType(value)){
-							element = fac.createOMElement(elementName);
-							element.addChild(fac.createOMText(SimpleTypeMapper
-									.getStringValue(value)));            
-		            	}else{    
-		            		 XMLStreamReader xr = BeanUtil.getPullParser(value,
-		            				 elementName, typeTable, qualified, false);
-		                     OMXMLParserWrapper stAXOMBuilder =
-		                             OMXMLBuilderFactory.createStAXOMBuilder(
-		                                     OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
-		                     element = stAXOMBuilder.getDocumentElement();
-		                     
-		            		
-		            	}	      
-						addInstanceTypeAttribute(fac, element, value, typeTable);
-						propertyQnameValueList.add(element);
-						continue;
-					}
+                        }
+                        
+                        if(SimpleTypeMapper.isSimpleType(value)){
+                            element = fac.createOMElement(elementName);
+                            element.addChild(fac.createOMText(SimpleTypeMapper
+                                    .getStringValue(value)));
+                        }else{
+                             XMLStreamReader xr = BeanUtil.getPullParser(value,
+                                     elementName, typeTable, qualified, false);
+                             OMXMLParserWrapper stAXOMBuilder =
+                                     OMXMLBuilderFactory.createStAXOMBuilder(
+                                             OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
+                             element = stAXOMBuilder.getDocumentElement();
+                             
+                            
+                        }
+                        addInstanceTypeAttribute(fac, element, value, typeTable);
+                        propertyQnameValueList.add(element);
+                        continue;
+                    }
 
                     propertyQnameValueList.add(value);
                 }
@@ -479,7 +468,7 @@ public class BeanUtil {
                         QName typeQName = beanElement.resolveQName(instanceTypeName);
                         //Need this flag to differentiate "xsd:hexBinary" and "xsd:base64Binary" data. 
                         if(org.apache.ws.commons.schema.constants.Constants.XSD_HEXBIN.equals(typeQName)){
-                        	hexBin = true;
+                            hexBin = true;
                         }
                         TypeTable typeTable = axisService.getTypeTable();
                         String className = typeTable.getClassNameForQName(typeQName);
@@ -502,8 +491,8 @@ public class BeanUtil {
                 return null;
             }
             
-            if(beanClass.getName().equals(DataHandler.class.getName())){    
-            	return SimpleTypeMapper.getDataHandler(beanElement,hexBin);            	
+            if(beanClass.getName().equals(DataHandler.class.getName())){
+                return SimpleTypeMapper.getDataHandler(beanElement,hexBin);
             }
 
             if (beanClass.isArray()) {
@@ -539,7 +528,7 @@ public class BeanUtil {
                     }
                     return ConverterUtil.convertToArray(arrayClassType, valueList);
                 }
-            }else if(SimpleTypeMapper.isDomDocument(beanClass)){                  	
+            }else if(SimpleTypeMapper.isDomDocument(beanClass)){
                 return convertOMtoDOM(beanElement);
                 
             } else if (XMLGregorianCalendar.class.getName().equals(
@@ -614,8 +603,8 @@ public class BeanUtil {
                                 partObj = SimpleTypeMapper.getHashSet((OMElement)
                                         parts.getParent(), prty.getName());
                             } else if (SimpleTypeMapper.isCollection(parameters)) {
-                            	Type type = prty.getReadMethod().getGenericReturnType();
-                            	partObj = processGenericCollection(parts, type, null, objectSupplier);  
+                                Type type = prty.getReadMethod().getGenericReturnType();
+                                partObj = processGenericCollection(parts, type, null, objectSupplier);  
 
                             } else if (SimpleTypeMapper.isDataHandler(parameters)) {
                                 partObj = SimpleTypeMapper.getDataHandler(parts);
@@ -623,17 +612,17 @@ public class BeanUtil {
                                 partObj = deserialize(parameters, (OMElement) parts.getParent(),
                                                       objectSupplier, prty.getName());
                             } else if (SimpleTypeMapper.isMap(parameters)){
-                                partObj = null;								
+                                partObj = null;
                                 final Type type = prty.getReadMethod().getGenericReturnType();
                                 if (type instanceof ParameterizedType) {
                                     ParameterizedType aType = (ParameterizedType) type;
-                                    Type[] parameterArgTypes = aType.getActualTypeArguments();                                 
+                                    Type[] parameterArgTypes = aType.getActualTypeArguments();
                                     partObj = processGenericsMapElement(parameterArgTypes
-                                 		 , (OMElement) parts.getParent(), null, parts.getChildren(), objectSupplier, beanClass);
-                                } else {                                	 
-                                	 Type[] parameterArgTypes = {Object.class,Object.class}; 
-                                	 partObj = processGenericsMapElement(parameterArgTypes
-                                     		 , (OMElement) parts.getParent(), null, parts.getChildren(), objectSupplier, beanClass);                                	
+                                          , (OMElement) parts.getParent(), null, parts.getChildren(), objectSupplier, beanClass);
+                                } else {
+                                    Type[] parameterArgTypes = {Object.class,Object.class}; 
+                                    partObj = processGenericsMapElement(parameterArgTypes
+                                             , (OMElement) parts.getParent(), null, parts.getChildren(), objectSupplier, beanClass);
                                 }
                             }else if (SimpleTypeMapper.isEnum(parameters)) {
                                 partObj =processEnumObject(parameters , parts);
@@ -830,10 +819,10 @@ public class BeanUtil {
              */
             boolean bare = false;
             if(parameterNames == null){
-            	bare = true;            	
+                bare = true;
             }
            
-			omElement = processElement(classType, omElement, helper, parts,
+            omElement = processElement(classType, omElement, helper, parts,
                                        currentLocalName, retObjs, count, objectSupplier, genericType, bare);
             while (omElement != null) {
                 count++;
@@ -878,15 +867,15 @@ public class BeanUtil {
         return retObjs;
     }
 
-	private static OMElement processElement(Class classType,
-			OMElement omElement, MultirefHelper helper, Iterator parts,
-			String currentLocalName, Object[] retObjs, int count,
-			ObjectSupplier objectSupplier, Type genericType) throws AxisFault {
+    private static OMElement processElement(Class classType,
+            OMElement omElement, MultirefHelper helper, Iterator parts,
+            String currentLocalName, Object[] retObjs, int count,
+            ObjectSupplier objectSupplier, Type genericType) throws AxisFault {
 
-		return processElement(classType, omElement, helper, parts,
-				currentLocalName, retObjs, count, objectSupplier, genericType, false);
+        return processElement(classType, omElement, helper, parts,
+                currentLocalName, retObjs, count, objectSupplier, genericType, false);
 
-	}
+    }
     private static OMElement processElement(Class classType, OMElement omElement,
                                             MultirefHelper helper, Iterator parts,
                                             String currentLocalName,
@@ -896,10 +885,10 @@ public class BeanUtil {
                                             Type genericType, boolean bare) throws AxisFault {
         Object objValue;
         boolean isRef = false;
-        OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);	        
+        OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
         if (omatribute != null) {
             isRef = true;
-        }	
+        }
         if (classType.isArray()) {
             boolean done = true;
             ArrayList<Object> valueList = new ArrayList<Object>();
@@ -938,26 +927,26 @@ public class BeanUtil {
             }
             
         } else if(SimpleTypeMapper.isCollection(classType) && ! isRef){
-        	if(bare){
-        		OMElement[] toReturn = new OMElement[1];
-        		parts = omElement.getChildren();
-            	retObjs[count] = processGenericCollection(omElement.getFirstElement(), toReturn, genericType, helper, objectSupplier, parts,bare);
-            	OMNode node = omElement.getNextOMSibling();
-            	while(node != null){
-            		if(OMElement.class.isAssignableFrom(node.getClass())){
-            			return (OMElement) node;
-            		} else {
-            			node = node.getNextOMSibling();
-            		}            		
-            	}      	
-            	            	 
-        	} else {
-        	OMElement[] toReturn = new OMElement[1];
-            	retObjs[count] = processGenericCollection(omElement, toReturn, genericType, helper, objectSupplier, parts,bare);
-            	 if (toReturn[0] != null) {        		
+            if(bare){
+                OMElement[] toReturn = new OMElement[1];
+                parts = omElement.getChildren();
+                retObjs[count] = processGenericCollection(omElement.getFirstElement(), toReturn, genericType, helper, objectSupplier, parts,bare);
+                OMNode node = omElement.getNextOMSibling();
+                while(node != null){
+                    if(OMElement.class.isAssignableFrom(node.getClass())){
+                        return (OMElement) node;
+                    } else {
+                        node = node.getNextOMSibling();
+                    }
+                }
+            
+            } else {
+            OMElement[] toReturn = new OMElement[1];
+                retObjs[count] = processGenericCollection(omElement, toReturn, genericType, helper, objectSupplier, parts,bare);
+                 if (toReturn[0] != null) {
                      return toReturn[0];
-                 }        		
-        	}        	
+                 }
+            }
         } else if (SimpleTypeMapper.isEnum(classType)) {
             /* handling enum types */
             retObjs[count] = processEnumObject(classType, omElement);
@@ -984,33 +973,33 @@ public class BeanUtil {
             } else {
                 continue;
             }
-			if (classType instanceof ParameterizedType) {
-				ParameterizedType parameterizedClassType = (ParameterizedType) classType;
-				if (Collection.class
-						.isAssignableFrom((Class<?>) parameterizedClassType
-								.getRawType())) {
-					o = processGenericCollection(omElement.getFirstElement(),
-							classType, helper, objectSupplier);
-				} else if (Map.class
-						.isAssignableFrom((Class<?>) parameterizedClassType
-								.getRawType())) {
-					o = processGenericsMapElement( 
-							parameterizedClassType.getActualTypeArguments(),
-							omElement, helper, omElement.getChildren(), objectSupplier,
-							parameterizedClassType);
-				} else {
-					o = processObject(omElement, (Class) classType,
-	                         helper, true, objectSupplier, genericType);
-				}
-    			   			
-    		} else {
-    			o = processObject(omElement, (Class) classType,
+            if (classType instanceof ParameterizedType) {
+                ParameterizedType parameterizedClassType = (ParameterizedType) classType;
+                if (Collection.class
+                        .isAssignableFrom((Class<?>) parameterizedClassType
+                                .getRawType())) {
+                    o = processGenericCollection(omElement.getFirstElement(),
+                            classType, helper, objectSupplier);
+                } else if (Map.class
+                        .isAssignableFrom((Class<?>) parameterizedClassType
+                                .getRawType())) {
+                    o = processGenericsMapElement( 
+                            parameterizedClassType.getActualTypeArguments(),
+                            omElement, helper, omElement.getChildren(), objectSupplier,
+                            parameterizedClassType);
+                } else {
+                    o = processObject(omElement, (Class) classType,
+                             helper, true, objectSupplier, genericType);
+                }
+                
+            } else {
+                o = processObject(omElement, (Class) classType,
                          helper, true, objectSupplier, genericType);
-    			
-    		}
+                
+            }
             
-			valueList.add(o);
-			
+            valueList.add(o);
+            
         }
         return valueList;
     }
@@ -1060,28 +1049,27 @@ public class BeanUtil {
                         return getSimpleTypeObjectChecked(classType, omElement);
                     }
                 } else if (SimpleTypeMapper.isCollection(classType)) {
-                	return processGenericCollection(omElement, generictype, null, objectSupplier); 
+                    return processGenericCollection(omElement, generictype, null, objectSupplier); 
 
                 } else if (SimpleTypeMapper.isDataHandler(classType)) {
                     return SimpleTypeMapper.getDataHandler(omElement);
                     
-                } else if(SimpleTypeMapper.isDomDocument(classType)){                  	
+                } else if(SimpleTypeMapper.isDomDocument(classType)){
                     return convertOMtoDOM(omElement);
                 } else if(SimpleTypeMapper.isMap(classType)){
-                	if (generictype != null && (generictype instanceof ParameterizedType)) {
-                      ParameterizedType aType = (ParameterizedType) generictype;
-                      Type[] parameterArgTypes = aType.getActualTypeArguments();                       
-                      Iterator parts = omElement.getChildElements();
-                      return processGenericsMapElement(parameterArgTypes
-                     		 , omElement, helper, parts, objectSupplier, generictype);
-                  } else {                	 
-                	  Type[] parameterArgTypes = {Object.class,Object.class}; 
-                	  Iterator parts = omElement.getChildElements();
-                  	  return processGenericsMapElement(parameterArgTypes,
-                      		 omElement, helper, parts, objectSupplier, generictype);   
-                  }
-                 
-                	
+                    if (generictype != null && (generictype instanceof ParameterizedType)) {
+                        ParameterizedType aType = (ParameterizedType) generictype;
+                        Type[] parameterArgTypes = aType.getActualTypeArguments();
+                        Iterator parts = omElement.getChildElements();
+                        return processGenericsMapElement(parameterArgTypes
+                             , omElement, helper, parts, objectSupplier, generictype);
+                    } else {
+                        Type[] parameterArgTypes = {Object.class,Object.class}; 
+                        Iterator parts = omElement.getChildElements();
+                        return processGenericsMapElement(parameterArgTypes,
+                                omElement, helper, parts, objectSupplier, generictype);   
+                    }
+                
                 }else if(SimpleTypeMapper.isEnum(classType)){
                     return processEnumObject(classType, omElement);
                 }else {
@@ -1163,43 +1151,43 @@ public class BeanUtil {
                     }
                 } else {
                     // this happens at the server side. this means it is an multidimentional array.
-					objects.add(partName);
-					if (SimpleTypeMapper.isObjectArray(arg.getClass())
-							|| SimpleTypeMapper
-									.isMultidimensionalObjectArray(arg
-											.getClass())) {
-						/**
-						 * If it is a Object[] we need to add instance type
-						 * attributes to the response message.
-						 * Copied from ADBXMLStreamReaderImpl. 
-						 * For inner Arrary Complex types we use the special local name array - "array"
-						 */
-						QName itemName = new QName(partName.getNamespaceURI(),
-								Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
-								partName.getPrefix());
-						objects.add(getOMElement(partName, (Object[]) arg,
-								itemName, qualifed, typeTable));
-					} else {
-						objects.add(arg);
-					}
+                    objects.add(partName);
+                    if (SimpleTypeMapper.isObjectArray(arg.getClass())
+                            || SimpleTypeMapper
+                                    .isMultidimensionalObjectArray(arg
+                                            .getClass())) {
+                        /**
+                         * If it is a Object[] we need to add instance type
+                         * attributes to the response message.
+                         * Copied from ADBXMLStreamReaderImpl. 
+                         * For inner Arrary Complex types we use the special local name array - "array"
+                         */
+                        QName itemName = new QName(partName.getNamespaceURI(),
+                                Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
+                                partName.getPrefix());
+                        objects.add(getOMElement(partName, (Object[]) arg,
+                                itemName, qualifed, typeTable));
+                    } else {
+                        objects.add(arg);
+                    }
                 }
             } else {
                 if (SimpleTypeMapper.isSimpleType(arg)) { 
-                	OMElement element;
-                	OMFactory fac = OMAbstractFactory.getOMFactory();
-                	if(partName != null){
-                		element = fac.createOMElement(partName, null);
-                	}else{
-                		String eleName = "arg" + argCount;
-                		element = fac.createOMElement(eleName, null);
-                	}					
-					element.addChild(fac.createOMText(SimpleTypeMapper
-							.getStringValue(arg)));
-					if (SimpleTypeMapper.isObjectArray(args.getClass())) {
-						addInstanceTypeAttribute(fac, element, arg, typeTable);
-					}
-					objects.add(element.getQName());
-					objects.add(element);
+                    OMElement element;
+                    OMFactory fac = OMAbstractFactory.getOMFactory();
+                    if(partName != null){
+                        element = fac.createOMElement(partName, null);
+                    }else{
+                        String eleName = "arg" + argCount;
+                        element = fac.createOMElement(eleName, null);
+                    }
+                    element.addChild(fac.createOMText(SimpleTypeMapper
+                            .getStringValue(arg)));
+                    if (SimpleTypeMapper.isObjectArray(args.getClass())) {
+                        addInstanceTypeAttribute(fac, element, arg, typeTable);
+                    }
+                    objects.add(element.getQName());
+                    objects.add(element);
                 } else {
                     if (partName == null) {
                         objects.add(new QName("arg" + argCount));
@@ -1227,7 +1215,7 @@ public class BeanUtil {
                         } else {
                             wrappingElement = fac.createOMElement(partName, null);
                         }
-                        OMText text = fac.createOMText(arg, true);
+                        OMText text = fac.createOMText((DataHandler)arg, true);
                         wrappingElement.addChild(text);
                         objects.add(wrappingElement);
                     }else if (SimpleTypeMapper.isEnum(arg.getClass())) {
@@ -1294,245 +1282,172 @@ public class BeanUtil {
         }
     }
     
-	/**
-	 * Adds the instance type attribute to the passed OMElement.	 
-	 *  
-	 *  e.g - <sam:obj xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 *                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	 *                xsi:type="xsd:string">
-	 *                String Value
-	 *        </sam:obj> 
-	 *
-	 *
-	 * @param fac the SOAPFactory instance.
-	 * @param element the child OMElement to add attributes.
-	 * @param resObject the java reflection method
-	 * @param resObject the res object
-	 * @param typeTable the type table of particular Axis2 service
-	 */
-	public static void addInstanceTypeAttribute(OMFactory fac,
-			OMElement element, Object resObject,
-			TypeTable typeTable) {
-		if(typeTable == null){
-			return;
-		}
-		OMNamespace xsiNS = fac.createOMNamespace(Constants.XSI_NAMESPACE,
-				Constants.DEFAULT_XSI_NAMESPACE_PREFIX);
-		OMNamespace xsdNS = fac.createOMNamespace(Constants.XSD_NAMESPACE,
-				Constants.DEFAULT_XSD_NAMESPACE_PREFIX);
-		element.declareNamespace(xsiNS);
-		element.declareNamespace(xsdNS);
-		QName xsdType = typeTable.getSchemaTypeName(resObject.getClass()
-				.getName());	
-		String attrValue = xsdType.getPrefix() + ":" + xsdType.getLocalPart();
-		element.addAttribute(Constants.XSI_TYPE_ATTRIBUTE, attrValue, xsiNS);
-	}
-	
-	/**
-	 * Gets the DOOM implementation of org.w3c.dom.Document  
-	 *
-	 * @param omElement the OMelement
-	 * @return the DOOM document
-	 */
-	public static OMDocument convertOMtoDOM(OMContainer omElement) {
-		// use an Axiom meta factory with feature "dom" to get org.w3c.dom.Document
-		OMFactory doomFactory = OMAbstractFactory.getMetaFactory(
-		        OMAbstractFactory.FEATURE_DOM).getOMFactory();
-		OMXMLParserWrapper doomBuilder = OMXMLBuilderFactory.createStAXOMBuilder(doomFactory,
-				omElement.getXMLStreamReader());
-		OMDocument domElement = doomBuilder.getDocument();
-		return domElement;
-	}
-	
-	/**
-	 * Convert DOM Document to a OMElement.
-	 *
-	 * @param fac the fac
-	 * @param document the document
-	 * @return the OMElement
-	 */
-	public static OMElement convertDOMtoOM(OMFactory fac, Object document) {
-	    if( document == null ) {
-	        return null;
-	    }
-	    if (document instanceof OMDocument) {
-		return ((OMDocument)document).getOMDocumentElement();
-		
-	    } else {
-		DocumentTraversal traversal = (DocumentTraversal) document;
-		TreeWalker walker = traversal.createTreeWalker(
-				((Document)document).getDocumentElement(), NodeFilter.SHOW_ALL, null, true);
-		return (OMElement) traverseDOMDocument(fac, walker, null);		
-	    }		
-	}
-	
-	/**
-	 * Traverse dom document and construct a OMElement.
-	 * Act as a helper method for convertDOMtoOM()
-	 *
-	 * @param fac the fac
-	 * @param walker the walker
-	 * @param parent the parent
-	 * @return the oM node
-	 */
-	private static OMNode traverseDOMDocument(OMFactory fac, TreeWalker walker,
-			OMContainer parent) {
-		OMNode curr = null;
-		Node node = walker.getCurrentNode();
-		
-		switch (node.getNodeType()) {
-		case Node.ELEMENT_NODE:
-			OMNamespace eleNS = null;
-			if (node.getNamespaceURI() != null) {
-				eleNS = fac.createOMNamespace(node.getNamespaceURI(),
-						node.getPrefix());
-			}
-			curr = fac.createOMElement(node.getNodeName(), eleNS);
-			curr = processDOMAttributes(fac, (OMElement) curr,	node.getAttributes());
-			if (parent != null) {
-				parent.addChild(curr);
-			}
-			if (node.getFirstChild() != null) {
-				walker.setCurrentNode(node.getFirstChild());
-				traverseDOMDocument(fac, walker, (OMContainer) curr);
-			}
-			break;
+    /**
+     * Adds the instance type attribute to the passed OMElement.
+     *  
+     *  e.g - <sam:obj xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     *                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     *                xsi:type="xsd:string">
+     *                String Value
+     *        </sam:obj> 
+     *
+     *
+     * @param fac the SOAPFactory instance.
+     * @param element the child OMElement to add attributes.
+     * @param resObject the java reflection method
+     * @param resObject the res object
+     * @param typeTable the type table of particular Axis2 service
+     */
+    public static void addInstanceTypeAttribute(OMFactory fac,
+            OMElement element, Object resObject,
+            TypeTable typeTable) {
+        if(typeTable == null){
+            return;
+        }
+        OMNamespace xsiNS = fac.createOMNamespace(Constants.XSI_NAMESPACE,
+                Constants.DEFAULT_XSI_NAMESPACE_PREFIX);
+        OMNamespace xsdNS = fac.createOMNamespace(Constants.XSD_NAMESPACE,
+                Constants.DEFAULT_XSD_NAMESPACE_PREFIX);
+        element.declareNamespace(xsiNS);
+        element.declareNamespace(xsdNS);
+        QName xsdType = typeTable.getSchemaTypeName(resObject.getClass()
+                .getName());
+        String attrValue = xsdType.getPrefix() + ":" + xsdType.getLocalPart();
+        element.addAttribute(Constants.XSI_TYPE_ATTRIBUTE, attrValue, xsiNS);
+    }
+    
+    /**
+     * Gets the DOOM implementation of org.w3c.dom.Document  
+     *
+     * @param omElement the OMelement
+     * @return the DOOM document
+     */
+    public static OMDocument convertOMtoDOM(OMContainer omElement) {
+        // use an Axiom meta factory with feature "dom" to get org.w3c.dom.Document
+        OMFactory doomFactory = OMAbstractFactory.getMetaFactory(
+                OMAbstractFactory.FEATURE_DOM).getOMFactory();
+        OMXMLParserWrapper doomBuilder = OMXMLBuilderFactory.createStAXOMBuilder(doomFactory,
+                omElement.getXMLStreamReader());
+        OMDocument domElement = doomBuilder.getDocument();
+        return domElement;
+    }
+    
+    /**
+     * Convert DOM Document to a OMElement.
+     *
+     * @param fac the fac
+     * @param document the document
+     * @return the OMElement
+     */
+    public static OMElement convertDOMtoOM(OMFactory fac, Object document) {
+        if( document == null ) {
+            return null;
+        }
+        if (document instanceof OMDocument) {
+            return ((OMDocument)document).getOMDocumentElement();
+        
+        } else {
+            return OMXMLBuilderFactory.createOMBuilder((Document)document, false).getDocumentElement(true);
+        }
+    }
+    
+    /**
+     * This method deserialize OM model in to a instance of java.util.Map
+     *
+     * @param parameterArgTypes the parameter argument types of Map <k,V>
+     * @param omElement the OMElement
+     * @param helper the helper
+     * @param parts the parts
+     * @param objectSupplier the object supplier
+     * @param genericType the generic type
+     * @return a instance of java.util.Map
+     * @throws AxisFault the axis fault
+     */
+    public static Map<Object,Object> processGenericsMapElement(Type[] parameterArgTypes,
+            OMElement omElement, MultirefHelper helper, Iterator parts,
+            ObjectSupplier objectSupplier, Type genericType) throws AxisFault {
+        Object objValue;
+        Map<Object,Object> valueMap = getMapInstance(genericType) ;
+        while (parts.hasNext()) {
+            objValue = parts.next();
+            if (objValue instanceof OMElement) {
+                omElement = (OMElement) objValue;
+            } else {
+                continue;
+            }
+            
+            if(omElement != null){
+                Iterator entryParts = omElement.getChildren();
+                Object entryKey = null;
+                Object entryValue = null;
+                while (entryParts.hasNext()) {
+                    objValue = entryParts.next();
+                    if (objValue instanceof OMElement) {
+                        omElement = (OMElement) objValue;
+                    } else {
+                        continue;
+                    }
+                    if (omElement.getLocalName().equals(
+                            org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME)) {
+                        entryKey = processMapParameterObject( parameterArgTypes[0], omElement,
+                                helper, objectSupplier, genericType);
+                        continue;
+                    }
+                    if (omElement.getLocalName().equals(
+                            org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME)) {
+                        entryValue = processMapParameterObject( parameterArgTypes[1],
+                                omElement, helper, objectSupplier, genericType);
+                        continue;
+                    }
+                }
+                if(entryKey != null){
+                    valueMap.put(entryKey, entryValue);
+                }
+            }
 
-		case Node.PROCESSING_INSTRUCTION_NODE:
-			ProcessingInstruction domPI = (ProcessingInstruction) node;
-			parent.addChild(fac.createOMProcessingInstruction(parent,
-					domPI.getTarget(), domPI.getData()));
-			break;
-
-		case Node.COMMENT_NODE:
-			parent.addChild(fac.createOMComment(parent,
-					((Comment) node).getNodeValue()));
-			break;
-
-		case Node.TEXT_NODE:
-			parent.addChild(fac.createOMText(node.getNodeValue()));
-			break;
-		}
-		if (node.getNextSibling() != null && parent != null) {
-			walker.setCurrentNode(node.getNextSibling());
-			traverseDOMDocument(fac, walker, parent);
-		}
-		return curr;
-	}
-	
-	private static OMElement processDOMAttributes(OMFactory fac,
-			OMElement curr, NamedNodeMap attMap) {
-		if (attMap != null && attMap.getLength() > 0) {			
-			for (int i = 0; i < attMap.getLength(); i++) {
-				Attr att = (Attr) attMap.item(i);
-				OMNamespace attrNS = null;				
-				if (att.getNamespaceURI() != null) {
-					attrNS = fac.createOMNamespace(att.getNamespaceURI(),
-							att.getPrefix());
-				}
-				curr.addAttribute(att.getNodeName(), att.getNodeValue(), attrNS);
-			}
-		}
-		return curr;
-	}
-	
-	/**
-	 * This method deserialize OM model in to a instance of java.util.Map
-	 *
-	 * @param parameterArgTypes the parameter argument types of Map <k,V>
-	 * @param omElement the OMElement
-	 * @param helper the helper
-	 * @param parts the parts
-	 * @param objectSupplier the object supplier
-	 * @param genericType the generic type
-	 * @return a instance of java.util.Map
-	 * @throws AxisFault the axis fault
-	 */
-	public static Map<Object,Object> processGenericsMapElement(Type[] parameterArgTypes,
-			OMElement omElement, MultirefHelper helper, Iterator parts,
-			ObjectSupplier objectSupplier, Type genericType) throws AxisFault {
-		Object objValue;			
-		Map<Object,Object> valueMap = getMapInstance(genericType) ;
-		while (parts.hasNext()) {
-			objValue = parts.next();
-			if (objValue instanceof OMElement) {
-				omElement = (OMElement) objValue;
-			} else {
-				continue;
-			}
-			
-			if(omElement != null){
-				Iterator entryParts = omElement.getChildren();
-				Object entryKey = null;
-				Object entryValue = null;
-				while (entryParts.hasNext()) {
-					objValue = entryParts.next();
-					if (objValue instanceof OMElement) {
-						omElement = (OMElement) objValue;
-					} else {
-						continue;
-					}
-					if (omElement.getLocalName().equals(
-							org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME)) {
-						entryKey = processMapParameterObject( parameterArgTypes[0], omElement,
-								helper, objectSupplier, genericType);
-						continue;
-					}
-					if (omElement.getLocalName().equals(
-							org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME)) {
-						entryValue = processMapParameterObject( parameterArgTypes[1],
-								omElement, helper, objectSupplier, genericType);
-						continue;
-					}			
-				}
-				if(entryKey != null){
-					valueMap.put(entryKey, entryValue);
-				}				
-			}
-
-		}
-		return valueMap;
-	}
-	
-	
-	/**
-	 * This method convert a instance of java.util.Map into
-	 * OM object model for serialization. 
-	 *
-	 * @param fac the OMFactory
-	 * @param type of the java.util.Map
-	 * @param results the results values
-	 * @param typeTable the type table
-	 * @param elementFormDefault the element form default
-	 * @return list of OMElement
-	 */
-	public static List<OMElement> getMapElement(OMFactory fac, Type type,
-			Map results, TypeTable typeTable, boolean elementFormDefault) {
-		Iterator<Object> keyItr = results.keySet().iterator();
-		List<OMElement> list = new ArrayList<OMElement>();
+        }
+        return valueMap;
+    }
+    
+    
+    /**
+     * This method convert a instance of java.util.Map into
+     * OM object model for serialization. 
+     *
+     * @param fac the OMFactory
+     * @param type of the java.util.Map
+     * @param results the results values
+     * @param typeTable the type table
+     * @param elementFormDefault the element form default
+     * @return list of OMElement
+     */
+    public static List<OMElement> getMapElement(OMFactory fac, Type type,
+            Map results, TypeTable typeTable, boolean elementFormDefault) {
+        Iterator<Object> keyItr = results.keySet().iterator();
+        List<OMElement> list = new ArrayList<OMElement>();
         OMNamespace ns = null;
-		Type keyType = Object.class;
+        Type keyType = Object.class;
         Type valueType = Object.class;
         if (elementFormDefault) {
             ns = fac.createOMNamespace(
                     org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_URI,
                     org.apache.axis2.Constants.AXIS2_MAP_NAMESPACE_PREFIX);
-        }	
-		
-		if (type instanceof ParameterizedType) {
-			ParameterizedType aType = (ParameterizedType) type;
-			Type[] parameterArgTypes = aType.getActualTypeArguments();
-			keyType = parameterArgTypes[0];
-			valueType = parameterArgTypes[1];
-		}
+        }
+        
+        if (type instanceof ParameterizedType) {
+            ParameterizedType aType = (ParameterizedType) type;
+            Type[] parameterArgTypes = aType.getActualTypeArguments();
+            keyType = parameterArgTypes[0];
+            valueType = parameterArgTypes[1];
+        }
 
-		while (keyItr.hasNext()) {
-			OMElement omEntry;
-			Object key = keyItr.next();
-			Object value;
-			if (key != null) {
-				value = results.get(key);
-				List<Object> properties = new ArrayList<Object>();
+        while (keyItr.hasNext()) {
+            OMElement omEntry;
+            Object key = keyItr.next();
+            Object value;
+            if (key != null) {
+                value = results.get(key);
+                List<Object> properties = new ArrayList<Object>();
                 QName keyName;
                 QName valueName;
                 if (elementFormDefault) {
@@ -1549,37 +1464,37 @@ public class BeanUtil {
                             org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME);
                 }
 
-				Object kValue = getMapParameterElement(fac,
-						org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, key,
-						keyType, typeTable, ns, elementFormDefault);
-				
-				Object vValue = getMapParameterElement(fac,
-						org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME,
-						value, valueType, typeTable, ns, elementFormDefault);
-				
-				if(Iterator.class.isAssignableFrom(kValue.getClass())){
-					Iterator valItr = (Iterator) kValue;
-					while (valItr.hasNext()) {
-						properties.add(keyName);
-						properties.add(valItr.next());						
-					}	
-				} else {
-					properties.add(keyName);
-					properties.add(kValue);
-				}			
+                Object kValue = getMapParameterElement(fac,
+                        org.apache.axis2.Constants.MAP_KEY_ELEMENT_NAME, key,
+                        keyType, typeTable, ns, elementFormDefault);
+                
+                Object vValue = getMapParameterElement(fac,
+                        org.apache.axis2.Constants.MAP_VALUE_ELEMENT_NAME,
+                        value, valueType, typeTable, ns, elementFormDefault);
+                
+                if(Iterator.class.isAssignableFrom(kValue.getClass())){
+                    Iterator valItr = (Iterator) kValue;
+                    while (valItr.hasNext()) {
+                        properties.add(keyName);
+                        properties.add(valItr.next());
+                    }
+                } else {
+                    properties.add(keyName);
+                    properties.add(kValue);
+                }
 
-				
-				if(vValue != null && Iterator.class.isAssignableFrom(vValue.getClass())){
-					Iterator valItr = (Iterator) vValue;
-					while (valItr.hasNext()) {
-						properties.add(valueName);
-						properties.add(valItr.next());						
-					}			
-				} else {
-					properties.add(valueName);
-					properties.add(vValue);
-				}
-				
+                
+                if(vValue != null && Iterator.class.isAssignableFrom(vValue.getClass())){
+                    Iterator valItr = (Iterator) vValue;
+                    while (valItr.hasNext()) {
+                        properties.add(valueName);
+                        properties.add(valItr.next());
+                    }
+                } else {
+                    properties.add(valueName);
+                    properties.add(vValue);
+                }
+                
                 QName entryQName;
                 if (elementFormDefault) {
                     entryQName = new QName(ns.getNamespaceURI(),
@@ -1590,302 +1505,301 @@ public class BeanUtil {
                             org.apache.axis2.Constants.MAP_ENTRY_ELEMENT_NAME);
 
                 }
-				XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
-				        entryQName, properties.toArray(), null,
-						typeTable, elementFormDefault);
+                XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(
+                        entryQName, properties.toArray(), null,
+                        typeTable, elementFormDefault);
 
-				StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
-						OMAbstractFactory.getOMFactory(), new StreamWrapper(
-								pullParser));
-				omEntry = stAXOMBuilder.getDocumentElement();
-				list.add(omEntry);
-			}
-		}
-		return list;
-	}
-	
-	/**
-	 * Helper method to deserialize each parameter of Map.
-	 *
-	 * @param paraType the parameter type
-	 * @param omElement the OMElement
-	 * @param helper the helper
-	 * @param objectSupplier the object supplier
-	 * @param genericType the generic type
-	 * @return the object
-	 * @throws AxisFault the axis fault
-	 */
-	private static Object processMapParameterObject(Type paraType, OMElement omElement,
-			MultirefHelper helper, ObjectSupplier objectSupplier,
-			Type genericType) throws AxisFault {
-		if (paraType instanceof ParameterizedType) {
-			if (Map.class.isAssignableFrom((Class)
-					((ParameterizedType) paraType).getRawType())) {
-				return processGenericsMapElement(
-						((ParameterizedType) paraType).getActualTypeArguments(),
-						omElement, helper, omElement.getChildren(),
-						objectSupplier, paraType);
-			} else if (Collection.class	.isAssignableFrom((Class) 
-					((ParameterizedType) paraType).getRawType())) {				
-				return processGenericCollection(
-						omElement,
-						(ParameterizedType) paraType,
-						helper, objectSupplier);
-			} else {
+                OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(
+                        new StreamWrapper(pullParser));
+                omEntry = builder.getDocumentElement();
+                list.add(omEntry);
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * Helper method to deserialize each parameter of Map.
+     *
+     * @param paraType the parameter type
+     * @param omElement the OMElement
+     * @param helper the helper
+     * @param objectSupplier the object supplier
+     * @param genericType the generic type
+     * @return the object
+     * @throws AxisFault the axis fault
+     */
+    private static Object processMapParameterObject(Type paraType, OMElement omElement,
+            MultirefHelper helper, ObjectSupplier objectSupplier,
+            Type genericType) throws AxisFault {
+        if (paraType instanceof ParameterizedType) {
+            if (Map.class.isAssignableFrom((Class)
+                    ((ParameterizedType) paraType).getRawType())) {
+                return processGenericsMapElement(
+                        ((ParameterizedType) paraType).getActualTypeArguments(),
+                        omElement, helper, omElement.getChildren(),
+                        objectSupplier, paraType);
+            } else if (Collection.class.isAssignableFrom((Class) 
+                    ((ParameterizedType) paraType).getRawType())) {
+                return processGenericCollection(
+                        omElement,
+                        (ParameterizedType) paraType,
+                        helper, objectSupplier);
+            } else {
                 throw new AxisFault("Map parameter does not support for "
                         + ((ParameterizedType) paraType).getRawType());
-			}
+            }
 
-		} else {
-			return processObject(omElement, (Class) paraType, helper, true,
-					objectSupplier, genericType);
-		}
-	}
-	
-	/**
-	 * This method instantiate a Map instance according to the expected 
-	 * parameter type of the service method. a instance HashMap<Object, Object> 
-	 * returns as the default value and in case of Exception.   
-	 *
-	 * @param genericType the generic type
-	 * @return the map instance 
-	 */
-	private static Map<Object, Object> getMapInstance(Type genericType) {
-		 Class rowType;
-		 if (genericType instanceof ParameterizedType) {
-			 rowType = (Class) ((ParameterizedType) genericType).getRawType();			 
-		 } else {
-			 rowType = (Class) genericType;
-		 }
-		
-		if (Map.class.getName().equals(rowType.getName())) {
-			return new HashMap<Object, Object>();
-			
-		} else if (ConcurrentMap.class.getName().equals(rowType.getName())) {
-			return new ConcurrentHashMap<Object, Object>();
-			
-		} else if (SortedMap.class.getName().equals(rowType.getName())) {
-			return new TreeMap<Object, Object>();
-			
-		} 
-//		TODO - Enable this logic once the Axis2 move to Java 1.6.		
-//		else if (NavigableMap.class.getName().equals(rowType.getName())) {
-//			return new TreeMap<Object, Object>();
-//			
-//		}  else if (ConcurrentNavigableMap.class.getName().equals(rowType.getName())) {
-//			return new ConcurrentSkipListMap<Object, Object>();
-//		}
-//		
-		else {
-			try {
-				return (Map<Object, Object>) rowType.newInstance();
-			} catch (Exception e) {
-				return new HashMap<Object, Object>();
-			}
-		}
-	}
-	
-	/**
-	 * Process the provided return  value and constructs OMElement accordingly.  
-	 *
-	 * @param fac the OMFactory instance
-	 * @param elementName the element name for return OMElement
-	 * @param value the actual return value
-	 * @param valueType the value type of return value
-	 * @param typeTable the type table
-	 * @param ns the OMNamespace
-	 * @param elementFormDefault the element form default
-	 * @return the map parameter object
-	 */
-	private static Object getMapParameterElement(OMFactory fac,
-			String elementName, Object value, Type valueType,
-			TypeTable typeTable, OMNamespace ns, boolean elementFormDefault) {
+        } else {
+            return processObject(omElement, (Class) paraType, helper, true,
+                    objectSupplier, genericType);
+        }
+    }
+    
+    /**
+     * This method instantiate a Map instance according to the expected 
+     * parameter type of the service method. a instance HashMap<Object, Object> 
+     * returns as the default value and in case of Exception.   
+     *
+     * @param genericType the generic type
+     * @return the map instance 
+     */
+    private static Map<Object, Object> getMapInstance(Type genericType) {
+        Class rowType;
+        if (genericType instanceof ParameterizedType) {
+            rowType = (Class) ((ParameterizedType) genericType).getRawType();
+        } else {
+            rowType = (Class) genericType;
+        }
+        
+        if (Map.class.getName().equals(rowType.getName())) {
+            return new HashMap<Object, Object>();
+            
+        } else if (ConcurrentMap.class.getName().equals(rowType.getName())) {
+            return new ConcurrentHashMap<Object, Object>();
+            
+        } else if (SortedMap.class.getName().equals(rowType.getName())) {
+            return new TreeMap<Object, Object>();
+            
+        } 
+//        TODO - Enable this logic once the Axis2 move to Java 1.6.
+//        else if (NavigableMap.class.getName().equals(rowType.getName())) {
+//            return new TreeMap<Object, Object>();
+//            
+//        }  else if (ConcurrentNavigableMap.class.getName().equals(rowType.getName())) {
+//            return new ConcurrentSkipListMap<Object, Object>();
+//        }
+//        
+        else {
+            try {
+                return (Map<Object, Object>) rowType.newInstance();
+            } catch (Exception e) {
+                return new HashMap<Object, Object>();
+            }
+        }
+    }
+    
+    /**
+     * Process the provided return  value and constructs OMElement accordingly.  
+     *
+     * @param fac the OMFactory instance
+     * @param elementName the element name for return OMElement
+     * @param value the actual return value
+     * @param valueType the value type of return value
+     * @param typeTable the type table
+     * @param ns the OMNamespace
+     * @param elementFormDefault the element form default
+     * @return the map parameter object
+     */
+    private static Object getMapParameterElement(OMFactory fac,
+            String elementName, Object value, Type valueType,
+            TypeTable typeTable, OMNamespace ns, boolean elementFormDefault) {
          //TODO - key/value can be a Collection, Array , Dom document ,OMElement etc
-	    if(value == null) {
-	        return null;
-	    }
-		if (SimpleTypeMapper.isMap(value.getClass())) {
-			List<OMElement> childList = getMapElement(fac, valueType,
-					(Map) value, typeTable, elementFormDefault);
-			OMElement omValue;
-			if(elementFormDefault) {
-			    omValue = fac.createOMElement(elementName,
-	                    ns.getNamespaceURI(), ns.getPrefix());			    
-			} else {
-			    omValue = fac.createOMElement(elementName, null);
-			    
-			}
-			for (OMElement child : childList) {
-				omValue.addChild(child);
-			}
-			return omValue;
-			
-		} else if (SimpleTypeMapper.isCollection(value.getClass())) {	
-		    QName elementQName;
-		    if(elementFormDefault) {
-		       elementQName = new QName(ns.getNamespaceURI(), elementName,
-	                    ns.getPrefix());		        
-		    } else {
-		       elementQName = new QName(elementName);
-		        
-		    }
-			
-			return getCollectionElement(fac, valueType, (Collection) value,
-					elementName, null, elementQName, typeTable,
-					elementFormDefault).getChildren();
-			
-		} else if(SimpleTypeMapper.isDomDocument((Class)valueType)) {
-		    return convertDOMtoOM(fac, value);
-		    
-		} else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
-			OMElement omValue;
-			omValue = fac.createOMElement(elementName, ns);
-			if (SimpleTypeMapper.isSimpleType(value)) {
-				omValue.addChild(fac.createOMText(SimpleTypeMapper
-						.getStringValue(value)));
+        if(value == null) {
+            return null;
+        }
+        if (SimpleTypeMapper.isMap(value.getClass())) {
+            List<OMElement> childList = getMapElement(fac, valueType,
+                    (Map) value, typeTable, elementFormDefault);
+            OMElement omValue;
+            if(elementFormDefault) {
+                omValue = fac.createOMElement(elementName,
+                        ns.getNamespaceURI(), ns.getPrefix());
             } else {
-			    QName name;
-			    if(elementFormDefault) {
-			        name = new QName(ns.getNamespaceURI(), elementName,
-	                        ns.getPrefix());			        
-			    } else {
-			        name = new QName(elementName);			        
-			    }
-				XMLStreamReader xr = BeanUtil.getPullParser(value, name,
-						typeTable, true, false);
-				OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
-						.createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
-								new StreamWrapper(xr));
-				omValue = stAXOMBuilder.getDocumentElement();
+                omValue = fac.createOMElement(elementName, null);
+                
+            }
+            for (OMElement child : childList) {
+                omValue.addChild(child);
+            }
+            return omValue;
+            
+        } else if (SimpleTypeMapper.isCollection(value.getClass())) {
+            QName elementQName;
+            if(elementFormDefault) {
+               elementQName = new QName(ns.getNamespaceURI(), elementName,
+                        ns.getPrefix());
+            } else {
+               elementQName = new QName(elementName);
+                
+            }
+            
+            return getCollectionElement(fac, valueType, (Collection) value,
+                    elementName, null, elementQName, typeTable,
+                    elementFormDefault).getChildren();
+            
+        } else if(SimpleTypeMapper.isDomDocument((Class)valueType)) {
+            return convertDOMtoOM(fac, value);
+            
+        } else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
+            OMElement omValue;
+            omValue = fac.createOMElement(elementName, ns);
+            if (SimpleTypeMapper.isSimpleType(value)) {
+                omValue.addChild(fac.createOMText(SimpleTypeMapper
+                        .getStringValue(value)));
+            } else {
+                QName name;
+                if(elementFormDefault) {
+                    name = new QName(ns.getNamespaceURI(), elementName,
+                            ns.getPrefix());
+                } else {
+                    name = new QName(elementName);
+                }
+                XMLStreamReader xr = BeanUtil.getPullParser(value, name,
+                        typeTable, true, false);
+                OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
+                        .createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
+                                new StreamWrapper(xr));
+                omValue = stAXOMBuilder.getDocumentElement();
 
-			}
-			addInstanceTypeAttribute(fac, omValue, value, typeTable);
-			return omValue;
-			
-		} else if (SimpleTypeMapper.isSimpleType(value)) {
+            }
+            addInstanceTypeAttribute(fac, omValue, value, typeTable);
+            return omValue;
+            
+        } else if (SimpleTypeMapper.isSimpleType(value)) {
             OMElement omValue;
             omValue = fac.createOMElement(elementName, ns);
             omValue.addChild(fac.createOMText(SimpleTypeMapper
                     .getStringValue(value)));
-            return omValue;            
+            return omValue;
         } 
-		return value;
-	}
-	
-	/**
-	 * Process generic collection.
-	 *
-	 * @param omElement the om element
-	 * @param generictype the generictype
-	 * @param helper the helper
-	 * @param objectSupplier the object supplier
-	 * @return the collection
-	 * @throws AxisFault the axis fault
-	 */
-	public static Collection<Object> processGenericCollection(OMElement omElement,
-			Type generictype, MultirefHelper helper,
-			ObjectSupplier objectSupplier) throws AxisFault {
-	QName partName = omElement.getQName();
-	Type parameter = Object.class;
-	if (generictype != null && (generictype instanceof ParameterizedType)) {
-	    ParameterizedType aType = (ParameterizedType) generictype;
-	    Type[] parameterArgTypes = aType.getActualTypeArguments();
-	    parameter = parameterArgTypes[0];
-	}
-	/*
-	 * Fix for AXIS2-5090. Use siblings with same QName instead of look for
-	 * children because list elements available on same level.
-	 */
-	Iterator parts = omElement.getParent().getChildrenWithName(partName);
-	return processGenericsElement(parameter, omElement, helper, parts,
-		objectSupplier, generictype);
-	}	
-	
-	/**
-	 * Process collection.
-	 *
-	 * @param omElement the om element
-	 * @param toReturn the to return
-	 * @param generictype the generictype
-	 * @param helper the helper
-	 * @param objectSupplier the object supplier
-	 * @param parts the parts
-	 * @param bare the bare
-	 * @return the collection
-	 * @throws AxisFault the axis fault
-	 */
-	public static Collection<Object> processGenericCollection(OMElement omElement,
-		OMElement[] toReturn, Type generictype, MultirefHelper helper,
-		ObjectSupplier objectSupplier, Iterator parts, boolean bare)
-		throws AxisFault {
-	    String currentLocalName = omElement.getLocalName();
-	    Type parameter = Object.class;
-	    List<OMElement> eleList = new ArrayList<OMElement>();
-	    // in 'Bare' style no need to add first element to the list.
-	    if (!bare) {
-		eleList.add(omElement);
-	    }
+        return value;
+    }
+    
+    /**
+     * Process generic collection.
+     *
+     * @param omElement the om element
+     * @param generictype the generictype
+     * @param helper the helper
+     * @param objectSupplier the object supplier
+     * @return the collection
+     * @throws AxisFault the axis fault
+     */
+    public static Collection<Object> processGenericCollection(OMElement omElement,
+            Type generictype, MultirefHelper helper,
+            ObjectSupplier objectSupplier) throws AxisFault {
+    QName partName = omElement.getQName();
+    Type parameter = Object.class;
+    if (generictype != null && (generictype instanceof ParameterizedType)) {
+        ParameterizedType aType = (ParameterizedType) generictype;
+        Type[] parameterArgTypes = aType.getActualTypeArguments();
+        parameter = parameterArgTypes[0];
+    }
+    /*
+     * Fix for AXIS2-5090. Use siblings with same QName instead of look for
+     * children because list elements available on same level.
+     */
+    Iterator<OMElement> parts = omElement.getParent().getChildrenWithName(partName);
+    return processGenericsElement(parameter, omElement, helper, parts,
+        objectSupplier, generictype);
+    }
+    
+    /**
+     * Process collection.
+     *
+     * @param omElement the om element
+     * @param toReturn the to return
+     * @param generictype the generictype
+     * @param helper the helper
+     * @param objectSupplier the object supplier
+     * @param parts the parts
+     * @param bare the bare
+     * @return the collection
+     * @throws AxisFault the axis fault
+     */
+    public static Collection<Object> processGenericCollection(OMElement omElement,
+        OMElement[] toReturn, Type generictype, MultirefHelper helper,
+        ObjectSupplier objectSupplier, Iterator parts, boolean bare)
+        throws AxisFault {
+        String currentLocalName = omElement.getLocalName();
+        Type parameter = Object.class;
+        List<OMElement> eleList = new ArrayList<OMElement>();
+        // in 'Bare' style no need to add first element to the list.
+        if (!bare) {
+            eleList.add(omElement);
+        }
 
-	    if (generictype != null && (generictype instanceof ParameterizedType)) {
-		ParameterizedType aType = (ParameterizedType) generictype;
-		Type[] parameterArgTypes = aType.getActualTypeArguments();
-		parameter = parameterArgTypes[0];
-	    }
+        if (generictype != null && (generictype instanceof ParameterizedType)) {
+            ParameterizedType aType = (ParameterizedType) generictype;
+            Type[] parameterArgTypes = aType.getActualTypeArguments();
+            parameter = parameterArgTypes[0];
+        }
 
-	    while (parts.hasNext()) {
-		Object objValue = parts.next();
-		OMElement currElement;
-		if (objValue instanceof OMElement) {
-		    currElement = (OMElement) objValue;
-		} else {
-		    continue;
-		}
-		if (currentLocalName.equals(currElement.getLocalName())) {
-		    eleList.add(currElement);
-		} else {
-		    // This just a container to bring back un-proceeded OMEleemnt.
-		    toReturn[0] = currElement;
-		    break;
-		}
-	    }
-	    return processGenericsElement(parameter, omElement, helper,
-		    eleList.iterator(), objectSupplier, generictype);
-	}	
+        while (parts.hasNext()) {
+            Object objValue = parts.next();
+            OMElement currElement;
+            if (objValue instanceof OMElement) {
+                currElement = (OMElement) objValue;
+            } else {
+                continue;
+            }
+            if (currentLocalName.equals(currElement.getLocalName())) {
+                eleList.add(currElement);
+            } else {
+                // This just a container to bring back un-proceeded OMEleemnt.
+                toReturn[0] = currElement;
+                break;
+            }
+        }
+        return processGenericsElement(parameter, omElement, helper,
+            eleList.iterator(), objectSupplier, generictype);
+    }
 
-	/**
-	 * Gets the collection element.
-	 *
-	 * @param fac the fac
-	 * @param type the type
-	 * @param results the results
-	 * @param name the name
-	 * @param innerName the inner name
-	 * @param elementQName the element q name
-	 * @param typeTable the type table
-	 * @param elementFormDefault the element form default
-	 * @return the collection element
-	 */
-	public static OMElement getCollectionElement(OMFactory fac, Type type,
-		Collection results, String name, String innerName,
-		QName elementQName, TypeTable typeTable, boolean elementFormDefault) {
+    /**
+     * Gets the collection element.
+     *
+     * @param fac the fac
+     * @param type the type
+     * @param results the results
+     * @param name the name
+     * @param innerName the inner name
+     * @param elementQName the element q name
+     * @param typeTable the type table
+     * @param elementFormDefault the element form default
+     * @return the collection element
+     */
+    public static OMElement getCollectionElement(OMFactory fac, Type type,
+        Collection results, String name, String innerName,
+        QName elementQName, TypeTable typeTable, boolean elementFormDefault) {
 
-	    String elementName = (innerName == null) ? name : innerName;
-	    Iterator<Object> itr = results.iterator();
-	    List<Object> properties = new ArrayList<Object>();
-	    OMNamespace ns = fac.createOMNamespace(elementQName.getNamespaceURI(),
-		    elementQName.getPrefix());
-	    Type valueType = Object.class;
-	    if (type instanceof ParameterizedType) {
-		ParameterizedType aType = (ParameterizedType) type;
-		Type[] parameterArgTypes = aType.getActualTypeArguments();
-		valueType = parameterArgTypes[0];
-	    }
+        String elementName = (innerName == null) ? name : innerName;
+        Iterator<Object> itr = results.iterator();
+        List<Object> properties = new ArrayList<Object>();
+        OMNamespace ns = fac.createOMNamespace(elementQName.getNamespaceURI(),
+            elementQName.getPrefix());
+        Type valueType = Object.class;
+        if (type instanceof ParameterizedType) {
+            ParameterizedType aType = (ParameterizedType) type;
+            Type[] parameterArgTypes = aType.getActualTypeArguments();
+            valueType = parameterArgTypes[0];
+        }
 
-	    while (itr.hasNext()) {
-		Object value = itr.next();
-		if (value != null) {
-		    value = getCollectionItemElement(fac, elementName, value,
-			    valueType, typeTable, ns, elementFormDefault);
+        while (itr.hasNext()) {
+            Object value = itr.next();
+            if (value != null) {
+                value = getCollectionItemElement(fac, elementName, value,
+                        valueType, typeTable, ns, elementFormDefault);
                 QName valueQName;
                 if (elementFormDefault) {
                     valueQName = new QName(ns.getNamespaceURI(), elementName,
@@ -1893,10 +1807,10 @@ public class BeanUtil {
                 } else {
                     valueQName = new QName(elementName);
                 }
-		    properties.add(valueQName);
-		    properties.add(value);
-		}
-	    }
+                properties.add(valueQName);
+                properties.add(value);
+            }
+        }
         QName eleQName;
         if (elementFormDefault) {
             eleQName = new QName(ns.getNamespaceURI(),
@@ -1904,55 +1818,55 @@ public class BeanUtil {
         } else {
             eleQName = new QName(elementQName.getLocalPart());
         }
-	    XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(eleQName, properties.toArray(), null, typeTable,
-		    elementFormDefault);
+        XMLStreamReader pullParser = new ADBXMLStreamReaderImpl(eleQName, properties.toArray(), null, typeTable,
+            elementFormDefault);
 
-	    StAXOMBuilder stAXOMBuilder = new StAXOMBuilder(
-		    OMAbstractFactory.getOMFactory(), new StreamWrapper(pullParser));
-	    return stAXOMBuilder.getDocumentElement();
-	}	
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(
+            new StreamWrapper(pullParser));
+        return builder.getDocumentElement();
+    }
 
-	/**
-	 * Gets the collection item element.
-	 *
-	 * @param fac the fac
-	 * @param elementName the element name
-	 * @param value the value
-	 * @param valueType the value type
-	 * @param typeTable the type table
-	 * @param ns the ns
-	 * @param elementFormDefault the element form default
-	 * @return the collection item element
-	 */
-	private static Object getCollectionItemElement(OMFactory fac,
-		String elementName, Object value, Type valueType,
-		TypeTable typeTable, OMNamespace ns, boolean elementFormDefault) {
-	    if (SimpleTypeMapper.isMap(value.getClass())) {
-		List<OMElement> childList = getMapElement(fac, valueType,
-			(Map) value, typeTable, elementFormDefault);
-		OMElement omValue = fac.createOMElement(elementName,
-			ns.getNamespaceURI(), ns.getPrefix());
-		for (OMElement child : childList) {
-		    omValue.addChild(child);
-		}
-		return omValue;
-
-	    } else if (SimpleTypeMapper.isCollection(value.getClass())) {
-		return getCollectionElement(
-			fac,
-			valueType,
-			(Collection) value,
-			elementName,
-			Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
-			new QName(ns.getNamespaceURI(), elementName, ns.getPrefix()),
-			typeTable, elementFormDefault);
-	    } else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
-		OMElement omValue;
-		omValue = fac.createOMElement(elementName, ns);
-		if (SimpleTypeMapper.isSimpleType(value)) {
-		    omValue.addChild(fac.createOMText(SimpleTypeMapper
-			    .getStringValue(value)));
-		} else {
+    /**
+     * Gets the collection item element.
+     *
+     * @param fac the fac
+     * @param elementName the element name
+     * @param value the value
+     * @param valueType the value type
+     * @param typeTable the type table
+     * @param ns the ns
+     * @param elementFormDefault the element form default
+     * @return the collection item element
+     */
+    private static Object getCollectionItemElement(OMFactory fac,
+            String elementName, Object value, Type valueType,
+            TypeTable typeTable, OMNamespace ns, boolean elementFormDefault) {
+        if (SimpleTypeMapper.isMap(value.getClass())) {
+            List<OMElement> childList = getMapElement(fac, valueType,
+                (Map) value, typeTable, elementFormDefault);
+            OMElement omValue = fac.createOMElement(elementName,
+                ns.getNamespaceURI(), ns.getPrefix());
+            for (OMElement child : childList) {
+                omValue.addChild(child);
+            }
+            return omValue;
+    
+        } else if (SimpleTypeMapper.isCollection(value.getClass())) {
+            return getCollectionElement(
+                fac,
+                valueType,
+                (Collection) value,
+                elementName,
+                Constants.INNER_ARRAY_COMPLEX_TYPE_NAME,
+                new QName(ns.getNamespaceURI(), elementName, ns.getPrefix()),
+                typeTable, elementFormDefault);
+        } else if (SimpleTypeMapper.isObjectType((Class) valueType)) {
+            OMElement omValue;
+            omValue = fac.createOMElement(elementName, ns);
+            if (SimpleTypeMapper.isSimpleType(value)) {
+                omValue.addChild(fac.createOMText(SimpleTypeMapper
+                    .getStringValue(value)));
+            } else {
                 QName name;
                 if (elementFormDefault) {
                     name = new QName(ns.getNamespaceURI(), elementName,
@@ -1961,71 +1875,71 @@ public class BeanUtil {
                     name = new QName(elementName);
                 }
                 XMLStreamReader xr = BeanUtil.getPullParser(value, name,
-			    typeTable, true, false);
-		    OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
-		    .createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
-			    new StreamWrapper(xr));
-		    omValue = stAXOMBuilder.getDocumentElement();
+                        typeTable, true, false);
+                OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory
+                        .createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
+                                new StreamWrapper(xr));
+                omValue = stAXOMBuilder.getDocumentElement();
 
-		}
-		addInstanceTypeAttribute(fac, omValue, value, typeTable);
-		return omValue;
-	    }
-	    return value;
-	}
-	
-	/**
-	 * Gets the collection instance object according to the genericType passed.
-	 *
-	 * @param genericType the generic type
-	 * @return the collection instance
-	 */
-	private static Collection<Object> getCollectionInstance(Type genericType) {
-	    Class rowType;
-	    if (genericType instanceof ParameterizedType) {
-		rowType = (Class) ((ParameterizedType) genericType).getRawType();
-	    } else {
-		rowType = (Class) genericType;
-	    }
+            }
+            addInstanceTypeAttribute(fac, omValue, value, typeTable);
+            return omValue;
+        }
+        return value;
+    }
+    
+    /**
+     * Gets the collection instance object according to the genericType passed.
+     *
+     * @param genericType the generic type
+     * @return the collection instance
+     */
+    private static Collection<Object> getCollectionInstance(Type genericType) {
+        Class rowType;
+        if (genericType instanceof ParameterizedType) {
+            rowType = (Class) ((ParameterizedType) genericType).getRawType();
+        } else {
+            rowType = (Class) genericType;
+        }
 
-	    if (Collection.class.getName().equals(rowType.getName())
-		    || List.class.getName().equals(rowType.getName())) {
-		return new ArrayList<Object>();
+        if (Collection.class.getName().equals(rowType.getName())
+            || List.class.getName().equals(rowType.getName())) {
+            return new ArrayList<Object>();
 
-	    } else if (Set.class.getName().equals(rowType.getName())) {
-		return new HashSet<Object>();
+        } else if (Set.class.getName().equals(rowType.getName())) {
+            return new HashSet<Object>();
 
-	    } else if (Queue.class.getName().equals(rowType.getName())) {
-		return new LinkedList<Object>();
+        } else if (Queue.class.getName().equals(rowType.getName())) {
+            return new LinkedList<Object>();
 
-	    }  else if (BlockingQueue.class.getName().equals(rowType.getName())) {
-		return new LinkedBlockingQueue<Object>();
+        } else if (BlockingQueue.class.getName().equals(rowType.getName())) {
+            return new LinkedBlockingQueue<Object>();
 
-	    } 
-//	    TODO - Enable this logic once the Axis2 move to Java 1.6.
-//	    else if (BlockingDeque.class.getName().equals(rowType.getName())) {
-//		return new LinkedBlockingDeque<Object>();
+        } 
+//        TODO - Enable this logic once the Axis2 move to Java 1.6.
+//        else if (BlockingDeque.class.getName().equals(rowType.getName())) {
+//        return new LinkedBlockingDeque<Object>();
 //
-//	    }else if (NavigableSet.class.getName().equals(rowType.getName())
-//		    || SortedSet.class.getName().equals(rowType.getName())) {
-//		return new TreeSet<Object>();
+//        }else if (NavigableSet.class.getName().equals(rowType.getName())
+//            || SortedSet.class.getName().equals(rowType.getName())) {
+//        return new TreeSet<Object>();
 //
-//	    } 	    
-	    else {
-		try {
-		    return (Collection<Object>) rowType.newInstance();
-		} catch (Exception e) {
-		    return new ArrayList<Object>();
-		}
-	    }
-	}
-	
+//        }
+        else {
+            try {
+                return (Collection<Object>) rowType.newInstance();
+            } catch (Exception e) {
+                return new ArrayList<Object>();
+            }
+        }
+    }
+    
     private static XMLGregorianCalendar getXMLGregorianCalendar(
             OMElement beanElement) throws DatatypeConfigurationException {
         String greCal = beanElement.getText();
         XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance()
                 .newXMLGregorianCalendar(greCal);
         return xmlCal;
-    }	
+    }
 
 }

@@ -76,7 +76,7 @@ public class SchemaDataLocatorTest extends XMLSchemaTest {
                 + "SchemaDataLocatorTest.xml");
         assertNotNull(data);
         assertEquals(data.length, 1);
-        assertSimilarXML(s, expected);
+        assertSimilarXML(expected, s);
 
     }
 

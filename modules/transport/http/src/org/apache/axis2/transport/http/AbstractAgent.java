@@ -56,7 +56,8 @@ public class AbstractAgent {
             throws IOException, ServletException {
 
 
-        String requestURI = httpServletRequest.getRequestURI();
+        // Don't use getRequestURI() here because it includes the session ID
+        String requestURI = httpServletRequest.getServletPath() + httpServletRequest.getPathInfo();
 
         String operation;
         int i = requestURI.lastIndexOf('/');
@@ -116,7 +117,7 @@ public class AbstractAgent {
                               HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
         httpServletResponse.setContentType("text/html");
-        httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName)
+        httpServletRequest.getRequestDispatcher("/WEB-INF/views/" + jspName)
                 .include(httpServletRequest, httpServletResponse);
     }
 
@@ -151,9 +152,8 @@ public class AbstractAgent {
         }
     }
 
-    protected void populateSessionInformation(HttpServletRequest req) {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+    protected void populateRequestAttributes(HttpServletRequest req) {
+        req.setAttribute("configContext", configContext);
+        req.setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
     }
 }

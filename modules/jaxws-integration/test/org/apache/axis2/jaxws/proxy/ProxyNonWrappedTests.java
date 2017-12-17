@@ -23,18 +23,16 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
-import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
-import org.test.proxy.doclitnonwrapped.Invoke;
-import org.test.proxy.doclitnonwrapped.ObjectFactory;
-import org.test.proxy.doclitnonwrapped.ReturnType;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.DocLitnonWrappedProxy;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.Invoke;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.ObjectFactory;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.ProxyDocLitUnwrappedService;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.ReturnType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import java.io.File;
-import java.net.URL;
 import java.util.concurrent.Future;
 
 /**
@@ -46,7 +44,6 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
     QName serviceName = new QName("http://doclitnonwrapped.proxy.test.org", "ProxyDocLitUnwrappedService");
     private String axisEndpoint = "http://localhost:6060/axis2/services/ProxyDocLitUnwrappedService.DocLitnonWrappedImplPort";
     private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedPort");
-    private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test-resources/wsdl/ProxyDocLitnonWrapped.wsdl";
 
     public static Test suite() {
         return getTestSetup(new TestSuite(ProxyNonWrappedTests.class));
@@ -104,17 +101,14 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         try{
             TestLogger.logger.debug("---------------------------------------");
             TestLogger.logger.debug("DocLitNonWrapped test case: " + getName());
-            //Create wsdl url
-            File wsdl= new File(wsdlLocation); 
-            URL wsdlUrl = wsdl.toURL(); 
             ObjectFactory factory = new ObjectFactory();
             //create input object to web service operation
             Invoke invokeObj = factory.createInvoke();
             invokeObj.setInvokeStr("test request for twoWay Async Operation");
             //Create Service
-            ProxyDocLitUnwrappedService service = new ProxyDocLitUnwrappedService(wsdlUrl, serviceName);
+            ProxyDocLitUnwrappedService service = new ProxyDocLitUnwrappedService();
             //Create proxy
-            DocLitnonWrappedProxy proxy = service.getProxyDocLitnonWrappedPort();
+            DocLitnonWrappedProxy proxy = service.getDocLitnonWrappedImplPort();
             TestLogger.logger.debug(">>Invoking Binding Provider property");
             //Setup Endpoint url -- optional.
             BindingProvider p = (BindingProvider)proxy;

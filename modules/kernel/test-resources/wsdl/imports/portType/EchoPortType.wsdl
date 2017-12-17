@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:types="http://tempuri.org/types"
+    xmlns:ns="http://tempuri.org/porttype"
+    targetNamespace="http://tempuri.org/porttype">
+    
+    <wsdl:types>
+        <xs:schema targetNamespace="http://tempuri.org/imports">
+            <xs:import schemaLocation="EchoTypes.xsd" namespace="http://tempuri.org/types" />
+        </xs:schema>
+    </wsdl:types>
+    
+    <wsdl:message name="echoRequest">
+        <wsdl:part name="parameters" element="types:echo"/>
+    </wsdl:message>
+    <wsdl:message name="echoResponse">
+        <wsdl:part name="parameters" element="types:echoResponse"/>
+    </wsdl:message>
+    
+    <wsdl:portType name="EchoServicePortType">
+        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#usingAddressingPolicy"/>
+        <wsdl:operation name="echo">
+            <wsdl:input message="ns:echoRequest" wsaw:Action="urn:custom:echo"/>
+            <wsdl:output message="ns:echoResponse" wsaw:Action="urn:custom:echoResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+</wsdl:definitions>

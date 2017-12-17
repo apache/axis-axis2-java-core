@@ -405,14 +405,18 @@
             <xsl:if test="not(@type=preceding-sibling::param/@type)">
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
                 <xsl:choose>
-                    <xsl:when test="$helpermode">
-                        return <xsl:value-of select="@type"/>Helper.INSTANCE.parse(param.getXMLStreamReaderWithoutCaching());
-                    </xsl:when>
                     <xsl:when test="@type = 'org.apache.axiom.om.OMElement'">
                         return param;
                     </xsl:when>
                     <xsl:otherwise>
-                        return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                        javax.xml.stream.XMLStreamReader reader = param.getXMLStreamReaderWithoutCaching();
+                        java.lang.Object result =
+                        <xsl:choose>
+                            <xsl:when test="$helpermode"><xsl:value-of select="@type"/>Helper.INSTANCE.parse(reader);</xsl:when>
+                            <xsl:otherwise><xsl:value-of select="@type"/>.Factory.parse(reader);</xsl:otherwise>
+                        </xsl:choose>
+                        reader.close();
+                        return result;
                     </xsl:otherwise>
                 </xsl:choose>
 

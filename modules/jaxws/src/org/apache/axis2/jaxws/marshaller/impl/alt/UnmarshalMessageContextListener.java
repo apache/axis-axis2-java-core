@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.ds.custombuilder.CustomBuilderSupport;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -89,7 +89,7 @@ public class UnmarshalMessageContextListener implements MessageContextListener {
         if (envelope == null) {
             return;
         }
-        if (!(envelope.getBuilder() instanceof StAXOMBuilder)) {
+        if (!(envelope.getBuilder() instanceof CustomBuilderSupport)) {
                 return;
             }
 
@@ -114,7 +114,7 @@ public class UnmarshalMessageContextListener implements MessageContextListener {
         JAXBDSContext jaxbDSC = new JAXBDSContext(info.getPackages(), info.getPackagesKey());
         jaxbDSC.setMessageContext(mc);
         JAXBCustomBuilder jcb = new JAXBCustomBuilder(jaxbDSC);
-        ((StAXOMBuilder) envelope.getBuilder()).registerCustomBuilderForPayload(jcb);
+        ((CustomBuilderSupport) envelope.getBuilder()).registerCustomBuilder(jcb, jcb);
         if (log.isDebugEnabled()) {
             log.debug("Registering JAXBCustomBuilder: " + jcb + " for AxisOperation: " + axisOp.getName());
         }

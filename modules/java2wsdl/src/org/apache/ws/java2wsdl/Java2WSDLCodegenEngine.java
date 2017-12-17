@@ -121,7 +121,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
                     if (Java2WSDLUtils.isURL(classPathEntry)) {
                         urls[i] = new URL(classPathEntry);
                     } else {
-                        urls[i] = new File(classPathEntry).toURL();
+                        urls[i] = new File(classPathEntry).toURI().toURL();
                     }
                 }
             } catch (MalformedURLException e) {

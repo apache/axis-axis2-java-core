@@ -19,6 +19,9 @@
 
 package org.apache.axis2.databinding.utils.reader;
 
+import org.apache.axiom.ext.stax.datahandler.DataHandlerProvider;
+import org.apache.axiom.ext.stax.datahandler.DataHandlerReader;
+import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import javax.activation.DataHandler;
@@ -27,7 +30,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 
-public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
+public class ADBDataHandlerStreamReader implements ADBXMLStreamReader, DataHandlerReader {
     private static final int START_ELEMENT_STATE = 0;
     private static final int TEXT_STATE = 1;
     private static final int END_ELEMENT_STATE = 2;
@@ -59,18 +62,37 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
      * @throws IllegalArgumentException
      */
     public Object getProperty(String propKey) throws IllegalArgumentException {
-        if (OPTIMIZATION_ENABLED.equals(propKey)) {
-            return Boolean.TRUE;
-        }
-        if (state == TEXT_STATE) {
-            if (IS_BINARY.equals(propKey)) {
-                return Boolean.TRUE;
-            } else if (DATA_HANDLER.equals(propKey)) {
-                return value;
-            }
-        }
-        return null;
+        return XMLStreamReaderUtils.processGetProperty(this, propKey);
+    }
 
+    @Override
+    public boolean isBinary() {
+        return state == TEXT_STATE;
+    }
+
+    @Override
+    public boolean isOptimized() {
+        return true;
+    }
+
+    @Override
+    public boolean isDeferred() {
+        return false;
+    }
+
+    @Override
+    public String getContentID() {
+        return null;
+    }
+
+    @Override
+    public DataHandler getDataHandler() throws XMLStreamException {
+        return value;
+    }
+
+    @Override
+    public DataHandlerProvider getDataHandlerProvider() {
+        throw new UnsupportedOperationException();
     }
 
     public int next() throws XMLStreamException {

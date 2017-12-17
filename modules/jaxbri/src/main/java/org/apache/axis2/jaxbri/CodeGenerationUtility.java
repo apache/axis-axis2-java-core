@@ -249,7 +249,7 @@ public class CodeGenerationUtility {
 
                 // Emit the code artifacts
                 JCodeModel codeModel = jaxbModel.generateCode(null, null);
-                FileCodeWriter writer = new FileCodeWriter(outputDir);
+                FileCodeWriter writer = new FileCodeWriter(outputDir, cgconfig.getOutputEncoding());
                 codeModel.build(writer);
 
                 Collection mappings = jaxbModel.getMappings();
@@ -359,7 +359,7 @@ public class CodeGenerationUtility {
     private static void scanEpisodeFile(File jar, SchemaCompiler sc)
             throws BadCommandLineException, IOException {
 
-        URLClassLoader ucl = new URLClassLoader(new URL[]{jar.toURL()});
+        URLClassLoader ucl = new URLClassLoader(new URL[]{jar.toURI().toURL()});
         Enumeration<URL> resources = ucl.findResources("META-INF/sun-jaxb.episode");
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();

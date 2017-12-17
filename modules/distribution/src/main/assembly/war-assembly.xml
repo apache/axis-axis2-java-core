@@ -40,9 +40,14 @@
                 <include>LICENSE.txt</include>
                 <include>NOTICE.txt</include>
                 <include>README.txt</include>
-                <include>release-notes.html</include>
             </includes>
             <filtered>true</filtered>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>../../src/site/markdown/release-notes/${release_version}.md</source>
+            <destName>RELEASE-NOTE.txt</destName>
+        </file>
+    </files>
 </assembly>

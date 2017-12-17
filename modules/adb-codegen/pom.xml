@@ -23,9 +23,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-adb-codegen</artifactId>
     <name>Apache Axis2 - ADB Codegen</name>
@@ -62,11 +62,6 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -115,29 +110,10 @@
                 <inherited>true</inherited>
                 <configuration>
                     <excludes>
-                        <exclude>**/*Abstract*.java</exclude>
-                        <exclude>**/*Util*.java</exclude>
-                        <exclude>**/*PhaseResolvingTest.java</exclude>
-                        <exclude>**/*UnionQNameTest.java</exclude>
-                        <exclude>**/*UnqualifiedTest.java</exclude>
+                        <exclude>org/apache/axis2/schema/ExtensionUtilityTest.java</exclude>
                     </excludes>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
                 </configuration>
             </plugin>
-	        <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-compiler-plugin</artifactId>
-	            <configuration>
-	                <fork>true</fork>
-	                <meminitial>128m</meminitial>
-	                <maxmem>256m</maxmem>
-                    <testExcludes>
-                        <exclude>helper/org/apache/axis2/schema/testsuite/TestAnyType*Helper.java</exclude>
-                    </testExcludes>
-	            </configuration>
-	        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -162,47 +138,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-test-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks unless="maven.test.skip">
-                                <property name="maven.junit.jvmargs" value="" />
-                                <path id="maven.dependency.classpath">
-                                    <path refid="maven.compile.classpath" />
-                                </path>
-                                <property name="compiled.classes.dir" value="target/classes" />
-                                <!-- Theres got to be a better way to do this -->
-                                <property name="schema.source.dir" value="test-resources/xsd" />
-                                <property name="testsuite.source.dir" value="test-resources/testsuite" />
-                                <property name="schema.output.base.dir" value="target/schema" />
-                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src" />
-                                <property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes" />
-                                <ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="." target="main" />
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/target/schema/src</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

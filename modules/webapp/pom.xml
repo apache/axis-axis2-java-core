@@ -21,9 +21,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.axis2</groupId>
-        <artifactId>axis2-parent</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <artifactId>axis2</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-webapp</artifactId>
     <packaging>war</packaging>
@@ -38,11 +38,6 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jibx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-java2wsdl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -127,6 +122,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <!-- Not required for the Maven build, but necessary to avoid errors when
+                 importing the project into an IDE. -->
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-mtompolicy</artifactId>
             <version>${project.version}</version>
@@ -143,6 +146,55 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-jms</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-mail</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-tcp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-udp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-xmpp</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jivesoftware</groupId>
+                    <artifactId>smack</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jivesoftware</groupId>
+                    <artifactId>smackx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>mex</artifactId>
             <version>${project.version}</version>
@@ -154,21 +206,22 @@
             <version>${project.version}</version>
             <type>mar</type>
         </dependency>
-        
-        <!-- Axis2 has always been shipped with Sun's implementations of
-             JavaMail and JAF, although Axiom depends on (and has been tested
-             with) Geronimo's implementations. This should probably reevaluated. -->
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${javax.mail.version}</version>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-spec</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-impl</artifactId>
+            <version>1.2.5</version>
         </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${project.version}</finalName>
         <resources>
             <resource>
-                <directory>../kernel/conf</directory>
+                <directory>${project.build.directory}/kernel/conf</directory>
                 <includes>
                     <include>*.properties</include>
                 </includes>
@@ -209,48 +262,20 @@
             </plugin>
             <plugin>
                 <!-- Compile the JSPs so that syntax errors are detected during the build. -->
-                <groupId>org.codehaus.mojo.jspc</groupId>
-                <artifactId>jspc-maven-plugin</artifactId>
-                <version>2.0-alpha-3</version>
+	        <groupId>org.mortbay.jetty</groupId>
+	        <artifactId>jetty-jspc-maven-plugin</artifactId>
+	        <version>8.1.16.v20140903</version>
                 <executions>
                     <execution>
                         <goals>
-                             <goal>compile</goal>
+                             <goal>jspc</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <includeInProject>false</includeInProject>
+                    <!-- We don't want to keep the generated classes; we just want to validate the JSPs -->
+                    <generatedClasses>${project.build.directory}/jspc</generatedClasses>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.mojo.jspc</groupId>
-                        <artifactId>jspc-compiler-tomcat6</artifactId>
-                        <version>2.0-alpha-3</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- We only want to validate the JSPs, but not to include the compiled
-                             versions in the project. However, the includeInProject parameter of
-                             the jspc-maven-plugin seems to be broken (the classes are always
-                             compiled to the target/classes folder) and maven-war-plugin doesn't
-                             have an option to exclude specific classes or packages. Therefore
-                             the only way to achieve this is to delete the files after compilation. -->
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <delete dir="${project.build.outputDirectory}/jsp" />
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -275,6 +300,24 @@
                                 </resource>
                             </resources>              
                         </configuration>            
+                    </execution>
+                    <execution>
+                        <id>copy-kernel-conf-properties</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/kernel/conf</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../kernel/conf</directory>
+                                    <includes>
+                                        <include>*.properties</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -304,14 +347,10 @@
                     <webXml>conf/web.xml</webXml>
                     <!-- This is basically the same list as in modules/distribution/src/main/assembly/bin-assembly.xml -->
                     <packagingExcludes>
-                        WEB-INF/lib/geronimo-activation_1.1_spec-*.jar,
-                        WEB-INF/lib/geronimo-javamail_1.4_spec-*.jar,
                         WEB-INF/lib/spring-beans-*.jar,
                         WEB-INF/lib/spring-context-*.jar,
                         WEB-INF/lib/spring-core-*.jar,
                         WEB-INF/lib/spring-web-*.jar,
-                        WEB-INF/lib/ant-*.jar,
-                        WEB-INF/lib/ant-launcher-*.jar,
                         WEB-INF/lib/aopalliance-*.jar,
                         WEB-INF/lib/bsf-*.jar,
                         WEB-INF/lib/FastInfoset-*.jar,
@@ -335,15 +374,36 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.22</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Attach a JAR with the Webapp classes for use as a dependency in user projects. -->
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>classes</classifier>
+                            <excludes>
+                                <!-- Properties must be copied to target/classes so that they are loaded
+                                     by the Jetty plugin, but we don't want to include them in the JAR.
+                                     Our only option is therefore to exclude them here (which means that we
+                                     can't use the attachClasses property on the maven-war-plugin). -->
+                                <exclude>*.properties</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
                     <webXml>conf/web.xml</webXml>
+                    <contextXml>conf/jetty.xml</contextXml>
                     <webAppConfig>
                         <contextPath>/axis2</contextPath>
-                        <baseResource implementation="org.mortbay.resource.ResourceCollection">
-                            <resourcesAsCSV>src/main/webapp,${project.build.directory}/webResources</resourcesAsCSV>
+                        <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+                            <resourcesAsCSV>${project.build.directory}/webResources,src/main/webapp</resourcesAsCSV>
                         </baseResource>
                     </webAppConfig>
                 </configuration>

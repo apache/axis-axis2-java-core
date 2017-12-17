@@ -23,11 +23,8 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.OMElementEx;
-import org.apache.axiom.soap.SOAP11Version;
-import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPVersion;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -53,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> implements SOAPElement {
+public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> implements SOAPElement {
     private String encodingStyle;
 
     public SOAPElementImpl(T element) {
@@ -71,7 +68,7 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
      */
     public SOAPElement addAttribute(Name name, String value) throws SOAPException {
         if (name.getURI() == null || name.getURI().trim().length() == 0) {
-            target.setAttribute(name.getLocalName(), value);
+            target.setAttributeNS("", name.getLocalName(), value);
         } else {
             target.setAttributeNS(name.getURI(), name.getPrefix() + ":" + name.getLocalName(),
                                    value);
@@ -98,11 +95,11 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
 
         SOAPElementImpl<OMElement> childEle;        
         if (namespaceURI == null || namespaceURI.trim().length() == 0) {
-            childEle =  new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElement(localName));
+            childEle =  new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElementNS(null, localName));
         } else {
             omTarget.declareNamespace(namespaceURI, prefix);
             childEle =
-                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElementNS(namespaceURI,
+                new SOAPElementImpl<OMElement>((OMElement)target.getOwnerDocument().createElementNS(namespaceURI,
                                                                                     localName));
         }
         
@@ -120,12 +117,10 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
             }
         }
 
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         if (namespaceURI != null && namespaceURI.trim().length() > 0) {
             childEle.omTarget.setNamespace(childEle.omTarget.declareNamespace(namespaceURI, prefix));
         }
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -138,16 +133,13 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
         if (prefix == null) {
             prefix = "";
         }
-        SOAPElementImpl<OMElement> childEle =
-                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().
-                        createElementNS(namespaceURI, prefix.length() == 0 ? localName : prefix + ":" + localName));
+        SOAPElementImpl<OMElement> childEle = (SOAPElementImpl<OMElement>)getOwnerDocument().
+                        createElementNS(namespaceURI, prefix.length() == 0 ? localName : prefix + ":" + localName);
     
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
         childEle.omTarget.setNamespace(prefix.length() == 0
                 ? childEle.omTarget.declareDefaultNamespace(namespaceURI)
                 : childEle.omTarget.declareNamespace(namespaceURI, prefix));
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -170,10 +162,8 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
       */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         SOAPElementImpl<OMElement> childEle =
-                new SOAPElementImpl<OMElement>((OMElement)getOwnerDocument().createElement(localName));
-        childEle.target.setUserData(SAAJ_NODE, childEle, null);
+                (SOAPElementImpl<OMElement>)getOwnerDocument().createElementNS(null, localName);
         target.appendChild(childEle.target);
-        childEle.target.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -182,6 +172,9 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
       * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(java.lang.String, java.lang.String)
       */
     public SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException {
+        if (uri == null) {
+            uri = "";
+        }
         if (prefix == null || prefix.length() == 0) {
             omTarget.declareDefaultNamespace(uri);
         } else {
@@ -204,9 +197,7 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
         //Therefore create a text node and add it
         //TODO: May need to address the situation where the prev sibling of the textnode itself is a textnode
         Text textNode = getOwnerDocument().createTextNode(text);
-        target.appendChild(textNode);
-        TextImplEx saajTextNode = new TextImplEx((OMText)textNode, this);
-        textNode.setUserData(SAAJ_NODE, saajTextNode, null);
+        appendChild(textNode);
         return this;
     }
 
@@ -274,7 +265,7 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
       */
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
-        Iterator childIter = omTarget.getChildrenWithName(qName);
+        Iterator<OMElement> childIter = omTarget.getChildrenWithName(qName);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
@@ -423,7 +414,7 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
     }
 
     public Iterator getChildElements(QName qname) {
-        Iterator childIter = omTarget.getChildrenWithName(qname);
+        Iterator<OMElement> childIter = omTarget.getChildrenWithName(qname);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
@@ -507,7 +498,7 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
      *          the encodingStyle is invalid for this SOAPElement.
      */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
-        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton()) {
+        if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11) {
             try {
                 URI uri = new URI(encodingStyle);
                 if (!(this instanceof SOAPEnvelope)) {
@@ -521,7 +512,7 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
                 throw new IllegalArgumentException("Invalid Encoding style : "
                         + encodingStyle + ":" + e);
             }
-        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAP12Version.getSingleton()) {
+        } else if (((SOAPFactory)this.omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP12) {
             if (this instanceof SOAPHeader || this instanceof SOAPBody ||
                     this instanceof SOAPFault ||
                     this instanceof SOAPFaultElement || this instanceof SOAPEnvelope ||
@@ -645,30 +636,6 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
     }
 
     /**
-     * Returns the parent element of this <code>Node</code> object. This method can throw an
-     * <code>UnsupportedOperationException</code> if the tree is not kept in memory.
-     *
-     * @return the <code>SOAPElement</code> object that is the parent of this <code>Node</code>
-     *         object or <code>null</code> if this <code>Node</code> object is root
-     * @throws UnsupportedOperationException if the whole tree is not kept in memory
-     * @see #setParentElement(javax.xml.soap.SOAPElement) setParentElement(javax.xml.soap.SOAPElement)
-     */
-    public SOAPElement getParentElement() {
-        if (this.parentElement == null) {
-            javax.xml.soap.Node parentNode = toSAAJNode(target.getParentNode());
-            if (parentNode instanceof SOAPElement) {
-                this.parentElement = (SOAPElement) parentNode;
-            }
-        }
-        return this.parentElement;
-    }
-
-    public void setParentElement(SOAPElement parent) throws SOAPException {
-        this.parentElement = parent;
-        ((OMElementEx)this.omTarget).setParent(((SOAPElementImpl<? extends OMElement>)parent).omTarget);
-    }
-
-    /**
      * Returns the the value of the immediate child of this <code>Node</code> object if a child
      * exists and its value is text.
      *
@@ -694,28 +661,6 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
     protected Object clone() throws CloneNotSupportedException {
         // TODO Auto-generated method stub
         return super.clone();
-    }
-
-    public Node getParentNode() {
-        Node parentNode = null;
-        if (this.parentElement == null) {
-            parentNode = toSAAJNode(target.getParentNode());
-            if (parentNode instanceof SOAPElement) {
-                this.parentElement = (SOAPElement) parentNode;
-            }
-        } else {
-            parentNode = this.parentElement;
-        }
-        return parentNode;
-    }
-
-    /** dom Node method */
-    public org.w3c.dom.Node getNextSibling() {
-        return toSAAJNode(target.getNextSibling());
-    }
-
-    public Node getPreviousSibling() {
-        return toSAAJNode(target.getPreviousSibling());
     }
 
     /**
@@ -744,16 +689,6 @@ public class SOAPElementImpl<T extends OMElement> extends SAAJNode<Element,T> im
                     "either has more than one child node or has a child " +
                     "node that is not a Text node");
         }
-    }
-
-    public void detachNode() {
-        this.detach();
-    }
-
-    public OMNode detach() {
-        OMNode omNode = this.omTarget.detach();
-        this.parentElement = null;
-        return omNode;
     }
 
     public String toString() {

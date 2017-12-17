@@ -82,7 +82,12 @@ public class DeploymentFileData {
      * @return the name of the referenced file
      */
     public String getName() {
-        return file.getName(); // No need to check for null due to constructor check
+        if (file != null) {
+            return file.getName();
+        } else {
+            String path = url.getPath();
+            return path.substring(path.lastIndexOf('/') + 1);
+        }
     }
 
 
@@ -118,8 +123,7 @@ public class DeploymentFileData {
                         throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
                                                                 this.file.getAbsolutePath()));
                     }
-                    urlsToLoadFrom = new URL[]{this.file.toURI().toURL()};
-                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, true, file, isChildFirstClassLoading);
+                    classLoader = Utils.createClassLoader(this.file.toURI().toURL(), null, parent, file, isChildFirstClassLoading);
                 } catch (Exception e) {
                     throw AxisFault.makeFault(e);
                 }

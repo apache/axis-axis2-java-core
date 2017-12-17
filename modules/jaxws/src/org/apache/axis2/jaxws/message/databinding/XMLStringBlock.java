@@ -22,6 +22,6 @@ package org.apache.axis2.jaxws.message.databinding;
 import org.apache.axis2.jaxws.message.Block;
 
 /** XMLStringBlock Block with a business object that is a String containing xml text */
-public interface XMLStringBlock extends Block {
+public interface XMLStringBlock extends Block<String,Void> {
 
 }

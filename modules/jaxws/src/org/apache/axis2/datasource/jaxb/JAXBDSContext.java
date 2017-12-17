@@ -19,13 +19,10 @@
 
 package org.apache.axis2.datasource.jaxb;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.XOPEncoded;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
-import org.apache.axiom.om.util.XMLStreamWriterRemoveIllegalChars;
-import org.apache.axiom.util.stax.XMLStreamReaderUtils;
-import org.apache.axiom.util.stax.xop.MimePartProvider;
-import org.apache.axiom.util.stax.xop.XOPEncodedStream;
-import org.apache.axiom.util.stax.xop.XOPUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
@@ -59,7 +56,6 @@ import javax.xml.ws.WebServiceException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -96,7 +92,7 @@ public class JAXBDSContext {
     //              Doc/Lit Bare "Minimal" Processing (JAXB ObjectFactories are missing...
     //                   and thus we must use "by type" for primitives/String)
     // Please don't use "by java type" processing to get around errors.
-    private Class processType = null;
+    private Class<?> processType = null;
     private boolean isxmlList =false;
     
     private String webServiceNamespace;
@@ -127,7 +123,7 @@ public class JAXBDSContext {
      * @deprecated
      */
     public JAXBDSContext(String contextPackage) {
-        this.contextPackages = new TreeSet();
+        this.contextPackages = new TreeSet<String>();
         this.contextPackages.add(contextPackage);
         this.contextPackagesKey = this.contextPackages.toString();
     }
@@ -234,7 +230,7 @@ public class JAXBDSContext {
     }
     
     /** @return RPC Declared Type */
-    public Class getProcessType() {
+    public Class<?> getProcessType() {
         return processType;
     }
 
@@ -246,7 +242,7 @@ public class JAXBDSContext {
      *
      * @param type
      */
-    public void setProcessType(Class type) {
+    public void setProcessType(Class<?> type) {
     	if (log.isDebugEnabled()) {
      		log.debug("Process Type set to: " + type);
      	}
@@ -287,43 +283,21 @@ public class JAXBDSContext {
         return null;
     }
     
-    /**
-     * Create an AttachmentMarshaller to marshal MTOM/SWA Attachments
-     * @param writer
-     * @return
-     */
-    protected AttachmentMarshaller createAttachmentMarshaller(XMLStreamWriter writer) {
-        return new JAXBAttachmentMarshaller(getMessageContext(), writer);
-    }
-    
-    /**
-     * Create an Attachment unmarshaller for unmarshalling MTOM/SWA Attachments
-     * @return AttachmentUnmarshaller
-     */
-    protected AttachmentUnmarshaller createAttachmentUnmarshaller(MimePartProvider mimePartProvider) {
-        return new JAXBAttachmentUnmarshaller(mimePartProvider, getMessageContext());
+    protected AttachmentContext createAttachmentContext() {
+        return new MessageContextAttachmentContext(getMessageContext());
     }
 
     /**
      * Unmarshal the xml into a JAXB object
-     * @param inputReader
+     * @param element
      * @return
      * @throws JAXBException
      */
-    public Object unmarshal(XMLStreamReader inputReader) throws JAXBException {
+    public Object unmarshal(OMElement element) throws JAXBException {
 
-        if (DEBUG_ENABLED) {
-            String clsText = (inputReader !=null) ? inputReader.getClass().toString() : "null";
-            log.debug("unmarshal with inputReader=" + clsText);
-        } 
         // See the Javadoc of the CustomBuilder interface for a complete explanation of
         // the following two instructions:
-        XOPEncodedStream xopEncodedStream = XOPUtils.getXOPEncodedStream(inputReader);
-        XMLStreamReader reader = XMLStreamReaderUtils.getOriginalXMLStreamReader(xopEncodedStream.getReader());
-        if (DEBUG_ENABLED) {
-            String clsText = (reader !=null) ? reader.getClass().toString() : "null";
-            log.debug("  originalReader=" + clsText);
-        } 
+        XOPEncoded<XMLStreamReader> xopEncodedStream = element.getXOPEncodedStreamReader(false);
         
         // There may be a preferred classloader that should be used
         ClassLoader cl = getClassLoader();
@@ -332,7 +306,7 @@ public class JAXBDSContext {
 
         
         // Create an attachment unmarshaller
-        AttachmentUnmarshaller aum = createAttachmentUnmarshaller(xopEncodedStream.getMimePartProvider());
+        AttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller(createAttachmentContext(), xopEncodedStream.getAttachmentAccessor());
 
         if (aum != null) {
             if (DEBUG_ENABLED) {
@@ -344,6 +318,7 @@ public class JAXBDSContext {
         Object jaxb = null;
 
         // Unmarshal into the business object.
+        XMLStreamReader reader = xopEncodedStream.getRootPart();
         if (getProcessType() == null) {
             jaxb = unmarshalByElement(u, reader);   // preferred and always used for
                                                     // style=document
@@ -375,90 +350,83 @@ public class JAXBDSContext {
         if (log.isDebugEnabled()) {
             log.debug("enter marshal");
         }
-        boolean installedFilter = false;
 
-        try {
-            // There may be a preferred classloader that should be used
-            ClassLoader cl = getClassLoader();
+        // There may be a preferred classloader that should be used
+        ClassLoader cl = getClassLoader();
 
 
-            // Very easy, use the Context to get the Marshaller.
-            // Use the marshaller to write the object.
-            JAXBContext jbc = getJAXBContext(cl);
-            Marshaller m = JAXBUtils.getJAXBMarshaller(jbc);
-            if (writer instanceof MTOMXMLStreamWriter && ((MTOMXMLStreamWriter) writer).getOutputFormat() != null) {
-                String encoding = ((MTOMXMLStreamWriter) writer).getOutputFormat().getCharSetEncoding();
+        // Very easy, use the Context to get the Marshaller.
+        // Use the marshaller to write the object.
+        JAXBContext jbc = getJAXBContext(cl);
+        Marshaller m = JAXBUtils.getJAXBMarshaller(jbc);
+        if (writer instanceof MTOMXMLStreamWriter && ((MTOMXMLStreamWriter) writer).getOutputFormat() != null) {
+            String encoding = ((MTOMXMLStreamWriter) writer).getOutputFormat().getCharSetEncoding();
 
-                String marshallerEncoding = (String) m.getProperty(Marshaller.JAXB_ENCODING);
+            String marshallerEncoding = (String) m.getProperty(Marshaller.JAXB_ENCODING);
 
-                // Make sure that the marshaller respects the encoding of the message.
-                // This is accomplished by setting the encoding on the Marshaller's JAXB_ENCODING property.
-                if (encoding == null && marshallerEncoding == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("The encoding and the marshaller's JAXB_ENCODING are both set to the default (UTF-8)");
-                    }
-                } else {
-                    // Must set the encoding to an actual String to set it on the Marshaller
-                    if (encoding == null) {
-                        encoding = "UTF-8";
-                    }
-                    if (!encoding.equalsIgnoreCase(marshallerEncoding)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("The Marshaller.JAXB_ENCODING is " + marshallerEncoding);
-                            log.debug("The Marshaller.JAXB_ENCODING is changed to the message encoding " + 
-                                    encoding);
-                        }
-                        m.setProperty(Marshaller.JAXB_ENCODING, encoding);
-                    } else {
-                        if (log.isDebugEnabled()) {
-                            log.debug("The encoding and the marshaller's JAXB_ENCODING are both set to:" + 
-                                    marshallerEncoding);
-                        }
-                    }
+            // Make sure that the marshaller respects the encoding of the message.
+            // This is accomplished by setting the encoding on the Marshaller's JAXB_ENCODING property.
+            if (encoding == null && marshallerEncoding == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("The encoding and the marshaller's JAXB_ENCODING are both set to the default (UTF-8)");
                 }
-            }
-
-            AttachmentMarshaller am = createAttachmentMarshaller(writer);
-            if (am != null) {
-                if (DEBUG_ENABLED) {
-                    log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
-                }
-                m.setAttachmentMarshaller(am);
-            }
-
-            MessageContext mc = getMessageContext();
-
-            // If requested install a filter to remove illegal characters
-            installedFilter = installFilter(mc, writer);
-
-
-            // Marshal the object
-            if (getProcessType() == null) {
-                marshalByElement(obj, 
-                        m, 
-                        writer, 
-                        true);
-                //!am.isXOPPackage());
             } else {
-                marshalByType(obj,
-                        m,
-                        writer,
-                        getProcessType(),
-                        isxmlList(),
-                        getConstructionType(),
-                        true); // Attempt to optimize by writing to OutputStream
+                // Must set the encoding to an actual String to set it on the Marshaller
+                if (encoding == null) {
+                    encoding = "UTF-8";
+                }
+                if (!encoding.equalsIgnoreCase(marshallerEncoding)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("The Marshaller.JAXB_ENCODING is " + marshallerEncoding);
+                        log.debug("The Marshaller.JAXB_ENCODING is changed to the message encoding " + 
+                                encoding);
+                    }
+                    m.setProperty(Marshaller.JAXB_ENCODING, encoding);
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("The encoding and the marshaller's JAXB_ENCODING are both set to:" + 
+                                marshallerEncoding);
+                    }
+                }
             }
+        }
 
-            JAXBUtils.releaseJAXBMarshaller(jbc, m);
+        AttachmentMarshaller am = new JAXBAttachmentMarshaller(createAttachmentContext(), writer);
+        if (am != null) {
+            if (DEBUG_ENABLED) {
+                log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
+            }
+            m.setAttachmentMarshaller(am);
+        }
 
-            if (log.isDebugEnabled()) {
-                log.debug("exit marshal");
-            }
-        } finally {
-            // Make sure the filter is uninstalled
-            if (installedFilter) {
-                uninstallFilter(writer);
-            }
+        MessageContext mc = getMessageContext();
+
+        // If requested install a filter to remove illegal characters
+        if (writer instanceof MTOMXMLStreamWriter && ContextUtils.isJAXBRemoveIllegalChars(mc)) {
+            writer = new XMLStreamWriterRemoveIllegalChars((MTOMXMLStreamWriter)writer);
+        }
+
+        // Marshal the object
+        if (getProcessType() == null) {
+            marshalByElement(obj, 
+                    m, 
+                    writer, 
+                    true);
+            //!am.isXOPPackage());
+        } else {
+            marshalByType(obj,
+                    m,
+                    writer,
+                    getProcessType(),
+                    isxmlList(),
+                    getConstructionType(),
+                    true); // Attempt to optimize by writing to OutputStream
+        }
+
+        JAXBUtils.releaseJAXBMarshaller(jbc, m);
+
+        if (log.isDebugEnabled()) {
+            log.debug("exit marshal");
         }
     }
     
@@ -474,8 +442,8 @@ public class JAXBDSContext {
     private static void marshalByElement(final Object b, final Marshaller m, 
                                          final XMLStreamWriter writer,
                                          final boolean optimize) {
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
                 // Marshalling directly to the output stream is faster than marshalling through the
                 // XMLStreamWriter. 
                 // Take advantage of this optimization if there is an output stream.
@@ -517,7 +485,7 @@ public class JAXBDSContext {
     private static String getDebugName(Object o) {
         String name = (o == null) ? "null" : o.getClass().getCanonicalName();
         if (o instanceof JAXBElement) {
-            name += " containing " + getDebugName(((JAXBElement) o).getValue());
+            name += " containing " + getDebugName(((JAXBElement<?>) o).getValue());
         }
         return name;
     }
@@ -534,13 +502,13 @@ public class JAXBDSContext {
             log.debug("XMLStreamWriter is " + writer);
         }
         OutputStream os = null;
-        if (writer.getClass() == MTOMXMLStreamWriter.class) {
+        if (writer instanceof MTOMXMLStreamWriter) {
             os = ((MTOMXMLStreamWriter) writer).getOutputStream();
             if (log.isDebugEnabled()) {
                 log.debug("OutputStream accessible from MTOMXMLStreamWriter is " + os);
             }
         }
-        if (writer.getClass() == XMLStreamWriterWithOS.class) {
+        if (writer instanceof XMLStreamWriterWithOS) {
             os = ((XMLStreamWriterWithOS) writer).getOutputStream();
             if (log.isDebugEnabled()) {
                 log.debug("OutputStream accessible from XMLStreamWriterWithOS is " + os);
@@ -578,7 +546,7 @@ public class JAXBDSContext {
      * @throws WebServiceException
      */
     public static Object unmarshalByType(final Unmarshaller u, final XMLStreamReader reader,
-                                          final Class type, final boolean isList,
+                                          final Class<?> type, final boolean isList,
                                           final JAXBUtils.CONSTRUCTION_TYPE ctype)
         throws WebServiceException {
 
@@ -589,7 +557,7 @@ public class JAXBDSContext {
             log.debug("  ctype = "+ ctype);
         }
 
-        return AccessController.doPrivileged(new PrivilegedAction() {
+        return AccessController.doPrivileged(new PrivilegedAction<Object>() {
             public Object run() {
                 try {
                     // Unfortunately RPC is type based. Thus a
@@ -618,7 +586,7 @@ public class JAXBDSContext {
                             	//process primitives first
                             	//first verify if we have a primitive type associated in the array.
                             	//array could be single dimension or multi dimension.
-                            	Class cType = type.getComponentType();
+                            	Class<?> cType = type.getComponentType();
                             	while(cType.isArray()){
                             		cType = cType.getComponentType();
                             	}
@@ -700,14 +668,13 @@ public class JAXBDSContext {
                         
                     }
                     if (log.isDebugEnabled()) {
-                        Class cls;
                         if (jaxb == null) {
                             if (DEBUG_ENABLED) {
                                 log.debug("End unmarshalByType returning null object");
                             }
 
                         } else if (jaxb instanceof JAXBElement) {
-                            JAXBElement jbe = (JAXBElement) jaxb;
+                            JAXBElement<?> jbe = (JAXBElement<?>) jaxb;
                             if (DEBUG_ENABLED) {
                                 log.debug("End unmarshalByType returning JAXBElement");
                                 log.debug("  Class = " + jbe.getDeclaredType());
@@ -731,13 +698,13 @@ public class JAXBDSContext {
 
     private static Object unmarshalArray(final XMLStreamReader reader, 
                                          final Unmarshaller u, 
-                                         Class type)
+                                         Class<?> type)
        throws Exception {
         try {
             if (DEBUG_ENABLED) {
                 log.debug("Invoking unmarshalArray");
             }
-            Object jaxb = AccessController.doPrivileged(new PrivilegedAction() {
+            Object jaxb = AccessController.doPrivileged(new PrivilegedAction<Object>() {
                 public Object run() {
                     try {
                         return u.unmarshal(reader, String[].class);
@@ -783,7 +750,7 @@ public class JAXBDSContext {
      */
     public static Object unmarshalAsListOrArray(final XMLStreamReader reader, 
                                                 final Unmarshaller u, 
-                                                 Class type)
+                                                 Class<?> type)
         throws IllegalAccessException, ParseException,NoSuchMethodException,
         InstantiationException,
         DatatypeConfigurationException,InvocationTargetException,JAXBException {
@@ -798,7 +765,7 @@ public class JAXBDSContext {
             // First unmarshal as a String
             Object jaxb = null;
             try {
-                jaxb = AccessController.doPrivileged(new PrivilegedAction() {
+                jaxb = AccessController.doPrivileged(new PrivilegedAction<Object>() {
                     public Object run() {
                         try {
                             return u.unmarshal(reader, String.class);
@@ -836,14 +803,14 @@ public class JAXBDSContext {
             return null;
         }
         if (obj instanceof JAXBElement) {
-            return ((JAXBElement) obj).getValue();
+            return ((JAXBElement<?>) obj).getValue();
         }
         return obj;
     }
 
     private static boolean isOccurrenceArray(Object obj) {
         return (obj instanceof JAXBElement) &&
-            (((JAXBElement)obj).getValue() instanceof OccurrenceArray);
+            (((JAXBElement<?>)obj).getValue() instanceof OccurrenceArray);
                 
     }
     /**
@@ -860,7 +827,7 @@ public class JAXBDSContext {
      * outputstream should be attempted.
      */
     private void marshalByType(final Object b, final Marshaller m,
-                                      final XMLStreamWriter writer, final Class type,
+                                      final XMLStreamWriter writer, final Class<?> type,
                                       final boolean isList, 
                                       final JAXBUtils.CONSTRUCTION_TYPE ctype,
                                       final boolean optimize) 
@@ -876,11 +843,11 @@ public class JAXBDSContext {
                         
         }
         if (isOccurrenceArray(b)) {
-            marshalOccurrenceArray((JAXBElement) b, m, writer);
+            marshalOccurrenceArray((JAXBElement<?>) b, m, writer);
             return;
         }
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
                 try {
 
                     // NOTE
@@ -928,7 +895,7 @@ public class JAXBDSContext {
                                 log.debug("marshalling [context path approach] " +
                                                 "with xmllist text = " + text);
                             }
-                            jbo = new JAXBElement(qName, String.class, text);
+                            jbo = new JAXBElement<String>(qName, String.class, text);
                         } else if (ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY) {
                             // Some versions of JAXB have array/list processing built in.
                             // This code is a safeguard because apparently some versions
@@ -939,7 +906,7 @@ public class JAXBDSContext {
                                 log.debug("marshalling [class array approach] " +
                                                 "with xmllist text = " + text);
                             }
-                            jbo = new JAXBElement(qName, String.class, text); 
+                            jbo = new JAXBElement<String>(qName, String.class, text); 
                         }
                     }
                     // When JAXBContext is created using a context path, it will not include Enum
@@ -963,10 +930,10 @@ public class JAXBDSContext {
                                 log.debug("marshalByType. Marshaling " + type.getName()
                                         + " as Enum");
                             }
-                            JAXBElement jbe = (JAXBElement) b;
-                            String value = XMLRootElementUtil.getEnumValue((Enum) jbe.getValue());
+                            JAXBElement<?> jbe = (JAXBElement<?>) b;
+                            String value = XMLRootElementUtil.getEnumValue((Enum<?>) jbe.getValue());
 
-                            jbo = new JAXBElement(jbe.getName(), String.class, value);
+                            jbo = new JAXBElement<String>(jbe.getName(), String.class, value);
                         }
                     }
 
@@ -1008,7 +975,7 @@ public class JAXBDSContext {
      * @param writer_in XMLStreamWriter
      */
     private void marshalOccurrenceArray(
-                final JAXBElement jbe_in, 
+                final JAXBElement<?> jbe_in, 
                 final Marshaller m_in,
                 final XMLStreamWriter writer_in) {
         
@@ -1017,8 +984,8 @@ public class JAXBDSContext {
             log.debug("  Marshaller = " + JavaUtils.getObjectIdentity(m_in));
         }
         
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
                 try {
                     
                     Marshaller m = m_in;
@@ -1044,7 +1011,7 @@ public class JAXBDSContext {
                     // The name is the name of the individual occurence elements
                     // Type type is Object[]
                     // The value is the array of Object[] representing each element
-                    JAXBElement jbe = new JAXBElement(jbe_in.getName(), 
+                    JAXBElement<Object[]> jbe = new JAXBElement<Object[]>(jbe_in.getName(), 
                             Object[].class, 
                             occurArray.getAsArray());
 
@@ -1091,7 +1058,7 @@ public class JAXBDSContext {
             if (DEBUG_ENABLED) {
                 log.debug("Invoking unMarshalByElement");
             }
-            return AccessController.doPrivileged(new PrivilegedAction() {
+            return AccessController.doPrivileged(new PrivilegedAction<Object>() {
                 public Object run() {
                     try {
                         return u.unmarshal(reader);
@@ -1109,37 +1076,4 @@ public class JAXBDSContext {
             throw new OMException(t);
         }
     }
-    
-
-    /**
-     * Install a JAXB filter if requested
-     * @param mc
-     * @param writer
-     * @return true if filter installed
-     */
-    private boolean installFilter(MessageContext mc, XMLStreamWriter writer) {
-        if (!(writer instanceof MTOMXMLStreamWriter)) {
-            return false;
-        }
-        if (!ContextUtils.isJAXBRemoveIllegalChars(mc)) {
-            return false;
-        }
-        
-         
-        MTOMXMLStreamWriter mtomWriter = (MTOMXMLStreamWriter) writer;
-        mtomWriter.setFilter(new XMLStreamWriterRemoveIllegalChars());
-        return true;
-    }
-    
-    /**
-     * UninstallInstall a JAXB filter if requested
-     * @param mc
-     * @param writer
-     * @return true if filter installed
-     */
-    private void uninstallFilter(XMLStreamWriter writer) {
-        MTOMXMLStreamWriter mtomWriter = (MTOMXMLStreamWriter) writer;
-        mtomWriter.removeFilter();
-    }
-
 }

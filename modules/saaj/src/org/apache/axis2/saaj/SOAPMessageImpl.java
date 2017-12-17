@@ -20,14 +20,14 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.mime.ContentTypeBuilder;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.OMMultipartWriter;
-import org.apache.axiom.soap.SOAP11Version;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPVersion;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -270,11 +270,11 @@ public class SOAPMessageImpl extends SOAPMessage {
     public void saveChanges() throws SOAPException {
         try {
             String contentTypeValue = getSingleHeaderValue(HTTPConstants.HEADER_CONTENT_TYPE);
-            ContentTypeBuilder contentType;
+            ContentType.Builder contentType;
             if (isEmptyString(contentTypeValue)) {
-                contentType = new ContentTypeBuilder(attachmentParts.size() > 0 ? MediaType.MULTIPART_RELATED : getMediaType());
+                contentType = ContentType.builder().setMediaType(attachmentParts.size() > 0 ? MediaType.MULTIPART_RELATED : getMediaType());
             } else {
-                contentType = new ContentTypeBuilder(contentTypeValue);
+                contentType = new ContentType(contentTypeValue).toBuilder();
                 //Use configures the baseType with multipart/related while no attachment exists or all the attachments are removed
                 if (contentType.getMediaType().equals(MediaType.MULTIPART_RELATED) && attachmentParts.size() == 0) {
                     contentType.setMediaType(getMediaType());
@@ -311,11 +311,11 @@ public class SOAPMessageImpl extends SOAPMessage {
                 
                 //Configure charset
                 String soapPartContentTypeValue = getSingleHeaderValue(soapPart.getMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE));
-                ContentTypeBuilder soapPartContentType = null;
+                ContentType.Builder soapPartContentType;
                 if (isEmptyString(soapPartContentTypeValue)) {
-                    soapPartContentType = new ContentTypeBuilder(soapPartContentTypeValue);
+                    soapPartContentType = new ContentType(soapPartContentTypeValue).toBuilder();
                 } else {
-                    soapPartContentType = new ContentTypeBuilder(getMediaType());
+                    soapPartContentType = ContentType.builder().setMediaType(getMediaType());
                 }                
                 setCharsetParameter(soapPartContentType);
             } else {
@@ -323,7 +323,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 setCharsetParameter(contentType);
             }
             
-            mimeHeaders.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType.toString());
+            mimeHeaders.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType.build().toString());
         } catch (ParseException e) {
             throw new SOAPException("Invalid Content Type Field in the Mime Message", e);
         }
@@ -374,7 +374,7 @@ public class SOAPMessageImpl extends SOAPMessage {
             if (attachmentParts.isEmpty()) {
                 envelope.serialize(out, format);
             } else {
-                ContentTypeBuilder contentType = new ContentTypeBuilder(getSingleHeaderValue(HTTPConstants.HEADER_CONTENT_TYPE));
+                ContentType.Builder contentType = new ContentType(getSingleHeaderValue(HTTPConstants.HEADER_CONTENT_TYPE)).toBuilder();
                 String boundary = contentType.getParameter("boundary");
                 if(isEmptyString(boundary)) {
                     boundary = UIDGenerator.generateMimeBoundary();
@@ -393,10 +393,10 @@ public class SOAPMessageImpl extends SOAPMessage {
                 }
                 format.setRootContentId(rootContentId);
 
-                format.setSOAP11(((SOAPFactory)((SOAPEnvelopeImpl) soapPart.getEnvelope()).omTarget.getOMFactory()).getSOAPVersion() == SOAP11Version.getSingleton());
+                format.setSOAP11(((SOAPFactory)((SOAPEnvelopeImpl) soapPart.getEnvelope()).omTarget.getOMFactory()).getSOAPVersion() == SOAPVersion.SOAP11);
                 
                 //Double save the content-type in case anything is updated
-                mimeHeaders.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType.toString());
+                mimeHeaders.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType.build().toString());
 
                 OMMultipartWriter mpw = new OMMultipartWriter(out, format);
                 OutputStream rootPartOutputStream = mpw.writeRootPart();
@@ -615,7 +615,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      * @param contentType
      * @throws SOAPException
      */
-    private void setCharsetParameter(ContentTypeBuilder contentType) throws SOAPException{
+    private void setCharsetParameter(ContentType.Builder contentType) throws SOAPException{
         String charset = (String)getProperty(CHARACTER_SET_ENCODING); 
         if (!isEmptyString(charset)) {
             contentType.setParameter("charset", charset);

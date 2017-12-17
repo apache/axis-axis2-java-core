@@ -25,11 +25,9 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.databinding.utils.Constants;
-import org.apache.axis2.util.StreamWrapper;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -41,9 +39,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -823,21 +819,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
      * @return
      */
     private String getStringXML(XMLStreamReader reader) throws XMLStreamException {
-        //the returned pullparser starts at an Element rather than the start
-        //document event. This is somewhat disturbing but since an ADBBean
-        //denotes an XMLFragment, it is justifiable to keep the current event
-        //at the Start-element rather than the start document
-        //What it boils down to is that we need to wrap the reader in a
-        //stream wrapper to get a fake start-document event
-
-        StreamingOMSerializer ser = new StreamingOMSerializer();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(byteArrayOutputStream);
-        ser.serialize(
-                new StreamWrapper(reader),
-                writer);
-        writer.flush();
-        return byteArrayOutputStream.toString();
+        return OMXMLBuilderFactory.createStAXOMBuilder(reader).getDocumentElement().toString();
     }
 
 //     /**

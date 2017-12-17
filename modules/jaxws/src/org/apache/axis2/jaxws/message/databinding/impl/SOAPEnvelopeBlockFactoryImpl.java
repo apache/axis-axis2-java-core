@@ -46,7 +46,7 @@ public class SOAPEnvelopeBlockFactoryImpl extends BlockFactoryImpl implements
       */
     public Block createFrom(OMElement omElement, Object context, QName qName)
             throws XMLStreamException {
-        return new SOAPEnvelopeBlockImpl(omElement, null, qName, this);
+        return new SOAPEnvelopeBlockImpl(omElement, qName, this);
     }
 
     /* (non-Javadoc)
@@ -54,7 +54,7 @@ public class SOAPEnvelopeBlockFactoryImpl extends BlockFactoryImpl implements
       */
     public Block createFrom(Object businessObject, Object context, QName qName)
             throws WebServiceException {
-        return new SOAPEnvelopeBlockImpl((SOAPEnvelope)businessObject, null, qName, this);
+        return new SOAPEnvelopeBlockImpl((SOAPEnvelope)businessObject, qName, this);
     }
 
     public boolean isElement() {

@@ -29,14 +29,15 @@ import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -259,7 +260,7 @@ public class CodegenBean {
 
             String baseUri;
             if ("file".equals(url.getProtocol())) {
-                baseUri = new File(url.getFile()).getParentFile().toURL().toExternalForm();
+                baseUri = new File(url.getFile()).getParentFile().toURI().toURL().toExternalForm();
             } else {
                 baseUri = url.toExternalForm().substring(0,
                         url.toExternalForm().lastIndexOf("/")
@@ -383,7 +384,8 @@ public class CodegenBean {
             if (!"xmlbeans".equals(getDatabindingName())) {
                 Thread.currentThread().setContextClassLoader(Class.class.getClassLoader());
             }
-            CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
+            CodeGenConfiguration codegenConfig = new CodeGenConfiguration();
+            CodegenConfigLoader.loadConfig(codegenConfig, fillOptionMap());
             codegenConfig.addAxisService(getAxisService(WSDLFileName));
             codegenConfig.setWsdlDefinition(wsdlDefinition);
             //set the baseURI
@@ -391,7 +393,8 @@ public class CodegenBean {
             new CodeGenerationEngine(codegenConfig).generate();
         } catch (Throwable e) {
             try {
-                CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
+                CodeGenConfiguration codegenConfig = new CodeGenConfiguration();
+                CodegenConfigLoader.loadConfig(codegenConfig, fillOptionMap());
                 codegenConfig.addAxisService(getAxisService(WSDLFileName));
                 codegenConfig.setWsdlDefinition(wsdlDefinition);
                 //set the baseURI
@@ -412,7 +415,7 @@ public class CodegenBean {
 
     public void readWSDL() throws WSDLException {
 
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    	WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
         wsdlDefinition = reader.readWSDL(WSDLFileName) ;
         if (wsdlDefinition != null) {
             wsdlDefinition.setDocumentBaseURI(WSDLFileName);

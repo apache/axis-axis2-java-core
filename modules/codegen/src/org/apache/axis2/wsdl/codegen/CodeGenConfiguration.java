@@ -19,19 +19,32 @@
 
 package org.apache.axis2.wsdl.codegen;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.util.CommandLineOption;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -174,6 +187,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.outputLanguage = outputLanguage;
     }
 
+    public void setOutputEncoding(String outputEncoding) {
+        this.outputEncoding = outputEncoding;
+    }
+
     public void setAdvancedCodeGenEnabled(boolean advancedCodeGenEnabled) {
         this.advancedCodeGenEnabled = advancedCodeGenEnabled;
     }
@@ -206,6 +223,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     //get the defaults for these from the property file
     private String outputLanguage = ConfigPropertyFileLoader.getDefaultLanguage();
+    private String outputEncoding = System.getProperty("file.encoding");
     private String databindingType = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
     private boolean advancedCodeGenEnabled = false;
 
@@ -377,8 +395,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      *
      * @param optionMap
      */
-    public CodeGenConfiguration(Map<String,CommandLineOption> optionMap) {
-        CodegenConfigLoader.loadConfig(this, optionMap);
+    public CodeGenConfiguration() {
         this.axisServices = new ArrayList<AxisService>();
         this.outputFileNamesList = new ArrayList<String>();
     }
@@ -391,6 +408,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public String getOutputLanguage() {
         return outputLanguage;
+    }
+
+    public String getOutputEncoding() {
+        return outputEncoding;
     }
 
     public boolean isAdvancedCodeGenEnabled() {
@@ -639,5 +660,127 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public void setUseOperationName(boolean useOperationName) {
         isUseOperationName = useOperationName;
+    }
+
+    public void loadWsdl(String wsdlUri) throws CodeGenerationException {
+        try {
+            // the redirected urls gives problems in code generation some times with jaxbri
+            // eg. https://www.paypal.com/wsdl/PayPalSvc.wsdl
+            // if there is a redirect url better to find it and use.
+            if (wsdlUri.startsWith("http")) {
+                URL url = new URL(wsdlUri);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setInstanceFollowRedirects(false);
+                connection.getResponseCode();
+                String newLocation = connection.getHeaderField("Location");
+                if (newLocation != null){
+                    wsdlUri = newLocation;
+                }
+            }
+
+            if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
+                    equals(getWSDLVersion())) {
+
+                WSDL20ToAxisServiceBuilder builder;
+
+                // jibx currently does not support multiservice
+                if ((getServiceName() != null) || (getDatabindingType().equals("jibx"))) {
+                    builder = new WSDL20ToAxisServiceBuilder(
+                            wsdlUri,
+                            getServiceName(),
+                            getPortName(),
+                            isAllPorts());
+                    builder.setCodegen(true);
+                    addAxisService(builder.populateService());
+                } else {
+                    builder = new WSDL20ToAllAxisServicesBuilder(wsdlUri, getPortName());
+                    builder.setCodegen(true);
+                    builder.setAllPorts(isAllPorts());
+                    setAxisServices(
+                            ((WSDL20ToAllAxisServicesBuilder)builder).populateAllServices());
+                }
+
+            } else {
+                //It'll be WSDL 1.1
+                Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
+
+                // we save the original wsdl definition to write it to the resource folder later
+                // this is required only if it has imports
+                Map imports = wsdl4jDef.getImports();
+                if ((imports != null) && (imports.size() > 0)) {
+                    setWsdlDefinition(readInTheWSDLFile(wsdlUri));
+                } else {
+                    setWsdlDefinition(wsdl4jDef);
+                }
+
+                // we generate the code for one service and one port if the
+                // user has specified them.
+                // otherwise generate the code for every service.
+                // TODO: find out a permanant solution for this.
+                QName serviceQname = null;
+
+                if (getServiceName() != null) {
+                    serviceQname = new QName(wsdl4jDef.getTargetNamespace(),
+                                             getServiceName());
+                }
+
+                WSDL11ToAxisServiceBuilder builder;
+                // jibx currently does not support multiservice
+                if ((serviceQname != null) || (getDatabindingType().equals("jibx"))) {
+                    builder = new WSDL11ToAxisServiceBuilder(
+                            wsdl4jDef,
+                            serviceQname,
+                            getPortName(),
+                            isAllPorts());
+                    builder.setCodegen(true);
+                    addAxisService(builder.populateService());
+                } else {
+                    builder = new WSDL11ToAllAxisServicesBuilder(wsdl4jDef, getPortName());
+                    builder.setCodegen(true);
+                    builder.setAllPorts(isAllPorts());
+                    setAxisServices(
+                            ((WSDL11ToAllAxisServicesBuilder)builder).populateAllServices());
+                }
+            }
+            setBaseURI(getBaseURI(wsdlUri));
+        } catch (AxisFault axisFault) {
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("engine.wsdlParsingException"), axisFault);
+        } catch (WSDLException e) {
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("engine.wsdlParsingException"), e);
+        } catch (Exception e) {
+            throw new CodeGenerationException(                            
+                    CodegenMessages.getMessage("engine.wsdlParsingException"), e);
+        }
+    }
+
+    /**
+     * calculates the base URI Needs improvement but works fine for now ;)
+     *
+     * @param currentURI
+     */
+    private String getBaseURI(String currentURI) throws URISyntaxException, IOException {
+        File file = new File(currentURI);
+        if (file.exists()) {
+            return file.getCanonicalFile().getParentFile().toURI().toString();
+        }
+        String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
+        return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
+    }
+
+    /**
+     * Read the WSDL file
+     *
+     * @param uri
+     * @throws WSDLException
+     */
+    private Definition readInTheWSDLFile(final String uri) throws WSDLException {
+
+        WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
+        reader.setFeature("javax.wsdl.importDocuments", true);
+
+        return reader.readWSDL(uri);
+        
     }
 }

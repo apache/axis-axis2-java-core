@@ -60,10 +60,10 @@ public class URLEndpointFactory {
                 }
             }
 
-            Iterator it = messageBuilders.getChildrenWithName(
+            Iterator<OMElement> it = messageBuilders.getChildrenWithName(
                     new QName(URLEndpointsConfiguration.MESSAGE_BUILDER));
             while(it.hasNext()) {
-                OMElement builderElement = (OMElement) it.next();
+                OMElement builderElement = it.next();
 
                 OMAttribute contentTypeAttr = builderElement.getAttribute(
                         new QName(URLEndpointsConfiguration.CONTENT_TYPE));
@@ -90,10 +90,10 @@ public class URLEndpointFactory {
             }
         }
 
-        Iterator paramItr = xml.getChildrenWithName(
+        Iterator<OMElement> paramItr = xml.getChildrenWithName(
                 new QName(URLEndpointsConfiguration.PARAMETER));
         while (paramItr.hasNext()) {
-            OMElement p = (OMElement) paramItr.next();
+            OMElement p = paramItr.next();
             OMAttribute paramNameAttr = p.getAttribute(new QName(URLEndpointsConfiguration.NAME));
             if (paramNameAttr == null) {
                 handleException("Parameter " + URLEndpointsConfiguration.NAME + " cannot be null");

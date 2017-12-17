@@ -20,10 +20,10 @@
 package org.apache.axis2.om;
 
 import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.util.StreamWrapper;
 import za.co.eskom.nrs.xmlvend.base.x20.schema.AdviceReqDocument;
 import za.co.eskom.nrs.xmlvend.base.x20.schema.ConfirmationAdviceReq;
@@ -48,10 +48,8 @@ public class OMAttributeTest extends TestCase {
         doc.setAdviceReq(req);
 
         //get the pull parser and construct the OMElement
-        StAXOMBuilder builder = new StAXOMBuilder(
-                OMAbstractFactory.getOMFactory(),
-                new StreamWrapper(doc.newXMLStreamReader())
-        );
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(
+                new StreamWrapper(doc.newXMLStreamReader()));
         OMElement elt = builder.getDocumentElement();
 
         //traverse the element and look at the namespace of the attribute

@@ -27,8 +27,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.UtilsTransportServer;
@@ -89,7 +89,7 @@ public abstract class AbstractTransportTest extends TestCase {
     }
     
     protected void assertSOAPEchoResponse(String textValue, XMLStreamReader reader) {
-        SOAPEnvelope env = new StAXSOAPModelBuilder(reader).getSOAPEnvelope();
+        SOAPEnvelope env = OMXMLBuilderFactory.createStAXSOAPModelBuilder(reader).getSOAPEnvelope();
         assertEchoResponse(textValue, env.getBody().getFirstElement());
     }
     
