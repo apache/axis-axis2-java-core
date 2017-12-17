@@ -78,19 +78,18 @@ public class WSDL11ToAxisServiceBuilderTest extends TestCase {
         final String portName = "FooHttpGetPort";
           
         AxisService service = new WSDL11ToAxisServiceBuilder(in, serviceName, portName).populateService();
-        List schemaDocuments = service.getSchema();
-        List duplicatedGlobalElements = findDuplicatedGlobalElements(schemaDocuments);
+        List<XmlSchema> schemaDocuments = service.getSchema();
+        List<QName> duplicatedGlobalElements = findDuplicatedGlobalElements(schemaDocuments);
         // NO duplicated element should exists
         assertTrue("Duplicated global element declarations found in '" +  wsdlPath, 
             duplicatedGlobalElements.isEmpty());
     }
 
-    protected List findDuplicatedGlobalElements(List schemaDocuments) {
-        List duplicatedGlobalElementDeclarations = new ArrayList();
-        Set globalElementDeclarations = new HashSet();
+    protected List<QName> findDuplicatedGlobalElements(List<XmlSchema> schemaDocuments) {
+        List<QName> duplicatedGlobalElementDeclarations = new ArrayList<QName>();
+        Set<QName> globalElementDeclarations = new HashSet<QName>();
         // Iterate over all schema documents
-        for (int i = 0; i < schemaDocuments.size(); i++) {
-            XmlSchema schemaDocument = (XmlSchema)schemaDocuments.get(i);
+        for (XmlSchema schemaDocument : schemaDocuments) {
             for (XmlSchemaObject xmlSchemaObject : schemaDocument.getItems()) {
                 // Check only XML schema elements
                 if (xmlSchemaObject instanceof XmlSchemaElement) {
