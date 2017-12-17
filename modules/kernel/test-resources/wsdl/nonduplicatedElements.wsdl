@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions targetNamespace="http://www.example.org"
+  xmlns:tns="http://www.example.org" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
+
+  <wsdl:types>
+    <xsd:schema elementFormDefault="qualified"
+      targetNamespace="http://www.example.org">
+      <xsd:element name="getFoo" type="xsd:string"/>
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="getFooIn">
+    <wsdl:documentation>
+      Message part referencing a global element declaration
+    </wsdl:documentation>
+    <wsdl:part name="input" element="tns:getFoo" />
+  </wsdl:message>
+  <wsdl:message name="getFooOut">
+    <wsdl:documentation>
+      Message part referencing a type definition
+    </wsdl:documentation>
+    <wsdl:part name="output" type="xsd:string" />
+  </wsdl:message>
+
+  <wsdl:portType name="FooPortType">
+    <wsdl:operation name="getFoo">
+      <wsdl:input message="tns:getFooIn" />
+      <wsdl:output message="tns:getFooOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  
+  <wsdl:binding name="FooHttpGetBinding" type="tns:FooPortType">
+    <http:binding verb="GET" />
+    <wsdl:operation name="getFoo">
+      <http:operation location="getFoo" />
+      <wsdl:input>
+        <http:urlEncoded/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="output" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="FooService">
+    <wsdl:port name="FooHttpGetPort" binding="tns:FooHttpGetBinding">
+      <http:address location="http://www.example.org/" />
+    </wsdl:port>
+  </wsdl:service>
+  
+</wsdl:definitions>
