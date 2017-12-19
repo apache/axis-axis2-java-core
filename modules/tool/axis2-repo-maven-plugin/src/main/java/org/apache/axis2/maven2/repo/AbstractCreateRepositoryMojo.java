@@ -329,20 +329,22 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                         log.info("Building service " + serviceName);
                         metaInfDirectory = new File(new File(parentDirectory, serviceName), "META-INF");
                         metaInfDirectory.mkdirs();
-                        for (Parameter parameter : serviceDescription.getParameters()) {
-                            OMElement parameterElement = null;
-                            for (Iterator<OMElement> it = serviceElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
-                                OMElement candidate = it.next();
-                                if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
-                                    parameterElement = candidate;
-                                    break;
+                        if (serviceDescription.getParameters() != null) {
+                            for (Parameter parameter : serviceDescription.getParameters()) {
+                                OMElement parameterElement = null;
+                                for (Iterator<OMElement> it = serviceElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
+                                    OMElement candidate = it.next();
+                                    if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
+                                        parameterElement = candidate;
+                                        break;
+                                    }
                                 }
+                                if (parameterElement == null) {
+                                    parameterElement = doc.getOMFactory().createOMElement("parameter", null, serviceElement);
+                                    parameterElement.addAttribute("name", parameter.getName(), null);
+                                }
+                                parameterElement.setText(parameter.getValue());
                             }
-                            if (parameterElement == null) {
-                                parameterElement = doc.getOMFactory().createOMElement("parameter", null, serviceElement);
-                                parameterElement.addAttribute("name", parameter.getName(), null);
-                            }
-                            parameterElement.setText(parameter.getValue());
                         }
                         FileOutputStream out = new FileOutputStream(new File(metaInfDirectory, "services.xml"));
                         try {
