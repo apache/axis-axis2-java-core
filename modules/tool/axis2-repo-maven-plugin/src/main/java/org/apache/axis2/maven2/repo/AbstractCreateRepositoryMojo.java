@@ -20,6 +20,7 @@
 package org.apache.axis2.maven2.repo;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -192,6 +193,13 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      */
     private JAXWSService[] jaxwsServices;
     
+    /**
+     * A list of service descriptions that should be processed to build exploded AARs.
+     * 
+     * @parameter
+     */
+    private ServiceDescription[] serviceDescriptions;
+    
     protected abstract String getScope();
     
     protected abstract File getInputDirectory();
@@ -294,6 +302,74 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                     throw new MojoExecutionException("Failed to build " + jarName, ex);
                 } catch (IOException ex) {
                     throw new MojoExecutionException("Failed to build " + jarName, ex);
+                }
+            }
+        }
+        if (serviceDescriptions != null) {
+            File parentDirectory = new File(outputDirectory, servicesDirectory);
+            for (ServiceDescription serviceDescription : serviceDescriptions) {
+                File servicesFile = new File(serviceDescription.getDirectory(), "services.xml");
+                File metaInfDirectory;
+                try {
+                    InputStream in = new FileInputStream(servicesFile);
+                    try {
+                        OMDocument doc = OMXMLBuilderFactory.createOMBuilder(in).getDocument();
+                        OMElement serviceElement;
+                        {
+                            Iterator<OMElement> it = doc.getOMDocumentElement().getChildrenWithLocalName("service");
+                            if (!it.hasNext()) {
+                                throw new MojoFailureException("No service found in " + servicesFile);
+                            }
+                            serviceElement = it.next();
+                            if (it.hasNext()) {
+                                throw new MojoFailureException(servicesFile + " contains more than one service");
+                            }
+                        }
+                        String serviceName = serviceElement.getAttributeValue(new QName("name"));
+                        log.info("Building service " + serviceName);
+                        metaInfDirectory = new File(new File(parentDirectory, serviceName), "META-INF");
+                        metaInfDirectory.mkdirs();
+                        for (Parameter parameter : serviceDescription.getParameters()) {
+                            OMElement parameterElement = null;
+                            for (Iterator<OMElement> it = serviceElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
+                                OMElement candidate = it.next();
+                                if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
+                                    parameterElement = candidate;
+                                    break;
+                                }
+                            }
+                            if (parameterElement == null) {
+                                parameterElement = doc.getOMFactory().createOMElement("parameter", null, serviceElement);
+                                parameterElement.addAttribute("name", parameter.getName(), null);
+                            }
+                            parameterElement.setText(parameter.getValue());
+                        }
+                        FileOutputStream out = new FileOutputStream(new File(metaInfDirectory, "services.xml"));
+                        try {
+                            doc.serialize(out);
+                        } finally {
+                            out.close();
+                        }
+                    } finally {
+                        in.close();
+                    }
+                    DirectoryScanner ds = new DirectoryScanner();
+                    ds.setBasedir(serviceDescription.getDirectory());
+                    ds.setExcludes(new String[] { "services.xml" });
+                    ds.scan();
+                    for (String relativePath : ds.getIncludedFiles()) {
+                        try {
+                            FileUtils.copyFile(
+                                    new File(serviceDescription.getDirectory(), relativePath),
+                                    new File(metaInfDirectory, relativePath));
+                        } catch (IOException ex) {
+                            throw new MojoExecutionException("Failed to copy " + relativePath, ex);
+                        }
+                    }
+                } catch (IOException ex) {
+                    throw new MojoExecutionException(ex.getMessage(), ex);
+                } catch (XMLStreamException ex) {
+                    throw new MojoExecutionException(ex.getMessage(), ex);
                 }
             }
         }
