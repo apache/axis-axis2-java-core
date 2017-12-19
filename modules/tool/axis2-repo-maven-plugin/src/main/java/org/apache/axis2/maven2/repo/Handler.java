@@ -18,32 +18,41 @@
  */
 package org.apache.axis2.maven2.repo;
 
-public class GeneratedAxis2Xml {
-    private MessageHandler[] messageBuilders;
-    private MessageHandler[] messageFormatters;
-    private Handler[] handlers;
-    
-    public MessageHandler[] getMessageBuilders() {
-        return messageBuilders;
-    }
-    
-    public void setMessageBuilders(MessageHandler[] messageBuilders) {
-        this.messageBuilders = messageBuilders;
-    }
-    
-    public MessageHandler[] getMessageFormatters() {
-        return messageFormatters;
-    }
-    
-    public void setMessageFormatters(MessageHandler[] messageFormatters) {
-        this.messageFormatters = messageFormatters;
+public class Handler {
+    private String flow;
+    private String phase;
+    private String name;
+    private String className;
+
+    public String getFlow() {
+        return flow;
     }
 
-    public Handler[] getHandlers() {
-        return handlers;
+    public void setFlow(String flow) {
+        this.flow = flow;
     }
 
-    public void setHandlers(Handler[] handlers) {
-        this.handlers = handlers;
+    public String getPhase() {
+        return phase;
+    }
+
+    public void setPhase(String phase) {
+        this.phase = phase;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

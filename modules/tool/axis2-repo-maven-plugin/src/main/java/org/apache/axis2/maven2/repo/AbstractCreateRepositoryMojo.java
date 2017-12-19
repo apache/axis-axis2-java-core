@@ -421,6 +421,30 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                         }
                         addMessageHandlers(root, generatedAxis2xml.getMessageBuilders(), "messageBuilder");
                         addMessageHandlers(root, generatedAxis2xml.getMessageFormatters(), "messageFormatter");
+                        if (generatedAxis2xml.getHandlers() != null) {
+                            for (Handler handler : generatedAxis2xml.getHandlers()) {
+                                boolean handlerInserted = false;
+                                for (Iterator<OMElement> phaseOrderIterator = root.getChildrenWithLocalName("phaseOrder"); phaseOrderIterator.hasNext(); ) {
+                                    OMElement phaseOrder = phaseOrderIterator.next();
+                                    if (phaseOrder.getAttributeValue(new QName("type")).equals(handler.getFlow())) {
+                                        for (Iterator<OMElement> phaseIterator = phaseOrder.getChildrenWithLocalName("phase"); phaseIterator.hasNext(); ) {
+                                            OMElement phase = phaseIterator.next();
+                                            if (phase.getAttributeValue(new QName("name")).equals(handler.getPhase())) {
+                                                OMElement handlerElement = axis2xmlDoc.getOMFactory().createOMElement("handler", null, phase);
+                                                handlerElement.addAttribute("name", handler.getName(), null);
+                                                handlerElement.addAttribute("class", handler.getClassName(), null);
+                                                handlerInserted = true;
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                                if (!handlerInserted) {
+                                    throw new MojoFailureException("Flow " + handler.getFlow() + " and phase " + handler.getPhase() + " not found");
+                                }
+                            }
+                        }
                         OutputStream out = new FileOutputStream(axis2xmlFile);
                         try {
                             axis2xmlDoc.serialize(out);
