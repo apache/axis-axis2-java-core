@@ -209,6 +209,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     protected abstract File[] getClassDirectories();
 
     private void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
+        if (handlers == null) {
+            return;
+        }
         OMElement parent = root.getFirstChildWithName(new QName(localName + "s"));
         for (MessageHandler handler : handlers) {
             OMElement element = parent.getOMFactory().createOMElement(localName, null, parent);
