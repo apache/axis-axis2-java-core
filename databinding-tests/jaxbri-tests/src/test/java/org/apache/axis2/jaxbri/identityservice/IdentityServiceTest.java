@@ -37,7 +37,6 @@ public class IdentityServiceTest {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/identityservice");
         AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
         AxisService service = axisConfiguration.getService("IdentityLinkingService");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(IdentityLinkingServiceImpl.class.getName());
         service.setScope(Constants.SCOPE_APPLICATION);
     }
     

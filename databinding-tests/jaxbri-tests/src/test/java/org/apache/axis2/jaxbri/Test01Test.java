@@ -20,9 +20,6 @@ package org.apache.axis2.jaxbri;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.testutils.UtilServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,9 +33,6 @@ public class Test01Test {
     @BeforeClass
     public static void startServer() throws Exception {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/Test01");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("Test01");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(Test01Impl.class.getName());
     }
     
     @AfterClass

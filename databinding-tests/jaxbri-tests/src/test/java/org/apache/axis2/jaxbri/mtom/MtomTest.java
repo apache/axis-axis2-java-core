@@ -40,7 +40,6 @@ public class MtomTest {
         AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
         axisConfiguration.getParameter(Constants.Configuration.ENABLE_MTOM).setValue(true);
         AxisService service = axisConfiguration.getService("mtom");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(MtomImpl.class.getName());
         service.setScope(Constants.SCOPE_APPLICATION);
     }
     

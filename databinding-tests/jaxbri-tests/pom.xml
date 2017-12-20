@@ -197,85 +197,94 @@
                 </dependencies>
             </plugin>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>Test01-repo</id>
-                        <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>create-test-repository</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/Test01</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
+                            <serviceDescriptions>
+                                <serviceDescription>
                                     <directory>${project.build.directory}/gen/Test01/resources</directory>
-                                    <targetPath>services/Test01.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
+                                    <parameters>
+                                        <parameter>
+                                            <name>ServiceClass</name>
+                                            <value>org.apache.axis2.jaxbri.Test01Impl</value>
+                                        </parameter>
+                                    </parameters>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                     <execution>
                         <id>processor-repo</id>
-                        <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>create-test-repository</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/processor</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
+                            <serviceDescriptions>
+                                <serviceDescription>
                                     <directory>${project.build.directory}/gen/processor/resources</directory>
-                                    <targetPath>services/processor.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
+                                    <parameters>
+                                        <parameter>
+                                            <name>ServiceClass</name>
+                                            <value>org.apache.axis2.jaxbri.processor.ProcessorImpl</value>
+                                        </parameter>
+                                    </parameters>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                     <execution>
                         <id>identityservice-repo</id>
-                        <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>create-test-repository</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/identityservice</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
+                            <serviceDescriptions>
+                                <serviceDescription>
                                     <directory>${project.build.directory}/gen/identityservice/resources</directory>
-                                    <targetPath>services/identityservice.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
+                                    <parameters>
+                                        <parameter>
+                                            <name>ServiceClass</name>
+                                            <value>org.apache.axis2.jaxbri.identityservice.IdentityLinkingServiceImpl</value>
+                                        </parameter>
+                                    </parameters>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                     <execution>
                         <id>mtom-repo</id>
-                        <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>create-test-repository</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/mtom</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
+                            <serviceDescriptions>
+                                <serviceDescription>
                                     <directory>${project.build.directory}/gen/mtom/resources</directory>
-                                    <targetPath>services/mtom.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
+                                    <parameters>
+                                        <parameter>
+                                            <name>ServiceClass</name>
+                                            <value>org.apache.axis2.jaxbri.mtom.MtomImpl</value>
+                                        </parameter>
+                                    </parameters>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <inputDirectory>src/test/repo</inputDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

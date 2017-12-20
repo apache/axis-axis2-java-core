@@ -29,12 +29,9 @@ import javax.xml.transform.dom.DOMResult;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxbri.processor.client.Processor;
 import org.apache.axis2.jaxbri.processor.client.ProcessorStub;
 import org.apache.axis2.jaxbri.processor.data.ReplyMessage;
@@ -55,9 +52,6 @@ public class ProcessorTest {
     @BeforeClass
     public static void startServer() throws Exception {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/processor");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("Processor");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(ProcessorImpl.class.getName());
     }
     
     @AfterClass
