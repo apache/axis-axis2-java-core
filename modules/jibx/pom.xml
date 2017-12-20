@@ -69,6 +69,13 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>echo</artifactId>
+            <version>${project.version}</version>
+            <type>aar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -173,6 +180,17 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
+                        <id>echo-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/echo</outputDirectory>
+                            <inputDirectory>src/test/repo</inputDirectory>
+                            <services>echo</services>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>library-unwrapped-repo</id>
                         <goals>
                             <goal>create-test-repository</goal>
@@ -180,6 +198,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/library-unwrapped</outputDirectory>
                             <inputDirectory>src/test/repo</inputDirectory>
+                            <includeServices>false</includeServices>
                             <serviceDescriptions>
                                 <serviceDescription>
                                     <directory>${project.build.directory}/gen/library-unwrapped/resources</directory>
@@ -201,6 +220,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/library-wrapped</outputDirectory>
                             <inputDirectory>src/test/repo</inputDirectory>
+                            <includeServices>false</includeServices>
                             <serviceDescriptions>
                                 <serviceDescription>
                                     <directory>${project.build.directory}/gen/library-wrapped/resources</directory>
