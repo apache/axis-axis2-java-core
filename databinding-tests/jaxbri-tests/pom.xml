@@ -283,7 +283,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <inputDirectory>src/test/repo</inputDirectory>
+                    <configurationDirectory>conf</configurationDirectory>
+                    <generatedAxis2xml/>
                 </configuration>
             </plugin>
         </plugins>
