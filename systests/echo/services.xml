@@ -19,6 +19,8 @@
 
 <service name="Echo">
     <parameter name="ServiceClass">org.apache.axis2.echo.EchoService</parameter>
+    <!-- This parameter is recognized by the schema-validation module -->
+    <parameter name="disableSchemaValidation">true</parameter>
     <operation name="echo">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
     </operation>

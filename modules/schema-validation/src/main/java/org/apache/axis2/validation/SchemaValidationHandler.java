@@ -34,26 +34,38 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.axiom.om.OMException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.xml.sax.SAXException;
 
 public class SchemaValidationHandler extends AbstractHandler {
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        AxisService service = msgContext.getAxisService();
+        Parameter parameter = service.getParameter("disableSchemaValidation");
+        if (parameter != null && JavaUtils.isTrueExplicitly(parameter.getValue())) {
+            return InvocationResponse.CONTINUE;
+        }
+        List<XmlSchema> schemas = service.getSchema();
+        if (schemas.isEmpty()) {
+            return InvocationResponse.CONTINUE;
+        }
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        List<Source> schemas = new ArrayList<Source>();
-        for (XmlSchema schema : msgContext.getAxisService().getSchema()) {
+        List<Source> schemaSources = new ArrayList<Source>();
+        for (XmlSchema schema : schemas) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 schema.write(baos);
             } catch (UnsupportedEncodingException ex) {
                 throw AxisFault.makeFault(ex);
             }
-            schemas.add(new StreamSource(new ByteArrayInputStream(baos.toByteArray())));
+            schemaSources.add(new StreamSource(new ByteArrayInputStream(baos.toByteArray())));
         }
         Schema schema;
         try {
-            schema = schemaFactory.newSchema(schemas.toArray(new Source[schemas.size()]));
+            schema = schemaFactory.newSchema(schemaSources.toArray(new Source[schemaSources.size()]));
         } catch (SAXException ex) {
             throw new AxisFault("Failed to compile schemas", ex);
         }
