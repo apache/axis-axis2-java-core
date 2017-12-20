@@ -186,7 +186,6 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/echo</outputDirectory>
-                            <inputDirectory>src/test/repo</inputDirectory>
                             <services>echo</services>
                         </configuration>
                     </execution>
@@ -197,7 +196,6 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/library-unwrapped</outputDirectory>
-                            <inputDirectory>src/test/repo</inputDirectory>
                             <includeServices>false</includeServices>
                             <serviceDescriptions>
                                 <serviceDescription>
@@ -219,7 +217,6 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/library-wrapped</outputDirectory>
-                            <inputDirectory>src/test/repo</inputDirectory>
                             <includeServices>false</includeServices>
                             <serviceDescriptions>
                                 <serviceDescription>
@@ -235,6 +232,14 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <configurationDirectory>conf</configurationDirectory>
+                    <generatedAxis2xml>
+                        <modules>
+                            <module>checker</module>
+                        </modules>
+                    </generatedAxis2xml>
+                </configuration>
             </plugin>
         </plugins>
     </build>

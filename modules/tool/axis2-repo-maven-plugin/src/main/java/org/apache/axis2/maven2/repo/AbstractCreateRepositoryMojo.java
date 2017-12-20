@@ -448,6 +448,11 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                                 }
                             }
                         }
+                        if (generatedAxis2xml.getModules() != null) {
+                            for (String module : generatedAxis2xml.getModules()) {
+                                axis2xmlDoc.getOMFactory().createOMElement("module", null, root).addAttribute("ref", module, null);
+                            }
+                        }
                         OutputStream out = new FileOutputStream(axis2xmlFile);
                         try {
                             axis2xmlDoc.serialize(out);

@@ -22,6 +22,7 @@ public class GeneratedAxis2Xml {
     private MessageHandler[] messageBuilders;
     private MessageHandler[] messageFormatters;
     private Handler[] handlers;
+    private String[] modules;
     
     public MessageHandler[] getMessageBuilders() {
         return messageBuilders;
@@ -45,5 +46,13 @@ public class GeneratedAxis2Xml {
 
     public void setHandlers(Handler[] handlers) {
         this.handlers = handlers;
+    }
+    
+    public String[] getModules() {
+        return modules;
+    }
+
+    public void setModules(String[] modules) {
+        this.modules = modules;
     }
 }
