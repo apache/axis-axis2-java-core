@@ -26,7 +26,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jibx.beans.Book;
 import org.apache.axis2.jibx.library.unwrapped.client.LibraryStub;
-import org.apache.axis2.jibx.library.unwrapped.service.LibraryImpl;
 import org.apache.axis2.testutils.UtilServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,7 +37,6 @@ public class LibraryTest {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/library-unwrapped");
         AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
         AxisService service = axisConfiguration.getService("library");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(LibraryImpl.class.getName());
         service.setScope(Constants.SCOPE_APPLICATION);
     }
     

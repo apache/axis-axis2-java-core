@@ -20,6 +20,7 @@
 package org.apache.axis2.maven2.repo;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -192,6 +193,13 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
      */
     private JAXWSService[] jaxwsServices;
     
+    /**
+     * A list of service descriptions that should be processed to build exploded AARs.
+     * 
+     * @parameter
+     */
+    private ServiceDescription[] serviceDescriptions;
+    
     protected abstract String getScope();
     
     protected abstract File getInputDirectory();
@@ -201,6 +209,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     protected abstract File[] getClassDirectories();
 
     private void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
+        if (handlers == null) {
+            return;
+        }
         OMElement parent = root.getFirstChildWithName(new QName(localName + "s"));
         for (MessageHandler handler : handlers) {
             OMElement element = parent.getOMFactory().createOMElement(localName, null, parent);
@@ -297,6 +308,76 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                 }
             }
         }
+        if (serviceDescriptions != null) {
+            File parentDirectory = new File(outputDirectory, servicesDirectory);
+            for (ServiceDescription serviceDescription : serviceDescriptions) {
+                File servicesFile = new File(serviceDescription.getDirectory(), "services.xml");
+                File metaInfDirectory;
+                try {
+                    InputStream in = new FileInputStream(servicesFile);
+                    try {
+                        OMDocument doc = OMXMLBuilderFactory.createOMBuilder(in).getDocument();
+                        OMElement serviceElement;
+                        {
+                            Iterator<OMElement> it = doc.getOMDocumentElement().getChildrenWithLocalName("service");
+                            if (!it.hasNext()) {
+                                throw new MojoFailureException("No service found in " + servicesFile);
+                            }
+                            serviceElement = it.next();
+                            if (it.hasNext()) {
+                                throw new MojoFailureException(servicesFile + " contains more than one service");
+                            }
+                        }
+                        String serviceName = serviceElement.getAttributeValue(new QName("name"));
+                        log.info("Building service " + serviceName);
+                        metaInfDirectory = new File(new File(parentDirectory, serviceName), "META-INF");
+                        metaInfDirectory.mkdirs();
+                        if (serviceDescription.getParameters() != null) {
+                            for (Parameter parameter : serviceDescription.getParameters()) {
+                                OMElement parameterElement = null;
+                                for (Iterator<OMElement> it = serviceElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
+                                    OMElement candidate = it.next();
+                                    if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
+                                        parameterElement = candidate;
+                                        break;
+                                    }
+                                }
+                                if (parameterElement == null) {
+                                    parameterElement = doc.getOMFactory().createOMElement("parameter", null, serviceElement);
+                                    parameterElement.addAttribute("name", parameter.getName(), null);
+                                }
+                                parameterElement.setText(parameter.getValue());
+                            }
+                        }
+                        FileOutputStream out = new FileOutputStream(new File(metaInfDirectory, "services.xml"));
+                        try {
+                            doc.serialize(out);
+                        } finally {
+                            out.close();
+                        }
+                    } finally {
+                        in.close();
+                    }
+                    DirectoryScanner ds = new DirectoryScanner();
+                    ds.setBasedir(serviceDescription.getDirectory());
+                    ds.setExcludes(new String[] { "services.xml" });
+                    ds.scan();
+                    for (String relativePath : ds.getIncludedFiles()) {
+                        try {
+                            FileUtils.copyFile(
+                                    new File(serviceDescription.getDirectory(), relativePath),
+                                    new File(metaInfDirectory, relativePath));
+                        } catch (IOException ex) {
+                            throw new MojoExecutionException("Failed to copy " + relativePath, ex);
+                        }
+                    }
+                } catch (IOException ex) {
+                    throw new MojoExecutionException(ex.getMessage(), ex);
+                } catch (XMLStreamException ex) {
+                    throw new MojoExecutionException(ex.getMessage(), ex);
+                }
+            }
+        }
         if (generatedAxis2xml != null || axis2xml != null) {
             File targetDirectory = configurationDirectory == null
                     ? outputDirectory : new File(outputDirectory, configurationDirectory);
@@ -343,6 +424,35 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                         }
                         addMessageHandlers(root, generatedAxis2xml.getMessageBuilders(), "messageBuilder");
                         addMessageHandlers(root, generatedAxis2xml.getMessageFormatters(), "messageFormatter");
+                        if (generatedAxis2xml.getHandlers() != null) {
+                            for (Handler handler : generatedAxis2xml.getHandlers()) {
+                                boolean handlerInserted = false;
+                                for (Iterator<OMElement> phaseOrderIterator = root.getChildrenWithLocalName("phaseOrder"); phaseOrderIterator.hasNext(); ) {
+                                    OMElement phaseOrder = phaseOrderIterator.next();
+                                    if (phaseOrder.getAttributeValue(new QName("type")).equals(handler.getFlow())) {
+                                        for (Iterator<OMElement> phaseIterator = phaseOrder.getChildrenWithLocalName("phase"); phaseIterator.hasNext(); ) {
+                                            OMElement phase = phaseIterator.next();
+                                            if (phase.getAttributeValue(new QName("name")).equals(handler.getPhase())) {
+                                                OMElement handlerElement = axis2xmlDoc.getOMFactory().createOMElement("handler", null, phase);
+                                                handlerElement.addAttribute("name", handler.getName(), null);
+                                                handlerElement.addAttribute("class", handler.getClassName(), null);
+                                                handlerInserted = true;
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                                if (!handlerInserted) {
+                                    throw new MojoFailureException("Flow " + handler.getFlow() + " and phase " + handler.getPhase() + " not found");
+                                }
+                            }
+                        }
+                        if (generatedAxis2xml.getModules() != null) {
+                            for (String module : generatedAxis2xml.getModules()) {
+                                axis2xmlDoc.getOMFactory().createOMElement("module", null, root).addAttribute("ref", module, null);
+                            }
+                        }
                         OutputStream out = new FileOutputStream(axis2xmlFile);
                         try {
                             axis2xmlDoc.serialize(out);

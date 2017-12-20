@@ -20,12 +20,8 @@
 package org.apache.axis2.jibx;
 
 import junit.framework.TestCase;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jibx.customer.EchoCustomerServiceStub;
 import org.apache.axis2.testutils.UtilServer;
-import org.apache.axis2.util.Utils;
-
-import javax.xml.namespace.QName;
 
 /**
  * Full code generation and runtime test for JiBX data binding extension. This is based on the
@@ -33,22 +29,13 @@ import javax.xml.namespace.QName;
  */
 public class Test extends TestCase {
     private static final String REPOSITORY_DIR =
-            System.getProperty("basedir", ".") + "/src/test/repo/";
-
-    public static final QName serviceName = new QName("EchoCustomerService");
-    public static final QName operationName = new QName("echo");
-
-    private AxisService service;
+            System.getProperty("basedir", ".") + "/target/repo/echo";
 
     private void startServer() throws Exception {
-        service = Utils.createSimpleService(serviceName,
-                                            Echo.class.getName(), operationName);
         UtilServer.start(REPOSITORY_DIR);
-        UtilServer.deployService(service);
     }
 
     private void stopServer() throws Exception {
-        UtilServer.unDeployService(serviceName);
         UtilServer.stop();
 /*        File outputFile = new File(OUTPUT_LOCATION_BASE);
         if (outputFile.exists() && outputFile.isDirectory()){
@@ -64,7 +51,7 @@ public class Test extends TestCase {
         Customer customer = new Customer("Redmond", person, "+14258858080",
                                          "WA", "14619 NE 80th Pl.", new Integer(98052));
         EchoCustomerServiceStub stub = new EchoCustomerServiceStub(UtilServer.getConfigurationContext(),
-                "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/EchoCustomerService/echo");
+                "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/Echo/echo");
         Customer result = stub.echo(customer);
         stopServer();
         assertEquals("Result object does not match request object",

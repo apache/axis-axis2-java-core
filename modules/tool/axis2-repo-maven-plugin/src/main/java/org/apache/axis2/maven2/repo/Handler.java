@@ -16,21 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.axis2.maven2.repo;
 
-package org.apache.axis2.jibx;
+public class Handler {
+    private String flow;
+    private String phase;
+    private String name;
+    private String className;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-public class Echo {
-
-    private static final Log log = LogFactory.getLog(Echo.class);
-
-    public Echo() {
+    public String getFlow() {
+        return flow;
     }
 
-    public OMElement echo(OMElement omEle) {
-        return omEle;
+    public void setFlow(String flow) {
+        this.flow = flow;
+    }
+
+    public String getPhase() {
+        return phase;
+    }
+
+    public void setPhase(String phase) {
+        this.phase = phase;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

@@ -69,6 +69,13 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>echo</artifactId>
+            <version>${project.version}</version>
+            <type>aar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -168,47 +175,71 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>library-unwrapped-repo</id>
-                        <phase>generate-test-resources</phase>
+                        <id>echo-repo</id>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/echo</outputDirectory>
+                            <services>echo</services>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>library-unwrapped-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/library-unwrapped</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
+                            <includeServices>false</includeServices>
+                            <serviceDescriptions>
+                                <serviceDescription>
                                     <directory>${project.build.directory}/gen/library-unwrapped/resources</directory>
-                                    <targetPath>services/library.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
+                                    <parameters>
+                                        <parameter>
+                                            <name>ServiceClass</name>
+                                            <value>org.apache.axis2.jibx.library.unwrapped.service.LibraryImpl</value>
+                                        </parameter>
+                                    </parameters>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                     <execution>
                         <id>library-wrapped-repo</id>
-                        <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>create-test-repository</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/repo/library-wrapped</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                </resource>
-                                <resource>
+                            <includeServices>false</includeServices>
+                            <serviceDescriptions>
+                                <serviceDescription>
                                     <directory>${project.build.directory}/gen/library-wrapped/resources</directory>
-                                    <targetPath>services/library.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
+                                    <parameters>
+                                        <parameter>
+                                            <name>ServiceClass</name>
+                                            <value>org.apache.axis2.jibx.library.wrapped.service.LibraryImpl</value>
+                                        </parameter>
+                                    </parameters>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <configurationDirectory>conf</configurationDirectory>
+                    <generatedAxis2xml>
+                        <modules>
+                            <module>checker</module>
+                        </modules>
+                    </generatedAxis2xml>
+                </configuration>
             </plugin>
         </plugins>
     </build>

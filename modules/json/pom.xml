@@ -173,6 +173,36 @@
                         <configuration>
                             <inputDirectory>test-repository/json</inputDirectory>
                             <outputDirectory>${project.build.directory}/repo/json</outputDirectory>
+                            <generatedAxis2xml>
+                                <messageFormatters>
+                                    <messageFormatter>
+                                        <contentType>application/json</contentType>
+                                        <className>org.apache.axis2.json.JSONMessageFormatter</className>
+                                    </messageFormatter>
+                                    <messageFormatter>
+                                        <contentType>application/json+badgerfish</contentType>
+                                        <className>org.apache.axis2.json.JSONBadgerfishMessageFormatter</className>
+                                    </messageFormatter>
+                                    <messageFormatter>
+                                        <contentType>text/javascript</contentType>
+                                        <className>org.apache.axis2.json.JSONMessageFormatter</className>
+                                    </messageFormatter>
+                                </messageFormatters>
+                                <messageBuilders>
+                                    <messageBuilder>
+                                        <contentType>application/json</contentType>
+                                        <className>org.apache.axis2.json.JSONOMBuilder</className>
+                                    </messageBuilder>
+                                    <messageBuilder>
+                                        <contentType>application/json+badgerfish</contentType>
+                                        <className>org.apache.axis2.json.JSONBadgerfishOMBuilder</className>
+                                    </messageBuilder>
+                                    <messageBuilder>
+                                        <contentType>text/javascript</contentType>
+                                        <className>org.apache.axis2.json.JSONOMBuilder</className>
+                                    </messageBuilder>
+                                </messageBuilders>
+                            </generatedAxis2xml>
                         </configuration>
                     </execution>
                     <execution>
@@ -183,27 +213,39 @@
                         <configuration>
                             <inputDirectory>test-repository/gson</inputDirectory>
                             <outputDirectory>${project.build.directory}/repo/gson</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>repo</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/repo/gson</outputDirectory>
-                            <resources>
-                                <resource>
+                            <generatedAxis2xml>
+                                <messageFormatters>
+                                    <messageFormatter>
+                                        <contentType>application/json</contentType>
+                                        <className>org.apache.axis2.json.gson.JsonFormatter</className>
+                                    </messageFormatter>
+                                </messageFormatters>
+                                <messageBuilders>
+                                    <messageBuilder>
+                                        <contentType>application/json</contentType>
+                                        <className>org.apache.axis2.json.gson.JsonBuilder</className>
+                                    </messageBuilder>
+                                </messageBuilders>
+                                <handlers>
+                                    <handler>
+                                        <flow>InFlow</flow>
+                                        <phase>Transport</phase>
+                                        <name>RequestURIOperationDispatcher</name>
+                                        <className>org.apache.axis2.dispatchers.RequestURIOperationDispatcher</className>
+                                    </handler>
+                                    <handler>
+                                        <flow>InFlow</flow>
+                                        <phase>Transport</phase>
+                                        <name>JSONMessageHandler</name>
+                                        <className>org.apache.axis2.json.gson.JSONMessageHandler</className>
+                                    </handler>
+                                </handlers>
+                            </generatedAxis2xml>
+                            <serviceDescriptions>
+                                <serviceDescription>
                                     <directory>${project.build.directory}/gen/resources</directory>
-                                    <targetPath>services/json_adb_test.aar/META-INF</targetPath>
-                                </resource>
-                            </resources>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                 </executions>

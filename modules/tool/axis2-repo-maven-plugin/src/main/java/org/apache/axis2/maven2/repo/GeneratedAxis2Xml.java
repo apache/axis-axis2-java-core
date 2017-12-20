@@ -21,6 +21,8 @@ package org.apache.axis2.maven2.repo;
 public class GeneratedAxis2Xml {
     private MessageHandler[] messageBuilders;
     private MessageHandler[] messageFormatters;
+    private Handler[] handlers;
+    private String[] modules;
     
     public MessageHandler[] getMessageBuilders() {
         return messageBuilders;
@@ -36,5 +38,21 @@ public class GeneratedAxis2Xml {
     
     public void setMessageFormatters(MessageHandler[] messageFormatters) {
         this.messageFormatters = messageFormatters;
+    }
+
+    public Handler[] getHandlers() {
+        return handlers;
+    }
+
+    public void setHandlers(Handler[] handlers) {
+        this.handlers = handlers;
+    }
+    
+    public String[] getModules() {
+        return modules;
+    }
+
+    public void setModules(String[] modules) {
+        this.modules = modules;
     }
 }
