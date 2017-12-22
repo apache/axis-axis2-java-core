@@ -235,7 +235,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <configurationDirectory>conf</configurationDirectory>
                     <generatedAxis2xml>
                         <modules>
                             <module>checker</module>

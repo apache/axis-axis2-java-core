@@ -293,7 +293,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <configurationDirectory>conf</configurationDirectory>
                     <generatedAxis2xml/>
                 </configuration>
             </plugin>

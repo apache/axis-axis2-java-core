@@ -36,10 +36,9 @@ import org.apache.axis2.jaxbri.processor.client.Processor;
 import org.apache.axis2.jaxbri.processor.client.ProcessorStub;
 import org.apache.axis2.jaxbri.processor.data.ReplyMessage;
 import org.apache.axis2.jaxbri.processor.data.RequestMessage;
-import org.apache.axis2.testutils.UtilServer;
+import org.apache.axis2.testutils.Axis2Server;
 import org.custommonkey.xmlunit.XMLAssert;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -47,21 +46,12 @@ import org.w3c.dom.Document;
  * Regression test for AXIS2-5147.
  */
 public class ProcessorTest {
-    private static final String ENDPOINT = "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/Processor";
-    
-    @BeforeClass
-    public static void startServer() throws Exception {
-        UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/processor");
-    }
-    
-    @AfterClass
-    public static void stopServer() throws Exception {
-        UtilServer.stop();
-    }
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo/processor");
     
     @Test
     public void testStub() throws Exception {
-        Processor stub = new ProcessorStub(UtilServer.getConfigurationContext(), ENDPOINT);
+        Processor stub = new ProcessorStub(server.getConfigurationContext(), server.getEndpoint("Processor"));
         RequestMessage request = new RequestMessage();
         request.setRequestID("A3TN39840");
         request.setRequestData("DATA");
@@ -79,9 +69,9 @@ public class ProcessorTest {
         InputStream in = ProcessorTest.class.getResourceAsStream("request.xml");
         try {
             OMElement request = OMXMLBuilderFactory.createOMBuilder(in).getDocumentElement();
-            ServiceClient client = new ServiceClient(UtilServer.getConfigurationContext(), null);
+            ServiceClient client = new ServiceClient(server.getConfigurationContext(), null);
             Options options = client.getOptions();
-            options.setTo(new EndpointReference(ENDPOINT));
+            options.setTo(new EndpointReference(server.getEndpoint("Processor")));
             try {
                 OMElement omResponse = client.sendReceive(request);
                 TransformerFactory.newInstance().newTransformer().transform(omResponse.getSAXSource(false), new DOMResult(response));
