@@ -281,6 +281,14 @@
                                     </parameters>
                                 </serviceDescription>
                             </serviceDescriptions>
+                            <generatedAxis2xml>
+                                <parameters>
+                                    <parameter>
+                                        <name>enableMTOM</name>
+                                        <value>true</value>
+                                    </parameter>
+                                </parameters>
+                            </generatedAxis2xml>
                         </configuration>
                     </execution>
                 </executions>

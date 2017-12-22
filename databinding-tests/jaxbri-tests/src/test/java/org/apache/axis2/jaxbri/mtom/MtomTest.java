@@ -23,8 +23,6 @@ import javax.activation.DataSource;
 
 import org.apache.axiom.testutils.activation.RandomDataSource;
 import org.apache.axiom.testutils.io.IOTestUtils;
-import org.apache.axis2.Constants;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.testutils.UtilServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,8 +34,6 @@ public class MtomTest {
     @BeforeClass
     public static void startServer() throws Exception {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/mtom");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        axisConfiguration.getParameter(Constants.Configuration.ENABLE_MTOM).setValue(true);
     }
     
     @AfterClass

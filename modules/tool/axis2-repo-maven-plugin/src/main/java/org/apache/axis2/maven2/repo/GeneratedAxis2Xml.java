@@ -19,11 +19,20 @@
 package org.apache.axis2.maven2.repo;
 
 public class GeneratedAxis2Xml {
+    private Parameter[] parameters;
     private MessageHandler[] messageBuilders;
     private MessageHandler[] messageFormatters;
     private Handler[] handlers;
     private String[] modules;
     
+    public Parameter[] getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Parameter[] parameters) {
+        this.parameters = parameters;
+    }
+
     public MessageHandler[] getMessageBuilders() {
         return messageBuilders;
     }

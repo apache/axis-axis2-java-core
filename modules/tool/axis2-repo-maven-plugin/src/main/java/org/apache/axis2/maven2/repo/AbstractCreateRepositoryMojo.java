@@ -208,6 +208,27 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     
     protected abstract File[] getClassDirectories();
 
+    private static void applyParameters(OMElement parentElement, Parameter[] parameters) {
+        if (parameters == null) {
+            return;
+        }
+        for (Parameter parameter : parameters) {
+            OMElement parameterElement = null;
+            for (Iterator<OMElement> it = parentElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
+                OMElement candidate = it.next();
+                if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
+                    parameterElement = candidate;
+                    break;
+                }
+            }
+            if (parameterElement == null) {
+                parameterElement = parentElement.getOMFactory().createOMElement("parameter", null, parentElement);
+                parameterElement.addAttribute("name", parameter.getName(), null);
+            }
+            parameterElement.setText(parameter.getValue());
+        }
+    }
+
     private void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
         if (handlers == null) {
             return;
@@ -335,23 +356,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                         if (serviceDescription.getScope() != null) {
                             serviceElement.addAttribute("scope", serviceDescription.getScope(), null);
                         }
-                        if (serviceDescription.getParameters() != null) {
-                            for (Parameter parameter : serviceDescription.getParameters()) {
-                                OMElement parameterElement = null;
-                                for (Iterator<OMElement> it = serviceElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
-                                    OMElement candidate = it.next();
-                                    if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
-                                        parameterElement = candidate;
-                                        break;
-                                    }
-                                }
-                                if (parameterElement == null) {
-                                    parameterElement = doc.getOMFactory().createOMElement("parameter", null, serviceElement);
-                                    parameterElement.addAttribute("name", parameter.getName(), null);
-                                }
-                                parameterElement.setText(parameter.getValue());
-                            }
-                        }
+                        applyParameters(serviceElement, serviceDescription.getParameters());
                         FileOutputStream out = new FileOutputStream(new File(metaInfDirectory, "services.xml"));
                         try {
                             doc.serialize(out);
@@ -425,6 +430,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                                 }
                             }
                         }
+                        applyParameters(root, generatedAxis2xml.getParameters());
                         addMessageHandlers(root, generatedAxis2xml.getMessageBuilders(), "messageBuilder");
                         addMessageHandlers(root, generatedAxis2xml.getMessageFormatters(), "messageFormatter");
                         if (generatedAxis2xml.getHandlers() != null) {
