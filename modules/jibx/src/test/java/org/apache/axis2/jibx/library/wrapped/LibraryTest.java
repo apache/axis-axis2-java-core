@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.jibx.library.wrapped;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jibx.beans.Book;
 import org.apache.axis2.jibx.library.wrapped.client.LibraryStub;
 import org.apache.axis2.jibx.wrappers.AddBookRequest;
@@ -33,9 +30,6 @@ public class LibraryTest {
     @BeforeClass
     public static void startServer() throws Exception {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/library-wrapped");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("library");
-        service.setScope(Constants.SCOPE_APPLICATION);
     }
     
     @AfterClass

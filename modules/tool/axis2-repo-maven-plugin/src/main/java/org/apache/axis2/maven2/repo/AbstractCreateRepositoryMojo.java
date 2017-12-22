@@ -332,6 +332,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                         log.info("Building service " + serviceName);
                         metaInfDirectory = new File(new File(parentDirectory, serviceName), "META-INF");
                         metaInfDirectory.mkdirs();
+                        if (serviceDescription.getScope() != null) {
+                            serviceElement.addAttribute("scope", serviceDescription.getScope(), null);
+                        }
                         if (serviceDescription.getParameters() != null) {
                             for (Parameter parameter : serviceDescription.getParameters()) {
                                 OMElement parameterElement = null;

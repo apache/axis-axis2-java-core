@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.jaxbri.identityservice;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.testutils.UtilServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -35,9 +32,6 @@ public class IdentityServiceTest {
     @BeforeClass
     public static void startServer() throws Exception {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/identityservice");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("IdentityLinkingService");
-        service.setScope(Constants.SCOPE_APPLICATION);
     }
     
     @AfterClass

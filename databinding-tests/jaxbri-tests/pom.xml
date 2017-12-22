@@ -251,6 +251,7 @@
                             <serviceDescriptions>
                                 <serviceDescription>
                                     <directory>${project.build.directory}/gen/identityservice/resources</directory>
+                                    <scope>application</scope>
                                     <parameters>
                                         <parameter>
                                             <name>ServiceClass</name>
@@ -271,6 +272,7 @@
                             <serviceDescriptions>
                                 <serviceDescription>
                                     <directory>${project.build.directory}/gen/mtom/resources</directory>
+                                    <scope>application</scope>
                                     <parameters>
                                         <parameter>
                                             <name>ServiceClass</name>

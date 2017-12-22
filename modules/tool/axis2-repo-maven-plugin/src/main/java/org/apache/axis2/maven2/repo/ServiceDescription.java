@@ -22,6 +22,7 @@ import java.io.File;
 
 public class ServiceDescription {
     private File directory;
+    private String scope;
     private Parameter[] parameters;
 
     public File getDirectory() {
@@ -30,6 +31,14 @@ public class ServiceDescription {
 
     public void setDirectory(File directory) {
         this.directory = directory;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public Parameter[] getParameters() {

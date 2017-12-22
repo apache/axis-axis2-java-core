@@ -21,9 +21,6 @@ package org.apache.axis2.jibx.library.unwrapped;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jibx.beans.Book;
 import org.apache.axis2.jibx.library.unwrapped.client.LibraryStub;
 import org.apache.axis2.testutils.UtilServer;
@@ -35,9 +32,6 @@ public class LibraryTest {
     @BeforeClass
     public static void startServer() throws Exception {
         UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/library-unwrapped");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("library");
-        service.setScope(Constants.SCOPE_APPLICATION);
     }
     
     @AfterClass
