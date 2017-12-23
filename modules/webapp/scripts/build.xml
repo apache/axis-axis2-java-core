@@ -76,6 +76,7 @@
 				<exclude name="**servlet**" />
 				<exclude name="axis2-ant-plugin-*.jar" />
 				<exclude name="axis2-*-codegen-*.jar"/>
+				<exclude name="axis2-jaxbri-*.jar"/>
 				<exclude name="axis2-java2wsdl-*.jar"/>
 				<!-- codegen is required for Rampart because of AXIS2-4265 -->
 				<!-- exclude name="axis2-codegen*.jar"/ -->

@@ -30,12 +30,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-jaxbri</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-local</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
