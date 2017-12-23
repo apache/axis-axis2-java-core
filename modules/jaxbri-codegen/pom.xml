@@ -27,7 +27,7 @@
         <version>1.8.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>axis2-jaxbri</artifactId>
+    <artifactId>axis2-jaxbri-codegen</artifactId>
     <name>Apache Axis2 - JAXB-RI Data Binding</name>
     <description>JAXB-RI data binding support for Axis2</description>
     <dependencies>
@@ -71,9 +71,9 @@
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxbri</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxbri</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/jaxbri</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxbri-codegen</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/jaxbri-codegen</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/jaxbri-codegen</url>
     </scm>
     <build>
         <plugins>

@@ -77,8 +77,9 @@
         <module>modules/tool/archetype/quickstart-webapp</module>
         <module>modules/webapp</module>
         <module>modules/xmlbeans</module>
+        <module>modules/xmlbeans-codegen</module>
         <module>modules/scripting</module>
-        <module>modules/jaxbri</module>
+        <module>modules/jaxbri-codegen</module>
         <module>modules/metadata</module>
         <module>modules/saaj</module>
         <module>modules/jaxws</module>
