@@ -1153,6 +1153,11 @@
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>1.5</version>
+                    <configuration>
+                        <!-- We don't actually want to allow System.exit, but the security manager
+                             installed by the plugin causes problems in multithreaded builds. -->
+                        <allowSystemExits>true</allowSystemExits>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
