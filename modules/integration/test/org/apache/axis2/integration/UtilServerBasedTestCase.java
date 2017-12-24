@@ -56,16 +56,4 @@ public class UtilServerBasedTestCase extends TestCase {
             }
         };
     }
-
-    protected static Test getTestSetup3(Test test, final String param1, final String param2) {
-        return new TestSetup(test) {
-            public void setUp() throws Exception {
-                UtilServer.start(param1, param2);
-            }
-
-            public void tearDown() throws Exception {
-                UtilServer.stop();
-            }
-        };
-    }
 }

@@ -104,30 +104,6 @@ public class UtilServer {
         count++;
     }
 
-    public static synchronized void start(String repository, String axis2xml) throws Exception {
-        if (count == 0) {
-            ConfigurationContext er = getNewConfigurationContext(repository, axis2xml);
-
-            receiver = new SimpleHTTPServer(er, TESTING_PORT);
-
-            try {
-                receiver.start();
-                System.out.print("Server started on port "
-                        + TESTING_PORT + ".....");
-            } catch (Exception e) {
-                throw AxisFault.makeFault(e);
-            }
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e1) {
-                throw new AxisFault("Thread interuptted", e1);
-            }
-
-        }
-        count++;
-    }
-
     public static ConfigurationContext getNewConfigurationContext(
             String repository) throws Exception {
         File file = new File(repository);
