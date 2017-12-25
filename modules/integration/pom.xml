@@ -129,6 +129,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <scope>test</scope>
@@ -243,7 +248,19 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/test-resources/samples</outputDirectory>
-                            <axis2xml>conf/axis2.xml</axis2xml>
+                            <generatedAxis2xml>
+                                <modules>
+                                    <module>addressing</module>
+                                </modules>
+                                <handlers>
+                                    <handler>
+                                        <flow>InFlow</flow>
+                                        <phase>Transport</phase>
+                                        <name>RequestURIOperationDispatcher</name>
+                                        <className>org.apache.axis2.dispatchers.RequestURIOperationDispatcher</className>
+                                    </handler>
+                                </handlers>
+                            </generatedAxis2xml>
                             <modules>addressing</modules>
                         </configuration>
                     </execution>
@@ -255,7 +272,11 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/test-resources/repository-client</outputDirectory>
-                            <axis2xml>conf/axis2.xml</axis2xml>
+                            <generatedAxis2xml>
+                                <modules>
+                                    <module>addressing</module>
+                                </modules>
+                            </generatedAxis2xml>
                             <modules>addressing</modules>
                         </configuration>
                     </execution>
@@ -302,7 +323,11 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/test-resources/integrationRepo</outputDirectory>
-                            <axis2xml>conf/axis2.xml</axis2xml>
+                            <generatedAxis2xml>
+                                <modules>
+                                    <module>addressing</module>
+                                </modules>
+                            </generatedAxis2xml>
                             <modules>addressing</modules>
                         </configuration>
                     </execution>
@@ -386,7 +411,11 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/Repository</outputDirectory>
-                            <axis2xml>conf/axis2.xml</axis2xml>
+                            <generatedAxis2xml>
+                                <modules>
+                                    <module>addressing</module>
+                                </modules>
+                            </generatedAxis2xml>
                             <modules>addressing,SOAP12TestModuleB,SOAP12TestModuleC</modules>
                             <includeServices>true</includeServices>
                             <services>SOAP12TestServiceB,SOAP12TestServiceC</services>
@@ -400,7 +429,11 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/perf2/build/repo</outputDirectory>
-                            <axis2xml>conf/axis2.xml</axis2xml>
+                            <generatedAxis2xml>
+                                <modules>
+                                    <module>addressing</module>
+                                </modules>
+                            </generatedAxis2xml>
                             <modules>addressing</modules>
                         </configuration>
                     </execution>
@@ -412,7 +445,11 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/perf/build/repo/conf</outputDirectory>
-                            <axis2xml>conf/axis2.xml</axis2xml>
+                            <generatedAxis2xml>
+                                <modules>
+                                    <module>addressing</module>
+                                </modules>
+                            </generatedAxis2xml>
                             <modules>addressing</modules>
                         </configuration>
                     </execution>
