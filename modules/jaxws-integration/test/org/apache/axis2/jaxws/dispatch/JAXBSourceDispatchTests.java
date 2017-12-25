@@ -19,10 +19,10 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.dispatch.jaxbsource.Invoke;
 import org.test.dispatch.jaxbsource.ObjectFactory;
 
@@ -36,6 +36,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+
+import static org.junit.Assert.assertNotNull;
+
 import java.io.StringWriter;
 
 /*
@@ -45,26 +48,24 @@ import java.io.StringWriter;
 */
 
 
-public class JAXBSourceDispatchTests extends AbstractTestCase {
+public class JAXBSourceDispatchTests {
 	/**
      * Invoke a sync Dispatch<JAXBSource> in PAYLOAD mode
      */
+
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
 	
-	private String url = "http://localhost:6060/axis2/services/SourceProviderService";
 	private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
 	private QName portName =new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     
-	public static Test suite() {
-        return getTestSetup(new TestSuite(JAXBSourceDispatchTests.class));
-    }
-
+    @Test
     public void testJAXBSourceSyncPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, url);
+        svc.addPort(portName, null, server.getEndpoint("SourceProviderService"));
         Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, Service.Mode.PAYLOAD);
 
         //Create JAXBContext and JAXBSource here.

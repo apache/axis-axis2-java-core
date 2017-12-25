@@ -19,39 +19,41 @@
 
 package org.apache.axis2.jaxws.polymorphic.shape.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapeService;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
 import javax.xml.ws.BindingProvider;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
 
-public class PolymorphicTests extends AbstractTestCase {
-    String axisEndpoint = "http://localhost:6060/axis2/services/PolymorphicShapeService.PolymorphicShapePort";
+public class PolymorphicTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(PolymorphicTests.class));
-    }
-
-    public void testFormalAndActualTypeInDifferentPackages(){
+    @Test
+    public void testFormalAndActualTypeInDifferentPackages() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         PolymorphicShapeService service = new PolymorphicShapeService();
         PolymorphicShapePortType port = service.getPolymorphicShapePort();
         BindingProvider p = (BindingProvider) port;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("PolymorphicShapeService.PolymorphicShapePort"));
 
         Shape shapeType;
 
@@ -77,9 +79,9 @@ public class PolymorphicTests extends AbstractTestCase {
         TestLogger.logger.debug("-------------------------------");
     }
     
+    @Test
     public void testInlineUseOfJAXBBinding() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         String schemaBindingPkgName = "org.test.echomessage";
         String standardPkgName= "org.test.complextype.nonanonymous";
         String wsdlLocation="test-resources/wsdl/JAXB_Customization_Sample.wsdl";
@@ -101,9 +103,9 @@ public class PolymorphicTests extends AbstractTestCase {
         TestLogger.logger.debug("------------------------------");
     }
     
+    @Test
     public void testSchemaReader() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         String wsdlLocation="test-resources/wsdl/shapes.wsdl";
 
         String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();

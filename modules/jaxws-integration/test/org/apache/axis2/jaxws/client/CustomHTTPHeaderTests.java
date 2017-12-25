@@ -20,6 +20,9 @@
 package org.apache.axis2.jaxws.client;
 
 import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,21 +31,17 @@ import java.util.Map;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
-public class CustomHTTPHeaderTests extends AbstractTestCase {
+public class CustomHTTPHeaderTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
 
-    String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersService.AddNumbersPortTypeImplPort";
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(CustomHTTPHeaderTests.class));
-    }
-    
+    @Test
     public void testPort() throws Exception {        
         Map<String, List<String>> headers = new HashMap<String, List<String>>();
         headers.put("MY_HEADER_1", Collections.singletonList("hello"));
@@ -53,7 +52,8 @@ public class CustomHTTPHeaderTests extends AbstractTestCase {
                 
         BindingProvider p = (BindingProvider) port;
         
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("AddNumbersService.AddNumbersPortTypeImplPort"));
         p.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
         
         assertEquals(777, port.addNumbers(333, 444));

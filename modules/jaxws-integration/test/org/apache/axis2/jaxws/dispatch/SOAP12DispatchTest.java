@@ -19,10 +19,11 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
@@ -35,6 +36,11 @@ import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -42,13 +48,14 @@ import java.io.ByteArrayOutputStream;
  * This class uses the JAX-WS Dispatch API to test sending and receiving
  * messages using SOAP 1.2.
  */
-public class SOAP12DispatchTest extends AbstractTestCase {
+public class SOAP12DispatchTest {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
     
     private static final QName QNAME_SERVICE = new QName(
             "http://org/apache/axis2/jaxws/test/SOAP12", "SOAP12Service");
     private static final QName QNAME_PORT = new QName(
             "http://org/apache/axis2/jaxws/test/SOAP12", "SOAP12Port");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/SOAP12ProviderService.SOAP12ProviderPort";    
     
     private static final String sampleRequest = 
         "<test:echoString xmlns:test=\"http://org/apache/axis2/jaxws/test/SOAP12\">" +
@@ -77,17 +84,18 @@ public class SOAP12DispatchTest extends AbstractTestCase {
         sampleRequest + 
         sampleEnvelopeTail;
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SOAP12DispatchTest.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("SOAP12ProviderService.SOAP12ProviderPort");
     }
-    
+
     /**
      * Test sending a SOAP 1.2 request in PAYLOAD mode
      */
+    @Test
     public void testSOAP12DispatchPayloadMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, getEndpoint());
         Dispatch<Source> dispatch = service.createDispatch(
                 QNAME_PORT, Source.class, Mode.PAYLOAD);
         
@@ -161,10 +169,12 @@ public class SOAP12DispatchTest extends AbstractTestCase {
      * JAX-WS will default to SOAP11, and SOAP12 is not registered as a protocol for the JMS namespace.  See AXIS2-4855
      * for more information.
      */
-    public void _testSOAP12JMSDispatchPayloadMode() throws Exception {
+    @Ignore
+    @Test
+    public void testSOAP12JMSDispatchPayloadMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-		service.addPort(QNAME_PORT, MDQConstants.SOAP12JMS_BINDING, URL_ENDPOINT);
+		service.addPort(QNAME_PORT, MDQConstants.SOAP12JMS_BINDING, getEndpoint());
         Dispatch<Source> dispatch = service.createDispatch(
                 QNAME_PORT, Source.class, Mode.PAYLOAD);
         
@@ -228,10 +238,11 @@ public class SOAP12DispatchTest extends AbstractTestCase {
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */
+    @Test
     public void testSOAP12DispatchMessageMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, getEndpoint());
         Dispatch<Source> dispatch = service.createDispatch(
                 QNAME_PORT, Source.class, Mode.MESSAGE);
         
@@ -298,10 +309,11 @@ public class SOAP12DispatchTest extends AbstractTestCase {
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */
+    @Test
     public void testSOAP12DispatchMessageMode_MustUnderstand() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, getEndpoint());
         Dispatch<Source> dispatch = service.createDispatch(
                 QNAME_PORT, Source.class, Mode.MESSAGE);
         

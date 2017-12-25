@@ -19,29 +19,32 @@
 
 package org.apache.axis2.jaxws.handler.header.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
 
-public class HandlerTests extends AbstractTestCase {
-    public static Test suite() {
-        return getTestSetup(new TestSuite(HandlerTests.class));
-    }
+public class HandlerTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
 
-    public void testHandler_getHeader_invocation() {
+    @Test
+    public void testHandler_getHeader_invocation() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         Object res;
         //Add myHeader to SOAPMessage that will be injected by handler.getHeader().
         String soapMessage =
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:myheader soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
-        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        String url = server.getEndpoint("DemoService.DemoServicePort");
         QName name = new QName("http://demo/", "DemoService");
         QName portName = new QName("http://demo/", "DemoServicePort");
         //Create Service
@@ -58,13 +61,13 @@ public class HandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
 
-    public void test_MU_Failure() {
+    @Test
+    public void test_MU_Failure() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         //Add bad header to SOAPMessage, we expect MU to fail
         String soapMessage =
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:badHeader soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
-        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        String url = server.getEndpoint("DemoService.DemoServicePort");
         QName name = new QName("http://demo/", "DemoService");
         QName portName = new QName("http://demo/", "DemoServicePort");
         try {
@@ -94,14 +97,14 @@ public class HandlerTests extends AbstractTestCase {
      * Test that a mustUnderstand header with a specific SOAP role that the endpoint is acting in
      * doesn't cause a NotUnderstood fault if the header QName is one that the handler understands.
      */
-    public void testSoapRoleActedIn() {
+    @Test
+    public void testSoapRoleActedIn() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         Object res;
         //Add myHeader to SOAPMessage that will be injected by handler.getHeader().
         String soapMessage =
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:myheader soap:actor=\"http://DemoHandler/Role\" soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
-        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        String url = server.getEndpoint("DemoService.DemoServicePort");
         QName name = new QName("http://demo/", "DemoService");
         QName portName = new QName("http://demo/", "DemoServicePort");
         //Create Service
@@ -122,14 +125,14 @@ public class HandlerTests extends AbstractTestCase {
      * Test that a mustUnderstand header with a specific SOAP role that the endpoint is acting in
      * doesn't cause a NotUnderstood fault if the header QName is one that the handler understands.
      */
-    public void testSoapRoleNotActedIn() {
+    @Test
+    public void testSoapRoleNotActedIn() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         Object res;
         //Add myHeader to SOAPMessage that will be injected by handler.getHeader().
         String soapMessage =
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:myheader soap:actor=\"http://DemoHandler/NotActedIn\" soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
-        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        String url = server.getEndpoint("DemoService.DemoServicePort");
         QName name = new QName("http://demo/", "DemoService");
         QName portName = new QName("http://demo/", "DemoServicePort");
         //Create Service
@@ -150,13 +153,13 @@ public class HandlerTests extends AbstractTestCase {
      * Test that a mustUnderstand header with a specific SOAP role that the endpoint is acting in
      * which has a mustUnderstand header that will not be processed by the handler causes a fault.
      */
-    public void testSoapRoleActedInNotUnderstoodFault() {
+    @Test
+    public void testSoapRoleActedInNotUnderstoodFault() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         //Add myHeader to SOAPMessage that will be injected by handler.getHeader().
         String soapMessage =
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:myNOTUNDERSTOODheader soap:actor=\"http://DemoHandler/Role\" soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
-        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        String url = server.getEndpoint("DemoService.DemoServicePort");
         QName name = new QName("http://demo/", "DemoService");
         QName portName = new QName("http://demo/", "DemoServicePort");
         try {

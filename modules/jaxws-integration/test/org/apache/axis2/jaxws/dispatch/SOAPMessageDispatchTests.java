@@ -19,10 +19,10 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -30,12 +30,17 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
+
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.concurrent.Future;
 
-public class SOAPMessageDispatchTests extends AbstractTestCase {
-	private String url = "http://localhost:6060/axis2/services/ProxyDocLitWrappedService.DocLitWrappedProxyImplPort";
+public class SOAPMessageDispatchTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
+
 	private QName serviceName = new QName(
 			"http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedService");
 	private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped",
@@ -43,20 +48,20 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
 	
 	String messageResource = "test-resources" + File.separator  + "xml" + File.separator +"soapmessage.xml";
 	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SOAPMessageDispatchTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("ProxyDocLitWrappedService.DocLitWrappedProxyImplPort");
     }
 
+    @Test
     public void testSOAPMessageSyncMessageMode() throws Exception {
 
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
 
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         //Initialize the JAX-WS client artifacts
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, url);
+        svc.addPort(portName, null, getEndpoint());
         Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
                                                             SOAPMessage.class, Service.Mode.MESSAGE);
 
@@ -81,16 +86,16 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
         response.writeTo(System.out);
     }
 
+    @Test
     public void testSOAPMessageAsyncCallbackMessageMode() throws Exception {
 
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
 
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         //Initialize the JAX-WS client artifacts
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, url);
+        svc.addPort(portName, null, getEndpoint());
         Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
                                                             SOAPMessage.class, Service.Mode.MESSAGE);
 
@@ -131,16 +136,16 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
         response.writeTo(System.out);
     }
 
+    @Test
     public void testSOAPMessageAsyncPollingMessageMode() throws Exception {
 
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
 
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         //Initialize the JAX-WS client artifacts
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, url);
+        svc.addPort(portName, null, getEndpoint());
         Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
                                                             SOAPMessage.class, Service.Mode.MESSAGE);
 
@@ -187,9 +192,10 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testConnectionReleaseForInvokeOneWayWithMEPMismatch() throws Exception {
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, url);
+        svc.addPort(portName, null, getEndpoint());
         Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
                                                             SOAPMessage.class, Service.Mode.MESSAGE);
         MessageFactory factory = MessageFactory.newInstance();

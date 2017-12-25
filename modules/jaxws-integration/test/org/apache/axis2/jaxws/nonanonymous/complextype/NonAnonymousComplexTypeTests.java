@@ -22,29 +22,26 @@
  */
 package org.apache.axis2.jaxws.nonanonymous.complextype;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.ws.BindingProvider;
 
-public class NonAnonymousComplexTypeTests extends AbstractTestCase {
+public class NonAnonymousComplexTypeTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
 
-    String axisEndpoint = "http://localhost:6060/axis2/services/EchoMessageService.EchoMessageImplPort";
-	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(NonAnonymousComplexTypeTests.class));
-    }
-
-    public void testSimpleProxy() {
+    @Test
+    public void testSimpleProxy() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String msg = "Hello Server";
         EchoMessagePortType myPort = (new EchoMessageService()).getEchoMessagePort();
         BindingProvider p = (BindingProvider) myPort;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("EchoMessageService.EchoMessageImplPort"));
 
         String response = myPort.echoMessage(msg);
         TestLogger.logger.debug(response);

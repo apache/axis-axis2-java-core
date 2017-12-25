@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.provider.soapbinding.tests;
 
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
@@ -34,15 +36,14 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+public class SOAPBindingProviderTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
 
-public class SOAPBindingProviderTests extends AbstractTestCase {
-    private String endpointUrl = "http://localhost:6060/axis2/services/SOAPBindingProviderService.SOAPBindingProviderPort";
     private QName serviceName = new QName("http://SOAPBindingProvider.provider.jaxws.axis2.apache.org", "SOAPBindingProviderService");
     private QName portName =  new QName("http://SOAPBindingProvider.provider.jaxws.axis2.apache.org", "SOAPBindingProviderPort");
     
@@ -71,13 +72,9 @@ public class SOAPBindingProviderTests extends AbstractTestCase {
 
     String request = "<invokeOp>Hello World</invokeOp>";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SOAPBindingProviderTests.class));
-    }
-    
+    @Test
     public void testSoap11Request() throws Exception {
         System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
         
         Dispatch<SOAPMessage> dispatch=getDispatch();
         String soapMessage = getSOAP11Message();
@@ -88,9 +85,9 @@ public class SOAPBindingProviderTests extends AbstractTestCase {
         assertTrue(getVersionURI(message).equals(SOAP11_NS_URI));
     }
 
+    @Test
     public void testSoap12Request() throws Exception {
         System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
         
         Dispatch<SOAPMessage> dispatch=getDispatch();
         String soapMessage = getSOAP12Message();
@@ -105,8 +102,9 @@ public class SOAPBindingProviderTests extends AbstractTestCase {
         System.out.println("Provider endpoint was able to receive both SOAP 11 and SOAP 12 request");
     }
     
-    private Dispatch<SOAPMessage> getDispatch(){
+    private Dispatch<SOAPMessage> getDispatch() throws Exception {
         Service svc = Service.create(serviceName);
+        String endpointUrl = server.getEndpoint("SOAPBindingProviderService.SOAPBindingProviderPort");
         svc.addPort(portName, null, endpointUrl);
         Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
         BindingProvider p = (BindingProvider) dispatch;

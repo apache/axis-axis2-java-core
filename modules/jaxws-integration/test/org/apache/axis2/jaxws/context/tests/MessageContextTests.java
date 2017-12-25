@@ -19,13 +19,14 @@
 
 package org.apache.axis2.jaxws.context.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.context.MessageContextImpl;
 import org.apache.axis2.jaxws.context.sei.MessageContext;
 import org.apache.axis2.jaxws.context.sei.MessageContextService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -33,47 +34,48 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceContext;
 
-public class MessageContextTests extends AbstractTestCase {
+public class MessageContextTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
 
     static final WebServiceClient wsc = MessageContextService.class.getAnnotation(WebServiceClient.class);
-    
-    String axisEndpoint = "http://localhost:6060/axis2/services/MessageContextService.MessageContextPort";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MessageContextTests.class));
-    }
-
-    public void testWSCtxt_WSDL_SERVICE_read() {
+    @Test
+    public void testWSCtxt_WSDL_SERVICE_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "{" + wsc.targetNamespace() + "}" + wsc.name();
         runTest(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, type_expected, value_expected, false);
     }
 
-    public void testWSCtxt_WSDL_PORT_read() {
+    @Test
+    public void testWSCtxt_WSDL_PORT_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "{" + wsc.targetNamespace() + "}MessageContextPort";
         runTest(javax.xml.ws.handler.MessageContext.WSDL_PORT, type_expected, value_expected, false);
     }
 
-    public void testWSCtxt_WSDL_OPERATION_read() {
+    @Test
+    public void testWSCtxt_WSDL_OPERATION_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "isPropertyPresent";
         runTest(javax.xml.ws.handler.MessageContext.WSDL_OPERATION, type_expected, value_expected, false);
     }
 
-    public void testWSCtxt_WSDL_INTERFACE_read() {
+    @Test
+    public void testWSCtxt_WSDL_INTERFACE_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "{" + wsc.targetNamespace() + "}MessageContext";
         runTest(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, type_expected, value_expected, false);
     }
 
-    public void testWSCtxt_WSDL_DESCRIPTION_read() {
+    @Test
+    public void testWSCtxt_WSDL_DESCRIPTION_read() throws Exception {
         String type_expected = java.net.URI.class.getName();
         String value_expected = "META-INF/MessageContext.wsdl";
         runTest(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, type_expected, value_expected, false);
     }
 
-    private void runTest(String propName, String exType, String exValue, boolean isValueFullySpecified) {
+    private void runTest(String propName, String exType, String exValue, boolean isValueFullySpecified) throws Exception {
         MessageContext port = getPort();
 
         Holder<String> type = new Holder<String>();
@@ -109,11 +111,12 @@ public class MessageContextTests extends AbstractTestCase {
         }
     }
 
-    public MessageContext getPort() {
+    public MessageContext getPort() throws Exception {
         MessageContextService service = new MessageContextService();
         MessageContext port = service.getMessageContextPort();
         BindingProvider p = (BindingProvider) port;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("MessageContextService.MessageContextPort"));
         return port;
     }
 }

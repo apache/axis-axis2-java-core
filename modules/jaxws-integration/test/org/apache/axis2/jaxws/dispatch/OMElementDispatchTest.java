@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -34,27 +36,27 @@ import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPModelBuilder;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 /**
  * This class uses the JAX-WS Dispatch API to test sending and receiving
  * messages using SOAP 1.2.
  */
-public class OMElementDispatchTest extends AbstractTestCase {
+public class OMElementDispatchTest {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo");
     
     private static final QName QNAME_SERVICE = new QName(
             "http://org/apache/axis2/jaxws/test/OMELEMENT", "OMElementService");
     private static final QName QNAME_PORT = new QName(
             "http://org/apache/axis2/jaxws/test/OMELEMENT", "OMElementPort");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/OMElementProviderService.OMElementProviderPort";    
     
     private static final String sampleRequest = 
         "<test:echoOMElement xmlns:test=\"http://org/apache/axis2/jaxws/test/OMELEMENT\">" +
@@ -70,17 +72,18 @@ public class OMElementDispatchTest extends AbstractTestCase {
         sampleRequest + 
         sampleEnvelopeTail;
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(OMElementDispatchTest.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("OMElementProviderService.OMElementProviderPort");
     }
-    
+
     /**
      * Test sending a SOAP 1.2 request in PAYLOAD mode
      */
+    @Test
     public void testSourceDispatchPayloadMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, getEndpoint());
         Dispatch<Source> dispatch = service.createDispatch(
                 QNAME_PORT, Source.class, Mode.PAYLOAD);
         
@@ -144,10 +147,11 @@ public class OMElementDispatchTest extends AbstractTestCase {
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */
+    @Test
     public void testSourceDispatchMessageMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, getEndpoint());
         Dispatch<Source> dispatch = service.createDispatch(
                 QNAME_PORT, Source.class, Mode.MESSAGE);
         
@@ -214,10 +218,11 @@ public class OMElementDispatchTest extends AbstractTestCase {
     /**
      * Test sending a SOAP 1.2 request in PAYLOAD mode
      */
+    @Test
     public void testOMElementDispatchPayloadMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, getEndpoint());
         Dispatch<OMElement> dispatch = service.createDispatch(
                 QNAME_PORT, OMElement.class, Mode.PAYLOAD);
         
@@ -261,10 +266,11 @@ public class OMElementDispatchTest extends AbstractTestCase {
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */
+    @Test
     public void testOMElementDispatchMessageMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, getEndpoint());
         Dispatch<OMElement> dispatch = service.createDispatch(
                 QNAME_PORT, OMElement.class, Mode.MESSAGE);
         
