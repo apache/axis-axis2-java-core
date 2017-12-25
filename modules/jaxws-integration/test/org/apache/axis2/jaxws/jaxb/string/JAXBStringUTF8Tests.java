@@ -6,7 +6,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
 
 public class JAXBStringUTF8Tests extends AbstractTestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/JAXBStringService.JAXBStringPortTypeImplPort";
@@ -89,24 +88,20 @@ public class JAXBStringUTF8Tests extends AbstractTestCase {
 
     private void runTestWithEncoding(String input, String output, String encoding) {
         TestLogger.logger.debug("Test : " + getName());
-        try {
-            JAXBStringPortType myPort = (new JAXBStringService()).getJAXBStringPort();
-            BindingProvider p = (BindingProvider) myPort;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
-            if (encoding != null) {
-                p.getRequestContext().put(org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING, encoding);
-            }
+        JAXBStringPortType myPort = (new JAXBStringService()).getJAXBStringPort();
+        BindingProvider p = (BindingProvider) myPort;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
-            Echo request = new Echo();
-            request.setArg(input);
-            EchoResponse response = myPort.echoString(request);
-            TestLogger.logger.debug(response.getResponse());
-            assertEquals(output, response.getResponse());
-        } catch (WebServiceException webEx) {
-            webEx.printStackTrace();
-            fail();
+        if (encoding != null) {
+            p.getRequestContext().put(org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING, encoding);
         }
+
+        Echo request = new Echo();
+        request.setArg(input);
+        EchoResponse response = myPort.echoString(request);
+        TestLogger.logger.debug(response.getResponse());
+        assertEquals(output, response.getResponse());
     }
    
 }
