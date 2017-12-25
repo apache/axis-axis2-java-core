@@ -33,11 +33,6 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-clustering</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
             <version>${project.version}</version>
         </dependency>
