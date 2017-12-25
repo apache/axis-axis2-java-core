@@ -28,7 +28,6 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
 
 public class NonAnonymousComplexTypeTests extends AbstractTestCase {
 
@@ -41,23 +40,19 @@ public class NonAnonymousComplexTypeTests extends AbstractTestCase {
     public void testSimpleProxy() {
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-        try {
-            String msg = "Hello Server";
-            EchoMessagePortType myPort = (new EchoMessageService()).getEchoMessagePort();
-            BindingProvider p = (BindingProvider) myPort;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
-            String response = myPort.echoMessage(msg);
-            TestLogger.logger.debug(response);
-            
-            // Try a second time to verify
-            response = myPort.echoMessage(msg);
-            TestLogger.logger.debug(response);
-            TestLogger.logger.debug("------------------------------");
-        } catch (WebServiceException webEx) {
-            webEx.printStackTrace();
-            fail();
-        }
+        String msg = "Hello Server";
+        EchoMessagePortType myPort = (new EchoMessageService()).getEchoMessagePort();
+        BindingProvider p = (BindingProvider) myPort;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
+        String response = myPort.echoMessage(msg);
+        TestLogger.logger.debug(response);
+        
+        // Try a second time to verify
+        response = myPort.echoMessage(msg);
+        TestLogger.logger.debug(response);
+        TestLogger.logger.debug("------------------------------");
     }
 
 		    
