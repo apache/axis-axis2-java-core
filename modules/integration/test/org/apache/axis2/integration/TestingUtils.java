@@ -25,6 +25,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -56,7 +58,7 @@ public class TestingUtils {
         OMElement firstChild = element.getFirstElement();
         TestCase.assertNotNull(firstChild);
         String textValue = firstChild.getText();
-        TestCase.assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
+        assertThat(textValue).isEqualTo("Isaac Asimov, The Foundation Trilogy");
     }
 
     public static String prefixBaseDirectory(String path) {
