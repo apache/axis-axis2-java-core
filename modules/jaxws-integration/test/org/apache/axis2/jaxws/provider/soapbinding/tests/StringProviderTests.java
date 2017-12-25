@@ -36,63 +36,63 @@ import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 public class StringProviderTests extends AbstractTestCase {
-	private String endpointUrl = "http://localhost:6060/axis2/services/SOAPBindingStringProviderService.SOAPBindingStringProviderPort";
-	private QName serviceName = new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderService");
-	private QName portName =  new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderPort");
+    private String endpointUrl = "http://localhost:6060/axis2/services/SOAPBindingStringProviderService.SOAPBindingStringProviderPort";
+    private QName serviceName = new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderService");
+    private QName portName =  new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderPort");
 
-	private static final String SOAP11_NS_URI = "http://schemas.xmlsoap.org/soap/envelope/";
-	private static final String SOAP12_NS_URI = "http://www.w3.org/2003/05/soap-envelope";
-	public static final String SOAP11_ENVELOPE_HEAD = "<?xml version='1.0' encoding='utf-8'?>" + 
-	"<soapenv:Envelope xmlns:soapenv=\"" + SOAP11_NS_URI + "\">" +
-	"<soapenv:Header />" + 
-	"<soapenv:Body>";
+    private static final String SOAP11_NS_URI = "http://schemas.xmlsoap.org/soap/envelope/";
+    private static final String SOAP12_NS_URI = "http://www.w3.org/2003/05/soap-envelope";
+    public static final String SOAP11_ENVELOPE_HEAD = "<?xml version='1.0' encoding='utf-8'?>" + 
+    "<soapenv:Envelope xmlns:soapenv=\"" + SOAP11_NS_URI + "\">" +
+    "<soapenv:Header />" + 
+    "<soapenv:Body>";
 
-	public static final String SOAP12_ENVELOPE_HEAD = 
-		"<?xml version='1.0' encoding='utf-8'?>" + 
-		"<soapenv:Envelope xmlns:soapenv=\"" + SOAP12_NS_URI + "\">" +
-		"<soapenv:Header />" + 
-		"<soapenv:Body>";
+    public static final String SOAP12_ENVELOPE_HEAD = 
+        "<?xml version='1.0' encoding='utf-8'?>" + 
+        "<soapenv:Envelope xmlns:soapenv=\"" + SOAP12_NS_URI + "\">" +
+        "<soapenv:Header />" + 
+        "<soapenv:Body>";
 
-	public static final String SOAP11_ENVELOPE_TAIL = 
-		"</soapenv:Body>" + 
-		"</soapenv:Envelope>";
+    public static final String SOAP11_ENVELOPE_TAIL = 
+        "</soapenv:Body>" + 
+        "</soapenv:Envelope>";
 
-	public static final String SOAP12_ENVELOPE_TAIL = 
-		"</soapenv:Body>" + 
-		"</soapenv:Envelope>";
-	
-	public static Test suite() {
+    public static final String SOAP12_ENVELOPE_TAIL = 
+        "</soapenv:Body>" + 
+        "</soapenv:Envelope>";
+    
+    public static Test suite() {
         return getTestSetup(new TestSuite(StringProviderTests.class));
     }
 /*
  * This test case makes sure that we receive a soap11 response for a soap11 request.
  */
-	public void testsoap11request(){
-		System.out.println("---------------------------------------");
-		System.out.println("test: " + getName());
-		try{
-			Service svc = Service.create(serviceName);
-			svc.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);
+    public void testsoap11request(){
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        try{
+            Service svc = Service.create(serviceName);
+            svc.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);
 
-			Dispatch<String> dispatch =
-				svc.createDispatch(portName, String.class, Service.Mode.MESSAGE);
-			String xmlMessage = SOAP11_ENVELOPE_HEAD+"<invokeOp>soap11 request</invokeOp>"+SOAP11_ENVELOPE_TAIL;
-			String response = dispatch.invoke(xmlMessage);
+            Dispatch<String> dispatch =
+                svc.createDispatch(portName, String.class, Service.Mode.MESSAGE);
+            String xmlMessage = SOAP11_ENVELOPE_HEAD+"<invokeOp>soap11 request</invokeOp>"+SOAP11_ENVELOPE_TAIL;
+            String response = dispatch.invoke(xmlMessage);
 
-			MessageFactory factory = MessageFactory.newInstance();
-			SOAPMessage soapMessage = factory.createMessage(null, new ByteArrayInputStream(response.getBytes()));
-			assertTrue(getVersionURI(soapMessage).equals(SOAP11_NS_URI));
-		}catch(Exception e){
-			System.out.println("Failure while sending soap 11 request");
-			System.out.println(e.getMessage());
-			fail();
-		}
+            MessageFactory factory = MessageFactory.newInstance();
+            SOAPMessage soapMessage = factory.createMessage(null, new ByteArrayInputStream(response.getBytes()));
+            assertTrue(getVersionURI(soapMessage).equals(SOAP11_NS_URI));
+        }catch(Exception e){
+            System.out.println("Failure while sending soap 11 request");
+            System.out.println(e.getMessage());
+            fail();
+        }
 
-	}
+    }
 
-	private String getVersionURI(SOAPMessage soapMessage)throws SOAPException{
-		SOAPPart sp = soapMessage.getSOAPPart();
-		SOAPEnvelope envelope = sp.getEnvelope();
-		return envelope.getNamespaceURI();
-	}
+    private String getVersionURI(SOAPMessage soapMessage)throws SOAPException{
+        SOAPPart sp = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = sp.getEnvelope();
+        return envelope.getNamespaceURI();
+    }
 }

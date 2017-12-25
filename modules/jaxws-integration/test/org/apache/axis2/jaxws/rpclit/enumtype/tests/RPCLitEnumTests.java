@@ -34,13 +34,13 @@ import javax.xml.ws.Holder;
 
 public class RPCLitEnumTests extends AbstractTestCase {
     
-	String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitEnumService.PortTypeImplPort";
+    String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitEnumService.PortTypeImplPort";
 
-	public static Test suite() {
+    public static Test suite() {
         return getTestSetup(new TestSuite(RPCLitEnumTests.class));
     }
 
-	public void testEnumSimpleType(){
+    public void testEnumSimpleType(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
         try{

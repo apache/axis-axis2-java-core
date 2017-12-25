@@ -40,12 +40,12 @@ import java.util.concurrent.Future;
 
 public class NonWrapTests extends AbstractTestCase {
 
-	String axisEndpoint = "http://localhost:6060/axis2/services/DocLitNonWrapService.DocLitNonWrapPortTypeImplPort";
-	
+    String axisEndpoint = "http://localhost:6060/axis2/services/DocLitNonWrapService.DocLitNonWrapPortTypeImplPort";
+    
     public static Test suite() {
         return getTestSetup(new TestSuite(NonWrapTests.class));
     }
-	
+    
     public void testTwoWaySync(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
@@ -55,7 +55,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapService service = new DocLitNonWrapService();
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
-            BindingProvider p =	(BindingProvider)proxy;
+            BindingProvider p =    (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
             ReturnType returnValue = proxy.twoWay(twoWay);
@@ -79,8 +79,8 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapService service = new DocLitNonWrapService();
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
             
-            BindingProvider p =	(BindingProvider)proxy;
-			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            BindingProvider p =    (BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
             
             ReturnType returnValue = proxy.twoWay(twoWay);
             
@@ -114,7 +114,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapService service = new DocLitNonWrapService();
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
-            BindingProvider p =	(BindingProvider)proxy;
+            BindingProvider p =    (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
             AsyncCallback callback = new AsyncCallback();
@@ -145,7 +145,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapService service = new DocLitNonWrapService();
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
-            BindingProvider p =	(BindingProvider)proxy;
+            BindingProvider p =    (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
             proxy.twoWayHolder(holder);
@@ -165,7 +165,7 @@ public class NonWrapTests extends AbstractTestCase {
             fail();
         }
     }
-	
+    
     public void testTwoWayHolderAsync(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
@@ -179,7 +179,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapService service = new DocLitNonWrapService();
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
-            BindingProvider p =	(BindingProvider)proxy;
+            BindingProvider p =    (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
             AsyncCallback callback = new AsyncCallback();

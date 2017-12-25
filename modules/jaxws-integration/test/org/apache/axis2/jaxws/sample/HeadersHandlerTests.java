@@ -96,43 +96,43 @@ public class HeadersHandlerTests extends AbstractTestCase {
          */
         String acoh1, acoh2, acoh3, acoh4, acoh5, acoh6;
         SOAPFactory sf = SOAPFactory.newInstance();
-    	try {
-        	Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
-        	
-        	// QName used here should match the key for the list set on the requestCtx
-        	acoh1 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL1);
-        	
-        	// QName used here should match the key for the list set on the requestCtx
-        	acoh2 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL2);
-        	
-        	// QName used here should match the key for the list set on the requestCtx
-        	acoh3 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL3);
-        	
-        	// QName used here should match the key for the list set on the requestCtx
-        	acoh4 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
-        	
-        	// create additional header strings that will need to be checked:
-    		acoh5 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH3_HEADER_QNAME, TestHeaders.CONTENT_LARGE);
-    		acoh6 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH4_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
-        	
-        	List<String> list1 = new ArrayList<String>();
-        	list1.add(acoh1);
-        	list1.add(acoh2);
-        	
-        	List<String> list2 = new ArrayList<String>();
-        	list2.add(acoh3);
-        	list2.add(acoh4);
-        	
-        	requestHeaders.put(TestHeaders.ACOH1_HEADER_QNAME, list1);
-        	requestHeaders.put(TestHeaders.ACOH2_HEADER_QNAME, list2);
-        	requestCtx.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
-    	} catch (Throwable e) {
-    		fail(e.getMessage());
-    		return;
-    	}
-    	
-    	// some handlers decrement the value, so we can confirm SOAP body manipulation does not corrupt the headers
-    	int numOfHandlerHitsInFlow = 3;
+        try {
+            Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
+            
+            // QName used here should match the key for the list set on the requestCtx
+            acoh1 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL1);
+            
+            // QName used here should match the key for the list set on the requestCtx
+            acoh2 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL2);
+            
+            // QName used here should match the key for the list set on the requestCtx
+            acoh3 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL3);
+            
+            // QName used here should match the key for the list set on the requestCtx
+            acoh4 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH2_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
+            
+            // create additional header strings that will need to be checked:
+            acoh5 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH3_HEADER_QNAME, TestHeaders.CONTENT_LARGE);
+            acoh6 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH4_HEADER_QNAME, TestHeaders.CONTENT_SMALL4);
+            
+            List<String> list1 = new ArrayList<String>();
+            list1.add(acoh1);
+            list1.add(acoh2);
+            
+            List<String> list2 = new ArrayList<String>();
+            list2.add(acoh3);
+            list2.add(acoh4);
+            
+            requestHeaders.put(TestHeaders.ACOH1_HEADER_QNAME, list1);
+            requestHeaders.put(TestHeaders.ACOH2_HEADER_QNAME, list2);
+            requestCtx.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
+        } catch (Throwable e) {
+            fail(e.getMessage());
+            return;
+        }
+        
+        // some handlers decrement the value, so we can confirm SOAP body manipulation does not corrupt the headers
+        int numOfHandlerHitsInFlow = 3;
         
         int intParam1 = 10;
         int intParam2 = 10;
@@ -155,7 +155,7 @@ public class HeadersHandlerTests extends AbstractTestCase {
         
         String log = readLogFile();
         String expected_calls =
-        		// client outbound
+                // client outbound
                   "HeadersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
                 + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh1+"\n"
                 + "HeadersClientLogicalHandler CHECKED_HEADER "+acoh2+"\n"

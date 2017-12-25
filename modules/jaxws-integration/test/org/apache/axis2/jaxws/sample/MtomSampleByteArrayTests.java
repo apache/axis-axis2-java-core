@@ -57,31 +57,31 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
     public void _testAttachmentByteArrayAPI11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
-    	
-      	String imageResourceDir = IMAGE_DIR;
-      		
-      	Service svc = Service.create(QNAME_SERVICE);
-      	svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
-      	
-      	JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtom1");
-      	Dispatch<Object> dispatch = svc.createDispatch(QNAME_PORT, jbc, Service.Mode.PAYLOAD);
-      	
-      	SOAPBinding binding = (SOAPBinding)dispatch.getBinding();
-      	binding.setMTOMEnabled(true);
-      	
-      	Image image = ImageIO.read (new File(imageResourceDir+File.separator+"test.jpg"));
-      	ImageDepot imageDepot = new ObjectFactory().createImageDepot();
-      	imageDepot.setImageData(image);
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        Service svc = Service.create(QNAME_SERVICE);
+        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
+        
+        JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtom1");
+        Dispatch<Object> dispatch = svc.createDispatch(QNAME_PORT, jbc, Service.Mode.PAYLOAD);
+        
+        SOAPBinding binding = (SOAPBinding)dispatch.getBinding();
+        binding.setMTOMEnabled(true);
+        
+        Image image = ImageIO.read (new File(imageResourceDir+File.separator+"test.jpg"));
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(image);
         setText(imageDepot);
-      	
-      	//Create a request bean with imagedepot bean as value
-      	ObjectFactory factory = new ObjectFactory();
-      	Invoke request = factory.createInvoke();
-      	request.setInput(imageDepot);
-      	
-      	SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
-      	
-      	assertNotNull(response);
+        
+        //Create a request bean with imagedepot bean as value
+        ObjectFactory factory = new ObjectFactory();
+        Invoke request = factory.createInvoke();
+        request.setInput(imageDepot);
+        
+        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
         checkText(response.getOutput());
         
@@ -103,7 +103,7 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
         TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
-            
+        
         Service svc = Service.create(QNAME_SERVICE);
         svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
         
@@ -145,28 +145,28 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
         
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
-    	
-      	String imageResourceDir = IMAGE_DIR;
-      		
-      	Service svc = Service.create(QNAME_SERVICE);
-      	svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, URL_ENDPOINT);
-      	
-      	JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtom1");
-      	Dispatch<Object> dispatch = svc.createDispatch(QNAME_PORT, jbc, Service.Mode.PAYLOAD);
-      	
-      	Image image = ImageIO.read (new File(imageResourceDir+File.separator+"test.jpg"));
-      	ImageDepot imageDepot = new ObjectFactory().createImageDepot();
-      	imageDepot.setImageData(image);
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        Service svc = Service.create(QNAME_SERVICE);
+        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, URL_ENDPOINT);
+        
+        JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtom1");
+        Dispatch<Object> dispatch = svc.createDispatch(QNAME_PORT, jbc, Service.Mode.PAYLOAD);
+        
+        Image image = ImageIO.read (new File(imageResourceDir+File.separator+"test.jpg"));
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(image);
         setText(imageDepot);
-      	
-      	//Create a request bean with imagedepot bean as value
-      	ObjectFactory factory = new ObjectFactory();
-      	Invoke request = factory.createInvoke();
-      	request.setInput(imageDepot);
-      	
-      	SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
-      	
-      	assertNotNull(response);
+        
+        //Create a request bean with imagedepot bean as value
+        ObjectFactory factory = new ObjectFactory();
+        Invoke request = factory.createInvoke();
+        request.setInput(imageDepot);
+        
+        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
         checkText(response.getOutput());
         

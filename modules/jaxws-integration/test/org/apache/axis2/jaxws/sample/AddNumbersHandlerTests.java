@@ -74,7 +74,7 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 public class AddNumbersHandlerTests extends AbstractTestCase {
-	
+    
     String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
     String invalidAxisEndpoint = "http://invalidHostName:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
 
@@ -107,14 +107,14 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * 3)  General handler framework functionality; make sure handlers are instantiated and called
      */
     public void testAddNumbersHandler() {
-		try{
+        try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
-			
+            
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
-			
-            BindingProvider p =	(BindingProvider)proxy;
+            
+            BindingProvider p =    (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
             int total = proxy.addNumbersHandler(10, 10);
 
@@ -149,11 +149,11 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             assertEquals(expected_calls, log);
             
             TestLogger.logger.debug("----------------------------------");
-		} catch(Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-	}
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
     
     /**
      * Client app sends MAXVALUE, MAXVALUE as params to add.
@@ -771,8 +771,8 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
             //AXIS2-2417 - assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
             assertTrue(((SOAPFaultException)e).getMessage().contains("Got value 101.  " +
-            		"AddNumbersHandlerPortTypeImpl.addNumbersHandler method is " +
-            		"correctly throwing this exception as part of testing"));
+                    "AddNumbersHandlerPortTypeImpl.addNumbersHandler method is " +
+                    "correctly throwing this exception as part of testing"));
             
             String log = readLogFile();
             String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
