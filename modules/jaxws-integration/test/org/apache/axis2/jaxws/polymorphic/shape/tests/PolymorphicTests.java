@@ -27,21 +27,14 @@ import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapeService;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
-import org.apache.axis2.jaxws.wsdl.SchemaReaderException;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
 import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
-import javax.wsdl.WSDLException;
 import javax.xml.ws.BindingProvider;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -84,105 +77,48 @@ public class PolymorphicTests extends AbstractTestCase {
         TestLogger.logger.debug("-------------------------------");
     }
     
-    public void testInlineUseOfJAXBBinding(){
+    public void testInlineUseOfJAXBBinding() throws Exception {
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
         String schemaBindingPkgName = "org.test.echomessage";
         String standardPkgName= "org.test.complextype.nonanonymous";
         String wsdlLocation="test-resources/wsdl/JAXB_Customization_Sample.wsdl";
-        URL url = null;
-        try{
-            try{
-                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
-                wsdlLocation = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
-            }catch(Exception e){
-                e.printStackTrace();
-                fail();
-            }
-            File file = new File(wsdlLocation);
-            url = file.toURI().toURL();
-            WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
-            org.apache.axis2.jaxws.wsdl.SchemaReader sr= new SchemaReaderImpl();
-            Set<String> set= sr.readPackagesFromSchema(wsdlWrapper.getDefinition());
-            assertNotNull(set);
-            Iterator<String> iter = set.iterator();
-            while(iter.hasNext()){
-                String pkg = iter.next();
-                TestLogger.logger.debug("Package = " + pkg);
-            }
-            TestLogger.logger.debug("------------------------------");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            fail();
-        }catch(FileNotFoundException e) {
-            e.printStackTrace();
-            fail();
-        }catch(UnknownHostException e) {
-            e.printStackTrace();
-            fail();
-        }catch(ConnectException e) {
-            e.printStackTrace();
-            fail();
-        }catch(IOException e) {
-            e.printStackTrace();
-            fail();
-        }catch(WSDLException e){
-            e.printStackTrace();
-            fail();
-        }catch(SchemaReaderException e){
-            e.printStackTrace();
-            fail();
+
+        String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+        wsdlLocation = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
+
+        File file = new File(wsdlLocation);
+        URL url = file.toURI().toURL();
+        WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
+        org.apache.axis2.jaxws.wsdl.SchemaReader sr= new SchemaReaderImpl();
+        Set<String> set= sr.readPackagesFromSchema(wsdlWrapper.getDefinition());
+        assertNotNull(set);
+        Iterator<String> iter = set.iterator();
+        while(iter.hasNext()){
+            String pkg = iter.next();
+            TestLogger.logger.debug("Package = " + pkg);
         }
+        TestLogger.logger.debug("------------------------------");
     }
     
-    public void testSchemaReader(){
+    public void testSchemaReader() throws Exception {
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
         String wsdlLocation="test-resources/wsdl/shapes.wsdl";
-        URL url = null;
-        try{
-            try{
-                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
-                wsdlLocation = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
-            }catch(Exception e){
-                e.printStackTrace();
-                fail();
-            }
-            File file = new File(wsdlLocation);
-            url = file.toURI().toURL();
-            WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
-            org.apache.axis2.jaxws.wsdl.SchemaReader sr= new SchemaReaderImpl();
-            Set<String> set= sr.readPackagesFromSchema(wsdlWrapper.getDefinition());
-            assertNotNull(set);
-            Iterator<String> iter = set.iterator();
-            while(iter.hasNext()){
-                TestLogger.logger.debug("Package =" + iter.next());
-            }
-            TestLogger.logger.debug("------------------------------");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            fail();
-        }catch(FileNotFoundException e) {
-            e.printStackTrace();
-            fail();
-        }catch(UnknownHostException e) {
-            e.printStackTrace();
-            fail();
-        }catch(ConnectException e) {
-            e.printStackTrace();
-            fail();
-        }catch(IOException e) {
-            e.printStackTrace();
-            fail();
-        }catch(WSDLException e){
-            e.printStackTrace();
-            fail();
-        }catch(SchemaReaderException e){
-            e.printStackTrace();
-            fail();
+
+        String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+        wsdlLocation = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
+
+        File file = new File(wsdlLocation);
+        URL url = file.toURI().toURL();
+        WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
+        org.apache.axis2.jaxws.wsdl.SchemaReader sr= new SchemaReaderImpl();
+        Set<String> set= sr.readPackagesFromSchema(wsdlWrapper.getDefinition());
+        assertNotNull(set);
+        Iterator<String> iter = set.iterator();
+        while(iter.hasNext()){
+            TestLogger.logger.debug("Package =" + iter.next());
         }
-        
-        
-                
+        TestLogger.logger.debug("------------------------------");
     }
 }
