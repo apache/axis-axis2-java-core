@@ -75,47 +75,34 @@ public class SOAPBindingProviderTests extends AbstractTestCase {
         return getTestSetup(new TestSuite(SOAPBindingProviderTests.class));
     }
     
-    public void testSoap11Request(){
-        try{
-            System.out.println("---------------------------------------");
-            System.out.println("test: " + getName());
-            
-            Dispatch<SOAPMessage> dispatch=getDispatch();
-            String soapMessage = getSOAP11Message();
-            MessageFactory factory = MessageFactory.newInstance();
-            SOAPMessage message = factory.createMessage(null, new ByteArrayInputStream(soapMessage.getBytes()));
-            Object obj = dispatch.invoke(message);
-            assertTrue(obj!=null && obj instanceof SOAPMessage);
-            assertTrue(getVersionURI(message).equals(SOAP11_NS_URI));
-        }catch(Exception e){
-            System.out.println("Failure while sending soap 11 request");
-            System.out.println(e.getMessage());
-            fail();
-        }
+    public void testSoap11Request() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<SOAPMessage> dispatch=getDispatch();
+        String soapMessage = getSOAP11Message();
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage message = factory.createMessage(null, new ByteArrayInputStream(soapMessage.getBytes()));
+        Object obj = dispatch.invoke(message);
+        assertTrue(obj!=null && obj instanceof SOAPMessage);
+        assertTrue(getVersionURI(message).equals(SOAP11_NS_URI));
     }
 
-    public void testSoap12Request(){
-        try{
-            System.out.println("---------------------------------------");
-            System.out.println("test: " + getName());
-            
-            Dispatch<SOAPMessage> dispatch=getDispatch();
-            String soapMessage = getSOAP12Message();
-            System.out.println("soap message ="+soapMessage);
-            MessageFactory factory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            MimeHeaders header = new MimeHeaders();
-            header.addHeader("Content-Type", "application/soap+xml");
-            SOAPMessage message = factory.createMessage(header, new ByteArrayInputStream(soapMessage.getBytes()));
-            Object obj = dispatch.invoke(message);
-            assertTrue(obj!=null && obj instanceof SOAPMessage);
-            assertTrue(getVersionURI(message).equals(SOAP12_NS_URI));
-            System.out.println("Provider endpoint was able to receive both SOAP 11 and SOAP 12 request");
-        }catch(Exception e){
-            System.out.println("Expecting that endpoint will be able to receive soap 12 and soap 11 request");
-            System.out.println(e.getMessage());
-            fail();
-            
-        }
+    public void testSoap12Request() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<SOAPMessage> dispatch=getDispatch();
+        String soapMessage = getSOAP12Message();
+        System.out.println("soap message ="+soapMessage);
+        MessageFactory factory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        MimeHeaders header = new MimeHeaders();
+        header.addHeader("Content-Type", "application/soap+xml");
+        SOAPMessage message = factory.createMessage(header, new ByteArrayInputStream(soapMessage.getBytes()));
+        Object obj = dispatch.invoke(message);
+        assertTrue(obj!=null && obj instanceof SOAPMessage);
+        assertTrue(getVersionURI(message).equals(SOAP12_NS_URI));
+        System.out.println("Provider endpoint was able to receive both SOAP 11 and SOAP 12 request");
     }
     
     private Dispatch<SOAPMessage> getDispatch(){
