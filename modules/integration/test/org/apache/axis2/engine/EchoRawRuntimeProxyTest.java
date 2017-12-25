@@ -40,7 +40,7 @@ import javax.xml.namespace.QName;
 
 public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
     public static final EndpointReference targetEPR = new EndpointReference(
-            "http://localhost:5555"
+            "http://localhost:" + UtilServer.TESTING_PORT
                     + "/axis2/services/EchoXMLService/echoOMElement");
 
     public static final QName serviceName = new QName("EchoXMLService");
@@ -84,7 +84,7 @@ public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
         HttpTransportProperties.ProxyProperties proxyproperties =
                 new HttpTransportProperties.ProxyProperties();
         proxyproperties.setProxyName("localhost");
-        proxyproperties.setProxyPort(5555);
+        proxyproperties.setProxyPort(UtilServer.TESTING_PORT);
         proxyproperties.setDomain("anonymous");
         proxyproperties.setPassWord("anonymous");
         proxyproperties.setUserName("anonymous");

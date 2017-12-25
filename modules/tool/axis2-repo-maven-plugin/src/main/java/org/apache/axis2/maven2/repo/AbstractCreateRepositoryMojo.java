@@ -229,7 +229,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
         }
     }
 
-    private void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
+    private static void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
         if (handlers == null) {
             return;
         }
@@ -238,6 +238,20 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
             OMElement element = parent.getOMFactory().createOMElement(localName, null, parent);
             element.addAttribute("contentType", handler.getContentType(), null);
             element.addAttribute("class", handler.getClassName(), null);
+        }
+    }
+
+    private static void processTransports(OMElement root, Transport[] transports, String localName) {
+        if (transports == null) {
+            return;
+        }
+        for (Transport transport : transports) {
+            for (Iterator<OMElement> it = root.getChildrenWithLocalName(localName); it.hasNext(); ) {
+                OMElement transportElement = it.next();
+                if (transportElement.getAttributeValue(new QName("name")).equals(transport.getName())) {
+                    applyParameters(transportElement, transport.getParameters());
+                }
+            }
         }
     }
     
@@ -431,6 +445,8 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                             }
                         }
                         applyParameters(root, generatedAxis2xml.getParameters());
+                        processTransports(root, generatedAxis2xml.getTransportReceivers(), "transportReceiver");
+                        processTransports(root, generatedAxis2xml.getTransportSenders(), "transportSender");
                         addMessageHandlers(root, generatedAxis2xml.getMessageBuilders(), "messageBuilder");
                         addMessageHandlers(root, generatedAxis2xml.getMessageFormatters(), "messageFormatter");
                         if (generatedAxis2xml.getHandlers() != null) {

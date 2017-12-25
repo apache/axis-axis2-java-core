@@ -31,6 +31,7 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.testutils.PortAllocator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -42,7 +43,7 @@ public class UtilServer {
 
     private static SimpleHTTPServer receiver;
 
-    public static final int TESTING_PORT = 5555;
+    public static final int TESTING_PORT = PortAllocator.allocatePort();
 
     public static final String FAILURE_MESSAGE = "Intentional Failure";
 

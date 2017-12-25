@@ -138,8 +138,9 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
         options.setTimeOutInMilliSeconds(50000);
 
         ConfigurationContext configurationContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"),
-                                                          null);
+                .createConfigurationContextFromFileSystem(
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"),
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo/conf/axis2.xml"));
 
         ServiceClient sender = new ServiceClient(configurationContext, null);
         sender.setOptions(options);

@@ -79,7 +79,7 @@ public class EchoRawSwAFileInputTest extends UtilServerBasedTestCase {
     }
 
     public void testEchoXMLSync() throws Exception {
-        Socket socket = new Socket("127.0.0.1", 5555);
+        Socket socket = new Socket("127.0.0.1", UtilServer.TESTING_PORT);
         OutputStream outStream = socket.getOutputStream();
         socket.getInputStream();
         InputStream requestMsgInStream = new FileInputStream(TestingUtils.prefixBaseDirectory("test-resources/swa/swainput.bin"));

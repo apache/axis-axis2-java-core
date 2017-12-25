@@ -37,6 +37,7 @@ import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.testutils.PortAllocator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 
@@ -58,7 +59,7 @@ public class ThirdPartyResponseRawXMLTest extends UtilServerBasedTestCase implem
     private SimpleHTTPServer receiver;
     private String callbackOperation;
     private String callbackServiceName = "CallbackService";
-    private int callbackserverPort = 17458;
+    private int callbackserverPort = PortAllocator.allocatePort();
     
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName,

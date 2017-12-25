@@ -464,6 +464,19 @@
                 <configuration>
                     <configurationDirectory>conf</configurationDirectory>
                     <includeServices>false</includeServices>
+                    <generatedAxis2xml>
+                        <transportReceivers>
+                            <transportReceiver>
+                                <name>http</name>
+                                <parameters>
+                                    <parameter>
+                                        <name>port</name>
+                                        <value>0</value>
+                                    </parameter>
+                                </parameters>
+                            </transportReceiver>
+                        </transportReceivers>
+                    </generatedAxis2xml>
                 </configuration>
             </plugin>
             <plugin>
