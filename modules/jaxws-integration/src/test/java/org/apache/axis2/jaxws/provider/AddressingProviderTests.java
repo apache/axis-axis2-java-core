@@ -226,7 +226,7 @@ public class AddressingProviderTests extends AbstractTestCase {
     }
     
     private URL getWsdl() throws Exception {
-        String wsdlLocation = "/src/test/java/org/apache/axis2/jaxws/provider/addressing/META-INF/AddressingProvider.wsdl";
+        String wsdlLocation = "/src/test/servicejars/AddressingProvider/META-INF/AddressingProvider.wsdl";
         String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
         wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();    
         File file = new File(wsdlLocation);

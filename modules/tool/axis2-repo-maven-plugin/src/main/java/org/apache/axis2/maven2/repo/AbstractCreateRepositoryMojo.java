@@ -335,6 +335,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                     for (File classDirectory : getClassDirectories()) {
                         archiver.addDirectory(classDirectory, includes, new String[0]);
                     }
+                    if (service.getResourcesDirectory() != null) {
+                        archiver.addDirectory(service.getResourcesDirectory());
+                    }
                     archiver.createArchive();
                 } catch (ArchiverException ex) {
                     throw new MojoExecutionException("Failed to build " + jarName, ex);

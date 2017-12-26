@@ -189,6 +189,13 @@
                             <axis2xml>test-resources/axis2.xml</axis2xml>
                             <jaxwsServices>
                                 <jaxwsService>
+                                    <name>AddressingProvider</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.provider.addressing</package>
+                                    </packages>
+                                    <resourcesDirectory>src/test/servicejars/AddressingProvider</resourcesDirectory>
+                                </jaxwsService>
+                                <jaxwsService>
                                     <name>XPayloadStringProvider</name>
                                     <packages>
                                         <package>org.apache.axis2.jaxws.xmlhttp.provider.payload.string</package>
@@ -958,18 +965,6 @@
 
                                 <jar destfile="${servicejars.dir}/RPCLitSWA.jar" basedir="${servicejars.dir}/RPCLitSWA" />
                                 <delete dir="${servicejars.dir}/RPCLitSWA" />
-
-                                <copy toDir="${servicejars.dir}/AddressingProvider/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/provider/addressing/**" />
-                                    </fileset>
-                                    <fileset dir="src/test/java/org/apache/axis2/jaxws/provider/addressing/">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
-
-                                <jar destfile="${servicejars.dir}/AddressingProvider.jar" basedir="${servicejars.dir}/AddressingProvider" />
-                                <delete dir="${servicejars.dir}/AddressingProvider" />
 
                                 <copy toDir="${servicejars.dir}/SOAP12EchoService/">
                                     <fileset dir="target/test-classes">
