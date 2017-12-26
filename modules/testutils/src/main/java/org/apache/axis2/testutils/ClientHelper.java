@@ -30,17 +30,13 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.Stub;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.junit.rules.ExternalResource;
 
-public class ClientHelper extends ExternalResource {
+public class ClientHelper extends AbstractConfigurationContextRule {
     private final AbstractAxis2Server server;
-    private final String repositoryPath;
-    private ConfigurationContext configurationContext;
 
     public ClientHelper(AbstractAxis2Server server, String repositoryPath) {
+        super(repositoryPath);
         this.server = server;
-        this.repositoryPath = repositoryPath;
     }
 
     public ClientHelper(AbstractAxis2Server server) {
@@ -49,21 +45,15 @@ public class ClientHelper extends ExternalResource {
 
     @Override
     protected final void before() throws Throwable {
-        configurationContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
+        super.before();
         SSLContext sslContext = server.getClientSSLContext();
         if (sslContext != null) {
-            configurationContext.setProperty(SSLContext.class.getName(), sslContext);
+            getConfigurationContext().setProperty(SSLContext.class.getName(), sslContext);
         }
     }
 
-    @Override
-    protected final void after() {
-        configurationContext = null;
-    }
-
     public final ServiceClient createServiceClient(String serviceName) throws Exception {
-        ServiceClient serviceClient = new ServiceClient(configurationContext, null);
+        ServiceClient serviceClient = new ServiceClient(getConfigurationContext(), null);
         serviceClient.getOptions().setTo(server.getEndpointReference(serviceName));
         configureServiceClient(serviceClient);
         return serviceClient;
@@ -84,7 +74,7 @@ public class ClientHelper extends ExternalResource {
         } else {
             handler = null;
         }
-        ServiceClient serviceClient = new ServiceClient(configurationContext,
+        ServiceClient serviceClient = new ServiceClient(getConfigurationContext(),
                 new URL(null, server.getEndpoint(serviceName) + "?wsdl", handler), wsdlServiceName, portName);
         configureServiceClient(serviceClient);
         return serviceClient;
@@ -93,7 +83,7 @@ public class ClientHelper extends ExternalResource {
     public final <T extends Stub> T createStub(Class<T> type, String serviceName) throws Exception {
         T stub = type
                 .getConstructor(ConfigurationContext.class, String.class)
-                .newInstance(configurationContext, server.getEndpoint(serviceName));
+                .newInstance(getConfigurationContext(), server.getEndpoint(serviceName));
         configureServiceClient(stub._getServiceClient());
         return stub;
     }

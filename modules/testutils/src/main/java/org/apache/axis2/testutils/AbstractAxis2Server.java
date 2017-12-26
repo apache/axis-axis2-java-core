@@ -23,35 +23,20 @@ import javax.net.ssl.SSLContext;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.junit.rules.ExternalResource;
 
-public abstract class AbstractAxis2Server extends ExternalResource {
-    private final String repositoryPath;
+public abstract class AbstractAxis2Server extends AbstractConfigurationContextRule {
     private final AxisServiceFactory[] serviceFactories;
-    private ConfigurationContext configurationContext;
 
     public AbstractAxis2Server(String repositoryPath, AxisServiceFactory... serviceFactories) {
-        this.repositoryPath = repositoryPath;
+        super(repositoryPath);
         this.serviceFactories = serviceFactories;
-    }
-
-    final String getRepositoryPath() {
-        return repositoryPath;
-    }
-
-    public final ConfigurationContext getConfigurationContext() {
-        if (configurationContext == null) {
-            throw new IllegalStateException();
-        }
-        return configurationContext;
     }
 
     @Override
     protected void before() throws Throwable {
-        configurationContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
+        super.before();
+        ConfigurationContext configurationContext = getConfigurationContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         for (AxisServiceFactory serviceFactory : serviceFactories) {
             axisConfiguration.addService(serviceFactory.createService(axisConfiguration));
@@ -62,7 +47,7 @@ public abstract class AbstractAxis2Server extends ExternalResource {
     @Override
     protected void after() {
         stopServer();
-        configurationContext = null;
+        super.after();
     }
 
     protected abstract void startServer(ConfigurationContext configurationContext) throws Throwable;
