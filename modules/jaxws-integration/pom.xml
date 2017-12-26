@@ -189,13 +189,6 @@
                             <axis2xml>test-resources/axis2.xml</axis2xml>
                             <jaxwsServices>
                                 <jaxwsService>
-                                    <name>AddressingProvider</name>
-                                    <packages>
-                                        <package>org.apache.axis2.jaxws.provider.addressing</package>
-                                    </packages>
-                                    <resourcesDirectory>src/test/servicejars/AddressingProvider</resourcesDirectory>
-                                </jaxwsService>
-                                <jaxwsService>
                                     <name>XPayloadStringProvider</name>
                                     <packages>
                                         <package>org.apache.axis2.jaxws.xmlhttp.provider.payload.string</package>
@@ -224,6 +217,26 @@
                                     <packages>
                                         <package>org.apache.axis2.jaxws.xmlhttp.provider.message.datasource</package>
                                     </packages>
+                                </jaxwsService>
+                            </jaxwsServices>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-addressing-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/addressing-repo</outputDirectory>
+                            <modules>addressing</modules>
+                            <axis2xml>test-resources/axis2_addressing.xml</axis2xml>
+                            <jaxwsServices>
+                                <jaxwsService>
+                                    <name>AddressingProvider</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.provider.addressing</package>
+                                    </packages>
+                                    <resourcesDirectory>src/test/servicejars/AddressingProvider</resourcesDirectory>
                                 </jaxwsService>
                             </jaxwsServices>
                         </configuration>

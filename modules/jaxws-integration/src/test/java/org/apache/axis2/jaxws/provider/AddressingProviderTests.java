@@ -19,6 +19,10 @@
 
 package org.apache.axis2.jaxws.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
@@ -33,6 +37,8 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.axis2.jaxws.spi.Binding;
+import org.apache.axis2.testutils.Axis2Server;
+
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
@@ -40,14 +46,14 @@ import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.RespectBindingFeature;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+public class AddressingProviderTests {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/addressing-repo");
 
-public class AddressingProviderTests extends AbstractTestCase {
-
-    private String endpointUrl = "http://localhost:6060/axis2/services/AddressingProviderService.AddressingProviderPort";    
     private QName serviceName = new QName("http://addressing.provider.jaxws.axis2.apache.org", "AddressingProviderService");
     private QName portName = new QName("http://addressing.provider.jaxws.axis2.apache.org", "AddressingProviderPort");
         
@@ -71,14 +77,14 @@ public class AddressingProviderTests extends AbstractTestCase {
                       
     static final String ACTION = "http://addressing.provider.jaxws.axis2.apache.org/AddressingProviderInterface/In";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(AddressingProviderTests.class), null,
-                "test-resources/axis2_addressing.xml");
+    private static String getEndpointUrl() throws Exception {
+        return server.getEndpoint("AddressingProviderService.AddressingProviderPort");
     }
-   
+    
     /**
      * Inject correct wsa header (wsa:Action must be set the the action of hello operation)
      */
+    @Test
     public void testInjectAddressingHeaders() throws Exception {
           
         Dispatch<SOAPMessage> dispatch = createDispatch();
@@ -105,12 +111,13 @@ public class AddressingProviderTests extends AbstractTestCase {
      * Message already contains wsa headers. Make sure there is no mismatch between 
      * SOAPAction and wsa:Action. 
      */
+    @Test
     public void testWithAddressingHeaders() throws Exception {
 
         Dispatch<SOAPMessage> dispatch = createDispatch();
              
         String msg = MessageFormat.format(SOAP_MESSAGE_2, 
-                                          endpointUrl,
+                                          getEndpointUrl(),
                                           "urn:" + UUID.randomUUID(),
                                           ACTION);
         
@@ -137,8 +144,10 @@ public class AddressingProviderTests extends AbstractTestCase {
      * Message already contains wsa headers. Make sure there is no mismatch between 
      * SOAPAction and wsa:Action. 
      */
+    // Skipping this test until we have a way to register the addressing validator.
+    @Ignore
+    @Test
     public void testWithRespectBinding() throws Exception {
-        /* Commenting this test until we have a way to register the addressing validator.
         Dispatch<SOAPMessage> dispatch = createDispatchWithRespectBinding();
              
         BindingProvider bp = (BindingProvider) dispatch;
@@ -152,10 +161,10 @@ public class AddressingProviderTests extends AbstractTestCase {
         assertNotNull(respectBindingFeature);
         assertTrue("Expecting RespectBindingFeature to be enabled.", respectBindingFeature.isEnabled());
         
-        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
+        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpointUrl());
 
         String msg = MessageFormat.format(SOAP_MESSAGE_2, 
-                                          endpointUrl,
+                                          getEndpointUrl(),
                                           "urn:" + UUID.randomUUID(),
                                           ACTION);
         
@@ -176,7 +185,6 @@ public class AddressingProviderTests extends AbstractTestCase {
         assertResponseXML(response, "Hello Response");
         
         System.out.println(response.toString());
-        */
     }
     
     private SOAPElement assertResponseXML(SOAPMessage msg, String expectedText) throws Exception {
@@ -207,7 +215,7 @@ public class AddressingProviderTests extends AbstractTestCase {
             svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE, wsf);
         
         BindingProvider p = (BindingProvider) dispatch;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpointUrl());
 
         return dispatch;
     }
