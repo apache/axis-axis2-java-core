@@ -19,11 +19,6 @@
 
 package org.apache.axis2.jaxws.provider;
 
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.BindingProvider;
@@ -32,9 +27,20 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.Response; 
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
+
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,29 +51,31 @@ import java.util.concurrent.Future;
  * Tests Dispatch<SOAPMessage> client and a Provider<SOAPMessage> service
  * with mustUnderstand attribute header.
  */
-public class SoapMessageMUProviderTests extends AbstractTestCase {
+public class SoapMessageMUProviderTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
+
     public static final QName serviceName =
             new QName("http://ws.apache.org/axis2", "SoapMessageMUProviderService");
     public static final QName portName =
             new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
-    public static final String endpointUrl =
-            "http://localhost:6060/axis2/services/SoapMessageMUProviderService.SimpleProviderServiceSOAP11port0";
 
     public static final String bindingID = SOAPBinding.SOAP11HTTP_BINDING;
     public static final Service.Mode mode = Service.Mode.MESSAGE;
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SoapMessageMUProviderTests.class));
+    private static String getEndpointUrl() throws Exception {
+        return server.getEndpoint("SoapMessageMUProviderService.SimpleProviderServiceSOAP11port0");
     }
 
     /**
      * Test soap message with no MU headers
      */
+    @Test
     public void testNoMustUnderstandHeaders() throws Exception {
         System.out.println("testNoMustUnderstandHeaders");
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -98,11 +106,12 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * outbound soap message for headers that are not understood.  Should cause an 
      * exception.
      */
-    public void testClientRequestNotUnderstoodHeaders() {
+    @Test
+    public void testClientRequestNotUnderstoodHeaders() throws Exception {
         System.out.println("testClientRequestNotUnderstoodHeaders");
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -136,11 +145,12 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * outbound soap message (i.e. the inbound response to the client) for headers that
      * are not understood.  Should cause an exception.
      */
-    public void testClientResponseNotUnderstoodHeaders() {
+    @Test
+    public void testClientResponseNotUnderstoodHeaders() throws Exception {
         System.out.println("testClientResponseNotUnderstoodHeaders");
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -174,11 +184,12 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * outbound soap message for headers that should be understood.  Should not cause an 
      * exception.
      */
+    @Test
     public void testClientRequestUnderstoodHeaders() throws Exception {
         System.out.println("testClientRequestUnderstoodHeaders");
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -202,11 +213,12 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * outbound soap message (i.e. the inbound response to the client) for headers that
      * are understood.  Should not cause an exception.
      */
+    @Test
     public void testClientResponseUnderstoodHeaders() throws Exception {
         System.out.println("testClientResponseUnderstoodHeaders");
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -231,12 +243,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * Tests that multiple handlers do not cause a collision when registering headers they 
      * understand.
      */
-    public void testClientResponseHandlerUnderstoodHeaders2() {
+    @Test
+    public void testClientResponseHandlerUnderstoodHeaders2() throws Exception {
         System.out.println("testClientResponseTwoHandlerUnderstoodHeaders2");
 
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -277,12 +290,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * Test that not-understood mustUnderstand headers cause an exception in the async polling
      * case.
      */
-    public void testClientResponseNotUnderstoodHeadersAsyncPolling() {
+    @Test
+    public void testClientResponseNotUnderstoodHeadersAsyncPolling() throws Exception {
         System.out.println("testClientResponseNotUnderstoodHeadersAsyncPolling");
 
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -322,12 +336,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * Test that JAX-WS handlers can register they processes certain mustUnderstand headers in the 
      * async polling case.
      */
-    public void testClientResponseHandlerUnderstoodHeadersAsyncPolling() {
+    @Test
+    public void testClientResponseHandlerUnderstoodHeadersAsyncPolling() throws Exception {
         System.out.println("testClientResponseHandlerUnderstoodHeadersAsyncPolling");
 
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -372,12 +387,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * Test that not-understood mustUnderstand headers cause an exception in the async callback
      * case.
      */
-    public void testClientResponseNotUnderstoodHeadersAsyncCallback() {
+    @Test
+    public void testClientResponseNotUnderstoodHeadersAsyncCallback() throws Exception {
         System.out.println("testClientResponseNotUnderstoodHeadersAsyncCallback");
 
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
@@ -417,12 +433,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * Test that JAX-WS handlers can register they processes certain mustUnderstand headers in the 
      * async callback case.
      */
-    public void testClientResponseUnderstoodHeadersAsyncCallback() {
+    @Test
+    public void testClientResponseUnderstoodHeadersAsyncCallback() throws Exception {
         System.out.println("testClientResponseUnderstoodHeadersAsyncCallback");
 
         // create a service
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, getEndpointUrl());
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
