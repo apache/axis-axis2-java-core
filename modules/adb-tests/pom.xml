@@ -44,12 +44,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-transport-local</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-http</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -350,6 +344,15 @@
                 <artifactId>axis2-repo-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
+                    <execution>
+                        <id>client-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/client</outputDirectory>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>repo-axis2-5741</id>
                         <goals>

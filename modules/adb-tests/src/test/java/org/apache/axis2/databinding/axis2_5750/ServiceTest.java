@@ -27,9 +27,14 @@ import org.apache.axis2.databinding.axis2_5750.client.FixedValue;
 import org.apache.axis2.databinding.axis2_5750.client.FixedValueServiceStub;
 import org.apache.axis2.databinding.axis2_5750.client.NonFixedValue_type1;
 import org.apache.axis2.databinding.axis2_5750.service.FixedValueServiceImpl;
+import org.apache.axis2.testutils.ClientHelper;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class ServiceTest {
+    @ClassRule
+    public static final ClientHelper clientHelper = new ClientHelper("target/repo/client");
+
     @Test
     public void test() throws Exception {
         int port = PortAllocator.allocatePort();
@@ -40,7 +45,7 @@ public class ServiceTest {
             NonFixedValue_type1 nonFixedValue_type1 = new NonFixedValue_type1();
             nonFixedValue_type1.setNonFixedValue_type0("SomeId");
             fixedValue.setNonFixedValue(nonFixedValue_type1);
-            FixedValueServiceStub stub = new FixedValueServiceStub(address);
+            FixedValueServiceStub stub = clientHelper.createStub(FixedValueServiceStub.class, address);
             assertThat(stub.test(fixedValue).getOut()).isEqualTo("OK");
         } finally {
             endpoint.stop();

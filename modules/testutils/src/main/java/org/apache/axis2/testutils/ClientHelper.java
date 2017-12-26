@@ -43,12 +43,26 @@ public class ClientHelper extends AbstractConfigurationContextRule {
         this(server, server.getRepositoryPath());
     }
 
+    public ClientHelper(String repositoryPath) {
+        this(null, repositoryPath);
+    }
+
     @Override
     protected final void before() throws Throwable {
         super.before();
-        SSLContext sslContext = server.getClientSSLContext();
-        if (sslContext != null) {
-            getConfigurationContext().setProperty(SSLContext.class.getName(), sslContext);
+        if (server != null) {
+            SSLContext sslContext = server.getClientSSLContext();
+            if (sslContext != null) {
+                getConfigurationContext().setProperty(SSLContext.class.getName(), sslContext);
+            }
+        }
+    }
+
+    private String getEndpoint(String endpoint) throws Exception {
+        if (server != null && !endpoint.startsWith("http://")) {
+            return server.getEndpoint(endpoint);
+        } else {
+            return endpoint;
         }
     }
 
@@ -80,10 +94,10 @@ public class ClientHelper extends AbstractConfigurationContextRule {
         return serviceClient;
     }
 
-    public final <T extends Stub> T createStub(Class<T> type, String serviceName) throws Exception {
+    public final <T extends Stub> T createStub(Class<T> type, String endpoint) throws Exception {
         T stub = type
                 .getConstructor(ConfigurationContext.class, String.class)
-                .newInstance(getConfigurationContext(), server.getEndpoint(serviceName));
+                .newInstance(getConfigurationContext(), getEndpoint(endpoint));
         configureServiceClient(stub._getServiceClient());
         return stub;
     }
