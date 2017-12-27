@@ -38,7 +38,7 @@ public class AsyncService
 {
 
     private final static URL ASYNCSERVICE_WSDL_LOCATION;
-    private static String wsdlLocation="/src/test/java/org/apache/axis2/jaxws/sample/asyncdoclit/server/META-INF/async_doclitwr2.wsdl";
+    private static String wsdlLocation="/src/test/servicejars/AsyncService2/META-INF/async_doclitwr2.wsdl";
     static {
         URL url = null;
         try {

@@ -35,6 +35,7 @@ package org.apache.axis2.testutils;
  * 
  * @see AllTestsWithRuntimeIgnore
  * @see JUnit38ClassRunnerWithRuntimeIgnore
+ * @see Junit4ClassRunnerWithRuntimeIgnore
  */
 public class RuntimeIgnoreException extends Error {
     private static final long serialVersionUID = -2378820905593825587L;

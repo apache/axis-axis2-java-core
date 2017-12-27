@@ -22,17 +22,17 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
-import org.apache.axis2.testutils.AllTestsWithRuntimeIgnore;
+import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.Junit4ClassRunnerWithRuntimeIgnore;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.test.faults.FaultyWebServiceResponse;
 
@@ -41,23 +41,28 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-@RunWith(AllTestsWithRuntimeIgnore.class)
+@RunWith(Junit4ClassRunnerWithRuntimeIgnore.class)
 public class FaultyWebServiceTests extends AbstractTestCase {
-    String axisEndpoint = "http://localhost:6060/axis2/services/FaultyWebServiceService.FaultyWebServicePortTypeImplPort";
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(FaultyWebServiceTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("FaultyWebServiceService.FaultyWebServicePortTypeImplPort");
     }
 
-
-
+    @Test
     public void testFaultyWebService(){
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
         
@@ -65,7 +70,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         try{
             exception = null;
             BindingProvider p =	(BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             // the invoke will throw an exception, if the test is performed right
             int total = proxy.faultyWebService(10);
@@ -89,7 +94,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         try{
             exception = null;
             BindingProvider p = (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             // the invoke will throw an exception, if the test is performed right
             int total = proxy.faultyWebService(10);
@@ -111,6 +116,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
     }
 
+    @Test
     public void testFaultyWebService_badEndpoint() throws Exception {
         String host = "this.is.a.bad.endpoint.terrible.in.fact";
         String badEndpoint = "http://" + host;
@@ -118,7 +124,6 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         checkUnknownHostURL(badEndpoint);
 
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
         
@@ -177,7 +182,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
     // TODO should also have an invoke oneway bad endpoint test to make sure
     // we get an exception as indicated in JAXWS 6.4.2.
 
-
+    @Test
     public void testFaultyWebService_badEndpoint_oneWay() throws Exception {
         String host = "this.is.a.bad.endpoint.terrible.in.fact";
         String badEndpoint = "http://" + host;
@@ -194,7 +199,6 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         WebServiceException exception = null;
 
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         try{
             exception = null;
            
@@ -231,6 +235,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         assertTrue(exception.getCause().getMessage().indexOf(host)!=-1);
     }
 
+    @Test
     public void testFaultyWebService_badEndpoint_AsyncCallback()
     throws Exception {
 
@@ -238,7 +243,6 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         String badEndpoint = "http://" + host;
 
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
@@ -291,6 +295,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
     }
 
+    @Test
     public void testFaultyWebService_badEndpoint_AsyncPolling()
     throws Exception {
 
@@ -298,7 +303,6 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         String badEndpoint = "http://" + host;
 
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
@@ -361,14 +365,14 @@ public class FaultyWebServiceTests extends AbstractTestCase {
     /*
      * Tests fault processing for user defined fault types
      */      
+    @Test
     public void testCustomFault_AsyncCallback() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
         BindingProvider p = (BindingProvider) proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
         FaultyAsyncHandler callback = new FaultyAsyncHandler();
         Future<?> future = proxy.faultyWebServiceAsync(1, callback);

@@ -18,17 +18,10 @@
  */
 package org.apache.axis2.jaxws.sample.asyncdoclit.client;
 
-import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
-import javax.xml.ws.BindingProvider;
-
 public class AsyncClient {
-
-    private static final String DOCLITWR_ASYNC_ENDPOINT =
-        "http://localhost:6060/axis2/services/AsyncService2.DocLitWrappedPortImplPort";
 
     private static final int max_isasleep_check = 30;
     
@@ -89,30 +82,6 @@ public class AsyncClient {
         System.out.println("AsyncClient.isAsleepCheck() Exit, time=" + mins + "min");
 
         return true;
-    }
-
-    /**
-     * Auxiliary method used for obtaining a proxy pre-configured with a
-     * specific Executor
-     */
-    public static AsyncPort getPort(Executor ex) {
-        AsyncService service = new AsyncService();
-
-        if (ex != null) service.setExecutor(ex);
-
-        AsyncPort port = service.getAsyncPort();
-        if (port == null) {
-            throw new RuntimeException("service.getAsyncPort() is null");
-        }
-
-        Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
-        rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                DOCLITWR_ASYNC_ENDPOINT); //Constants.DOCLITWR_ASYNC_ENDPOINT);
-
-        System.out.println("AsyncClient.getPort() = "
-                + DOCLITWR_ASYNC_ENDPOINT); //Constants.DOCLITWR_ASYNC_ENDPOINT);
-
-        return port;
     }
 
     /**

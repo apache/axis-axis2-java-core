@@ -26,10 +26,6 @@ import javax.xml.namespace.QName;
  * conversion methods
  */
 public class Constants {
-
-    // server hostName and WC port
-    private static final String SERVER = "localhost:6060";
-    
     //public static final String WSDL_NAMESPACE = "http://common.wsfvt.async.jaxws";
     public static final String WSDL_NAMESPACE = "http://org/test/parallelasync";
 
@@ -42,19 +38,6 @@ public class Constants {
 
     public static final QName PORT_QNAME = new QName(WSDL_NAMESPACE,
             "AsyncPort");
-
-    // Endpoint addresses
-    public static final String BASE_ENDPOINT = "http://" + SERVER
-            + "/axis2/services/";
-
-    public static final String DOCLITWR_ASYNC_ENDPOINT = BASE_ENDPOINT
-            + "AsyncService"; //+ "AsyncDocLitWrappedService";
-
-    public static final String DOCLIT_ASYNC_ENDPOINT = BASE_ENDPOINT
-            + "AsyncService"; //+ "AsyncDocLitService";
-
-    public static final String RPCLIT_ASYNC_ENDPOINT = BASE_ENDPOINT
-            + "AsyncService"; //+ "AsyncRpcLitService";
 
     public static final String THE_STRING = "This Is Just A Test";
 

@@ -24,54 +24,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.testutils.RuntimeIgnoreException;
 
-public class AbstractTestCase extends TestCase {
-    public AbstractTestCase() {
-        super();
-    }
-
-    /*
-     * users may pass in their own repositoryDir path and path to custom configuration file.
-     * Passing 'null' for either param will use the default
-     */
-    protected static Test getTestSetup(Test test, final String repositoryDir, final String axis2xml) {
-        return new TestSetup(test) {
-            public void setUp() throws Exception {
-                TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-                StartServer startServer = new StartServer("server1");
-                startServer.testStartServer(repositoryDir, axis2xml);
-            }
-
-            public void tearDown() throws Exception {
-                TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-                StopServer stopServer = new StopServer("server1");
-                stopServer.testStopServer();
-            }
-        };
-    }
-
-    protected static Test getTestSetup(Test test) {
-        return new TestSetup(test) {
-            public void setUp() throws Exception {
-                TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-                StartServer startServer = new StartServer("server1");
-                startServer.testStartServer();
-            }
-
-            public void tearDown() throws Exception {
-                TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-                StopServer stopServer = new StopServer("server1");
-                stopServer.testStopServer();
-            }
-        };
-    }
-    
+public class AbstractTestCase {
     /**
      * Check that the given URL refers to an unknown host. More precisely, this method checks that
      * the DNS resolver will not be able to resolve the host name. If the expectation is not met,

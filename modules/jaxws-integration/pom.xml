@@ -238,6 +238,13 @@
                                     </packages>
                                     <resourcesDirectory>src/test/servicejars/AddressingProvider</resourcesDirectory>
                                 </jaxwsService>
+                                <jaxwsService>
+                                    <name>AsyncService2</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.sample.asyncdoclit</package>
+                                    </packages>
+                                    <resourcesDirectory>src/test/servicejars/AsyncService2</resourcesDirectory>
+                                </jaxwsService>
                             </jaxwsServices>
                         </configuration>
                     </execution>
@@ -1117,18 +1124,6 @@
 
                                 <jar destfile="${servicejars.dir}/AsyncService.jar" basedir="${servicejars.dir}/AsyncService" />
                                 <delete dir="${servicejars.dir}/AsyncService" />
-
-                                <copy toDir="${servicejars.dir}/AsyncService2/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/sample/asyncdoclit/**" />
-                                    </fileset>
-                                    <fileset dir="src/test/java/org/apache/axis2/jaxws/sample/asyncdoclit/server">
-                                        <include name="META-INF/**" />
-                                    </fileset>
-                                </copy>
-
-                                <jar destfile="${servicejars.dir}/AsyncService2.jar" basedir="${servicejars.dir}/AsyncService2" />
-                                <delete dir="${servicejars.dir}/AsyncService2" />
 
                                 <copy toDir="${servicejars.dir}/FaultyWebServiceService/">
                                     <fileset dir="target/test-classes">

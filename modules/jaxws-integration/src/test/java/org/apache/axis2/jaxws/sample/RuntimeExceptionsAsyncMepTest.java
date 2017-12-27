@@ -18,6 +18,10 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -31,9 +35,6 @@ import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
@@ -44,7 +45,10 @@ import org.apache.axis2.jaxws.sample.asyncdoclit.client.AsyncService;
 import org.apache.axis2.jaxws.sample.asyncdoclit.client.ThrowExceptionFault;
 import org.apache.axis2.jaxws.sample.asyncdoclit.common.CallbackHandler;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
-import org.apache.axis2.testutils.AllTestsWithRuntimeIgnore;
+import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.Junit4ClassRunnerWithRuntimeIgnore;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.test.asyncdoclit.ExceptionTypeEnum;
 import org.test.asyncdoclit.ThrowExceptionResponse;
@@ -52,13 +56,12 @@ import org.test.asyncdoclit.ThrowExceptionResponse;
 /**
  * Test for varios async exceptions whern AsyncMEP is enabled
  */
-@RunWith(AllTestsWithRuntimeIgnore.class)
+@RunWith(Junit4ClassRunnerWithRuntimeIgnore.class)
 public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/addressing-repo");
 
-    private static final String DOCLITWR_ASYNC_ENDPOINT = "http://localhost:6060/axis2/services/AsyncService2.DocLitWrappedPortImplPort";
     private static final String CONNECT_EXCEPTION_ENDPOINT = "http://localhost:6061/axis2/services/AsyncService2.DocLitWrappedPortImplPort";
-    static final String CONNECT_404_ENDPOINT = DOCLITWR_ASYNC_ENDPOINT // Constants.DOCLITWR_ASYNC_ENDPOINT
-            + "/DoesNotExist";
 
     static final String HOST_NOT_FOUND_ENDPOINT = "http://this.endpoint.does.not.exist/nope";
 
@@ -69,18 +72,15 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      */
     static boolean listenerAlreadySetup = false;
 
-    public static Test suite() {
-        Test test = getTestSetup(new TestSuite(
-                RuntimeExceptionsAsyncMepTest.class), null,
-                "test-resources/axis2_addressing.xml");
-        return test;
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("AsyncService2.DocLitWrappedPortImplPort");
     }
 
-    private AsyncPort getPort() {
+    private AsyncPort getPort() throws Exception {
         return getPort(null);
     }
     
-    private AsyncPort getPort(WebServiceFeature... features) {
+    private AsyncPort getPort(WebServiceFeature... features) throws Exception {
 
         AsyncService service = new AsyncService();
         AsyncPort port = service.getAsyncPort(features);
@@ -88,7 +88,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
         rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                DOCLITWR_ASYNC_ENDPOINT);
+                getEndpoint());
 
         return port;
     }
@@ -98,7 +98,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               does not exist.  Verify that the connection exception is received
      *               by the client.
      */
-  
+    @Test
     public void testAsyncCallback_asyncWire_ConnectException() throws Exception {
         setupAddressingAndListener();
         
@@ -126,6 +126,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               is a server not found case). Expected to throw a
      *               EE/WSE/UnknownHostException
      */
+    @Test
     public void testAsyncPolling_asyncMEP_UnknwonHost() throws Exception {
         checkUnknownHostURL(HOST_NOT_FOUND_ENDPOINT);
 
@@ -159,11 +160,12 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               configured against an endpoint which does not exist (this
      *               is a 404-Not Found case). Expected to throw a EE/WSE
      */
+    @Test
     public void testAsyncPolling_asyncMEP_404NotFound() throws Exception {
 
         AsyncPort port = getPort();
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
-        rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, CONNECT_404_ENDPOINT);
+        rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint() + "/DoesNotExist");
         Response<ThrowExceptionResponse> resp = port
                 .throwExceptionAsync(ExceptionTypeEnum.WSE);
 
@@ -197,6 +199,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               will throw a WSE which should result in a
      *               EE/SOAPFaultException
      */
+    @Test
     public void testAsyncPolling_asyncMEP_WebServiceException()
             throws Exception {
 
@@ -222,6 +225,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               will throw a wsdl:fault which should result in a
      *               EE/SimpleFault
      */
+    @Test
     public void testAsyncPolling_asyncMEP_WsdlFault() throws Exception {
 
         AsyncPort port = getPort();
@@ -249,6 +253,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               is a server not found case). Expected to throw a
      *               EE/WSE/UnknownHostException
      */
+    @Test
     public void testAsyncCallback_asyncMEP_UnknownHost() throws Exception {
         checkUnknownHostURL(HOST_NOT_FOUND_ENDPOINT);
 
@@ -285,11 +290,12 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               is a 404 Not Found case). Expected to throw a
      *               EE/WSE/UnknownHostException
      */
+    @Test
     public void testAsyncCallback_asyncMEP_404NotFound() throws Exception {
 
         AsyncPort port = getPort();
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
-        rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, CONNECT_404_ENDPOINT);
+        rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint() + "/DoesNotExist");
 
         CallbackHandler<ThrowExceptionResponse> handler = new CallbackHandler<ThrowExceptionResponse>();
         Future<?> resp = port.throwExceptionAsync(ExceptionTypeEnum.WSE,
@@ -327,6 +333,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               throws a generic WebServiceException. I think we may have
      *               the record for longest method name in Apache here.
      */
+    @Test
     public void testAsyncCallback_asyncMEP_WebServiceException()
             throws Exception {
 
@@ -334,7 +341,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
         rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                DOCLITWR_ASYNC_ENDPOINT);
+                getEndpoint());
         rc.put(AddressingConstants.WSA_REPLY_TO, "blarg");
 
         CallbackHandler<ThrowExceptionResponse> handler = new CallbackHandler<ThrowExceptionResponse>();
@@ -361,6 +368,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               throws a generic WebServiceException. I think we may have
      *               the record for longest method name in Apache here.
      */
+    @Test
     public void testAsyncCallback_asyncMEP_asyncWire_Addressing_WebServiceException()
             throws Exception {
         setupAddressingAndListener();
@@ -368,7 +376,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
         rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                DOCLITWR_ASYNC_ENDPOINT);
+                getEndpoint());
         //rc.put(AddressingConstants.WSA_REPLY_TO, AddressingConstants.Final.WSA_ANONYMOUS_URL);
         rc.put("org.apache.axis2.jaxws.use.async.mep", Boolean.TRUE);
 
@@ -397,6 +405,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
      *               will throw a wsdl:fault which should result in a
      *               EE/SimpleFault
      */
+    @Test
     public void testAsyncCallback_asyncMEP_WsdlFault() throws Exception {
 
         AsyncPort port = getPort();
