@@ -19,27 +19,27 @@
 
 package org.apache.axis2.jaxws.sample;
 
+import static org.junit.Assert.assertTrue;
+
 import javax.xml.ws.BindingProvider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public class ResourceInjectionTests extends AbstractTestCase {
-    String axisEndpoint = "http://localhost:6060/axis2/services/ResourceInjectionService.ResourceInjectionPortTypeImplPort";
+public class ResourceInjectionTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ResourceInjectionTests.class));
-    }
-    
-    public ResourceInjectionPortType getProxy() {
+    public ResourceInjectionPortType getProxy() throws Exception {
         ResourceInjectionService service = new ResourceInjectionService();
         ResourceInjectionPortType proxy = service.getResourceInjectionPort();
         BindingProvider p = (BindingProvider) proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("ResourceInjectionService.ResourceInjectionPortTypeImplPort"));
         return proxy;
     }
     
@@ -47,6 +47,7 @@ public class ResourceInjectionTests extends AbstractTestCase {
      * This test ensures that an endpoint with an inject WebServiceContext
      * can successfully get and query the web service.
      */
+    @Test
     public void testEchoWithResourceInjectionAndLifecycleMethods() throws Exception {
         
         ResourceInjectionPortType proxy = getProxy();
@@ -77,7 +78,9 @@ public class ResourceInjectionTests extends AbstractTestCase {
      *
      * See: jaxws/src/org/apache/axis2/jaxws/context/WebServiceContextImpl.java line 146
      */ 
-    public void _testResourceInjectionEndpointReference() {
+    @Ignore
+    @Test
+    public void testResourceInjectionEndpointReference() throws Exception {
         ResourceInjectionPortType proxy = getProxy();
         String response = proxy.testInjection("epr");
         assertTrue("The response was null", response != null);

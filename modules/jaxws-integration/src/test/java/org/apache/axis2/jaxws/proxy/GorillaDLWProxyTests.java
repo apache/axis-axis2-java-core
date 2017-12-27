@@ -19,14 +19,13 @@
 
 package org.apache.axis2.jaxws.proxy;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtilsMonitor;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
@@ -35,6 +34,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -45,31 +49,29 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class GorillaDLWProxyTests extends AbstractTestCase {
+public class GorillaDLWProxyTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private QName serviceName = new QName(
             "http://org.apache.axis2.jaxws.proxy.gorilla_dlw", "GorillaService");
-    private String axisEndpoint = "http://localhost:6060/axis2/services/GorillaService.GorillaProxyImplPort";
     private QName portName = new QName("http://org.apache.axis2.jaxws.proxy.rpclit",
             "GorillaPort");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"src/test/java/org/apache/axis2/jaxws/proxy/gorilla_dlw/META-INF/gorilla_dlw.wsdl";
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(GorillaDLWProxyTests.class));
-    }
     
     /**
      * Utility method to get the proxy
      * @return GorillaInterface proxy
      * @throws MalformedURLException
      */
-    public GorillaInterface getProxy() throws MalformedURLException {
+    public GorillaInterface getProxy() throws Exception {
         File wsdl= new File(wsdlLocation); 
         URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         Object proxy =service.getPort(portName, GorillaInterface.class);
         BindingProvider p = (BindingProvider)proxy; 
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("GorillaService.GorillaProxyImplPort"));
         
         return (GorillaInterface)proxy;
     }
@@ -79,11 +81,11 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * @return
      * @throws MalformedURLException
      */
-    public Dispatch<String> getDispatch() throws MalformedURLException {
+    public Dispatch<String> getDispatch() throws Exception {
         File wsdl= new File(wsdlLocation); 
         URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
-        service.addPort(portName, null, axisEndpoint);
+        service.addPort(portName, null, server.getEndpoint("GorillaService.GorillaProxyImplPort"));
         Dispatch<String> dispatch = service.createDispatch(portName, String.class, Service.Mode.PAYLOAD);
         return dispatch;
     }
@@ -93,6 +95,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * If this test fails, it usually means that there are connection
      * problems or deploy problems.
      */
+    @Test
     public void testEchoString() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
@@ -118,6 +121,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
     /**
      * Tests that we can echo a null
      */
+    @Test
     public void testEchoStringNull() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
@@ -139,6 +143,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * Test whether the @XmlSeeAlso that was added to the SEI
      * is used to construct the JAXBContext
      */
+    @Test
     public void testXmlSeeAlso() throws Exception {
         try{
             // Set up the JAXBUtils monitor
@@ -197,6 +202,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
     /**
      * Testing of StringList (xsd:list of string)
      */
+    @Test
     public void testEchoStringList() throws Exception {
         // Run the test multiple times to verify correct behavior
         _testEchoStringList();
@@ -256,6 +262,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * Testing of StringList (xsd:list of string)
      * SEI is mapped to String[] instead of List<String>
      */
+    @Test
     public void testEchoStringListAlt() throws Exception {
         
         // Run the test multiple times to verify correct behavior
@@ -317,7 +324,9 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
     // recognizes the property as an indexed property. Instead it considers it as a simple
     // property with type String[] (because XJC also generates the corresponding getters and
     // setters).
-    public void ignored_testEchoIndexedStringArray() throws Exception {
+    @Ignore
+    @Test
+    public void testEchoIndexedStringArray() throws Exception {
         // Run the test multiple times to verify correct behavior
         _testEchoIndexedStringArray();
         _testEchoIndexedStringArray();
@@ -377,6 +386,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * Test of String Array (string maxOccurs=unbounded)
      * @throws Exception
      */
+    @Test
     public void testEchoStringArray() throws Exception {
         
         // Run the test multiple times to verify correct behavior
@@ -438,6 +448,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * Test of String Array (string maxOccurs=unbounded) which is mapped to String[]
      * @throws Exception
      */
+    @Test
     public void testEchoStringArrayAlt() throws Exception {
         
         // Run the test multiple times to verify correct behavior
@@ -489,6 +500,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testEchoDate() throws Exception{
     	try{
     		System.out.println("TestEchoDate");
@@ -507,6 +519,7 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
     	}
     }
     
+    @Test
     public void testPolymorphicDate() throws Exception{
     	try{
 	    	GorillaInterface proxy = getProxy();

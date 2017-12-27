@@ -19,16 +19,16 @@
 
 package org.apache.axis2.jaxws.sample;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.dlwminArrays.IGenericService;
 import org.apache.axis2.jaxws.sample.dlwminArrays.WSUser;
-
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -42,23 +42,20 @@ import javax.xml.ws.Service;
  * "Minimal" indicates that no wrapper beans are associated with the JAX-WS method.
  * In most enterprise scenarios, wrapper beans are packaged with the JAX-WS application.
  */
-public class DLWMinArrayTests extends AbstractTestCase {
+public class DLWMinArrayTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private static final String NAMESPACE = "http://apache.org/axis2/jaxws/sample/dlwminArrays";
     private static final QName QNAME_SERVICE = new QName(
             NAMESPACE, "GenericService");
     private static final QName QNAME_PORT = new QName(
             NAMESPACE, "GenericServicePort");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/GenericService.GenericServicePort";
     
     private static String FIRST = "first";
     private static String SECOND = "second";
 	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(DLWMinArrayTests.class));
-    }
-
-    private IGenericService getProxy(String action) {
+    private IGenericService getProxy(String action) throws Exception {
         Service service = Service.create(QNAME_SERVICE);
         IGenericService proxy = service.getPort(QNAME_PORT, IGenericService.class);
         BindingProvider p = (BindingProvider) proxy;
@@ -67,13 +64,15 @@ public class DLWMinArrayTests extends AbstractTestCase {
         p.getRequestContext().put(
                 BindingProvider.SOAPACTION_URI_PROPERTY, action);
         p.getRequestContext().put(
-                BindingProvider.ENDPOINT_ADDRESS_PROPERTY, URL_ENDPOINT);
+                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("GenericService.GenericServicePort"));
         return proxy;
     }
     
     /**
      * Test sayHello method 
      */
+    @Test
     public void testHello() throws Exception {
         
         IGenericService proxy = getProxy("sayHello");
@@ -90,6 +89,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
     /**
      * Test method that returns a String[]
      */
+    @Test
     public void testGetSimpleArray() throws Exception {
         
         IGenericService proxy = getProxy("getSimpleArray");
@@ -112,6 +112,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
     /**
      * Test method that returns a List<String>
      */
+    @Test
     public void testGetSimpleList() throws Exception {
         
         IGenericService proxy = getProxy("getSimpleList");
@@ -133,6 +134,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
     /**
      * Test method that returns a bean array (WSUser[])
      */
+    @Test
     public void testGetComplexArray() throws Exception {
         
         IGenericService proxy = getProxy("getComplexArray");
@@ -154,6 +156,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
     /**
      * Test method that returns a List of beans (List<WSUser>)
      */
+    @Test
     public void testGetComplexList() throws Exception {
         
         IGenericService proxy = getProxy("getComplexList");
@@ -176,6 +179,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * Test method that echos a List of beans (List<WSUser>)
      * Two items are echo'd.
      */
+    @Test
     public void testEchoComplexList2() throws Exception {
         
         IGenericService proxy = getProxy("echoComplexList");
@@ -206,6 +210,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * Test method that echos a List of beans (List<WSUser>)
      * One item is echo'd.
      */
+    @Test
     public void testEchoComplexList1() throws Exception {
         
         IGenericService proxy = getProxy("echoComplexList");
@@ -232,6 +237,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * Test method that echos a List of beans (List<WSUser>)
      * The list contains no items.
      */
+    @Test
     public void testEchoComplexList0() throws Exception {
         
         IGenericService proxy = getProxy("echoComplexList");
@@ -253,6 +259,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * Test method that echos a List of beans (List<WSUser>)
      * The list contains no items.
      */
+    @Test
     public void testEchoComplexListNull() throws Exception {
         
         IGenericService proxy = getProxy("echoComplexList");
@@ -294,6 +301,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * 2 WSUsers are echo'd
      * 2 Strings are echo'd
      */
+    @Test
     public void testEcho22() throws Exception {
         
         IGenericService proxy = getProxy("echo");
@@ -340,6 +348,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * 1 WSUsers is echo'd
      * 1 Strings is echo'd
      */
+    @Test
     public void testEcho11() throws Exception {
         
         IGenericService proxy = getProxy("echo");
@@ -379,6 +388,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * 1 WSUsers is echo'd
      * 0 Strings are echo'd
      */
+    @Test
     public void testEcho10() throws Exception {
         
         IGenericService proxy = getProxy("echo");
@@ -414,6 +424,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * 0 WSUsers are echo'd
      * 1 Strings is echo'd
      */
+    @Test
     public void testEcho01() throws Exception {
         
         IGenericService proxy = getProxy("echo");
@@ -447,6 +458,7 @@ public class DLWMinArrayTests extends AbstractTestCase {
      * 0 WSUsers are echo'd
      * 0 Strings are echo'd
      */
+    @Test
     public void testEcho00() throws Exception {
         
         IGenericService proxy = getProxy("echo");

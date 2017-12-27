@@ -19,36 +19,33 @@
 
 package org.apache.axis2.jaxws.rpclit.enumtype.tests;
 
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.Service;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.rpclit.schema.ElementString;
+
+import static org.junit.Assert.fail;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
+public class RPCLitEnumTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-public class RPCLitEnumTests extends AbstractTestCase {
-    
-    String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitEnumService.PortTypeImplPort";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(RPCLitEnumTests.class));
-    }
-
+    @Test
     public void testEnumSimpleType(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         try{
             Service service = new Service();
             PortType portType = service.getPort();
 
             BindingProvider p = (BindingProvider) portType;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                    server.getEndpoint("RPCLitEnumService.PortTypeImplPort"));
 
             Holder<ElementString> pString = new Holder<ElementString>(ElementString.A);
             portType.echoString(pString);

@@ -19,19 +19,25 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.parallelasync.common.CallbackHandler;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.parallelasync.CustomAsyncResponse;
 import org.test.parallelasync.SleepResponse;
-import org.test.parallelasync.WakeUpResponse;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -45,26 +51,20 @@ import java.util.concurrent.Future;
  * @see ParallelAsyncTests 
  * 
  */
-public class AsyncExecutorTests extends AbstractTestCase {
-
-    private static final String DOCLITWR_ASYNC_ENDPOINT =
-        "http://localhost:6060/axis2/services/AsyncService.DocLitWrappedPortImplPort";
+public class AsyncExecutorTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     // used for logging
     private String myClassName = "AsyncExecutorTests";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(AsyncExecutorTests.class));
-    }
 
     /**
      * @testStrategy Check that the web service is up and running 
      *               before running any other tests
      */
+    @Test
     public void testService_isAlive() throws Exception {
         final String MESSAGE = "testServiceAlive";
-
-        String title = myClassName + " : " + getName() + " : ";
 
         AsyncPort port = getPort((Executor)null);
 
@@ -79,7 +79,7 @@ public class AsyncExecutorTests extends AbstractTestCase {
             request1 = req1base + "_" + i;
             request2 = req2base + "_" + i;
 
-            TestLogger.logger.debug(title + "iteration [" + i + "] using request1 [" + request1 +
+            TestLogger.logger.debug("Iteration [" + i + "] using request1 [" + request1 +
                     "]  request2 [" + request2 + "]");
 
             // submit request #1 to the server-side web service that 
@@ -113,7 +113,7 @@ public class AsyncExecutorTests extends AbstractTestCase {
                 req2_result = resp2.get().getResponse();
             } catch (Exception e) {
                 TestLogger.logger.debug(
-                        title + "iteration [" + i + "] using request1 [" + request1 +
+                        "Iteration [" + i + "] using request1 [" + request1 +
                                 "]  request2 [" + request2 + "] :  got exception [" +
                                 e.getClass().getName() + "]  [" + e.getMessage() + "] ");
                 e.printStackTrace();
@@ -162,11 +162,11 @@ public class AsyncExecutorTests extends AbstractTestCase {
             if (sleepResp != null) { 
                 req_cb_result = sleepResp.getMessage();
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] :  result [" + req_cb_result + "] ");
+                        "Request [" + request1 + "] :  result [" + req_cb_result + "] ");
             }
 
         } catch (Exception ex) {
-            TestLogger.logger.debug(title + " request [" + request1 + "] :  got exception [" +
+            TestLogger.logger.debug("Request [" + request1 + "] :  got exception [" +
                     ex.getClass().getName() + "]  [" + ex.getMessage() + "] ");
             ex.printStackTrace();
             fail(ex.toString());
@@ -181,6 +181,7 @@ public class AsyncExecutorTests extends AbstractTestCase {
      * immediately and not affect the request being sent to the service and the response
      * being received by an executor  
      */
+    @Test
     public void testMultithreadedCallback() {
         TestThreadMonitor monitor = startupTestThreads();
         
@@ -233,13 +234,14 @@ public class AsyncExecutorTests extends AbstractTestCase {
         return service;
     }
 
-    private AsyncPort getPort(AsyncService service) {
+    private AsyncPort getPort(AsyncService service) throws Exception {
 
         AsyncPort port = service.getAsyncPort();
         assertNotNull("Port is null", port);
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
-        rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, DOCLITWR_ASYNC_ENDPOINT);
+        rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("AsyncService.DocLitWrappedPortImplPort"));
         
         return port;
     }
@@ -248,7 +250,7 @@ public class AsyncExecutorTests extends AbstractTestCase {
      * Auxiliary method used for obtaining a proxy pre-configured with a
      * specific Executor
      */
-    private AsyncPort getPort(Executor ex) {
+    private AsyncPort getPort(Executor ex) throws Exception {
         AsyncService service = getService(ex);
 
         AsyncPort port = service.getAsyncPort();
@@ -256,7 +258,7 @@ public class AsyncExecutorTests extends AbstractTestCase {
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
         rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                DOCLITWR_ASYNC_ENDPOINT);
+                server.getEndpoint("AsyncService.DocLitWrappedPortImplPort"));
         
         return port;
     }

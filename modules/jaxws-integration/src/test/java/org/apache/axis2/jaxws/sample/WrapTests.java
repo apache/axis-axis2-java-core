@@ -22,48 +22,47 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilderMonitor;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.sample.wrap.Header;
 import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
 import org.test.sample.wrap.HeaderResponse;
 
+import static org.junit.Assert.assertTrue;
+
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
-public class WrapTests extends AbstractTestCase {
+public class WrapTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    String axisEndpoint = "http://localhost:6060/axis2/services/DocLitWrapService.DocLitWrapImplPort";
-	
     // String containing some characters that require XML encoding
     private static String XMLCHARS = "<<<3>>>3>>>3";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(WrapTests.class));
-    }
-
     /**
      * Get theDocLitWrap Prxoy
      * @return DocLitWrapProxy
      */
-    private DocLitWrap getProxy() {
+    private DocLitWrap getProxy() throws Exception {
         DocLitWrapService service = new DocLitWrapService();
         DocLitWrap proxy = service.getDocLitWrapPort();
         BindingProvider p = (BindingProvider) proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("DocLitWrapService.DocLitWrapImplPort"));
         return proxy;
     }
 
-    public void testTwoWaySync(){
+    @Test
+    public void testTwoWaySync() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String reqString = "Test twoWay Sync";
         DocLitWrap proxy = getProxy();
@@ -73,9 +72,9 @@ public class WrapTests extends AbstractTestCase {
         TestLogger.logger.debug("------------------------------");
     }
 
-    public void testOneWayVoidWithNoInputParams(){
+    @Test
+    public void testOneWayVoidWithNoInputParams() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         DocLitWrapService service = new DocLitWrapService();
         DocLitWrap proxy = getProxy();
@@ -87,9 +86,9 @@ public class WrapTests extends AbstractTestCase {
         TestLogger.logger.debug("------------------------------");
     }
 
-    public void testTwoWayHolder(){
+    @Test
+    public void testTwoWayHolder() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String holderString = new String("Test twoWay Sync");
         Integer holderInteger = new Integer(0);
@@ -107,9 +106,9 @@ public class WrapTests extends AbstractTestCase {
         TestLogger.logger.debug("------------------------------");
     }
 
-    public void testTwoWayWithHeadersAndHolders(){
+    @Test
+    public void testTwoWayWithHeadersAndHolders() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         Header header = new Header();
         header.setOut(0);
@@ -132,9 +131,9 @@ public class WrapTests extends AbstractTestCase {
         TestLogger.logger.debug("------------------------------");
     }
 
-    public void testTwoWayHolderAsync(){
+    @Test
+    public void testTwoWayHolderAsync() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String holderString = new String("Test twoWay Sync");
         Integer holderInteger = new Integer(0);
@@ -155,9 +154,9 @@ public class WrapTests extends AbstractTestCase {
     /**
      * This is a test of a doc/lit echo test
      */
-    public void testEchoString() {
+    @Test
+    public void testEchoString() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String request = "hello world";
 
@@ -176,9 +175,9 @@ public class WrapTests extends AbstractTestCase {
      * request in a header.  This can only be reproduced via
      * annotations and WSGEN.  WSImport will not allow this.
      */
-    public void testEchoStringWSGEN1() {
+    @Test
+    public void testEchoStringWSGEN1() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String request = "hello world";
 
@@ -197,10 +196,9 @@ public class WrapTests extends AbstractTestCase {
      * response in a header.  This can only be reproduced via
      * annotations and WSGEN.  WSImport will not allow this.
      */
-
-    public void testEchoStringWSGEN2() {
+    @Test
+    public void testEchoStringWSGEN2() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String request = "hello world 2";
 
@@ -217,9 +215,9 @@ public class WrapTests extends AbstractTestCase {
     /**
      * This is a test of a doc/lit echo test with xml chars.
      */
-    public void testEchoString_xmlchars() {
+    @Test
+    public void testEchoString_xmlchars() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String request = XMLCHARS;
 
@@ -238,9 +236,9 @@ public class WrapTests extends AbstractTestCase {
      * request in a header.  This can only be reproduced via
      * annotations and WSGEN.  WSImport will not allow this.
      */
-    public void testEchoStringWSGEN1_xmlchars() {
+    @Test
+    public void testEchoStringWSGEN1_xmlchars() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String request = XMLCHARS;
 
@@ -259,10 +257,9 @@ public class WrapTests extends AbstractTestCase {
      * response in a header.  This can only be reproduced via
      * annotations and WSGEN.  WSImport will not allow this.
      */
-
-    public void testEchoStringWSGEN2_xmlchars() {
+    @Test
+    public void testEchoStringWSGEN2_xmlchars() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         String request = XMLCHARS;
 
@@ -279,9 +276,9 @@ public class WrapTests extends AbstractTestCase {
      * Test to validate whether a JAXBCustomBuilder is plugged in
      * on the server.
      */
-    public void testJAXBCB_Server1(){
+    @Test
+    public void testJAXBCB_Server1() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test  : " + getName());
 
         String reqString = "JAXBCustomBuilderServer1";
         DocLitWrap proxy = getProxy();
@@ -310,9 +307,9 @@ public class WrapTests extends AbstractTestCase {
      * Test to validate whether a JAXBCustomBuilder is plugged in
      * and used on the server.
      */
-    public void testJAXBCB_Server2(){
+    @Test
+    public void testJAXBCB_Server2() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test  : " + getName());
 
         String reqString = "JAXBCustomBuilderServer2";
         DocLitWrap proxy = getProxy();
@@ -342,9 +339,9 @@ public class WrapTests extends AbstractTestCase {
      * Test to validate whether a JAXBCustomBuilder is plugged and used
      * on the client
      */
-    public void testJAXBCB_Client(){
+    @Test
+    public void testJAXBCB_Client() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test  : " + getName());
         try{
             String reqString = "JAXBCustomBuilderClient";
             DocLitWrap proxy = getProxy();
@@ -379,9 +376,9 @@ public class WrapTests extends AbstractTestCase {
      * Test to validate whether a JAXBCustomBuilder is plugged and used
      * on the client
      */
-    public void testJAXBCB_Client_withHighFidelity(){
+    @Test
+    public void testJAXBCB_Client_withHighFidelity() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test  : " + getName());
         try{
             String reqString = "JAXBCustomBuilderClient";
             DocLitWrap proxy = getProxy();
@@ -420,9 +417,9 @@ public class WrapTests extends AbstractTestCase {
      * on the client.  Also makes sure that the JAXBCustomBuilder
      * falls back to normal processing when faults are thrown.
      */
-    public void testJAXBCB_Fault(){
+    @Test
+    public void testJAXBCB_Fault() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test  : " + getName());
         try{
             String reqNormalString = "JAXBCustomBuilderClient";
             String reqFaultString = "JAXBCustomBuilderFault";

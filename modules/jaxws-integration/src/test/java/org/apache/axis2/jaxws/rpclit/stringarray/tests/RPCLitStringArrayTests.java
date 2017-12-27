@@ -19,31 +19,32 @@
 
 package org.apache.axis2.jaxws.rpclit.stringarray.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.rpclit.stringarray.sei.Echo;
 import org.apache.axis2.jaxws.rpclit.stringarray.sei.RPCLitStringArrayService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.rpclit.stringarray.StringArray;
 
 import javax.xml.ws.BindingProvider;
+
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 
-public class RPCLitStringArrayTests extends AbstractTestCase {
+public class RPCLitStringArrayTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(RPCLitStringArrayTests.class));
-    }
-
+    @Test
     public void testStringArrayType() throws Exception {
         System.out.println("------------------------------");
-        System.out.println("Test : " + getName());
             
         RPCLitStringArrayService service = new RPCLitStringArrayService();
         Echo portType = service.getEchoPort();
         BindingProvider p = (BindingProvider) portType;
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                                  "http://localhost:6060/axis2/services/RPCLitStringArrayService.EchoImplPort");
+                                  server.getEndpoint("RPCLitStringArrayService.EchoImplPort"));
 
         String[] strArray= {"str1", "str2", "str3", "str4 5"};
         StringArray array = new StringArray();
@@ -69,15 +70,15 @@ public class RPCLitStringArrayTests extends AbstractTestCase {
         System.out.print("---------------------------------");
     }
 
+    @Test
     public void testStringArrayTypeNoSEI() throws Exception {
         System.out.println("------------------------------");
-        System.out.println("Test : " + getName());
             
         RPCLitStringArrayService service = new RPCLitStringArrayService();
         Echo portType = service.getEchoPort();
         BindingProvider p = (BindingProvider) portType;
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                                  "http://localhost:6060/axis2/services/RPCLitStringArrayEchoNoSEIService.EchoNoSEIPort");
+                                  server.getEndpoint("RPCLitStringArrayEchoNoSEIService.EchoNoSEIPort"));
 
         String[] strArray= {"str1", "str2", "str3", "str4 5"};
         StringArray array = new StringArray();

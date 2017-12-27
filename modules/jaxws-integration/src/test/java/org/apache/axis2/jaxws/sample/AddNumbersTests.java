@@ -19,34 +19,39 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 
-public class AddNumbersTests extends AbstractTestCase {
-	
-    String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersService.AddNumbersPortTypeImplPort";
+public class AddNumbersTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(AddressBookTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("AddNumbersService.AddNumbersPortTypeImplPort");
     }
-    	    
+
+    @Test
     public void testAddNumbers() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         AddNumbersService service = new AddNumbersService();
         AddNumbersPortType proxy = service.getAddNumbersPort();
 
         BindingProvider p = (BindingProvider) proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         int total = proxy.addNumbers(10, 10);
 
         TestLogger.logger.debug("Total =" + total);
@@ -74,17 +79,17 @@ public class AddNumbersTests extends AbstractTestCase {
         assertTrue("http response headers", headers != null && !headers.isEmpty());
     }
     
+    @Test
     public void testOneWay() {
         try {
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersService service = new AddNumbersService();
             AddNumbersPortType proxy = service.getAddNumbersPort();
             
             BindingProvider bp = (BindingProvider) proxy;
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
             proxy.oneWayInt(11);
             
             // Try it one more time

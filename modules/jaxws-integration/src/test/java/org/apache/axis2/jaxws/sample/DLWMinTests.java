@@ -19,15 +19,18 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException3;
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -42,20 +45,17 @@ import javax.xml.ws.WebServiceException;
  * "Minimal" indicates that no wrapper beans are associated with the JAX-WS method.
  * In most enterprise scenarios, wrapper beans are packaged with the JAX-WS application.
  */
-public class DLWMinTests extends AbstractTestCase {
+public class DLWMinTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private static final String NAMESPACE = "http://apache.org/axis2/jaxws/sample/dlwmin";
     private static final QName QNAME_SERVICE = new QName(
             NAMESPACE, "GreeterService");
     private static final QName QNAME_PORT = new QName(
             NAMESPACE, "GreeterPort");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/GreeterService.GreeterImplPort";
 	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(DLWMinTests.class));
-    }
-
-    private Greeter getProxy(String action) {
+    private Greeter getProxy(String action) throws Exception {
         Service service = Service.create(QNAME_SERVICE);
         Greeter proxy = service.getPort(QNAME_PORT, Greeter.class);
         BindingProvider p = (BindingProvider) proxy;
@@ -64,14 +64,15 @@ public class DLWMinTests extends AbstractTestCase {
         p.getRequestContext().put(
                 BindingProvider.SOAPACTION_URI_PROPERTY, action);
         p.getRequestContext().put(
-                BindingProvider.ENDPOINT_ADDRESS_PROPERTY, URL_ENDPOINT);
+                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("GreeterService.GreeterImplPort"));
         return proxy;
     }
     
-    private Dispatch<String> getDispatch(String action) {
+    private Dispatch<String> getDispatch(String action) throws Exception {
         // Get a dispatch
         Service svc = Service.create(QNAME_SERVICE);
-        svc.addPort(QNAME_PORT, null, URL_ENDPOINT);
+        svc.addPort(QNAME_PORT, null, server.getEndpoint("GreeterService.GreeterImplPort"));
         Dispatch<String> dispatch = svc.createDispatch(QNAME_PORT, 
                 String.class, Service.Mode.PAYLOAD);
         BindingProvider p = (BindingProvider) dispatch;
@@ -86,7 +87,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simple greetMe method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testGreetMe() {
+    @Test
+    public void testGreetMe() throws Exception {
         
         Greeter proxy = getProxy("greetMe");
         
@@ -104,7 +106,8 @@ public class DLWMinTests extends AbstractTestCase {
      * with style doc/lit wrapped without the presence of wrapper classes.
      * Passing a null input and receiving a null return
      */
-    public void testGreetMe_Null() {
+    @Test
+    public void testGreetMe_Null() throws Exception {
         
         
         Greeter proxy = getProxy("greetMe");
@@ -122,7 +125,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simple greetMe method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testGreetMe_Dispatch() {
+    @Test
+    public void testGreetMe_Dispatch() throws Exception {
        
         Dispatch<String> dispatch = getDispatch("greetMe");
         
@@ -155,7 +159,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simpleTest method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testSimpleTest() {
+    @Test
+    public void testSimpleTest() throws Exception {
         
         Greeter proxy = getProxy("simpleTest");
         
@@ -181,7 +186,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simpleTest method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testSimpleTestNoName() {
+    @Test
+    public void testSimpleTestNoName() throws Exception {
         
         Greeter proxy = getProxy("simpleTest");
         
@@ -205,7 +211,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simpleTest method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testSimple_Dispatch() {
+    @Test
+    public void testSimple_Dispatch() throws Exception {
        
         Dispatch<String> dispatch = getDispatch("simpleTest");
         
@@ -237,7 +244,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simpleTest method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testSimpleNoName_Dispatch() {
+    @Test
+    public void testSimpleNoName_Dispatch() throws Exception {
        
         Dispatch<String> dispatch = getDispatch("simpleTest");
         
@@ -269,7 +277,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simpleUnqualified method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testUnqualified() {
+    @Test
+    public void testUnqualified() throws Exception {
         
         Greeter proxy = getProxy("testUnqualified");
         
@@ -286,7 +295,8 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simpleUnqualified method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
-    public void testUnqualified_Dispatch() {
+    @Test
+    public void testUnqualified_Dispatch() throws Exception {
        
         Dispatch<String> dispatch = getDispatch("testUnqualified");
         
@@ -317,6 +327,7 @@ public class DLWMinTests extends AbstractTestCase {
     /**
      * Test echo with complexType 
      */
+    @Test
     public void testProcess_Echo()  throws Exception {
         
         Greeter proxy = getProxy("process");
@@ -340,6 +351,7 @@ public class DLWMinTests extends AbstractTestCase {
     /**
      * Test throwing checked exception w/o a JAXB Bean
      */
+    @Test
     public void testProcess_CheckException()  throws Exception {
         
         Greeter proxy = getProxy("process");
@@ -378,6 +390,7 @@ public class DLWMinTests extends AbstractTestCase {
     /**
      * Test throwing checked exception that has a JAXB Bean
      */
+    @Test
     public void testProcess_CheckException2()  throws Exception {
         
         Greeter proxy = getProxy("process");
@@ -410,6 +423,7 @@ public class DLWMinTests extends AbstractTestCase {
     /**
      * Test throwing checked exception that is a compliant JAXWS exception
      */
+    @Test
     public void testProcess_CheckException3()  throws Exception {
         
         Greeter proxy = getProxy("process");
@@ -442,6 +456,7 @@ public class DLWMinTests extends AbstractTestCase {
     /**
      * Test throwing WebServiceException
      */
+    @Test
     public void testProcess_WebServiceException()  throws Exception {
         
         Greeter proxy = getProxy("process");
@@ -472,6 +487,7 @@ public class DLWMinTests extends AbstractTestCase {
     /**
      * Test throwing NPE
      */
+    @Test
     public void testProcess_NPE()  throws Exception {
         
         Greeter proxy = getProxy("process");
