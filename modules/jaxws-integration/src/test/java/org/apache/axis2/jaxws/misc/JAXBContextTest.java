@@ -46,69 +46,69 @@ public class JAXBContextTest extends AbstractTestCase {
      * @throws Exception
      */
     public void test01() throws JAXBException {
-    	// Get a JAXBContext
-    	TreeSet<String> context1 = new TreeSet<String>();
-    	context1.add("org.test.addnumbers");
-    	context1.add("org.apache.axis2.jaxws.anytype");
+        // Get a JAXBContext
+        TreeSet<String> context1 = new TreeSet<String>();
+        context1.add("org.test.addnumbers");
+        context1.add("org.apache.axis2.jaxws.anytype");
 
-    	JAXBContext jaxbContext1 = JAXBUtils.getJAXBContext(context1);
+        JAXBContext jaxbContext1 = JAXBUtils.getJAXBContext(context1);
 
-    	// Assert that the JAXBContext was found and the context contains the two valid packages
-    	assertTrue(jaxbContext1 != null);
-    	assertTrue(context1.contains("org.test.addnumbers"));
-    	assertTrue(context1.contains("org.apache.axis2.jaxws.anytype"));
-    	String context1String = jaxbContext1.toString();
+        // Assert that the JAXBContext was found and the context contains the two valid packages
+        assertTrue(jaxbContext1 != null);
+        assertTrue(context1.contains("org.test.addnumbers"));
+        assertTrue(context1.contains("org.apache.axis2.jaxws.anytype"));
+        String context1String = jaxbContext1.toString();
         assertTrue(context1String.contains("org.test.addnumbers"));
         assertTrue(context1String.contains("org.apache.axis2.jaxws.anytype")); 
 
-    	// Repeat with the same packages
-    	TreeSet<String> context2 = new TreeSet<String>();
-    	context2.add("org.test.addnumbers");
-    	context2.add("org.apache.axis2.jaxws.anytype");
+        // Repeat with the same packages
+        TreeSet<String> context2 = new TreeSet<String>();
+        context2.add("org.test.addnumbers");
+        context2.add("org.apache.axis2.jaxws.anytype");
 
-    	JAXBContext jaxbContext2 = JAXBUtils.getJAXBContext(context2);
+        JAXBContext jaxbContext2 = JAXBUtils.getJAXBContext(context2);
 
-    	// The following assertion is probably true,but GC may have wiped out the weak reference
-    	//assertTrue(jaxbContext2 == jaxbContext1);
-    	assertTrue(jaxbContext2 != null);
-    	assertTrue(jaxbContext2.toString().equals(jaxbContext1.toString()));
-    	assertTrue(context2.contains("org.test.addnumbers"));
-    	assertTrue(context2.contains("org.apache.axis2.jaxws.anytype"));
-    	String context2String = jaxbContext2.toString();
+        // The following assertion is probably true,but GC may have wiped out the weak reference
+        //assertTrue(jaxbContext2 == jaxbContext1);
+        assertTrue(jaxbContext2 != null);
+        assertTrue(jaxbContext2.toString().equals(jaxbContext1.toString()));
+        assertTrue(context2.contains("org.test.addnumbers"));
+        assertTrue(context2.contains("org.apache.axis2.jaxws.anytype"));
+        String context2String = jaxbContext2.toString();
         assertTrue(context2String.contains("org.test.addnumbers"));
         assertTrue(context2String.contains("org.apache.axis2.jaxws.anytype")); 
         
 
-    	// Repeat with the same packages + an invalid package
-    	TreeSet<String> context3 = new TreeSet<String>();
-    	context3.add("org.test.addnumbers");
-    	context3.add("org.apache.axis2.jaxws.anytype");
-    	context3.add("my.grandma.loves.jaxws");
+        // Repeat with the same packages + an invalid package
+        TreeSet<String> context3 = new TreeSet<String>();
+        context3.add("org.test.addnumbers");
+        context3.add("org.apache.axis2.jaxws.anytype");
+        context3.add("my.grandma.loves.jaxws");
 
-    	JAXBContext jaxbContext3 = JAXBUtils.getJAXBContext(context3);
+        JAXBContext jaxbContext3 = JAXBUtils.getJAXBContext(context3);
 
-    	// The following assertion is probably true,but GC may have wiped out the weak reference
-    	//assertTrue(jaxbContext3 == jaxbContext1);
-    	assertTrue(jaxbContext3 != null);
+        // The following assertion is probably true,but GC may have wiped out the weak reference
+        //assertTrue(jaxbContext3 == jaxbContext1);
+        assertTrue(jaxbContext3 != null);
 
-    	assertTrue(context3.contains("org.test.addnumbers"));
-    	assertTrue(context3.contains("org.apache.axis2.jaxws.anytype")); 
-    	assertTrue(context3.contains("my.grandma.loves.jaxws")); 
-    	String context3String = jaxbContext3.toString();
-    	assertTrue(context3String.contains("org.test.addnumbers"));
+        assertTrue(context3.contains("org.test.addnumbers"));
+        assertTrue(context3.contains("org.apache.axis2.jaxws.anytype")); 
+        assertTrue(context3.contains("my.grandma.loves.jaxws")); 
+        String context3String = jaxbContext3.toString();
+        assertTrue(context3String.contains("org.test.addnumbers"));
         assertTrue(context3String.contains("org.apache.axis2.jaxws.anytype")); 
         assertTrue(!context3String.contains("my.grandma.loves.jaxws")); 
 
-    	// Repeat with a subset of packages
-    	TreeSet<String> context4 = new TreeSet<String>();
-    	context4.add("org.test.addnumbers");
+        // Repeat with a subset of packages
+        TreeSet<String> context4 = new TreeSet<String>();
+        context4.add("org.test.addnumbers");
 
 
-    	JAXBContext jaxbContext4 = JAXBUtils.getJAXBContext(context4);
+        JAXBContext jaxbContext4 = JAXBUtils.getJAXBContext(context4);
 
-    	assertTrue(jaxbContext4 != null);
-    	assertTrue(jaxbContext4 != jaxbContext3);
-    	assertTrue(context4.contains("org.test.addnumbers"));
+        assertTrue(jaxbContext4 != null);
+        assertTrue(jaxbContext4 != jaxbContext3);
+        assertTrue(context4.contains("org.test.addnumbers"));
     }
     
     /**
