@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.jaxws.provider.soapbinding.tests;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 
 import javax.xml.namespace.QName;
@@ -30,13 +33,14 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-
-public class StringProviderTests extends AbstractTestCase {
-    private String endpointUrl = "http://localhost:6060/axis2/services/SOAPBindingStringProviderService.SOAPBindingStringProviderPort";
+public class StringProviderTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
+    
     private QName serviceName = new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderService");
     private QName portName =  new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderPort");
 
@@ -61,18 +65,16 @@ public class StringProviderTests extends AbstractTestCase {
         "</soapenv:Body>" + 
         "</soapenv:Envelope>";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(StringProviderTests.class));
-    }
 /*
  * This test case makes sure that we receive a soap11 response for a soap11 request.
  */
+    @Test
     public void testsoap11request(){
         System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
         try{
             Service svc = Service.create(serviceName);
-            svc.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);
+            svc.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING,
+                    server.getEndpoint("SOAPBindingStringProviderService.SOAPBindingStringProviderPort"));
 
             Dispatch<String> dispatch =
                 svc.createDispatch(portName, String.class, Service.Mode.MESSAGE);

@@ -19,9 +19,7 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
@@ -31,16 +29,14 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.junit.Test;
+
 /**
  * A suite for some tests for specific behavior in the Dispatch with 
  * null and invalid params.
  */
-public class ParamTests extends AbstractTestCase {
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ParamTests.class));
-    }
-    
+public class ParamTests {
+    @Test
     public void testNullSoapParamWithMessageMode() {
         QName serviceName = new QName("http://test", "MyService");
         QName portName = new QName("http://test", "MyPort");
@@ -62,10 +58,12 @@ public class ParamTests extends AbstractTestCase {
         assertTrue("A WebServiceException should be thrown for this null param", handled);
     }
     
+    @Test
     public void testNullHttpParamWithPayloadMode() {
         // fill in this test when we add XML/HTTP Binding support
     }
     
+    @Test
     public void testNullHttpParamWithMessageMode() {
         // fill in this test when we add XML/HTTP Binding support        
     }

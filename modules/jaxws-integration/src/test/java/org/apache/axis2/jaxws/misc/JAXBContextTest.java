@@ -22,29 +22,26 @@
  */
 package org.apache.axis2.jaxws.misc;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
+import org.junit.Test;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+
+import static org.junit.Assert.assertTrue;
+
 import java.util.TreeSet;
 
 /**
  * Tests Namespace to Package Algorithm
  *
  */
-public class JAXBContextTest extends AbstractTestCase {
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(JAXBContextTest.class));
-    }
-
+public class JAXBContextTest {
     /**
      * Test basic functionality of JAXBUtils pooling
      * @throws Exception
      */
+    @Test
     public void test01() throws JAXBException {
         // Get a JAXBContext
         TreeSet<String> context1 = new TreeSet<String>();
@@ -115,6 +112,7 @@ public class JAXBContextTest extends AbstractTestCase {
      * Test basic functionality of JAXBUtils pooling
      * @throws Exception
      */
+    @Test
     public void test02() throws JAXBException {
         // Get a JAXBContext
         TreeSet<String> context1 = new TreeSet<String>();
@@ -187,6 +185,7 @@ public class JAXBContextTest extends AbstractTestCase {
         assertTrue(context4.contains("org.test.addnumbers"));
     }
     
+    @Test
     public void test03() throws JAXBException {
         // Simulate a web services that references a.Bean2 and b.Bean1
         // Note that both these beans are in the same namespace

@@ -19,10 +19,11 @@
 
 package org.apache.axis2.jaxws.provider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -39,6 +40,8 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
+
+import static org.junit.Assert.assertTrue;
 
 import java.awt.*;
 import java.io.File;
@@ -65,11 +68,11 @@ import java.io.File;
  *
  */
 public class JAXBProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    String endpointUrl = "http://localhost:6060/axis2/services/JAXBProviderService.JAXBProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "JAXBProviderService");
     
-    String PROVIDER_ENDPOINT_URL = "http://localhost:6060/axis2/services/SoapMessageCheckMTOMProviderService.SoapMessageCheckMTOMProviderPort";
     private QName PROVIDER_SERVICE_NAME = new QName("http://soapmsgcheckmtom.provider.jaxws.axis2.apache.org", "SoapMessageCheckMTOMProviderService");
 
     DataSource stringDS, imageDS;
@@ -91,17 +94,13 @@ public class JAXBProviderTests extends ProviderTestCase {
         }
     }
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(JAXBProviderTests.class));
-    }
-
     /**
      * test String
      * @throws Exception
      */
+    @Test
     public void testMTOMAttachmentString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(stringDS);
@@ -111,7 +110,7 @@ public class JAXBProviderTests extends ProviderTestCase {
     	imageDepot.setImageData(dataHandler);
         
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
+        svc.addPort(portName, null, server.getEndpoint("JAXBProviderService.JAXBProviderPort"));
         
         JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
         
@@ -139,9 +138,9 @@ public class JAXBProviderTests extends ProviderTestCase {
      * test Image
      * @throws Exception
      */
+    @Test
     public void testMTOMAttachmentImage() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(imageDS);
@@ -151,7 +150,7 @@ public class JAXBProviderTests extends ProviderTestCase {
     	imageDepot.setImageData(dataHandler);
         
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
+        svc.addPort(portName, null, server.getEndpoint("JAXBProviderService.JAXBProviderPort"));
         
         JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
         
@@ -184,9 +183,9 @@ public class JAXBProviderTests extends ProviderTestCase {
      * which verifies that an attachment was sent (versus inline)
      * @throws Exception
      */
+    @Test
     public void testMTOMAttachmentImageProvider_API() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(imageDS);
@@ -196,7 +195,7 @@ public class JAXBProviderTests extends ProviderTestCase {
         imageDepot.setImageData(dataHandler);
         
         Service svc = Service.create(PROVIDER_SERVICE_NAME);
-        svc.addPort(portName, null, PROVIDER_ENDPOINT_URL);
+        svc.addPort(portName, null, server.getEndpoint("SoapMessageCheckMTOMProviderService.SoapMessageCheckMTOMProviderPort"));
         
         JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
         
@@ -229,9 +228,9 @@ public class JAXBProviderTests extends ProviderTestCase {
      * which verifies that an attachment was sent (versus inline)
      * @throws Exception
      */
+    @Test
     public void testMTOMAttachmentImageProvider_MTOMFeature() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(imageDS);
@@ -241,7 +240,7 @@ public class JAXBProviderTests extends ProviderTestCase {
         imageDepot.setImageData(dataHandler);
         
         Service svc = Service.create(PROVIDER_SERVICE_NAME);
-        svc.addPort(portName, null, PROVIDER_ENDPOINT_URL);
+        svc.addPort(portName, null, server.getEndpoint("SoapMessageCheckMTOMProviderService.SoapMessageCheckMTOMProviderPort"));
         
         JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
         
@@ -271,9 +270,9 @@ public class JAXBProviderTests extends ProviderTestCase {
      * which verifies that an attachment was sent (versus inline)
      * @throws Exception
      */
+    @Test
     public void testMTOMAttachmentImageProvider_MTOMFeatureThreshhold() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(imageDS);
@@ -283,7 +282,7 @@ public class JAXBProviderTests extends ProviderTestCase {
         imageDepot.setImageData(dataHandler);
         
         Service svc = Service.create(PROVIDER_SERVICE_NAME);
-        svc.addPort(portName, null, PROVIDER_ENDPOINT_URL);
+        svc.addPort(portName, null, server.getEndpoint("SoapMessageCheckMTOMProviderService.SoapMessageCheckMTOMProviderPort"));
         
         JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
         

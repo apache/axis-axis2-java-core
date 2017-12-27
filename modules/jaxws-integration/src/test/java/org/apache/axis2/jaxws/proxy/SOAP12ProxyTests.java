@@ -19,12 +19,17 @@
 
 package org.apache.axis2.jaxws.proxy;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.proxy.soap12.Echo;
 import org.apache.axis2.jaxws.proxy.soap12.SOAP12EchoService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -35,29 +40,26 @@ import javax.xml.ws.WebServiceException;
  * requests.  The endpoint can accept different keys to determine
  * what it should send back.
  */
-public class SOAP12ProxyTests extends AbstractTestCase {
+public class SOAP12ProxyTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private static final String SEND_SOAP11_RESPONSE = "RESPONSE-SOAP11";
     private static final String SEND_SOAP12_RESPONSE = "RESPONSE-SOAP12";
-    String axisEndpoint = "http://localhost:6060/axis2/services/SOAP12EchoService.EchoPort";
 	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SOAP12ProxyTests.class));
-    }
-
     /**
      * Send a SOAP 1.2 request and expect a SOAP 1.2 response.
      */
+    @Test
     public void testSOAP12RequestSOAP12Response() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // create the proxy instance.  the WSDL used by this proxy
         // should have a proper SOAP 1.2 binding configured
         SOAP12EchoService service = new SOAP12EchoService();
         Echo proxy = service.getPort(new QName("http://jaxws.axis2.apache.org/proxy/soap12", "EchoPort"), Echo.class);
         BindingProvider p = (BindingProvider) proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, server.getEndpoint("SOAP12EchoService.EchoPort"));
 
         // invoke the remote operation.  send a key that tells the 
         // service send back a SOAP 1.2 response.
@@ -82,9 +84,10 @@ public class SOAP12ProxyTests extends AbstractTestCase {
      * response.  This should result in an exception.
      */
     // TODO fix and re-enable
-    public void _testSOAP12RequestSOAP11Response() {
+    @Ignore
+    @Test
+    public void testSOAP12RequestSOAP11Response() {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // create the proxy instance.  the WSDL used by this proxy
         // should have a proper SOAP 1.2 binding configured

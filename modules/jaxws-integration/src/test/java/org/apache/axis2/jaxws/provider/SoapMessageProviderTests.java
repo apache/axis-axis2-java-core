@@ -19,13 +19,12 @@
 
 package org.apache.axis2.jaxws.provider;
 
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -43,6 +42,12 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,8 +61,9 @@ import java.util.Map;
  *
  */
 public class SoapMessageProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    private String endpointUrl = "http://localhost:6060/axis2/services/SoapMessageProviderService.SoapMessageProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SoapMessageProviderService");
     
     private String reqMsgStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -95,14 +101,15 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         SoapMessageProvider.XML_WSE_REQUEST +
         "</invoke_str></ns2:invokeOp>";
                 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SoapMessageProviderTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("SoapMessageProviderService.SoapMessageProviderPort");
     }
-   
+
     /**
      * Sends an SOAPMessage containing only xml data to the web service.  
      * Receives a response containing just xml data.
      */
+    @Test
     public void testProviderSOAPMessageXMLOnly(){
         try{       
             // Create the dispatch
@@ -163,6 +170,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing only xml data to the web service.  
      * Receives a response containing an empty body
      */
+    @Test
     public void testProviderSOAPMessageXMLEmptyBody(){
         try{       
             // Create the dispatch
@@ -217,6 +225,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing only xml data 
      * Provider will throw a Fault
      */
+    @Test
     public void testProviderSOAPMessageSOAPFault() throws Exception {
              
             // Create the dispatch
@@ -277,6 +286,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing only xml data 
      * Provider will throw a generic WebServicesException
      */
+    @Test
     public void testProviderSOAPMessageWebServiceException() throws Exception {
              
             // Create the dispatch
@@ -323,6 +333,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Receives a response containing xml data and the same raw attachments.
      */
     
+    @Test
     public void testProviderSOAPMessageRawAttachment(){
         // Raw Attachments are attachments that are not referenced in the xml with MTOM or SWARef.
         // Currently there is no support in Axis 2 for these kinds of attachments.
@@ -396,6 +407,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing xml data and mtom attachment.  
      * Receives a response containing xml data and the mtom attachment.
      */
+    @Test
     public void testProviderSOAPMessageMTOM(){
         try{       
             // Create the dispatch
@@ -470,6 +482,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing xml data and a swaref attachment to the web service.  
      * Receives a response containing xml data and the swaref attachment attachment.
      */
+    @Test
     public void testProviderSOAPMessageSWARef(){
         try{       
             // Create the dispatch
@@ -541,10 +554,11 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * This is a negative test to insure that we don't allow creation of a dispatch with
      * type Soap using Payload mode
      */
+    @Test
     public void testInvalidTypeWithMode(){
         try{       
             Service svc = Service.create(serviceName);
-            svc.addPort(portName, null, endpointUrl);
+            svc.addPort(portName, null, getEndpoint());
             Dispatch<SOAPMessage> dispatch = 
             	svc.createDispatch(portName, SOAPMessage.class, Service.Mode.PAYLOAD);
             fail("Did not catch exception for invalid Dispatch with Payload Mode");
@@ -560,6 +574,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * The header information is sent using a jaxws.request.soap.header Map  
      * Receives a response containing xml data
      */
+    @Test
     public void testProviderSOAPMessage_RequestHeaders(){
         try{       
             // Create the dispatch
@@ -634,6 +649,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * The header information is sent using a jaxws.request.soap.header Map  
      * Receives a response containing xml data
      */
+    @Test
     public void testProviderSOAPMessage_RequestAndResponseHeaders(){
         try{       
             // Create the dispatch
@@ -750,7 +766,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     	
     	
         Service svc = Service.create(serviceName);
-        svc.addPort(portName,null, endpointUrl);
+        svc.addPort(portName,null, getEndpoint());
         Dispatch<SOAPMessage> dispatch = 
         	svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
         return dispatch;
@@ -764,7 +780,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         
         
         Service svc = Service.create(serviceName);
-        svc.addPort(portName,null, endpointUrl);
+        svc.addPort(portName,null, getEndpoint());
         Dispatch<String> dispatch = 
                 svc.createDispatch(portName, String.class, Service.Mode.PAYLOAD);
         return dispatch;

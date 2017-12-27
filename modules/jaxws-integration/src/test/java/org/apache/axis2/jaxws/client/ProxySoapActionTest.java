@@ -19,29 +19,30 @@
 
 package org.apache.axis2.jaxws.client;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import javax.xml.ws.BindingProvider;
+
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.client.soapaction.BookStore;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 /**
  * A suite of SOAPAction related tests for the dynamic proxy client 
  */
-public class ProxySoapActionTest extends AbstractTestCase {
+public class ProxySoapActionTest {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ProxySoapActionTest.class));
-    }
-        
-
-    public void testSendRequestWithSoapAction() {
+    @Test
+    public void testSendRequestWithSoapAction() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         BookStoreService service = new BookStoreService();
         BookStore bs = service.getBookStorePort();
+        ((BindingProvider)bs).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("BookStoreService"));
         
         float price = bs.getPriceWithAction("test item");
         TestLogger.logger.debug("return value [" + price + "]");

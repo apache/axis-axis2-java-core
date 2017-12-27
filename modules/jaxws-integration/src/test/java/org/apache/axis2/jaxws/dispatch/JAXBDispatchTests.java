@@ -19,10 +19,11 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
 import test.EchoString;
@@ -33,22 +34,25 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.Future;
 
-public class JAXBDispatchTests extends AbstractTestCase {
+public class JAXBDispatchTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private Dispatch<Object> dispatchPayload;
     private Dispatch<Object> dispatchMessage;
     private JAXBContext jbc;
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(JAXBDispatchTests.class));
-    }
-
+    @Before
     public void setUp() throws Exception {
         //Create the Service object
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         
         //Create the JAX-B Dispatch object to recognize the test and soap packages
         jbc = JAXBContext.newInstance("test:org.xmlsoap.schemas.soap.envelope");
@@ -60,9 +64,9 @@ public class JAXBDispatchTests extends AbstractTestCase {
                 jbc, Service.Mode.MESSAGE);
     }
     
+    @Test
     public void testSyncPayload() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -94,9 +98,9 @@ public class JAXBDispatchTests extends AbstractTestCase {
         assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
     }
     
+    @Test
     public void testAysncPayload() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -149,9 +153,9 @@ public class JAXBDispatchTests extends AbstractTestCase {
         assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
     }
     
+    @Test
     public void testOneWayPayload() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -167,9 +171,9 @@ public class JAXBDispatchTests extends AbstractTestCase {
         dispatchPayload.invokeOneWay(request);
     }
     
+    @Test
     public void testSyncMessage() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -212,9 +216,9 @@ public class JAXBDispatchTests extends AbstractTestCase {
         assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
     }
     
+    @Test
     public void testAysncMessage() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -279,9 +283,9 @@ public class JAXBDispatchTests extends AbstractTestCase {
         
     }
     
+    @Test
     public void testOneWayMessge() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();

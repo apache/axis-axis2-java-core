@@ -19,12 +19,11 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.Source;
@@ -33,6 +32,11 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.concurrent.Future;
@@ -41,18 +45,17 @@ import java.util.concurrent.Future;
  * This class tests the JAX-WS Dispatch<Source> with content in various 
  * forms of a javax.xml.transform.sax.SAXSource.
  */
-public class SAXSourceDispatchTests extends AbstractTestCase{
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SAXSourceDispatchTests.class));
-    }
+public class SAXSourceDispatchTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
+    @Test
 	public void testSyncPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                                                        Source.class, Service.Mode.PAYLOAD);
 
@@ -103,13 +106,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         
      }
 
+    @Test
 	public void testSyncMessageMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.MESSAGE);
 		
@@ -160,13 +163,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("echoStringResponse"));
 	}
 
+    @Test
     public void testAsyncCallbackPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.PAYLOAD);
         
@@ -234,13 +237,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("echoStringResponse"));
     }
     
+    @Test
     public void testAsyncCallbackMessageMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.MESSAGE);
 		
@@ -308,13 +311,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("echoStringResponse"));
 	}
     
+    @Test
     public void testAsyncPollingPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.PAYLOAD);
         
@@ -377,13 +380,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("echoStringResponse"));
     }
     
+    @Test
     public void testAsyncPollingMessageMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.MESSAGE);
         
@@ -446,13 +449,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("echoStringResponse"));
     }
     
+    @Test
     public void testOneWayPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.PAYLOAD);
         
@@ -475,13 +478,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         dispatch.invokeOneWay(request);
     }
     
+    @Test
     public void testOneWayMessageMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.MESSAGE);
         
@@ -503,13 +506,13 @@ public class SAXSourceDispatchTests extends AbstractTestCase{
         dispatch.invokeOneWay(request);
 	}
     
+    @Test
     public void testBadSAXSource() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, server.getEndpoint("EchoService"));
         Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 Source.class, Service.Mode.MESSAGE);
         

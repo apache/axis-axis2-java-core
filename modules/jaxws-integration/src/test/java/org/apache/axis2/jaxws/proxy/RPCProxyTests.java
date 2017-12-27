@@ -19,13 +19,14 @@
 
 package org.apache.axis2.jaxws.proxy;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
@@ -36,36 +37,39 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class RPCProxyTests extends AbstractTestCase {
+public class RPCProxyTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private QName serviceName = new QName(
             "http://org.apache.axis2.jaxws.proxy.rpclit", "RPCLitService");
-    private String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitService.RPCLitImplPort";
     private QName portName = new QName("http://org.apache.axis2.jaxws.proxy.rpclit",
             "RPCLit");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"src/test/java/org/apache/axis2/jaxws/proxy/rpclit/META-INF/RPCLit.wsdl";
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(RPCProxyTests.class));
-    }
     
     /**
      * Utility method to get the proxy
      * @return RPCLit proxy
      * @throws MalformedURLException
      */
-    public RPCLit getProxy() throws MalformedURLException {
+    public RPCLit getProxy() throws Exception {
         File wsdl= new File(wsdlLocation); 
         URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
         Object proxy =service.getPort(portName, RPCLit.class);
         BindingProvider p = (BindingProvider)proxy; 
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("RPCLitService.RPCLitImplPort"));
         
         return (RPCLit)proxy;
     }
@@ -75,11 +79,11 @@ public class RPCProxyTests extends AbstractTestCase {
      * @return
      * @throws MalformedURLException
      */
-    public Dispatch<String> getDispatch() throws MalformedURLException {
+    public Dispatch<String> getDispatch() throws Exception {
         File wsdl= new File(wsdlLocation); 
         URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
-        service.addPort(portName, null, axisEndpoint);
+        service.addPort(portName, null, server.getEndpoint("RPCLitService.RPCLitImplPort"));
         Dispatch<String> dispatch = service.createDispatch(portName, String.class, Service.Mode.PAYLOAD);
         return dispatch;
     }
@@ -87,6 +91,7 @@ public class RPCProxyTests extends AbstractTestCase {
     /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
+    @Test
     public void testSimple() throws Exception {
         try{ 
             RPCLit proxy = getProxy();
@@ -109,6 +114,7 @@ public class RPCProxyTests extends AbstractTestCase {
     /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
+    @Test
     public void testSimpleInOut() throws Exception {
         try{ 
             RPCLit proxy = getProxy();
@@ -135,6 +141,7 @@ public class RPCProxyTests extends AbstractTestCase {
     /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
+    @Test
     public void testSimple2() throws Exception {
         try{ 
             RPCLit proxy = getProxy();
@@ -159,6 +166,7 @@ public class RPCProxyTests extends AbstractTestCase {
      * Simple test that ensures that we can echo a string to an rpc/lit web service.
      * This test passes the information in headers
      */
+    @Test
     public void testHeader() throws Exception {
         RPCLit proxy = getProxy();
         String request1 = "hello";
@@ -178,6 +186,7 @@ public class RPCProxyTests extends AbstractTestCase {
     /**
      * Simple test that ensures that a service fault is thrown correctly
      */
+    @Test
     public void testFault() throws Exception {
         RPCLit proxy = getProxy();
         try{ 
@@ -207,6 +216,7 @@ public class RPCProxyTests extends AbstractTestCase {
     /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
+    @Test
     public void testForNull() throws Exception {
         RPCLit proxy = getProxy();
         try{   
@@ -234,6 +244,7 @@ public class RPCProxyTests extends AbstractTestCase {
     /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
+    @Test
     public void testForNullReturn() throws Exception {
         
         RPCLit proxy = getProxy();
@@ -257,6 +268,7 @@ public class RPCProxyTests extends AbstractTestCase {
     
     
     
+    @Test
     public void testSimple_Dispatch() throws Exception {
         // Send a payload that simulates
         // the rpc message
@@ -297,6 +309,7 @@ public class RPCProxyTests extends AbstractTestCase {
         assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
     }
     
+    @Test
     public void testSimple2_DispatchWithoutXSIType() throws Exception {
         // Send a payload that simulates
         // the rpc message
@@ -343,6 +356,7 @@ public class RPCProxyTests extends AbstractTestCase {
         assertTrue(response.contains("HELLOWORLD"));
     }
     
+    @Test
     public void testSimple_DispatchWithoutXSIType() throws Exception {
         // Send a payload that simulates
         // the rpc message
@@ -389,6 +403,7 @@ public class RPCProxyTests extends AbstractTestCase {
     /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service.
      */
+    @Test
     public void testStringList() throws Exception {
         try{ 
             RPCLit proxy = getProxy();
@@ -412,6 +427,7 @@ public class RPCProxyTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testStringList_Dispatch() throws Exception {
         // Send a payload that simulates
         // the rpc message
@@ -458,7 +474,9 @@ public class RPCProxyTests extends AbstractTestCase {
      * Users should use document/literal processing if they 
      * need such complicated scenarios.
      */
-    public void _testLists() {
+    @Ignore
+    @Test
+    public void testLists() {
         try{ 
             RPCLit proxy = getProxy();
             QName[] request = new QName[] {RPCLitImpl.qname1, RPCLitImpl.qname2};
@@ -501,7 +519,9 @@ public class RPCProxyTests extends AbstractTestCase {
      * Users should use document/literal processing if they 
      * need such complicated scenarios.
      */
-    public void _testCalendars() {
+    @Ignore
+    @Test
+    public void testCalendars() {
         try{ 
             RPCLit proxy = getProxy();
             XMLGregorianCalendar[] request = new XMLGregorianCalendar[] {RPCLitImpl.bday, RPCLitImpl.holiday};
@@ -522,6 +542,7 @@ public class RPCProxyTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testBigIntegers() {
         try{ 
             RPCLit proxy = getProxy();
@@ -543,6 +564,7 @@ public class RPCProxyTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testLongs() {
         try{ 
             RPCLit proxy = getProxy();
@@ -566,6 +588,7 @@ public class RPCProxyTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testEnums() {
         try{ 
             RPCLit proxy = getProxy();

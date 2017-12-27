@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.jaxws.provider.soapbinding.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
@@ -37,21 +40,20 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
 import org.apache.axis2.jaxws.provider.soapbinding.soapmsg.SoapMessageProvider;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 /**
  * Tests Dispatch<SOAPMessage> client and a Provider<SOAPMessage> service.
  * The client and service interaction tests various xml and attachment scenarios
  *
  */
-public class SoapMessageProviderTests extends AbstractTestCase {
-    private String endpointUrl = "http://localhost:6060/axis2/services/SoapMessageProviderService.SoapMessageProviderPort";
+public class SoapMessageProviderTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
+    
     private QName serviceName = new QName("http://soapmsg.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingSoapMessageProviderService");
     private QName portName =  new QName("http://soapmsg.soapbinding.provider.jaxws.axis2.apache.org", "SoapMessageProviderPort");
 
@@ -96,13 +98,11 @@ public class SoapMessageProviderTests extends AbstractTestCase {
     SoapMessageProvider.XML_SOAP12_RESPONSE +
     "</invoke_str></ns2:invokeOp>";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SoapMessageProviderTests.class));
-    }
     /**
      * Sends an SOAPMessage containing only xml data 
      * Provider will throw a Fault
      */
+    @Test
     public void testProviderSOAPMessageSOAPFault() throws Exception {
 
         // Create the dispatch
@@ -164,6 +164,7 @@ public class SoapMessageProviderTests extends AbstractTestCase {
      * Sends an SOAPMessage containing only xml data 
      * Provider will throw a generic WebServicesException
      */
+    @Test
     public void testProviderSOAPMessageWebServiceException() throws Exception {
 
         // Create the dispatch
@@ -209,7 +210,7 @@ public class SoapMessageProviderTests extends AbstractTestCase {
      * Sends an SOAPMessage containing xml data and raw attachments to the web service.  
      * Receives a response containing xml data and the same raw attachments.
      */
-
+    @Test
     public void testProviderSOAPMessageRawAttachment(){
         // Raw Attachments are attachments that are not referenced in the xml with MTOM or SWARef.
         // Currently there is no support in Axis 2 for these kinds of attachments.
@@ -283,6 +284,7 @@ public class SoapMessageProviderTests extends AbstractTestCase {
      * Sends an SOAPMessage containing xml data and mtom attachment.  
      * Receives a response containing xml data and the mtom attachment.
      */
+    @Test
     public void testProviderSOAPMessageMTOM(){
         try{       
             // Create the dispatch
@@ -357,6 +359,7 @@ public class SoapMessageProviderTests extends AbstractTestCase {
      * Sends an SOAPMessage containing xml data and a swaref attachment to the web service.  
      * Receives a response containing xml data and the swaref attachment attachment.
      */
+    @Test
     public void testProviderSOAPMessageSWARef(){
         try{       
             // Create the dispatch
@@ -428,6 +431,7 @@ public class SoapMessageProviderTests extends AbstractTestCase {
     /* This is a negative test case for a Provider that has NO SOAPBinding restriction
      * Dispatch will send a SOAP11 request and Provider will send a SOAP12 Response.
      */
+    @Test
     public void testSoap11RequestWithSoap12Response(){
         SOAPMessage request = null;
         Dispatch<SOAPMessage> dispatch = null;
@@ -461,7 +465,7 @@ public class SoapMessageProviderTests extends AbstractTestCase {
 
 
         Service svc = Service.create(serviceName);
-        svc.addPort(portName,null, endpointUrl);
+        svc.addPort(portName,null, server.getEndpoint("SoapMessageProviderService.SoapMessageProviderPort"));
         Dispatch<SOAPMessage> dispatch = 
             svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
         return dispatch;
@@ -475,7 +479,7 @@ public class SoapMessageProviderTests extends AbstractTestCase {
 
 
         Service svc = Service.create(serviceName);
-        svc.addPort(portName,null, endpointUrl);
+        svc.addPort(portName,null, server.getEndpoint("SoapMessageProviderService.SoapMessageProviderPort"));
         Dispatch<String> dispatch = 
             svc.createDispatch(portName, String.class, Service.Mode.PAYLOAD);
         return dispatch;

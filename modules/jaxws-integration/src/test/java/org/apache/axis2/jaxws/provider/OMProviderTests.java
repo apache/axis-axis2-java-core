@@ -5,6 +5,9 @@ import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.Constants;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -15,14 +18,15 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.StringReader;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class OMProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    String endpointUrl = "http://localhost:6060/axis2/services/OMProviderService.OMProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "OMProviderService");
     
         private static final String SOAP11_NS_URI = "http://schemas.xmlsoap.org/soap/envelope/";
@@ -45,21 +49,19 @@ public class OMProviderTests extends ProviderTestCase {
 
         private static String request = "<invokeOp>Hello Provider OM</invokeOp>";
         private static String SOAPFaultRequest ="<invokeOp>SOAPFault</invokeOp>";
-        
-   public static Test suite() {
-      return getTestSetup(new TestSuite(OMProviderTests.class));
-   }
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("OMProviderService.OMProviderPort");
     }
-    
+
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */
+    @Test
     public void testOMElementDispatchMessageMode() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(serviceName);
-        service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);
+        service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, getEndpoint());
         Dispatch<OMElement> dispatch = service.createDispatch(
                 portName, OMElement.class, Mode.MESSAGE);
         
@@ -84,10 +86,11 @@ public class OMProviderTests extends ProviderTestCase {
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */
+    @Test
     public void testOMElementDispatchMessageModeSOAPFaultException() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(serviceName);
-        service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);
+        service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, getEndpoint());
         Dispatch<OMElement> dispatch = service.createDispatch(
                 portName, OMElement.class, Mode.MESSAGE);
         
@@ -104,10 +107,11 @@ public class OMProviderTests extends ProviderTestCase {
         assertTrue(response ==null);
     }
     
+    @Test
     public void testOMElementDispatchMessageModeSOAPFault() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(serviceName);
-        service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);
+        service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, getEndpoint());
         Dispatch<OMElement> dispatch = service.createDispatch(
                 portName, OMElement.class, Mode.MESSAGE);
         BindingProvider bp = (BindingProvider)dispatch;

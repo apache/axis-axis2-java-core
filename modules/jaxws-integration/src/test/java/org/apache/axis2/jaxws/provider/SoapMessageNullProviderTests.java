@@ -19,20 +19,23 @@
 
 package org.apache.axis2.jaxws.provider;
 
+import static org.junit.Assert.fail;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class SoapMessageNullProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    private String endpointUrl = "http://localhost:6060/axis2/services/SoapMessageNullProviderService.SoapMessageNullProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SoapMessageNullProviderService");
     public static final QName portName =
         new QName("http://ws.apache.org/axis2", "SoapMessageNullProviderPort");
@@ -41,24 +44,16 @@ public class SoapMessageNullProviderTests extends ProviderTestCase {
     public static final String bindingID = SOAPBinding.SOAP11HTTP_BINDING;
     public static final Service.Mode mode = Service.Mode.MESSAGE;
 
-
-    public SoapMessageNullProviderTests() {
-        super();
-    }
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SoapMessageNullProviderTests.class));
-    }
     /*
      * Test that the custom property jaxws.provider.interpretNullAsOneway when set to true
      * correctly causes the jaxws runtime to treat a null return from a provider as a one-way
      */
+    @Test
     public void testProviderReturnsNull() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, bindingID, endpointUrl);
+        svc.addPort(portName, bindingID, server.getEndpoint("SoapMessageNullProviderService.SoapMessageNullProviderPort"));
 
         javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);

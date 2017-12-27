@@ -19,30 +19,28 @@
 
 package org.apache.axis2.jaxws.provider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
 public class StringMessageProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    String endpointUrl = "http://localhost:6060/axis2/services/StringMessageProviderService.StringMessageProviderPort";
     String xmlString = "<test>test input</test>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringMessageProviderService");
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(StringMessageProviderTests.class));
-    }
-        
+    @Test
     public void testProviderString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
+        svc.addPort(portName, null, server.getEndpoint("StringMessageProviderService.StringMessageProviderPort"));
         
         Dispatch<String> dispatch = svc
                 .createDispatch(portName, String.class, Service.Mode.PAYLOAD);

@@ -19,11 +19,11 @@
 
 package org.apache.axis2.jaxws.proxy;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axis2.jaxws.proxy.rpclitswa.sei.RPCLitSWA;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -35,16 +35,20 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
+
+import static org.junit.Assert.assertTrue;
+
 import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class RPCLitSWAProxyTests extends AbstractTestCase {
+public class RPCLitSWAProxyTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private QName serviceName = new QName(
             "http://org/apache/axis2/jaxws/proxy/rpclitswa", "RPCLitSWAService");
-    private String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitSWAService.RPCLitSWA";
     private QName portName = new QName("http://org/apache/axis2/jaxws/proxy/rpclitswa",
             "RPCLitSWA");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+
@@ -68,23 +72,20 @@ public class RPCLitSWAProxyTests extends AbstractTestCase {
     }
     private static DataSource imageDS;
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(RPCLitSWAProxyTests.class));
-    }
-    
     /**
      * Utility method to get the proxy
      * @return RPCLit proxy
      * @throws MalformedURLException
      */
-    public RPCLitSWA getProxy() throws MalformedURLException {
+    public RPCLitSWA getProxy() throws Exception {
         File wsdl= new File(wsdlLocation);
         assertTrue("WSDL does not exist:" + wsdlLocation,wsdl.exists());
         URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(wsdlUrl, serviceName);
         Object proxy =service.getPort(portName, RPCLitSWA.class);
         BindingProvider p = (BindingProvider)proxy; 
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("RPCLitSWAService.RPCLitSWA"));
         
         return (RPCLitSWA)proxy;
     }
@@ -94,16 +95,17 @@ public class RPCLitSWAProxyTests extends AbstractTestCase {
      * @return
      * @throws MalformedURLException
      */
-    public Dispatch<String> getDispatch() throws MalformedURLException {
+    public Dispatch<String> getDispatch() throws Exception {
         File wsdl= new File(wsdlLocation); 
         URL wsdlUrl = wsdl.toURI().toURL(); 
         Service service = Service.create(null, serviceName);
-        service.addPort(portName, null, axisEndpoint);
+        service.addPort(portName, null, server.getEndpoint("RPCLitSWAService.RPCLitSWA"));
         Dispatch<String> dispatch = service.createDispatch(portName, String.class, 
                                                            Service.Mode.PAYLOAD);
         return dispatch;
     }
     
+    @Test
     public void testNOOP() {
         
     }
@@ -126,6 +128,7 @@ public class RPCLitSWAProxyTests extends AbstractTestCase {
                                                                    new String[] {"text/plain"}));
         // TODO: End HACK for RPCListSWAProxyTest
      */
+    @Test
     public void testRPCLitSWAEcho() throws Exception {
         
             RPCLitSWA proxy = getProxy();

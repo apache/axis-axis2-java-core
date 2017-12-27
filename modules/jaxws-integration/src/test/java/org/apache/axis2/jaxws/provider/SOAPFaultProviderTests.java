@@ -19,8 +19,7 @@
 
 package org.apache.axis2.jaxws.provider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -28,15 +27,20 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
 /**
  * 
  */
 public class SOAPFaultProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
+    
     public QName portName =
         new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
-
-    String endpointUrl = "http://localhost:6060/axis2/services/StringProviderService.StringProviderPort";
 
     private static final String sampleSoapEnvelopeHeader =
         "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -51,17 +55,10 @@ public class SOAPFaultProviderTests extends ProviderTestCase {
         + "</soap:Fault>";
     
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SOAPFaultProviderTests.class));
-    }
-        
-    public SOAPFaultProviderTests() {
-        super();
-    }
-
-    private Dispatch<String> getDispatch() {
+    private Dispatch<String> getDispatch() throws Exception {
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);
+        svc.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("StringProviderService.StringProviderPort"));
 
         // Use Message mode so we can build up the entire SOAP envelope containing the fault
         Dispatch<String> dispatch =
@@ -74,9 +71,9 @@ public class SOAPFaultProviderTests extends ProviderTestCase {
         return dispatch;
     }
 
-    public void testFault() {
+    @Test
+    public void testFault() throws Exception {
         System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
 
         Dispatch<String> dispatch = getDispatch();
         String request = sampleSoapEnvelopeHeader + soapFaultBodyContent + sampleSoapEnvelopeFooter;

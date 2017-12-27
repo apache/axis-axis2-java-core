@@ -19,9 +19,10 @@
 
 package org.apache.axis2.jaxws.provider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
@@ -35,6 +36,11 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,22 +48,15 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 public class SourceProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    private String endpointUrl = "http://localhost:6060/axis2/services/SourceProviderService.SourceProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
     private String xmlDir = "xml";
 
-    public SourceProviderTests() {
-        super();
-    }
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SourceProviderTests.class));
-    }
-        
-    private Dispatch<Source> getDispatch() {
+    private Dispatch<Source> getDispatch() throws Exception {
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
+        svc.addPort(portName, null, server.getEndpoint("SourceProviderService.SourceProviderPort"));
         
         Dispatch<Source> dispatch = svc
                 .createDispatch(portName, Source.class, Service.Mode.PAYLOAD);
@@ -92,9 +91,9 @@ public class SourceProviderTests extends ProviderTestCase {
         
     }
     
+    @Test
     public void testNormal() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -113,9 +112,9 @@ public class SourceProviderTests extends ProviderTestCase {
         assertTrue(response.contains(request));
     }
     
+    @Test
     public void testEmptyString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -139,9 +138,9 @@ public class SourceProviderTests extends ProviderTestCase {
         
     }
     
+    @Test
     public void testNullSource() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -162,9 +161,9 @@ public class SourceProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testEmptySource() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -185,9 +184,9 @@ public class SourceProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testNonNullString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -211,9 +210,9 @@ public class SourceProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testCommentString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -236,9 +235,9 @@ public class SourceProviderTests extends ProviderTestCase {
     }
     
    
+    @Test
     public void testProviderReturnsNull() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -262,9 +261,10 @@ public class SourceProviderTests extends ProviderTestCase {
         }
 
     }
+
+    @Test
     public void testProviderEmptySource() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -280,10 +280,11 @@ public class SourceProviderTests extends ProviderTestCase {
             fail("Caught exception " + e);
         }
 
-    }    
+    }
+
+    @Test
     public void testTwoElementsString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -307,9 +308,9 @@ public class SourceProviderTests extends ProviderTestCase {
         assertTrue(response.contains("<a>hello</a>"));
     }
     
+    @Test
     public void testTwoElementsAndMixedContentString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -331,9 +332,9 @@ public class SourceProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testException() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         
@@ -360,9 +361,9 @@ public class SourceProviderTests extends ProviderTestCase {
         }
     }
     
+    @Test
     public void testUserGeneratedSOAPFault() throws Exception {
         System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
         
         Dispatch<Source> dispatch = getDispatch();
         String request = "<test>throwUserGeneratedFault</test>";
@@ -378,6 +379,7 @@ public class SourceProviderTests extends ProviderTestCase {
     }
 
     
+    @Test
     public void testProviderSource(){
         try{
             String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();
@@ -388,7 +390,7 @@ public class SourceProviderTests extends ProviderTestCase {
             StreamSource xmlStreamSource = new StreamSource(inputStream);
 
             Service svc = Service.create(serviceName);
-            svc.addPort(portName,null, endpointUrl);
+            svc.addPort(portName,null, server.getEndpoint("SourceProviderService.SourceProviderPort"));
             Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, null);
             TestLogger.logger.debug(">> Invoking Source Provider Dispatch");
             Source response = dispatch.invoke(xmlStreamSource);

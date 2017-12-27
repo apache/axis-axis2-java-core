@@ -19,9 +19,13 @@
 
 package org.apache.axis2.jaxws.provider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
@@ -31,18 +35,15 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
 
 public class StringProviderTests extends ProviderTestCase {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    String endpointUrl = "http://localhost:6060/axis2/services/StringProviderService.StringProviderPort";
     String xmlString = "<invoke>test input</invoke>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(StringProviderTests.class));
-    }
-        
-    private Dispatch<String> getDispatch() {
+    private Dispatch<String> getDispatch() throws Exception {
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
+        svc.addPort(portName, null, server.getEndpoint("StringProviderService.StringProviderPort"));
         
         Dispatch<String> dispatch = svc
                 .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
@@ -54,9 +55,9 @@ public class StringProviderTests extends ProviderTestCase {
         return dispatch;
         
     }
-    private Dispatch<String> getDispatchOneway() {
+    private Dispatch<String> getDispatchOneway() throws Exception {
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
+        svc.addPort(portName, null, server.getEndpoint("StringProviderService.StringProviderPort"));
         
         Dispatch<String> dispatch = svc
                 .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
@@ -68,9 +69,10 @@ public class StringProviderTests extends ProviderTestCase {
         return dispatch;
         
     }
+    
+    @Test
     public void testNormal() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -83,9 +85,9 @@ public class StringProviderTests extends ProviderTestCase {
         assertTrue(request.equals(response));
     }
     
+    @Test
     public void testEmptyString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -105,9 +107,9 @@ public class StringProviderTests extends ProviderTestCase {
        
     }
     
+    @Test
     public void testNullString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -126,9 +128,9 @@ public class StringProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testNonNullString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -147,9 +149,9 @@ public class StringProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testCommentString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -167,9 +169,9 @@ public class StringProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testTwoElementsString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -189,9 +191,9 @@ public class StringProviderTests extends ProviderTestCase {
         assertTrue("<a>hello</a>".equals(response));
     }
     
+    @Test
     public void testTwoElementsAndMixedContentString() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -209,9 +211,9 @@ public class StringProviderTests extends ProviderTestCase {
         assertTrue(response == null);
     }
     
+    @Test
     public void testException() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -239,9 +241,9 @@ public class StringProviderTests extends ProviderTestCase {
      * jaxws.provider.interpretNullAsOneway property is set
      * @throws Exception
      */
+    @Test
     public void testProviderReturnsNull() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         String request = "<invoke>returnNull</invoke>";
@@ -266,9 +268,9 @@ public class StringProviderTests extends ProviderTestCase {
      * jaxws.provider.interpretNullAsOneway property is set
      * @throws Exception
      */
+    @Test
     public void testProviderReturnsNullOneway() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         Dispatch<String> dispatch = getDispatchOneway();
         // Because the operation is defined in WSDL, it should not be 

@@ -19,39 +19,46 @@
 
 package org.apache.axis2.jaxws.proxy;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.DocLitnonWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.Invoke;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.ObjectFactory;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.ProxyDocLitUnwrappedService;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.ReturnType;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.util.concurrent.Future;
 
 /**
  * This test cases will use proxy NON wrapped wsdl to invoke methods
  * on a deployed Server Endpoint.
  */
-public class ProxyNonWrappedTests extends AbstractTestCase {
+public class ProxyNonWrappedTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     QName serviceName = new QName("http://doclitnonwrapped.proxy.test.org", "ProxyDocLitUnwrappedService");
-    private String axisEndpoint = "http://localhost:6060/axis2/services/ProxyDocLitUnwrappedService.DocLitnonWrappedImplPort";
     private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedPort");
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ProxyNonWrappedTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("ProxyDocLitUnwrappedService.DocLitnonWrappedImplPort");
     }
-    
-    public void testInvoke(){
+
+    @Test
+    public void testInvoke() throws Exception {
         TestLogger.logger.debug("-----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         TestLogger.logger.debug(">>Testing Sync Inovoke on Proxy DocLit non-wrapped");
         ObjectFactory factory = new ObjectFactory();
         Invoke invokeObj = factory.createInvoke();
@@ -61,7 +68,7 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         DocLitnonWrappedProxy proxy = service.getPort(portName, DocLitnonWrappedProxy.class);
         assertNotNull(proxy);
         BindingProvider p = (BindingProvider)proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         ReturnType response = proxy.invoke(invokeObj);
         assertNotNull(response);
         TestLogger.logger.debug(">>Response =" + response.getReturnStr());
@@ -75,9 +82,9 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         TestLogger.logger.debug("-------------------------------------");
     }
     
-    public void testNullInvoke(){
+    @Test
+    public void testNullInvoke() throws Exception {
         TestLogger.logger.debug("-----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         TestLogger.logger.debug(">>Testing Sync Invoke on Proxy DocLit bare with a null parameter");
         ObjectFactory factory = new ObjectFactory();
         Invoke invokeObj = null;
@@ -86,7 +93,7 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         DocLitnonWrappedProxy proxy = service.getPort(portName, DocLitnonWrappedProxy.class);
         assertNotNull(proxy);
         BindingProvider p = (BindingProvider)proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         ReturnType response = proxy.invoke(invokeObj);
         assertNull(response);
         
@@ -97,10 +104,10 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         TestLogger.logger.debug("-------------------------------------");
     }
     
+    @Test
     public void testInvokeAsyncCallback(){
         try{
             TestLogger.logger.debug("---------------------------------------");
-            TestLogger.logger.debug("DocLitNonWrapped test case: " + getName());
             ObjectFactory factory = new ObjectFactory();
             //create input object to web service operation
             Invoke invokeObj = factory.createInvoke();
@@ -112,7 +119,7 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
             TestLogger.logger.debug(">>Invoking Binding Provider property");
             //Setup Endpoint url -- optional.
             BindingProvider p = (BindingProvider)proxy;
-                p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+                p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             TestLogger.logger.debug(">> Invoking Proxy Asynchronous Callback");
             AsyncHandler<ReturnType> handler = new AsyncCallback();
             //Invoke operation Asynchronously.
@@ -137,6 +144,7 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testInvokeAsyncPolling(){
         
     }

@@ -19,6 +19,13 @@
 
 package org.apache.axis2.jaxws.sample;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,15 +59,11 @@ import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler2;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler3;
@@ -71,11 +74,16 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersProtocolHandler2;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
-public class AddNumbersHandlerTests extends AbstractTestCase {
+public class AddNumbersHandlerTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
     
-    String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
     String invalidAxisEndpoint = "http://invalidHostName:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
 
     static File requestFile = null;
@@ -87,8 +95,8 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
     
     private static final String filelogname = "target/AddNumbersHandlerTests.log";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(AddNumbersHandlerTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort");
     }
 
     /**
@@ -106,16 +114,16 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * 3)  Handlers are sharing properties, both APPLICATION scoped and HANDLER scoped
      * 3)  General handler framework functionality; make sure handlers are instantiated and called
      */
+    @Test
     public void testAddNumbersHandler() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
             
             BindingProvider p =    (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             int total = proxy.addNumbersHandler(10, 10);
 
             assertEquals("With handler manipulation, total should be 3 less than a proper sumation.", 17, total);
@@ -173,16 +181,16 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * 2)  Access to the special "jaxws.webmethod.exception"
      * 3)  Proper exception call flow when an application exception is thrown.
      */
+    @Test
     public void testAddNumbersHandler_WithCheckedException() throws Exception {
 
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         AddNumbersHandlerService service = new AddNumbersHandlerService();
         AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
 
         BindingProvider p = (BindingProvider)proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         AddNumbersHandlerFault_Exception expectedException = null;
         Throwable t = null;
         try {
@@ -266,16 +274,16 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * 2)  Access to the special "jaxws.webmethod.exception"
      * 3)  Proper exception call flow when an unchecked exception is thrown.
      */
+    @Test
     public void testAddNumbersHandler_WithUnCheckedException() throws Exception {
 
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         AddNumbersHandlerService service = new AddNumbersHandlerService();
         AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
 
         BindingProvider p = (BindingProvider)proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         SOAPFaultException expectedException = null;
         Throwable t = null;
         try {
@@ -361,16 +369,16 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * 2)  Access to the special "jaxws.webmethod.exception"
      * 3)  Proper exception call flow when an unchecked exception is thrown.
      */
+    @Test
     public void testAddNumbersHandler_WithHandlerException() throws Exception {
 
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         AddNumbersHandlerService service = new AddNumbersHandlerService();
         AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
 
         BindingProvider p = (BindingProvider)proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         SOAPFaultException expectedException = null;
         Throwable t = null;
         try {
@@ -403,6 +411,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
        
     }
     
+    @Test
     public void testAddNumbersHandlerDispatch() {
         try {
             QName serviceName =
@@ -412,7 +421,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
 
             Service myService = Service.create(serviceName);
             
-            myService.addPort(portName, null, axisEndpoint);
+            myService.addPort(portName, null, getEndpoint());
             Dispatch<Source> myDispatch = myService.createDispatch(portName, Source.class, 
                                                                    Service.Mode.MESSAGE);
 
@@ -469,6 +478,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testAddNumbersHandlerDispatchMyResolver() {
         try {
             QName serviceName =
@@ -480,7 +490,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             
             myService.setHandlerResolver(new MyHandlerResolver());
             
-            myService.addPort(portName, null, axisEndpoint);
+            myService.addPort(portName, null, getEndpoint());
             Dispatch<Source> myDispatch = myService.createDispatch(portName, Source.class, 
                                                                    Service.Mode.MESSAGE);
 
@@ -528,10 +538,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
     /*
      * JAXWS 9.2.1.1 conformance test
      */
+    @Test
     public void testAddNumbersHandlerResolver() {
         try {
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
 
             AddNumbersHandlerService service = new AddNumbersHandlerService();
 
@@ -558,17 +568,17 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         }
     }
 
+    @Test
     public void testAddNumbersHandlerWithFault() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
             
             BindingProvider p = (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);  
+                    getEndpoint());  
             // value 99 triggers the handler to throw an exception, but does
             // NOT trigger the AddNumbersHandler.handlefault method.
             // The spec does not call the handlefault method of a handler that
@@ -607,10 +617,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * outbound AddNumbersClientProtocolHandler are accessible.  These properties are also checked here in
      * the client app.  AddNumbersClientLogicalHandler also subtracts 1 from the sum on the inbound flow.
      */
+    @Test
     public void testAddNumbersClientHandler() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -618,7 +628,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             BindingProvider p = (BindingProvider)proxy;
             
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
             p.getRequestContext().put("myClientKey", "myClientVal");
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
@@ -686,10 +696,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * puts the AddNumbersClientLogicalHandler and AddNumbersClientProtocolHandler
      * in the flow.  Results should be the same as testAddNumbersClientHandler.
      */
+    @Test
     public void testAddNumbersClientHandlerMyResolver() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             service.setHandlerResolver(new MyHandlerResolver());
@@ -699,7 +709,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             BindingProvider p = (BindingProvider)proxy;
             
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
 
             int total = proxy.addNumbersHandler(10,10);
             
@@ -741,10 +751,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testAddNumbersClientProtoAndLogicalHandler() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -752,7 +762,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             BindingProvider p = (BindingProvider)proxy;
             
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
             if (handlers == null)
@@ -804,10 +814,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
     
+    @Test
     public void testAddNumbersClientHandlerWithFault() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -815,7 +825,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             BindingProvider p = (BindingProvider)proxy;
             
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
             if (handlers == null)
@@ -854,10 +864,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * host on the EPR) is returned as a SOAPFaultException, and the JAX-WS application handler 
      * handleFault() methods are driven.  This is the default behavior.
      */
+    @Test
     public void testAddNumbersClientHandlerWithLocalException() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -902,10 +912,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * host on the EPR) is returned as a WebServiceExcpetion (not a SOAPFaultException), and the 
      * JAX-WS application handler handleMessage() methods are driven.
      */
+    @Test
     public void testAddNumbersClientHandlerWithLocalException_RevertBehaviorFlag() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             setAxisConfigParameter(service, org.apache.axis2.jaxws.Constants.DISABLE_SOAPFAULT_FOR_LOCAL_EXCEPTION, 
@@ -946,13 +956,13 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
 
+    @Test
     public void testAddNumbersClientHandlerWithFalse() throws Exception {
         AddNumbersClientLogicalHandler2 clh = new AddNumbersClientLogicalHandler2();
         AddNumbersClientProtocolHandler  cph = new AddNumbersClientProtocolHandler();
         cph.setPivot(true);
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -960,7 +970,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             BindingProvider p = (BindingProvider)proxy;
             
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
             if (handlers == null) {
@@ -998,10 +1008,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * AddNumbersClientLogicalHandler2 doubles the first param on outbound.  Async, of course.
      *
      */
+    @Test
     public void testAddNumbersClientHandlerAsync() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -1009,7 +1019,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             BindingProvider p = (BindingProvider)proxy;
             
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
             if (handlers == null)
@@ -1081,10 +1091,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
      * @see #testAddNumbersClientHandlerWithLocalException_RevertBehaviorFlag()
      * 
      */
+    @Test
     public void testAddNumbersClientHandlerWithLocalExceptionAsync_RevertBehavior() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -1135,10 +1145,10 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testAddNumbersHandlerHandlerResolver() {
         try {
             System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
             AddNumbersHandlerService service = new AddNumbersHandlerService(); // will give NPE:
             List<Handler> handlers = service.getHandlerResolver()
                     .getHandlerChain(null);
@@ -1155,17 +1165,17 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     } 
     
+    @Test
     public void testOneWay() {
         try {
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
             
             BindingProvider bp = (BindingProvider) proxy;
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);
+                    getEndpoint());
             proxy.oneWayInt(11);
             
             // one-way invocations run in their own thread,
@@ -1196,18 +1206,18 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
     
+    @Test
     public void testOneWayWithProtocolException() {
         Exception exception = null;
         try {
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
 
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
 
             BindingProvider p = (BindingProvider) proxy;
 
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             p.getRequestContext().put("myClientKey", "myClientVal");
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
@@ -1218,7 +1228,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             p.getBinding().setHandlerChain(handlers);
             
             BindingProvider bp = (BindingProvider) proxy;
-            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             // value 99 will trigger exception from AddNumbersClientLogicalHandler
             proxy.oneWayInt(99);
         } catch (Exception e) {            
@@ -1248,18 +1258,18 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
     
+    @Test
     public void testOneWayWithRuntimeException() {
         Exception exception = null;
         try {
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
 
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
 
             BindingProvider p = (BindingProvider) proxy;
 
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             p.getRequestContext().put("myClientKey", "myClientVal");
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
@@ -1270,7 +1280,7 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             p.getBinding().setHandlerChain(handlers);
             
             BindingProvider bp = (BindingProvider) proxy;
-            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             // value 99 will trigger exception from AddNumbersClientLogicalHandler
             proxy.oneWayInt(999);
         } catch (Exception e) {
@@ -1362,7 +1372,8 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         return new StreamSource(fis);
     }
     
-    protected void setUp() {
+    @Before
+    public void setUp() {
         File file = new File(filelogname);
         file.delete();  // yes, delete for each retrieval, which should only happen once per test
     }
