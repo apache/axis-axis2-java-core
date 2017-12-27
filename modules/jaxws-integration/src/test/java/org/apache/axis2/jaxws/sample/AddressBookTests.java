@@ -59,9 +59,8 @@ public class AddressBookTests extends AbstractTestCase {
      */
     
     public void testAddressBookWithDispatch() throws Exception {
-        try {
-            TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.addressbook.data");
         
@@ -101,10 +100,6 @@ public class AddressBookTests extends AbstractTestCase {
         assertTrue(response.isStatus());
         TestLogger.logger.debug("[pass]     - valid response received");
         TestLogger.logger.debug("[response] - " + response.isStatus());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
     
     
