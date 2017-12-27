@@ -19,9 +19,12 @@
 
 package org.apache.axis2.jaxws.sample;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -36,38 +39,41 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.mtomfeature.ObjectFactory;
 import org.apache.axis2.jaxws.sample.mtomfeature.ProcessDocumentDelegate;
 import org.apache.axis2.jaxws.sample.mtomfeature.ProcessDocumentService;
 import org.apache.axis2.jaxws.sample.mtomfeature.SendPDFFile;
 import org.apache.axis2.jaxws.sample.mtomfeature.SendPDFFileResponse;
 import org.apache.axis2.jaxws.spi.Binding;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 
-public class MTOMFeatureTests extends AbstractTestCase {
-    private static final String axisEndpoint = "http://localhost:6060/axis2/services/ProcessDocumentService.ProcessDocumentPortBindingImplPort";
+public class MTOMFeatureTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
+
     private static final QName serviceName = new QName("http://mtomfeature.sample.jaxws.axis2.apache.org/", "ProcessDocumentService");
     private static final QName portName = new QName("http://mtomfeature.sample.jaxws.axis2.apache.org/", "ProcessDocumentPort");
     String resourceDir = System.getProperty("basedir",".")+ File.separator+"test-resources"+File.separator+"pdf";
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MTOMFeatureTests.class));
+
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("ProcessDocumentService.ProcessDocumentPortBindingImplPort");
     }
+
+    @Test
     public void testMTOMFeatureProxy(){
         try{
             
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             MTOMFeature mtomFeature = new MTOMFeature(true, 1);
             ProcessDocumentService service = new ProcessDocumentService();
             ProcessDocumentDelegate proxy = service.getProcessDocumentPort(mtomFeature);
             
             BindingProvider bp = (BindingProvider)proxy;
-            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             Binding b =(Binding) bp.getBinding();
 
             WebServiceFeature wsFeature = b.getFeature(MTOMFeature.ID);
@@ -99,16 +105,16 @@ public class MTOMFeatureTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testMTOMFeatureDispatch(){
         try{      
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             MTOMFeature mtomFeature = new MTOMFeature(true, 1);
             //Create the necessary JAXBContext
             JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtomfeature");
             // Create the JAX-WS client needed to send the request
             Service service = Service.create(serviceName);
-            service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, axisEndpoint);
+            service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, getEndpoint());
             Dispatch<Object> dispatch = service.createDispatch(portName, jbc, Mode.PAYLOAD, mtomFeature);
             ObjectFactory of = new ObjectFactory();
             SendPDFFile pdf = of.createSendPDFFile();

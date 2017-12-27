@@ -18,44 +18,46 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.doclitbarenoarg.sei.BareDocLitNoArgService;
 import org.apache.axis2.jaxws.sample.doclitbarenoarg.sei.DocLitBareNoArgPortType;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 import javax.xml.ws.BindingProvider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+public class BareNoArgTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-public class BareNoArgTests extends AbstractTestCase {
-
-    static final String ENDPOINT_URL = 
-        "http://localhost:6060/axis2/services/BareDocLitNoArgService.DocLitBareNoArgPortTypeImplPort";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(BareNoArgTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("BareDocLitNoArgService.DocLitBareNoArgPortTypeImplPort");
     }
-    
-    public void testTwoWayEmpty_With_SOAPACTION() {
+
+    @Test
+    public void testTwoWayEmpty_With_SOAPACTION() throws Exception {
         BareDocLitNoArgService service = new BareDocLitNoArgService();
         DocLitBareNoArgPortType proxy = service.getBareDocLitNoArgPort();
         BindingProvider p = (BindingProvider) proxy;
 
         p.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "twoWayEmpty");
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         
         String response = proxy.twoWayEmpty();
         assertTrue("Did not receive expected response value", 
                    "org.apache.axis2.jaxws.sample.doclitbarenoarg.DocLitBareNoArgPortTypeImpl.twoWayEmpty".equals(response));
     }
 
-    public void testTwoWayEmpty_No_SOAPACTION() {
+    @Test
+    public void testTwoWayEmpty_No_SOAPACTION() throws Exception {
         BareDocLitNoArgService service = new BareDocLitNoArgService();
         DocLitBareNoArgPortType proxy = service.getBareDocLitNoArgPort();
         BindingProvider p = (BindingProvider) proxy;
 
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         
         String response = proxy.twoWayEmpty();
         assertTrue("Did not receive expected response value", 

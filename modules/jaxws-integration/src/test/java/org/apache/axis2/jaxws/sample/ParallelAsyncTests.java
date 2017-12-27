@@ -19,19 +19,24 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.parallelasync.common.CallbackHandler;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.parallelasync.CustomAsyncResponse;
 import org.test.parallelasync.SleepResponse;
-import org.test.parallelasync.WakeUpResponse;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -44,28 +49,23 @@ import java.util.concurrent.Future;
  * 
  * ExecutionException tests are covered in jaxws.dispatch and jaxws.proxy
  */
-public class ParallelAsyncTests extends AbstractTestCase {
-
-    private static final String DOCLITWR_ASYNC_ENDPOINT =
-        "http://localhost:6060/axis2/services/AsyncService.DocLitWrappedPortImplPort";
+public class ParallelAsyncTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     // used for logging
     private String myClassName = "ParallelAsyncTests";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ParallelAsyncTests.class));
-    }
-    	
+    @Test
     public void testNOOP () {}
 
     /**
      * @testStrategy Check that the web service is up and running 
      *               before running any other tests
      */
+    @Test
     public void testService_isAlive() throws Exception {
         final String MESSAGE = "testServiceAlive";
-
-        String title = myClassName + " : " + getName() + " : ";
 
         AsyncPort port = getPort((Executor)null);
 
@@ -80,7 +80,7 @@ public class ParallelAsyncTests extends AbstractTestCase {
             request1 = req1base + "_" + i;
             request2 = req2base + "_" + i;
 
-            TestLogger.logger.debug(title + "iteration [" + i + "] using request1 [" + request1 +
+            TestLogger.logger.debug("Iteration [" + i + "] using request1 [" + request1 +
                     "]  request2 [" + request2 + "]");
 
             // submit request #1 to the server-side web service that 
@@ -114,7 +114,7 @@ public class ParallelAsyncTests extends AbstractTestCase {
                 req2_result = resp2.get().getResponse();
             } catch (Exception e) {
                 TestLogger.logger.debug(
-                        title + "iteration [" + i + "] using request1 [" + request1 +
+                        "Iteration [" + i + "] using request1 [" + request1 +
                                 "]  request2 [" + request2 + "] :  got exception [" +
                                 e.getClass().getName() + "]  [" + e.getMessage() + "] ");
                 e.printStackTrace();
@@ -167,11 +167,11 @@ public class ParallelAsyncTests extends AbstractTestCase {
             {
                 req_cb_result = sleepResp.getMessage();
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] :  result [" + req_cb_result + "] ");
+                        "Request [" + request1 + "] :  result [" + req_cb_result + "] ");
             }
 
         } catch (Exception ex) {
-            TestLogger.logger.debug(title + " request [" + request1 + "] :  got exception [" +
+            TestLogger.logger.debug("Request [" + request1 + "] :  got exception [" +
                     ex.getClass().getName() + "]  [" + ex.getMessage() + "] ");
             ex.printStackTrace();
             fail(ex.toString());
@@ -188,10 +188,9 @@ public class ParallelAsyncTests extends AbstractTestCase {
      *               is a request being processed.  Uses the default executor.
      *               
      */
+    @Test
     public void testService_ExecutorShutdownNow() throws Exception {
         final String MESSAGE = "testExecutorShutdownNow";
-
-        String title = myClassName + " : " + getName() + " : ";
 
         AsyncService service = getService(null);
         AsyncPort port = getPort(service);
@@ -205,7 +204,7 @@ public class ParallelAsyncTests extends AbstractTestCase {
         }
         else
         {
-            TestLogger.logger.debug(title + " No executor service available. Nothing to test.");
+            TestLogger.logger.debug("No executor service available. Nothing to test.");
             return;
         }
 
@@ -215,11 +214,11 @@ public class ParallelAsyncTests extends AbstractTestCase {
 
         String request1 = "sleepAsync_with_Callback_1";
 
-        TestLogger.logger.debug(title + " port.sleepAsync(" + request1 +
+        TestLogger.logger.debug("port.sleepAsync(" + request1 +
                 ", callbackHander1)  #1 being submitted....");
 		Future<?> sr1 = port.sleepAsync(request1, sleepCallbackHandler1);
         TestLogger.logger.debug(
-                title + " port.sleepAsync(" + request1 + ", callbackHander1)  #1 .....submitted.");
+                "port.sleepAsync(" + request1 + ", callbackHander1)  #1 .....submitted.");
 
         // wait a bit to make sure that the server has the request
         Thread.sleep(1000);
@@ -228,19 +227,19 @@ public class ParallelAsyncTests extends AbstractTestCase {
         // attempts to stop all actively executing tasks via Thread.interrupt()
         // and should prevent new tasks from being submitted
         TestLogger.logger
-                .debug(title + " shutting down executor [" + ex.getClass().getName() + "]");
+                .debug("Shutting down executor [" + ex.getClass().getName() + "]");
         ex.shutdownNow();
 
         // check the waiting request 
-        TestLogger.logger.debug(title + " port.isAsleep(" + request1 + ") #1 being submitted....");
+        TestLogger.logger.debug("port.isAsleep(" + request1 + ") #1 being submitted....");
         String asleepWithCallback1 = port.isAsleep(request1);
         TestLogger.logger.debug(
-                title + " port.isAsleep(" + request1 + ") #1 = [" + asleepWithCallback1 + "]");
+                "port.isAsleep(" + request1 + ") #1 = [" + asleepWithCallback1 + "]");
 
         // wakeup the waiting request
-        TestLogger.logger.debug(title + " port.wakeUp(request1) #1 being submitted....");
+        TestLogger.logger.debug("port.wakeUp(request1) #1 being submitted....");
         String wake1 = port.wakeUp(request1);
-        TestLogger.logger.debug(title + " port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
+        TestLogger.logger.debug("port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
 
         // wait a bit..
         Thread.sleep(2000);
@@ -248,7 +247,7 @@ public class ParallelAsyncTests extends AbstractTestCase {
         // check the Future
         if (sr1.isDone())
         {
-            TestLogger.logger.debug(title + " sr1.isDone[TRUE] ");
+            TestLogger.logger.debug("sr1.isDone[TRUE] ");
         }
 
         // try to get the response
@@ -259,29 +258,29 @@ public class ParallelAsyncTests extends AbstractTestCase {
 
             if (sleepResp1 != null)
             {
-                TestLogger.logger.debug(title + " request [" + request1 +
+                TestLogger.logger.debug("request [" + request1 +
                         "] #1:  sleepResponse [NOT NULL] from callback handler");
                 String result1 = sleepResp1.getMessage();
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] #1:  result [" + result1 + "] ");
+                        "request [" + request1 + "] #1:  result [" + result1 + "] ");
             }
             else
             {
-                TestLogger.logger.debug(title + " request [" + request1 +
+                TestLogger.logger.debug("request [" + request1 +
                         "] #1:  sleepResponse [NULL] from callback handler");
 
                 // see what the Future says
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] #1:  ....check Future response...");
+                        "request [" + request1 + "] #1:  ....check Future response...");
                 Object futureResult = sr1.get();
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] #1:  ....Future response [" +
+                        "request [" + request1 + "] #1:  ....Future response [" +
                                 futureResult + "]...");
             }
 
         } catch (Exception exc) {
 
-            TestLogger.logger.debug(title + " request [" + request1 + "] :  got exception [" +
+            TestLogger.logger.debug("request [" + request1 + "] :  got exception [" +
                     exc.getClass().getName() + "]  [" + exc.getMessage() + "] ");
             gotException = true;
         }
@@ -295,10 +294,9 @@ public class ParallelAsyncTests extends AbstractTestCase {
      *               is a request being processed.  Uses an application executor
      *               service.
      */
+    @Test
     public void testService_ExecutorShutdownNow_2() throws Exception {
         final String MESSAGE = "testExecutorShutdownNow_2";
-
-        String title = myClassName + " : " + getName() + " : ";
 
         AsyncService service = getService(null);
         AsyncPort port = getPort(service);
@@ -313,11 +311,11 @@ public class ParallelAsyncTests extends AbstractTestCase {
 
         String request1 = "sleepAsync_with_Callback_1";
 
-        TestLogger.logger.debug(title + " port.sleepAsync(" + request1 +
+        TestLogger.logger.debug("port.sleepAsync(" + request1 +
                 ", callbackHander1)  #1 being submitted....");
 		Future<?> sr1 = port.sleepAsync(request1, sleepCallbackHandler1);
         TestLogger.logger.debug(
-                title + " port.sleepAsync(" + request1 + ", callbackHander1)  #1 .....submitted.");
+                "port.sleepAsync(" + request1 + ", callbackHander1)  #1 .....submitted.");
 
         // wait a bit to make sure that the server has the request
         Thread.sleep(1000);
@@ -326,19 +324,19 @@ public class ParallelAsyncTests extends AbstractTestCase {
         // attempts to stop all actively executing tasks via Thread.interrupt()
         // and should prevent new tasks from being submitted
         TestLogger.logger
-                .debug(title + " shutting down executor [" + ex.getClass().getName() + "]");
+                .debug("Shutting down executor [" + ex.getClass().getName() + "]");
         ex.shutdownNow();
 
         // check the waiting request 
-        TestLogger.logger.debug(title + " port.isAsleep(" + request1 + ") #1 being submitted....");
+        TestLogger.logger.debug("port.isAsleep(" + request1 + ") #1 being submitted....");
         String asleepWithCallback1 = port.isAsleep(request1);
         TestLogger.logger.debug(
-                title + " port.isAsleep(" + request1 + ") #1 = [" + asleepWithCallback1 + "]");
+                "port.isAsleep(" + request1 + ") #1 = [" + asleepWithCallback1 + "]");
 
         // wakeup the waiting request
-        TestLogger.logger.debug(title + " port.wakeUp(request1) #1 being submitted....");
+        TestLogger.logger.debug("port.wakeUp(request1) #1 being submitted....");
         String wake1 = port.wakeUp(request1);
-        TestLogger.logger.debug(title + " port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
+        TestLogger.logger.debug("port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
 
         // wait a bit..
         Thread.sleep(2000);
@@ -346,7 +344,7 @@ public class ParallelAsyncTests extends AbstractTestCase {
         // check the Future
         if (sr1.isDone())
         {
-            TestLogger.logger.debug(title + " sr1.isDone[TRUE] ");
+            TestLogger.logger.debug("sr1.isDone[TRUE] ");
         }
 
         // try to get the response
@@ -357,29 +355,29 @@ public class ParallelAsyncTests extends AbstractTestCase {
 
             if (sleepResp1 != null)
             {
-                TestLogger.logger.debug(title + " request [" + request1 +
+                TestLogger.logger.debug("Request [" + request1 +
                         "] #1:  sleepResponse [NOT NULL] from callback handler");
                 String result1 = sleepResp1.getMessage();
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] #1:  result [" + result1 + "] ");
+                        "Request [" + request1 + "] #1:  result [" + result1 + "] ");
             }
             else
             {
-                TestLogger.logger.debug(title + " request [" + request1 +
+                TestLogger.logger.debug("Request [" + request1 +
                         "] #1:  sleepResponse [NULL] from callback handler");
 
                 // see what the Future says
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] #1:  ....check Future response...");
+                        "Request [" + request1 + "] #1:  ....check Future response...");
                 Object futureResult = sr1.get();
                 TestLogger.logger.debug(
-                        title + " request [" + request1 + "] #1:  ....Future response [" +
+                        "Request [" + request1 + "] #1:  ....Future response [" +
                                 futureResult + "]...");
             }
 
         } catch (Exception exc) {
 
-            TestLogger.logger.debug(title + " request [" + request1 + "] :  got exception [" +
+            TestLogger.logger.debug("Request [" + request1 + "] :  got exception [" +
                     exc.getClass().getName() + "]  [" + exc.getMessage() + "] ");
             gotException = true;
         }
@@ -392,10 +390,9 @@ public class ParallelAsyncTests extends AbstractTestCase {
      *               is a request.  Uses the default executor.
      *               
      */
+    @Test
     public void testService_ExecutorShutdownNow_3() throws Exception {
         final String MESSAGE = "testExecutorShutdownNow_3";
-
-        String title = myClassName + " : " + getName() + " : ";
 
         AsyncService service = getService(null);
         AsyncPort port = getPort(service);
@@ -411,12 +408,12 @@ public class ParallelAsyncTests extends AbstractTestCase {
             // attempts to stop all actively executing tasks via Thread.interrupt()
             // and should prevent new tasks from being submitted
             TestLogger.logger
-                    .debug(title + " shutting down executor [" + ex.getClass().getName() + "]");
+                    .debug("Shutting down executor [" + ex.getClass().getName() + "]");
             ex.shutdownNow();
         }
         else
         {
-            TestLogger.logger.debug(title + " No executor service available. Nothing to test.");
+            TestLogger.logger.debug("No executor service available. Nothing to test.");
             return;
         }
 
@@ -430,15 +427,15 @@ public class ParallelAsyncTests extends AbstractTestCase {
         try
         {
             // submit a request to the server that will wait until we ask for it
-            TestLogger.logger.debug(title + " port.sleepAsync(" + request1 +
+            TestLogger.logger.debug("port.sleepAsync(" + request1 +
                     ", callbackHander1)  #1 being submitted....");
             sr1 = port.sleepAsync(request1, sleepCallbackHandler1);
-            TestLogger.logger.debug(title + " port.sleepAsync(" + request1 +
+            TestLogger.logger.debug("port.sleepAsync(" + request1 +
                     ", callbackHander1)  #1 .....submitted.");
         }
         catch (Exception exc)
         {
-            TestLogger.logger.debug(title + " request [" + request1 + "] :  got exception [" +
+            TestLogger.logger.debug("Request [" + request1 + "] :  got exception [" +
                     exc.getClass().getName() + "]  [" + exc.getMessage() + "] ");
             gotRequestException = true;
         }
@@ -450,9 +447,9 @@ public class ParallelAsyncTests extends AbstractTestCase {
         if (!gotRequestException)
         {
             // wakeup the waiting request
-            TestLogger.logger.debug(title + " port.wakeUp(request1) #1 being submitted....");
+            TestLogger.logger.debug("port.wakeUp(request1) #1 being submitted....");
             String wake1 = port.wakeUp(request1);
-            TestLogger.logger.debug(title + " port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
+            TestLogger.logger.debug("port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
 
             // try to get the response
             try {
@@ -461,28 +458,28 @@ public class ParallelAsyncTests extends AbstractTestCase {
 
                 if (sleepResp1 != null)
                 {
-                    TestLogger.logger.debug(title + " request [" + request1 +
+                    TestLogger.logger.debug("Request [" + request1 +
                             "] #1:  sleepResponse [NOT NULL] from callback handler");
                     String result1 = sleepResp1.getMessage();
                     TestLogger.logger.debug(
-                            title + " request [" + request1 + "] #1:  result [" + result1 + "] ");
+                            "Request [" + request1 + "] #1:  result [" + result1 + "] ");
                 }
                 else
                 {
-                    TestLogger.logger.debug(title + " request [" + request1 +
+                    TestLogger.logger.debug("Request [" + request1 +
                             "] #1:  sleepResponse [NULL] from callback handler");
 
                     // see what the Future says
-                    TestLogger.logger.debug(title + " request [" + request1 +
+                    TestLogger.logger.debug("Request [" + request1 +
                             "] #1:  ....check Future response...");
                     Object futureResult = sr1.get();
-                    TestLogger.logger.debug(title + " request [" + request1 +
+                    TestLogger.logger.debug("Request [" + request1 +
                             "] #1:  ....Future response [" + futureResult + "]...");
                 }
 
             } catch (Exception exc) {
 
-                TestLogger.logger.debug(title + " request [" + request1 + "] :  got exception [" +
+                TestLogger.logger.debug("Request [" + request1 + "] :  got exception [" +
                         exc.getClass().getName() + "]  [" + exc.getMessage() + "] ");
                 gotResponseException = true;
             }
@@ -550,14 +547,14 @@ public class ParallelAsyncTests extends AbstractTestCase {
     }
 
 
-    private AsyncPort getPort(AsyncService service) {
+    private AsyncPort getPort(AsyncService service) throws Exception {
 
         AsyncPort port = service.getAsyncPort();
         assertNotNull("Port is null", port);
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
         rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                DOCLITWR_ASYNC_ENDPOINT);
+                server.getEndpoint("AsyncService.DocLitWrappedPortImplPort"));
         
         return port;
 
@@ -567,7 +564,7 @@ public class ParallelAsyncTests extends AbstractTestCase {
      * Auxiliary method used for obtaining a proxy pre-configured with a
      * specific Executor
      */
-    private AsyncPort getPort(Executor ex) {
+    private AsyncPort getPort(Executor ex) throws Exception {
         AsyncService service = getService(ex);
 
         AsyncPort port = service.getAsyncPort();
@@ -575,7 +572,7 @@ public class ParallelAsyncTests extends AbstractTestCase {
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
         rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                DOCLITWR_ASYNC_ENDPOINT);
+                server.getEndpoint("AsyncService.DocLitWrappedPortImplPort"));
         
         return port;
     }

@@ -22,12 +22,13 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
@@ -36,19 +37,23 @@ import org.test.sample.nonwrap.TwoWayHolder;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.util.concurrent.Future;
 
-public class NonWrapTests extends AbstractTestCase {
+public class NonWrapTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    String axisEndpoint = "http://localhost:6060/axis2/services/DocLitNonWrapService.DocLitNonWrapPortTypeImplPort";
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(NonWrapTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("DocLitNonWrapService.DocLitNonWrapPortTypeImplPort");
     }
-    
+
+    @Test
     public void testTwoWaySync(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         try{
             TwoWay twoWay = new ObjectFactory().createTwoWay();
             twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
@@ -56,7 +61,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
             BindingProvider p =    (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             ReturnType returnValue = proxy.twoWay(twoWay);
             TestLogger.logger.debug(returnValue.getReturnStr());
@@ -70,17 +75,18 @@ public class NonWrapTests extends AbstractTestCase {
             fail();
         }
     }
-    
-    public void _testTwoWaySyncNull() throws Exception{
+
+    @Ignore
+    @Test
+    public void testTwoWaySyncNull() throws Exception{
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         try{
             TwoWay twoWay = null;  // This should cause an WebServiceException
             DocLitNonWrapService service = new DocLitNonWrapService();
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
             
             BindingProvider p =    (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             
             ReturnType returnValue = proxy.twoWay(twoWay);
             
@@ -105,9 +111,9 @@ public class NonWrapTests extends AbstractTestCase {
         }
     }
 
+    @Test
     public void testTwoWayASyncCallback(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         try{
             TwoWay twoWay = new ObjectFactory().createTwoWay();
             twoWay.setTwowayStr("testing Async call for java bean non wrap endpoint");
@@ -115,7 +121,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
             BindingProvider p =    (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             AsyncCallback callback = new AsyncCallback();
             Future<?> monitor = proxy.twoWayAsync(twoWay, callback);
@@ -132,9 +138,9 @@ public class NonWrapTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testTwoWayHolder(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         try{
             TwoWayHolder twh = new TwoWayHolder();
             twh.setTwoWayHolderInt(new Integer(0));
@@ -146,7 +152,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
             BindingProvider p =    (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             proxy.twoWayHolder(holder);
             twh = holder.value;
@@ -166,9 +172,9 @@ public class NonWrapTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testTwoWayHolderAsync(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         try{
             TwoWayHolder twh = new TwoWayHolder();
             twh.setTwoWayHolderInt(new Integer(0));
@@ -180,7 +186,7 @@ public class NonWrapTests extends AbstractTestCase {
             DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 
             BindingProvider p =    (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             AsyncCallback callback = new AsyncCallback();
             Future<?> monitor =proxy.twoWayHolderAsync(twh, callback);

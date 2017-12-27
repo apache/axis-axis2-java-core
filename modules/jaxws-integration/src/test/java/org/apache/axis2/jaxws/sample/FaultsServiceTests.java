@@ -22,10 +22,7 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.faultsservice.BaseFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.ComplexFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.DerivedFault1_Exception;
@@ -34,40 +31,47 @@ import org.apache.axis2.jaxws.sample.faultsservice.FaultsService;
 import org.apache.axis2.jaxws.sample.faultsservice.FaultsServicePortType;
 import org.apache.axis2.jaxws.sample.faultsservice.InvalidTickerFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.SimpleFault;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.polymorphicfaults.BaseFault;
 import org.test.polymorphicfaults.ComplexFault;
 import org.test.polymorphicfaults.DerivedFault1;
 import org.test.polymorphicfaults.DerivedFault2;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPFaultException;
 
-public class FaultsServiceTests extends AbstractTestCase {
-    
-    String axisEndpoint = "http://localhost:6060/axis2/services/FaultsService.FaultsPort";
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(FaultsServiceTests.class));
-    }
+public class FaultsServiceTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
     
     /**
      * Utility method to get the proxy
      * @return proxy
      */
-    private FaultsServicePortType getProxy() {
+    private FaultsServicePortType getProxy() throws Exception {
         FaultsService service = new FaultsService();
         FaultsServicePortType proxy = service.getFaultsPort();
         BindingProvider p = (BindingProvider)proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("FaultsService.FaultsPort"));
         return proxy;
     }
     
     /**
      * Tests that that BaseFault is thrown
      */
-    public void testFaultsService0() {
+    @Test
+    public void testFaultsService0() throws Exception {
         Exception exception = null;
         FaultsServicePortType proxy = getProxy();
         try{
@@ -113,7 +117,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that that BaseFault (DerivedFault1) is thrown
      */
-    public void testFaultsService1() {
+    @Test
+    public void testFaultsService1() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -161,7 +166,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that that BaseFault (DerivedFault1) is thrown
      */
-    public void testFaultsService2() {
+    @Test
+    public void testFaultsService2() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -183,7 +189,7 @@ public class FaultsServiceTests extends AbstractTestCase {
         DerivedFault2 df = (DerivedFault2) fault;
         assertEquals(2, df.getA());
         assertEquals("DerivedFault2", df.getB());  
-        assertEquals(2F, df.getC());
+        assertEquals(2F, df.getC(), 0.0F);
         
         // Repeat to verify behavior
         try{
@@ -205,13 +211,14 @@ public class FaultsServiceTests extends AbstractTestCase {
         df = (DerivedFault2) fault;
         assertEquals(2, df.getA());
         assertEquals("DerivedFault2", df.getB());  
-        assertEquals(2F, df.getC());
+        assertEquals(2F, df.getC(), 0.0F);
     }
     
     /**
      * Tests that that ComplxFaultFault is thrown 
      */
-    public void testFaultsService3(){
+    @Test
+    public void testFaultsService3() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -234,7 +241,7 @@ public class FaultsServiceTests extends AbstractTestCase {
         ComplexFault cf = (ComplexFault) fault;
         assertEquals(2, cf.getA());
         assertEquals("Complex", cf.getB());  
-        assertEquals(2F, cf.getC());
+        assertEquals(2F, cf.getC(), 0.0F);
         assertEquals(5, cf.getD());
         
         
@@ -259,7 +266,7 @@ public class FaultsServiceTests extends AbstractTestCase {
         cf = (ComplexFault) fault;
         assertEquals(2, cf.getA());
         assertEquals("Complex", cf.getB());  
-        assertEquals(2F, cf.getC());
+        assertEquals(2F, cf.getC(), 0.0F);
         assertEquals(5, cf.getD());
     }
     
@@ -267,7 +274,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that throwing of SimpleFault
      */
-    public void testFaultsService4(){
+    @Test
+    public void testFaultsService4() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -307,7 +315,8 @@ public class FaultsServiceTests extends AbstractTestCase {
      * Test throwing legacy fault
      * Disabled while I fix this test
      */
-    public void testFaultsService5(){
+    @Test
+    public void testFaultsService5() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -343,7 +352,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that throwing of BaseFault_Exception
      */
-    public void testFaultsService6(){
+    @Test
+    public void testFaultsService6() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -379,7 +389,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that throwing of DerivedFault1_Exception
      */
-    public void testFaultsService7(){
+    @Test
+    public void testFaultsService7() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -417,7 +428,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that throwing of DerivedFault1_Exception
      */
-    public void testFaultsService8(){
+    @Test
+    public void testFaultsService8() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -431,7 +443,7 @@ public class FaultsServiceTests extends AbstractTestCase {
             assertNotNull(faultInfo);
             assertEquals(200, faultInfo.getA());
             assertEquals("DF2", faultInfo.getB());
-            assertEquals(80.0F, faultInfo.getC());
+            assertEquals(80.0F, faultInfo.getC(), 0.0F);
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected DerivedFault1_Exception but received " + e.getClass());
         }
@@ -448,7 +460,7 @@ public class FaultsServiceTests extends AbstractTestCase {
             assertNotNull(faultInfo);
             assertEquals(200, faultInfo.getA());
             assertEquals("DF2", faultInfo.getB());
-            assertEquals(80.0F, faultInfo.getC());
+            assertEquals(80.0F, faultInfo.getC(), 0.0F);
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected DerivedFault1_Exception but received " + e.getClass());
         }
@@ -457,7 +469,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that that SOAPFaultException is thrown 
      */
-    public void testFaultsService9a(){
+    @Test
+    public void testFaultsService9a() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -511,7 +524,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that that SOAPFaultException is thrown 
      */
-    public void testFaultsService9b(){
+    @Test
+    public void testFaultsService9b() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -575,7 +589,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that that SOAPFaultException (NPE) is thrown 
      */
-    public void testFaultsService10(){
+    @Test
+    public void testFaultsService10() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -625,7 +640,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that that SOAPFaultException (NPE) is thrown 
      */
-    public void testFaultsService10a(){
+    @Test
+    public void testFaultsService10a() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -676,7 +692,8 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests that that SOAPFaultException (for WebServiceException) is thrown 
      */
-    public void testFaultsService11(){
+    @Test
+    public void testFaultsService11() throws Exception {
         FaultsServicePortType proxy = getProxy();
         Exception exception = null;
         try{
@@ -728,18 +745,19 @@ public class FaultsServiceTests extends AbstractTestCase {
     /**
      * Tests Resource injection
      */
+    @Test
     public void testResourceInjection() throws Exception {
         FaultsServicePortType proxy = getProxy();
         
         float total = proxy.getQuote("INJECTION");
         
         // If resource injection occurred properly, then the a value of 1234567 is expected
-        assertEquals("Resource Injection Failed", 1234567F, total);
+        assertEquals("Resource Injection Failed", 1234567F, total, 0.0F);
         
         // Repeat to verify behavior
         total = proxy.getQuote("INJECTION");
         
         // If resource injection occurred properly, then the a value of 1234567 is expected
-        assertEquals("Resource Injection Failed", 1234567F, total);
+        assertEquals("Resource Injection Failed", 1234567F, total, 0.0F);
     }
 }

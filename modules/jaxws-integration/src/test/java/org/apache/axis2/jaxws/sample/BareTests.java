@@ -22,32 +22,32 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.BareDocLitService;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.xml.ws.BindingProvider;
 
-public class BareTests extends AbstractTestCase {
-
-    static final String ENDPOINT_URL = 
-        "http://localhost:6060/axis2/services/BareDocLitService.DocLitBarePortTypeImplPort";
+public class BareTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     // String containing some characters that require XML encoding
     private static String XMLCHARS = ">><<<3>>>3>>>3";
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(BareTests.class));
+
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("BareDocLitService.DocLitBarePortTypeImplPort");
     }
 
+    @Test
     public void testEchoString() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
-
 
         BareDocLitService service = new BareDocLitService();
         DocLitBarePortType proxy = service.getBareDocLitPort();
@@ -56,7 +56,7 @@ public class BareTests extends AbstractTestCase {
                                   BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(
                                   BindingProvider.SOAPACTION_URI_PROPERTY, "echoString");
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
         String request = "Hello World";
         String response = proxy.echoString(request);
@@ -70,9 +70,9 @@ public class BareTests extends AbstractTestCase {
 
     }
     
+    @Test
     public void testEchoString_xmlencode() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         BareDocLitService service = new BareDocLitService();
         DocLitBarePortType proxy = service.getBareDocLitPort();
@@ -81,7 +81,7 @@ public class BareTests extends AbstractTestCase {
                                   BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(
                                   BindingProvider.SOAPACTION_URI_PROPERTY, "echoString");
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
         String request = XMLCHARS;
         String response = proxy.echoString(request);
@@ -95,9 +95,9 @@ public class BareTests extends AbstractTestCase {
 
     }
     
+    @Test
     public void testTwoWaySync(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         try{
 
@@ -108,7 +108,7 @@ public class BareTests extends AbstractTestCase {
                                       BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
             p.getRequestContext().put(
                                       BindingProvider.SOAPACTION_URI_PROPERTY, "twoWaySimple");
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             String response = proxy.twoWaySimple(10);
             TestLogger.logger.debug("Sync Response =" + response);
@@ -124,16 +124,16 @@ public class BareTests extends AbstractTestCase {
         }
     }
 
+    @Test
     public void testTwoWaySyncWithBodyRouting(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         try{
 
             BareDocLitService service = new BareDocLitService();
             DocLitBarePortType proxy = service.getBareDocLitPort();
             BindingProvider p = (BindingProvider) proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
             String response = proxy.twoWaySimple(10);
             TestLogger.logger.debug("Sync Response =" + response);
@@ -149,9 +149,9 @@ public class BareTests extends AbstractTestCase {
         }
     }
 
+    @Test
     public void testOneWayEmpty(){
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
 
         try{
 
@@ -164,7 +164,7 @@ public class BareTests extends AbstractTestCase {
             p.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,
             "oneWayEmpty");
             p.getRequestContext().put(
-                                      BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+                                      BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             proxy.oneWayEmpty();
             
             // Try the call again
@@ -177,10 +177,9 @@ public class BareTests extends AbstractTestCase {
         }
     }
     
+    @Test
     public void testHeader() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
-
 
         BareDocLitService service = new BareDocLitService();
         DocLitBarePortType proxy = service.getBareDocLitPort();
@@ -189,7 +188,7 @@ public class BareTests extends AbstractTestCase {
                                   BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(
                                   BindingProvider.SOAPACTION_URI_PROPERTY, "headerTest");
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
         String request = "Hello World";
         String response = proxy.headerTest(1, request);
@@ -206,10 +205,9 @@ public class BareTests extends AbstractTestCase {
 
     }
     
+    @Test
     public void testHeaderWithNull() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
-
 
         BareDocLitService service = new BareDocLitService();
         DocLitBarePortType proxy = service.getBareDocLitPort();
@@ -218,7 +216,7 @@ public class BareTests extends AbstractTestCase {
                                   BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(
                                   BindingProvider.SOAPACTION_URI_PROPERTY, "headerTest");
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         
         // Don't write a header element when the @WebParam header parameter is null.
         p.getRequestContext().put(org.apache.axis2.jaxws.Constants.WRITE_HEADER_ELEMENT_IF_NULL, Boolean.FALSE);

@@ -19,36 +19,33 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.wsgen.client.WSGenInterface;
 import org.apache.axis2.jaxws.sample.wsgen.client.WSGenService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import javax.xml.ws.BindingProvider;
 
-public class WSGenTests extends AbstractTestCase {
+public class WSGenTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
     
-    String axisEndpoint = "http://localhost:6060/axis2/services/WSGenService.WSGenPort";
-    
-    public static Test suite() {
-        return getTestSetup(new TestSuite(WrapTests.class));
-    }
-    	
-    
-    
+    @Test
     public void testWSGen() {
         try{
             TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
             
             WSGenService service = new WSGenService();
             WSGenInterface proxy = service.getWSGenPort();
             
             BindingProvider p = (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);  
+                    server.getEndpoint("WSGenService.WSGenPort"));  
             String outString = "this is a wonderful test";
             String s = proxy.echoString(outString);
 

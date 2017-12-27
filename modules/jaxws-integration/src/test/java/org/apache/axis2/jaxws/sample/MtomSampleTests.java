@@ -19,15 +19,12 @@
 
 package org.apache.axis2.jaxws.sample;
 
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.datasource.jaxb.JAXBAttachmentUnmarshallerMonitor;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
-import org.apache.axis2.util.Utils;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -49,44 +46,33 @@ import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.awt.Image;
 import java.io.File;
 import java.util.List;
 
-public class MtomSampleTests extends AbstractTestCase {
+public class MtomSampleTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom.test.org", "MtomSampleService");
     private static final QName QNAME_PORT    = new QName("urn://mtom.test.org", "MtomSample");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
-    
-    private static final String URL_ENDPOINT_MTOMDISABLE = 
-        "http://localhost:6060/axis2/services/MtomSampleMTOMDisableService.MtomSampleMTOMDisableServicePort";
-    private static final String URL_ENDPOINT_MTOMDISABLE2 = 
-        "http://localhost:6060/axis2/services/MtomSampleMTOMDisable2Service.MtomSampleMTOMDisable2ServicePort";
-    private static final String URL_ENDPOINT_MTOMENABLE = 
-        "http://localhost:6060/axis2/services/MtomSampleMTOMEnableService.MtomSampleMTOMEnableServicePort";
-    private static final String URL_ENDPOINT_MTOMDEFAULT = 
-        "http://localhost:6060/axis2/services/MtomSampleMTOMDefaultService.MtomSampleMTOMDefaultServicePort";
-    private static final String URL_ENDPOINT_MTOMTHRESHOLD = 
-        "http://localhost:6060/axis2/services/MtomSampleMTOMThresholdService.MtomSampleMTOMThresholdServicePort";
-    
     
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
     
     private static boolean CHECK_VERSIONMISMATCH = true;
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MtomSampleTests.class));
-    }
-   
     /*
      * Enable attachment Optimization through the SOAPBinding method 
      * -- setMTOMEnabled([true|false])
      * Using SOAP11
      */
+    @Test
     public void testSendImageAttachmentAPI11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -111,7 +97,8 @@ public class MtomSampleTests extends AbstractTestCase {
         
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("MtomSampleService.MtomSampleServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
         //Enable attachment optimization
@@ -134,9 +121,9 @@ public class MtomSampleTests extends AbstractTestCase {
      * Enable attachment Optimization through the MTOMFeature
      * Using SOAP11
      */
+    @Test
     public void testSendImageFeature11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -163,7 +150,8 @@ public class MtomSampleTests extends AbstractTestCase {
 
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("MtomSampleService.MtomSampleServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
         
         List cids = null;
@@ -212,9 +200,9 @@ public class MtomSampleTests extends AbstractTestCase {
     /*
      * Enable attachment Optimization but call an endpoint with @MTOM(enable=false)
      */
+    @Test
     public void testSendImage_MTOMDisable() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -241,7 +229,8 @@ public class MtomSampleTests extends AbstractTestCase {
 
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMDISABLE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("MtomSampleMTOMDisableService.MtomSampleMTOMDisableServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
         
         List cids = null;
@@ -292,9 +281,9 @@ public class MtomSampleTests extends AbstractTestCase {
      * Enable attachment Optimization but call an endpoint with @MTOM(enable=false)
      * which should override the MTOM BindingType
      */
+    @Test
     public void testSendImage_MTOMDisable2() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -321,7 +310,8 @@ public class MtomSampleTests extends AbstractTestCase {
 
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMDISABLE2);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("MtomSampleMTOMDisable2Service.MtomSampleMTOMDisable2ServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
         
         List cids = null;
@@ -371,9 +361,9 @@ public class MtomSampleTests extends AbstractTestCase {
     /*
      * Enable attachment Optimization but call an endpoint with @MTOM(enable=true)
      */
+    @Test
     public void testSendImage_MTOMEnable() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -400,7 +390,8 @@ public class MtomSampleTests extends AbstractTestCase {
 
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMENABLE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("MtomSampleMTOMEnableService.MtomSampleMTOMEnableServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
         
         List cids = null;
@@ -449,9 +440,9 @@ public class MtomSampleTests extends AbstractTestCase {
     /*
      * Enable attachment Optimization but call an endpoint with @MTOM
      */
+    @Test
     public void testSendImage_MTOMDefault() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -478,7 +469,8 @@ public class MtomSampleTests extends AbstractTestCase {
 
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMDEFAULT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("MtomSampleMTOMDefaultService.MtomSampleMTOMDefaultServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
         
         List cids = null;
@@ -529,9 +521,9 @@ public class MtomSampleTests extends AbstractTestCase {
      * Enable attachment optimization using the SOAP11 binding
      * property for MTOM.
      */
+    @Test
     public void testSendImageAttachmentProperty11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -557,7 +549,8 @@ public class MtomSampleTests extends AbstractTestCase {
         // Create the JAX-WS client needed to send the request with soap 11 binding
         // property for MTOM
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING,
+                server.getEndpoint("MtomSampleService.MtomSampleServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
@@ -576,9 +569,9 @@ public class MtomSampleTests extends AbstractTestCase {
      * Enable attachment optimization using both the SOAP11 binding
      * property for MTOM and the Binding API
      */
+    @Test
     public void testSendImageAttachmentAPIProperty11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -604,7 +597,8 @@ public class MtomSampleTests extends AbstractTestCase {
         // Create the JAX-WS client needed to send the request with soap 11 binding
         // property for MTOM
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING,
+                server.getEndpoint("MtomSampleService.MtomSampleServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
         
@@ -631,9 +625,9 @@ public class MtomSampleTests extends AbstractTestCase {
      * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
      * 
      */
+    @Test
     public void testSendImageAttachmentProperty12() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -659,7 +653,8 @@ public class MtomSampleTests extends AbstractTestCase {
         // Create the JAX-WS client needed to send the request with soap 11 binding
         // property for MTOM
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_MTOM_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_MTOM_BINDING,
+                server.getEndpoint("MtomSampleService.MtomSampleServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
         try {
@@ -720,9 +715,9 @@ public class MtomSampleTests extends AbstractTestCase {
      * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
      * 
      */
+    @Test
     public void testSendImageAttachmentAPI12() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -748,7 +743,8 @@ public class MtomSampleTests extends AbstractTestCase {
         // Create the JAX-WS client needed to send the request with soap 11 binding
         // property for MTOM
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING,
+                server.getEndpoint("MtomSampleService.MtomSampleServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
         
@@ -807,10 +803,9 @@ public class MtomSampleTests extends AbstractTestCase {
     /*
      * Enable attachment Optimization but call an endpoint with @MTOM(enable=true, Threshold = 99000)
      */
-    
+    @Test
     public void testSendImage_setMTOMThreshold() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         System.out.println("testSendImage_setMTOMThreshold()");
         String imageResourceDir = IMAGE_DIR;
         
@@ -837,7 +832,8 @@ public class MtomSampleTests extends AbstractTestCase {
         MTOMFeature mtom21 = new MTOMFeature(true, threshold);
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMTHRESHOLD);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING,
+                server.getEndpoint("MtomSampleMTOMThresholdService.MtomSampleMTOMThresholdServicePort"));
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
         
         List cids = null;

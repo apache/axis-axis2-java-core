@@ -19,11 +19,15 @@
 
 package org.apache.axis2.jaxws.security;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
@@ -31,9 +35,10 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
-public class BasicAuthSecurityTests extends AbstractTestCase {
+public class BasicAuthSecurityTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    private String endpointUrl = "http://localhost:6060/axis2/services/BasicAuthSecurityService.SimpleProviderServiceSOAP11port0";
     private String xmlString = "<invokeOp>test input</invokeOp>";
     private QName SERVICE_QNAME = new QName("http://ws.apache.org/axis2", "BasicAuthSecurityService");
     private QName PORT_QNAME = new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
@@ -41,16 +46,16 @@ public class BasicAuthSecurityTests extends AbstractTestCase {
     private String USER_ID = "testid";
     private String PASSWORD = "testid";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(BasicAuthSecurityTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("BasicAuthSecurityService.SimpleProviderServiceSOAP11port0");
     }
-    
+
+    @Test
     public void testBasicAuth() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
-        		                                endpointUrl,
+                                                getEndpoint(),
         		                                SOAPBinding.SOAP11HTTP_BINDING);
 
         TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
@@ -66,12 +71,12 @@ public class BasicAuthSecurityTests extends AbstractTestCase {
         assertTrue(retVal != null);
     }
     
+    @Test
     public void testBasicAuth_uid_pwd() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
-        		                                endpointUrl,
+                                                getEndpoint(),
         		                                SOAPBinding.SOAP11HTTP_BINDING);
         
         dispatch.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_ID);
@@ -91,12 +96,12 @@ public class BasicAuthSecurityTests extends AbstractTestCase {
         assertTrue(retVal != null);
     }
     
+    @Test
     public void testBasicAuth_uid()throws Exception{
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
-        		                                endpointUrl,
+                                                getEndpoint(),
         		                                SOAPBinding.SOAP11HTTP_BINDING);
         
         dispatch.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_ID);
@@ -111,12 +116,12 @@ public class BasicAuthSecurityTests extends AbstractTestCase {
         TestLogger.logger.debug(">> Response [" + retVal + "]");
     }
     
+    @Test
     public void testBasicAuth_pwd()throws Exception{
         TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
-                                                endpointUrl,
+                                                getEndpoint(),
                                                 SOAPBinding.SOAP11HTTP_BINDING);
 
         dispatch.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
@@ -130,7 +135,7 @@ public class BasicAuthSecurityTests extends AbstractTestCase {
             fail("Set PASSWORD with no USERID: WebServiceException is expected");
         }
         catch(WebServiceException wse){
-            TestLogger.logger.debug(getName() + ": " + wse);
+            TestLogger.logger.debug(wse);
         }
         
         // Try a second time to verify
@@ -143,7 +148,7 @@ public class BasicAuthSecurityTests extends AbstractTestCase {
             fail("Set PASSWORD with no USERID: WebServiceException is expected");
         }
         catch(WebServiceException wse){
-            TestLogger.logger.debug(getName() + ": " + wse);
+            TestLogger.logger.debug(wse);
         }
     }
     

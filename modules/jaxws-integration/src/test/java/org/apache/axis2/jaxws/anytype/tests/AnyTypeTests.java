@@ -32,7 +32,7 @@ import javax.xml.ws.BindingProvider;
 
 public class AnyTypeTests {
     @ClassRule
-    public static Axis2Server server = new Axis2Server("target/repo");
+    public static final Axis2Server server = new Axis2Server("target/repo");
     
     @Test
     public void testAnyTypeElementinWrappedWSDL(){

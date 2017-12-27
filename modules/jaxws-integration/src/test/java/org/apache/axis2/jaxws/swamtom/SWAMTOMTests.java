@@ -17,7 +17,9 @@
  * under the License.
  */package org.apache.axis2.jaxws.swamtom;
 
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -29,36 +31,34 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Tests calling an endpoint that has one operation that
  * uses an MTOM attachment and another operation that uses a SWA
  * attachment.
  */
-public class SWAMTOMTests extends AbstractTestCase {
+public class SWAMTOMTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
+
     private static final QName QNAME_SERVICE = new QName("http://swamtomservice.test.org", 
                                                          "SWAMTOMService");
     private static final QName QNAME_PORT    = new QName("http://swamtomservice.test.org", 
                                                          "SWAMTOMPortTypePort");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/SWAMTOMService.SWAMTOMPortTypePort";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SWAMTOMTests.class));
-    }
-    
-    public Dispatch<SOAPMessage> getDispatch(String soapAction) {
+    public Dispatch<SOAPMessage> getDispatch(String soapAction) throws Exception {
+        String endpoint = server.getEndpoint("SWAMTOMService.SWAMTOMPortTypePort");
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, endpoint);
         Dispatch<SOAPMessage> dispatch = service.createDispatch(QNAME_PORT,
                                                                 SOAPMessage.class,
                                                                 Service.Mode.MESSAGE);
         BindingProvider p = (BindingProvider) dispatch;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, URL_ENDPOINT);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
         p.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, soapAction);
         
@@ -84,6 +84,7 @@ public class SWAMTOMTests extends AbstractTestCase {
      * This test ensures that the toleration of the attachments with legacy (pre WS-I 1.0) content ids.
      * @throws Exception
      */
+    @Test
     public void testSWAAttachments_LegacyContentID() throws Exception {
         String soapAction = "swaAttachment";
         Dispatch<SOAPMessage> dispatch = getDispatch(soapAction);
@@ -201,6 +202,7 @@ public class SWAMTOMTests extends AbstractTestCase {
      * This test ensures that the endpoint can receive and return compliant (pre WS-I 1.0) content ids.
      * @throws Exception
      */
+    @Test
     public void testSWAAttachments_WSI() throws Exception {
         String soapAction = "swaAttachment";
         Dispatch<SOAPMessage> dispatch = getDispatch(soapAction);
@@ -311,6 +313,7 @@ public class SWAMTOMTests extends AbstractTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testSWAAttachments2_WSI() throws Exception {
         String soapAction = "swaAttachment2";
         Dispatch<SOAPMessage> dispatch = getDispatch(soapAction);
@@ -459,6 +462,7 @@ public class SWAMTOMTests extends AbstractTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testSWAAttachments2_Legacy() throws Exception {
         String soapAction = "swaAttachment2";
         Dispatch<SOAPMessage> dispatch = getDispatch(soapAction);

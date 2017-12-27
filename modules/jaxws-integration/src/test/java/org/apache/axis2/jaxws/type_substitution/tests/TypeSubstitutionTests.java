@@ -19,11 +19,10 @@
 
 package org.apache.axis2.jaxws.type_substitution.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -32,15 +31,20 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
-public class TypeSubstitutionTests extends AbstractTestCase {
+public class TypeSubstitutionTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private String NS = "http://apple.org";
     private QName XSI_TYPE = new QName("http://www.w3.org/2001/XMLSchema-instance", "type");
 
-    private String endpointUrl = "http://localhost:6060/axis2/services/AppleFinderService.AppleFinderPort";
     private QName serviceName = new QName(NS, "AppleFinderService");
     private QName portName = new QName(NS, "AppleFinderPort");
     
@@ -51,11 +55,8 @@ public class TypeSubstitutionTests extends AbstractTestCase {
     private String reqMsgEnd = "</soap:Body></soap:Envelope>";
    
     private String GET_APPLES = "<ns2:getApples xmlns:ns2=\"" + NS + "\"/>";
-                
-    public static Test suite() {
-        return getTestSetup(new TestSuite(TypeSubstitutionTests.class));
-    }
-   
+
+    @Test
     public void testTypeSubstitution() throws Exception {
         Dispatch<SOAPMessage> dispatch = createDispatch();
              
@@ -116,7 +117,7 @@ public class TypeSubstitutionTests extends AbstractTestCase {
 
     private Dispatch<SOAPMessage> createDispatch() throws Exception {
         Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
+        svc.addPort(portName, null, server.getEndpoint("AppleFinderService.AppleFinderPort"));
         Dispatch<SOAPMessage> dispatch = 
             svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
         return dispatch;

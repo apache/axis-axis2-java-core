@@ -19,30 +19,30 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.stringlist.sei.StringListPortType;
 import org.apache.axis2.jaxws.sample.stringlist.sei.StringListService;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import javax.xml.ws.BindingProvider;
 
+public class StringListTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-public class StringListTests extends AbstractTestCase {
-    String axisEndpoint = "http://localhost:6060/axis2/services/StringListService.StringListPortTypeImplPort";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(StringListTests.class));
-    }
-
+    @Test
     public void testStringListScenario() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         StringListService sls = new StringListService();
         StringListPortType portType =sls.getStringListPort();
         BindingProvider p =	(BindingProvider)portType;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("StringListService.StringListPortTypeImplPort"));
         String[] send = new String[]{"String1","String2","String3","String Space"};
         // since the array is serilized as xsd:list the string with space will be converted
         // to a new array element. so we send array.length of 3 but get back array.length of 5

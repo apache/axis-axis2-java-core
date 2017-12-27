@@ -18,6 +18,10 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,40 +41,39 @@ import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.headershandler.HeadersClientTrackerHandler;
 import org.apache.axis2.jaxws.sample.headershandler.HeadersHandlerPortType;
 import org.apache.axis2.jaxws.sample.headershandler.HeadersHandlerService;
 import org.apache.axis2.jaxws.sample.headershandler.TestHeaders;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.test.headershandler.HeadersHandlerResponse;
 
 /**
  * @author rott
  *
  */
-public class HeadersHandlerTests extends AbstractTestCase {
+public class HeadersHandlerTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-    String axisEndpoint = "http://localhost:6060/axis2/services/HeadersHandlerService.HeadersHandlerPortTypeImplPort";
-    
     private static final String filelogname = "target/HeadersHandlerTests.log";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(HeadersHandlerTests.class));
-    }
-    
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteFile();
-        super.setUp();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         //deleteFile();
-        super.tearDown();
     }
 
     private void deleteFile() throws Exception {
@@ -78,18 +81,20 @@ public class HeadersHandlerTests extends AbstractTestCase {
         file.delete();  // yes, delete for each retrieval, which should only happen once per test
     }
 
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("HeadersHandlerService.HeadersHandlerPortTypeImplPort");
+    }
 
-
+    @Test
     public void testHeadersHandler() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         HeadersHandlerService service = new HeadersHandlerService();
         HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
         BindingProvider p = (BindingProvider) proxy;
         Map<String, Object> requestCtx = p.getRequestContext();
         
-        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         
         /*
          * add several headers by way of HeadersAdapter property
@@ -212,16 +217,16 @@ public class HeadersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
     
+    @Test
     public void testHeadersHandlerAsyncCallback() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         HeadersHandlerService service = new HeadersHandlerService();
         HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
         BindingProvider p = (BindingProvider) proxy;
         Map<String, Object> requestCtx = p.getRequestContext();
         
-        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
         
         /*
          * add several headers by way of HeadersAdapter property
@@ -350,16 +355,16 @@ public class HeadersHandlerTests extends AbstractTestCase {
         TestLogger.logger.debug("----------------------------------");
     }
     
-    public void testHeadersHandlerServerInboundFault() {
+    @Test
+    public void testHeadersHandlerServerInboundFault() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         HeadersHandlerService service = new HeadersHandlerService();
         HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
         BindingProvider p = (BindingProvider) proxy;
         Map<String, Object> requestCtx = p.getRequestContext();
 
-        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
         /*
          * add several headers by way of HeadersAdapter property
@@ -501,16 +506,17 @@ public class HeadersHandlerTests extends AbstractTestCase {
      * When the response flow is fixed, remove this comment, and remove the '_' from the
      * test method name to enable it.
      */
-    public void _testHeadersHandlerServerInboundFlowReversal() {
+    @Ignore
+    @Test
+    public void testHeadersHandlerServerInboundFlowReversal() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
 
         HeadersHandlerService service = new HeadersHandlerService();
         HeadersHandlerPortType proxy = service.getHeadersHandlerPort();
         BindingProvider p = (BindingProvider) proxy;
         Map<String, Object> requestCtx = p.getRequestContext();
 
-        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
 
         /*
          * add several headers by way of HeadersAdapter property
@@ -641,9 +647,9 @@ public class HeadersHandlerTests extends AbstractTestCase {
      * use it as an alternative to SAAJ.  We have protection built in to prevent handler
      * implementations from doing both.  This method tests for that.
      */
+    @Test
     public void testHeadersHandlerTracker() {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         try {
 
             HeadersHandlerService service = new HeadersHandlerService();
@@ -656,7 +662,7 @@ public class HeadersHandlerTests extends AbstractTestCase {
             p.getBinding().setHandlerChain(handlers);
             Map<String, Object> requestCtx = p.getRequestContext();
 
-            requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            requestCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getEndpoint());
             
             int total = proxy.headersHandler(1, 1);
             fail("Should have received a WebServiceException, but did not.");

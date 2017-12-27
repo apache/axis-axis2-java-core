@@ -22,33 +22,31 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.doclitbaremin.sei.BareDocLitMinService;
 import org.apache.axis2.jaxws.sample.doclitbaremin.sei.DocLitBareMinPortType;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 import javax.xml.ws.BindingProvider;
 
+public class DocLitBareMinTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
-public class DocLitBareMinTests extends AbstractTestCase {
-    String axisEndpoint = "http://localhost:6060/axis2/services/DocLitBareMinPortTypeImplService.DocLitBareMinPortTypeImplPort";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(DocLitBareMinTests.class));
-    }
-    	
-	
+    @Test
     public void testEcho() throws Exception {
         TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
         
         
         BareDocLitMinService service = new BareDocLitMinService();
         DocLitBareMinPortType proxy = service.getBareDocLitMinPort();
         BindingProvider p = (BindingProvider) proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                server.getEndpoint("DocLitBareMinPortTypeImplService.DocLitBareMinPortTypeImplPort"));
         p.getRequestContext().put(
                 BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(

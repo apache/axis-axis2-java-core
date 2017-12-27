@@ -19,15 +19,16 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.mtom1.Base64Binary;
 import org.apache.axis2.jaxws.sample.mtom1.ImageDepot;
 import org.apache.axis2.jaxws.sample.mtom1.Invoke;
 import org.apache.axis2.jaxws.sample.mtom1.ObjectFactory;
 import org.apache.axis2.jaxws.sample.mtom1.SendImageResponse;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
@@ -35,33 +36,39 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.awt.*;
 import java.io.File;
 
-public class MtomSampleByteArrayTests extends AbstractTestCase {
+public class MtomSampleByteArrayTests {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server("target/repo");
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "SendImageService");
     private static final QName QNAME_PORT    = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "sendImageSoap");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/SendImageService.sendImagePort";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+File.separator+"test-resources"+File.separator+"image";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MtomSampleByteArrayTests.class));
+    private static String getEndpoint() throws Exception {
+        return server.getEndpoint("SendImageService.sendImagePort");
     }
-    
+
     /*
      * Enable attachment Optimization through the SOAPBinding method 
      * -- setMTOMEnabled([true|false])
      * Using SOAP11
      */
-    public void _testAttachmentByteArrayAPI11() throws Exception {
+    @Ignore
+    @Test
+    public void testAttachmentByteArrayAPI11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
         Service svc = Service.create(QNAME_SERVICE);
-        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
+        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, getEndpoint());
         
         JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtom1");
         Dispatch<Object> dispatch = svc.createDispatch(QNAME_PORT, jbc, Service.Mode.PAYLOAD);
@@ -98,14 +105,14 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
      * -- setMTOMEnabled([true|false])
      * Using SOAP11
      */
+    @Test
     public void testAttachmentByteArrayAPI11_ClientSendsNonOptimizedMTOM() throws Exception {
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
         Service svc = Service.create(QNAME_SERVICE);
-        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
+        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, getEndpoint());
         
         JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtom1");
         Dispatch<Object> dispatch = svc.createDispatch(QNAME_PORT, jbc, Service.Mode.PAYLOAD);
@@ -141,15 +148,15 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
      * Enable attachment optimization using the SOAP11 binding
      * property for MTOM.
      */
+    @Test
     public void testAttachmentByteArrayProperty11() throws Exception {
         
         TestLogger.logger.debug("----------------------------------");
-        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
         Service svc = Service.create(QNAME_SERVICE);
-        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, URL_ENDPOINT);
+        svc.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, getEndpoint());
         
         JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.mtom1");
         Dispatch<Object> dispatch = svc.createDispatch(QNAME_PORT, jbc, Service.Mode.PAYLOAD);
