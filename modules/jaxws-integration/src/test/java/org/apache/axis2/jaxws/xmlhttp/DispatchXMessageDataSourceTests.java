@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.xmlhttp;
 
+import org.apache.axis2.jaxws.framework.ClientConfigurationContextBinder;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axis2.testutils.Axis2Server;
 import org.junit.Before;
@@ -55,6 +56,9 @@ import java.util.HashMap;
 public class DispatchXMessageDataSourceTests {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo");
+
+    @ClassRule
+    public static final ClientConfigurationContextBinder binder = new ClientConfigurationContextBinder("target/client-repo");
     
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProviderPort");

@@ -28,6 +28,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.apache.axis2.jaxws.framework.ClientConfigurationContextBinder;
 import org.apache.axis2.testutils.Axis2Server;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -54,6 +55,9 @@ import java.util.concurrent.Future;
 public class SoapMessageMUProviderTests {
     @ClassRule
     public static final Axis2Server server = new Axis2Server("target/repo");
+
+    @ClassRule
+    public static final ClientConfigurationContextBinder binder = new ClientConfigurationContextBinder("target/client-repo");
 
     public static final QName serviceName =
             new QName("http://ws.apache.org/axis2", "SoapMessageMUProviderService");

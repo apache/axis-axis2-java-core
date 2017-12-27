@@ -249,6 +249,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/client-repo</outputDirectory>
+                            <axis2xml>test-resources/axis2.xml</axis2xml>
                             <modules>addressing</modules>
                         </configuration>
                     </execution>
@@ -1412,16 +1413,6 @@
                         <property>
                             <name>javax.xml.soap.MetaFactory</name>
                             <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
-                        </property>
-                        <!-- Need this for the client side to pickup an axis2.xml to configure SoapMessageMUProviderChecker -->
-                        <property>
-                            <name>org.apache.axis2.jaxws.config.path</name>
-                            <value>./target/test-classes/axis2.xml</value>
-                        </property>
-                        <!-- Need this for the client side to pickup the addressing mar -->
-                        <property>
-                            <name>org.apache.axis2.jaxws.repo.path</name>
-                            <value>./target/client-repo</value>
                         </property>
                         <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
                         <property>

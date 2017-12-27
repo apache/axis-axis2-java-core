@@ -36,6 +36,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.axis2.jaxws.framework.ClientConfigurationContextBinder;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.testutils.Axis2Server;
 
@@ -53,6 +54,9 @@ import org.junit.Test;
 public class AddressingProviderTests {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/addressing-repo");
+
+    @ClassRule
+    public static final ClientConfigurationContextBinder binder = new ClientConfigurationContextBinder("target/client-repo");
 
     private QName serviceName = new QName("http://addressing.provider.jaxws.axis2.apache.org", "AddressingProviderService");
     private QName portName = new QName("http://addressing.provider.jaxws.axis2.apache.org", "AddressingProviderPort");
