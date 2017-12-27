@@ -48,23 +48,23 @@ public class ResourceInjectionTests extends AbstractTestCase {
      * can successfully get and query the web service.
      */
     public void testEchoWithResourceInjectionAndLifecycleMethods() throws Exception {
-          
-            ResourceInjectionPortType proxy = getProxy();
-            String response = proxy.testInjection("sample");
-            assertTrue("The response was null", response != null);
-            assertTrue("The response was not succesful: " + response, 
-                       response.indexOf("SUCCESS") >= 0);
-            
-            // Repeat to verify behavior
-            response = proxy.testInjection("sample");
-            assertTrue("The response was null", response != null);
-            assertTrue("The response was not succesful: " + response, 
-                       response.indexOf("SUCCESS") >= 0);
-            char[] chars = new char[] {0x15}; // 0x15 is not a valid xml character..and should be filtered
-            String insert = new String(chars);
-            assertTrue("Illegal characters were not filtered: " + response,
-                    response.indexOf(insert) < 0);
         
+        ResourceInjectionPortType proxy = getProxy();
+        String response = proxy.testInjection("sample");
+        assertTrue("The response was null", response != null);
+        assertTrue("The response was not succesful: " + response, 
+                   response.indexOf("SUCCESS") >= 0);
+        
+        // Repeat to verify behavior
+        response = proxy.testInjection("sample");
+        assertTrue("The response was null", response != null);
+        assertTrue("The response was not succesful: " + response, 
+                   response.indexOf("SUCCESS") >= 0);
+        char[] chars = new char[] {0x15}; // 0x15 is not a valid xml character..and should be filtered
+        String insert = new String(chars);
+        assertTrue("Illegal characters were not filtered: " + response,
+                response.indexOf(insert) < 0);
+    
     }
    
     /*
