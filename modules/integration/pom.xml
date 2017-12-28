@@ -83,11 +83,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>org.apache.axis2.osgi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
             <artifactId>addressing</artifactId>
             <version>${project.version}</version>
             <type>mar</type>
