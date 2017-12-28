@@ -35,6 +35,7 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -124,9 +125,7 @@ public class ProxyNonWrappedTests {
             AsyncHandler<ReturnType> handler = new AsyncCallback();
             //Invoke operation Asynchronously.
             Future<?> monitor = proxy.invokeAsync(invokeObj, handler);
-            while(!monitor.isDone()){
-                Thread.sleep(1000);
-            }
+            await(monitor);
             
             
             // Try again
@@ -134,9 +133,7 @@ public class ProxyNonWrappedTests {
             handler = new AsyncCallback();
             //Invoke operation Asynchronously.
             monitor = proxy.invokeAsync(invokeObj, handler);
-            while(!monitor.isDone()){
-                Thread.sleep(1000);
-            }
+            await(monitor);
             TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){ 
             e.printStackTrace(); 

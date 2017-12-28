@@ -32,6 +32,7 @@ import org.test.parallelasync.SleepResponse;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -92,7 +93,7 @@ public class ParallelAsyncTests {
             Response<CustomAsyncResponse> resp2 = port.remappedAsync(request2);
 
             // wait until the response for request #2 is done 
-            waitBlocking(resp2);
+            await(resp2);
 
             // check the waiting request #1
             String asleep = port.isAsleep(request1);
@@ -103,7 +104,7 @@ public class ParallelAsyncTests {
             //System.out.println(title+"iteration ["+i+"]   port.wakeUp(request1 ["+request1+"]) = ["+wake+"]");
 
             // wait until the response for request #1 is done
-            waitBlocking(resp1);
+            await(resp1);
         
             // get the responses
             String req1_result = null;
@@ -241,14 +242,7 @@ public class ParallelAsyncTests {
         String wake1 = port.wakeUp(request1);
         TestLogger.logger.debug("port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
 
-        // wait a bit..
-        Thread.sleep(2000);
-
-        // check the Future
-        if (sr1.isDone())
-        {
-            TestLogger.logger.debug("sr1.isDone[TRUE] ");
-        }
+        await(sr1);
 
         // try to get the response
         boolean gotException = false;
@@ -338,14 +332,7 @@ public class ParallelAsyncTests {
         String wake1 = port.wakeUp(request1);
         TestLogger.logger.debug("port.wakeUp(" + request1 + ") #1 = [" + wake1 + "]");
 
-        // wait a bit..
-        Thread.sleep(2000);
-
-        // check the Future
-        if (sr1.isDone())
-        {
-            TestLogger.logger.debug("sr1.isDone[TRUE] ");
-        }
+        await(sr1);
 
         // try to get the response
         boolean gotException = false;
@@ -575,14 +562,5 @@ public class ParallelAsyncTests {
                 server.getEndpoint("AsyncService.DocLitWrappedPortImplPort"));
         
         return port;
-    }
-    
-    private void waitBlocking(Future<?> monitor){
-        while (!monitor.isDone()){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-        }
     }
 }

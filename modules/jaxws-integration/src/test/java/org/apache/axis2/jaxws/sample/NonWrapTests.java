@@ -38,6 +38,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -190,17 +191,13 @@ public class NonWrapTests {
 
             AsyncCallback callback = new AsyncCallback();
             Future<?> monitor =proxy.twoWayHolderAsync(twh, callback);
-            while(!monitor.isDone()){
-                Thread.sleep(1000);
-            }
+            await(monitor);
             assertNotNull(monitor);
             
             // Repeat to verify behavior
             callback = new AsyncCallback();
             monitor =proxy.twoWayHolderAsync(twh, callback);
-            while(!monitor.isDone()){
-                Thread.sleep(1000);
-            }
+            await(monitor);
             assertNotNull(monitor);
 
             TestLogger.logger.debug("------------------------------");

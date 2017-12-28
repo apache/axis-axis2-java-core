@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -273,10 +274,7 @@ public class HeadersHandlerTests {
         HeadersHandlerAsyncCallback callback = new HeadersHandlerAsyncCallback();
         Future<?> future = proxy.headersHandlerAsync(intParam1, intParam2, callback);
 
-        while (!future.isDone()) {
-            Thread.sleep(1000);
-            TestLogger.logger.debug("Async invocation incomplete");
-        }
+        await(future);
 
         int total = callback.getResponseValue();
         

@@ -32,6 +32,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.apache.axis2.jaxws.framework.TestUtils.checkUnknownHostURL;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -196,10 +197,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
         Future<?> monitor = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent, callback);
 	        
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         String response = callback.getValue();
         assertNotNull("dispatch invoke returned null", response);
@@ -219,10 +217,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
         monitor = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent, callback);
                 
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         response = callback.getValue();
         assertNotNull("dispatch invoke returned null", response);
@@ -254,10 +249,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
         Future<?> monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
     
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         String response = callback.getValue();
         assertNotNull("dispatch invoke returned null", response);
@@ -276,10 +268,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
         monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
     
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         response = callback.getValue();
         assertNotNull("dispatch invoke returned null", response);
@@ -308,10 +297,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
         Response<String> asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
             
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         String response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
@@ -327,10 +313,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
         asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
             
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
@@ -359,10 +342,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (polling) Dispatch with Message Mode");
         Response<String> asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage);
     
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         String response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
@@ -378,10 +358,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (polling) Dispatch with Message Mode");
         asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage);
     
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
@@ -494,10 +471,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
         Future<?> monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
     
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         if (callback.hasError()) {
             Throwable t = callback.getError();
@@ -523,10 +497,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
         monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
     
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         if (callback.hasError()) {
             Throwable t = callback.getError();
@@ -561,10 +532,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
         Response<String> asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
             
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         Throwable ttemp = null;
         try {
@@ -582,10 +550,7 @@ public class StringDispatchTests {
         TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
         asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
             
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         ttemp = null;
         try {

@@ -32,6 +32,7 @@ import org.test.parallelasync.SleepResponse;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.apache.axis2.jaxws.framework.TestUtils.withRetry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -92,7 +93,7 @@ public class AsyncExecutorTests {
             Response<CustomAsyncResponse> resp2 = port.remappedAsync(request2);
 
             // wait until the response for request #2 is done 
-            waitBlocking(resp2);
+            await(resp2);
 
             // check the waiting request #1
             String asleep = port.isAsleep(request1);
@@ -103,7 +104,7 @@ public class AsyncExecutorTests {
             //System.out.println(title+"iteration ["+i+"]   port.wakeUp(request1 ["+request1+"]) = ["+wake+"]");
 
             // wait until the response for request #1 is done
-            waitBlocking(resp1);
+            await(resp1);
         
             // get the responses
             String req1_result = null;
@@ -264,15 +265,6 @@ public class AsyncExecutorTests {
         return port;
     }
     
-    private void waitBlocking(Future<?> monitor){
-        while (!monitor.isDone()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-        }
-    }
-    
     /**
      * Object used to synchronize and communicate between the thread that sends the request and
      * the thread that processes the response.
@@ -410,12 +402,7 @@ public class AsyncExecutorTests {
             final Future<?> sr1 = monitor.futureResponse;
             CallbackHandler<SleepResponse> sleepCallbackHandler1 = monitor.callbackHandler;
             
-            withRetry(new Runnable() {
-                public void run() {
-                    // check the Future
-                    assertTrue("Response is not done!", sr1.isDone());
-                }
-            });
+            await(sr1);
 
             // try to get the response
             try {

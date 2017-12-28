@@ -19,10 +19,14 @@
 
 package org.apache.axis2.jaxws.framework;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.withRetry;
+import static org.junit.Assert.assertTrue;
+
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.concurrent.Future;
 
 import org.apache.axis2.testutils.RuntimeIgnoreException;
 
@@ -56,18 +60,30 @@ public final class TestUtils {
     }
 
     public static void withRetry(Runnable runnable) throws InterruptedException {
-        int retries = 0;
+        int elapsedTime = 0;
+        int interval = 1;
         while (true) {
             try {
                 runnable.run();
                 return;
             } catch (AssertionError ex) {
-                if (retries++ > 60) {
+                if (elapsedTime > 30000) {
                     throw ex;
                 } else {
-                    Thread.sleep(500);
+                    Thread.sleep(interval);
+                    elapsedTime += interval;
+                    interval = Math.min(500, interval*2);
                 }
             }
         }
+    }
+
+    public static void await(final Future<?> future) throws InterruptedException {
+        withRetry(new Runnable() {
+            public void run() {
+                // check the Future
+                assertTrue("Response is not done!", future.isDone());
+            }
+        });
     }
 }

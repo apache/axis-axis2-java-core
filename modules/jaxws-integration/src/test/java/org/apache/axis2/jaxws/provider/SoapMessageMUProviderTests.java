@@ -37,6 +37,7 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -322,10 +323,7 @@ public class SoapMessageMUProviderTests {
         }
         
         try {
-            while (!asyncResponse.isDone()) {
-                System.out.println(">> Async invocation still not complete");
-                Thread.sleep(1000);
-            }
+            await(asyncResponse);
             SOAPMessage response = asyncResponse.get();
             fail("Should have caught a mustUnderstand exception");
         } catch (Exception e) {
@@ -373,10 +371,7 @@ public class SoapMessageMUProviderTests {
         try {
             Response<SOAPMessage> asyncResponse = dispatch.invokeAsync(message);
             assertNotNull("No response received", asyncResponse);
-            while (!asyncResponse.isDone()) {
-                System.out.println(">> Async invocation still not complete");
-                Thread.sleep(1000);
-            }
+            await(asyncResponse);
             SOAPMessage response = asyncResponse.get();
             assertNotNull("Response was nulL", response);
             String responseString = AttachmentUtil.toString(response);
@@ -420,10 +415,7 @@ public class SoapMessageMUProviderTests {
         }
         
         try {
-            while (!asyncResponse.isDone()) {
-                System.out.println(">> Async invocation still not complete");
-                Thread.sleep(1000);
-            }
+            await(asyncResponse);
             assertTrue("Did not receive exception", callback.hasError());
             assertTrue("Did not received expected exception", 
                     callback.getError().toString().contains("Must Understand check failed for header http://ws.apache.org/axis2 : muserver"));
@@ -478,10 +470,7 @@ public class SoapMessageMUProviderTests {
         }
         
         try {
-            while (!asyncResponse.isDone()) {
-                System.out.println(">> Async invocation still not complete");
-                Thread.sleep(1000);
-            }
+            await(asyncResponse);
             assertFalse("Receive unexpected exception", callback.hasError());
             SOAPMessage response = callback.getValue();
             assertNotNull(response);

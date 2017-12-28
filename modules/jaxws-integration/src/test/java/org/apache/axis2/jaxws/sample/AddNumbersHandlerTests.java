@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.sample;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -1033,10 +1034,7 @@ public class AddNumbersHandlerTests {
             AddNumbersHandlerAsyncCallback callback = new AddNumbersHandlerAsyncCallback();
             Future<?> future = proxy.addNumbersHandlerAsync(10, 10, callback);
 
-            while (!future.isDone()) {
-                Thread.sleep(1000);
-                TestLogger.logger.debug("Async invocation incomplete");
-            }
+            await(future);
             
             int total = callback.getResponseValue();
             
@@ -1114,10 +1112,7 @@ public class AddNumbersHandlerTests {
             AddNumbersHandlerAsyncCallback callback = new AddNumbersHandlerAsyncCallback();
             Future<?> future = proxy.addNumbersHandlerAsync(10, 10, callback);
 
-            while (!future.isDone()) {
-                Thread.sleep(1000);
-                TestLogger.logger.debug("Async invocation incomplete");
-            }
+            await(future);
             
             int total = callback.getResponseValue();
             assertEquals("Local exception should cause value to be 0", 0, total);

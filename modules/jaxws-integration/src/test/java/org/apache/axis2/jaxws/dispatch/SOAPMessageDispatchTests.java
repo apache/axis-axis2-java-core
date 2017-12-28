@@ -31,6 +31,7 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
@@ -110,10 +111,7 @@ public class SOAPMessageDispatchTests {
         Future<?> monitor = dispatch.invokeAsync(msgObject, ac);
 
         assertNotNull("dispatch invokeAsync returned null Future<?>", monitor);
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
 
         SOAPMessage response = ac.getValue();
         assertNotNull("dispatch invoke returned null", response);
@@ -126,10 +124,7 @@ public class SOAPMessageDispatchTests {
         monitor = dispatch.invokeAsync(msgObject, ac);
 
         assertNotNull("dispatch invokeAsync returned null Future<?>", monitor);
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
 
         response = ac.getValue();
         assertNotNull("dispatch invoke returned null", response);
@@ -159,10 +154,7 @@ public class SOAPMessageDispatchTests {
         Response<SOAPMessage> asyncResponse = dispatch.invokeAsync(msgObject);
 
         assertNotNull("dispatch invokeAsync returned null Response", asyncResponse);
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
 
         SOAPMessage response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
@@ -175,10 +167,7 @@ public class SOAPMessageDispatchTests {
         asyncResponse = dispatch.invokeAsync(msgObject);
 
         assertNotNull("dispatch invokeAsync returned null Response", asyncResponse);
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
 
         response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);

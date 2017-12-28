@@ -32,6 +32,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -186,10 +187,7 @@ public class StreamSourceDispatchTests {
         Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
         // Wait for the async response to be returned
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         Source response = callbackHandler.getValue();
         assertNotNull(response);
@@ -215,10 +213,7 @@ public class StreamSourceDispatchTests {
         monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
         // Wait for the async response to be returned
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         response = callbackHandler.getValue();
         assertNotNull(response);
@@ -261,10 +256,7 @@ public class StreamSourceDispatchTests {
         Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
         // Wait for the async response to be returned
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         Source response = callbackHandler.getValue();
         assertNotNull(response);
@@ -295,10 +287,7 @@ public class StreamSourceDispatchTests {
         monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
         // Wait for the async response to be returned
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(monitor);
         
         response = callbackHandler.getValue();
         assertNotNull(response);
@@ -337,10 +326,7 @@ public class StreamSourceDispatchTests {
         Response<Source> asyncResponse = dispatch.invokeAsync(srcStream);
 
         // Wait for the async response to be returned
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         Source response = asyncResponse.get();
         assertNotNull(response);
@@ -365,10 +351,7 @@ public class StreamSourceDispatchTests {
         asyncResponse = dispatch.invokeAsync(srcStream);
 
         // Wait for the async response to be returned
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         response = asyncResponse.get();
         assertNotNull(response);
@@ -408,10 +391,7 @@ public class StreamSourceDispatchTests {
         Response<Source> asyncResponse = dispatch.invokeAsync(srcStream);
 
         // Wait for the async response to be returned
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         Source response = asyncResponse.get();
         assertNotNull(response);
@@ -437,10 +417,7 @@ public class StreamSourceDispatchTests {
         asyncResponse = dispatch.invokeAsync(srcStream);
 
         // Wait for the async response to be returned
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         response = asyncResponse.get();
         assertNotNull(response);

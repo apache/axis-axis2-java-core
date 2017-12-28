@@ -41,6 +41,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.apache.axis2.jaxws.framework.TestUtils.checkUnknownHostURL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -253,10 +254,7 @@ public class FaultyWebServiceTests {
         FaultyAsyncHandler callback = new FaultyAsyncHandler();
         Future<?> future = proxy.faultyWebServiceAsync(1, callback);
 
-        while (!future.isDone()) {
-            Thread.sleep(1000);
-            TestLogger.logger.debug("Async invocation incomplete");
-        }
+        await(future);
 
         Exception e = callback.getException();
 
@@ -275,10 +273,7 @@ public class FaultyWebServiceTests {
         callback = new FaultyAsyncHandler();
         future = proxy.faultyWebServiceAsync(1, callback);
 
-        while (!future.isDone()) {
-            Thread.sleep(1000);
-            TestLogger.logger.debug("Async invocation incomplete");
-        }
+        await(future);
 
         e = callback.getException();
 
@@ -311,10 +306,7 @@ public class FaultyWebServiceTests {
                                   badEndpoint);
 
         Future<?> future = proxy.faultyWebServiceAsync(1);
-        while (!future.isDone()) {
-            Thread.sleep(1000);
-            TestLogger.logger.debug("Async invocation incomplete");
-        }
+        await(future);
 
         Exception e = null;
         try {
@@ -337,10 +329,7 @@ public class FaultyWebServiceTests {
         
         // Repeat to verify behavior
         proxy.faultyWebServiceAsync(1);
-        while (!future.isDone()) {
-            Thread.sleep(1000);
-            TestLogger.logger.debug("Async invocation incomplete");
-        }
+        await(future);
 
         e = null;
         try {
@@ -377,10 +366,7 @@ public class FaultyWebServiceTests {
         FaultyAsyncHandler callback = new FaultyAsyncHandler();
         Future<?> future = proxy.faultyWebServiceAsync(1, callback);
 
-        while (!future.isDone()) {
-            Thread.sleep(1000);
-            TestLogger.logger.debug("Async invocation incomplete");
-        }
+        await(future);
 
         Exception e = callback.getException();
         e.printStackTrace();
@@ -399,10 +385,7 @@ public class FaultyWebServiceTests {
         callback = new FaultyAsyncHandler();
         future = proxy.faultyWebServiceAsync(1, callback);
 
-        while (!future.isDone()) {
-            Thread.sleep(1000);
-            TestLogger.logger.debug("Async invocation incomplete");
-        }
+        await(future);
 
         e = callback.getException();
         e.printStackTrace();

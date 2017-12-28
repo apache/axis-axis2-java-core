@@ -33,6 +33,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
@@ -204,10 +205,7 @@ public class ProxyTests {
         TestLogger.logger.debug(">> Invoking Proxy with async polling request");
         Response<ReturnType> asyncResponse = proxy.invokeAsync(request);
 
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         ReturnType response = asyncResponse.get();
         assertNotNull(response);
@@ -215,10 +213,7 @@ public class ProxyTests {
         // Try again
         asyncResponse = proxy.invokeAsync(request);
 
-        while (!asyncResponse.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
+        await(asyncResponse);
         
         response = asyncResponse.get();
         assertNotNull(response);

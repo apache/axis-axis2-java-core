@@ -35,6 +35,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -114,10 +115,7 @@ public class JAXBDispatchTests {
         TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
         Future<?> monitor = dispatchPayload.invokeAsync(request, callback);
         
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-             Thread.sleep(1000);
-        }
+        await(monitor);
         
         EchoStringResponse response = (EchoStringResponse) callback.getData();
         assertNotNull(response);
@@ -138,10 +136,7 @@ public class JAXBDispatchTests {
         TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
         monitor = dispatchPayload.invokeAsync(request, callback);
         
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-             Thread.sleep(1000);
-        }
+        await(monitor);
         
         response = (EchoStringResponse) callback.getData();
         assertNotNull(response);
@@ -236,10 +231,7 @@ public class JAXBDispatchTests {
         TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
         Future<?> monitor = dispatchMessage.invokeAsync(request, callback);
         
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-             Thread.sleep(1000);
-        }
+        await(monitor);
         
         JAXBElement<Envelope> jaxbResponse = (JAXBElement<Envelope>) callback.getData();
         
@@ -262,10 +254,7 @@ public class JAXBDispatchTests {
         TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
         monitor = dispatchMessage.invokeAsync(request, callback);
         
-        while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-             Thread.sleep(1000);
-        }
+        await(monitor);
         
         jaxbResponse = (JAXBElement<Envelope>) callback.getData();
         
