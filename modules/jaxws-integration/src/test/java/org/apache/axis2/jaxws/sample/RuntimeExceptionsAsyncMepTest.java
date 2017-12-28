@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.checkUnknownHostURL;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -38,7 +39,6 @@ import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.asyncdoclit.client.AsyncClient;
 import org.apache.axis2.jaxws.sample.asyncdoclit.client.AsyncPort;
 import org.apache.axis2.jaxws.sample.asyncdoclit.client.AsyncService;
@@ -57,7 +57,7 @@ import org.test.asyncdoclit.ThrowExceptionResponse;
  * Test for varios async exceptions whern AsyncMEP is enabled
  */
 @RunWith(Junit4ClassRunnerWithRuntimeIgnore.class)
-public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
+public class RuntimeExceptionsAsyncMepTest {
     @ClassRule
     public static final Axis2Server server = new Axis2Server("target/addressing-repo");
 

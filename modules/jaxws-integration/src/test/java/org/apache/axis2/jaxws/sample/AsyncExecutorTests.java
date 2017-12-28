@@ -32,6 +32,7 @@ import org.test.parallelasync.SleepResponse;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.withRetry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -346,22 +347,6 @@ public class AsyncExecutorTests {
                     title + " port.sleepAsync(" + request1 + ", callbackHander1)  #1 .....submitted.");
             
             // Return from this thread immediately
-        }
-    }
-    
-    static void withRetry(Runnable runnable) throws InterruptedException {
-        int retries = 0;
-        while (true) {
-            try {
-                runnable.run();
-                return;
-            } catch (AssertionError ex) {
-                if (retries++ > 60) {
-                    throw ex;
-                } else {
-                    Thread.sleep(500);
-                }
-            }
         }
     }
     

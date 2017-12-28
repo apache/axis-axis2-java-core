@@ -23,7 +23,6 @@
 package org.apache.axis2.jaxws.sample;
 
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
@@ -42,6 +41,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.checkUnknownHostURL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -52,7 +52,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @RunWith(Junit4ClassRunnerWithRuntimeIgnore.class)
-public class FaultyWebServiceTests extends AbstractTestCase {
+public class FaultyWebServiceTests {
     @ClassRule
     public static final Axis2Server server = new Axis2Server("target/repo");
 

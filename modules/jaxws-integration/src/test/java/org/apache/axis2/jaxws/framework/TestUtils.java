@@ -26,7 +26,9 @@ import java.net.UnknownHostException;
 
 import org.apache.axis2.testutils.RuntimeIgnoreException;
 
-public class AbstractTestCase {
+public final class TestUtils {
+    private TestUtils() {}
+
     /**
      * Check that the given URL refers to an unknown host. More precisely, this method checks that
      * the DNS resolver will not be able to resolve the host name. If the expectation is not met,
@@ -41,7 +43,7 @@ public class AbstractTestCase {
      * @param url
      * @throws MalformedURLException
      */
-    protected static void checkUnknownHostURL(String url) throws MalformedURLException {
+    public static void checkUnknownHostURL(String url) throws MalformedURLException {
         String host = new URL(url).getHost();
         InetAddress addr;
         try {
@@ -51,5 +53,21 @@ public class AbstractTestCase {
             return;
         }
         throw new RuntimeIgnoreException(host + " resolves to " + addr.getHostAddress() + "; skipping test case");
+    }
+
+    public static void withRetry(Runnable runnable) throws InterruptedException {
+        int retries = 0;
+        while (true) {
+            try {
+                runnable.run();
+                return;
+            } catch (AssertionError ex) {
+                if (retries++ > 60) {
+                    throw ex;
+                } else {
+                    Thread.sleep(500);
+                }
+            }
+        }
     }
 }

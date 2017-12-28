@@ -20,7 +20,6 @@
 package org.apache.axis2.jaxws.dispatch;
 
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.testutils.Axis2Server;
 import org.apache.axis2.testutils.Junit4ClassRunnerWithRuntimeIgnore;
 import org.junit.ClassRule;
@@ -33,6 +32,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
+import static org.apache.axis2.jaxws.framework.TestUtils.checkUnknownHostURL;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @RunWith(Junit4ClassRunnerWithRuntimeIgnore.class)
-public class StringDispatchTests extends AbstractTestCase {
+public class StringDispatchTests {
     @ClassRule
     public static final Axis2Server server = new Axis2Server("target/repo");
 
