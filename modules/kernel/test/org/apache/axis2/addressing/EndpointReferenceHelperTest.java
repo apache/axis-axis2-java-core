@@ -29,6 +29,9 @@ import org.apache.axis2.addressing.metadata.WSDLLocation;
 
 import javax.xml.namespace.QName;
 
+import static com.google.common.truth.Truth.assertAbout;
+import static org.apache.axiom.truth.xml.XMLTruth.xml;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -81,7 +84,7 @@ public class EndpointReferenceHelperTest extends TestCase {
         EndpointReference deser = EndpointReferenceHelper.fromOM(om);
 
         assertEquals(epr.getAddress(), deser.getAddress());
-        ArrayList addrAttrs = deser.getAddressAttributes();
+        ArrayList<OMAttribute> addrAttrs = deser.getAddressAttributes();
         compareAttributes(attr1, (OMAttribute)addrAttrs.get(0));
         compareAttributes(attr2, (OMAttribute)addrAttrs.get(1));
 
@@ -90,15 +93,15 @@ public class EndpointReferenceHelperTest extends TestCase {
         compareAttributes(attr2, (OMAttribute)attrs.get(1));
 
         ArrayList metadata = deser.getMetaData();
-        assertEquals(md1, metadata.get(0));
-        assertEquals(md2, metadata.get(1));
+        assertAbout(xml()).that(metadata.get(0)).hasSameContentAs(md1);
+        assertAbout(xml()).that(metadata.get(1)).hasSameContentAs(md2);
         ArrayList mdAttrs = deser.getMetadataAttributes();
         compareAttributes(attr1, (OMAttribute)mdAttrs.get(0));
         compareAttributes(attr2, (OMAttribute)mdAttrs.get(1));
 
         ArrayList extelts = deser.getExtensibleElements();
-        assertEquals(ext1, extelts.get(0));
-        assertEquals(ext2, extelts.get(1));
+        assertAbout(xml()).that(extelts.get(0)).hasSameContentAs(ext1);
+        assertAbout(xml()).that(extelts.get(1)).hasSameContentAs(ext2);
 
         Map m = deser.getAllReferenceParameters();
         assertEquals("rp1", ((OMElement) m.get(rp1Qname)).getText());
@@ -110,23 +113,23 @@ public class EndpointReferenceHelperTest extends TestCase {
 
         assertEquals(epr.getAddress(), deser.getAddress());
         addrAttrs = deser.getAddressAttributes();
-        assertEquals(attr1, addrAttrs.get(0));
-        assertEquals(attr2, addrAttrs.get(1));
+        compareAttributes(attr1, addrAttrs.get(0));
+        compareAttributes(attr2, addrAttrs.get(1));
 
         attrs = deser.getAttributes();
         compareAttributes(attr1, (OMAttribute)attrs.get(0));
         compareAttributes(attr2, (OMAttribute)attrs.get(1));
 
         metadata = deser.getMetaData();
-        assertEquals(md1, metadata.get(0));
-        assertEquals(md2, metadata.get(1));
+        assertAbout(xml()).that(metadata.get(0)).hasSameContentAs(md1);
+        assertAbout(xml()).that(metadata.get(1)).hasSameContentAs(md2);
         mdAttrs = deser.getMetadataAttributes();
         compareAttributes(attr1, (OMAttribute)mdAttrs.get(0));
         compareAttributes(attr2, (OMAttribute)mdAttrs.get(1));
 
         extelts = deser.getExtensibleElements();
-        assertEquals(ext1, extelts.get(0));
-        assertEquals(ext2, extelts.get(1));
+        assertAbout(xml()).that(extelts.get(0)).hasSameContentAs(ext1);
+        assertAbout(xml()).that(extelts.get(1)).hasSameContentAs(ext2);
 
         m = deser.getAllReferenceParameters();
         assertEquals("rp1", ((OMElement) m.get(rp1Qname)).getText());
@@ -204,8 +207,8 @@ public class EndpointReferenceHelperTest extends TestCase {
         assertNull(metadata);
 
         ArrayList extelts = deser.getExtensibleElements();
-        assertEquals(ext1, extelts.get(0));
-        assertEquals(ext2, extelts.get(1));
+        assertAbout(xml()).that(extelts.get(0)).hasSameContentAs(ext1);
+        assertAbout(xml()).that(extelts.get(1)).hasSameContentAs(ext2);
 
         //All reference properties are returned as reference parameters.
         Map m = deser.getAllReferenceParameters();
@@ -233,8 +236,8 @@ public class EndpointReferenceHelperTest extends TestCase {
         assertNull(metadata);
 
         extelts = deser.getExtensibleElements();
-        assertEquals(ext1, extelts.get(0));
-        assertEquals(ext2, extelts.get(1));
+        assertAbout(xml()).that(extelts.get(0)).hasSameContentAs(ext1);
+        assertAbout(xml()).that(extelts.get(1)).hasSameContentAs(ext2);
 
         //All reference properties are returned as reference parameters.
         m = deser.getAllReferenceParameters();
