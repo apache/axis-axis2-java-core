@@ -1401,6 +1401,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <trimStackTrace>false</trimStackTrace>
                     <systemProperties>
                         <property>
                             <name>java.io.tmpdir</name>
