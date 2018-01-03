@@ -65,7 +65,6 @@ public class LongRunningServiceTest extends UtilServerBasedTestCase
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start();
         UtilServer.engageAddressingModule();
         AxisService service =
                 Utils.createSimpleService(serviceName,

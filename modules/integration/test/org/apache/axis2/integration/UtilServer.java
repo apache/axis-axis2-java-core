@@ -39,8 +39,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 public class UtilServer {
-    private static int count = 0;
-
     private static SimpleHTTPServer receiver;
 
     public static final int TESTING_PORT = PortAllocator.allocatePort();
@@ -73,26 +71,28 @@ public class UtilServer {
 
 
     public static synchronized void start(String repository) throws Exception {
-        if (count == 0) {
-            ConfigurationContext er = getNewConfigurationContext(repository);
+        if (receiver != null) {
+            throw new IllegalStateException("Server already running");
+        }
 
-            receiver = new SimpleHTTPServer(er, TESTING_PORT);
+        ConfigurationContext er = getNewConfigurationContext(repository);
 
-            try {
-                receiver.start();
-                ListenerManager listenerManager = er.getListenerManager();
-                TransportInDescription trsIn = new TransportInDescription(Constants.TRANSPORT_HTTP);
-                trsIn.setReceiver(receiver);
-                if (listenerManager == null) {
-                    listenerManager = new ListenerManager();
-                    listenerManager.init(er);
-                }
-                listenerManager.addListener(trsIn, true);
-                System.out.print("Server started on port "
-                        + TESTING_PORT + ".....");
-            } catch (Exception e) {
-                e.printStackTrace();
+        receiver = new SimpleHTTPServer(er, TESTING_PORT);
+
+        try {
+            receiver.start();
+            ListenerManager listenerManager = er.getListenerManager();
+            TransportInDescription trsIn = new TransportInDescription(Constants.TRANSPORT_HTTP);
+            trsIn.setReceiver(receiver);
+            if (listenerManager == null) {
+                listenerManager = new ListenerManager();
+                listenerManager.init(er);
             }
+            listenerManager.addListener(trsIn, true);
+            System.out.print("Server started on port "
+                    + TESTING_PORT + ".....");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         try {
@@ -100,9 +100,6 @@ public class UtilServer {
         } catch (InterruptedException e1) {
             throw new AxisFault("Thread interuptted", e1);
         }
-
-
-        count++;
     }
 
     public static ConfigurationContext getNewConfigurationContext(
@@ -131,22 +128,22 @@ public class UtilServer {
     }
 
     public static synchronized void stop() throws AxisFault {
-        if (count == 1) {
-            receiver.stop();
-            while (receiver.isRunning()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e1) {
-                    //nothing to do here
-                }
-            }
-            count = 0;
-// tp.doStop();
-            System.out.print("Server stopped .....");
-        } else {
-            count--;
+        if (receiver == null) {
+            throw new IllegalStateException();
         }
+
+        receiver.stop();
+        while (receiver.isRunning()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e1) {
+                //nothing to do here
+            }
+        }
+// tp.doStop();
+        System.out.print("Server stopped .....");
         receiver.getConfigurationContext().terminate();
+        receiver = null;
     }
 
     public static ConfigurationContext getConfigurationContext() {
