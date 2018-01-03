@@ -94,12 +94,6 @@ public class UtilServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e1) {
-            throw new AxisFault("Thread interuptted", e1);
-        }
     }
 
     public static ConfigurationContext getNewConfigurationContext(
