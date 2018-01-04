@@ -26,8 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.axiom.om.util.LogOutputStream;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.util.LogWriter;
+import org.apache.commons.io.output.WriterOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
@@ -71,9 +72,7 @@ public class JAXWS2WSDLCodegenEngine {
      *             the exception
      */
     public void generate() throws Exception {
-        LogOutputStream logOutputStream = new LogOutputStream(log,
-                Integer.MAX_VALUE);
-        WsgenTool genTool = new WsgenTool(logOutputStream);
+        WsgenTool genTool = new WsgenTool(new WriterOutputStream(new LogWriter(log)));
 
         List<String> args = new ArrayList<String>();
         configurImportToolOptions(args);

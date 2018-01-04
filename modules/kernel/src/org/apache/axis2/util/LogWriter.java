@@ -17,7 +17,7 @@
  *  under the License.
  */
 
-package org.apache.axis2.transport.mail;
+package org.apache.axis2.util;
 
 import java.io.Writer;
 
