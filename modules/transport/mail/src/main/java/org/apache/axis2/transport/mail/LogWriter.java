@@ -27,54 +27,54 @@ import org.apache.commons.logging.Log;
  * {@link Writer} implementation that redirects to a logger.
  */
 public class LogWriter extends Writer {
-	private final Log log;
-	private final String endOfLine;
-	private final StringBuffer lineBuffer = new StringBuffer();
-	private int endOfLineMatch;
-	
-	public LogWriter(Log log, String endOfLine) {
-		this.log = log;
-		this.endOfLine = endOfLine;
-	}
+    private final Log log;
+    private final String endOfLine;
+    private final StringBuffer lineBuffer = new StringBuffer();
+    private int endOfLineMatch;
+    
+    public LogWriter(Log log, String endOfLine) {
+        this.log = log;
+        this.endOfLine = endOfLine;
+    }
 
-	public LogWriter(Log log) {
-		this(log, System.getProperty("line.separator"));
-	}
-	
-	@Override
-	public void write(char[] cbuf, int off, int len) {
-		int start = off;
-		for (int i=off; i<off+len; i++) {
-			if (cbuf[i] == endOfLine.charAt(endOfLineMatch)) {
-				endOfLineMatch++;
-				if (endOfLineMatch == endOfLine.length()) {
-					lineBuffer.append(cbuf, start, i-start+1);
-					lineBuffer.setLength(lineBuffer.length()-endOfLine.length());
-					flushLineBuffer();
-					start = i+1;
-					endOfLineMatch = 0;
-				}
-			} else {
-				endOfLineMatch = 0;
-			}
-		}
-		lineBuffer.append(cbuf, start, off+len-start);
-	}
+    public LogWriter(Log log) {
+        this(log, System.getProperty("line.separator"));
+    }
+    
+    @Override
+    public void write(char[] cbuf, int off, int len) {
+        int start = off;
+        for (int i=off; i<off+len; i++) {
+            if (cbuf[i] == endOfLine.charAt(endOfLineMatch)) {
+                endOfLineMatch++;
+                if (endOfLineMatch == endOfLine.length()) {
+                    lineBuffer.append(cbuf, start, i-start+1);
+                    lineBuffer.setLength(lineBuffer.length()-endOfLine.length());
+                    flushLineBuffer();
+                    start = i+1;
+                    endOfLineMatch = 0;
+                }
+            } else {
+                endOfLineMatch = 0;
+            }
+        }
+        lineBuffer.append(cbuf, start, off+len-start);
+    }
 
-	@Override
-	public void close() {
-		if (lineBuffer.length() > 0) {
-			flushLineBuffer();
-		}
-	}
-	
-	@Override
-	public void flush() {
-		// Nothing to do
-	}
+    @Override
+    public void close() {
+        if (lineBuffer.length() > 0) {
+            flushLineBuffer();
+        }
+    }
+    
+    @Override
+    public void flush() {
+        // Nothing to do
+    }
 
-	private void flushLineBuffer() {
-		log.info(lineBuffer.toString());
-		lineBuffer.setLength(0);
-	}
+    private void flushLineBuffer() {
+        log.info(lineBuffer.toString());
+        lineBuffer.setLength(0);
+    }
 }
