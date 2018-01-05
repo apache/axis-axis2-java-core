@@ -72,11 +72,9 @@ public class SchemaValidationHandler extends AbstractHandler {
         try {
             schema.newValidator().validate(msgContext.getEnvelope().getBody().getFirstElement().getSAXSource(true));
         } catch (SAXException ex) {
+            throw new AxisFault("Failed to validate message: " + ex.getMessage(), ex);
+        } catch (OMException | IOException ex) {
             throw new AxisFault("Failed to validate message", ex);
-        } catch (IOException ex) {
-            throw new AxisFault("Failed to validate message", ex);
-        } catch (OMException ex) {
-            throw AxisFault.makeFault(ex);
         }
         return InvocationResponse.CONTINUE;
     }
