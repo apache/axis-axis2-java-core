@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.sample;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -36,6 +37,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -866,7 +868,7 @@ public class AddNumbersHandlerTests {
      * handleFault() methods are driven.  This is the default behavior.
      */
     @Test
-    public void testAddNumbersClientHandlerWithLocalException() {
+    public void testAddNumbersClientHandlerWithLocalException() throws Exception {
         try{
             TestLogger.logger.debug("----------------------------------");
             
@@ -889,10 +891,9 @@ public class AddNumbersHandlerTests {
             int total = proxy.addNumbersHandler(1,2);
             
             fail("Should have got an exception, but we didn't.");
-        } catch(Exception e) {
-            assertTrue("Exception should be SOAPFaultException. Found " +e.getClass() + " "+ e.getMessage(), e instanceof SOAPFaultException);
+        } catch (SOAPFaultException e) {
             SOAPFault soapFault = ((SOAPFaultException) e).getFault();
-            assertTrue("Cause should be instanceof UnknownHostException", (e.getCause() instanceof java.net.UnknownHostException));
+            assertThat(e.getCause()).isInstanceOf(UnknownHostException.class);
             
             String log = readLogFile();
             String expected_calls = "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_OUTBOUND\n"
@@ -942,7 +943,7 @@ public class AddNumbersHandlerTests {
         } catch(Exception e) {
             assertTrue("Exception should be WebServiceException.", e instanceof WebServiceException);
             assertFalse("Exception should not be SOAPFaultException.", e instanceof SOAPFaultException);
-            assertTrue("Cause should be instanceof UnknownHostException", (e.getCause() instanceof java.net.UnknownHostException));
+            assertTrue("Cause should be instanceof UnknownHostException", (e.getCause() instanceof UnknownHostException));
             
             String log = readLogFile();
             String expected_calls = "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_OUTBOUND\n"
