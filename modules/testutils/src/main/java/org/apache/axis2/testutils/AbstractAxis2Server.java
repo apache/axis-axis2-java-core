@@ -23,42 +23,31 @@ import javax.net.ssl.SSLContext;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.junit.rules.ExternalResource;
+import org.apache.axis2.engine.AxisConfiguration;
 
-public abstract class AbstractAxis2Server extends ExternalResource {
-    private final String repositoryPath;
-    private ConfigurationContext configurationContext;
+public abstract class AbstractAxis2Server extends AbstractConfigurationContextRule {
+    private final AxisServiceFactory[] serviceFactories;
 
-    public AbstractAxis2Server(String repositoryPath) {
-        if (repositoryPath == null || repositoryPath.trim().length() == 0) {
-            throw new IllegalArgumentException("Axis2 repository must not be null or empty");
-        }
-        this.repositoryPath = repositoryPath;
-    }
-
-    final String getRepositoryPath() {
-        return repositoryPath;
-    }
-
-    public final ConfigurationContext getConfigurationContext() {
-        if (configurationContext == null) {
-            throw new IllegalStateException();
-        }
-        return configurationContext;
+    public AbstractAxis2Server(String repositoryPath, AxisServiceFactory... serviceFactories) {
+        super(repositoryPath);
+        this.serviceFactories = serviceFactories;
     }
 
     @Override
     protected void before() throws Throwable {
-        configurationContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
+        super.before();
+        ConfigurationContext configurationContext = getConfigurationContext();
+        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
+        for (AxisServiceFactory serviceFactory : serviceFactories) {
+            axisConfiguration.addService(serviceFactory.createService(axisConfiguration));
+        }
         startServer(configurationContext);
     }
 
     @Override
     protected void after() {
         stopServer();
-        configurationContext = null;
+        super.after();
     }
 
     protected abstract void startServer(ConfigurationContext configurationContext) throws Throwable;

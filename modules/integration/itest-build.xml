@@ -75,12 +75,6 @@
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/complexdatatypebare" />
 
-		<!-- compile the schema for XMLbeans -->
-		<java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true">
-			<classpath refid="maven.runtime.classpath" />
-			<arg line="-src target/xmlbeans/java -d target/xmlbeans/resources -srconly test-resources/xsd/type-test.xsd" />
-		</java>
-
 		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="rpc-wsdl-codegen" />
 		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="wsdl20-codegen" />
 	</target>

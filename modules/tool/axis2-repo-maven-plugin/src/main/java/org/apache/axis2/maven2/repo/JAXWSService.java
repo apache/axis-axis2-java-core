@@ -18,9 +18,12 @@
  */
 package org.apache.axis2.maven2.repo;
 
+import java.io.File;
+
 public final class JAXWSService {
     private String name;
     private String[] packages;
+    private File resourcesDirectory;
     
     public String getName() {
         return name;
@@ -36,5 +39,13 @@ public final class JAXWSService {
     
     public void setPackages(String[] packages) {
         this.packages = packages;
+    }
+
+    public File getResourcesDirectory() {
+        return resourcesDirectory;
+    }
+
+    public void setResourcesDirectory(File resourcesDirectory) {
+        this.resourcesDirectory = resourcesDirectory;
     }
 }

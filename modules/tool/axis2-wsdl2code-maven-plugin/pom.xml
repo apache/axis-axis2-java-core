@@ -118,7 +118,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-xmlbeans</artifactId>
+            <artifactId>axis2-xmlbeans-codegen</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
@@ -129,7 +129,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-jaxbri</artifactId>
+            <artifactId>axis2-jaxbri-codegen</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
             <exclusions>
@@ -190,11 +190,22 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- Work around MINVOKER-191 -->
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>install</goal>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>

@@ -61,11 +61,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jaxbri</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-xmlbeans</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -147,6 +142,16 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-jms</artifactId>
             <version>${project.version}</version>
             <exclusions>
@@ -193,6 +198,12 @@
                     <artifactId>commons-lang</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <!-- codegen is required for Rampart because of AXIS2-4265 -->
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-codegen</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>

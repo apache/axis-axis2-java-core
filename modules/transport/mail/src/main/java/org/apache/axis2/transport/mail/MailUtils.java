@@ -26,6 +26,7 @@ import javax.mail.Session;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.transport.base.ParamUtils;
+import org.apache.axis2.util.LogWriter;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.apache.commons.logging.Log;
 

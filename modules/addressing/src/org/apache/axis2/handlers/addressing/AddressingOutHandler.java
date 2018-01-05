@@ -22,8 +22,6 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.AttributeHelper;
-import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -333,14 +331,14 @@ public class AddressingOutHandler extends AbstractTemplatedHandler implements Ad
                     if (!isAddressingHeaderAlreadyAvailable(Final.FAULT_HEADER_DETAIL, false)) {
                         SOAPHeaderBlock faultDetail = header.addHeaderBlock(
                                 Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
-                        faultDetail.addChild(ElementHelper.importOMElement(detailElement, factory));
+                        faultDetail.addChild((OMElement)factory.importInformationItem(detailElement));
                     }
                 } else if (!messageContext.isSOAP11()) {
                     // Add detail to the Fault in the SOAP Body
                     SOAPFault fault = envelope.getBody().getFault();
                     if (fault != null && fault.getDetail() != null) {
                         fault.getDetail().addDetailEntry(
-                                ElementHelper.importOMElement(detailElement, factory));
+                                (OMElement)factory.importInformationItem(detailElement));
                     }
                 }
             }
@@ -428,7 +426,7 @@ public class AddressingOutHandler extends AbstractTemplatedHandler implements Ad
             }
         }
 
-        private OMElement createSOAPHeaderBlock(String value, String headerName, ArrayList attributes) {
+        private OMElement createSOAPHeaderBlock(String value, String headerName, ArrayList<OMAttribute> attributes) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace("createSOAPHeaderBlock: value=" + value + " headerName=" + headerName);
             }
@@ -437,10 +435,10 @@ public class AddressingOutHandler extends AbstractTemplatedHandler implements Ad
                         header.addHeaderBlock(headerName, addressingNamespaceObject);
                 soapHeaderBlock.addChild(factory.createOMText(value));
                 if (attributes != null && !attributes.isEmpty()) {
-                    Iterator attrIterator = attributes.iterator();
+                    Iterator<OMAttribute> attrIterator = attributes.iterator();
                     while (attrIterator.hasNext()) {
-                        AttributeHelper
-                                .importOMAttribute((OMAttribute)attrIterator.next(), soapHeaderBlock);
+                        soapHeaderBlock.addAttribute(
+                                (OMAttribute)soapHeaderBlock.getOMFactory().importInformationItem(attrIterator.next()));
                     }
                 }
                 addRoleToHeader(soapHeaderBlock);
@@ -503,7 +501,7 @@ public class AddressingOutHandler extends AbstractTemplatedHandler implements Ad
                 Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
                     OMElement omElement = (OMElement)iterator.next();
-                    SOAPHeaderBlock newElement = ElementHelper.toSOAPHeaderBlock(omElement, factory);
+                    SOAPHeaderBlock newElement = factory.createSOAPHeaderBlock(omElement);
                     if (isFinalAddressingNamespace) {
                         newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
@@ -529,7 +527,7 @@ public class AddressingOutHandler extends AbstractTemplatedHandler implements Ad
                             // Only add the reference parameter from the WSDL if it does not already exist.
                             // This allows clients to override the values before invoking the service.
                             if (referenceInformation == null || !referenceInformation.containsKey(omElement.getQName())) {
-                                SOAPHeaderBlock newElement = ElementHelper.toSOAPHeaderBlock(omElement, factory);
+                                SOAPHeaderBlock newElement = factory.createSOAPHeaderBlock(omElement);
                                 if (isFinalAddressingNamespace) {
                                     newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                             Final.WSA_TYPE_ATTRIBUTE_VALUE,

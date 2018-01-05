@@ -26,16 +26,21 @@ import org.apache.axiom.testutils.PortAllocator;
 import org.apache.axis2.databinding.axis2_5758.client.StockQuoteServiceStub;
 import org.apache.axis2.databinding.axis2_5758.client.TradePriceRequest;
 import org.apache.axis2.databinding.axis2_5758.service.StockQuoteServiceImpl;
+import org.apache.axis2.testutils.ClientHelper;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class ServiceTest {
+    @ClassRule
+    public static final ClientHelper clientHelper = new ClientHelper("target/repo/client");
+
     @Test
     public void test() throws Exception {
         int port = PortAllocator.allocatePort();
         String address = "http://localhost:" + port + "/service";
         Endpoint endpoint = Endpoint.publish(address, new StockQuoteServiceImpl());
         try {
-            StockQuoteServiceStub stub = new StockQuoteServiceStub(address);
+            StockQuoteServiceStub stub = clientHelper.createStub(StockQuoteServiceStub.class, address);
             TradePriceRequest request = new TradePriceRequest();
             request.setTickerSymbol(null);
             assertThat(stub.getLastTradePrice(request).getPrice()).isNaN();

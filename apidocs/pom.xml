@@ -71,7 +71,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-jaxbri</artifactId>
+            <artifactId>axis2-jaxbri-codegen</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

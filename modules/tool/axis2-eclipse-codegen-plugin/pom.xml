@@ -86,7 +86,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-xmlbeans</artifactId>
+            <artifactId>axis2-xmlbeans-codegen</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

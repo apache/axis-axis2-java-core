@@ -207,6 +207,7 @@
                             <serviceDescriptions>
                                 <serviceDescription>
                                     <directory>${project.build.directory}/gen/library-unwrapped/resources</directory>
+                                    <scope>application</scope>
                                     <parameters>
                                         <parameter>
                                             <name>ServiceClass</name>
@@ -228,6 +229,7 @@
                             <serviceDescriptions>
                                 <serviceDescription>
                                     <directory>${project.build.directory}/gen/library-wrapped/resources</directory>
+                                    <scope>application</scope>
                                     <parameters>
                                         <parameter>
                                             <name>ServiceClass</name>
@@ -240,7 +242,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <configurationDirectory>conf</configurationDirectory>
                     <generatedAxis2xml>
                         <modules>
                             <module>checker</module>

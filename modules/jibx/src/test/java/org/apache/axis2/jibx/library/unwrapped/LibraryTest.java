@@ -21,33 +21,19 @@ package org.apache.axis2.jibx.library.unwrapped;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jibx.beans.Book;
 import org.apache.axis2.jibx.library.unwrapped.client.LibraryStub;
-import org.apache.axis2.testutils.UtilServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class LibraryTest {
-    @BeforeClass
-    public static void startServer() throws Exception {
-        UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/library-unwrapped");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("library");
-        service.setScope(Constants.SCOPE_APPLICATION);
-    }
-    
-    @AfterClass
-    public static void stopServer() throws Exception {
-        UtilServer.stop();
-    }
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo/library-unwrapped");
     
     @Test
     public void test1() throws Exception {
-        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/library");
+        LibraryStub stub = new LibraryStub(server.getConfigurationContext(), server.getEndpoint("library"));
         
         stub.addBook("Paperback", "0618918248", new String[] { "Richard Dawkins" }, "The God Delusion");
         
@@ -67,7 +53,7 @@ public class LibraryTest {
     
     @Test
     public void test2() throws Exception {
-        LibraryStub stub = new LibraryStub(UtilServer.getConfigurationContext(), "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/library");
+        LibraryStub stub = new LibraryStub(server.getConfigurationContext(), server.getEndpoint("library"));
         
         stub.addBookInstance(new Book("Hardcover", "8854401765", "The Voyage of the Beagle", new String[] { "Charles Darwin" }));
         Book book = stub.getBook("8854401765");

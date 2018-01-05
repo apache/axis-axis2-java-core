@@ -30,16 +30,21 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.util.CommonUtils;
 
 import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 import javax.activation.DataHandler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * The mail transport sender sends mail using an SMTP server configuration defined
@@ -469,8 +474,8 @@ public class MailTransportSender extends AbstractTransportSender
                 mainPart.setHeader("Content-Transfer-Encoding",
                         (String) msgContext.getOptions().getProperty("Content-Transfer-Encoding"));
             } else {
-                String contentType = dataHandler.getContentType().toLowerCase();
-                if (!contentType.startsWith("multipart/") && CommonUtils.isTextualPart(contentType)) {
+                ContentType contentType = new ContentType(dataHandler.getContentType());
+                if (!contentType.getMediaType().hasPrimaryType("multipart") && contentType.isTextual()) {
                     mainPart.setHeader("Content-Transfer-Encoding", "quoted-printable");
                 }
             }
@@ -495,7 +500,7 @@ public class MailTransportSender extends AbstractTransportSender
                 metrics.incrementBytesSent(msgContext, bytesSent);
             }
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | ParseException e) {
             metrics.incrementFaultsSending();
             handleException("Error creating mail message or sending it to the configured server", e);
             

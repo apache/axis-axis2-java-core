@@ -18,37 +18,21 @@
  */
 package org.apache.axis2.jaxbri.identityservice;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.testutils.UtilServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 /**
  * Regression test for AXIS2-4197.
  */
 public class IdentityServiceTest {
-    private static final String ENDPOINT = "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/IdentityLinkingService";
-    
-    @BeforeClass
-    public static void startServer() throws Exception {
-        UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/identityservice");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        AxisService service = axisConfiguration.getService("IdentityLinkingService");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(IdentityLinkingServiceImpl.class.getName());
-        service.setScope(Constants.SCOPE_APPLICATION);
-    }
-    
-    @AfterClass
-    public static void stopServer() throws Exception {
-        UtilServer.stop();
-    }
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo/identityservice");
     
     @Test
     public void test() throws Exception {
-        IdentityLinkingService stub = new IdentityLinkingServiceStub(UtilServer.getConfigurationContext(), ENDPOINT);
+        IdentityLinkingService stub = new IdentityLinkingServiceStub(
+                server.getConfigurationContext(), server.getEndpoint("IdentityLinkingService"));
         LinkIdentitiesType linkIdentities = new LinkIdentitiesType();
         linkIdentities.setOwningPlatform("test");
         stub.createLinkedIdentities(linkIdentities);

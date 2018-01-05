@@ -44,12 +44,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-transport-local</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-http</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -346,30 +340,19 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/repo</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>axis2-repo-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
+                    <execution>
+                        <id>client-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/client</outputDirectory>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>repo-axis2-5741</id>
                         <goals>
@@ -431,6 +414,9 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <generatedAxis2xml/>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -203,7 +203,8 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"),
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo/conf/axis2.xml"));
 
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.engageModule("addressing");

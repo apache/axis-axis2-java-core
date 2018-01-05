@@ -23,35 +23,17 @@ import javax.activation.DataSource;
 
 import org.apache.axiom.testutils.activation.RandomDataSource;
 import org.apache.axiom.testutils.io.IOTestUtils;
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.testutils.UtilServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.axis2.testutils.Axis2Server;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class MtomTest {
-    private static final String ENDPOINT = "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/mtom";
-    
-    @BeforeClass
-    public static void startServer() throws Exception {
-        UtilServer.start(System.getProperty("basedir", ".") + "/target/repo/mtom");
-        AxisConfiguration axisConfiguration = UtilServer.getConfigurationContext().getAxisConfiguration();
-        axisConfiguration.getParameter(Constants.Configuration.ENABLE_MTOM).setValue(true);
-        AxisService service = axisConfiguration.getService("mtom");
-        service.getParameter(Constants.SERVICE_CLASS).setValue(MtomImpl.class.getName());
-        service.setScope(Constants.SCOPE_APPLICATION);
-    }
-    
-    @AfterClass
-    public static void stopServer() throws Exception {
-        UtilServer.stop();
-    }
+    @ClassRule
+    public static Axis2Server server = new Axis2Server("target/repo/mtom");
     
     @Test
     public void test() throws Exception {
-        MtomStub stub = new MtomStub(UtilServer.getConfigurationContext(), ENDPOINT);
+        MtomStub stub = new MtomStub(server.getConfigurationContext(), server.getEndpoint("mtom"));
         UploadDocument uploadRequest = new UploadDocument();
         DataSource contentDS = new RandomDataSource(1234567L, 1024);
         uploadRequest.setContent(new DataHandler(contentDS));

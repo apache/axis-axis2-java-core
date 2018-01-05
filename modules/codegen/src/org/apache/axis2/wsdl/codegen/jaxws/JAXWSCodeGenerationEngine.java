@@ -26,12 +26,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.axiom.om.util.LogOutputStream;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
+import org.apache.axis2.util.LogWriter;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.commons.io.output.WriterOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -89,10 +90,7 @@ public class JAXWSCodeGenerationEngine {
      *             the code generation exception
      */
     public void generate() throws CodeGenerationException {
-
-        LogOutputStream logOutputStream = new LogOutputStream(log,
-                Integer.MAX_VALUE);
-        WsimportTool importTool = new WsimportTool(logOutputStream);
+        WsimportTool importTool = new WsimportTool(new WriterOutputStream(new LogWriter(log)));
         ArrayList<String> args = new ArrayList<String>();
         configurImportToolOptions(args);
         mergeOriginalArgs(args);

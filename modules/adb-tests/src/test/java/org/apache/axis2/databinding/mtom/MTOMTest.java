@@ -28,16 +28,21 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.databinding.mtom.client.MTOMServiceStub;
 import org.apache.axis2.databinding.mtom.client.MTOMServiceStub.GetContent;
 import org.apache.axis2.databinding.mtom.service.MTOMServiceImpl;
+import org.apache.axis2.testutils.ClientHelper;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class MTOMTest {
+    @ClassRule
+    public static final ClientHelper clientHelper = new ClientHelper("target/repo/client");
+
     @Test
     public void test() throws Exception {
         int port = PortAllocator.allocatePort();
         String address = "http://localhost:" + port + "/mtom";
         Endpoint endpoint = Endpoint.publish(address, new MTOMServiceImpl());
         try {
-            MTOMServiceStub stub = new MTOMServiceStub(address);
+            MTOMServiceStub stub = clientHelper.createStub(MTOMServiceStub.class, address);
             // JAX-WS only produces an MTOM response if the request uses MTOM
             stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
             DataHandler content = stub.getContent(new GetContent()).getContent();

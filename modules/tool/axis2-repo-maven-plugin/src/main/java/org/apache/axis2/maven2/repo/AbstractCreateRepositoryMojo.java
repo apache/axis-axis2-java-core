@@ -208,7 +208,28 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     
     protected abstract File[] getClassDirectories();
 
-    private void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
+    private static void applyParameters(OMElement parentElement, Parameter[] parameters) {
+        if (parameters == null) {
+            return;
+        }
+        for (Parameter parameter : parameters) {
+            OMElement parameterElement = null;
+            for (Iterator<OMElement> it = parentElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
+                OMElement candidate = it.next();
+                if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
+                    parameterElement = candidate;
+                    break;
+                }
+            }
+            if (parameterElement == null) {
+                parameterElement = parentElement.getOMFactory().createOMElement("parameter", null, parentElement);
+                parameterElement.addAttribute("name", parameter.getName(), null);
+            }
+            parameterElement.setText(parameter.getValue());
+        }
+    }
+
+    private static void addMessageHandlers(OMElement root, MessageHandler[] handlers, String localName) {
         if (handlers == null) {
             return;
         }
@@ -217,6 +238,20 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
             OMElement element = parent.getOMFactory().createOMElement(localName, null, parent);
             element.addAttribute("contentType", handler.getContentType(), null);
             element.addAttribute("class", handler.getClassName(), null);
+        }
+    }
+
+    private static void processTransports(OMElement root, Transport[] transports, String localName) {
+        if (transports == null) {
+            return;
+        }
+        for (Transport transport : transports) {
+            for (Iterator<OMElement> it = root.getChildrenWithLocalName(localName); it.hasNext(); ) {
+                OMElement transportElement = it.next();
+                if (transportElement.getAttributeValue(new QName("name")).equals(transport.getName())) {
+                    applyParameters(transportElement, transport.getParameters());
+                }
+            }
         }
     }
     
@@ -300,6 +335,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                     for (File classDirectory : getClassDirectories()) {
                         archiver.addDirectory(classDirectory, includes, new String[0]);
                     }
+                    if (service.getResourcesDirectory() != null) {
+                        archiver.addDirectory(service.getResourcesDirectory());
+                    }
                     archiver.createArchive();
                 } catch (ArchiverException ex) {
                     throw new MojoExecutionException("Failed to build " + jarName, ex);
@@ -332,23 +370,10 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                         log.info("Building service " + serviceName);
                         metaInfDirectory = new File(new File(parentDirectory, serviceName), "META-INF");
                         metaInfDirectory.mkdirs();
-                        if (serviceDescription.getParameters() != null) {
-                            for (Parameter parameter : serviceDescription.getParameters()) {
-                                OMElement parameterElement = null;
-                                for (Iterator<OMElement> it = serviceElement.getChildrenWithLocalName("parameter"); it.hasNext(); ) {
-                                    OMElement candidate = it.next();
-                                    if (candidate.getAttributeValue(new QName("name")).equals(parameter.getName())) {
-                                        parameterElement = candidate;
-                                        break;
-                                    }
-                                }
-                                if (parameterElement == null) {
-                                    parameterElement = doc.getOMFactory().createOMElement("parameter", null, serviceElement);
-                                    parameterElement.addAttribute("name", parameter.getName(), null);
-                                }
-                                parameterElement.setText(parameter.getValue());
-                            }
+                        if (serviceDescription.getScope() != null) {
+                            serviceElement.addAttribute("scope", serviceDescription.getScope(), null);
                         }
+                        applyParameters(serviceElement, serviceDescription.getParameters());
                         FileOutputStream out = new FileOutputStream(new File(metaInfDirectory, "services.xml"));
                         try {
                             doc.serialize(out);
@@ -422,6 +447,9 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                                 }
                             }
                         }
+                        applyParameters(root, generatedAxis2xml.getParameters());
+                        processTransports(root, generatedAxis2xml.getTransportReceivers(), "transportReceiver");
+                        processTransports(root, generatedAxis2xml.getTransportSenders(), "transportSender");
                         addMessageHandlers(root, generatedAxis2xml.getMessageBuilders(), "messageBuilder");
                         addMessageHandlers(root, generatedAxis2xml.getMessageFormatters(), "messageFormatter");
                         if (generatedAxis2xml.getHandlers() != null) {

@@ -21,6 +21,8 @@ package org.apache.axis2.engine;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -35,8 +37,15 @@ import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.testutils.PortAllocator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
+
+import static com.google.common.truth.Truth.assertThat;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
@@ -45,12 +54,12 @@ public class ThirdPartyResponseRawXMLTest extends UtilServerBasedTestCase implem
         return getTestSetup(new TestSuite(ThirdPartyResponseRawXMLTest.class));
     }
     
-	private boolean received;
+    private final BlockingQueue<OMElement> received = new ArrayBlockingQueue<>(1);
     protected AxisService service;
     private SimpleHTTPServer receiver;
     private String callbackOperation;
     private String callbackServiceName = "CallbackService";
-    private int callbackserverPort = 17458;
+    private int callbackserverPort = PortAllocator.allocatePort();
     
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName,
@@ -62,8 +71,13 @@ public class ThirdPartyResponseRawXMLTest extends UtilServerBasedTestCase implem
     	AxisService callbackService  = Utils.createSimpleInOnlyService(new QName(callbackServiceName),new MessageReceiver(){
             public void receive(MessageContext messageCtx) throws AxisFault {
                 SOAPEnvelope envelope = messageCtx.getEnvelope();
-                TestingUtils.compareWithCreatedOMElement(envelope.getBody().getFirstElement());
-                received = true;
+                OMElement bodyContent = envelope.getBody().getFirstElement();
+                bodyContent.build();
+                try {
+                    received.put(bodyContent);
+                } catch (InterruptedException ex) {
+                    // Do nothing
+                }
             }
         },new QName(callbackOperation));
         UtilServer.deployService(callbackService);
@@ -85,14 +99,9 @@ public class ThirdPartyResponseRawXMLTest extends UtilServerBasedTestCase implem
         sender.setOptions(op);
         sender.engageModule(Constants.MODULE_ADDRESSING);
         sender.fireAndForget(TestingUtils.createDummyOMElement());
-        int index = 0;
-        while (!received) {
-            Thread.sleep(1000);
-            index++;
-            if (index == 20) {
-                throw new AxisFault("error Occured");
-            }
-        }
+        OMElement bodyContent = received.poll(20, TimeUnit.SECONDS);
+        assertThat(bodyContent).isNotNull();
+        TestingUtils.compareWithCreatedOMElement(bodyContent);
     }
 
     protected void tearDown() throws Exception {
