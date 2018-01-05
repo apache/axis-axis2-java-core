@@ -76,6 +76,13 @@
             <type>aar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>schema-validation</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>
@@ -238,6 +245,7 @@
                     <generatedAxis2xml>
                         <modules>
                             <module>checker</module>
+                            <module>schema-validation</module>
                         </modules>
                     </generatedAxis2xml>
                 </configuration>

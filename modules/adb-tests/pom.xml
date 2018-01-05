@@ -78,6 +78,13 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>schema-validation</artifactId>
+            <version>${project.version}</version>
+            <type>mar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -415,7 +422,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <generatedAxis2xml/>
+                    <generatedAxis2xml>
+                        <modules>
+                            <module>schema-validation</module>
+                        </modules>
+                    </generatedAxis2xml>
                 </configuration>
             </plugin>
             <plugin>

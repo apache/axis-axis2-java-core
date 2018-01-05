@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -16,12 +17,16 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
-<service name="Echo">
-    <parameter name="ServiceClass">org.apache.axis2.echo.EchoService</parameter>
-    <!-- This parameter is recognized by the schema-validation module -->
-    <parameter name="disableSchemaValidation">true</parameter>
-    <operation name="echo">
-        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
-    </operation>
-</service>
+<module name="schema-validation">
+    <Description>Schema Validation Module</Description>
+    <InFlow>
+        <handler name="SchemaValidationHandler" class="org.apache.axis2.validation.SchemaValidationHandler">
+            <order phase="OperationInPhase"/>
+        </handler>
+    </InFlow>
+    <OutFlow>
+        <handler name="SchemaValidationHandler" class="org.apache.axis2.validation.SchemaValidationHandler">
+            <order phase="OperationOutPhase"/>
+        </handler>
+    </OutFlow>
+</module>
