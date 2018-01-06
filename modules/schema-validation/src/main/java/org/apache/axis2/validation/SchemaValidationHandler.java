@@ -54,6 +54,7 @@ public class SchemaValidationHandler extends AbstractHandler {
             return InvocationResponse.CONTINUE;
         }
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        schemaFactory.setErrorHandler(new SchemaFactoryErrorHandler());
         List<Source> schemaSources = new ArrayList<Source>();
         for (XmlSchema schema : schemas) {
             MemoryBlob blob = Blobs.createMemoryBlob();
