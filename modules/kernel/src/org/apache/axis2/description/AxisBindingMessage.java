@@ -40,185 +40,185 @@ import java.util.Map;
 
 public class AxisBindingMessage extends AxisDescription {
 
-	private String name;
+    private String name;
 
-	private String direction;
+    private String direction;
 
-	private Map<String, Object> options;
+    private Map<String, Object> options;
 
-	private AxisMessage axisMessage;
+    private AxisMessage axisMessage;
 
-	// Used to indicate whether this message is a fault or not. Needed for the
-	// WSDL 2.0 serializer
-	private boolean fault = false;
+    // Used to indicate whether this message is a fault or not. Needed for the
+    // WSDL 2.0 serializer
+    private boolean fault = false;
 
     private volatile Policy effectivePolicy = null;
     private volatile Date lastPolicyCalculatedTime = null;
 
-	public boolean isFault() {
-		return fault;
-	}
+    public boolean isFault() {
+        return fault;
+    }
 
-	public void setFault(boolean fault) {
-		this.fault = fault;
-	}
+    public void setFault(boolean fault) {
+        this.fault = fault;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public AxisMessage getAxisMessage() {
-		return axisMessage;
-	}
+    public AxisMessage getAxisMessage() {
+        return axisMessage;
+    }
 
-	public void setAxisMessage(AxisMessage axisMessage) {
-		this.axisMessage = axisMessage;
-	}
+    public void setAxisMessage(AxisMessage axisMessage) {
+        this.axisMessage = axisMessage;
+    }
 
-	public String getDirection() {
-		return direction;
-	}
+    public String getDirection() {
+        return direction;
+    }
 
-	public void setDirection(String direction) {
-		this.direction = direction;
-	}
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
-	public AxisBindingMessage() {
-		options = new HashMap<String, Object>();
-	}
+    public AxisBindingMessage() {
+        options = new HashMap<String, Object>();
+    }
 
-	public void setProperty(String name, Object value) {
-		options.put(name, value);
-	}
+    public void setProperty(String name, Object value) {
+        options.put(name, value);
+    }
 
-	/**
-	 * @param name
-	 *            name of the property to search for
-	 * @return the value of the property, or null if the property is not found
-	 */
-	public Object getProperty(String name) {
-		Object obj = options.get(name);
-		if (obj != null) {
-			return obj;
-		}
+    /**
+     * @param name
+     *            name of the property to search for
+     * @return the value of the property, or null if the property is not found
+     */
+    public Object getProperty(String name) {
+        Object obj = options.get(name);
+        if (obj != null) {
+            return obj;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public Object getKey() {
-		return null; // To change body of implemented methods use File |
-		// Settings | File Templates.
-	}
+    public Object getKey() {
+        return null; // To change body of implemented methods use File |
+        // Settings | File Templates.
+    }
 
-	public void engageModule(AxisModule axisModule) throws AxisFault {
-		throw new UnsupportedOperationException("Sorry we do not support this");
-	}
+    public void engageModule(AxisModule axisModule) throws AxisFault {
+        throw new UnsupportedOperationException("Sorry we do not support this");
+    }
 
-	public boolean isEngaged(String moduleName) {
-		throw new UnsupportedOperationException(
-				"axisMessage.isEngaged() is not supported");
+    public boolean isEngaged(String moduleName) {
+        throw new UnsupportedOperationException(
+                "axisMessage.isEngaged() is not supported");
 
-	}
+    }
 
-	/**
-	 * Generates the bindingMessage element (can be input, output, infault or
-	 * outfault)
-	 * 
-	 * @param tns -
-	 *            The targetnamespace
-	 * @param wsoap -
-	 *            The SOAP namespace (WSDL 2.0)
-	 * @param whttp -
-	 *            The HTTP namespace (WSDL 2.0)
-	 * @param nameSpaceMap -
-	 *            The namespacemap of the service
-	 * @return The generated bindingMessage element
-	 */
-	public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns,
-			OMNamespace wsoap, OMNamespace whttp, Map<String, String> nameSpaceMap) {
-		String property;
-		ArrayList list;
-		OMFactory omFactory = OMAbstractFactory.getOMFactory();
-		OMElement bindingMessageElement;
+    /**
+     * Generates the bindingMessage element (can be input, output, infault or
+     * outfault)
+     * 
+     * @param tns -
+     *            The targetnamespace
+     * @param wsoap -
+     *            The SOAP namespace (WSDL 2.0)
+     * @param whttp -
+     *            The HTTP namespace (WSDL 2.0)
+     * @param nameSpaceMap -
+     *            The namespacemap of the service
+     * @return The generated bindingMessage element
+     */
+    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns,
+            OMNamespace wsoap, OMNamespace whttp, Map<String, String> nameSpaceMap) {
+        String property;
+        ArrayList list;
+        OMFactory omFactory = OMAbstractFactory.getOMFactory();
+        OMElement bindingMessageElement;
 
-		// If this is a fault, create a fault element and add fault specific
-		// properties
-		if (this.isFault()) {
-			if (this.getParent() instanceof AxisBinding) {
-				bindingMessageElement = omFactory.createOMElement(
-						WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
-			} else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this
-					.getDirection())) {
-				bindingMessageElement = omFactory.createOMElement(
-						WSDL2Constants.IN_FAULT_LOCAL_NAME, wsdl);
-			} else {
-				bindingMessageElement = omFactory.createOMElement(
-						WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
-			}
-			bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-					WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":"
-							+ this.name));
+        // If this is a fault, create a fault element and add fault specific
+        // properties
+        if (this.isFault()) {
+            if (this.getParent() instanceof AxisBinding) {
+                bindingMessageElement = omFactory.createOMElement(
+                        WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
+            } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this
+                    .getDirection())) {
+                bindingMessageElement = omFactory.createOMElement(
+                        WSDL2Constants.IN_FAULT_LOCAL_NAME, wsdl);
+            } else {
+                bindingMessageElement = omFactory.createOMElement(
+                        WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
+            }
+            bindingMessageElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":"
+                            + this.name));
 
-			WSDL20Util.extractWSDL20SoapFaultInfo(options,
-					bindingMessageElement, omFactory, wsoap);
+            WSDL20Util.extractWSDL20SoapFaultInfo(options,
+                    bindingMessageElement, omFactory, wsoap);
 
-			Integer code = (Integer) this.options
-					.get(WSDL2Constants.ATTR_WHTTP_CODE);
-			if (code != null) {
-				bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-						WSDL2Constants.ATTRIBUTE_CODE, whttp, code.toString()));
-			}
+            Integer code = (Integer) this.options
+                    .get(WSDL2Constants.ATTR_WHTTP_CODE);
+            if (code != null) {
+                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.ATTRIBUTE_CODE, whttp, code.toString()));
+            }
 
-			// Checks whether the message is an input message
-		} else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this
-				.getDirection())) {
-			bindingMessageElement = omFactory.createOMElement(
-					WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
+            // Checks whether the message is an input message
+        } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this
+                .getDirection())) {
+            bindingMessageElement = omFactory.createOMElement(
+                    WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
 
-			// Message should be an output message
-		} else {
-			bindingMessageElement = omFactory.createOMElement(
-					WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
-		}
+            // Message should be an output message
+        } else {
+            bindingMessageElement = omFactory.createOMElement(
+                    WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
+        }
 
-		// Populate common properties
-		property = (String) this.options
-				.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
-		if (property != null) {
-			bindingMessageElement
-					.addAttribute(omFactory.createOMAttribute(
-							WSDL2Constants.ATTRIBUTE_CONTENT_ENCODING, whttp,
-							property));
-		}
-		list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WHTTP_HEADER);
-		if (list != null && list.size() > 0) {
-			WSDLSerializationUtil.addHTTPHeaderElements(omFactory, list, whttp,
-					bindingMessageElement, nameSpaceMap);
-		}
-		list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_HEADER);
-		if (list != null && list.size() > 0) {
-			WSDLSerializationUtil.addSOAPHeaderElements(omFactory, list, wsoap,
-					bindingMessageElement, nameSpaceMap);
-		}
-		list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_MODULE);
-		if (list != null && list.size() > 0) {
-			WSDLSerializationUtil.addSOAPModuleElements(omFactory, list, wsoap,
-					bindingMessageElement);
-		}
-		WSDLSerializationUtil.addWSDLDocumentationElement(this,
-				bindingMessageElement, omFactory, wsdl);
-		WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
-				bindingMessageElement);
-		return bindingMessageElement;
-	}
+        // Populate common properties
+        property = (String) this.options
+                .get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
+        if (property != null) {
+            bindingMessageElement
+                    .addAttribute(omFactory.createOMAttribute(
+                            WSDL2Constants.ATTRIBUTE_CONTENT_ENCODING, whttp,
+                            property));
+        }
+        list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WHTTP_HEADER);
+        if (list != null && list.size() > 0) {
+            WSDLSerializationUtil.addHTTPHeaderElements(omFactory, list, whttp,
+                    bindingMessageElement, nameSpaceMap);
+        }
+        list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_HEADER);
+        if (list != null && list.size() > 0) {
+            WSDLSerializationUtil.addSOAPHeaderElements(omFactory, list, wsoap,
+                    bindingMessageElement, nameSpaceMap);
+        }
+        list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_MODULE);
+        if (list != null && list.size() > 0) {
+            WSDLSerializationUtil.addSOAPModuleElements(omFactory, list, wsoap,
+                    bindingMessageElement);
+        }
+        WSDLSerializationUtil.addWSDLDocumentationElement(this,
+                bindingMessageElement, omFactory, wsdl);
+        WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
+                bindingMessageElement);
+        return bindingMessageElement;
+    }
 
-	public AxisBindingOperation getAxisBindingOperation() {
-		return (AxisBindingOperation) parent;
-	}
+    public AxisBindingOperation getAxisBindingOperation() {
+        return (AxisBindingOperation) parent;
+    }
 
     public Policy getEffectivePolicy() {
         if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
@@ -232,131 +232,131 @@ public class AxisBindingMessage extends AxisDescription {
         return effectivePolicy;
     }
 
-	public Policy calculateEffectivePolicy() {
-		PolicySubject policySubject = null;
-		Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
+    public Policy calculateEffectivePolicy() {
+        PolicySubject policySubject = null;
+        Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
 
-		// AxisBindingMessage
-		policySubject = getPolicySubject();
-		policyList.addAll(policySubject.getAttachedPolicyComponents());
+        // AxisBindingMessage
+        policySubject = getPolicySubject();
+        policyList.addAll(policySubject.getAttachedPolicyComponents());
 
-		// AxisBindingOperation policies
-		AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
-		if (axisBindingOperation != null) {
-			policyList.addAll(axisBindingOperation.getPolicySubject()
-					.getAttachedPolicyComponents());
-		}
+        // AxisBindingOperation policies
+        AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
+        if (axisBindingOperation != null) {
+            policyList.addAll(axisBindingOperation.getPolicySubject()
+                    .getAttachedPolicyComponents());
+        }
 
-		// AxisBinding
-		AxisBinding axisBinding = (axisBindingOperation == null) ? null
-				: axisBindingOperation.getAxisBinding();
-		if (axisBinding != null) {
-			policyList.addAll(axisBinding.getPolicySubject()
-					.getAttachedPolicyComponents());
-		}
+        // AxisBinding
+        AxisBinding axisBinding = (axisBindingOperation == null) ? null
+                : axisBindingOperation.getAxisBinding();
+        if (axisBinding != null) {
+            policyList.addAll(axisBinding.getPolicySubject()
+                    .getAttachedPolicyComponents());
+        }
 
-		// AxisEndpoint
-		AxisEndpoint axisEndpoint = (axisBinding == null) ? null : axisBinding
-				.getAxisEndpoint();
-		if (axisEndpoint != null) {
-			policyList.addAll(axisEndpoint.getPolicySubject()
-					.getAttachedPolicyComponents());
-		}
+        // AxisEndpoint
+        AxisEndpoint axisEndpoint = (axisBinding == null) ? null : axisBinding
+                .getAxisEndpoint();
+        if (axisEndpoint != null) {
+            policyList.addAll(axisEndpoint.getPolicySubject()
+                    .getAttachedPolicyComponents());
+        }
 
-		// AxisMessage
-		if (axisMessage != null) {
-			policyList.addAll(axisMessage.getPolicySubject()
-					.getAttachedPolicyComponents());
-		}
+        // AxisMessage
+        if (axisMessage != null) {
+            policyList.addAll(axisMessage.getPolicySubject()
+                    .getAttachedPolicyComponents());
+        }
 
-		// AxisOperation
-		AxisOperation axisOperation = (axisMessage == null) ? null
-				: axisMessage.getAxisOperation();
-		if (axisOperation != null) {
-			policyList.addAll(axisOperation.getPolicySubject()
-					.getAttachedPolicyComponents());
-		}
+        // AxisOperation
+        AxisOperation axisOperation = (axisMessage == null) ? null
+                : axisMessage.getAxisOperation();
+        if (axisOperation != null) {
+            policyList.addAll(axisOperation.getPolicySubject()
+                    .getAttachedPolicyComponents());
+        }
 
-		// AxisService
-		AxisService axisService = (axisOperation == null) ? null
-				: axisOperation.getAxisService();
-		if (axisService != null) {
-			policyList.addAll(axisService.getPolicySubject()
-					.getAttachedPolicyComponents());
-		}
+        // AxisService
+        AxisService axisService = (axisOperation == null) ? null
+                : axisOperation.getAxisService();
+        if (axisService != null) {
+            policyList.addAll(axisService.getPolicySubject()
+                    .getAttachedPolicyComponents());
+        }
 
-		// AxisConfiguration
-		AxisConfiguration axisConfiguration = (axisService == null) ? null
-				: axisService.getAxisConfiguration();
-		if (axisConfiguration != null) {
-			policyList.addAll(axisConfiguration.getPolicySubject()
-					.getAttachedPolicyComponents());
-		}
+        // AxisConfiguration
+        AxisConfiguration axisConfiguration = (axisService == null) ? null
+                : axisService.getAxisConfiguration();
+        if (axisConfiguration != null) {
+            policyList.addAll(axisConfiguration.getPolicySubject()
+                    .getAttachedPolicyComponents());
+        }
 
-		return PolicyUtil.getMergedPolicy(policyList, axisService);
-	}
-	
-	private boolean isPolicyUpdated() {
-		if (getPolicySubject().getLastUpdatedTime().after(
+        return PolicyUtil.getMergedPolicy(policyList, axisService);
+    }
+    
+    private boolean isPolicyUpdated() {
+        if (getPolicySubject().getLastUpdatedTime().after(
                 lastPolicyCalculatedTime)) {
-			return true;
-		}
-		// AxisBindingOperation
-		AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
-		if (axisBindingOperation != null
-				&& axisBindingOperation.getPolicySubject().getLastUpdatedTime()
-						.after(lastPolicyCalculatedTime)) {
-			return true;
-		}
-		// AxisBinding
-		AxisBinding axisBinding = (axisBindingOperation == null) ? null
-				: axisBindingOperation.getAxisBinding();
-		if (axisBinding != null
-				&& axisBinding.getPolicySubject().getLastUpdatedTime().after(
+            return true;
+        }
+        // AxisBindingOperation
+        AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
+        if (axisBindingOperation != null
+                && axisBindingOperation.getPolicySubject().getLastUpdatedTime()
+                        .after(lastPolicyCalculatedTime)) {
+            return true;
+        }
+        // AxisBinding
+        AxisBinding axisBinding = (axisBindingOperation == null) ? null
+                : axisBindingOperation.getAxisBinding();
+        if (axisBinding != null
+                && axisBinding.getPolicySubject().getLastUpdatedTime().after(
                 lastPolicyCalculatedTime)) {
-			return true;
-		}
-		// AxisEndpoint
-		AxisEndpoint axisEndpoint = (axisBinding == null) ? null : axisBinding
-				.getAxisEndpoint();
-		if (axisEndpoint != null
-				&& axisEndpoint.getPolicySubject().getLastUpdatedTime().after(
+            return true;
+        }
+        // AxisEndpoint
+        AxisEndpoint axisEndpoint = (axisBinding == null) ? null : axisBinding
+                .getAxisEndpoint();
+        if (axisEndpoint != null
+                && axisEndpoint.getPolicySubject().getLastUpdatedTime().after(
                 lastPolicyCalculatedTime)) {
-			return true;
-		}
-		// AxisMessage
-		if (axisMessage != null
-				&& axisMessage.getPolicySubject().getLastUpdatedTime().after(
+            return true;
+        }
+        // AxisMessage
+        if (axisMessage != null
+                && axisMessage.getPolicySubject().getLastUpdatedTime().after(
                 lastPolicyCalculatedTime)) {
-			return true;
-		}
-		// AxisOperation
-		AxisOperation axisOperation = (axisMessage == null) ? null
-				: axisMessage.getAxisOperation();
-		if (axisOperation != null
-				&& axisOperation.getPolicySubject().getLastUpdatedTime().after(
+            return true;
+        }
+        // AxisOperation
+        AxisOperation axisOperation = (axisMessage == null) ? null
+                : axisMessage.getAxisOperation();
+        if (axisOperation != null
+                && axisOperation.getPolicySubject().getLastUpdatedTime().after(
                 lastPolicyCalculatedTime)) {
-			return true;
-		}
-		// AxisService
-		AxisService axisService = (axisOperation == null) ? null
-				: axisOperation.getAxisService();
-		if (axisService != null
-				&& axisService.getPolicySubject().getLastUpdatedTime().after(
+            return true;
+        }
+        // AxisService
+        AxisService axisService = (axisOperation == null) ? null
+                : axisOperation.getAxisService();
+        if (axisService != null
+                && axisService.getPolicySubject().getLastUpdatedTime().after(
                 lastPolicyCalculatedTime)) {
-			return true;
-		}
-		// AxisConfiguration
-		AxisConfiguration axisConfiguration = (axisService == null) ? null
-				: axisService.getAxisConfiguration();
-		if (axisConfiguration != null
-				&& axisConfiguration.getPolicySubject().getLastUpdatedTime()
-						.after(lastPolicyCalculatedTime)) {
-			return true;
-		}
-		return false;
-	}
-	
+            return true;
+        }
+        // AxisConfiguration
+        AxisConfiguration axisConfiguration = (axisService == null) ? null
+                : axisService.getAxisConfiguration();
+        if (axisConfiguration != null
+                && axisConfiguration.getPolicySubject().getLastUpdatedTime()
+                        .after(lastPolicyCalculatedTime)) {
+            return true;
+        }
+        return false;
+    }
+    
     @Override
     public void applyPolicy() throws AxisFault {
         getAxisMessage().applyPolicy();
