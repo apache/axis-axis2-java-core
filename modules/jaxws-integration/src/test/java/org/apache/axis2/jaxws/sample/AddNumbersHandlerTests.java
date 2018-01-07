@@ -75,6 +75,7 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolH
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerFault_Exception;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersProtocolHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersProtocolHandler2;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.testutils.Axis2Server;
@@ -132,12 +133,7 @@ public class AddNumbersHandlerTests {
             assertEquals("With handler manipulation, total should be 3 less than a proper sumation.", 17, total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
             
-            // also confirm that @PreDestroy method is called.  Since it only makes sense to call it on the managed
-            // (server) side and just before the handler instance goes out of scope, we are creating a file in the
-            // @PreDestroy method, and will check for its existance here.  If the file does not exist, it means
-            // @PreDestroy method was never called.  The file is set to .deleteOnExit(), so no need to delete it.
-            File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
-            assertTrue("File AddNumbersProtocolHandler.preDestroy.txt does not exist, meaning the @PreDestroy method was not called.", file.exists());
+            assertTrue("@PreDestroy method was not called.", AddNumbersProtocolHandler.getAndResetPredestroyCalled());
 
             String log = readLogFile();
             String expected_calls =
@@ -216,12 +212,7 @@ public class AddNumbersHandlerTests {
                         "but the exception is: " + t);
         }
        
-        // also confirm that @PreDestroy method is called.  Since it only makes sense to call it on the managed
-        // (server) side and just before the handler instance goes out of scope, we are creating a file in the
-        // @PreDestroy method, and will check for its existance here.  If the file does not exist, it means
-        // @PreDestroy method was never called.  The file is set to .deleteOnExit(), so no need to delete it.
-        File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
-        assertTrue("File AddNumbersProtocolHandler.preDestroy.txt does not exist, meaning the @PreDestroy method was not called.", file.exists());
+        assertTrue("@PreDestroy method was not called.", AddNumbersProtocolHandler.getAndResetPredestroyCalled());
 
         String log = readLogFile();
         String expected_calls =
@@ -310,12 +301,7 @@ public class AddNumbersHandlerTests {
                         "but the exception is: " + t);
         }
        
-        // also confirm that @PreDestroy method is called.  Since it only makes sense to call it on the managed
-        // (server) side and just before the handler instance goes out of scope, we are creating a file in the
-        // @PreDestroy method, and will check for its existance here.  If the file does not exist, it means
-        // @PreDestroy method was never called.  The file is set to .deleteOnExit(), so no need to delete it.
-        File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
-        assertTrue("File AddNumbersProtocolHandler.preDestroy.txt does not exist, meaning the @PreDestroy method was not called.", file.exists());
+        assertTrue("@PreDestroy method was not called.", AddNumbersProtocolHandler.getAndResetPredestroyCalled());
 
         String log = readLogFile();
         String expected_calls =

@@ -19,7 +19,6 @@
 
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.TestLogger;
 
 import javax.annotation.PreDestroy;
@@ -30,12 +29,11 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+    private static final AtomicBoolean predestroyCalled = new AtomicBoolean();
 
     HandlerTracker tracker = new HandlerTracker(AddNumbersProtocolHandler.class.getSimpleName());
     
@@ -113,22 +111,11 @@ public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAP
     @PreDestroy
     public void preDestroy() {
         tracker.preDestroy();
-    	try {
-    		/*
-    		 * since @PreDestroy methods are called just before the managed (server) side
-    		 * handler instance goes out of scope, there's not a good way to test if it is
-    		 * called.  So, we are creating a file that one of the AddNumbersHandlerTests tests
-    		 * checks the existance of.
-    		 */
-    		File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
-    		file.createNewFile();
-    		FileOutputStream fos = new FileOutputStream(file);
-    		fos.write(new byte[]{'h','i'});
-    		fos.close();
-    		file.deleteOnExit();
-    	} catch (Exception e) {
-    		throw ExceptionFactory.makeWebServiceException(e);
-    	}
+        predestroyCalled.set(true);
+    }
+
+    public static boolean getAndResetPredestroyCalled() {
+        return predestroyCalled.getAndSet(false);
     }
 
     private static String stackToString(Throwable e) {
