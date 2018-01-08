@@ -536,7 +536,6 @@
         <maven.archiver.version>3.0.2</maven.archiver.version>
         <maven.version>3.3.9</maven.version>
         <maven.plugin.descriptor.version>2.0.7</maven.plugin.descriptor.version>
-        <maven.archetype.plugin.version>2.2</maven.archetype.plugin.version>
         <plexus.classworlds.version>2.4</plexus.classworlds.version>
         <plexus.utils.version>1.4.9</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
@@ -948,11 +947,6 @@
                 <version>${maven.plugin.descriptor.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-archetype-plugin</artifactId>
-                <version>${maven.archetype.plugin.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>${plexus.utils.version}</version>
@@ -1288,6 +1282,11 @@
                     <configuration>
                         <javaHome>${java.home}</javaHome>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-archetype-plugin</artifactId>
+                    <version>3.0.1</version>
                 </plugin>
                 
                 <!-- Use released versions of the aar and mar plugins in order to avoid
