@@ -20,14 +20,12 @@ package org.apache.axis2.databinding.axis2_5750;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import javax.xml.ws.Endpoint;
-
-import org.apache.axiom.testutils.PortAllocator;
 import org.apache.axis2.databinding.axis2_5750.client.FixedValue;
 import org.apache.axis2.databinding.axis2_5750.client.FixedValueServiceStub;
 import org.apache.axis2.databinding.axis2_5750.client.NonFixedValue_type1;
 import org.apache.axis2.databinding.axis2_5750.service.FixedValueServiceImpl;
 import org.apache.axis2.testutils.ClientHelper;
+import org.apache.axis2.testutils.jaxws.JAXWSEndpoint;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -35,20 +33,16 @@ public class ServiceTest {
     @ClassRule
     public static final ClientHelper clientHelper = new ClientHelper("target/repo/client");
 
+    @ClassRule
+    public static final JAXWSEndpoint endpoint = new JAXWSEndpoint(new FixedValueServiceImpl());
+
     @Test
     public void test() throws Exception {
-        int port = PortAllocator.allocatePort();
-        String address = "http://localhost:" + port + "/service";
-        Endpoint endpoint = Endpoint.publish(address, new FixedValueServiceImpl());
-        try {
-            FixedValue fixedValue = new FixedValue();
-            NonFixedValue_type1 nonFixedValue_type1 = new NonFixedValue_type1();
-            nonFixedValue_type1.setNonFixedValue_type0("SomeId");
-            fixedValue.setNonFixedValue(nonFixedValue_type1);
-            FixedValueServiceStub stub = clientHelper.createStub(FixedValueServiceStub.class, address);
-            assertThat(stub.test(fixedValue).getOut()).isEqualTo("OK");
-        } finally {
-            endpoint.stop();
-        }
+        FixedValue fixedValue = new FixedValue();
+        NonFixedValue_type1 nonFixedValue_type1 = new NonFixedValue_type1();
+        nonFixedValue_type1.setNonFixedValue_type0("SomeId");
+        fixedValue.setNonFixedValue(nonFixedValue_type1);
+        FixedValueServiceStub stub = clientHelper.createStub(FixedValueServiceStub.class, endpoint.getAddress());
+        assertThat(stub.test(fixedValue).getOut()).isEqualTo("OK");
     }
 }

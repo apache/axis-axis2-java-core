@@ -20,13 +20,11 @@ package org.apache.axis2.databinding.axis2_5758;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import javax.xml.ws.Endpoint;
-
-import org.apache.axiom.testutils.PortAllocator;
 import org.apache.axis2.databinding.axis2_5758.client.StockQuoteServiceStub;
 import org.apache.axis2.databinding.axis2_5758.client.TradePriceRequest;
 import org.apache.axis2.databinding.axis2_5758.service.StockQuoteServiceImpl;
 import org.apache.axis2.testutils.ClientHelper;
+import org.apache.axis2.testutils.jaxws.JAXWSEndpoint;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -34,20 +32,16 @@ public class ServiceTest {
     @ClassRule
     public static final ClientHelper clientHelper = new ClientHelper("target/repo/client");
 
+    @ClassRule
+    public static final JAXWSEndpoint endpoint = new JAXWSEndpoint(new StockQuoteServiceImpl());
+
     @Test
     public void test() throws Exception {
-        int port = PortAllocator.allocatePort();
-        String address = "http://localhost:" + port + "/service";
-        Endpoint endpoint = Endpoint.publish(address, new StockQuoteServiceImpl());
-        try {
-            StockQuoteServiceStub stub = clientHelper.createStub(StockQuoteServiceStub.class, address);
-            TradePriceRequest request = new TradePriceRequest();
-            request.setTickerSymbol(null);
-            assertThat(stub.getLastTradePrice(request).getPrice()).isNaN();
-            request.setTickerSymbol("GOOG");
-            assertThat(stub.getLastTradePrice(request).getPrice()).isWithin(0.001f).of(100.0f);
-        } finally {
-            endpoint.stop();
-        }
+        StockQuoteServiceStub stub = clientHelper.createStub(StockQuoteServiceStub.class, endpoint.getAddress());
+        TradePriceRequest request = new TradePriceRequest();
+        request.setTickerSymbol(null);
+        assertThat(stub.getLastTradePrice(request).getPrice()).isNaN();
+        request.setTickerSymbol("GOOG");
+        assertThat(stub.getLastTradePrice(request).getPrice()).isWithin(0.001f).of(100.0f);
     }
 }

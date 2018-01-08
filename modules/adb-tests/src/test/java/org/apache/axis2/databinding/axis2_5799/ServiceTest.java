@@ -20,13 +20,11 @@ package org.apache.axis2.databinding.axis2_5799;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import javax.xml.ws.Endpoint;
-
-import org.apache.axiom.testutils.PortAllocator;
 import org.apache.axis2.databinding.axis2_5799.client.ComplexTypeWithAttribute;
 import org.apache.axis2.databinding.axis2_5799.client.EchoServiceStub;
 import org.apache.axis2.databinding.axis2_5799.service.EchoImpl;
 import org.apache.axis2.testutils.ClientHelper;
+import org.apache.axis2.testutils.jaxws.JAXWSEndpoint;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -34,18 +32,14 @@ public class ServiceTest {
     @ClassRule
     public static final ClientHelper clientHelper = new ClientHelper("target/repo/client");
 
+    @ClassRule
+    public static final JAXWSEndpoint endpoint = new JAXWSEndpoint(new EchoImpl());
+
     @Test
     public void test() throws Exception {
-        int port = PortAllocator.allocatePort();
-        String address = "http://localhost:" + port + "/service";
-        Endpoint endpoint = Endpoint.publish(address, new EchoImpl());
-        try {
-            EchoServiceStub stub = clientHelper.createStub(EchoServiceStub.class, address);
-            ComplexTypeWithAttribute request = new ComplexTypeWithAttribute();
-            request.setAttr("value");
-            assertThat(stub.echo(request).getAttr()).isEqualTo("value");
-        } finally {
-            endpoint.stop();
-        }
+        EchoServiceStub stub = clientHelper.createStub(EchoServiceStub.class, endpoint.getAddress());
+        ComplexTypeWithAttribute request = new ComplexTypeWithAttribute();
+        request.setAttr("value");
+        assertThat(stub.echo(request).getAttr()).isEqualTo("value");
     }
 }

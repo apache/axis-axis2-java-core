@@ -19,9 +19,7 @@
 package org.apache.axis2.databinding.mtom;
 
 import javax.activation.DataHandler;
-import javax.xml.ws.Endpoint;
 
-import org.apache.axiom.testutils.PortAllocator;
 import org.apache.axiom.testutils.activation.RandomDataSource;
 import org.apache.axiom.testutils.io.IOTestUtils;
 import org.apache.axis2.Constants;
@@ -29,6 +27,7 @@ import org.apache.axis2.databinding.mtom.client.MTOMServiceStub;
 import org.apache.axis2.databinding.mtom.client.MTOMServiceStub.GetContent;
 import org.apache.axis2.databinding.mtom.service.MTOMServiceImpl;
 import org.apache.axis2.testutils.ClientHelper;
+import org.apache.axis2.testutils.jaxws.JAXWSEndpoint;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -36,21 +35,17 @@ public class MTOMTest {
     @ClassRule
     public static final ClientHelper clientHelper = new ClientHelper("target/repo/client");
 
+    @ClassRule
+    public static final JAXWSEndpoint endpoint = new JAXWSEndpoint(new MTOMServiceImpl());
+
     @Test
     public void test() throws Exception {
-        int port = PortAllocator.allocatePort();
-        String address = "http://localhost:" + port + "/mtom";
-        Endpoint endpoint = Endpoint.publish(address, new MTOMServiceImpl());
-        try {
-            MTOMServiceStub stub = clientHelper.createStub(MTOMServiceStub.class, address);
-            // JAX-WS only produces an MTOM response if the request uses MTOM
-            stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-            DataHandler content = stub.getContent(new GetContent()).getContent();
-            IOTestUtils.compareStreams(
-                    new RandomDataSource(654321L, 1000000).getInputStream(), "expected",
-                    content.getInputStream(), "actual");
-        } finally {
-            endpoint.stop();
-        }
+        MTOMServiceStub stub = clientHelper.createStub(MTOMServiceStub.class, endpoint.getAddress());
+        // JAX-WS only produces an MTOM response if the request uses MTOM
+        stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        DataHandler content = stub.getContent(new GetContent()).getContent();
+        IOTestUtils.compareStreams(
+                new RandomDataSource(654321L, 1000000).getInputStream(), "expected",
+                content.getInputStream(), "actual");
     }
 }
