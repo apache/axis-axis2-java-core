@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PolicySubject {
-
-    private boolean updated = false;
     private Date lastUpdatedTime = new Date();
     
     private ConcurrentHashMap<String, PolicyComponent> attachedPolicyComponents = new ConcurrentHashMap<String, PolicyComponent>();
@@ -77,10 +75,6 @@ public class PolicySubject {
             PolicyComponent policyComponent) {
         attachedPolicyComponents.put(key, policyComponent);
         setLastUpdatedTime(new Date());
-        
-        if (!isUpdated()) {
-            setUpdated(true);
-        }
     }
 
     public PolicyComponent getAttachedPolicyComponent(String key) {
@@ -92,14 +86,6 @@ public class PolicySubject {
         return attachedPolicyComponents.values();
     }
 
-    public boolean isUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(boolean updated) {
-        this.updated = updated;
-    }
-
     public void updatePolicy(Policy policy) {
         String key = (policy.getName() != null) ? policy.getName() : policy
                 .getId();
@@ -109,26 +95,16 @@ public class PolicySubject {
         }
         attachedPolicyComponents.put(key, policy);
         setLastUpdatedTime(new Date());
-        
-        if (!isUpdated()) {
-            setUpdated(true);
-        }
     }
 
     public void detachPolicyComponent(String key) {
         attachedPolicyComponents.remove(key);
         setLastUpdatedTime(new Date());
-        if (!isUpdated()) {
-            setUpdated(true);
-        }
     }
 
     public void clear() {
         attachedPolicyComponents.clear();
         setLastUpdatedTime(new Date());
-        if (!isUpdated()) {
-            setUpdated(true);
-        }
     }
 
     public Date getLastUpdatedTime() {
