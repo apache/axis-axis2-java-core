@@ -46,14 +46,14 @@ public class AarMojo extends AbstractAarMojo {
      *
      * @required
      * @readonly
-     * @parameter expression="${session}"
+     * @parameter property="session"
      */
     private MavenSession session;
     
     /**
      * The directory for the generated aar.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      */
     private String outputDirectory;
@@ -61,7 +61,7 @@ public class AarMojo extends AbstractAarMojo {
     /**
      * The name of the generated aar.
      *
-     * @parameter expression="${project.build.finalName}"
+     * @parameter default-value="${project.build.finalName}"
      * @required
      */
     private String aarName;
@@ -93,11 +93,13 @@ public class AarMojo extends AbstractAarMojo {
      * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to
      * install or deploy it to the local repository instead of the default one in an execution.
      *
-     * @parameter expression="${primaryArtifact}" default-value="true"
+     * @parameter default-value="true"
      */
     private boolean primaryArtifact;
 
-    /** @component */
+    /**
+     * @component
+     */
     private MavenProjectHelper projectHelper;
 
     /**

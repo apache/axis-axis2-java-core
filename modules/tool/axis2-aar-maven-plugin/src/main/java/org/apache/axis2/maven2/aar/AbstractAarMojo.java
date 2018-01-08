@@ -41,7 +41,7 @@ public abstract class AbstractAarMojo
     /**
      * The projects base directory.
      *
-     * @parameter expression="${project.basedir}"
+     * @parameter property="project.basedir"
      * @required
      * @readonly
      */
@@ -50,7 +50,7 @@ public abstract class AbstractAarMojo
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -59,7 +59,7 @@ public abstract class AbstractAarMojo
     /**
      * The directory containing generated classes.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      * @required
      */
     private File classesDirectory;
@@ -67,7 +67,7 @@ public abstract class AbstractAarMojo
     /**
      * The directory where the aar is built.
      *
-     * @parameter expression="${project.build.directory}/aar"
+     * @parameter default-value="${project.build.directory}/aar"
      * @required
      */
     protected File aarDirectory;
@@ -107,7 +107,7 @@ public abstract class AbstractAarMojo
     /**
      * Whether the dependency jars should be included in the aar
      *
-     * @parameter expression="${includeDependencies}" default-value="true"
+     * @parameter default-value="true"
      */
     private boolean includeDependencies;
 

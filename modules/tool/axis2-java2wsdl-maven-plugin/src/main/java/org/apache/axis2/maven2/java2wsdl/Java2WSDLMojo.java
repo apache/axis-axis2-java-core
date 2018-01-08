@@ -52,7 +52,7 @@ public class Java2WSDLMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @read-only
      * @required
      */
@@ -60,111 +60,111 @@ public class Java2WSDLMojo extends AbstractMojo {
 
     /**
      * Fully qualified name of the class, which is being inspected.
-     * @parameter expression="${axis2.java2wsdl.className}"
+     * @parameter property="axis2.java2wsdl.className"
      * @required
      */
     private String className;
 
     /**
      * Target namespace of the generated WSDL.
-     * @parameter expression="${axis2.java2wsdl.targetNamespace}"
+     * @parameter property="axis2.java2wsdl.targetNamespace"
      */
     private String targetNamespace;
 
     /**
      * The namespace prefix, which is being used for the WSDL's
      * target namespace.
-     * @parameter expression="${axis2.java2wsdl.targetNamespacePrefix}"
+     * @parameter property="axis2.java2wsdl.targetNamespacePrefix"
      */
     private String targetNamespacePrefix;
 
     /**
      * The generated schemas target namespace.
-     * @parameter expression="${axis2.java2wsdl.schemaTargetNamespace}"
+     * @parameter property="axis2.java2wsdl.schemaTargetNamespace"
      */
     private String schemaTargetNamespace;
 
     /**
      * The generated schemas target namespace prefix.
-     * @parameter expression="${axis2.java2wsdl.schemaTargetNamespacePrefix}"
+     * @parameter property="axis2.java2wsdl.schemaTargetNamespacePrefix"
      */
     private String schemaTargetNamespacePrefix;
 
     /**
      * Name of the generated service.
-     * @parameter expression="${axis2.java2wsdl.serviceName}"
+     * @parameter property="axis2.java2wsdl.serviceName"
      */
     private String serviceName;
 
     /**
      * Name of the service file, which is being generated.
-     * @parameter expression="${axis2.java2wsdl.outputFileName}" default-value="${project.build.directory}/generated-resources/service.wsdl"
+     * @parameter property="axis2.java2wsdl.outputFileName" default-value="${project.build.directory}/generated-resources/service.wsdl"
      */
     private String outputFileName;
 
     /**
      * Style for the wsdl
-     * @parameter expression="${axis2.java2wsdl.style}"
+     * @parameter property="axis2.java2wsdl.style"
      */
     private String style;
 
     /**
      * Use for the wsdl
-     * @parameter expression="${axis2.java2wsdl.use}"
+     * @parameter property="axis2.java2wsdl.use"
      */
     private String use;
 
     /**
      * Version for the wsdl
-     * @parameter expression="${axis2.java2wsdl.wsdlVersion}"
+     * @parameter property="axis2.java2wsdl.wsdlVersion"
      */
     private String wsdlVersion;
 
     /**
      * Namespace Generator
-     * @parameter expression="${axis2.java2wsdl.nsGenClassName}"
+     * @parameter property="axis2.java2wsdl.nsGenClassName"
      */
     private String nsGenClassName;
 
     /**
      * Schema Generator
-     * @parameter expression="${axis2.java2wsdl.schemaGenClassName}"
+     * @parameter property="axis2.java2wsdl.schemaGenClassName"
      */
     private String schemaGenClassName;
 
     /**
      * Location URI in the wsdl
-     * @parameter expression="${axis2.java2wsdl.locationUri}"
+     * @parameter property="axis2.java2wsdl.locationUri"
      */
     private String locationUri;
 
     /**
      * attrFormDefault setting for the schema
-     * @parameter expression="${axis2.java2wsdl.attrFormDefault}"
+     * @parameter property="axis2.java2wsdl.attrFormDefault"
      */
     private String attrFormDefault;
 
     /**
      * elementFormDefault setting for the schema
-     * @parameter expression="${axis2.java2wsdl.elementFormDefault}"
+     * @parameter property="axis2.java2wsdl.elementFormDefault"
      */
     private String elementFormDefault;
 
     /**
      * Switch on the Doc/Lit/Bare style schema
-     * @parameter expression="${axis2.java2wsdl.docLitBare}"
+     * @parameter property="axis2.java2wsdl.docLitBare"
      */
     private String docLitBare;
 
     /**
      * Additional classes for which we need to generate schema
-     * @parameter expression="${axis2.java2wsdl.extraClasses}"
+     * @parameter property="axis2.java2wsdl.extraClasses"
      */
     private String[] extraClasses;
 
     /**
      * Specify namespaces explicitly for packages
-     * @parameter expression="${axis2.java2wsdl.package2Namespace}"
+     * @parameter property="axis2.java2wsdl.package2Namespace"
      */
     private Properties package2Namespace;
 

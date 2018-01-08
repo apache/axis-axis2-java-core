@@ -36,7 +36,7 @@ public class WSDL2CodeMojo extends GenerateSourcesMojo {
     /**
      * The output directory, where the generated sources are being created.
      *
-     * @parameter expression="${axis2.wsdl2code.target}" default-value="${project.build.directory}/generated-sources/axis2/wsdl2code"
+     * @parameter property="axis2.wsdl2code.target" default-value="${project.build.directory}/generated-sources/axis2/wsdl2code"
      */
     private File outputDirectory;
 

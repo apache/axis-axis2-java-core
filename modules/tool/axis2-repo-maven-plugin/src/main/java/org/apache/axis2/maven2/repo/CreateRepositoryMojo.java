@@ -47,7 +47,7 @@ public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
     private File outputDirectory;
     
     /**
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter property="project.build.outputDirectory"
      * @readonly
      */
     private File buildOutputDirectory;

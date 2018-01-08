@@ -34,7 +34,7 @@ public class GenerateTestSourcesMojo extends AbstractWSDL2CodeMojo {
     /**
      * The output directory, where the generated sources are being created.
      *
-     * @parameter expression="${axis2.wsdl2code.target}" default-value="${project.build.directory}/generated-test-sources/wsdl2code"
+     * @parameter property="axis2.wsdl2code.target" default-value="${project.build.directory}/generated-test-sources/wsdl2code"
      */
     private File outputDirectory;
     

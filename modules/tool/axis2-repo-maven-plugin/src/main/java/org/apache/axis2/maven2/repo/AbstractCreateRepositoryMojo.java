@@ -61,14 +61,14 @@ import org.codehaus.plexus.util.StringUtils;
 
 public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     /**
-     * @parameter expression="${project.artifacts}"
+     * @parameter property="project.artifacts"
      * @readonly
      * @required
      */
     private Set<Artifact> projectArtifacts;
     
     /**
-     * @parameter expression="${project.collectedProjects}"
+     * @parameter property="project.collectedProjects"
      * @required
      * @readonly
      */

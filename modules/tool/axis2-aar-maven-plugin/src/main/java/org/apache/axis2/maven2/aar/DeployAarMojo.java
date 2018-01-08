@@ -48,21 +48,21 @@ public class DeployAarMojo extends AbstractAarMojo {
     /**
      * The URL of the Axis2 administration console.
      *
-     * @parameter default-value="http://localhost:8080/axis2/axis2-admin" expression="${axis2.aar.axis2AdminConsoleURL}"
+     * @parameter default-value="http://localhost:8080/axis2/axis2-admin" property="axis2.aar.axis2AdminConsoleURL"
      */
     private URL axis2AdminConsoleURL;
 
     /**
      * The administrator user name for the Axis2 administration console.
      *
-     * @parameter expression="${axis2.aar.axis2AdminUser}"
+     * @parameter property="axis2.aar.axis2AdminUser"
      */
     private String axis2AdminUser;
 
     /**
      * The administrator password for the Axis2 administration console.
      *
-     * @parameter expression="${axis2.aar.axis2AdminPassword}"
+     * @parameter property="axis2.aar.axis2AdminPassword"
      */
     private String axis2AdminPassword;
 

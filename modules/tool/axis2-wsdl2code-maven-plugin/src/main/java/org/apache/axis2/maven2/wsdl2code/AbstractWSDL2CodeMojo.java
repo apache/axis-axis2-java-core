@@ -39,7 +39,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @readonly
      * @required
      */
@@ -48,7 +48,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     /**
      * The WSDL file, which is being read.
      *
-     * @parameter expression="${axis2.wsdl2code.wsdlFile}" default-value="src/main/resources/service.wsdl"
+     * @parameter property="axis2.wsdl2code.wsdlFile" default-value="src/main/resources/service.wsdl"
      */
     private String wsdlFile;
 
@@ -56,28 +56,28 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * Package name of the generated sources; will be used to create a package structure below the
      * output directory.
      *
-     * @parameter expression="${axis2.wsdl2code.package}"
+     * @parameter property="axis2.wsdl2code.package"
      */
     private String packageName;
 
     /**
      * The programming language of the generated sources.
      *
-     * @parameter expression="${axis2.wsdl2code.language}" default-value="java"
+     * @parameter property="axis2.wsdl2code.language" default-value="java"
      */
     private String language;
 
     /**
      * The databinding framework, which is being used by the generated sources.
      *
-     * @parameter expression="${axis2.wsdl2code.databindingName}" default-value="adb"
+     * @parameter property="axis2.wsdl2code.databindingName" default-value="adb"
      */
     private String databindingName;
 
     /**
      * The binding file for JiBX databinding.
      *
-     * @parameter expression="${axis2.wsdl2code.jibxBindingFile}"
+     * @parameter property="axis2.wsdl2code.jibxBindingFile"
      */
     private String jibxBindingFile;
 
@@ -85,7 +85,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * Port name, for which to generate sources. By default, sources will be generated for a
      * randomly picked port.
      *
-     * @parameter expression="${axis2.wsdl2code.portName}"
+     * @parameter property="axis2.wsdl2code.portName"
      */
     private String portName;
 
@@ -93,35 +93,35 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * Service name, for which to generate sources. By default, sources will be generated for all
      * services.
      *
-     * @parameter expression="${axis2.wsdl2code.serviceName}"
+     * @parameter property="axis2.wsdl2code.serviceName"
      */
     private String serviceName;
 
     /**
      * Mode, for which sources are being generated; either of "sync", "async" or "both".
      *
-     * @parameter expression="${axis2.wsdl2code.syncMode}" default-value="both"
+     * @parameter property="axis2.wsdl2code.syncMode" default-value="both"
      */
     private String syncMode;
 
     /**
      * Whether server side sources are being generated.
      *
-     * @parameter expression="${axis2.wsdl2code.generateServerSide}" default-value="false"
+     * @parameter property="axis2.wsdl2code.generateServerSide" default-value="false"
      */
     private boolean generateServerSide;
 
     /**
      * Whether a test case is being generated.
      *
-     * @parameter expression="${axis2.wsdl2code.generateTestCase}" default-value="false"
+     * @parameter property="axis2.wsdl2code.generateTestCase" default-value="false"
      */
     private boolean generateTestcase;
 
     /**
      * Whether a "services.xml" file is being generated.
      *
-     * @parameter expression="${axis2.wsdl2code.generateServicesXml}" default-value="false"
+     * @parameter property="axis2.wsdl2code.generateServicesXml" default-value="false"
      */
     private boolean generateServicesXml;
 
@@ -129,46 +129,46 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * Whether to generate simply all classes. This is only valid in conjunction with
      * "generateServerSide".
      *
-     * @parameter expression="${axis2.wsdl2code.generateAllClasses}" default-value="false"
+     * @parameter property="axis2.wsdl2code.generateAllClasses" default-value="false"
      */
     private boolean generateAllClasses;
 
     /**
      * Whether to unpack classes.
      *
-     * @parameter expression="${axis2.wsdl2code.unpackClasses}" default-value="false"
+     * @parameter property="axis2.wsdl2code.unpackClasses" default-value="false"
      */
     private boolean unpackClasses;
 
     /**
      * Whether to generate the server side interface.
      *
-     * @parameter expression="${axis2.wsdl2code.generateServerSideInterface}" default-value="false"
+     * @parameter property="axis2.wsdl2code.generateServerSideInterface" default-value="false"
      */
     private boolean generateServerSideInterface = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.repositoryPath}"
+     * @parameter property="axis2.wsdl2code.repositoryPath"
      */
     private String repositoryPath = null;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.externalMapping}"
+     * @parameter property="axis2.wsdl2code.externalMapping"
      */
     private File externalMapping = null;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.wsdlVersion}" default-value="1.1"
+     * @parameter property="axis2.wsdl2code.wsdlVersion" default-value="1.1"
      */
     private String wsdlVersion;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.targetSourceFolderLocation}" default-value="src"
+     * @parameter property="axis2.wsdl2code.targetSourceFolderLocation" default-value="src"
      */
     private String targetSourceFolderLocation;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.targetResourcesFolderLocation}"
+     * @parameter property="axis2.wsdl2code.targetResourcesFolderLocation"
      */
     private String targetResourcesFolderLocation = null;
 
@@ -176,56 +176,56 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * This will select between wrapped and unwrapped during code generation. Maps to the -uw option
      * of the command line tool.
      * 
-     * @parameter expression="${axis2.wsdl2code.unwrap}" default-value="false"
+     * @parameter property="axis2.wsdl2code.unwrap" default-value="false"
      */
     private boolean unwrap = false;
 
     /**
      * Set this to true to generate code for all ports.
      * 
-     * @parameter expression="${axis2.wsdl2code.allPorts}" default-value="false"
+     * @parameter property="axis2.wsdl2code.allPorts" default-value="false"
      */
     private boolean allPorts = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.backwardCompatible}" default-value="false" *
+     * @parameter property="axis2.wsdl2code.backwardCompatible" default-value="false" *
      */
     private boolean backwardCompatible = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.flattenFiles}" default-value="false" *
+     * @parameter property="axis2.wsdl2code.flattenFiles" default-value="false" *
      */
     private boolean flattenFiles = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.skipMessageReceiver}" default-value="false" *
+     * @parameter property="axis2.wsdl2code.skipMessageReceiver" default-value="false" *
      */
     private boolean skipMessageReceiver = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.skipBuildXML}" default-value="false" *
+     * @parameter property="axis2.wsdl2code.skipBuildXML" default-value="false" *
      */
     private boolean skipBuildXML = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.skipWSDL}" default-value="false" *
+     * @parameter property="axis2.wsdl2code.skipWSDL" default-value="false" *
      */
     private boolean skipWSDL = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.overWrite}" default-value="false" *
+     * @parameter property="axis2.wsdl2code.overWrite" default-value="false" *
      */
     private boolean overWrite = false;
 
     /**
-     * @parameter expression="${axis2.wsdl2code.suppressPrefixes}" default-value="false" *
+     * @parameter property="axis2.wsdl2code.suppressPrefixes" default-value="false" *
      */
     private boolean suppressPrefixes = false;
 
     /**
      * Specify databinding specific extra options
      *
-     * @parameter expression="${axis2.java2wsdl.options}"
+     * @parameter property="axis2.java2wsdl.options"
      */
     private Properties options;
 
@@ -234,7 +234,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * this parameter is discouraged. In general, you should use the {@code namespaceUris}
      * parameter. However, the latter cannot be set on the command line.
      * 
-     * @parameter expression="${axis2.wsdl2code.namespaceToPackages}"
+     * @parameter property="axis2.wsdl2code.namespaceToPackages"
      */
     private String namespaceToPackages = null;
 

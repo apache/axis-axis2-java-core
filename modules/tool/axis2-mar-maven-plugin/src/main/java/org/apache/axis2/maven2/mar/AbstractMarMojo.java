@@ -45,7 +45,7 @@ public abstract class AbstractMarMojo
     /**
      * The projects base directory.
      *
-     * @parameter expression="${project.basedir}"
+     * @parameter property="project.basedir"
      * @required
      * @readonly
      */
@@ -54,7 +54,7 @@ public abstract class AbstractMarMojo
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -63,7 +63,7 @@ public abstract class AbstractMarMojo
     /**
      * The directory containing generated classes.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter property="project.build.outputDirectory"
      * @required
      */
     private File classesDirectory;
@@ -71,7 +71,7 @@ public abstract class AbstractMarMojo
     /**
      * The directory where the mar is built.
      *
-     * @parameter expression="${project.build.directory}/mar"
+     * @parameter default-value="${project.build.directory}/mar"
      * @required
      */
     protected File marDirectory;
@@ -95,7 +95,7 @@ public abstract class AbstractMarMojo
     /**
      * Whether the dependency jars should be included in the mar
      * 
-     * @parameter expression="${includeDependencies}" default-value="true"
+     * @parameter default-value="true"
      */
     private boolean includeDependencies;
     

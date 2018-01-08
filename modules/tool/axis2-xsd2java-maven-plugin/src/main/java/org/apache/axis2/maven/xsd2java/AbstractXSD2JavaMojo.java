@@ -36,7 +36,7 @@ public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
     /**
      * The maven project.
      * 
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @readonly
      * @required
      */

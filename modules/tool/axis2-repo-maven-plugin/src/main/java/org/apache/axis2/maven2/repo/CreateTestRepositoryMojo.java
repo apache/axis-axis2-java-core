@@ -50,19 +50,19 @@ public class CreateTestRepositoryMojo extends AbstractCreateRepositoryMojo {
     private File outputDirectory;
     
     /**
-     * @parameter expression="${maven.test.skip}"
+     * @parameter property="maven.test.skip"
      * @readonly
      */
     private boolean skip;
     
     /**
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter property="project.build.outputDirectory"
      * @readonly
      */
     private File buildOutputDirectory;
     
     /**
-     * @parameter expression="${project.build.testOutputDirectory}"
+     * @parameter property="project.build.testOutputDirectory"
      * @readonly
      */
     private File buildTestOutputDirectory;
