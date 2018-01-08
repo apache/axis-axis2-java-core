@@ -44,6 +44,7 @@ import java.util.Set;
  * @goal java2wsdl
  * @phase process-classes
  * @requiresDependencyResolution compile
+ * @threadSafe
  */
 public class Java2WSDLMojo extends AbstractMojo {
     public static final String OPEN_BRACKET = "[";

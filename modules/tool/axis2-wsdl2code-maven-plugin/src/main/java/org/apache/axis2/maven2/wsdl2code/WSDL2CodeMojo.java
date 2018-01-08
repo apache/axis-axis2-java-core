@@ -44,6 +44,7 @@ import java.util.Properties;
  * @goal wsdl2code
  * @phase generate-sources
  * @requiresDependencyResolution test
+ * @threadSafe
  */
 public class WSDL2CodeMojo extends AbstractMojo {
     /**

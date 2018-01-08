@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  *
  * @goal inplace
  * @requiresDependencyResolution runtime
+ * @threadSafe
  */
 public class MarInPlaceMojo 
   extends AbstractMarMojo

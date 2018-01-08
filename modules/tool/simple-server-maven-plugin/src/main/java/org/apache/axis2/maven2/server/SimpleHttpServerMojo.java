@@ -42,6 +42,7 @@ import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_FILE_NA
  * @goal run 
  * @execute phase="compile"  // TODO - check this again.
  * @requiresDependencyResolution runtime 
+ * @threadSafe
  */
 public class SimpleHttpServerMojo extends AbstractMojo {
 
