@@ -27,6 +27,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal exploded
  * @phase package
  * @requiresDependencyResolution runtime
+ * @threadSafe
  */
 public class MarExplodedMojo
     extends AbstractMarMojo

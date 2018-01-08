@@ -33,6 +33,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal create-test-repository
  * @phase process-test-classes
  * @requiresDependencyResolution test
+ * @threadSafe
  */
 public class CreateTestRepositoryMojo extends AbstractCreateRepositoryMojo {
     /**

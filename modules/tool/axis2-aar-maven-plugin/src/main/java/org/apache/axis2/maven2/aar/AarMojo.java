@@ -39,6 +39,7 @@ import java.io.IOException;
  * @goal aar
  * @phase package
  * @requiresDependencyResolution runtime
+ * @threadSafe
  */
 public class AarMojo extends AbstractAarMojo {
     /**

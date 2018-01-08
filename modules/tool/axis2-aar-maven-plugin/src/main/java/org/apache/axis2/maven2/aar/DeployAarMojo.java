@@ -40,6 +40,7 @@ import java.net.URL;
  * 
  * @goal deployaar
  * @phase install
+ * @threadSafe
  */
 public class DeployAarMojo extends AbstractAarMojo {
 

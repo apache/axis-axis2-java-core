@@ -30,6 +30,7 @@ import org.apache.maven.artifact.Artifact;
  * @goal create-repository
  * @phase package
  * @requiresDependencyResolution runtime
+ * @threadSafe
  */
 public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
     /**

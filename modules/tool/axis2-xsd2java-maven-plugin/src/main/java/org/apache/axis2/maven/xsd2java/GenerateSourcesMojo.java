@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProject;
  * 
  * @goal generate-sources
  * @phase generate-sources
+ * @threadSafe
  */
 public class GenerateSourcesMojo extends AbstractXSD2JavaMojo {
     /**

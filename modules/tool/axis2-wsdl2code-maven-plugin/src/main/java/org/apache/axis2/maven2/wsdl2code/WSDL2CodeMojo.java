@@ -28,6 +28,7 @@ import org.apache.maven.project.MavenProject;
  * 
  * @goal wsdl2code
  * @phase generate-sources
+ * @threadSafe
  * @deprecated This goal is identical to axis2-wsdl2code:generate-sources; either switch to that
  *             goal or use the new axis2-wsdl2code:generate-test-sources goal if you need to
  *             generate code for use in unit tests only.

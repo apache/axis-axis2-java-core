@@ -39,6 +39,7 @@ import java.io.IOException;
  * @goal mar
  * @phase package
  * @requiresDependencyResolution runtime
+ * @threadSafe
  */
 public class MarMojo extends AbstractMarMojo
 {

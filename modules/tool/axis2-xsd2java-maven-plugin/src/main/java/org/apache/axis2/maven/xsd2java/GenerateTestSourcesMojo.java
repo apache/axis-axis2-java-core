@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProject;
  * 
  * @goal generate-test-sources
  * @phase generate-test-sources
+ * @threadSafe
  */
 public class GenerateTestSourcesMojo extends AbstractXSD2JavaMojo {
     /**
