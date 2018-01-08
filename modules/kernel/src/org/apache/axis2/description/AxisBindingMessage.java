@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.WSDL20Util;
 import org.apache.axis2.util.WSDLSerializationUtil;
@@ -233,127 +232,29 @@ public class AxisBindingMessage extends AxisDescription {
     }
 
     public Policy calculateEffectivePolicy() {
-        PolicySubject policySubject = null;
         Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
 
-        // AxisBindingMessage
-        policySubject = getPolicySubject();
-        policyList.addAll(policySubject.getAttachedPolicyComponents());
-
-        // AxisBindingOperation policies
-        AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
-        if (axisBindingOperation != null) {
-            policyList.addAll(axisBindingOperation.getPolicySubject()
-                    .getAttachedPolicyComponents());
-        }
-
-        // AxisBinding
-        AxisBinding axisBinding = (axisBindingOperation == null) ? null
-                : axisBindingOperation.getAxisBinding();
-        if (axisBinding != null) {
-            policyList.addAll(axisBinding.getPolicySubject()
-                    .getAttachedPolicyComponents());
-        }
-
-        // AxisEndpoint
-        AxisEndpoint axisEndpoint = (axisBinding == null) ? null : axisBinding
-                .getAxisEndpoint();
-        if (axisEndpoint != null) {
-            policyList.addAll(axisEndpoint.getPolicySubject()
-                    .getAttachedPolicyComponents());
-        }
-
-        // AxisMessage
-        if (axisMessage != null) {
-            policyList.addAll(axisMessage.getPolicySubject()
-                    .getAttachedPolicyComponents());
-        }
-
-        // AxisOperation
-        AxisOperation axisOperation = (axisMessage == null) ? null
-                : axisMessage.getAxisOperation();
-        if (axisOperation != null) {
-            policyList.addAll(axisOperation.getPolicySubject()
-                    .getAttachedPolicyComponents());
-        }
-
-        // AxisService
-        AxisService axisService = (axisOperation == null) ? null
-                : axisOperation.getAxisService();
-        if (axisService != null) {
-            policyList.addAll(axisService.getPolicySubject()
-                    .getAttachedPolicyComponents());
-        }
-
-        // AxisConfiguration
-        AxisConfiguration axisConfiguration = (axisService == null) ? null
-                : axisService.getAxisConfiguration();
-        if (axisConfiguration != null) {
-            policyList.addAll(axisConfiguration.getPolicySubject()
-                    .getAttachedPolicyComponents());
-        }
+        AxisDescription description = this;
+        AxisService axisService = null;
+        do {
+            policyList.addAll(description.getPolicySubject().getAttachedPolicyComponents());
+            if (description instanceof AxisService) {
+                axisService = (AxisService)description;
+            }
+        } while ((description = description.getParent()) != null);
+        
 
         return PolicyUtil.getMergedPolicy(policyList, axisService);
     }
     
     private boolean isPolicyUpdated() {
-        if (getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
-        }
-        // AxisBindingOperation
-        AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
-        if (axisBindingOperation != null
-                && axisBindingOperation.getPolicySubject().getLastUpdatedTime()
-                        .after(lastPolicyCalculatedTime)) {
-            return true;
-        }
-        // AxisBinding
-        AxisBinding axisBinding = (axisBindingOperation == null) ? null
-                : axisBindingOperation.getAxisBinding();
-        if (axisBinding != null
-                && axisBinding.getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
-        }
-        // AxisEndpoint
-        AxisEndpoint axisEndpoint = (axisBinding == null) ? null : axisBinding
-                .getAxisEndpoint();
-        if (axisEndpoint != null
-                && axisEndpoint.getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
-        }
-        // AxisMessage
-        if (axisMessage != null
-                && axisMessage.getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
-        }
-        // AxisOperation
-        AxisOperation axisOperation = (axisMessage == null) ? null
-                : axisMessage.getAxisOperation();
-        if (axisOperation != null
-                && axisOperation.getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
-        }
-        // AxisService
-        AxisService axisService = (axisOperation == null) ? null
-                : axisOperation.getAxisService();
-        if (axisService != null
-                && axisService.getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
-        }
-        // AxisConfiguration
-        AxisConfiguration axisConfiguration = (axisService == null) ? null
-                : axisService.getAxisConfiguration();
-        if (axisConfiguration != null
-                && axisConfiguration.getPolicySubject().getLastUpdatedTime()
-                        .after(lastPolicyCalculatedTime)) {
-            return true;
-        }
+        AxisDescription description = this;
+        do {
+            if (description.getPolicySubject().getLastUpdatedTime().after(
+                    lastPolicyCalculatedTime)) {
+                return true;
+            }
+        } while ((description = description.getParent()) != null);
         return false;
     }
     
