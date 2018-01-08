@@ -149,7 +149,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.1</version>
                 <executions>
                     <execution>
                         <!-- This copies the dependencies so that they can be located by Eclipse -->

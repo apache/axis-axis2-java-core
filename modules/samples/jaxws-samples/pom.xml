@@ -105,7 +105,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.2</version>
                 <executions>
                     <execution>
                         <id>copy-modules</id>
