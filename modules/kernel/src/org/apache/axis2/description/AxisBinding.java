@@ -238,7 +238,7 @@ public class AxisBinding extends AxisDescription {
         }
         WSDLSerializationUtil.addWSDLDocumentationElement(this, bindingElement, omFactory, wsdl);
         WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
-				bindingElement);
+                bindingElement);
         return bindingElement;
     }
     
@@ -274,7 +274,7 @@ public class AxisBinding extends AxisDescription {
     }
     
     public Iterator<AxisBindingOperation> getChildren(){
-    	return (Iterator<AxisBindingOperation>) super.getChildren();
+        return (Iterator<AxisBindingOperation>) super.getChildren();
     }
     
     @Override

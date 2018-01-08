@@ -49,7 +49,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class OutInAxisOperation extends TwoChannelAxisOperation {
 
-	private static final Log log = LogFactory.getLog(OutInAxisOperation.class);
+    private static final Log log = LogFactory.getLog(OutInAxisOperation.class);
 
     public OutInAxisOperation() {
         super();
@@ -191,7 +191,7 @@ class OutInAxisOperationClient extends OperationClient {
         if (!mc.getOptions().isUseSeparateListener()) {
             Boolean useAsyncOption =
                     (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
-			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: useAsyncOption " + useAsyncOption);
+            if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: useAsyncOption " + useAsyncOption);
             if (useAsyncOption != null) {
                 useAsync = useAsyncOption.booleanValue();
             }
@@ -255,21 +255,21 @@ class OutInAxisOperationClient extends OperationClient {
                 }
                 callbackReceiver = new CallbackReceiver();
                 axisOp.setMessageReceiver(callbackReceiver);
-				if (log.isDebugEnabled()) log.debug("OutInAxisOperation: callbackReceiver " + callbackReceiver + " : " + axisOp);
+                if (log.isDebugEnabled()) log.debug("OutInAxisOperation: callbackReceiver " + callbackReceiver + " : " + axisOp);
             }
         }
 
         SyncCallBack internalCallback = null;
         if (axisCallback != null) {
             callbackReceiver.addCallback(mc.getMessageID(), axisCallback);  
-			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating axis callback");			
+            if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating axis callback");            
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Creating internal callback");
             }
             internalCallback = new SyncCallBack();
             callbackReceiver.addCallback(mc.getMessageID(), internalCallback);
-			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating internal callback");
+            if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating internal callback");
         }
 
         /**
@@ -303,7 +303,7 @@ class OutInAxisOperationClient extends OperationClient {
         mc.setProperty(MessageContext.CLIENT_API_NON_BLOCKING, Boolean.TRUE);
         mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
         AxisEngine.send(mc);
-		if (internalCallback != null) {
+        if (internalCallback != null) {
             internalCallback.waitForCompletion(options.getTimeOutInMilliSeconds());
 
             // process the result of the invocation
@@ -528,7 +528,7 @@ class OutInAxisOperationClient extends OperationClient {
          * finally block.
          */
         public synchronized void onComplete() {
-			complete = true;
+            complete = true;
             notify();
         }
 

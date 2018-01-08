@@ -62,7 +62,7 @@ public class AxisEndpoint extends AxisDescription {
         if (endpointURL == null) {
             endpointURL = calculateEndpointURL();
         }
-		return endpointURL;
+        return endpointURL;
     }
 
     public void setEndpointURL(String endpointURL) {
