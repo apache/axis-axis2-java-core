@@ -25,13 +25,12 @@ import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PolicySubject {
-    private Date lastUpdatedTime = new Date();
+    private OpaqueInstant lastUpdatedTime = new OpaqueInstant();
     
     private ConcurrentHashMap<String, PolicyComponent> attachedPolicyComponents = new ConcurrentHashMap<String, PolicyComponent>();
 
@@ -49,7 +48,7 @@ public class PolicySubject {
 
     public void attachPolicyReference(PolicyReference reference) {
         attachedPolicyComponents.put(reference.getURI(), reference);
-        setLastUpdatedTime(new Date()); 
+        setLastUpdatedTime(new OpaqueInstant()); 
     }
 
     public void attachPolicyComponents(List<PolicyComponent> policyComponents) {
@@ -74,7 +73,7 @@ public class PolicySubject {
     public void attachPolicyComponent(String key,
             PolicyComponent policyComponent) {
         attachedPolicyComponents.put(key, policyComponent);
-        setLastUpdatedTime(new Date());
+        setLastUpdatedTime(new OpaqueInstant());
     }
 
     public PolicyComponent getAttachedPolicyComponent(String key) {
@@ -94,24 +93,24 @@ public class PolicySubject {
                     "policy doesn't have a name or an id ");
         }
         attachedPolicyComponents.put(key, policy);
-        setLastUpdatedTime(new Date());
+        setLastUpdatedTime(new OpaqueInstant());
     }
 
     public void detachPolicyComponent(String key) {
         attachedPolicyComponents.remove(key);
-        setLastUpdatedTime(new Date());
+        setLastUpdatedTime(new OpaqueInstant());
     }
 
     public void clear() {
         attachedPolicyComponents.clear();
-        setLastUpdatedTime(new Date());
+        setLastUpdatedTime(new OpaqueInstant());
     }
 
-    public Date getLastUpdatedTime() {
+    public OpaqueInstant getLastUpdatedTime() {
         return lastUpdatedTime;
     }
 
-    public void setLastUpdatedTime(Date lastUpdatedTime) {
+    public void setLastUpdatedTime(OpaqueInstant lastUpdatedTime) {
         this.lastUpdatedTime = lastUpdatedTime;
     }
 }

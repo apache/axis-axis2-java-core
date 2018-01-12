@@ -53,7 +53,7 @@ public class AxisBindingMessage extends AxisDescription {
     private boolean fault = false;
 
     private volatile Policy effectivePolicy = null;
-    private volatile Date lastPolicyCalculatedTime = null;
+    private volatile OpaqueInstant lastPolicyCalculatedTime = null;
 
     public boolean isFault() {
         return fault;
@@ -225,7 +225,7 @@ public class AxisBindingMessage extends AxisDescription {
             synchronized (this) {
                 if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
                     effectivePolicy = calculateEffectivePolicy();
-                    lastPolicyCalculatedTime = new Date();
+                    lastPolicyCalculatedTime = new OpaqueInstant();
                 }
             }
         }
