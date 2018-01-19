@@ -1400,6 +1400,8 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <!-- Make test execution deterministic -->
+                    <runOrder>alphabetical</runOrder>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <trimStackTrace>false</trimStackTrace>
                     <systemProperties>
