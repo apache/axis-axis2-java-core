@@ -23,7 +23,9 @@ import junit.framework.TestCase;
 import org.apache.axis2.context.MessageContext;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MessageContextChangeTest extends TestCase {
     private FieldDescription[] knownList = {
@@ -127,7 +129,15 @@ public class MessageContextChangeTest extends TestCase {
 
         Class mcClass = mc.getClass();
 
-        Field [] fields = mcClass.getDeclaredFields();
+        List<Field> fieldList = new ArrayList<>();
+        for (Field field : mcClass.getDeclaredFields()) {
+            // Ignore fields added by instrumentation (such as JaCoCo)
+            if (!field.getName().startsWith("$")) {
+                fieldList.add(field);
+            }
+        }
+        Field[] fields = fieldList.toArray(new Field[fieldList.size()]);
+
         int numberFields = fields.length;
 
         int numberKnownFields = knownList.length;

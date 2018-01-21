@@ -183,7 +183,7 @@
                         presence of jaxp-ri on the classpath.
                       * Please leave this on a single line. Adding a newline between the two
                         options causes a build failure. -->
-                    <argLine>-Xbootclasspath/p:${surefire.bootclasspath} -Dcom.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration=com.sun.org.apache.xerces.internal.parsers.XIncludeParserConfiguration</argLine>
+                    <argLine>${argLine} -Xbootclasspath/p:${surefire.bootclasspath} -Dcom.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration=com.sun.org.apache.xerces.internal.parsers.XIncludeParserConfiguration</argLine>
                     <systemProperties>
                         <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
                         <property>

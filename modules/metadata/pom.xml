@@ -260,7 +260,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <argLine>
-                        -Xbootclasspath/p:${jaxws.bootclasspath}
+                        ${argLine} -Xbootclasspath/p:${jaxws.bootclasspath}
                     </argLine>
                     <includes>
                         <include>**/*Tests.java</include>
