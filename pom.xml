@@ -1278,6 +1278,11 @@
                     <version>9.3.10.v20160621</version>
                 </plugin>
                 <plugin>
+                    <groupId>com.github.veithen.invoker</groupId>
+                    <artifactId>resolver-proxy-maven-plugin</artifactId>
+                    <version>0.1</version>
+                </plugin>
+                <plugin>
                     <artifactId>maven-invoker-plugin</artifactId>
                     <version>3.0.1</version>
                     <configuration>

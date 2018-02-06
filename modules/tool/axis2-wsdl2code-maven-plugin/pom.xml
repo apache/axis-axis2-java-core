@@ -190,13 +190,13 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!-- Work around MINVOKER-191 -->
-                <artifactId>maven-install-plugin</artifactId>
+                <groupId>com.github.veithen.invoker</groupId>
+                <artifactId>resolver-proxy-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>install</goal>
+                            <goal>start</goal>
+                            <goal>stop</goal>
                         </goals>
                     </execution>
                 </executions>
