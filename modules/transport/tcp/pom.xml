@@ -58,26 +58,34 @@
 
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
-                   <execution>
-                        <id>build-repo</id>
-                        <phase>test-compile</phase>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/test-resources/samples/modules" />
-                                <mkdir dir="target/test-resources/samples/conf" />
-                              	<copy file="${settings.localRepository}/org/apache/axis2/addressing/${project.version}/addressing-${project.version}.mar" tofile="target/test-resources/samples/modules/addressing.mar" />
-                                <copy file="conf/axis2.xml" tofile="target/test-resources/samples/conf/axis2.xml" />
-                                <copy file="conf/client_axis2.xml" tofile="target/test-resources/samples/conf/client_axis2.xml" />
-                            </tasks>
-                        </configuration>
-                       <goals>
-                            <goal>run</goal>
+                    <execution>
+                        <id>build-server-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/server</outputDirectory>
+                            <axis2xml>conf/axis2.xml</axis2xml>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-client-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/client</outputDirectory>
+                            <axis2xml>conf/client_axis2.xml</axis2xml>
+                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <configurationDirectory>conf</configurationDirectory>
+                </configuration>
             </plugin>
 
             <plugin>
