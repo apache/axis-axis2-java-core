@@ -59,7 +59,7 @@ public class UtilsTCPServer {
         if (count == 0) {
 
             // start tcp server
-            File file = new File(prefixBaseDirectory(Constants.TESTING_REPOSITORY));
+            File file = new File(prefixBaseDirectory("target/repo/server"));
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("Repository directory does not exist");
@@ -96,10 +96,10 @@ public class UtilsTCPServer {
     }
 
     public static ConfigurationContext createClientConfigurationContext() throws Exception {
-        File file = new File(prefixBaseDirectory(Constants.TESTING_REPOSITORY));
+        File file = new File(prefixBaseDirectory("target/repo/client"));
         ConfigurationContext configContext = 
             ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                    file.getAbsolutePath(), file.getAbsolutePath() + "/conf/client_axis2.xml");
+                    file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
         return configContext;
     }
 
