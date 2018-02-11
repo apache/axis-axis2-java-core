@@ -110,43 +110,43 @@
             <version>${project.version}</version>
         </dependency>
 
-      <dependency>
-          <groupId>org.apache.axis2</groupId>
-          <artifactId>axis2-transport-testkit</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.mockejb</groupId>
-          <artifactId>mockejb</artifactId>
-          <version>0.6-beta2</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.qpid</groupId>
-          <artifactId>qpid-broker</artifactId>
-          <version>0.18</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.qpid</groupId>
-          <artifactId>qpid-client</artifactId>
-          <version>0.18</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-core</artifactId>
-          <version>5.1.0</version>
-          <scope>test</scope>
-          <exclusions>
-              <!-- We want to choose the JAF implementation ourselves -->
-              <exclusion>
-                  <groupId>javax.activation</groupId>
-                  <artifactId>activation</artifactId>
-              </exclusion>
-          </exclusions>
-      </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-testkit</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockejb</groupId>
+            <artifactId>mockejb</artifactId>
+            <version>0.6-beta2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>qpid-broker</artifactId>
+            <version>0.18</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>qpid-client</artifactId>
+            <version>0.18</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <version>5.1.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <!-- We want to choose the JAF implementation ourselves -->
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
