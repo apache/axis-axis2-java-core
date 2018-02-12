@@ -64,24 +64,23 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>com.github.veithen.alta</groupId>
+                <artifactId>alta-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy</id>
                         <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>generate-properties</goal>
                         </goals>
                         <configuration>
-                            <stripVersion>true</stripVersion>
-                            <artifactItems>
-                                <artifactItem>
+                            <name>aspectjweaver</name>
+                            <value>%file%</value>
+                            <artifacts>
+                                <artifact>
                                     <groupId>org.aspectj</groupId>
                                     <artifactId>aspectjweaver</artifactId>
-                                    <outputDirectory>target/lib</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
+                                </artifact>
+                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>
@@ -100,7 +99,7 @@
                             <value>target/cobertura.ser</value>
                         </property>
                     </systemProperties>
-                    <argLine>${argLine} -javaagent:target/lib/aspectjweaver.jar -Xms64m -Xmx128m</argLine>
+                    <argLine>${argLine} -javaagent:${aspectjweaver} -Xms64m -Xmx128m</argLine>
                 </configuration>
             </plugin>
         </plugins>
