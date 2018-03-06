@@ -34,7 +34,7 @@ if exists(dist_root):
     rmtree(dist_root)
 call(["svn", "checkout", "https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/", dist_root])
 mkdir(dist_dir)
-for suffix in [ "zip", "zip.asc", "zip.md5", "zip.sha1", "zip.sha512" ]:
+for suffix in [ "zip", "zip.asc", "zip.sha512" ]:
     for classifier in [ "bin", "src", "war" ]:
         file = "axis2-" + release + "-" + classifier + "." + suffix
         copyfile(join(root_dir, "modules", "distribution", "target", file), join(dist_dir, file))

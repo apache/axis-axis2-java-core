@@ -26,13 +26,13 @@ release can be found [here](release-notes/${release_version}.html).
 The following distributions are available for download:
 
 &nbsp;                             | Link                                                      | Checksums and signatures
------------------------------------|-----------------------------------------------------------|-------------------------------
-Binary distribution                | [axis2-${release_version}-bin.zip][1]                     | [MD5][2] [SHA1][3] [PGP][4]
-Source distribution                | [axis2-${release_version}-src.zip][5]                     | [MD5][6] [SHA1][7] [PGP][8]
-WAR distribution                   | [axis2-${release_version}-war.zip][9]                     | [MD5][10] [SHA1][11] [PGP][12]
-Service Archive plugin for Eclipse | [axis2-eclipse-service-plugin-${release_version}.zip][13] | [MD5][14] [SHA1][15] [PGP][16]
-Code Generator plugin for Eclipse  | [axis2-eclipse-codegen-plugin-${release_version}.zip][17] | [MD5][18] [SHA1][19] [PGP][20]
-Axis2 plugin for IntelliJ IDEA     | [axis2-idea-plugin-${release_version}.zip][21]            | [MD5][22] [SHA1][23] [PGP][24]
+-----------------------------------|-----------------------------------------------------------|-------------------------
+Binary distribution                | [axis2-${release_version}-bin.zip][1]                     | [SHA512][3] [PGP][4]
+Source distribution                | [axis2-${release_version}-src.zip][5]                     | [SHA512][7] [PGP][8]
+WAR distribution                   | [axis2-${release_version}-war.zip][9]                     | [SHA512][11] [PGP][12]
+Service Archive plugin for Eclipse | [axis2-eclipse-service-plugin-${release_version}.zip][13] | [SHA512][15] [PGP][16]
+Code Generator plugin for Eclipse  | [axis2-eclipse-codegen-plugin-${release_version}.zip][17] | [SHA512][19] [PGP][20]
+Axis2 plugin for IntelliJ IDEA     | [axis2-idea-plugin-${release_version}.zip][21]            | [SHA512][23] [PGP][24]
 
 The binary distribution contains all the Axis2 libraries and modules, except for [Apache Rampart](../rampart/)
 (WS-Security implementation) which must be downloaded separately. It also contains command line tools,
@@ -48,28 +48,22 @@ Distributions for older releases can be found in the [archive][28].
 All releases are also available as Maven artifacts in the [central repository][29].
 
 [1]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-${release_version}-bin.zip
-[2]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-bin.zip.md5
-[3]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-bin.zip.sha1
+[3]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-bin.zip.sha512
 [4]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-bin.zip.asc
 [5]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-${release_version}-src.zip
-[6]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-src.zip.md5
-[7]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-src.zip.sha1
+[7]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-src.zip.sha512
 [8]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-src.zip.asc
 [9]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip
-[10]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip.md5
-[11]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip.sha1
+[11]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip.sha512
 [12]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip.asc
 [13]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip
-[14]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip.md5
-[15]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip.sha1
+[15]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip.sha512
 [16]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip.asc
 [17]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip
-[18]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip.md5
-[19]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip.sha1
+[19]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip.sha512
 [20]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip.asc
 [21]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip
-[22]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip.md5
-[23]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip.sha1
+[23]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip.sha512
 [24]: https://www.apache.org/dist/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip.asc
 [25]: http://www.apache.org/dev/release-signing#verifying-signature
 [26]: https://www.apache.org/dist/axis/axis2/java/core/KEYS

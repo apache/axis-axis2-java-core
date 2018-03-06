@@ -1199,8 +1199,6 @@
                     <version>1.5</version>
                     <configuration>
                         <algorithms>
-                            <algorithm>MD5</algorithm>
-                            <algorithm>SHA-1</algorithm>
                             <algorithm>SHA-512</algorithm>
                         </algorithms>
                     </configuration>
