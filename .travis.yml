@@ -1,0 +1,9 @@
+dist: trusty
+language: java
+jdk:
+  - openjdk8
+install: echo NOOP Skipping pre-fetch of Maven dependencies
+cache:
+  directories:
+    - $HOME/.m2
+script: mvn -B clean verify -Papache-release -Dgpg.skip=true
