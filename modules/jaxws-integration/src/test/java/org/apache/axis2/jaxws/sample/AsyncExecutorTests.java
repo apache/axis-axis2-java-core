@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.sample;
 
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.TestUtils;
 import org.apache.axis2.jaxws.sample.parallelasync.common.CallbackHandler;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
@@ -68,18 +69,15 @@ public class AsyncExecutorTests {
     public void testService_isAlive() throws Exception {
         final String MESSAGE = "testServiceAlive";
 
-        AsyncPort port = getPort((Executor)null);
+        final AsyncPort port = getPort((Executor)null);
 
         String req1base = "sleepAsync";
         String req2base = "remappedAsync";
 
-        String request1 = null;
-        String request2 = null;
-
         for (int i = 0; i < 10; i++) {
             
-            request1 = req1base + "_" + i;
-            request2 = req2base + "_" + i;
+            final String request1 = req1base + "_" + i;
+            final String request2 = req2base + "_" + i;
 
             TestLogger.logger.debug("Iteration [" + i + "] using request1 [" + request1 +
                     "]  request2 [" + request2 + "]");
@@ -96,8 +94,15 @@ public class AsyncExecutorTests {
             await(resp2);
 
             // check the waiting request #1
-            String asleep = port.isAsleep(request1);
-            //System.out.println(title+"iteration ["+i+"]   port.isAsleep(request1 ["+request1+"]) = ["+asleep+"]");
+            // Requests are not necessarily processed in order, so we need to retry.
+            withRetry(new Runnable() {
+                @Override
+                public void run() {
+                    String asleep = port.isAsleep(request1);
+                    //System.out.println(title+"iteration ["+i+"]   port.isAsleep(request1 ["+request1+"]) = ["+asleep+"]");
+                    assertEquals("sleepAsync did not sleep as expected", request1, asleep);
+                }
+            });
 
             // wakeup the waiting request #1
             String wake = port.wakeUp(request1);
@@ -123,7 +128,6 @@ public class AsyncExecutorTests {
             }
 
             // check status on request #1
-            assertEquals("sleepAsync did not sleep as expected", request1, asleep);
             assertEquals("sleepAsync did not return expected response ", request1, req1_result);
 
             // check status on request #2
@@ -137,7 +141,7 @@ public class AsyncExecutorTests {
         // check the callback operation
 		CallbackHandler<SleepResponse> sleepCallbackHandler = new CallbackHandler<SleepResponse>();
 
-        request1 = req1base + "_with_Callback";
+        String request1 = req1base + "_with_Callback";
         //System.out.println(title+" port.sleepAsync("+request1+", callbackHander)  being submitted....");
 		Future<?> sr = port.sleepAsync(request1, sleepCallbackHandler);
 
