@@ -3,11 +3,11 @@
     <parent>
         <artifactId>jms-sample</artifactId>
         <groupId>org.apache.axis2.examples</groupId>
-        <version>1.7.8-SNAPSHOT</version>
+        <version>1.7.8</version>
     </parent>
     <groupId>org.apache.axis2.examples</groupId>
     <artifactId>jmsService</artifactId>
-    <version>1.7.8-SNAPSHOT</version>
+    <version>1.7.8</version>
     <build>
         <plugins>
             <plugin>
