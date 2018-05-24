@@ -2,11 +2,15 @@ dist: trusty
 language: java
 jdk:
   - openjdk8
-install: echo NOOP Skipping pre-fetch of Maven dependencies
+install: true
+script: '[ "$TRAVIS_REPO_SLUG" == apache/axis2-java ] && [ "$TRAVIS_BRANCH" == trunk ] && [ "$TRAVIS_PULL_REQUEST" == false ] && goal=deploy || goal=verify ; mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true $goal'
+env:
+  global:
+    - secure: "IzpkWYL9tH5bE6I6nDbgW6HUlz/+R7XuBXo5997r2adRz8Q1vnSA4gvvMDLyvNjUXDWB99HNLXMaInYlpLNOjBjgXx0abmbcUBfCu0/923iuT80IowT7kNcQK+k4b9ajFT4EZAWySru1SyeTa1VgEjCnAhynDXhhGwCjjakxGrY="
+    - secure: "iAPTcu1L6InO4F39F22iDccXhc59H7vVbEXZF3IxeWdf0RbtaahWrxHO532ILmTxN+wMio0GMNtmbyp8GP1Q30g7ZtK0YINeKcvR/PesiIcerm5Zp7Bh1a2PB3wJFnlykYBenn+AXXXZKRrmPki2aXFC0wEQ6hgKBQfVgwOcvHA="
 cache:
   directories:
     - $HOME/.m2
-script: mvn -B clean verify -Papache-release -Dgpg.skip=true
 notifications:
   email:
     # java-dev@axis.apache.org doesn't work here because it's not an address registered on GitHub.
