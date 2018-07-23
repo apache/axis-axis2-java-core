@@ -160,8 +160,8 @@ public class ConverterUtilTest extends TestCase {
             this.internalTestConvertToDateTime();
             
             // run tests with time zone "Africa/Windhoek"
-            System.out.println( "setting time zone to Africa/Windhoek" );
-            TimeZone.setDefault(TimeZone.getTimeZone("Africa/Windhoek"));
+            System.out.println( "setting time zone to Africa/Tunis" );
+            TimeZone.setDefault(TimeZone.getTimeZone("Africa/Tunis"));
             this.internalTestConvertToDateTime();
 
             // run tests with time zone "Australia/Darwin"
