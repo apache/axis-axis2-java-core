@@ -30,6 +30,9 @@
     <artifactId>axis2-clustering</artifactId>
     <name>Apache Axis2 - Clustering</name>
     <description>Axis2 Clustering module</description>
+    <properties>
+        <tomcat.version>6.0.16</tomcat.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -62,10 +65,12 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tribes</artifactId>
+            <version>${tomcat.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>juli</artifactId>
+            <version>${tomcat.version}</version>
         </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
