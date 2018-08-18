@@ -21,6 +21,7 @@ package org.apache.axis2.jaxbri;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.ClientHelper;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -32,9 +33,12 @@ public class Test01Test {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/Test01");
     
+    @ClassRule
+    public static ClientHelper clientHelper = new ClientHelper(server);
+    
     @Test
     public void test() throws Exception {
-        Test01 stub = new Test01Stub(server.getConfigurationContext(), server.getEndpoint("Test01"));
+        Test01 stub = clientHelper.createStub(Test01Stub.class, "Test01");
         Add add = new Add();
         add.setArg1(3);
         add.setArg2(4);

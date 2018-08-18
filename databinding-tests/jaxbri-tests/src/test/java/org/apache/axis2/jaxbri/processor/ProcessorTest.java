@@ -37,6 +37,7 @@ import org.apache.axis2.jaxbri.processor.client.ProcessorStub;
 import org.apache.axis2.jaxbri.processor.data.ReplyMessage;
 import org.apache.axis2.jaxbri.processor.data.RequestMessage;
 import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.ClientHelper;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -49,9 +50,12 @@ public class ProcessorTest {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/processor");
     
+    @ClassRule
+    public static ClientHelper clientHelper = new ClientHelper(server);
+    
     @Test
     public void testStub() throws Exception {
-        Processor stub = new ProcessorStub(server.getConfigurationContext(), server.getEndpoint("Processor"));
+        Processor stub = clientHelper.createStub(ProcessorStub.class, "Processor");
         RequestMessage request = new RequestMessage();
         request.setRequestID("A3TN39840");
         request.setRequestData("DATA");

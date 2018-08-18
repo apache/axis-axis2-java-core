@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxbri.identityservice;
 
 import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.ClientHelper;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -29,10 +30,13 @@ public class IdentityServiceTest {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/identityservice");
     
+    @ClassRule
+    public static ClientHelper clientHelper = new ClientHelper(server);
+    
     @Test
     public void test() throws Exception {
-        IdentityLinkingService stub = new IdentityLinkingServiceStub(
-                server.getConfigurationContext(), server.getEndpoint("IdentityLinkingService"));
+        IdentityLinkingService stub = clientHelper.createStub(
+                IdentityLinkingServiceStub.class, "IdentityLinkingService");
         LinkIdentitiesType linkIdentities = new LinkIdentitiesType();
         linkIdentities.setOwningPlatform("test");
         stub.createLinkedIdentities(linkIdentities);

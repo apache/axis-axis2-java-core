@@ -24,6 +24,7 @@ import javax.activation.DataSource;
 import org.apache.axiom.testutils.activation.RandomDataSource;
 import org.apache.axiom.testutils.io.IOTestUtils;
 import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.ClientHelper;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -31,9 +32,12 @@ public class MtomTest {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/mtom");
     
+    @ClassRule
+    public static ClientHelper clientHelper = new ClientHelper(server);
+    
     @Test
     public void test() throws Exception {
-        MtomStub stub = new MtomStub(server.getConfigurationContext(), server.getEndpoint("mtom"));
+        MtomStub stub = clientHelper.createStub(MtomStub.class, "mtom");
         UploadDocument uploadRequest = new UploadDocument();
         DataSource contentDS = new RandomDataSource(1234567L, 1024);
         uploadRequest.setContent(new DataHandler(contentDS));
