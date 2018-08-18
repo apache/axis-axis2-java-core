@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<wsdl:definitions targetNamespace="http://apache.org/axis2/jaxbri/axis2_5919"
+    xmlns:tns="http://apache.org/axis2/jaxbri/axis2_5919"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <schema elementFormDefault="qualified" targetNamespace="http://apache.org/axis2/jaxbri/axis2_5919"
+            xmlns="http://www.w3.org/2001/XMLSchema"
+            xmlns:tns="http://apache.org/axis2/jaxbri/axis2_5919"
+            xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            
+            <element name="TestRequest">
+                <complexType>
+                    <sequence/>
+                </complexType>
+            </element>
+            
+            <element name="TestResponse">
+                <complexType>
+                    <sequence />
+                </complexType>
+            </element>
+            
+            <element name="TestFault">
+                <complexType>
+                    <sequence>
+                        <element name="message" type="xsd:string"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </wsdl:types>
+    
+    <wsdl:message name="TestRequest">
+        <wsdl:part element="tns:TestRequest" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="TestResponse">
+        <wsdl:part element="tns:TestResponse" name="return"/>
+    </wsdl:message>
+    
+    <wsdl:message name="TestFault">
+        <wsdl:part element="tns:TestFault" name="fault"/>
+    </wsdl:message>
+    
+    <wsdl:portType name="Fault">
+        <wsdl:operation name="Test">
+            <wsdl:input message="tns:TestRequest" name="TestRequest"/>
+            <wsdl:output message="tns:TestResponse" name="TestResponse"/>
+            <wsdl:fault message="tns:TestFault" name="TestFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="FaultSoapBinding" type="tns:Fault">
+        <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Test">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="TestRequest">
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="TestResponse">
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="TestFault">
+                <wsdlsoap:fault name="TestFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="FaultService">
+        <wsdl:port binding="tns:FaultSoapBinding" name="Fault">
+            <wsdlsoap:address location="http://localhost:8080/fault"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

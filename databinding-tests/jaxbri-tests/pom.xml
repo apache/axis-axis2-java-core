@@ -168,6 +168,20 @@
                             <outputDirectory>${project.build.directory}/gen/mtom</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>wsdl2code-axis2-5919</id>
+                        <goals>
+                            <goal>generate-test-sources</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFile>src/test/wsdl/AXIS2-5919.wsdl</wsdlFile>
+                            <generateServerSide>true</generateServerSide>
+                            <generateServerSideInterface>true</generateServerSideInterface>
+                            <generateServicesXml>true</generateServicesXml>
+                            <generateAllClasses>true</generateAllClasses>
+                            <outputDirectory>${project.build.directory}/gen/AXIS2-5919</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <databindingName>jaxbri</databindingName>
@@ -277,6 +291,27 @@
                                     </parameter>
                                 </parameters>
                             </generatedAxis2xml>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>axis2-5919-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo/AXIS2-5919</outputDirectory>
+                            <serviceDescriptions>
+                                <serviceDescription>
+                                    <directory>${project.build.directory}/gen/AXIS2-5919/resources</directory>
+                                    <scope>application</scope>
+                                    <parameters>
+                                        <parameter>
+                                            <name>ServiceClass</name>
+                                            <value>org.apache.axis2.jaxbri.axis2_5919.FaultServiceImpl</value>
+                                        </parameter>
+                                    </parameters>
+                                </serviceDescription>
+                            </serviceDescriptions>
                         </configuration>
                     </execution>
                 </executions>

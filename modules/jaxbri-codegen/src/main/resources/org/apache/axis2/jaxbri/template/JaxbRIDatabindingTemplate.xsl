@@ -61,19 +61,19 @@
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
 
-                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName elementQName)
-                    throws org.apache.axis2.AxisFault {
+                <xsl:if test="not(@primitive)">
+                    private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent) throws org.apache.axis2.AxisFault {
                         org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
-
-                        java.lang.Object object = param; <!-- This is necessary to convert primitive types to their corresponding wrapper types (so that we can call getClass()) -->
-                        return factory.createOMElement(new org.apache.axiom.om.ds.jaxb.JAXBOMDataSource( wsContext,
-                                new javax.xml.bind.JAXBElement(elementQName, object.getClass(), object)));
+                        return factory.createOMElement(new org.apache.axiom.om.ds.jaxb.JAXBOMDataSource(wsContext, param));
                     }
+                </xsl:if>
 
                 private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent, javax.xml.namespace.QName elementQName)
                 throws org.apache.axis2.AxisFault {
                     org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-                    envelope.getBody().addChild(toOM(param, optimizeContent, elementQName));
+                    java.lang.Object object = param; <!-- This is necessary to convert primitive types to their corresponding wrapper types (so that we can call getClass()) -->
+                    envelope.getBody().addChild(factory.createOMElement(new org.apache.axiom.om.ds.jaxb.JAXBOMDataSource(wsContext,
+                            new javax.xml.bind.JAXBElement(elementQName, object.getClass(), object))));
                     return envelope;
                 }
 
