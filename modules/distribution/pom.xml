@@ -526,6 +526,10 @@
                                 
                                 <!-- Test of the faulthandling sample -->
                                 <ant dir="${project.build.directory}/axis2-${project.version}/samples/faulthandling" target="generate.service" />
+                                
+                                <!-- Test of the json sample -->
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/json" target="generate.service" />
+                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/json" target="client.jar" />
                             </tasks>
                         </configuration>
                     </execution>

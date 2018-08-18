@@ -52,7 +52,7 @@
     <target name="generate.service" depends="clean,prepare">
         <copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 
-        <javac srcdir="src" destdir="${dest.dir.classes}">
+        <javac srcdir="src" destdir="${dest.dir.classes}" fork="true">
             <classpath refid="axis.classpath" />
         </javac>
 
@@ -63,7 +63,7 @@
     </target>
 
     <target name="client.compile">
-        <javac srcdir="src" destdir="${dest.dir.classes}" includes="sample.json.client/**">
+        <javac srcdir="src" destdir="${dest.dir.classes}" includes="sample.json.client/**" fork="true">
             <classpath refid="axis.classpath"/>
         </javac>
     </target>
