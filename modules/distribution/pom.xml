@@ -381,20 +381,22 @@
                         </goals>
                         <configuration>
                             <scripts>
-                                <script>
+                                <script><![CDATA[
                                     import java.util.jar.*
                                     
                                     def jar = new JarInputStream(new FileInputStream(project.properties['webapp']))
                                     def expected = new HashSet()
                                     def entry
                                     while(entry = jar.nextJarEntry) {
-                                        expected.add(entry.name)
+                                        if (entry.name != 'META-INF/') {
+                                            expected.add(entry.name)
+                                        }
                                     }
                                     jar.close()
                                     
                                     jar = new JarInputStream(new FileInputStream(new File(project.build.directory, "axis2-" + project.version + "/dist/axis2.war")))
                                     while(entry = jar.nextJarEntry) {
-                                        if (!expected.remove(entry.name)) {
+                                        if (entry.name != 'META-INF/' && !expected.remove(entry.name)) {
                                             throw new Error("Unexpected entry in Web app: " + entry.name)
                                         }
                                     }
@@ -402,7 +404,7 @@
                                         throw new Error("Missing entries in Web app: " + expected)
                                     }
                                     jar.close()
-                                </script>
+                                ]]></script>
                             </scripts>
                         </configuration>
                     </execution>
