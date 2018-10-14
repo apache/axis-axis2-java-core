@@ -43,6 +43,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-jaxb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
         </dependency>
@@ -141,7 +146,7 @@
                         <configuration>
                             <tasks unless="maven.test.skip">
                                 <property name="axis2.home" value="${basedir}/target" />
-                                <property name="maven.class.path" refid="maven.runtime.classpath" />
+                                <property name="maven.class.path" refid="maven.test.classpath" />
                                 <ant dir="${project.build.directory}/gen/Test01" />
                             </tasks>
                         </configuration>

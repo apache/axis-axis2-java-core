@@ -206,7 +206,7 @@
             org.apache.axiom.om.OMElement param,
             java.lang.Class type) throws org.apache.axis2.AxisFault{
             try {
-                return param.unmarshal(wsContext, null, type, false).getValue();
+                return org.apache.axiom.om.util.jaxb.JAXBUtils.unmarshal(param, wsContext, null, type, false).getValue();
             } catch (javax.xml.bind.JAXBException bex){
                 throw org.apache.axis2.AxisFault.makeFault(bex);
             }
