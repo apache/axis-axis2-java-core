@@ -232,6 +232,10 @@
             <artifactId>taglibs-standard-impl</artifactId>
             <version>1.2.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-jaxb</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${project.version}</finalName>

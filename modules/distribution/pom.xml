@@ -165,6 +165,10 @@
             <artifactId>axis2-transport-local</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-jaxb</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>org.apache.axis2</groupId>

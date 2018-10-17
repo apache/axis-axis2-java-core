@@ -61,6 +61,7 @@ public class OSGiTest {
                 url("link:classpath:org.apache.felix.configadmin.link"),
                 url("link:classpath:org.apache.servicemix.bundles.wsdl4j.link"),
                 url("link:classpath:org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec.link"),
+                url("link:classpath:com.sun.activation.javax.activation.link"),
                 url("link:classpath:com.sun.mail.javax.mail.link"), // TODO: should no longer be necessary
                 url("link:classpath:org.apache.geronimo.specs.geronimo-servlet_2.5_spec.link"),
                 url("link:classpath:org.apache.james.apache-mime4j-core.link"),
