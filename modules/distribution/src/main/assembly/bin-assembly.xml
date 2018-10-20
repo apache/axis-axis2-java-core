@@ -193,7 +193,6 @@
                  <exclude>com.sun.xml.stream:sjsxp:jar</exclude>
                  <exclude>com.sun.org.apache.xml.internal:resolver:jar</exclude>
                  <exclude>javax.xml.stream:stax-api:jar</exclude>
-                 <exclude>javax.xml.soap:saaj-api:jar</exclude>
                  <exclude>org.jvnet:mimepull:jar</exclude>
             </excludes>
         </dependencySet>

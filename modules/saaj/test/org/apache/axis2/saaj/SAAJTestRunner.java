@@ -19,10 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import javax.xml.soap.SAAJMetaFactory;
 
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
@@ -116,8 +113,6 @@ public class SAAJTestRunner extends JUnit4ClassRunner {
             System.setProperty("javax.xml.soap.MetaFactory",
             		"com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
 
-            resetSAAJFactories();
-
             super.invokeTestMethod(method, multiRunNotifier);
         }
         if (multiRunListener.isShouldContinue()) {
@@ -130,20 +125,7 @@ public class SAAJTestRunner extends JUnit4ClassRunner {
                     "org.apache.axis2.saaj.SOAPConnectionFactoryImpl");
             System.setProperty("javax.xml.soap.MetaFactory",
                     "org.apache.axis2.saaj.SAAJMetaFactoryImpl");
-            resetSAAJFactories();
             super.invokeTestMethod(method, multiRunNotifier);
-        }
-    }
-    
-    private void resetSAAJFactories() {
-        // SAAJMetaFactory caches the instance; use reflection to reset it between test runs.
-        // Note that the other factories are OK.
-        try {
-            Field field = SAAJMetaFactory.class.getDeclaredField("instance");
-            field.setAccessible(true);
-            field.set(null, null);
-        } catch (Throwable ex) {
-            throw new Error(ex);
         }
     }
 }
