@@ -20,6 +20,8 @@
 package org.apache.axis2.saaj.integration;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.testutils.activation.RandomDataSource;
+import org.apache.axiom.testutils.io.IOTestUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
@@ -32,7 +34,6 @@ import org.apache.axis2.saaj.Validated;
 import org.apache.axis2.util.Utils;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -56,16 +57,21 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import java.io.ByteArrayInputStream;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
 @RunWith(SAAJTestRunner.class)
-public class IntegrationTest extends Assert {
+public class IntegrationTest {
 
     static int port;
     public static final QName SERVICE_NAME = new QName("Echo");
@@ -203,13 +209,12 @@ public class IntegrationTest extends Assert {
         textAttach.setContentId("submitSampleText@apache.org");
         request.addAttachmentPart(textAttach);
 
-        //Attach a java.awt.Image object to the SOAP request
-        DataHandler imageDH = new DataHandler(TestUtils.getTestFileAsDataSource("axis2.jpg"));
-        AttachmentPart jpegAttach = request.createAttachmentPart(imageDH);
-        jpegAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
-        jpegAttach.setContentId("submitSampleImage@apache.org");
-        jpegAttach.setContentType("image/jpg");
-        request.addAttachmentPart(jpegAttach);
+        // Add an application/octet-stream attachment to the SOAP request
+        DataHandler binaryDH = new DataHandler(new RandomDataSource(54321, 15000));
+        AttachmentPart binaryAttach = request.createAttachmentPart(binaryDH);
+        binaryAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
+        binaryAttach.setContentId("submitSample@apache.org");
+        request.addAttachmentPart(binaryAttach);
 
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage response = sCon.call(request, getAddress());
@@ -218,27 +223,13 @@ public class IntegrationTest extends Assert {
 
         Iterator attachIter = response.getAttachments();
 
-        int i = 0;
-        while (attachIter.hasNext()) {
-            AttachmentPart attachment = (AttachmentPart)attachIter.next();
-            final Object content = attachment.getDataHandler().getContent();
-            if (content instanceof String) {
-                assertEquals(sampleMessage, (String)content);
-            } else if (content instanceof ByteArrayInputStream) {
-                ByteArrayInputStream bais = (ByteArrayInputStream)content;
-                byte[] b = new byte[15000];
-                final int lengthRead = bais.read(b);
-                FileOutputStream fos =
-                        new FileOutputStream(new File(System.getProperty("basedir", ".") + "/" +
-                                "target/test-resources/result" + (i++) + ".jpg"));
-                fos.write(b, 0, lengthRead);
-                fos.flush();
-                fos.close();
-
-                assertTrue(attachment.getContentType().equals("image/jpeg")
-                        || attachment.getContentType().equals("text/plain"));
-            }
-        }
+        assertThat(attachIter.hasNext()).isTrue();
+        assertThat(((AttachmentPart)attachIter.next()).getContent()).isEqualTo(sampleMessage);
+        assertThat(attachIter.hasNext()).isTrue();
+        AttachmentPart attachment = (AttachmentPart)attachIter.next();
+        assertThat(attachment.getContentType()).isEqualTo("application/octet-stream");
+        IOTestUtils.compareStreams(binaryDH.getInputStream(), "expected", attachment.getDataHandler().getInputStream(), "actual");
+        assertThat(attachIter.hasNext()).isFalse();
 
         sCon.close();
 
