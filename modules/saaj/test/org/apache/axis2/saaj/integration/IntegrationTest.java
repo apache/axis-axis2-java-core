@@ -19,7 +19,6 @@
 
 package org.apache.axis2.saaj.integration;
 
-import junit.framework.Assert;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -33,13 +32,12 @@ import org.apache.axis2.saaj.Validated;
 import org.apache.axis2.util.Utils;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
