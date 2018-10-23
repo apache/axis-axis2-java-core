@@ -115,6 +115,11 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/</url>
     <scm>

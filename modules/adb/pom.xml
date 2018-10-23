@@ -64,6 +64,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
             <scope>test</scope>
