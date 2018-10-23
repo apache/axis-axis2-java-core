@@ -1255,9 +1255,9 @@
                     <version>0.6.2</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jaxb2-maven-plugin</artifactId>
-                    <version>2.4</version>
+                    <groupId>com.github.veithen.maven</groupId>
+                    <artifactId>xjc-maven-plugin</artifactId>
+                    <version>0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -1374,31 +1374,6 @@
                         <version>1.0</version>
                     </signature>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- Work around AXIS2-5890. The jaxb2-maven-plugin doesn't have an option
-                             to force regenerating the source, so just clean the stale flag file. -->
-                        <id>clean-testXjcStaleFlag</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                            <filesets>
-                                <fileset>
-                                    <directory>${project.build.directory}/jaxb2</directory>
-                                    <includes>
-                                        <include>*-testXjcStaleFlag</include>
-                                    </includes>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

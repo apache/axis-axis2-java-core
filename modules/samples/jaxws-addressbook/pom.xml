@@ -56,18 +56,17 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>xjc-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>generate-sources</goal>
                         </goals>
                         <configuration>
-                            <sourceType>XmlSchema</sourceType>
-                            <sources>
-                                <source>src/AddressBookEntry.xsd</source>
-                            </sources>
+                            <files>
+                                <file>src/AddressBookEntry.xsd</file>
+                            </files>
                         </configuration>
                     </execution>
                 </executions>

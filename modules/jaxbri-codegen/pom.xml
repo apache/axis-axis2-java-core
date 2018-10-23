@@ -98,18 +98,18 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>xjc-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>testXjc</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
-                            <sourceType>WSDL</sourceType>
-                            <testSources>
-                                <testSource>src/test/wsdl/DocLitBareService.wsdl</testSource>
-                            </testSources>
+                            <schemaLanguage>WSDL</schemaLanguage>
+                            <files>
+                                <file>src/test/wsdl/DocLitBareService.wsdl</file>
+                            </files>
                         </configuration>
                     </execution>
                 </executions>

@@ -201,33 +201,21 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>xjc-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>testXjc</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
-                            <sourceType>WSDL</sourceType>
-                            <testSources>
-                                <testSource>test-resources/wsdl/ProxyDocLitWrapped.wsdl</testSource>
-                            </testSources>
-                            <packageName>org.test.proxy.doclitwrapped</packageName>
+                            <schemaLanguage>WSDL</schemaLanguage>
+                            <files>
+                                <file>test-resources/wsdl/ProxyDocLitWrapped.wsdl</file>
+                            </files>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <!-- Work around a problem in jaxb2-maven-plugin which confuses compile sources
-                     and test sources, causing test sources to be included in the source JAR.
-                     Should be fixed by https://github.com/mojohaus/jaxb2-maven-plugin/pull/94. -->
-                <artifactId>maven-source-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>org/test/**</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
