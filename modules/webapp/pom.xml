@@ -282,9 +282,9 @@
             </plugin>
             <plugin>
                 <!-- Compile the JSPs so that syntax errors are detected during the build. -->
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jspc-maven-plugin</artifactId>
-                <version>8.1.16.v20140903</version>
+                <version>9.4.12.v20180830</version>
                 <executions>
                     <execution>
                         <goals>
