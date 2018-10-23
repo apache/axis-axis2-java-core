@@ -56,14 +56,8 @@
             <artifactId>xml-resolver</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jsr173</artifactId>
-                    <groupId>javax.xml</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
