@@ -154,37 +154,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.github.veithen.alta</groupId>
-                <artifactId>alta-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate-properties</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <groupId>org.apache.geronimo.specs</groupId>
-                                    <artifactId>geronimo-jaxws_2.2_spec</artifactId>
-                                 </artifact>
-                            </artifacts>
-                            <name>jaxws.bootclasspath</name>
-                            <value>%file%</value>
-                            <separator>${path.separator}</separator>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <compilerArgument>
-                        -Xbootclasspath/p:${jaxws.bootclasspath}
-                    </compilerArgument>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-repo-maven-plugin</artifactId>
                 <executions>
@@ -247,9 +216,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <argLine>
-                        ${argLine} -Xbootclasspath/p:${jaxws.bootclasspath}
-                    </argLine>
                     <includes>
                         <include>**/*Tests.java</include>
                     </includes>
