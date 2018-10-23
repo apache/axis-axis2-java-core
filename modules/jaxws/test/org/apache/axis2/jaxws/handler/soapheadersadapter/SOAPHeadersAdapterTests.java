@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFactory;
@@ -643,11 +644,11 @@ public class SOAPHeadersAdapterTests extends TestCase {
         
         // confirm headers are there
         SOAPHeader soapHeader = soapMessage.getSOAPHeader();
-        Iterator<SOAPHeaderElement> it = soapHeader.getChildElements();
+        Iterator<Node> it = soapHeader.getChildElements();
         // TODO: not sure if the order of the header additions is or should be preserved.
         // in other words, this test may be a little too strict.
-        SOAPHeaderElement headerElem1 = it.next();
-        SOAPHeaderElement headerElem2 = it.next();
+        SOAPHeaderElement headerElem1 = (SOAPHeaderElement)it.next();
+        SOAPHeaderElement headerElem2 = (SOAPHeaderElement)it.next();
         // should only be two header elements, so...
         assertFalse(it.hasNext());
         
@@ -703,11 +704,11 @@ public class SOAPHeadersAdapterTests extends TestCase {
         
         // confirm headers are there
         SOAPHeader soapHeader = soapEnvelope.getHeader();
-        Iterator<SOAPHeaderElement> it = soapHeader.getChildElements();
+        Iterator<Node> it = soapHeader.getChildElements();
         // TODO: not sure if the order of the header additions is or should be preserved.
         // in other words, this test may be a little too strict.
-        SOAPHeaderElement headerElem1 = it.next();
-        SOAPHeaderElement headerElem2 = it.next();
+        SOAPHeaderElement headerElem1 = (SOAPHeaderElement)it.next();
+        SOAPHeaderElement headerElem2 = (SOAPHeaderElement)it.next();
         // should only be two header elements, so...
         assertFalse(it.hasNext());
         
