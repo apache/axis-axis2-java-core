@@ -29,7 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 public abstract class XMLSchemaTest extends TestCase {
 
@@ -63,24 +62,6 @@ public abstract class XMLSchemaTest extends TestCase {
 
     }
 
-    public void loadSampleSchemaFile(ArrayList<XmlSchema> schemas) throws Exception{
-        File file = null;
-        int i = 1;
-       
-            file = new File(SampleSchemasDirectory + "sampleSchema" + i
-                    + ".xsd");
-            while (file.exists()) {
-                InputStream is = new FileInputStream(file);
-                XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-                XmlSchema schema = schemaCol.read(new StreamSource(is));
-                schemas.add(schema);
-                i++;
-                file = new File(SampleSchemasDirectory + "sampleSchema" + i
-                        + ".xsd");
-            }
-       
-    }
-    
     public String readXMLfromSchemaFile(String path) throws Exception {
         InputStream is = new FileInputStream(path);
         XmlSchemaCollection schemaCol = new XmlSchemaCollection();

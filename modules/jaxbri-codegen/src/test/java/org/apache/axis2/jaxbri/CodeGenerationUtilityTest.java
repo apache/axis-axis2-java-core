@@ -17,30 +17,37 @@
  * under the License.
  */
 
-package org.temp;
+package org.apache.axis2.jaxbri;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axis2.jaxbri.CodeGenerationUtility;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.junit.Test;
 
-public class CodeGenerationUtilityTest extends XMLSchemaTest {
+public class CodeGenerationUtilityTest {
+    private static List<XmlSchema> loadSampleSchemaFile() throws Exception {
+        return Collections.singletonList(new XmlSchemaCollection().read(new StreamSource(
+                CodeGenerationUtilityTest.class.getResource("sampleSchema1.xsd").toString())));
+    }
 
     @Test
     public void testProcessSchemas() throws Exception {
-        ArrayList<XmlSchema> list = new ArrayList<XmlSchema>();
-        loadSampleSchemaFile(list);
         CodeGenConfiguration codeGenConfiguration = new CodeGenConfiguration();
         codeGenConfiguration.setBaseURI("localhost/test");
         codeGenConfiguration.setOutputLocation(new File("target"));
-        TypeMapper mapper = CodeGenerationUtility.processSchemas(list, null, codeGenConfiguration);
+        TypeMapper mapper = CodeGenerationUtility.processSchemas(loadSampleSchemaFile(), null, codeGenConfiguration);
         Map map = mapper.getAllMappedNames();
         String s = map.get(new QName("http://www.w3schools.com", "note")).toString();
         assertEquals("com.w3schools.Note", s);
