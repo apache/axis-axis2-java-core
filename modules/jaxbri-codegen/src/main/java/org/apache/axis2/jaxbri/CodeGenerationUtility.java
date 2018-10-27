@@ -364,15 +364,11 @@ public class CodeGenerationUtility {
         rootElement.appendChild(annoElement);
         File file = File.createTempFile("customized",".xsd");
         FileOutputStream stream = new FileOutputStream(file);
-        try {
-            Result result = new StreamResult(stream);
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            xformer.transform(new DOMSource(rootElement), result);
-            stream.flush();
-            stream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Result result = new StreamResult(stream);
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        xformer.transform(new DOMSource(rootElement), result);
+        stream.flush();
+        stream.close();
         InputSource ins = new InputSource(file.toURI().toString());
         sc.parseSchema(ins);
         file.delete();
