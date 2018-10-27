@@ -28,6 +28,9 @@ import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
 import com.sun.tools.xjc.BadCommandLineException;
+
+import org.apache.axiom.blob.Blobs;
+import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -362,16 +365,15 @@ public class CodeGenerationUtility {
         appInfo.appendChild(schemaBindings);
         schemaBindings.appendChild(pkgElement);
         rootElement.appendChild(annoElement);
-        File file = File.createTempFile("customized",".xsd");
-        FileOutputStream stream = new FileOutputStream(file);
+        MemoryBlob blob = Blobs.createMemoryBlob();
+        OutputStream stream = blob.getOutputStream();
         Result result = new StreamResult(stream);
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
         xformer.transform(new DOMSource(rootElement), result);
-        stream.flush();
         stream.close();
-        InputSource ins = new InputSource(file.toURI().toString());
+        InputSource ins = new InputSource(blob.getInputStream());
+        ins.setSystemId("urn:" + UUID.randomUUID());
         sc.parseSchema(ins);
-        file.delete();
     }
 
     private static String extractNamespace(XmlSchema schema) {
