@@ -193,15 +193,6 @@
                     <syncMode>sync</syncMode>
                     <unpackClasses>true</unpackClasses>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <!-- Work around "'file' access is not allowed due to restriction set by
-                             the accessExternalSchema property" error on Java 8. -->
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                        <version>2.11.0</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>${project.groupId}</groupId>
