@@ -124,6 +124,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SOAP12TestModuleB</artifactId>
             <version>${project.version}</version>
