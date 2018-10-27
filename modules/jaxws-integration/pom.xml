@@ -658,13 +658,13 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>wsimport-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>wsimport-SOAPActionTest</id>
                         <goals>
-                            <goal>wsimport-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <wsdlFiles>
@@ -675,7 +675,7 @@
                     <execution>
                         <id>wsimport-AnyType</id>
                         <goals>
-                            <goal>wsimport-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <wsdlFiles>
@@ -687,7 +687,7 @@
                     <execution>
                         <id>wsimport-shapes</id>
                         <goals>
-                            <goal>wsimport-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <wsdlFiles>
@@ -698,7 +698,7 @@
                     <execution>
                         <id>wsimport-EchoMessage</id>
                         <goals>
-                            <goal>wsimport-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <wsdlFiles>
@@ -710,7 +710,7 @@
                     <execution>
                         <id>wsimport-proxy_doclit_unwr</id>
                         <goals>
-                            <goal>wsimport-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <wsdlFiles>
@@ -722,7 +722,7 @@
                     <execution>
                         <id>wsimport-ProxyDocLitWrapped</id>
                         <goals>
-                            <goal>wsimport-test</goal>
+                            <goal>generate-test-sources</goal>
                         </goals>
                         <configuration>
                             <wsdlFiles>

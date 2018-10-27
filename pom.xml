@@ -1232,14 +1232,9 @@
                     <version>0.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jaxws-maven-plugin</artifactId>
-                    <version>2.5</version>
-                    <configuration>
-                        <vmArgs>
-                            <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                        </vmArgs>
-                    </configuration>
+                    <groupId>com.github.veithen.maven</groupId>
+                    <artifactId>wsimport-maven-plugin</artifactId>
+                    <version>0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
