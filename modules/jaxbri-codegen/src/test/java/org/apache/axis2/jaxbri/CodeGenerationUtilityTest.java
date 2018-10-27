@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxbri;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -34,22 +35,37 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class CodeGenerationUtilityTest {
-    private static List<XmlSchema> loadSampleSchemaFile() throws Exception {
+    @Rule
+    public final TemporaryFolder outputLocation = new TemporaryFolder();
+
+    private static List<XmlSchema> loadSampleSchemaFile() {
         return Collections.singletonList(new XmlSchemaCollection().read(new StreamSource(
                 CodeGenerationUtilityTest.class.getResource("sampleSchema1.xsd").toString())));
     }
 
     @Test
-    public void testProcessSchemas() throws Exception {
+    public void testProcessSchemas() {
         CodeGenConfiguration codeGenConfiguration = new CodeGenConfiguration();
         codeGenConfiguration.setBaseURI("localhost/test");
-        codeGenConfiguration.setOutputLocation(new File("target"));
+        codeGenConfiguration.setOutputLocation(outputLocation.getRoot());
         TypeMapper mapper = CodeGenerationUtility.processSchemas(loadSampleSchemaFile(), null, codeGenConfiguration);
         Map map = mapper.getAllMappedNames();
         String s = map.get(new QName("http://www.w3schools.com", "note")).toString();
         assertEquals("com.w3schools.Note", s);
+    }
+
+    @Test
+    public void testNamespaceMapping() {
+        CodeGenConfiguration codeGenConfiguration = new CodeGenConfiguration();
+        codeGenConfiguration.setBaseURI("dummy");
+        codeGenConfiguration.setUri2PackageNameMap(Collections.singletonMap("http://www.w3schools.com", "test"));
+        codeGenConfiguration.setOutputLocation(outputLocation.getRoot());
+        CodeGenerationUtility.processSchemas(loadSampleSchemaFile(), null, codeGenConfiguration);
+        assertThat(new File(outputLocation.getRoot(), "src/test/Note.java").exists()).isTrue();
     }
 }
