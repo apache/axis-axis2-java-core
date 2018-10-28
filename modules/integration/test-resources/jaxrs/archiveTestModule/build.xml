@@ -36,7 +36,7 @@
 
     <target name="compile" depends="init" unless="jars.uptodate">
         <mkdir dir="${build.classes}"/>
-        <javac fork="true" destdir="${build.classes}" debug="on">
+        <javac fork="true" destdir="${build.classes}" debug="on" source="1.7" target="1.7">
             <classpath refid="axis.test.classpath"/>
             <src path="${src}"/>
         </javac>

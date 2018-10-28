@@ -32,7 +32,7 @@
 
     <target name="compile" depends="init" unless="pojo.uptodate">
         <mkdir dir="${pojo.dir}"/>
-        <javac fork="true" destdir="${pojo.dir}" debug="on">
+        <javac fork="true" destdir="${pojo.dir}" debug="on" source="1.7" target="1.7">
             <classpath refid="axis.test.classpath"/>
             <src path="${src}"/>
         </javac>
