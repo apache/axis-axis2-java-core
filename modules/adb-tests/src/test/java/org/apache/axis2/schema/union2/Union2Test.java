@@ -57,15 +57,17 @@ public class Union2Test extends AbstractTestCase {
     }
 
     public void testFuzzDateType() throws Exception {
+        Date date = new Date(1539684442000L);
         TestFuzzyDateType testFuzzyDateType = new TestFuzzyDateType();
         FuzzyDateType fuzzyDateType = new FuzzyDateType();
-        fuzzyDateType.setObject(new Date());
+        fuzzyDateType.setObject(date);
         testFuzzyDateType.setTestFuzzyDateType(fuzzyDateType);
 
         // java.util.Date maps to xs:date, so we expect to loose the time information
         TestFuzzyDateType expectedResult = new TestFuzzyDateType();
         FuzzyDateType expectedFuzzyDateType = new FuzzyDateType();
         Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
