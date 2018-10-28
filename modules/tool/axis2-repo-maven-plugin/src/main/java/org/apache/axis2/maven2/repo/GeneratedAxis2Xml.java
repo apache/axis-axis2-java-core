@@ -26,6 +26,7 @@ public class GeneratedAxis2Xml {
     private MessageHandler[] messageFormatters;
     private Handler[] handlers;
     private String[] modules;
+    private Deployer[] deployers;
     
     public Parameter[] getParameters() {
         return parameters;
@@ -81,5 +82,13 @@ public class GeneratedAxis2Xml {
 
     public void setModules(String[] modules) {
         this.modules = modules;
+    }
+
+    public Deployer[] getDeployers() {
+        return deployers;
+    }
+
+    public void setDeployers(Deployer[] deployers) {
+        this.deployers = deployers;
     }
 }
