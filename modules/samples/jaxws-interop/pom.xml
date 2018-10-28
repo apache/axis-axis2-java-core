@@ -70,6 +70,22 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>wsimport-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-sources</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>src/main/resources/META-INF/BaseDataTypesDocLitB.wsdl</wsdlFile>
+                            </wsdlFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-repo-maven-plugin</artifactId>
                 <executions>
