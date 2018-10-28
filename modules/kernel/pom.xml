@@ -46,8 +46,8 @@
             <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
+            <groupId>javax.transaction</groupId>
+            <artifactId>javax.transaction-api</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
