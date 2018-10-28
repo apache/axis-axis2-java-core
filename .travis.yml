@@ -7,7 +7,7 @@ install: true
 script: mvn -B -Papache-release -Dgpg.skip=true verify
 jobs:
   include:
-    - if: repo = "apache/axis2-java" AND branch = master AND type = push
+    - if: repo = "apache/axis2-java" AND branch = trunk AND type = push
       stage: deploy
       script: mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true -DskipTests=true deploy
 env:
