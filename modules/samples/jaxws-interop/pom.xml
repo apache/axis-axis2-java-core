@@ -116,6 +116,13 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <!-- Exclude generated code to work around JDK-8200432 -->
+                    <excludePackageNames>com.microsoft.*,org.datacontract.*,org.tempuri</excludePackageNames>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
