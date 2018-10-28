@@ -27,14 +27,6 @@
     <artifactId>jaxws-interop</artifactId>
     <packaging>jar</packaging>
     <name>JAXWS Interop Sample</name>
-    <build>
-        <sourceDirectory>src</sourceDirectory>
-        <resources>
-          <resource>
-            <directory>resources</directory>
-          </resource>
-        </resources>
-    </build>
     <dependencies>
         <dependency>
             <groupId>javax.xml.bind</groupId>
