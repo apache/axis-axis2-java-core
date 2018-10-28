@@ -2,8 +2,14 @@ dist: trusty
 language: java
 jdk:
   - openjdk8
+  - openjdk9
 install: true
-script: '[ "$TRAVIS_REPO_SLUG" == apache/axis2-java ] && [ "$TRAVIS_BRANCH" == trunk ] && [ "$TRAVIS_PULL_REQUEST" == false ] && goal=deploy || goal=verify ; mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true $goal'
+script: mvn -B -Papache-release -Dgpg.skip=true verify
+jobs:
+  include:
+    - if: repo = "apache/axis2-java" AND branch = master AND type = push
+      stage: deploy
+      script: mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true -DskipTests=true deploy
 env:
   global:
     - secure: "IzpkWYL9tH5bE6I6nDbgW6HUlz/+R7XuBXo5997r2adRz8Q1vnSA4gvvMDLyvNjUXDWB99HNLXMaInYlpLNOjBjgXx0abmbcUBfCu0/923iuT80IowT7kNcQK+k4b9ajFT4EZAWySru1SyeTa1VgEjCnAhynDXhhGwCjjakxGrY="
