@@ -44,5 +44,62 @@
             <artifactId>axis2-jaxws</artifactId>
             <version>1.8.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-testutils</artifactId>
+            <version>1.8.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>1.8.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-repo-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                            <generatedAxis2xml>
+                                <deployers>
+                                    <deployer>
+                                        <extension>jar</extension>
+                                        <directory>servicejars</directory>
+                                        <className>org.apache.axis2.jaxws.framework.JAXWSDeployer</className>
+                                    </deployer>
+                                </deployers>
+                            </generatedAxis2xml>
+                            <jaxwsServices>
+                                <jaxwsService>
+                                    <name>InteropSample</name>
+                                    <packages>
+                                        <package>org.apache.axis2.jaxws.interop</package>
+                                    </packages>
+                                </jaxwsService>
+                            </jaxwsServices>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
