@@ -52,6 +52,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jacorb</groupId>
+            <artifactId>jacorb-omgapi</artifactId>
+            <version>3.9</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
