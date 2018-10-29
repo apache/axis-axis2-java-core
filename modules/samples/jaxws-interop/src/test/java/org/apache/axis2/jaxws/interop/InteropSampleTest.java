@@ -20,7 +20,6 @@ package org.apache.axis2.jaxws.interop;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
@@ -38,9 +37,7 @@ public class InteropSampleTest {
     @Test
     public void test() throws Exception {
         MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, new ClientConfigurationFactory(null, "target/repo/axis2.xml"));
-        BaseDataTypesDocLitBService service = new BaseDataTypesDocLitBService(
-                InteropSampleTest.class.getResource("/META-INF/BaseDataTypesDocLitB.wsdl"),
-                new QName("http://tempuri.org/", "BaseDataTypesDocLitBService"));
+        BaseDataTypesDocLitBService service = new BaseDataTypesDocLitBService();
         IBaseDataTypesDocLitB proxy = service.getBasicHttpBindingIBaseDataTypesDocLitB();
         ((BindingProvider)proxy).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, server.getEndpoint("BaseDataTypesDocLitBService"));
         assertThat(proxy.retBool(true)).isTrue();
