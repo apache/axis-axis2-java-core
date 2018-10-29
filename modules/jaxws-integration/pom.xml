@@ -640,6 +640,7 @@
                             <wsdlFiles>
                                 <wsdlFile>${basedir}/src/test/repository/services/BookStoreService/META-INF/SOAPActionTest.wsdl</wsdlFile>
                             </wsdlFiles>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                     <execution>
@@ -652,6 +653,7 @@
                                 <wsdlFile>${basedir}/src/test/java/org/apache/axis2/jaxws/anytype/META-INF/AnyType.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.jaxws.anytype</packageName>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                     <execution>
@@ -663,6 +665,7 @@
                             <wsdlFiles>
                                 <wsdlFile>${basedir}/src/test/java/org/apache/axis2/jaxws/polymorphic/shape/META-INF/shapes.wsdl</wsdlFile>
                             </wsdlFiles>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                     <execution>
@@ -675,6 +678,7 @@
                                 <wsdlFile>${basedir}/src/test/java/org/apache/axis2/jaxws/nonanonymous/complextype/META-INF/EchoMessage.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.jaxws.nonanonymous.complextype</packageName>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                     <execution>
@@ -687,6 +691,7 @@
                                 <wsdlFile>${basedir}/src/test/java/org/apache/axis2/jaxws/proxy/doclitnonwrapped/META-INF/proxy_doclit_unwr.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.jaxws.proxy.doclitnonwrapped</packageName>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                     <execution>
@@ -699,6 +704,7 @@
                                 <wsdlFile>${basedir}/src/test/java/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.jaxws.proxy.doclitwrapped</packageName>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                 </executions>

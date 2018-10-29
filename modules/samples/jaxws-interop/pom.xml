@@ -81,6 +81,7 @@
                             <wsdlFiles>
                                 <wsdlFile>src/main/resources/META-INF/BaseDataTypesDocLitB.wsdl</wsdlFile>
                             </wsdlFiles>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                 </executions>

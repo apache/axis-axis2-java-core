@@ -455,6 +455,7 @@
                                 <wsdlFile>${basedir}/src/test/wsdl/AXIS2-5741.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.databinding.axis2_5741.client</packageName>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                     <execution>
@@ -467,6 +468,7 @@
                                 <wsdlFile>${basedir}/src/test/wsdl/AXIS2-5749.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.apache.axis2.databinding.axis2_5749.client</packageName>
+                            <generateService>true</generateService>
                         </configuration>
                     </execution>
                     <execution>
