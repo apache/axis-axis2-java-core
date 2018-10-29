@@ -6,12 +6,13 @@ jdk:
 before_install:
   - if [ -e $JAVA_HOME/lib/security/cacerts ]; then ln -sf /etc/ssl/certs/java/cacerts $JAVA_HOME/lib/security/cacerts; fi
 install: true
-script: mvn -B -U -Papache-release -Dgpg.skip=true verify
+script: mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true verify
+before_cache: "find $HOME/.m2 -name '*-SNAPSHOT' -a -type d -exec rm -rf '{}' ';'"
 jobs:
   include:
     - if: repo = "apache/axis2-java" AND branch = trunk AND type = push
       stage: deploy
-      script: mvn -B -U -s .travis-settings.xml -Papache-release -Dgpg.skip=true -DskipTests=true deploy
+      script: mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true -DskipTests=true deploy
       env:
         - secure: "IzpkWYL9tH5bE6I6nDbgW6HUlz/+R7XuBXo5997r2adRz8Q1vnSA4gvvMDLyvNjUXDWB99HNLXMaInYlpLNOjBjgXx0abmbcUBfCu0/923iuT80IowT7kNcQK+k4b9ajFT4EZAWySru1SyeTa1VgEjCnAhynDXhhGwCjjakxGrY="
         - secure: "iAPTcu1L6InO4F39F22iDccXhc59H7vVbEXZF3IxeWdf0RbtaahWrxHO532ILmTxN+wMio0GMNtmbyp8GP1Q30g7ZtK0YINeKcvR/PesiIcerm5Zp7Bh1a2PB3wJFnlykYBenn+AXXXZKRrmPki2aXFC0wEQ6hgKBQfVgwOcvHA="
