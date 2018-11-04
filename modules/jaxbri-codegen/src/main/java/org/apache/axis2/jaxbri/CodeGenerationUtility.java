@@ -79,8 +79,7 @@ public class CodeGenerationUtility {
                                             CodeGenConfiguration cgconfig)
             throws RuntimeException {
         try {
-            // Work around an incompatibility between plexus-classworlds and Java 9 that causes
-            // a failure to load package annotations.
+            // Work around MNG-6506.
             CodeGenerationUtility.class.getClassLoader().loadClass("com.sun.tools.xjc.reader.xmlschema.bindinfo.package-info");
 
             //check for the imported types. Any imported types are supposed to be here also
