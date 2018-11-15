@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
-        <version>1.7.9</version>
+        <version>1.7.10-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <artifactId>axis2-repo-maven-plugin</artifactId>
@@ -70,9 +70,9 @@
     </dependencies>
     <url>http://axis.apache.org/axis2/java/core/tools/maven-plugins/axis2-repo-maven-plugin/</url>
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.9/modules/tool/axis2-repo-maven-plugin</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/tags/v1.7.9/modules/tool/axis2-repo-maven-plugin</developerConnection>
-        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/tags/v1.7.9/modules/tool/axis2-repo-maven-plugin</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_7/modules/tool/axis2-repo-maven-plugin</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_7/modules/tool/axis2-repo-maven-plugin</developerConnection>
+        <url>http://svn.apache.org/viewvc/axis/axis2/java/core/branches/1_7/modules/tool/axis2-repo-maven-plugin</url>
     </scm>
     <distributionManagement>
         <site>
