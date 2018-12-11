@@ -35,8 +35,6 @@ import org.apache.axis2.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.WSDLPropertyReader;
-import org.apache.axis2.tool.core.JarFileWriter;
-import org.apache.axis2.tool.core.SrcCompiler;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodegenConfigLoader;
