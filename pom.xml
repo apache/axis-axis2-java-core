@@ -1353,6 +1353,18 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>jacoco-report-maven-plugin</artifactId>
+                <version>0.1-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <!-- Always build source JARs -->
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
