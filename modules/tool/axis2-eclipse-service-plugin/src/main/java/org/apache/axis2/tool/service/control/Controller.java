@@ -113,11 +113,6 @@ public class Controller {
             writer.write(serviceFileString) ;
             writer.close() ;
             
-//                    new ServiceFileCreator().createServiceFile(
-//                            page2Bean.getServiceName(),
-//                            page2Bean.getAutomaticClassName(),
-//                            page2Bean.getSelectedMethodNames());//create the file here
-            	
             isServiceCreated = true;
         }
 

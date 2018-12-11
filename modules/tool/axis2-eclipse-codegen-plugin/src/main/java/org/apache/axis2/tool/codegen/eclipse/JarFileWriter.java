@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.tool.core;
+package org.apache.axis2.tool.codegen.eclipse;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Jar;
