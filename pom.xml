@@ -104,7 +104,6 @@
         <module>modules/samples</module>
         <module>databinding-tests</module>
         <module>systests</module>
-        <module>code-coverage</module>
     </modules>
     <profiles>
         <profile>
@@ -1399,18 +1398,6 @@
                         </property>
                     </systemProperties>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.veithen.phos</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>install-data-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.veithen.maven</groupId>
