@@ -76,7 +76,7 @@
                             <value>file:../../log4j.properties</value>
                         </property>
                     </systemProperties>
-                    <argLine>-javaagent:target/lib/aspectjweaver.jar -Xms64m -Xmx128m</argLine>
+                    <argLine>${argLine} -javaagent:target/lib/aspectjweaver.jar -Xms64m -Xmx128m</argLine>
                 </configuration>
             </plugin>
             <plugin>

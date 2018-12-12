@@ -102,7 +102,7 @@
               <value>target/cobertura.ser</value>
             </property>
           </systemProperties>
-          <argLine>-javaagent:target/lib/aspectjweaver.jar -Xms64m -Xmx128m</argLine>
+          <argLine>${argLine} -javaagent:target/lib/aspectjweaver.jar -Xms64m -Xmx128m</argLine>
         </configuration>
       </plugin>
     </plugins>
