@@ -1217,6 +1217,8 @@
                     <version>2.0.0</version>
                     <configuration>
                         <javaHome>${java.home}</javaHome>
+                        <!-- Enable the JaCoCo agent. -->
+                        <mavenOpts>${argLine}</mavenOpts>
                     </configuration>
                 </plugin>
                 
