@@ -61,50 +61,9 @@ public class ApplicationXMLFormatter implements MessageFormatter {
     public byte[] getBytes(MessageContext messageContext, 
                            OMOutputFormat format, 
                            boolean preserve) throws AxisFault {
-
-        if (log.isDebugEnabled()) {
-            log.debug("start getBytes()");
-            log.debug("  fault flow=" + 
-                      (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW));
-        }
-        try {
-            OMElement omElement;
-
-            // Find the correct element to serialize.  Normally it is the first element
-            // in the body.  But if this is a fault, use the detail entry element or the 
-            // fault reason.
-            if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
-                SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
-                SOAPFaultDetail soapFaultDetail = fault.getDetail();
-                omElement = soapFaultDetail.getFirstElement();
-
-                if (omElement == null) {
-                    omElement = fault.getReason();
-                }
-
-            } else {
-                // Normal case: The xml payload is the first element in the body.
-                omElement = messageContext.getEnvelope().getBody().getFirstElement();
-            }
-            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-
-            if (omElement != null) {
-
-                try {
-                    omElement.serialize(bytesOut, format, preserve);
-                } catch (IOException e) {
-                    throw AxisFault.makeFault(e);
-                }
-
-                return bytesOut.toByteArray();
-            }
-
-            return new byte[0];
-        } finally {
-            if (log.isDebugEnabled()) {
-                log.debug("end getBytes()");
-            }
-        }
+        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+        writeTo(messageContext, format, bytesOut, preserve);
+        return bytesOut.toByteArray();
     }
 
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
