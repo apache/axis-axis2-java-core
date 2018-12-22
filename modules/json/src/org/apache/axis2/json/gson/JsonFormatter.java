@@ -52,7 +52,7 @@ public class JsonFormatter implements MessageFormatter {
         return new byte[0];
     }
 
-    public void writeTo(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat, OutputStream outputStream, boolean b) throws AxisFault {
+    public void writeTo(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat, OutputStream outputStream, boolean preserve) throws AxisFault {
         String charSetEncoding = (String) outMsgCtxt.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
         JsonWriter jsonWriter;
         String msg;
@@ -94,11 +94,7 @@ public class JsonFormatter implements MessageFormatter {
                                                                     outMsgCtxt.getConfigurationContext());
                 try {
                     xmlsw.writeStartDocument();
-                    if (b) {
-                        element.serialize(xmlsw);
-                    } else {
-                        element.serializeAndConsume(xmlsw);
-                    }
+                    element.serialize(xmlsw, preserve);
                     xmlsw.writeEndDocument();
                 } catch (XMLStreamException e) {
                     throw new AxisFault("Error while writing to the output stream using JsonWriter", e);

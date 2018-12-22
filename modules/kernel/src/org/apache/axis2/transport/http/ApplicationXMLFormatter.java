@@ -33,7 +33,6 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -92,12 +91,8 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             if (omElement != null) {
 
                 try {
-                    if (preserve) {
-                        omElement.serialize(bytesOut, format);
-                    } else {
-                        omElement.serializeAndConsume(bytesOut, format);
-                    }
-                } catch (XMLStreamException e) {
+                    omElement.serialize(bytesOut, format, preserve);
+                } catch (IOException e) {
                     throw AxisFault.makeFault(e);
                 }
 
@@ -136,12 +131,8 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             }
             if (omElement != null) {
                 try {
-                    if (preserve) {
-                        omElement.serialize(outputStream, format);
-                    } else {
-                        omElement.serializeAndConsume(outputStream, format);
-                    }
-                } catch (XMLStreamException e) {
+                    omElement.serialize(outputStream, format, preserve);
+                } catch (IOException e) {
                     throw AxisFault.makeFault(e);
                 }
             }

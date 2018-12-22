@@ -148,11 +148,7 @@ public class FastInfosetPOXMessageFormatter implements MessageFormatter {
             XMLStreamWriter streamWriter = new StAXDocumentSerializer(outputStream);
             //Since we drop the SOAP envelop we have to manually write the start document and the end document events            
             streamWriter.writeStartDocument();
-            if (preserve) {
-                element.serialize(streamWriter);
-            } else {
-                element.serializeAndConsume(streamWriter);
-            }
+            element.serialize(streamWriter, preserve);
             streamWriter.writeEndDocument();
         } catch (XMLStreamException xmlse) {
             logger.error(xmlse.getMessage());
