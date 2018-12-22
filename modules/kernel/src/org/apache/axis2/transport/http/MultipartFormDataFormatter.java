@@ -84,41 +84,13 @@ public class MultipartFormDataFormatter implements MessageFormatter {
      *         message format.
      */
     public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-        OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
         ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
         try {
-            createMultipatFormDataRequest(omElement, bytesOut, format);
+            writeTo(messageContext, format, bytesOut, true);
             return bytesOut.toByteArray();
         } catch (IOException e) {
             throw new AxisFault(e.getMessage());
         }     
-    }
-
-    /**
-     * To support deffered writing transports as in http chunking.. Axis2 was
-     * doing this for some time..
-     * <p/>
-     * Preserve flag can be used to preserve the envelope for later use. This is
-     * usefull when implementing authentication machnisms like NTLM.
-     *
-     * @param outputStream
-     * @param preserve     :
-     *                     do not consume the OM when this is set..
-     */
-    public void writeTo(MessageContext messageContext, OMOutputFormat format,
-                        OutputStream outputStream, boolean preserve) throws AxisFault {
-
-        try {
-            byte[] b = getBytes(messageContext, format);
-
-            if (b != null && b.length > 0) {
-                outputStream.write(b);
-            } else {
-                outputStream.flush();
-            }
-        } catch (IOException e) {
-            throw new AxisFault("An error occured while writing the request");
-        }
     }
 
     /**
@@ -163,42 +135,40 @@ public class MultipartFormDataFormatter implements MessageFormatter {
         return soapAction;
     }
 
-    /**
-     * @param dataOut
-     * @param bytesOut 
-     * @param format 
-     * @return
-     * @throws IOException 
-     */
-    private void createMultipatFormDataRequest(OMElement dataOut, ByteArrayOutputStream bytesOut,
-            OMOutputFormat format) throws IOException {
+    public void writeTo(MessageContext messageContext, OMOutputFormat format,
+            OutputStream outputStream, boolean preserve) throws AxisFault {
+        OMElement dataOut = messageContext.getEnvelope().getBody().getFirstElement();
         if (dataOut != null) {
-            Iterator iter1 = dataOut.getChildElements();
-            OMFactory omFactory = OMAbstractFactory.getOMFactory();
-            OMMultipartWriter writer = new OMMultipartWriter(bytesOut, format);
-            while (iter1.hasNext()) {               
-                OMElement ele = (OMElement) iter1.next();
-                Iterator iter2 = ele.getChildElements();
-                // check whether the element is a complex type
-                if (iter2.hasNext()) {
-                    OMElement omElement =
-                            omFactory.createOMElement(ele.getQName().getLocalPart(), null);
-                    omElement.addChild(
-                            processComplexType(omElement, ele.getChildElements(), omFactory));                   
-                    OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
-                            Collections.singletonList(new Header("Content-Disposition",
-                                    DISPOSITION_TYPE + "; name=\"" + omElement.getLocalName() + "\"")));
-                    partOutputStream.write(omElement.toString().getBytes());
-                    partOutputStream.close();
-                } else {
-                    OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
-                            Collections.singletonList(new Header("Content-Disposition",
-                                    DISPOSITION_TYPE + "; name=\"" + ele.getLocalName() + "\"")));
-                    partOutputStream.write(ele.getText().getBytes());
-                    partOutputStream.close();
+            try {
+                Iterator iter1 = dataOut.getChildElements();
+                OMFactory omFactory = OMAbstractFactory.getOMFactory();
+                OMMultipartWriter writer = new OMMultipartWriter(outputStream, format);
+                while (iter1.hasNext()) {
+                    OMElement ele = (OMElement) iter1.next();
+                    Iterator iter2 = ele.getChildElements();
+                    // check whether the element is a complex type
+                    if (iter2.hasNext()) {
+                        OMElement omElement =
+                                omFactory.createOMElement(ele.getQName().getLocalPart(), null);
+                        omElement.addChild(
+                                processComplexType(omElement, ele.getChildElements(), omFactory));
+                        OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
+                                Collections.singletonList(new Header("Content-Disposition",
+                                        DISPOSITION_TYPE + "; name=\"" + omElement.getLocalName() + "\"")));
+                        partOutputStream.write(omElement.toString().getBytes());
+                        partOutputStream.close();
+                    } else {
+                        OutputStream partOutputStream = writer.writePart(DEFAULT_CONTENT_TYPE, null,
+                                Collections.singletonList(new Header("Content-Disposition",
+                                        DISPOSITION_TYPE + "; name=\"" + ele.getLocalName() + "\"")));
+                        partOutputStream.write(ele.getText().getBytes());
+                        partOutputStream.close();
+                    }
                 }
+                writer.complete();
+            } catch (IOException ex) {
+                throw AxisFault.makeFault(ex);
             }
-            writer.complete();            
         }
     }
 
