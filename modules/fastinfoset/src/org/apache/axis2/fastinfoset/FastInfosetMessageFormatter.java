@@ -59,23 +59,9 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
      */
     public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
             throws AxisFault {
-        OMElement element = messageContext.getEnvelope();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        
-        try {
-            //Creates StAX document serializer which actually implements the XMLStreamWriter
-            XMLStreamWriter streamWriter = new StAXDocumentSerializer(outStream);
-            streamWriter.writeStartDocument();
-            element.serializeAndConsume(streamWriter);
-            //TODO Looks like the SOAP envelop doesn't have an end document tag. Find out why?
-            streamWriter.writeEndDocument();
-            
-            return outStream.toByteArray();
-            
-        } catch (XMLStreamException xmlse) {
-            logger.error(xmlse.getMessage());
-            throw new AxisFault(xmlse.getMessage(), xmlse);
-        }
+        writeTo(messageContext, format, outStream, false);
+        return outStream.toByteArray();
     }
 
     /**

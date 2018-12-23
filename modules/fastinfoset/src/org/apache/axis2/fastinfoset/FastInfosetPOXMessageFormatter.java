@@ -59,24 +59,9 @@ public class FastInfosetPOXMessageFormatter implements MessageFormatter {
      */
     public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
             throws AxisFault {
-        //For POX drop the SOAP envelope and use the message body
-        OMElement element = messageContext.getEnvelope().getBody().getFirstElement();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        
-        try {
-            //Creates StAX document serializer which actually implements the XMLStreamWriter
-            XMLStreamWriter streamWriter = new StAXDocumentSerializer(outStream);
-            //Since we drop the SOAP envelop we have to manually write the start document and the end document events
-            streamWriter.writeStartDocument();
-            element.serializeAndConsume(streamWriter);
-            streamWriter.writeEndDocument();
-            
-            return outStream.toByteArray();
-            
-        } catch (XMLStreamException xmlse) {
-            logger.error(xmlse.getMessage());
-            throw new AxisFault(xmlse.getMessage(), xmlse);
-        }
+        writeTo(messageContext, format, outStream, false);
+        return outStream.toByteArray();
     }
 
     /**

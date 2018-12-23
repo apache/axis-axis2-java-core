@@ -91,34 +91,9 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
      */
 
     public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format) throws AxisFault {
-        OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
-        //if the element is an OMSourcedElement and it contains a JSONDataSource with
-        //correct convention, directly get the JSON string.
-
-        String jsonToWrite = getStringToWrite(element);
-        if (jsonToWrite != null) {
-            return jsonToWrite.getBytes();
-            //otherwise serialize the OM by expanding the tree
-        } else {
-            try {
-                ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-                XMLStreamWriter jsonWriter = getJSONWriter(bytesOut, format, msgCtxt);
-                element.serializeAndConsume(jsonWriter);
-                jsonWriter.writeEndDocument();
-
-                return bytesOut.toByteArray();
-
-            } catch (XMLStreamException e) {
-                throw AxisFault.makeFault(e);
-            } catch (FactoryConfigurationError e) {
-                throw AxisFault.makeFault(e);
-            } catch (IllegalStateException e) {
-                throw new AxisFault(
-                        "Mapped formatted JSON with namespaces are not supported in Axis2. " +
-                                "Make sure that your request doesn't include namespaces or " +
-                                "use the Badgerfish convention");
-            }
-        }
+        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+        writeTo(msgCtxt, format, bytesOut, true);
+        return bytesOut.toByteArray();
     }
 
     public String formatSOAPAction(MessageContext msgCtxt, OMOutputFormat format,
