@@ -29,8 +29,10 @@ import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
 import org.apache.axis2.util.JavaUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -40,34 +42,33 @@ import java.util.Iterator;
 public class XFormURLEncodedFormatter implements MessageFormatter {
 
     public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-
-        OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
-
-        if (omElement != null) {
-            Iterator it = omElement.getChildElements();
-            String paraString = "";
-
-            while (it.hasNext()) {
-                OMElement ele1 = (OMElement) it.next();
-                String parameter;
-
-                parameter = ele1.getLocalName() + "=" + ele1.getText();
-                paraString = "".equals(paraString) ? parameter : (paraString + "&" + parameter);
-            }
-
-            return paraString.getBytes();
-        }
-
-        return new byte[0];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        writeTo(messageContext, format, baos, true);
+        return baos.toByteArray();
     }
 
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
                         OutputStream outputStream, boolean preserve) throws AxisFault {
-
-        try {
-            outputStream.write(getBytes(messageContext, format));
-        } catch (IOException e) {
-            throw new AxisFault("An error occured while writing the request");
+        OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
+        if (omElement != null) {
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(outputStream, "utf-8");
+                boolean first = true;
+                for (Iterator<OMElement> it = omElement.getChildElements(); it.hasNext(); ) {
+                    OMElement child = it.next();
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.write('&');
+                    }
+                    writer.write(child.getLocalName());
+                    writer.write('=');
+                    child.writeTextTo(writer, preserve);
+                }
+                writer.flush();
+            } catch (IOException e) {
+                throw new AxisFault("An error occured while writing the request");
+            }
         }
     }
 
