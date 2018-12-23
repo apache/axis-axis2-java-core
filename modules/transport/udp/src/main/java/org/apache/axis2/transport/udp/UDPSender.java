@@ -38,6 +38,7 @@ import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.base.AbstractTransportSender;
 import org.apache.axis2.transport.base.BaseUtils;
 import org.apache.axis2.util.MessageProcessorSelector;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
@@ -71,7 +72,9 @@ public class UDPSender extends AbstractTransportSender {
         MessageFormatter messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);
         OMOutputFormat format = BaseUtils.getOMOutputFormat(msgContext);
         format.setContentType(udpOutInfo.getContentType());
-        byte[] payload = messageFormatter.getBytes(msgContext, format);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        messageFormatter.writeTo(msgContext, format, out, false);
+        byte[] payload = out.toByteArray();
         try {
             DatagramSocket socket = new DatagramSocket();
             if (log.isDebugEnabled()) {

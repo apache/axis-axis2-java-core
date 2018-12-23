@@ -46,22 +46,6 @@ public class PlainTextFormatterTest extends TestCase {
 		return messageContext;
 	}
 	
-	private void testGetBytes(String encoding) throws Exception {
-		MessageContext messageContext = createMessageContext(testString);
-        OMOutputFormat format = new OMOutputFormat();
-        format.setCharSetEncoding(encoding);
-        byte[] bytes = new PlainTextFormatter().getBytes(messageContext, format);
-        assertEquals(testString, new String(bytes, encoding));
-	}
-	
-	public void testGetBytesUTF8() throws Exception {
-		testGetBytes("UTF-8");
-	}
-	
-	public void testGetBytesLatin1() throws Exception {
-		testGetBytes("ISO-8859-1");
-	}
-	
 	private void testWriteTo(String encoding) throws Exception {
 		MessageContext messageContext = createMessageContext(testString);
         OMOutputFormat format = new OMOutputFormat();

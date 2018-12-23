@@ -18,7 +18,6 @@
  */
 package org.apache.axis2.format;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -36,12 +35,6 @@ import org.apache.axis2.transport.http.util.URLTemplatingUtil;
 import org.apache.axis2.transport.base.BaseConstants;
 
 public class BinaryFormatter implements MessageFormatterEx {
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writeTo(messageContext, format, baos, true);
-        return baos.toByteArray();
-    }
-
     private DataHandler getDataHandler(MessageContext messageContext) {
         OMElement firstChild = messageContext.getEnvelope().getBody().getFirstElement();
         if (BaseConstants.DEFAULT_BINARY_WRAPPER.equals(firstChild.getQName())) {

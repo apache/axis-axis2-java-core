@@ -29,7 +29,6 @@ import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
 import org.apache.axis2.util.JavaUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -40,13 +39,6 @@ import java.util.Iterator;
  * Formates the request message as application/x-www-form-urlencoded
  */
 public class XFormURLEncodedFormatter implements MessageFormatter {
-
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writeTo(messageContext, format, baos, true);
-        return baos.toByteArray();
-    }
-
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
                         OutputStream outputStream, boolean preserve) throws AxisFault {
         OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();

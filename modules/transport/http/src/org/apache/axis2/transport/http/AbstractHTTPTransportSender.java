@@ -334,7 +334,7 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
                                                            HTTPConstants.COMPRESSION_GZIP);
                 try {
                     out = new GZIPOutputStream(out);
-                    out.write(messageFormatter.getBytes(msgContext, format));
+                    messageFormatter.writeTo(msgContext, format, out, false);
                     ((GZIPOutputStream) out).finish();
                     out.flush();
                 } catch (IOException e) {

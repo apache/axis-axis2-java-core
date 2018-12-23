@@ -33,7 +33,6 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -44,27 +43,6 @@ import java.net.URL;
 public class ApplicationXMLFormatter implements MessageFormatter {
 
     private static final Log log = LogFactory.getLog(ApplicationXMLFormatter.class);
-    public byte[] getBytes(MessageContext 
-                           messageContext, 
-                           OMOutputFormat format) throws AxisFault {
-        return getBytes(messageContext, format, false);
-    }
-    
-    /**
-     * Get the bytes for this message
-     * @param messageContext
-     * @param format
-     * @param preserve (indicates if the OM should be preserved or consumed)
-     * @return
-     * @throws AxisFault
-     */
-    public byte[] getBytes(MessageContext messageContext, 
-                           OMOutputFormat format, 
-                           boolean preserve) throws AxisFault {
-        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-        writeTo(messageContext, format, bytesOut, preserve);
-        return bytesOut.toByteArray();
-    }
 
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
                         OutputStream outputStream, boolean preserve) throws AxisFault {

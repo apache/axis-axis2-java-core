@@ -74,27 +74,6 @@ public class MultipartFormDataFormatterTest extends TestCase {
         return enp;
     }
 
-    public void testGetBytes() throws AxisFault {
-
-        OMOutputFormat omOutput = new OMOutputFormat();
-        String boundary = omOutput.getMimeBoundary();
-        byte[] bytes = formatter.getBytes(messageContext, omOutput);
-        String message = new String(bytes);
-        
-        assertNotNull("bytes can not be null", bytes);
-        assertTrue("Can not find the content", message.contains(boundary));
-        assertTrue("Can not find the content",
-                message.contains("Content-Disposition: form-data; name=\"part1\""));
-        assertTrue("Can not find the content",
-                message.contains("Content-Disposition: form-data; name=\"part2\""));
-        assertTrue("Can not find the content",
-                message.contains("Content-Type: text/plain; charset=US-ASCII"));
-        //assertTrue("Can not find the content", message.contains("Content-Transfer-Encoding: 8bit"));
-        assertTrue("Can not find the content", message.contains("sample data part 1"));
-        assertTrue("Can not find the content", message.contains("sample data part 2"));
-
-    }
-
     public void testWriteTo() throws AxisFault {
 
         OMOutputFormat omOutput = new OMOutputFormat();

@@ -48,10 +48,6 @@ import java.util.Iterator;
 public class JsonFormatter implements MessageFormatter {
     private static final Log log = LogFactory.getLog(JsonFormatter.class);
 
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat omOutputFormat) throws AxisFault {
-        return new byte[0];
-    }
-
     public void writeTo(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat, OutputStream outputStream, boolean preserve) throws AxisFault {
         String charSetEncoding = (String) outMsgCtxt.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
         JsonWriter jsonWriter;

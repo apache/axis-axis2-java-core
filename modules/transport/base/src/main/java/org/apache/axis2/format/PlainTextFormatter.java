@@ -26,7 +26,6 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.transport.base.BaseConstants;
 
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -36,13 +35,6 @@ import java.net.URL;
 import javax.activation.DataSource;
 
 public class PlainTextFormatter implements MessageFormatterEx {
-
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writeTo(messageContext, format, baos, true);
-        return baos.toByteArray();
-    }
-
     public void writeTo(MessageContext messageContext, OMOutputFormat format, OutputStream outputStream, boolean preserve) throws AxisFault {
         OMElement textElt = messageContext.getEnvelope().getBody().getFirstElement();
         if (BaseConstants.DEFAULT_TEXT_WRAPPER.equals(textElt.getQName())) {

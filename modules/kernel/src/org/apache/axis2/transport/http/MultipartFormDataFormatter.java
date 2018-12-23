@@ -30,7 +30,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -78,21 +77,6 @@ import java.util.Iterator;
  * @@@@-@@-@@ --AaB03x--
  */
 public class MultipartFormDataFormatter implements MessageFormatter {
-
-    /**
-     * @return a byte array of the message formatted according to the given
-     *         message format.
-     */
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-        try {
-            writeTo(messageContext, format, bytesOut, true);
-            return bytesOut.toByteArray();
-        } catch (IOException e) {
-            throw new AxisFault(e.getMessage());
-        }     
-    }
-
     /**
      * Different message formats can set their own content types
      * Eg: JSONFormatter can set the content type as application/json

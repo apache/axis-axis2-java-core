@@ -49,10 +49,6 @@ public class DataSourceFormatter implements MessageFormatter {
         this.contentType = contentType;
     }
 
-    public byte[] getBytes(org.apache.axis2.context.MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-        throw new UnsupportedOperationException("FIXME");
-    }
-
     public void writeTo(org.apache.axis2.context.MessageContext messageContext, OMOutputFormat format, OutputStream outputStream, boolean preserve) throws AxisFault {
         AttachmentsAdapter attachments = (AttachmentsAdapter) messageContext.getProperty(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS);
         try {

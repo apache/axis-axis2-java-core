@@ -88,9 +88,8 @@ public class TCPTransportSender extends AbstractTransportSender {
         MessageFormatter messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);
         OMOutputFormat format = BaseUtils.getOMOutputFormat(msgContext);
         format.setContentType(contentType);
-        byte[] payload = messageFormatter.getBytes(msgContext, format);
         OutputStream out = socket.getOutputStream();
-        out.write(payload);
+        messageFormatter.writeTo(msgContext, format, out, false);
         out.flush();
     }
 

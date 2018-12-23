@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -50,18 +49,6 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
             OMOutputFormat format, String soapAction) {
 
         return null;
-    }
-
-    /**
-     * Retrieves the raw bytes from the SOAP envelop.
-     * 
-     * @see org.apache.axis2.transport.MessageFormatter#getBytes(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat)
-     */
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
-            throws AxisFault {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        writeTo(messageContext, format, outStream, false);
-        return outStream.toByteArray();
     }
 
     /**

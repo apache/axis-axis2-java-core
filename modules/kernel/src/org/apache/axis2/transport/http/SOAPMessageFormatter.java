@@ -39,7 +39,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -92,13 +91,6 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 log.debug("end writeTo()");
             }
         }
-    }
-
-    public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format)
-            throws AxisFault {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        writeTo(msgCtxt, format, out, true);
-        return out.toByteArray();
     }
 
     public String getContentType(MessageContext msgCtxt, OMOutputFormat format,

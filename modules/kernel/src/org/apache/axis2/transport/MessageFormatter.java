@@ -43,14 +43,6 @@ import java.net.URL;
  * </p>
  */
 public interface MessageFormatter {
-
-    /**
-     * @return a byte array of the message formatted according to the given
-     *         message format.
-     */
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
-            throws AxisFault;
-
     /**
      * To support deffered writing transports as in http chunking.. Axis2 was
      * doing this for some time..

@@ -31,10 +31,8 @@ import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URIEncoderDecoder;
 
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -74,26 +72,6 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
             contentType += "; charset=" + encoding;
         }
         return contentType;
-    }
-
-    /**
-     * Gives the JSON message as an array of bytes. If the payload is an OMSourcedElement and
-     * it contains a JSONDataSource with a correctly formatted JSON String, gets it directly from
-     * the DataSource and returns as a byte array. If not, the OM tree is expanded and it is
-     * serialized into the output stream and byte array is returned.
-     *
-     * @param msgCtxt Message context which contains the soap envelope to be written
-     * @param format  format of the message, this is ignored
-     * @return the payload as a byte array
-     * @throws AxisFault if there is an error in writing the message using StAX writer or IF THE
-     *                   USER TRIES TO SEND A JSON MESSAGE WITH NAMESPACES USING THE "MAPPED"
-     *                   CONVENTION.
-     */
-
-    public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format) throws AxisFault {
-        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-        writeTo(msgCtxt, format, bytesOut, true);
-        return bytesOut.toByteArray();
     }
 
     public String formatSOAPAction(MessageContext msgCtxt, OMOutputFormat format,

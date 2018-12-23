@@ -23,7 +23,10 @@ import java.net.URL;
 
 import javax.activation.DataSource;
 
-import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.blob.BlobDataSource;
+import org.apache.axiom.blob.Blobs;
+import org.apache.axiom.blob.MemoryBlob;
+import org.apache.axiom.blob.MemoryBlobOutputStream;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -33,7 +36,7 @@ import org.apache.axis2.transport.MessageFormatter;
  * Adapter to add the {@link MessageFormatterEx} interface to an
  * existing {@link MessageFormatter}.
  * It implements the {@link MessageFormatterEx#getDataSource(MessageContext, OMOutputFormat, String)} method
- * using {@link MessageFormatter#getBytes(MessageContext, OMOutputFormat)} and
+ * using {@link MessageFormatter#writeTo(MessageContext, OMOutputFormat, OutputStream, boolean)} and
  * {@link MessageFormatter#getContentType(MessageContext, OMOutputFormat, String)}.
  */
 public class MessageFormatterExAdapter implements MessageFormatterEx {
@@ -46,20 +49,17 @@ public class MessageFormatterExAdapter implements MessageFormatterEx {
     public DataSource getDataSource(MessageContext messageContext,
                                     OMOutputFormat format,
                                     String soapAction) throws AxisFault {
-        return new ByteArrayDataSource(
-                getBytes(messageContext, format),
-                getContentType(messageContext, format, soapAction));
+        MemoryBlob blob = Blobs.createMemoryBlob();
+        MemoryBlobOutputStream out = blob.getOutputStream();
+        writeTo(messageContext, format, out, false);
+        out.close();
+        return new BlobDataSource(blob, getContentType(messageContext, format, soapAction));
     }
 
     public String formatSOAPAction(MessageContext messageContext,
                                    OMOutputFormat format,
                                    String soapAction) {
         return messageFormatter.formatSOAPAction(messageContext, format, soapAction);
-    }
-
-    public byte[] getBytes(MessageContext messageContext,
-                           OMOutputFormat format) throws AxisFault {
-        return messageFormatter.getBytes(messageContext, format);
     }
 
     public String getContentType(MessageContext messageContext,
