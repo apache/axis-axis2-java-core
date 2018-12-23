@@ -19,8 +19,6 @@
 
 package org.apache.axis2.databinding;
 
-import javax.xml.stream.Location;
-
 /**
  * uses to handle ADB exceptions
  */
@@ -40,13 +38,5 @@ public class ADBException extends DataBindException {
 
     public ADBException(String string, Throwable throwable) {
         super(string, throwable);
-    }
-
-    public ADBException(String string, Location location, Throwable throwable) {
-        super(string, location, throwable);
-    }
-
-    public ADBException(String string, Location location) {
-        super(string, location);
     }
 }
