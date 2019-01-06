@@ -9,6 +9,7 @@ script: mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true verify
 before_cache: "find $HOME/.m2 -name '*-SNAPSHOT' -a -type d -exec rm -rf '{}' ';'"
 jobs:
   include:
+    - stage: test
     - if: repo = "apache/axis2-java" AND branch = 1_7 AND type = push
       stage: deploy
       script: mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true -DskipTests=true deploy
