@@ -41,10 +41,8 @@ import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.junit.rules.ExternalResource;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.AxisServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +56,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 /**
  * Support for running an embedded Jetty server
  */
-public class JettyServer extends ExternalResource {
+public class JettyServer extends AbstractAxis2Server {
     /**
      * The alias of the certificate to configure for Jetty's ssl context factory: {@value}
      */
@@ -71,7 +69,6 @@ public class JettyServer extends ExternalResource {
     
     private static final Log log = LogFactory.getLog(JettyServer.class);
     
-    private final String repository;
     private final boolean secure;
     private File keyStoreFile;
     private File trustStoreFile;
@@ -84,16 +81,13 @@ public class JettyServer extends ExternalResource {
     /**
      * Constructor.
      * 
-     * @param repository
+     * @param repositoryPath
      *            The path to the Axis2 repository to use. Must not be null or empty.
      * @param secure
      *            Whether to enable HTTPS.
      */
-    public JettyServer(String repository, boolean secure) {
-        if (repository == null || repository.trim().length() == 0) {
-            throw new IllegalArgumentException("Axis2 repository must not be null or empty");
-        }
-        this.repository = repository;
+    public JettyServer(String repositoryPath, boolean secure) {
+        super(repositoryPath);
         this.secure = secure;
     }
     
@@ -115,7 +109,7 @@ public class JettyServer extends ExternalResource {
     }
     
     @Override
-    protected void before() throws Throwable {
+    protected void startServer(final ConfigurationContext configurationContext) throws Throwable {
         server = new Server();
         
         if (!secure) {
@@ -187,8 +181,6 @@ public class JettyServer extends ExternalResource {
         context.setParentLoaderPriority(true);
         context.setThrowUnavailableOnStartupException(true);
         
-        final ConfigurationContext configurationContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repository);
         @SuppressWarnings("serial")
         ServletHolder servlet = new ServletHolder(new AxisServlet() {
             @Override
@@ -222,7 +214,7 @@ public class JettyServer extends ExternalResource {
     }
     
     @Override
-    protected void after() {
+    protected void stopServer() {
         if (server != null) {
             log.info("Stop called");
             try {
@@ -263,10 +255,16 @@ public class JettyServer extends ExternalResource {
         }
     }
 
+    @Override
+    public boolean isSecure() {
+        return secure;
+    }
+
     /**
      * @return Jetty's http connector port. 
      * @throws IllegalStateException If Jetty is not running or the http connector cannot be found.
      */
+    @Override
     public int getPort() throws IllegalStateException {
         if (server == null) {
             throw new IllegalStateException("Jetty server is not initialized");
@@ -290,10 +288,12 @@ public class JettyServer extends ExternalResource {
         throw new IllegalStateException("Could not find Jetty http connector");
     }
 
+    @Override
     public String getEndpoint(String serviceName) {
         return String.format("%s://localhost:%s/axis2/services/%s", secure ? "https" : "http", getPort(), serviceName);
     }
 
+    @Override
     public EndpointReference getEndpointReference(String serviceName) {
         return new EndpointReference(getEndpoint(serviceName));
     }
