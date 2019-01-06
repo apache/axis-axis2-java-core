@@ -19,6 +19,7 @@
 package org.apache.axis2.testutils;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
@@ -41,15 +42,19 @@ public class Axis2Server extends ExternalResource {
         return port;
     }
 
-    public String getEndpoint(String serviceName) throws AxisFault {
+    public ConfigurationContext getConfigurationContext() {
         if (configurationContext == null) {
             throw new IllegalStateException();
         }
-        return configurationContext.getAxisConfiguration().getService(serviceName).getEPRs()[0];
+        return configurationContext;
     }
 
-    public ConfigurationContext getConfigurationContext() {
-        return configurationContext;
+    public String getEndpoint(String serviceName) throws AxisFault {
+        return getConfigurationContext().getAxisConfiguration().getService(serviceName).getEPRs()[0];
+    }
+
+    public EndpointReference getEndpointReference(String serviceName) throws AxisFault {
+        return new EndpointReference(getEndpoint(serviceName));
     }
 
     @Override
