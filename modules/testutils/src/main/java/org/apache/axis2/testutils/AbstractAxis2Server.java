@@ -24,17 +24,17 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.junit.rules.ExternalResource;
 
 public abstract class AbstractAxis2Server extends ExternalResource {
     private final String repositoryPath;
+    private final AxisServiceFactory[] serviceFactories;
     private ConfigurationContext configurationContext;
 
-    public AbstractAxis2Server(String repositoryPath) {
-        if (repositoryPath == null || repositoryPath.trim().length() == 0) {
-            throw new IllegalArgumentException("Axis2 repository must not be null or empty");
-        }
+    public AbstractAxis2Server(String repositoryPath, AxisServiceFactory... serviceFactories) {
         this.repositoryPath = repositoryPath;
+        this.serviceFactories = serviceFactories;
     }
 
     final String getRepositoryPath() {
@@ -52,6 +52,10 @@ public abstract class AbstractAxis2Server extends ExternalResource {
     protected void before() throws Throwable {
         configurationContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
+        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
+        for (AxisServiceFactory serviceFactory : serviceFactories) {
+            axisConfiguration.addService(serviceFactory.createService(axisConfiguration));
+        }
         startServer(configurationContext);
     }
 

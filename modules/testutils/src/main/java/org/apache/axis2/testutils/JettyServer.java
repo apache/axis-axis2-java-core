@@ -85,8 +85,8 @@ public class JettyServer extends AbstractAxis2Server {
      * @param secure
      *            Whether to enable HTTPS.
      */
-    public JettyServer(String repositoryPath, boolean secure) {
-        super(repositoryPath);
+    public JettyServer(String repositoryPath, boolean secure, AxisServiceFactory... axisServiceFactories) {
+        super(repositoryPath, axisServiceFactories);
         this.secure = secure;
     }
     

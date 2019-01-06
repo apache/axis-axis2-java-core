@@ -29,8 +29,8 @@ public class Axis2Server extends AbstractAxis2Server {
     private int port = -1;
     private SimpleHTTPServer server;
 
-    public Axis2Server(String repositoryPath) {
-        super(repositoryPath);
+    public Axis2Server(String repositoryPath, AxisServiceFactory... axisServiceFactories) {
+        super(repositoryPath, axisServiceFactories);
     }
 
     @Override

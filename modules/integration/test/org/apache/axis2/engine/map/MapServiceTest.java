@@ -19,8 +19,10 @@
 
 package org.apache.axis2.engine.map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import javax.xml.stream.XMLStreamException;
-import junit.framework.TestCase;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -31,33 +33,19 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisServer;
+import org.apache.axis2.testutils.Axis2Server;
+import org.apache.axis2.testutils.SimpleAxisServiceFactory;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 /**
  * The Class MapServiceTest.
  */
-public class MapServiceTest extends TestCase {
-    private AxisServer server;
+public class MapServiceTest {
+    @ClassRule
+    public static Axis2Server server = new Axis2Server(null,
+            new SimpleAxisServiceFactory(MapService.class));
     
-    /** The service. */
-    protected AxisService service;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        server = new AxisServer();
-        server.deployService(MapService.class.getName());
-    }   
-
-    @Override
-    protected void tearDown() throws Exception {
-        server.stop();
-    }
-
     /**
      * Test string generics map service.
      * 
@@ -66,9 +54,10 @@ public class MapServiceTest extends TestCase {
      * @throws AxisFault
      *             the axis fault
      */
+    @Test
     public void testStringGenericsMapService() throws XMLStreamException,
             AxisFault {
-        String epr = "http://localhost:6060/axis2/services/MapService/stringGenericsMapService";
+        String epr = server.getEndpoint("MapService") + "/stringGenericsMapService";
         Options options = new Options();
         options.setTo(new EndpointReference(epr));
         ServiceClient sender = new ServiceClient();
@@ -94,10 +83,11 @@ public class MapServiceTest extends TestCase {
      * @throws AxisFault
      *             the axis fault
      */
+    @Test
     public void testStringGenericsTreeMapService() throws XMLStreamException,
             AxisFault {
 
-        String epr = "http://localhost:6060/axis2/services/MapService/stringGenericsTreeMapService";
+        String epr = server.getEndpoint("MapService") + "/stringGenericsTreeMapService";
         Options options = new Options();
         options.setTo(new EndpointReference(epr));
         ServiceClient sender = new ServiceClient();
