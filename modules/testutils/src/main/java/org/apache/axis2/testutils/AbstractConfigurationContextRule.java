@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.testutils;
 
+import java.io.File;
+
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.junit.rules.ExternalResource;
@@ -43,8 +45,25 @@ public abstract class AbstractConfigurationContextRule extends ExternalResource 
 
     @Override
     protected void before() throws Throwable {
+        String axis2xml;
+        if (repositoryPath == null) {
+            axis2xml = null;
+        } else {
+            File repo = new File(repositoryPath);
+            File axis2xmlFile = new File(repo, "axis2.xml");
+            if (axis2xmlFile.exists()) {
+                axis2xml = axis2xmlFile.getAbsolutePath();
+            } else {
+                axis2xmlFile = new File(new File(repo, "conf"), "axis2.xml");
+                if (axis2xmlFile.exists()) {
+                    axis2xml = axis2xmlFile.getAbsolutePath();
+                } else {
+                    axis2xml = null;
+                }
+            }
+        }
         configurationContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath, axis2xml);
     }
 
     @Override

@@ -19,6 +19,9 @@
 
 package org.apache.axis2.engine;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,13 +34,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -48,58 +49,44 @@ import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.testutils.Axis2Server;
 import org.apache.axis2.util.Utils;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 
-public class PausingHandlerExecutionTest extends UtilServerBasedTestCase implements TestConstants {
-    private static boolean initDone = false;
+public class PausingHandlerExecutionTest implements TestConstants {
+    @ClassRule
+    public static final Axis2Server server = new Axis2Server(TestingUtils.prefixBaseDirectory(Constants.TESTING_REPOSITORY));
+
     private static ArrayList testResults;
-    private AxisService testService;
     private static TestHandler middleGlobalInHandler;
-    private TestHandler firstOperationInHandler;
-    private TestHandler middleOperationInHandler;
-    private TestHandler middleOperationOutHandler;
 
-    public PausingHandlerExecutionTest() {
-        super(PausingHandlerExecutionTest.class.getName());
-    }
-
-    public PausingHandlerExecutionTest(String testName) {
-        super(testName);
-    }
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(PausingHandlerExecutionTest.class));
-    }
-
-    protected void setUp() throws Exception {
-        //org.apache.log4j.BasicConfigurator.configure();
+    @BeforeClass
+    public static void setUp() throws Exception {
+        AxisConfiguration axisConfiguration = server.getConfigurationContext().getAxisConfiguration();
 
         testResults = new ArrayList();
 
-        if (!initDone) {
-            initDone = true;
-            List globalInPhases =
-                    UtilServer.getConfigurationContext().getAxisConfiguration().getInFlowPhases();
-            for (int i = 0; i < globalInPhases.size(); i++) {
-                Phase globalInPhase = (Phase)globalInPhases.get(i);
-                if (PhaseMetadata.PHASE_PRE_DISPATCH.equals(globalInPhase.getPhaseName())) {
-                    System.out.println("Adding handlers to  globalInPhase   name [" +
-                            globalInPhase.getPhaseName() + "]  ...");
-                    globalInPhase.addHandler(new TestHandler("In1"));
-                    middleGlobalInHandler = new TestHandler("In2");
-                    globalInPhase.addHandler(middleGlobalInHandler);
-                    globalInPhase.addHandler(new TestHandler("In3"));
-                    System.out.println("...done adding handlers to  globalInPhase   name [" +
-                            globalInPhase.getPhaseName() + "]  ...");
-                }
+        List globalInPhases = axisConfiguration.getInFlowPhases();
+        for (int i = 0; i < globalInPhases.size(); i++) {
+            Phase globalInPhase = (Phase)globalInPhases.get(i);
+            if (PhaseMetadata.PHASE_PRE_DISPATCH.equals(globalInPhase.getPhaseName())) {
+                System.out.println("Adding handlers to  globalInPhase   name [" +
+                        globalInPhase.getPhaseName() + "]  ...");
+                globalInPhase.addHandler(new TestHandler("In1"));
+                middleGlobalInHandler = new TestHandler("In2");
+                globalInPhase.addHandler(middleGlobalInHandler);
+                globalInPhase.addHandler(new TestHandler("In3"));
+                System.out.println("...done adding handlers to  globalInPhase   name [" +
+                        globalInPhase.getPhaseName() + "]  ...");
             }
         }
 
-        testService = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                                                operationName);
-        UtilServer.deployService(testService);
+        AxisService testService = Utils.createSimpleService(serviceName, Echo.class.getName(),
+                                                            operationName);
+        axisConfiguration.addService(testService);
         AxisOperation operation = testService.getOperation(operationName);
 
         ArrayList operationSpecificPhases = new ArrayList();
@@ -111,9 +98,9 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
             Phase operationSpecificPhase = (Phase)phaseList.get(i);
             if (PhaseMetadata.PHASE_POLICY_DETERMINATION
                     .equals(operationSpecificPhase.getPhaseName())) {
-                firstOperationInHandler = new TestHandler("In4");
+                TestHandler firstOperationInHandler = new TestHandler("In4");
                 operationSpecificPhase.addHandler(firstOperationInHandler);
-                middleOperationInHandler = new TestHandler("In5");
+                TestHandler middleOperationInHandler = new TestHandler("In5");
                 operationSpecificPhase.addHandler(middleOperationInHandler);
                 operationSpecificPhase.addHandler(new TestHandler("In6"));
             }
@@ -129,21 +116,16 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
             if (PhaseMetadata.PHASE_POLICY_DETERMINATION
                     .equals(operationSpecificPhase.getPhaseName())) {
                 operationSpecificPhase.addHandler(new TestHandler("Out1"));
-                middleOperationOutHandler = new TestHandler("Out2");
+                TestHandler middleOperationOutHandler = new TestHandler("Out2");
                 operationSpecificPhase.addHandler(middleOperationOutHandler);
                 operationSpecificPhase.addHandler(new TestHandler("Out3"));
             }
         }
     }
 
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-        UtilServer.unDeployClientService();
-    }
-
     private ServiceClient createClient() throws Exception {
         Options options = new Options();
-        options.setTo(targetEPR);
+        options.setTo(new EndpointReference("http://127.0.0.1:" + server.getPort() + "/axis2/services/EchoXMLService/echoOMElement"));
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setAction(operationName.getLocalPart());
@@ -164,6 +146,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
         TestingUtils.compareWithCreatedOMElement(result);
     }
 
+    @Test
     public void testSuccessfulInvocation() throws Exception {
         System.out.println("Starting testSuccessfulInvocation");
         middleGlobalInHandler.shouldPause(true);
@@ -198,7 +181,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
 
     }
 
-    private class TestHandler extends AbstractHandler {
+    private static class TestHandler extends AbstractHandler {
         private String handlerName;
         private boolean shouldFail = false;
         private boolean shouldPause = false;
@@ -360,7 +343,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
 
     }
 
-    private class Worker extends Thread {
+    private static class Worker extends Thread {
         private byte[] serializedMessageContext = null;
         private ConfigurationContext configurationContext = null;
         private File theFile = null;
