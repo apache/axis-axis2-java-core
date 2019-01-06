@@ -19,51 +19,46 @@
 package org.apache.axis2.testutils;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.client.Stub;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.junit.rules.ExternalResource;
 
-public abstract class AbstractAxis2Server extends ExternalResource {
+public final class ClientHelper extends ExternalResource {
+    private final AbstractAxis2Server server;
     private final String repositoryPath;
     private ConfigurationContext configurationContext;
 
-    public AbstractAxis2Server(String repositoryPath) {
-        if (repositoryPath == null || repositoryPath.trim().length() == 0) {
-            throw new IllegalArgumentException("Axis2 repository must not be null or empty");
-        }
+    public ClientHelper(AbstractAxis2Server server, String repositoryPath) {
+        this.server = server;
         this.repositoryPath = repositoryPath;
     }
 
-    final String getRepositoryPath() {
-        return repositoryPath;
-    }
-
-    public final ConfigurationContext getConfigurationContext() {
-        if (configurationContext == null) {
-            throw new IllegalStateException();
-        }
-        return configurationContext;
+    public ClientHelper(AbstractAxis2Server server) {
+        this(server, server.getRepositoryPath());
     }
 
     @Override
     protected void before() throws Throwable {
         configurationContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
-        startServer(configurationContext);
     }
 
     @Override
     protected void after() {
-        stopServer();
         configurationContext = null;
     }
 
-    protected abstract void startServer(ConfigurationContext configurationContext) throws Throwable;
-    protected abstract void stopServer();
+    public ServiceClient createServiceClient(String serviceName) throws AxisFault {
+        ServiceClient serviceClient = new ServiceClient(configurationContext, null);
+        serviceClient.getOptions().setTo(server.getEndpointReference(serviceName));
+        return serviceClient;
+    }
 
-    public abstract boolean isSecure();
-    public abstract int getPort();
-    public abstract String getEndpoint(String serviceName) throws AxisFault;
-    public abstract EndpointReference getEndpointReference(String serviceName) throws AxisFault;
+    public <T extends Stub> T createStub(Class<T> type, String serviceName) throws Exception {
+        return type
+                .getConstructor(ConfigurationContext.class, String.class)
+                .newInstance(configurationContext, server.getEndpoint(serviceName));
+    }
 }
