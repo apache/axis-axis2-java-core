@@ -25,7 +25,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.junit.rules.ExternalResource;
 
-public final class ClientHelper extends ExternalResource {
+public class ClientHelper extends ExternalResource {
     private final AbstractAxis2Server server;
     private final String repositoryPath;
     private ConfigurationContext configurationContext;
@@ -40,25 +40,31 @@ public final class ClientHelper extends ExternalResource {
     }
 
     @Override
-    protected void before() throws Throwable {
+    protected final void before() throws Throwable {
         configurationContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
     }
 
     @Override
-    protected void after() {
+    protected final void after() {
         configurationContext = null;
     }
 
-    public ServiceClient createServiceClient(String serviceName) throws AxisFault {
+    public final ServiceClient createServiceClient(String serviceName) throws Exception {
         ServiceClient serviceClient = new ServiceClient(configurationContext, null);
         serviceClient.getOptions().setTo(server.getEndpointReference(serviceName));
+        configureServiceClient(serviceClient);
         return serviceClient;
     }
 
-    public <T extends Stub> T createStub(Class<T> type, String serviceName) throws Exception {
-        return type
+    public final <T extends Stub> T createStub(Class<T> type, String serviceName) throws Exception {
+        T stub = type
                 .getConstructor(ConfigurationContext.class, String.class)
                 .newInstance(configurationContext, server.getEndpoint(serviceName));
+        configureServiceClient(stub._getServiceClient());
+        return stub;
+    }
+
+    protected void configureServiceClient(ServiceClient serviceClient) throws Exception {
     }
 }
