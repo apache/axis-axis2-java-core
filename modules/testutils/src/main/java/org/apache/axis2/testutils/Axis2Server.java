@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.testutils;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -34,6 +36,11 @@ public class Axis2Server extends AbstractAxis2Server {
     @Override
     public boolean isSecure() {
         return false;
+    }
+
+    @Override
+    public SSLContext getClientSSLContext() {
+        return null;
     }
 
     @Override

@@ -18,11 +18,15 @@
  */
 package org.apache.axis2.testutils;
 
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.Stub;
 import org.apache.axis2.context.ConfigurationContext;
@@ -47,6 +51,10 @@ public class ClientHelper extends ExternalResource {
     protected final void before() throws Throwable {
         configurationContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(repositoryPath);
+        SSLContext sslContext = server.getClientSSLContext();
+        if (sslContext != null) {
+            configurationContext.setProperty(SSLContext.class.getName(), sslContext);
+        }
     }
 
     @Override
@@ -62,8 +70,22 @@ public class ClientHelper extends ExternalResource {
     }
 
     public final ServiceClient createServiceClient(String serviceName, QName wsdlServiceName, String portName) throws Exception {
+        URLStreamHandler handler;
+        if (server.isSecure()) {
+            final SSLContext sslContext = server.getClientSSLContext();
+            handler = new URLStreamHandler() {
+                @Override
+                protected URLConnection openConnection(URL url) throws IOException {
+                    HttpsURLConnection conn = (HttpsURLConnection)new URL(url.toExternalForm()).openConnection();
+                    conn.setSSLSocketFactory(sslContext.getSocketFactory());
+                    return conn;
+                }
+            };
+        } else {
+            handler = null;
+        }
         ServiceClient serviceClient = new ServiceClient(configurationContext,
-                new URL(server.getEndpoint(serviceName) + "?wsdl"), wsdlServiceName, portName);
+                new URL(null, server.getEndpoint(serviceName) + "?wsdl", handler), wsdlServiceName, portName);
         configureServiceClient(serviceClient);
         return serviceClient;
     }

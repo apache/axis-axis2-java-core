@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.testutils;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -63,6 +65,7 @@ public abstract class AbstractAxis2Server extends ExternalResource {
     protected abstract void stopServer();
 
     public abstract boolean isSecure();
+    public abstract SSLContext getClientSSLContext() throws Exception;
     public abstract int getPort();
     public abstract String getEndpoint(String serviceName) throws AxisFault;
     public abstract EndpointReference getEndpointReference(String serviceName) throws AxisFault;
