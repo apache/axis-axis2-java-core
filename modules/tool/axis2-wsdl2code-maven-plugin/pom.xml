@@ -43,6 +43,17 @@
             <url>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging/tools/maven-plugins/axis2-wsdl2code-maven-plugin</url>
         </site>
     </distributionManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Both google-java-format and Maven depend on Guava. We need to select
+                     a version that works for both. -->
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
