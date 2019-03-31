@@ -406,7 +406,7 @@ public class WizardFrame extends JFrame {
                  //locations lib directory
                  if (output.getCreateJarCheckBoxSelection()){
                      File tempClassFile=codegenBean.getTemp();
-                     tempClassFile.mkdir();
+                     tempClassFile.mkdirs();
                      File srcTemp=new File(tempClassFile.getPath()+File.separator+"src");
                      srcTemp.mkdir();
                      copyDirectory(new File(output.getOutputLocation()+File.separator+"src"),srcTemp);

@@ -47,7 +47,7 @@ public class SrcCompiler extends Javac {
 
           Path path;
           File destDir = new File(tempPath + File.separator + "classes");
-          destDir.mkdir();
+          destDir.mkdirs();
 
           Path srcPath = new Path(project, tempPath + File.separator + "src");
           this.setSrcdir(srcPath);
