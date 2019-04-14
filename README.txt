@@ -47,7 +47,7 @@ be performed:
      the META-INF directory
   3) Drop the jar file to the $AXIS2_HOME/WEB-INF/services directory
      where $AXIS2_HOME represents the install directory of your Axis2 
-     runtime. (In the case of a servelet container this would be the
+     runtime. (In the case of a servlet container this would be the
      "axis2" directory inside "webapps".)
 
 To verify the deployment please go to http://<yourip>:<port>/axis2/ and
