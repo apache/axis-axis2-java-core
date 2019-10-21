@@ -624,10 +624,9 @@ public class ConverterUtil {
         calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
 
         // set the day light off set only if time zone
-        if (source.length() >= 10) {
+        if (source.length() > 10) {
             calendar.set(Calendar.DST_OFFSET, 0);
         }
-        calendar.getTimeInMillis();
         if (bc){
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
         }
