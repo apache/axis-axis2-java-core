@@ -4286,6 +4286,16 @@ public class MessageContext extends AbstractContext
     }
 
     public boolean isFault() {
+	if (getEnvelope() == null) {
+	    // AXIS2-5943 , the basic assumption that the Axis2 architecture makes 
+	    // is that any payload always has some form of SOAP representation and 
+	    // the envelope should therefore never be null.
+	    // In the HTTP Response of JSON based REST services, the axisOperation
+	    // is null so no envelope is created
+            log.debug(getLogIDString() + ", " + myClassName +
+                    " , isFault() found a null soap envelope, returning false. This can happen in REST HTTP responses. ");
+            return false;
+        }
         return getEnvelope().hasFault();
     }
 
