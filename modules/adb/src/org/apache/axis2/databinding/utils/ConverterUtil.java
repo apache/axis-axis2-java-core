@@ -670,7 +670,8 @@ public class ConverterUtil {
         if ((s == null) || s.equals("")){
             return null;
         }
-        return new Token(s);
+	// add trim() for AXIS2-5575
+        return new Token(s.trim());
     }
 
 
