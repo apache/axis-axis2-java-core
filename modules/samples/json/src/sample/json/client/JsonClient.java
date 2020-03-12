@@ -31,13 +31,11 @@ import java.io.UnsupportedEncodingException;
 public class JsonClient{
 
     private String url = "http://localhost:8080/axis2/services/JsonService/echoUser";
-    private String contentType = "application/json-impl";
+    private String contentType = "application/json";
     private String charSet = "UTF-8";
 
     public static void main(String[] args)throws IOException {
-        String echoUser = "{\"echoUser\":{\"user\":{\"name\":\"My_Name\",\"surname\":\"MY_Surname\",\"middleName\":" +
-            "\"My_MiddleName\",\"age\":123,\"address\":{\"country\":\"My_Country\",\"city\":\"My_City\",\"street\":" +
-            "\"My_Street\",\"building\":\"My_Building\",\"flat\":\"My_Flat\",\"zipCode\":\"My_ZipCode\"}}}}";
+	String echoUser = "{\"echoUser\":[{\"arg0\":{\"name\":\"My_Name\",\"surname\":\"MY_Surname\",\"middleName\":" + "\"My_MiddleName\",\"age\":123,\"address\":{\"country\":\"My_Country\",\"city\":\"My_City\",\"street\":" + "\"My_Street\",\"building\":\"My_Building\",\"flat\":\"My_Flat\",\"zipCode\":\"My_ZipCode\"}}}]}";
 
         JsonClient jsonClient = new JsonClient();
         jsonClient.post(echoUser);

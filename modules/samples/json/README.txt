@@ -9,19 +9,24 @@ convention.
 
 In this sample it sends
 
-{"echoUser":{"user":{"name":"My_Name","surname":"MY_Surname","middleName":"My_MiddleName","age":123,
-    "address":{"country":"My_Country","city":"My_City","street":"My_Street","building":"My_Building","flat":"My_Flat","zipCode":"My_ZipCode"}}}}
+{"echoUser":[{"arg0":{"name":My_Name,"surname":MY_Surname,"middleName":My_MiddleName,"age":123
+,"address":{"country":My_Country,"city":My_City,"street":My_Street,"building":My_Building,"fla
+t":My_Flat,"zipCode":My_ZipCode}}}]}
+
 
 JSON request to the echoUser method and get the response as
 
 {"Response":{"name":"My_Name","surname":"MY_Surname","middleName":"My_MiddleName","age":123,
     "address":{"country":"My_Country","city":"My_City","street":"My_Street","building":"My_Building","flat":"My_Flat","zipCode":"My_ZipCode"}}}
 
+Note that the above request String could be placed into a file myjson.dat and used with curl:
+
+curl -v -H "Content-Type: application/json" -X POST --data @/root/myjson.dat http://localhost:8080/axis2/services/JsonService/echoUser
 
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.8 or later
 
 Running The Sample
 ==================
