@@ -79,6 +79,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1344,7 +1346,15 @@ public class ConverterUtil {
      * @return 0 if equal , + value if greater than , - value if less than
      */
     public static long compare(BigInteger binBigInteger, String value) {
-        return binBigInteger.longValue() - Long.parseLong(value);
+        //AXIS2-5724 - Handle Decimal String value when casting to Long.
+        long param;
+        try {
+            NumberFormat nf = NumberFormat.getInstance();
+            param = nf.parse(value).longValue();
+        } catch (Exception e) {
+            throw new ObjectConversionException(e);
+        }
+        return binBigInteger.longValue() - param;
     }
 
     /**
