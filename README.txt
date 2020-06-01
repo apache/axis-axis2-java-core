@@ -5,7 +5,7 @@ http://axis.apache.org/axis2/java/core/
 ------------------------------------------------------
 
 ___________________
-Building
+Building 
 ===================
 
 We use Maven 2 (http://maven.apache.org) to build, and you'll find a
