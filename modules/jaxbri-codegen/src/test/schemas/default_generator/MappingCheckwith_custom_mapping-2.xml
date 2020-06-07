@@ -17,7 +17,7 @@
   ~ under the License.
   -->
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://example.org" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://example.org">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://example.org" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://example.org" version="1.0">
 <xs:complexType name="dummyClass">
 <xs:sequence/>
 </xs:complexType>

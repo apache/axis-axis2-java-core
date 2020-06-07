@@ -18,7 +18,7 @@
   -->
 
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://example.org" xmlns:enum="http://ws.apache.org/namespaces/axis2/enum" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://example.org">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://example.org" xmlns:enum="http://ws.apache.org/namespaces/axis2/enum" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://example.org" version="1.0">
     <xs:simpleType name="simpleEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="WHITE"/>
