@@ -10,12 +10,12 @@ before_cache: "find $HOME/.m2 -name '*-SNAPSHOT' -a -type d -exec rm -rf '{}' ';
 jobs:
   include:
     - stage: test
-    - if: repo = "apache/axis2-java" AND branch = 1_7 AND type = push
+    - if: repo = "apache/axis-axis2-java-core" AND branch = 1_7 AND type = push
       stage: deploy
       script: mvn -B -s .travis-settings.xml -Papache-release -Dgpg.skip=true -DskipTests=true deploy
       env:
-        - secure: "IzpkWYL9tH5bE6I6nDbgW6HUlz/+R7XuBXo5997r2adRz8Q1vnSA4gvvMDLyvNjUXDWB99HNLXMaInYlpLNOjBjgXx0abmbcUBfCu0/923iuT80IowT7kNcQK+k4b9ajFT4EZAWySru1SyeTa1VgEjCnAhynDXhhGwCjjakxGrY="
-        - secure: "iAPTcu1L6InO4F39F22iDccXhc59H7vVbEXZF3IxeWdf0RbtaahWrxHO532ILmTxN+wMio0GMNtmbyp8GP1Q30g7ZtK0YINeKcvR/PesiIcerm5Zp7Bh1a2PB3wJFnlykYBenn+AXXXZKRrmPki2aXFC0wEQ6hgKBQfVgwOcvHA="
+        - secure: "FtTstQQ7UzWoeSeDSDuRVZmaa/HspGKdqN/zhDY73xvVqQNiN/qEJ1n080199GPfWYZPtB6p9hFhXCbE9UN3+fnfuW0CO4iiBolRCsjdxU43bCaGjLpXiw/6ZIAaKSDPNsiXYK4d0EOKKWjWNWF1lODPrWvUdvB+bhOopUujsTImVKDZ4EqxW/35Qs96DipOz4BDLIGpdduQd8WywuCxUmGQgrzEy8xGmVt/Up383yZLAkPybR1YMp227chsgNLIurdBUbiNd73wh9YAjo/PRTDGbUgkjuUXj0m25vrmTPcHO4CBTzgb5dWeDFfwtZ5chfeanm/bAQyzPhqWF2XkbfKENGrDhOsYIT122VDfXxp+dNFnYj6vx27ulSea1m5GvclBCWkz9cqg4NTL9ZFRJwPvOLBNf/hni4aG4GKGv8sIU3HVVAB4qwpP9WLIDgKlimUq1bfIlj0jIPn/ZZmxd9KHw5gYcCTK0BHXjuFInXFM/3yb71fe8q+Rf8Zqc3HHyVCXCu9JDCuLDbN5BqKAULRAW+pK6Y5LCQTcE0GdotaA1EAlnB1hpwWCaXuGh4WS2+enTxMv6AsJgF1vB0JOXyocYcLp/0j0aolVk6azzdI9fk7VEXPt9xBI+GFmQqGHJf4iX85YizmB7ApwX9iIlMFMoIzuwllWogGO8IaTrPs="
+        - secure: "Amz5GjcuFs5A2nksM5GrzhmBe2+RpuwmTILBxzQ3Uhdb6fiNtIqsb+9OsYVWmqPwsI9Oun9yM4NCicWpWFJRDdoBN7pjK65mwlE356VvfyHx9MupXwJO00ILxJ5x5HiKtVglM1M3EZ9gm1PoVzxed9ZpSp/gmFUwvHzdImSNqLbWJ3SjHNOAqXoq2VPhvOae+jsmpBmeGHsTefNtFoLszZq2GgtEgFF3kNZzCTBnk6x5WXOAIO28elseZGEtp6yG5ugesdh6Z+EbifeAU1Rj/H5d820wiwViSmP3ieLrHUwbtbhUtU4f2UK9kXSEPu6FruYLj1tYWggM4w9jHM6Kiytq54YgnL8hNrzQeiU+YpOHaD7rNHrEVaVPFUSzog4YCh7IH4uD1nqrMHMoEpbKltn1ViJodOaAE2LBk32VFP832R4nUZLfhLspQ/V0N+fh4zp57LoYX0A+0MVX72gz395B+nN5mgK8JOPkXJYC4IVttN2nECAxqzabGTrJ5g97Jc73JVrvyQi4VFx9G2Ej/ye3EYpd+nqtAee5JeCHevqggcmPlnUlXMjuNCMx2r+di1HQMPu/CtmKfMGG4qayOZqvrMg1ld2dqY2ZllFGkpEprG1cCD5PR+ibZmiCN/c2w6mLBdHoc2KqGoXPvgi85MspeddrmtMtywTAN3Zta7Q="
 cache:
   directories:
     - $HOME/.m2
