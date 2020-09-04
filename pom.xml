@@ -639,6 +639,11 @@
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-rt</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-tools</artifactId>
                 <version>${jaxws.tools.version}</version>
             </dependency>
