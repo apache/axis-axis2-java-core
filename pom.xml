@@ -642,6 +642,12 @@
                 <artifactId>jaxws-rt</artifactId>
                 <version>2.3.3</version>
             </dependency>
+           <dependency>
+               <groupId>com.sun.xml.messaging.saaj</groupId>
+               <artifactId>saaj-impl</artifactId>
+               <version>1.5.2</version>
+           </dependency>
+
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-tools</artifactId>
