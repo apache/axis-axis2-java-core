@@ -68,6 +68,7 @@
         <dependency>
             <groupId>javax.xml.soap</groupId>
             <artifactId>javax.xml.soap-api</artifactId>
+            <version>${soap-api.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
