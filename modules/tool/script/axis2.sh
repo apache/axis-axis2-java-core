@@ -46,7 +46,9 @@ do
 
    if [ "$prearg"=-classpath ] || [ "$prearg"=-cp  ]
    then
-      AXIS2_CLASSPATH="$arg":"$AXIS2_CLASSPATH"
+      if [[ $arg  == "*.jar" ]]; then
+          AXIS2_CLASSPATH="$arg":"$AXIS2_CLASSPATH"
+      fi
    fi
    prearg="$arg"
 done 
