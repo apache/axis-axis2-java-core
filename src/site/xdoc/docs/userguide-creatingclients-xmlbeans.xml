@@ -318,7 +318,7 @@ public class Client{
 
             data.setMessageString("fire and forget it!");
 
-            stub.DoInOnly(req);
+            stub.doInOnly(req);
             System.out.println("done");
         } catch(Exception e){
             e.printStackTrace();
@@ -337,7 +337,7 @@ public class Client{
             data.setEchoString("echo! ... echo!");
 
             TwoWayOneParameterEchoResponseDocument res =
-                stub.TwoWayOneParameterEcho(req);
+                stub.twoWayOneParameterEcho(req);
 
             System.out.println(res.getTwoWayOneParameterEchoResponse().getEchoString());
         } catch(Exception e){
@@ -354,7 +354,7 @@ public class Client{
             NoParametersRequestDocument.NoParametersRequest data =
                 req.addNewNoParametersRequest();
 
-            System.out.println(stub.NoParameters(req));
+            System.out.println(stub.noParameters(req));
         } catch(Exception e){
             e.printStackTrace();
             System.out.println("\n\n\n");
@@ -376,7 +376,7 @@ public class Client{
             data.setItemName("flour");
 
             MultipleParametersAddItemResponseDocument res =
-                stub.MultipleParametersAddItem(req);
+                stub.multipleParametersAddItem(req);
             MultipleParametersAddItemResponseDocument.
                 MultipleParametersAddItemResponse dataRes =
                 res.getMultipleParametersAddItemResponse();
@@ -411,7 +411,7 @@ don't, check out the <a href=
 "userguide-buildingservices.html">Building Services</a> document)
 you can run the client by adding the two .jar files to your
 classpath and typing:
-<code>java.org.apache.axis2.axis2userguide.Client</code></p>
+<code>java org.apache.axis2.axis2userguide.Client</code></p>
 <p>You should see the response in a console window of your servlet
 container. It should look something like this:</p>
 <p><img alt=
