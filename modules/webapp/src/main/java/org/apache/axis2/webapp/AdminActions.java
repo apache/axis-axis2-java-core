@@ -52,6 +52,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Validator;
+
 /**
  * Provides methods to process axis2 admin requests.
  */
@@ -120,10 +124,16 @@ final class AdminActions {
         if (req.getSession(false) != null) {
             return new Redirect(LOGOUT);
         } else {
-            if ("true".equals(req.getParameter("failed"))) {
-                req.setAttribute("errorMessage", "Invalid auth credentials!");
+            try {
+                String failed = DefaultHTTPUtilities.getInstance().getParameter(req, "failed");
+                if ("true".equals(failed)) {
+                    req.setAttribute("errorMessage", "Invalid auth credentials!");
+                }
+                return new View(LOGIN_JSP_NAME);
+            } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
+                return new Redirect(LOGOUT);
             }
-            return new View(LOGIN_JSP_NAME);
         }
     }
 
@@ -160,6 +170,16 @@ final class AdminActions {
                         String fileName = item.getName();
                         String fileExtesion = fileName;
                         fileExtesion = fileExtesion.toLowerCase();
+
+                        Validator validator = ESAPI.validator();
+                        if (fileExtesion != null) {
+                            boolean fileextstatus = validator.isValidInput("userInput", fileExtesion, "FileName", 3, false);
+                            if (!fileextstatus) {
+                                log.error("invalid fileExtesion: " + fileExtesion);
+                                return new Redirect(UPLOAD).withStatus(false, "Unsupported file name");
+                            }
+                        }
+
                         if (!(fileExtesion.endsWith(".jar") || fileExtesion.endsWith(".aar"))) {
                             return new Redirect(UPLOAD).withStatus(false, "Unsupported file type " + fileExtesion);
                         } else {
@@ -175,6 +195,13 @@ final class AdminActions {
                                                 .length());
                             }
 
+                            if (fileNameOnly != null) {
+                                boolean filestatus = validator.isValidInput("userInput", fileNameOnly, "FileName", 100, false);
+                                if (!filestatus) {
+                                    log.error("invalid fileNameOnly: " + fileNameOnly);
+                                    return new Redirect(UPLOAD).withStatus(false, "Unsupported file name");
+                                } 
+                            }
                             File uploadedFile = new File(serviceDir, fileNameOnly);
                             item.write(uploadedFile);
                             return new Redirect(UPLOAD).withStatus(true, "File " + fileNameOnly + " successfully uploaded");
@@ -197,8 +224,15 @@ final class AdminActions {
             return new Redirect(WELCOME);
         }
 
-        String username = req.getParameter("userName");
-        String password = req.getParameter("password");
+        String username = null;
+        String password = null;
+        try {
+            username = DefaultHTTPUtilities.getInstance().getParameter(req, "userName");
+            password = DefaultHTTPUtilities.getInstance().getParameter(req, "password");
+        } catch (Exception ex) {
+            log.error("invalid credentials: " + ex.getMessage(), ex);
+            return new Redirect(WELCOME).withParameter("failed", "true");
+        } 
 
         if ((username == null) || (password == null) || username.trim().length() == 0
                 || password.trim().length() == 0) {
@@ -220,7 +254,15 @@ final class AdminActions {
 
     @Action(name=EDIT_SERVICE_PARAMETERS)
     public View editServiceParameters(HttpServletRequest req) throws AxisFault {
-        String serviceName = req.getParameter("axisService");
+
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(req, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid serviceName");
+            return new View("editServiceParameters.jsp");
+        } 
         AxisService service =
                 configContext.getAxisConfiguration().getServiceForActivation(serviceName);
         if (service.isActive()) {
@@ -260,11 +302,23 @@ final class AdminActions {
 
     @Action(name="updateServiceParameters", post=true)
     public Redirect updateServiceParameters(HttpServletRequest request) throws AxisFault {
-        String serviceName = request.getParameter("axisService");
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(request, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            return new Redirect(EDIT_SERVICE_PARAMETERS).withStatus(false, "invalid serviceName");
+        } 
         AxisService service = configContext.getAxisConfiguration().getService(serviceName);
         if (service != null) {
             for (Parameter parameter : service.getParameters()) {
-                String para = request.getParameter(serviceName + "_" + parameter.getName());
+                String para = null;
+                try {
+                    para = DefaultHTTPUtilities.getInstance().getParameter(request, serviceName + "_" + parameter.getName());
+                } catch (Exception ex) {
+                    log.error("invalid serviceName: " + ex.getMessage(), ex);
+                    return new Redirect(EDIT_SERVICE_PARAMETERS).withStatus(false, "invalid serviceName");
+                } 
                 service.addParameter(new Parameter(parameter.getName(), para));
             }
 
@@ -273,7 +327,13 @@ final class AdminActions {
                 String op_name = axisOperation.getName().getLocalPart();
 
                 for (Parameter parameter : axisOperation.getParameters()) {
-                    String para = request.getParameter(op_name + "_" + parameter.getName());
+                    String para = null;
+                    try {
+                        para = DefaultHTTPUtilities.getInstance().getParameter(request, serviceName + "_" + parameter.getName());
+                    } catch (Exception ex) {
+                        log.error("invalid serviceName: " + ex.getMessage(), ex);
+                        return new Redirect(EDIT_SERVICE_PARAMETERS).withStatus(false, "invalid serviceName");
+                    } 
 
                     axisOperation.addParameter(new Parameter(parameter.getName(), para));
                 }
@@ -296,7 +356,13 @@ final class AdminActions {
 
     @Action(name="doEngageGlobally", post=true)
     public Redirect doEngageGlobally(HttpServletRequest request) {
-        String moduleName = request.getParameter("module");
+        String moduleName = null;
+        try {
+            moduleName = DefaultHTTPUtilities.getInstance().getParameter(request, "module");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            return new Redirect(ENGAGE_GLOBALLY).withStatus(false, "invalid module name");
+        }
         try {
             configContext.getAxisConfiguration().engageModule(moduleName);
             return new Redirect(ENGAGE_GLOBALLY).withStatus(true,
@@ -315,7 +381,14 @@ final class AdminActions {
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
 
-        String serviceName = req.getParameter("axisService");
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(req, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid serviceName");
+            return new View("engageToOperation.jsp");
+        } 
 
         if (serviceName != null) {
             req.setAttribute("service", serviceName);
@@ -331,9 +404,32 @@ final class AdminActions {
 
     @Action(name="doEngageToOperation", post=true)
     public Redirect doEngageToOperation(HttpServletRequest request) {
-        String moduleName = request.getParameter("module");
-        String serviceName = request.getParameter("service");
-        String operationName = request.getParameter("axisOperation");
+
+        String moduleName = null;
+        try {
+            moduleName = DefaultHTTPUtilities.getInstance().getParameter(request, "module");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            return new Redirect(ENGAGE_TO_OPERATION).withStatus(false, "invalid moduleName");
+        }
+
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(request, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid serviceName");
+            return new Redirect(ENGAGE_TO_OPERATION).withStatus(false, "invalid serviceName");
+        } 
+
+        String operationName = null;
+        try {
+            operationName = DefaultHTTPUtilities.getInstance().getParameter(request, "axisOperation");
+        } catch (Exception ex) {
+            log.error("invalid operationName: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid operationName");
+            return new Redirect(ENGAGE_TO_OPERATION).withStatus(false, "invalid operationName");
+        } 
         Redirect redirect = new Redirect(ENGAGE_TO_OPERATION).withParameter("axisService", serviceName);
         try {
             AxisOperation od = configContext.getAxisConfiguration().getService(
@@ -365,8 +461,23 @@ final class AdminActions {
 
     @Action(name="doEngageToService", post=true)
     public Redirect doEngageToService(HttpServletRequest request) {
-        String moduleName = request.getParameter("module");
-        String serviceName = request.getParameter("axisService");
+        String moduleName = null;
+        try {
+            moduleName = DefaultHTTPUtilities.getInstance().getParameter(request, "module");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            return new Redirect(ENGAGE_GLOBALLY).withStatus(false, "invalid module name");
+        }
+
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(request, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid serviceName");
+            return new Redirect(ENGAGE_TO_SERVICE).withStatus(false, "invalid serviceName");
+        } 
+
         try {
             configContext.getAxisConfiguration().getService(serviceName).engageModule(
                     configContext.getAxisConfiguration().getModule(moduleName));
@@ -398,8 +509,22 @@ final class AdminActions {
 
     @Action(name="doEngageToServiceGroup", post=true)
     public Redirect doEngageToServiceGroup(HttpServletRequest request) throws AxisFault {
-        String moduleName = request.getParameter("module");
-        String serviceName = request.getParameter("axisService");
+        String moduleName = null;
+        try {
+            moduleName = DefaultHTTPUtilities.getInstance().getParameter(request, "module");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            return new Redirect(ENGAGE_GLOBALLY).withStatus(false, "invalid module name");
+        }
+
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(request, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid serviceName");
+            return new Redirect(ENGAGE_TO_SERVICE).withStatus(false, "invalid serviceName");
+        } 
         configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
                 configContext.getAxisConfiguration().getModule(moduleName));
         return new Redirect(ENGAGE_TO_SERVICE_GROUP).withStatus(true,
@@ -414,8 +539,23 @@ final class AdminActions {
 
     @Action(name="viewServiceGroupContext")
     public View viewServiceGroupContext(HttpServletRequest req) {
-        String type = req.getParameter("TYPE");
-        String sgID = req.getParameter("ID");
+        String type = null;
+        try {
+            type = DefaultHTTPUtilities.getInstance().getParameter(req, "type");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            req.setAttribute("status", "invalid type name");
+            return new View("viewServiceGroupContext.jsp");
+        }
+
+        String sgID = null;
+        try {
+            sgID = DefaultHTTPUtilities.getInstance().getParameter(req, "ID");
+        } catch (Exception ex) {
+            log.error("invalid id: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid id");
+            return new View("viewServiceGroupContext.jsp");
+        } 
         ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
         req.getSession().setAttribute("ServiceGroupContext",sgContext);
         req.getSession().setAttribute("TYPE",type);
@@ -425,9 +565,32 @@ final class AdminActions {
 
     @Action(name="viewServiceContext")
     public View viewServiceContext(HttpServletRequest req) throws AxisFault {
-        String type = req.getParameter("TYPE");
-        String sgID = req.getParameter("PID");
-        String ID = req.getParameter("ID");
+        String type = null;
+        try {
+            type = DefaultHTTPUtilities.getInstance().getParameter(req, "type");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            req.setAttribute("status", "invalid type name");
+            return new View("viewServiceContext.jsp");
+        }
+
+        String sgID = null;
+        try {
+            sgID = DefaultHTTPUtilities.getInstance().getParameter(req, "PID");
+        } catch (Exception ex) {
+            log.error("invalid PID param received: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid PID");
+            return new View("viewServiceContext.jsp");
+        } 
+
+        String ID  = null;
+        try {
+            ID = DefaultHTTPUtilities.getInstance().getParameter(req, "ID");
+        } catch (Exception ex) {
+            log.error("invalid ID: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid ID");
+            return new View("viewServiceContext.jsp");
+        } 
         ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
         if (sgContext != null) {
             AxisService service = sgContext.getDescription().getService(ID);
@@ -465,8 +628,22 @@ final class AdminActions {
 
     @Action(name="doActivateService", post=true)
     public Redirect doActivateService(HttpServletRequest request) throws AxisFault {
-        String serviceName = request.getParameter("axisService");
-        String turnon = request.getParameter("turnon");
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(request, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid serviceName");
+            return new Redirect(ACTIVATE_SERVICE);
+        } 
+        String turnon = null;
+        try {
+            turnon = DefaultHTTPUtilities.getInstance().getParameter(request, "turnon");
+        } catch (Exception ex) {
+            log.error("invalid turnon: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid turnon");
+            return new Redirect(DEACTIVATE_SERVICE);
+        } 
         if (serviceName != null) {
             if (turnon != null) {
                 configContext.getAxisConfiguration().startService(serviceName);
@@ -483,8 +660,22 @@ final class AdminActions {
 
     @Action(name="doDeactivateService", post=true)
     public Redirect doDeactivateService(HttpServletRequest request) throws AxisFault {
-        String serviceName = request.getParameter("axisService");
-        String turnoff = request.getParameter("turnoff");
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(request, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid serviceName");
+            return new Redirect(DEACTIVATE_SERVICE);
+        } 
+        String turnoff = null;
+        try {
+            turnoff = DefaultHTTPUtilities.getInstance().getParameter(request, "turnoff");
+        } catch (Exception ex) {
+            log.error("invalid turnoff: " + ex.getMessage(), ex);
+            request.setAttribute("status", "invalid turnoff");
+            return new Redirect(DEACTIVATE_SERVICE);
+        } 
         if (serviceName != null) {
             if (turnoff != null) {
                 configContext.getAxisConfiguration().stopService(serviceName);
@@ -503,7 +694,14 @@ final class AdminActions {
 
     @Action(name=VIEW_OPERATION_SPECIFIC_CHAINS)
     public View viewOperationSpecificChains(HttpServletRequest req) throws AxisFault {
-        String service = req.getParameter("axisService");
+        String service = null;
+        try {
+            service = DefaultHTTPUtilities.getInstance().getParameter(req, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid serviceName");
+            return new View("editServiceParameters.jsp");
+        } 
 
         if (service != null) {
             req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
@@ -541,7 +739,14 @@ final class AdminActions {
     @Action(name="listSingleService")
     public View listSingleService(HttpServletRequest req) throws AxisFault {
         req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
-        String serviceName = req.getParameter("serviceName");
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(req, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid serviceName");
+            return new View("editServiceParameters.jsp");
+        } 
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
             req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
@@ -577,9 +782,32 @@ final class AdminActions {
 
     @Action(name="disengageModule", post=true)
     public Redirect processdisengageModule(HttpServletRequest req) throws AxisFault {
-        String type = req.getParameter("type");
-        String serviceName = req.getParameter("serviceName");
-        String moduleName = req.getParameter("module");
+        String type = null;
+        try {
+            type = DefaultHTTPUtilities.getInstance().getParameter(req, "type");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            req.setAttribute("status", "invalid type name");
+            return new Redirect(LIST_SERVICES).withStatus(false, "invalid type name");
+        }
+
+        String moduleName = null;
+        try {
+            moduleName = DefaultHTTPUtilities.getInstance().getParameter(req, "module");
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            return new Redirect(LIST_SERVICES).withStatus(false, "invalid module name");
+        }
+
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(req, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid serviceName");
+            return new Redirect(LIST_SERVICES).withStatus(false, "invalid serviceName");
+        } 
+
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         AxisService service = axisConfiguration.getService(serviceName);
         AxisModule module = axisConfiguration.getModule(moduleName);
@@ -589,7 +817,14 @@ final class AdminActions {
                 return new Redirect(LIST_SERVICES).withStatus(false, "Can not disengage module "
                         + moduleName + ". This module is engaged at a higher level.");
             } else {
-                String opName = req.getParameter("operation");
+                String opName = null;
+                try {
+                    opName = DefaultHTTPUtilities.getInstance().getParameter(req, "operation");
+                } catch (Exception ex) {
+                    log.error("invalid operation: " + ex.getMessage(), ex);
+                    req.setAttribute("status", "invalid operation");
+                    return new Redirect(LIST_SERVICES).withStatus(false, "invalid operation");
+                } 
                 AxisOperation op = service.getOperation(new QName(opName));
                 op.disengageModule(module);
                 return new Redirect(LIST_SERVICES).withStatus(true,
@@ -610,7 +845,14 @@ final class AdminActions {
 
     @Action(name="deleteService", post=true)
     public Redirect deleteService(HttpServletRequest req) throws AxisFault {
-        String serviceName = req.getParameter("serviceName");
+        String serviceName = null;
+        try {
+            serviceName = DefaultHTTPUtilities.getInstance().getParameter(req, "axisService");
+        } catch (Exception ex) {
+            log.error("invalid serviceName: " + ex.getMessage(), ex);
+            req.setAttribute("status", "invalid serviceName");
+            return new Redirect(LIST_SERVICES).withStatus(false, "Failed to delete service, serviceName is invalid");
+        } 
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         if (axisConfiguration.getService(serviceName) != null) {
             axisConfiguration.removeService(serviceName);
