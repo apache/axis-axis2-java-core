@@ -45,10 +45,6 @@
             <artifactId>log4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.owasp.esapi</groupId>
-            <artifactId>esapi</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-spring</artifactId>
             <version>${project.version}</version>
@@ -403,13 +399,6 @@
                             <excludes>
                                 <exclude>servlet*.txt</exclude>
                             </excludes>
-                        </resource>
-                        <resource>
-                            <directory>conf</directory>
-                            <includes>
-                                  <include>ESAPI.properties</include>
-                            </includes>
-                            <targetPath>WEB-INF/classes</targetPath>
                         </resource>
                     </webResources>
                 </configuration>
