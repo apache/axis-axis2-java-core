@@ -71,6 +71,8 @@ final class AdminActions {
     private static final String ACTIVATE_SERVICE = "activateService";
     private static final String EDIT_SERVICE_PARAMETERS = "editServiceParameters";
     private static final String VIEW_OPERATION_SPECIFIC_CHAINS = "viewOperationSpecificChains";
+    private static final String HTTP_PARAM_REGEX_INVALID_CHARS = "^[a-zA-Z0-9.\\-\\/+=@_,:\\\\ ]*$";
+    private static final String FILENAME_REGEX_INVALID_CHARS = "^[a-zA-Z0-9!@#$%^&{}\\[\\]()_+\\-=,.~'` ]{1,255}$";
 
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
@@ -120,7 +122,12 @@ final class AdminActions {
         if (req.getSession(false) != null) {
             return new Redirect(LOGOUT);
         } else {
-            if ("true".equals(req.getParameter("failed"))) {
+            String failed = req.getParameter("failed");
+            if (failed.matches(HTTP_PARAM_REGEX_INVALID_CHARS)) {
+                log.error("welcome() received invalid 'failed' param, redirecting to: " + LOGOUT);
+                return new Redirect(LOGOUT);
+            }
+            if ("true".equals(failed)) {
                 req.setAttribute("errorMessage", "Invalid auth credentials!");
             }
             return new View(LOGIN_JSP_NAME);
@@ -175,6 +182,10 @@ final class AdminActions {
                                                 .length());
                             }
 
+                            if (fileNameOnly.matches(FILENAME_REGEX_INVALID_CHARS) || fileNameOnly.length() > 100) {
+                                log.error("doUpload() received invalid filename, redirecting to: " + WELCOME);
+                                return new Redirect(UPLOAD).withStatus(false, "Received invalid filename");
+                            }
                             File uploadedFile = new File(serviceDir, fileNameOnly);
                             item.write(uploadedFile);
                             return new Redirect(UPLOAD).withStatus(true, "File " + fileNameOnly + " successfully uploaded");
@@ -200,6 +211,16 @@ final class AdminActions {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
 
+        if (username.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || username.length() > 100) {
+            log.error("login() received invalid 'username' param, redirecting to: " + WELCOME);
+            return new Redirect(WELCOME).withParameter("failed", "true");
+        }
+
+        if (password.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || password.length() > 100) {
+            log.error("login() received invalid 'password' param, redirecting to: " + WELCOME);
+            return new Redirect(WELCOME).withParameter("failed", "true");
+        }
+
         if ((username == null) || (password == null) || username.trim().length() == 0
                 || password.trim().length() == 0) {
             return new Redirect(WELCOME).withParameter("failed", "true");
@@ -221,6 +242,11 @@ final class AdminActions {
     @Action(name=EDIT_SERVICE_PARAMETERS)
     public View editServiceParameters(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("axisService");
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("editServiceParameters() received invalid 'serviceName' param, redirecting to: editServiceParameters.jsp");
+            req.setAttribute("status", "invalid serviceName");
+            return new View("editServiceParameters.jsp");
+        }
         AxisService service =
                 configContext.getAxisConfiguration().getServiceForActivation(serviceName);
         if (service.isActive()) {
@@ -261,10 +287,18 @@ final class AdminActions {
     @Action(name="updateServiceParameters", post=true)
     public Redirect updateServiceParameters(HttpServletRequest request) throws AxisFault {
         String serviceName = request.getParameter("axisService");
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("updateServiceParameters() received invalid 'serviceName' param, redirecting to: " + EDIT_SERVICE_PARAMETERS);
+            return new Redirect(EDIT_SERVICE_PARAMETERS).withStatus(false, "invalid serviceName");
+        }
         AxisService service = configContext.getAxisConfiguration().getService(serviceName);
         if (service != null) {
             for (Parameter parameter : service.getParameters()) {
                 String para = request.getParameter(serviceName + "_" + parameter.getName());
+                if (para.matches(HTTP_PARAM_REGEX_INVALID_CHARS)) {
+                    log.error("updateServiceParameters() received invalid param '" +serviceName + "_" + parameter.getName()+ "', redirecting to: " + EDIT_SERVICE_PARAMETERS);
+                    return new Redirect(EDIT_SERVICE_PARAMETERS).withStatus(false, "invalid parameter name");
+                }
                 service.addParameter(new Parameter(parameter.getName(), para));
             }
 
@@ -274,6 +308,10 @@ final class AdminActions {
 
                 for (Parameter parameter : axisOperation.getParameters()) {
                     String para = request.getParameter(op_name + "_" + parameter.getName());
+                    if (para.matches(HTTP_PARAM_REGEX_INVALID_CHARS)) {
+                        log.error("updateServiceParameters() received invalid param '" + op_name + "_" + parameter.getName() + "', redirecting to: " + EDIT_SERVICE_PARAMETERS);
+                        return new Redirect(EDIT_SERVICE_PARAMETERS).withStatus(false, "invalid parameter name");
+                    }
 
                     axisOperation.addParameter(new Parameter(parameter.getName(), para));
                 }
@@ -297,6 +335,10 @@ final class AdminActions {
     @Action(name="doEngageGlobally", post=true)
     public Redirect doEngageGlobally(HttpServletRequest request) {
         String moduleName = request.getParameter("module");
+        if (moduleName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || moduleName.length() > 100) {
+            log.error("processdisengageModule() received invalid 'moduleName' param, redirecting to: " + LIST_SERVICES);
+            return new Redirect(ENGAGE_GLOBALLY).withStatus(false, "invalid moduleName");
+        }
         try {
             configContext.getAxisConfiguration().engageModule(moduleName);
             return new Redirect(ENGAGE_GLOBALLY).withStatus(true,
@@ -316,6 +358,11 @@ final class AdminActions {
         req.getSession().setAttribute("modules", null);
 
         String serviceName = req.getParameter("axisService");
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("engageToOperation() received invalid 'serviceName' param, redirecting to: engageToOperation.jsp");
+            req.setAttribute("status", "invalid serviceName");
+            return new View("engageToOperation.jsp");
+        }
 
         if (serviceName != null) {
             req.setAttribute("service", serviceName);
@@ -334,6 +381,20 @@ final class AdminActions {
         String moduleName = request.getParameter("module");
         String serviceName = request.getParameter("service");
         String operationName = request.getParameter("axisOperation");
+        if (moduleName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || moduleName.length() > 100) {
+            log.error("doEngageToOperation() received invalid 'moduleName' param, redirecting to: engageToOperation.jsp");
+            return new Redirect(ENGAGE_TO_OPERATION).withStatus(false, "invalid moduleName");
+        }
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("doEngageToOperation() received invalid 'serviceName' param, redirecting to: engageToOperation.jsp");
+            return new Redirect(ENGAGE_TO_OPERATION).withStatus(false, "invalid serviceName");
+
+        }
+        if (operationName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || operationName.length() > 100) {
+            log.error("doEngageToOperation() received invalid 'operationName' param, redirecting to: engageToOperation.jsp");
+            return new Redirect(ENGAGE_TO_OPERATION).withStatus(false, "invalid operationName");
+
+        }
         Redirect redirect = new Redirect(ENGAGE_TO_OPERATION).withParameter("axisService", serviceName);
         try {
             AxisOperation od = configContext.getAxisConfiguration().getService(
@@ -367,6 +428,15 @@ final class AdminActions {
     public Redirect doEngageToService(HttpServletRequest request) {
         String moduleName = request.getParameter("module");
         String serviceName = request.getParameter("axisService");
+        if (moduleName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || moduleName.length() > 100) {
+            log.error("doEngageToService() received invalid 'moduleName' param, redirecting to: engageToOperation.jsp");
+            return new Redirect(ENGAGE_TO_SERVICE).withStatus(false, "invalid module name");
+        }
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("doEngageToService() received invalid 'serviceName' param, redirecting to: engageToOperation.jsp");
+            return new Redirect(ENGAGE_TO_SERVICE).withStatus(false, "invalid serviceName");
+
+        }
         try {
             configContext.getAxisConfiguration().getService(serviceName).engageModule(
                     configContext.getAxisConfiguration().getModule(moduleName));
@@ -400,6 +470,15 @@ final class AdminActions {
     public Redirect doEngageToServiceGroup(HttpServletRequest request) throws AxisFault {
         String moduleName = request.getParameter("module");
         String serviceName = request.getParameter("axisService");
+        if (moduleName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || moduleName.length() > 100) {
+            log.error("doEngageToServiceGroup() received invalid 'moduleName' param, redirecting to: engageToOperation.jsp");
+            return new Redirect(ENGAGE_GLOBALLY).withStatus(false, "invalid module name");
+        }
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("doEngageToServiceGroup() received invalid 'serviceName' param, redirecting to: engageToOperation.jsp");
+            return new Redirect(ENGAGE_TO_SERVICE).withStatus(false, "invalid serviceName"); 
+
+        }
         configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
                 configContext.getAxisConfiguration().getModule(moduleName));
         return new Redirect(ENGAGE_TO_SERVICE_GROUP).withStatus(true,
@@ -416,6 +495,18 @@ final class AdminActions {
     public View viewServiceGroupContext(HttpServletRequest req) {
         String type = req.getParameter("TYPE");
         String sgID = req.getParameter("ID");
+	if (type.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || type.length() > 100) {
+            log.error("viewServiceGroupContext() received invalid 'type' param, redirecting to: viewServiceGroupContext.jsp");
+            req.setAttribute("status", "invalid type");
+            return new View("viewServiceGroupContext.jsp");
+
+        }
+        if (sgID.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || sgID.length() > 100) {
+            log.error("viewServiceGroupContext() received invalid 'sgID' param, redirecting to: viewServiceGroupContext.jsp");
+            req.setAttribute("status", "invalid sgID");
+            return new View("viewServiceGroupContext.jsp");
+
+        }
         ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
         req.getSession().setAttribute("ServiceGroupContext",sgContext);
         req.getSession().setAttribute("TYPE",type);
@@ -428,6 +519,24 @@ final class AdminActions {
         String type = req.getParameter("TYPE");
         String sgID = req.getParameter("PID");
         String ID = req.getParameter("ID");
+	if (type.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || type.length() > 100) {
+            log.error("viewServiceContext() received invalid 'type' param, redirecting to: viewServiceGroupContext.jsp");
+            req.setAttribute("status", "invalid type");
+            return new View("viewServiceGroupContext.jsp");
+
+        }
+        if (sgID.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || sgID.length() > 100) {
+            log.error("viewServiceContext() received invalid 'sgID' param, redirecting to: viewServiceGroupContext.jsp");
+            req.setAttribute("status", "invalid sgID");
+            return new View("viewServiceGroupContext.jsp");
+
+        }
+        if (ID.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || ID.length() > 100) {
+            log.error("viewServiceContext() received invalid 'ID' param, redirecting to: viewServiceGroupContext.jsp");
+            req.setAttribute("status", "invalid ID");
+            return new View("viewServiceGroupContext.jsp");
+
+        }
         ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
         if (sgContext != null) {
             AxisService service = sgContext.getDescription().getService(ID);
@@ -466,7 +575,19 @@ final class AdminActions {
     @Action(name="doActivateService", post=true)
     public Redirect doActivateService(HttpServletRequest request) throws AxisFault {
         String serviceName = request.getParameter("axisService");
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("doActivateService() received invalid 'serviceName' param, redirecting to: " + ACTIVATE_SERVICE);
+            request.setAttribute("status", "invalid serviceName");
+            return new Redirect(ACTIVATE_SERVICE);
+
+        }
         String turnon = request.getParameter("turnon");
+        if (turnon.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || turnon.length() > 100) {
+            log.error("doActivateService() received invalid 'turnon' param, redirecting to: " + ACTIVATE_SERVICE);
+            request.setAttribute("status", "invalid turnon");
+            return new Redirect(ACTIVATE_SERVICE);
+
+        }
         if (serviceName != null) {
             if (turnon != null) {
                 configContext.getAxisConfiguration().startService(serviceName);
@@ -485,6 +606,18 @@ final class AdminActions {
     public Redirect doDeactivateService(HttpServletRequest request) throws AxisFault {
         String serviceName = request.getParameter("axisService");
         String turnoff = request.getParameter("turnoff");
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("doDeactivateService() received invalid 'serviceName' param, redirecting to: " + DEACTIVATE_SERVICE);
+            request.setAttribute("status", "invalid serviceName");
+            return new Redirect(DEACTIVATE_SERVICE);
+
+        }
+        if (turnoff.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || turnoff.length() > 100) {
+            log.error("doDeactivateService() received invalid 'turnoff' param, redirecting to: " + DEACTIVATE_SERVICE);
+            request.setAttribute("status", "invalid turnoff");
+            return new Redirect(DEACTIVATE_SERVICE);
+
+        }
         if (serviceName != null) {
             if (turnoff != null) {
                 configContext.getAxisConfiguration().stopService(serviceName);
@@ -504,6 +637,12 @@ final class AdminActions {
     @Action(name=VIEW_OPERATION_SPECIFIC_CHAINS)
     public View viewOperationSpecificChains(HttpServletRequest req) throws AxisFault {
         String service = req.getParameter("axisService");
+        if (service.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || service.length() > 100) {
+            log.error("viewOperationSpecificChains() received invalid 'axisService' param, redirecting to: viewOperationSpecificChains.jsp");
+            req.setAttribute("status", "invalid axisService");
+            return new View("viewOperationSpecificChains.jsp");
+
+        }
 
         if (service != null) {
             req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
@@ -542,6 +681,12 @@ final class AdminActions {
     public View listSingleService(HttpServletRequest req) throws AxisFault {
         req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
         String serviceName = req.getParameter("serviceName");
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("listSingleService() received invalid 'serviceName' param, redirecting to: listSingleService.jsp");
+            req.setAttribute("status", "invalid serviceName");
+            return new View("listSingleService.jsp");
+
+        }
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
             req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
@@ -580,6 +725,20 @@ final class AdminActions {
         String type = req.getParameter("type");
         String serviceName = req.getParameter("serviceName");
         String moduleName = req.getParameter("module");
+	if (type.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || type.length() > 100) {
+            log.error("processdisengageModule() received invalid 'type' param, redirecting to: " + LIST_SERVICES);
+            return new Redirect(LIST_SERVICES).withStatus(false, "invalid type");
+
+        }
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("processdisengageModule() received invalid 'serviceName' param, redirecting to: " + LIST_SERVICES);
+            return new Redirect(LIST_SERVICES).withStatus(false, "invalid serviceName");
+
+        }
+        if (moduleName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || moduleName.length() > 100) {
+            log.error("processdisengageModule() received invalid 'moduleName' param, redirecting to: " + LIST_SERVICES);
+            return new Redirect(LIST_SERVICES).withStatus(false, "invalid moduleName");
+        }
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         AxisService service = axisConfiguration.getService(serviceName);
         AxisModule module = axisConfiguration.getModule(moduleName);
@@ -590,6 +749,10 @@ final class AdminActions {
                         + moduleName + ". This module is engaged at a higher level.");
             } else {
                 String opName = req.getParameter("operation");
+                if (opName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || opName.length() > 100) {
+                    log.error("processdisengageModule() received invalid 'operation' param, redirecting to: " + LIST_SERVICES);
+                    return new Redirect(LIST_SERVICES).withStatus(false, "invalid operation");
+                }
                 AxisOperation op = service.getOperation(new QName(opName));
                 op.disengageModule(module);
                 return new Redirect(LIST_SERVICES).withStatus(true,
@@ -611,6 +774,11 @@ final class AdminActions {
     @Action(name="deleteService", post=true)
     public Redirect deleteService(HttpServletRequest req) throws AxisFault {
         String serviceName = req.getParameter("serviceName");
+        if (serviceName.matches(HTTP_PARAM_REGEX_INVALID_CHARS) || serviceName.length() > 100) {
+            log.error("deleteService() received invalid 'serviceName' param, redirecting to: " + LIST_SERVICES);
+            return new Redirect(LIST_SERVICES).withStatus(false, "Failed to delete service '" + serviceName + "'. Received invalid 'serviceName'.");
+
+        }
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         if (axisConfiguration.getService(serviceName) != null) {
             axisConfiguration.removeService(serviceName);
