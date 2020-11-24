@@ -8,7 +8,7 @@ ___________________
 Building 
 ===================
 
-We use Maven 2 (http://maven.apache.org) to build, and you'll find a
+We use Maven 3 (http://maven.apache.org) to build, and you'll find a
 pom.xml in each module, as well as at the top level.  Use "mvn install"
 (or "mvn clean install" to clean up first) to build.
 
