@@ -32,7 +32,9 @@ import org.apache.axis2.jaxws.description.impl.EndpointDescriptionImpl;
 import org.apache.axis2.jaxws.description.impl.EndpointInterfaceDescriptionImpl;
 import org.apache.axis2.jaxws.description.impl.LegacyMethodRetrieverImpl;
 import org.apache.axis2.jaxws.util.WSToolingUtils;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.Level;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -58,7 +60,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
         // To change the settings, edit the log4j.property file
         // in the test-resources directory.
-        BasicConfigurator.configure();
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
     }
 
     /**

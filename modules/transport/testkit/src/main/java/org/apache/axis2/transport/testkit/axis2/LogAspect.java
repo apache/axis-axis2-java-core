@@ -26,7 +26,7 @@ import javax.activation.DataSource;
 
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.TeeInputStream;
 import org.apache.commons.io.output.TeeOutputStream;
@@ -48,8 +48,8 @@ public class LogAspect {
     public void aroundWriteTo(ProceedingJoinPoint proceedingJoinPoint,
             MessageContext msgContext, OMOutputFormat format, OutputStream out, boolean preserve)
             throws Throwable {
-        if (LogManager.INSTANCE.isLoggingEnabled()) {
-            OutputStream log = LogManager.INSTANCE.createLog("formatter");
+        if (TestKitLogManager.INSTANCE.isLoggingEnabled()) {
+            OutputStream log = TestKitLogManager.INSTANCE.createLog("formatter");
             try {
                 OutputStream tee = new TeeOutputStream(out, log);
                 proceedingJoinPoint.proceed(new Object[] { msgContext, format, tee, preserve });
@@ -65,9 +65,9 @@ public class LogAspect {
         pointcut="call(javax.activation.DataSource org.apache.axis2.format.MessageFormatterEx.getDataSource(..))",
         returning="dataSource")
     public void afterGetDataSource(DataSource dataSource) {
-        if (LogManager.INSTANCE.isLoggingEnabled()) {
+        if (TestKitLogManager.INSTANCE.isLoggingEnabled()) {
             try {
-                OutputStream out = LogManager.INSTANCE.createLog("formatter");
+                OutputStream out = TestKitLogManager.INSTANCE.createLog("formatter");
                 try {
                     InputStream in = dataSource.getInputStream();
                     try {
@@ -89,14 +89,14 @@ public class LogAspect {
             " && args(in, contentType, msgContext)")
     public Object aroundProcessDocument(ProceedingJoinPoint proceedingJoinPoint,
             InputStream in, String contentType, MessageContext msgContext) throws Throwable {
-        if (LogManager.INSTANCE.isLoggingEnabled()) {
+        if (TestKitLogManager.INSTANCE.isLoggingEnabled()) {
             InputStream tee;
             if (in == null) {
                 tee = null;
             } else {
-                OutputStream log = LogManager.INSTANCE.createLog("builder");
+                OutputStream log = TestKitLogManager.INSTANCE.createLog("builder");
                 // Note: We can't close the log right after the method execution because the
-                //       message builder may use streaming. LogManager will take care of closing the
+                //       message builder may use streaming. TestKitLogManager will take care of closing the
                 //       log for us if anything goes wrong.
                 tee = new TeeInputStream(in, log, true);
             }

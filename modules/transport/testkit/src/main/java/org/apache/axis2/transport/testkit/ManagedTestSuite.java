@@ -34,7 +34,7 @@ import org.apache.axis2.transport.testkit.filter.FilterExpressionParser;
 import org.apache.axis2.transport.testkit.tests.TestResourceSet;
 import org.apache.axis2.transport.testkit.tests.TestResourceSetTransition;
 import org.apache.axis2.transport.testkit.tests.ManagedTestCase;
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.lang.StringUtils;
 
 public class ManagedTestSuite extends TestSuite {
@@ -89,7 +89,7 @@ public class ManagedTestSuite extends TestSuite {
 
     @Override
     public void run(TestResult result) {
-        LogManager logManager = LogManager.INSTANCE;
+        TestKitLogManager logManager = TestKitLogManager.INSTANCE;
         if (!reuseResources) {
             super.run(result);
         } else {

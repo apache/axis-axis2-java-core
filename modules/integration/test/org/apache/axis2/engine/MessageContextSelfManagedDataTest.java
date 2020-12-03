@@ -269,7 +269,6 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * for their respective functions.
      */
     protected void setUp() throws Exception {
-        //org.apache.log4j.BasicConfigurator.configure();
 
         invokecallcount = 0;
 

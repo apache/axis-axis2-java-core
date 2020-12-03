@@ -23,7 +23,7 @@ import java.io.OutputStream;
 
 import javax.mail.Message;
 
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.Aspect;
@@ -36,7 +36,7 @@ public class LogAspect {
     @Before("call(void javax.mail.Transport.send(javax.mail.Message)) && args(message)")
     public void beforeSend(Message message) {
         try {
-            OutputStream out = LogManager.INSTANCE.createLog("javamail");
+            OutputStream out = TestKitLogManager.INSTANCE.createLog("javamail");
             try {
                 message.writeTo(out);
             } finally {

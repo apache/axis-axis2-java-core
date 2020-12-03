@@ -54,7 +54,6 @@ public class ObjectSave2Test extends TestCase {
 	}
 
 	protected void setUp() throws Exception {
-		// org.apache.log4j.BasicConfigurator.configure();
 	}
 
 	public void testObjectSerializable() throws Exception {

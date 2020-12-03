@@ -102,7 +102,7 @@
             <directory>../../modules/kernel/conf</directory>
             <outputDirectory>conf</outputDirectory>
             <includes>
-                <include>log4j.properties</include>
+                <include>log4j2.xml</include>
                 <include>commons-logging.properties</include>
             </includes>
         </fileSet>

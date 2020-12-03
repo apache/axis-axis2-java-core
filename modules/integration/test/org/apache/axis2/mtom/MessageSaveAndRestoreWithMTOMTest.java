@@ -49,6 +49,10 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Utils;
 
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.Level;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.imageio.ImageIO;
@@ -73,13 +77,16 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
     public MessageSaveAndRestoreWithMTOMTest() {
         super(MessageSaveAndRestoreWithMTOMTest.class.getName());
 
-        org.apache.log4j.BasicConfigurator.configure();
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
+
     }
 
     public MessageSaveAndRestoreWithMTOMTest(String testName) {
         super(testName);
 
-        org.apache.log4j.BasicConfigurator.configure();
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
     }
 
     public static Test suite() {

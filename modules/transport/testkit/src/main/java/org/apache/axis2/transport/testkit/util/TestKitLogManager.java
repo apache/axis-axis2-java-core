@@ -21,42 +21,46 @@ package org.apache.axis2.transport.testkit.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.StringWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.axis2.transport.testkit.tests.ManagedTestCase;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.TTCCLayout;
-import org.apache.log4j.WriterAppender;
 
-public class LogManager {
-    public static final LogManager INSTANCE = new LogManager();
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.appender.WriterAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.LogManager;
+
+public class TestKitLogManager {
+    public static final TestKitLogManager INSTANCE = new TestKitLogManager();
     
     private final File logDir;
     private File testCaseDir;
-    private WriterAppender appender;
+    private Appender appender;
     private int sequence;
     private List<OutputStream> logs;
+
+    private static final Logger logger =
+      (Logger) LogManager.getLogger(TestKitLogManager.class);
+ 
     
-    private LogManager() {
+    private TestKitLogManager() {
         logDir = new File("target" + File.separator + "testkit-logs");
     }
     
     public void setTestCase(ManagedTestCase testCase) throws IOException {
         if (appender != null) {
-            Logger.getRootLogger().removeAppender(appender);
-            appender.close();
+            ((Logger) LogManager.getRootLogger()).removeAppender(appender);
             appender = null;
-        }
-        if (logs != null) {
-            for (OutputStream log : logs) {
-                IOUtils.closeQuietly(log);
-            }
-            logs = null;
         }
         if (testCase == null) {
             testCaseDir = null;
@@ -65,19 +69,32 @@ public class LogManager {
             testCaseDir = new File(testSuiteDir, testCase.getId());
             logs = new LinkedList<OutputStream>();
             sequence = 1;
-            appender = new WriterAppender(new TTCCLayout(), createLog("debug"));
-            Logger.getRootLogger().addAppender(appender);
+
+            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+            Configuration config = ctx.getConfiguration();
+
+            StringWriter output = new StringWriter();
+            appender = WriterAppender.newBuilder().setTarget(output).setName("debug").setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.TTCC_CONVERSION_PATTERN).build()).setConfiguration(config).build();
+
+            if (appender != null) {
+                if (!appender.isStarted()) {
+                    appender.start();
+                }
+                config.addAppender(appender);
+            }
         }
     }
     
     public synchronized boolean isLoggingEnabled() {
         return testCaseDir != null;
     }
-    
+
     public synchronized OutputStream createLog(String name) throws IOException {
         testCaseDir.mkdirs();
-        OutputStream log = new FileOutputStream(new File(testCaseDir, StringUtils.leftPad(String.valueOf(sequence++), 2, '0') + "-" + name + ".log"));
+        OutputStream log = new FileOutputStream(new File(testCaseDir, StringUtils.leftPad(String.valueOf(sequence++),
+2, '0') + "-" + name + ".log"));
         logs.add(log);
         return log;
     }
+    
 }

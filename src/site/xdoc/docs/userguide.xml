@@ -305,7 +305,7 @@ WEB-INF directory represents the actual Axis2 application,
 including all the *.jar files, any included modules, and even the
 deployed services themselves.</p>
 <p>The classes directory holds any class or property files that are
-needed by Axis2 itself, such as log4j.properties. Any actual
+needed by Axis2 itself, such as log4j2.xml. Any actual
 services to be handled by the system reside in the services
 directory in the form of an axis archive, or *.aar file. This file
 contains any classes related to the service, as well as the

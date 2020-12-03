@@ -299,7 +299,6 @@ public class MessageContextSaveATest extends TestCase {
 
 
     protected void setUp() throws Exception {
-        //org.apache.log4j.BasicConfigurator.configure();
     }
 
 

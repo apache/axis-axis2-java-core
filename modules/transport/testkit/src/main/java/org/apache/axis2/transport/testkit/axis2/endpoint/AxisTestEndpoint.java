@@ -42,7 +42,7 @@ import org.apache.axis2.transport.testkit.name.Name;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 
 /**
  * Base class for Axis2 based test endpoints.
@@ -55,7 +55,7 @@ public abstract class AxisTestEndpoint {
     @Transient AxisService service;
     
     @Setup @SuppressWarnings("unused")
-    private void setUp(LogManager logManager, AxisTestEndpointContext context, Channel channel,
+    private void setUp(TestKitLogManager logManager, AxisTestEndpointContext context, Channel channel,
             AxisServiceConfigurator[] configurators) throws Exception {
         
         this.context = context;

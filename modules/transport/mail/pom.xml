@@ -92,7 +92,7 @@
                     <systemProperties>
                         <property>
                             <name>log4j.configuration</name>
-                            <value>file:../../log4j.properties</value>
+                            <value>file:../../log4j2.xml</value>
                         </property>
                         <property>
                             <name>net.sourceforge.cobertura.datafile</name>

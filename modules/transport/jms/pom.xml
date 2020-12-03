@@ -71,7 +71,7 @@
                     <systemProperties>
                         <property>
                             <name>log4j.configuration</name>
-                            <value>file:../../log4j.properties</value>
+                            <value>file:../../log4j2.xml</value>
                         </property>
                     </systemProperties>
                     <argLine>${argLine} -javaagent:${aspectjweaver} -Xms64m -Xmx128m</argLine>

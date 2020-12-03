@@ -86,7 +86,7 @@ public class DispatchXMessageDataSourceTests {
         };
 
         String resourceDir = System.getProperty("basedir",".")+"/"+"test-resources";
-        File file3 = new File(resourceDir+File.separator+"log4j.properties");
+        File file3 = new File(resourceDir+File.separator+"log4j2.xml");
         attachmentDS = new FileDataSource(file3);
     }
     

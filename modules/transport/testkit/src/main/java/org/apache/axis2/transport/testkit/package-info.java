@@ -253,10 +253,10 @@
  * a maximum of information during the execution of each test case.
  * <p>
  * The collected information is written to a set of log files managed by
- * {@link org.apache.axis2.transport.testkit.util.LogManager}. An instance is added automatically to
+ * {@link org.apache.axis2.transport.testkit.util.TestKitLogManager}. An instance is added automatically to
  * the resource set of every test case and other resources can acquire a reference through the dependency
  * injection mechanism described above. This is the recommended approach. Alternatively, the log manager
- * can be used as a singleton through {@link org.apache.axis2.transport.testkit.util.LogManager#INSTANCE}.
+ * can be used as a singleton through {@link org.apache.axis2.transport.testkit.util.TestKitLogManager#INSTANCE}.
  * <p>
  * Logs files are written to subdirectories of <tt>target/testkit-logs</tt>. The directory structure has
  * a two level hierarchy identifying the test class (by its fully qualified name) and the test case

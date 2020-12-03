@@ -51,7 +51,6 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
     //Test creation of a Service Description from DBC, using a basic list.
     //An implicit SEI that extends only java.lang.object
     public void testServiceImplAsImplicitSEI() {
-        //org.apache.log4j.BasicConfigurator.configure();
 
         //Build a Hashmap of DescriptionBuilderComposites that contains the serviceImpl and
         //all necessary associated DBC's possibly including SEI and superclasses

@@ -376,11 +376,6 @@ Codegeneration</a>', and copy the "logging.mar" file to the
 "modules" directory.</p>
 <p>Then run 'ant run.client.servicewithmodule' from
 <strong>axis2home/samples/userguide directory</strong></p>
-<p>Note: To see the logs, the user needs to modify the
-"log4j.properties" to log INFO. The property file is located in
-"<strong>webapps/axis2/WEB-INF/classes</strong>" of your servlet
-container. Change the line "log4j.rootCategory= ERROR, LOGFILE" to
-"log4j.rootCategory=INFO, ERROR, LOGFILE".</p>
 <p><font size="2"><b>Note (on samples):</b></font> All the samples
 mentioned in the user's guide are located at the
 <b>"samples\userguide\src"</b> directory of the binary

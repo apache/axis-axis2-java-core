@@ -25,7 +25,9 @@ import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.Level;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -42,7 +44,8 @@ public class ReflectiveConverterTests extends TestCase {
         // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
         // To change the settings, edit the log4j.property file
         // in the test-resources directory.
-        BasicConfigurator.configure();
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
     }
 
     private static DescriptionBuilderComposite implDBC;

@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.transport.testkit.name.Key;
 import org.apache.axis2.transport.testkit.name.NameUtils;
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 
 @Key("test")
 public abstract class ManagedTestCase extends TestCase {
@@ -40,7 +40,7 @@ public abstract class ManagedTestCase extends TestCase {
 
     public ManagedTestCase(Object... resources) {
         resourceSet.addResources(resources);
-        addResource(LogManager.INSTANCE);
+        addResource(TestKitLogManager.INSTANCE);
     }
 
     protected void addResource(Object resource) {
@@ -108,7 +108,7 @@ public abstract class ManagedTestCase extends TestCase {
     @Override
     protected void setUp() throws Exception {
         if (!managed) {
-            LogManager.INSTANCE.setTestCase(this);
+            TestKitLogManager.INSTANCE.setTestCase(this);
             resourceSet.setUp();
         }
     }
@@ -117,7 +117,7 @@ public abstract class ManagedTestCase extends TestCase {
     protected void tearDown() throws Exception {
         if (!managed) {
             resourceSet.tearDown();
-            LogManager.INSTANCE.setTestCase(null);
+            TestKitLogManager.INSTANCE.setTestCase(null);
         }
     }
 

@@ -20,7 +20,9 @@
 package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.Level;
 
 import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
@@ -34,7 +36,9 @@ public class WrapperPackageTests extends TestCase {
         // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
         // To change the settings, edit the log4j.property file
         // in the test-resources directory.
-        BasicConfigurator.configure();
+        Configurator.initialize(new DefaultConfiguration());
+        Configurator.setRootLevel(Level.DEBUG);
+
     }
 
     public void testSEIPackageWrapper() {

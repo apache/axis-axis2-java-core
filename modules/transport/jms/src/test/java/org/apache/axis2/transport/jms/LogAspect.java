@@ -29,7 +29,7 @@ import javax.jms.Message;
 import javax.jms.TextMessage;
 
 import org.apache.axis2.transport.jms.iowrappers.BytesMessageInputStream;
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +44,7 @@ public class LogAspect {
     		" call(void javax.jms.TopicPublisher.publish(javax.jms.Message))) && args(message)")
     public void beforeSend(Message message) {
         try {
-            OutputStream out = LogManager.INSTANCE.createLog("jms");
+            OutputStream out = TestKitLogManager.INSTANCE.createLog("jms");
             try {
                 PrintWriter pw = new PrintWriter(new OutputStreamWriter(out), false);
                 pw.println("Type: " + message.getClass().getName());

@@ -30,16 +30,16 @@ import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.message.IncomingMessage;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.io.IOUtils;
 import org.mortbay.http.HttpException;
 import org.mortbay.http.HttpRequest;
 
 public class JettyByteArrayAsyncEndpoint extends JettyAsyncEndpoint<byte[]> {
-    private @Transient LogManager logManager;
+    private @Transient TestKitLogManager logManager;
 
     @Setup @SuppressWarnings("unused")
-    private void setUp(LogManager logManager) throws Exception {
+    private void setUp(TestKitLogManager logManager) throws Exception {
         this.logManager = logManager;
     }
     

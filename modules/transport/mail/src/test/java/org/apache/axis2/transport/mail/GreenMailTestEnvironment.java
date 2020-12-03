@@ -33,7 +33,7 @@ import org.apache.axis2.transport.testkit.name.Name;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.apache.axis2.transport.testkit.util.LogManager;
+import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.axis2.transport.testkit.util.PortAllocator;
 import org.apache.axis2.transport.testkit.util.ServerUtil;
 import org.apache.axis2.transport.testkit.util.tcpmon.Tunnel;
@@ -51,7 +51,7 @@ public class GreenMailTestEnvironment extends MailTestEnvironment {
     private @Transient PortAllocator portAllocator;
     private @Transient ServerSetup smtpServerSetup;
     private @Transient ServerSetup storeServerSetup;
-    private @Transient LogManager logManager;
+    private @Transient TestKitLogManager logManager;
     private @Transient GreenMail greenMail;
     private @Transient Tunnel smtpTunnel;
     private int accountNumber;
@@ -62,7 +62,7 @@ public class GreenMailTestEnvironment extends MailTestEnvironment {
     }
 
     @Setup @SuppressWarnings("unused")
-    private void setUp(LogManager logManager, PortAllocator portAllocator) throws Exception {
+    private void setUp(TestKitLogManager logManager, PortAllocator portAllocator) throws Exception {
         this.logManager = logManager;
         this.portAllocator = portAllocator;
         smtpServerSetup = new ServerSetup(portAllocator.allocatePort(), "127.0.0.1", ServerSetup.PROTOCOL_SMTP);
