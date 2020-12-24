@@ -36,7 +36,7 @@ public class IgnoreUnexpectedTest {
         Handler handler = mock(Handler.class);
         logger.addHandler(handler);
         try {
-            assertThat(CabinType.Factory.fromValue(value)).isSameAs(expected);
+            assertThat(CabinType.Factory.fromValue(value)).isSameInstanceAs(expected);
             if (expected == null) {
                 verify(handler).publish(any(LogRecord.class));
             } else {

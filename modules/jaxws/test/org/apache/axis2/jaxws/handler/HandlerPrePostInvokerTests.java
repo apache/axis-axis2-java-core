@@ -86,8 +86,8 @@ public class HandlerPrePostInvokerTests extends TestCase {
         HandlerPostInvokerFactory postFact = (HandlerPostInvokerFactory)FactoryRegistry.getFactory(HandlerPostInvokerFactory.class);
         HandlerPreInvoker preInvoker = preFact.createHandlerPreInvoker();
         HandlerPostInvoker postInvoker = postFact.createHandlerPostInvoker();
-        assertThat(preInvoker).named("preInvoker").isInstanceOf(org.apache.axis2.jaxws.handler.impl.HandlerPreInvokerImpl.class);
-        assertThat(postInvoker).named("postInvoker").isInstanceOf(org.apache.axis2.jaxws.handler.impl.HandlerPostInvokerImpl.class);
+        assertThat(preInvoker).isInstanceOf(org.apache.axis2.jaxws.handler.impl.HandlerPreInvokerImpl.class);
+        assertThat(postInvoker).isInstanceOf(org.apache.axis2.jaxws.handler.impl.HandlerPostInvokerImpl.class);
     }
     
     /**

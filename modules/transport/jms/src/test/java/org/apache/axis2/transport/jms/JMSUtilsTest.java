@@ -35,6 +35,6 @@ public class JMSUtilsTest {
         Session session = mock(Session.class);
         MessageConsumer consumer = mock(MessageConsumer.class);
         when(session.createConsumer(queue, null)).thenReturn(consumer);
-        assertThat(JMSUtils.createConsumer(session, queue, null)).isSameAs(consumer);
+        assertThat(JMSUtils.createConsumer(session, queue, null)).isSameInstanceAs(consumer);
     }
 }
