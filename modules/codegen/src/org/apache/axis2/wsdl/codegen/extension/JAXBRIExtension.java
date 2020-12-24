@@ -50,7 +50,7 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
 
     public static final String JAXB_RI_API_CLASS = "javax.xml.bind.JAXBContext";
-    public static final String JAXB_RI_IMPL_CLASS = "com.sun.xml.bind.Util";
+    public static final String JAXB_RI_IMPL_CLASS = "com.sun.xml.bind.v2.JAXBContextFactory";
     public static final String JAXB_RI_XJC_CLASS = "com.sun.tools.xjc.api.XJC";
 
     public static final String JAXB_RI_UTILITY_CLASS =
