@@ -21,6 +21,8 @@ updates:
     ignore:
       - dependency-name: "javax.xml.bind:jaxb-api"
         versions: ">= 3.0"
+      - dependency-name: "org.eclipse.jetty:*"
+        versions: ">= 10.0"
       - dependency-name: "org.glassfish.jaxb:jaxb-xjc"
         versions: ">= 3.0"
       - dependency-name: "org.glassfish.jaxb:jaxb-runtime"
