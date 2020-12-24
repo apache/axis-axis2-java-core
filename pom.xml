@@ -515,6 +515,7 @@
         <xmlschema.version>2.2.5</xmlschema.version>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
+        <aspectj.version>1.8.2</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
         <commons.fileupload.version>1.4</commons.fileupload.version>
         <commons.httpclient.version>3.1</commons.httpclient.version>
@@ -1125,12 +1126,12 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
-                <version>1.8.2</version>
+                <version>${aspectj.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.8.2</version>
+                <version>${aspectj.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
