@@ -1283,7 +1283,7 @@
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
                     <artifactId>wsimport-maven-plugin</artifactId>
-                    <version>0.2</version>
+                    <version>0.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
