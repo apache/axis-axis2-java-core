@@ -18,4 +18,11 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "javax.xml.bind:jaxb-api"
+        versions: ">= 3.0"
+      - dependency-name: "org.glassfish.jaxb:jaxb-xjc"
+        versions: ">= 3.0"
+      - dependency-name: "org.glassfish.jaxb:jaxb-runtime"
+        versions: ">= 3.0"
     open-pull-requests-limit: 15
