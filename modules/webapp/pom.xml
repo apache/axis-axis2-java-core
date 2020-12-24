@@ -258,6 +258,7 @@
                 <directory>${project.build.directory}/kernel/conf</directory>
                 <includes>
                     <include>*.properties</include>
+                    <include>log4j2.xml</include>
                 </includes>
             </resource>
         </resources>
@@ -348,6 +349,7 @@
                                     <directory>../kernel/conf</directory>
                                     <includes>
                                         <include>*.properties</include>
+                                        <include>log4j2.xml</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -403,13 +405,6 @@
                             <excludes>
                                 <exclude>servlet*.txt</exclude>
                             </excludes>
-                        </resource>
-                        <resource>
-                            <directory>conf</directory>
-                            <targetPath>WEB-INF/classes</targetPath>
-                            <includes>
-                                <include>*.xml</include>
-                            </includes>
                         </resource>
                     </webResources>
                 </configuration>
