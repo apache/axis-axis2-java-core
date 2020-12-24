@@ -21,7 +21,6 @@ package org.apache.axis2.transport.testkit;
 
 import static org.apache.axis2.transport.testkit.AdapterUtils.adapt;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -49,6 +48,7 @@ import org.apache.axis2.transport.testkit.tests.async.SwATestCase;
 import org.apache.axis2.transport.testkit.tests.async.TextPlainTestCase;
 import org.apache.axis2.transport.testkit.tests.async.XMLAsyncMessageTestCase;
 import org.apache.axis2.transport.testkit.tests.echo.XMLRequestResponseMessageTestCase;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class TransportTestSuiteBuilder {
     static class ResourceRelation<T> {
@@ -130,7 +130,7 @@ public class TransportTestSuiteBuilder {
         try {
             // We only want tests with client and/or endpoint based on Axis
             suite.addExclude("(&(client=*)(endpoint=*)(!(|(client=axis)(endpoint=axis))))");
-        } catch (ParseException ex) {
+        } catch (InvalidSyntaxException ex) {
             throw new Error(ex);
         }
     }

@@ -19,7 +19,6 @@
 
 package org.apache.axis2.transport.testkit;
 
-import java.text.ParseException;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,17 +28,18 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-import org.apache.axis2.transport.testkit.filter.FilterExpression;
-import org.apache.axis2.transport.testkit.filter.FilterExpressionParser;
 import org.apache.axis2.transport.testkit.tests.TestResourceSet;
 import org.apache.axis2.transport.testkit.tests.TestResourceSetTransition;
 import org.apache.axis2.transport.testkit.tests.ManagedTestCase;
 import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.lang.StringUtils;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class ManagedTestSuite extends TestSuite {
     private final Class<?> testClass;
-    private final List<FilterExpression> excludes = new LinkedList<FilterExpression>();
+    private final List<Filter> excludes = new LinkedList<Filter>();
     private final boolean reuseResources;
     private boolean invertExcludes;
     private int nextId = 1;
@@ -57,8 +57,8 @@ public class ManagedTestSuite extends TestSuite {
         return testClass;
     }
 
-    public void addExclude(String filter) throws ParseException {
-        excludes.add(FilterExpressionParser.parse(filter));
+    public void addExclude(String filter) throws InvalidSyntaxException {
+        excludes.add(FrameworkUtil.createFilter(filter));
     }
 
     public void setInvertExcludes(boolean invertExcludes) {
@@ -71,7 +71,7 @@ public class ManagedTestSuite extends TestSuite {
             ManagedTestCase ttest = (ManagedTestCase)test;
             Map<String,String> map = ttest.getNameComponents();
             boolean excluded = false;
-            for (FilterExpression exclude : excludes) {
+            for (Filter exclude : excludes) {
                 if (exclude.matches(map)) {
                     excluded = true;
                     break;
