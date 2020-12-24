@@ -1016,7 +1016,7 @@
             <dependency>
                 <groupId>org.eclipse.core</groupId>
                 <artifactId>jobs</artifactId>
-                <version>3.2.0-v20060603</version>
+                <version>3.6.0-v20140424-0053</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.core</groupId>
