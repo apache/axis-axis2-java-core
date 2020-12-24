@@ -554,7 +554,7 @@
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
-        <jaxws.tools.version>2.3.3</jaxws.tools.version>
+        <jaxws.tools.version>3.0.0</jaxws.tools.version>
         <jaxws.rt.version>2.3.3</jaxws.rt.version>
         <jaxws.api.version>2.3.1</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
@@ -1251,7 +1251,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.8.1</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.veithen.alta</groupId>
