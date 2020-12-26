@@ -992,7 +992,7 @@
             <dependency>
                 <groupId>org.eclipse.core</groupId>
                 <artifactId>resources</artifactId>
-                <version>3.2.1-R32x_v20060914</version>
+                <version>3.3.0-v20070604</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.core</groupId>
@@ -1194,7 +1194,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
