@@ -513,7 +513,7 @@
         <woden.version>1.0M11-SNAPSHOT</woden.version>
         <axiom.version>1.3.0-SNAPSHOT</axiom.version>
         <xmlschema.version>2.2.5</xmlschema.version>
-        <ant.version>1.7.0</ant.version>
+        <ant.version>1.10.9</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.6</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
