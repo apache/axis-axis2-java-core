@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -175,5 +176,40 @@ public class MockHttpServletResponse implements HttpServletResponse, OutTranspor
     }
 
     public void setStatus(int sc, String sm) {
+    }
+
+    @Override
+    public String getContentType() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setCharacterEncoding(String charset) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setContentLengthLong(long len) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getStatus() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getHeader(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<String> getHeaders(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        throw new UnsupportedOperationException();
     }
 }

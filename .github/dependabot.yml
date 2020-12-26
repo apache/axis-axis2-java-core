@@ -21,6 +21,9 @@ updates:
     ignore:
       - dependency-name: "com.sun.xml.ws:*"
         versions: ">= 3.0"
+      # Jetty 9 supports Servlets 3.1.
+      - dependency-name: "javax.servlet:javax.servlet-api"
+        versions: "> 3.1.0"
       - dependency-name: "javax.xml.bind:jaxb-api"
         versions: ">= 3.0"
       - dependency-name: "org.eclipse.jetty:*"

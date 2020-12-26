@@ -522,7 +522,6 @@
         <maven.version>3.3.9</maven.version>
         <plexus.utils.version>3.3.0</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
-        <servlet.api.version>2.3</servlet.api.version>
         <slf4j.version>1.7.30</slf4j.version>
         <spring.version>5.3.2</spring.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
@@ -672,8 +671,8 @@
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${servlet.api.version}</version>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
