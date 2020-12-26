@@ -48,8 +48,6 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase {
             System.getProperty("basedir", ".") + "/test-resources/";
     public static final String CLASSES_DIR =
             System.getProperty("basedir", ".") + "/target/classes/";
-    private String[] moduleNames = { "xml", "common", "core" };
-    private static final String MODULE_PATH_PREFIX = "../modules/";
     private static final String COMPILE_TARGET_NAME = "compile";
 
     protected String wsdlFileName;
@@ -215,10 +213,6 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase {
         File outputLocationFile = new File(outputLocation);
         Path classPath = new Path(codeGenProject, outputLocation);
         classPath.addExisting(classPath.concatSystemClasspath(), false);
-        for (int i = 0; i < moduleNames.length; i++) {
-            classPath.add(new Path(codeGenProject,
-                                   MODULE_PATH_PREFIX + moduleNames[i] + CLASSES_DIR));
-        }
 
         classPath.add(new Path(codeGenProject, cp));
 
