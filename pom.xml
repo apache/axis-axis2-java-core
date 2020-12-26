@@ -1225,7 +1225,7 @@
                 <plugin>
                     <groupId>net.nicoulaj.maven.plugins</groupId>
                     <artifactId>checksum-maven-plugin</artifactId>
-                    <version>1.5</version>
+                    <version>1.9</version>
                     <configuration>
                         <algorithms>
                             <algorithm>SHA-512</algorithm>
