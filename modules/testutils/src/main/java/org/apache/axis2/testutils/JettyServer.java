@@ -38,8 +38,7 @@ import javax.servlet.ServletException;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -170,13 +169,13 @@ public class JettyServer extends AbstractAxis2Server {
         server = new Server();
         
         if (!secure) {
-            SelectChannelConnector connector = new SelectChannelConnector();
+            ServerConnector connector = new ServerConnector(server);
             server.addConnector(connector);
         } else {
             if (serverSslContextFactory == null) {
                 generateKeys();
             }
-            SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(serverSslContextFactory);
+            ServerConnector sslConnector = new ServerConnector(server, serverSslContextFactory);
             server.addConnector(sslConnector);
         }
         
@@ -266,9 +265,9 @@ public class JettyServer extends AbstractAxis2Server {
         }
         
         for (Connector connector : connectors) {
-            if (connector instanceof SelectChannelConnector) {
+            if (connector instanceof ServerConnector) {
                 //must be the http connector
-                return connector.getLocalPort();
+                return ((ServerConnector) connector).getLocalPort();
             }
         }
         

@@ -22,8 +22,8 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.rules.ExternalResource;
 
 public final class JAXWSEndpoint extends ExternalResource {
@@ -38,9 +38,7 @@ public final class JAXWSEndpoint extends ExternalResource {
 
     @Override
     protected void before() throws Throwable {
-        server = new Server();
-        SelectChannelConnector connector = new SelectChannelConnector();
-        server.addConnector(connector);
+        server = new Server(0);
         HttpContextImpl httpContext = new HttpContextImpl();
         Endpoint.create(implementor).publish(httpContext);
         server.setHandler(new JAXWSHandler(httpContext));
@@ -60,6 +58,6 @@ public final class JAXWSEndpoint extends ExternalResource {
     }
 
     public String getAddress() {
-        return String.format("http://localhost:%s/", server.getConnectors()[0].getLocalPort());
+        return server.getURI().toString();
     }
 }
