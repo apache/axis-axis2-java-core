@@ -20,13 +20,7 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
-import org.apache.axiom.util.base64.Base64Utils;
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,14 +35,16 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
+
+import static com.google.common.truth.Truth.assertThat;
+
 import java.awt.*;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Iterator;
+import java.util.Random;
 
 @RunWith(SAAJTestRunner.class)
 public class AttachmentTest extends Assert {
@@ -269,56 +265,18 @@ public class AttachmentTest extends Assert {
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage msg = factory.createMessage();
         AttachmentPart ap = msg.createAttachmentPart();
-
-        String urlString = "http://ws.apache.org/images/project-logo.jpg";
-        if (isNetworkedResourceAvailable(urlString)) {
-            URL url = new URL(urlString);
-            DataHandler dh = new DataHandler(url);
-            //Create InputStream from DataHandler's InputStream
-            InputStream is = dh.getInputStream();
-
-            byte buf[] = IOUtils.toByteArray(is);
-            //Setting Content via InputStream for image/jpeg mime type
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            Base64Utils.encode(buf, 0, buf.length, bos);
-            buf = bos.toByteArray();
-            InputStream stream = new ByteArrayInputStream(buf);
-            ap.setBase64Content(stream, "image/jpeg");
-
-            //Getting Content.. should return InputStream object
-            InputStream r = ap.getBase64Content();
-            if (r != null) {
-                if (r instanceof InputStream) {
-                    //InputStream object was returned (ok)
-                } else {
-                    fail("Unexpected object was returned");
-                }
-            }
-        }
-    }
-
-    private boolean isNetworkedResourceAvailable(String url) {
-        HttpClient client = new HttpClient();
-        GetMethod method = new GetMethod(url);
-        client.getHttpConnectionManager().getParams().setConnectionTimeout(1000);
-                method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                                        new DefaultHttpMethodRetryHandler(1, false));
-
+        
+        byte[] bytes = new byte[4096];
+        new Random(1234).nextBytes(bytes);
+        ap.setBase64Content(
+                new ByteArrayInputStream(Base64.encodeBase64(bytes, false)),
+                "application/octet-stream");
+        
+        InputStream r = ap.getBase64Content();
         try {
-            int statusCode = client.executeMethod(method);
-            if (statusCode != HttpStatus.SC_OK) {
-                return false;
-            }
-            //byte[] responseBody = method.getResponseBody();
-        } catch (HttpException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            assertThat(Base64.decodeBase64(IOUtils.toByteArray(r))).isEqualTo(bytes);
         } finally {
-            method.releaseConnection();
+            r.close();
         }
-        return true;
     }
 }
