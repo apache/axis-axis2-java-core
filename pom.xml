@@ -144,24 +144,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>doclint-java7</id>
-            <activation>
-                <jdk>(,1.8)</jdk>
-            </activation>
-            <properties>
-                <javadoc.nolint.param />
-            </properties>
-        </profile>
-        <profile>
-            <id>doclint-java8</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.nolint.param>-Xdoclint:none</javadoc.nolint.param>
-            </properties>
-        </profile>
     </profiles>
     <mailingLists>
         <mailingList>
@@ -1131,9 +1113,7 @@
                     <version>3.2.0</version>
                     <configuration>
                         <detectOfflineLinks>false</detectOfflineLinks>
-                        <additionalOptions>
-                            <additionalOption>${javadoc.nolint.param}</additionalOption>
-                        </additionalOptions>
+                        <doclint>none</doclint>
                         <quiet>true</quiet>
                     </configuration>
                 </plugin>
@@ -1146,7 +1126,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.6</version>
+                    <version>3.9.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
@@ -1542,9 +1522,9 @@
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>issue-tracking</report>
-                            <report>mailing-list</report>
-                            <report>project-team</report>
+                            <report>issue-management</report>
+                            <report>mailing-lists</report>
+                            <report>team</report>
                         </reports>
                     </reportSet>
                 </reportSets>

@@ -315,7 +315,7 @@
                             <doclet>org.apache.axis2.transport.testkit.doclet.ResourceInfoDoclet</doclet>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
                             <show>private</show>
-                            <additionalparam>-out "${javadoc-compat-out-dir}/resource-info.dat"</additionalparam>
+                            <additionalOptions>-out "${javadoc-compat-out-dir}/resource-info.dat"</additionalOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -334,10 +334,9 @@
                             </docletArtifacts>
                             <doclet>org.apache.axis2.transport.testkit.doclet.TestkitJavadocDoclet</doclet>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
-                            <additionalparam>
-                                ${javadoc.nolint.param}
+                            <additionalOptions>
                                 -resource-info "${javadoc-compat-out-dir}/resource-info.dat"
-                            </additionalparam>
+                            </additionalOptions>
                             <reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
                             <destDir>.</destDir>
                         </configuration>
