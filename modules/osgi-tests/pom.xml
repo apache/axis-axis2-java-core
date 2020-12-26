@@ -34,7 +34,7 @@
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/osgi-tests</url>
     </scm>
     <properties>
-        <exam.version>3.4.0</exam.version>
+        <exam.version>4.13.4</exam.version>
     </properties>
     <dependencies>
         <dependency>
