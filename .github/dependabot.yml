@@ -19,12 +19,12 @@ updates:
     schedule:
       interval: "daily"
     ignore:
+      - dependency-name: "com.sun.xml.ws:*"
+        versions: ">= 3.0"
       - dependency-name: "javax.xml.bind:jaxb-api"
         versions: ">= 3.0"
       - dependency-name: "org.eclipse.jetty:*"
         versions: ">= 10.0"
-      - dependency-name: "org.glassfish.jaxb:jaxb-xjc"
-        versions: ">= 3.0"
-      - dependency-name: "org.glassfish.jaxb:jaxb-runtime"
+      - dependency-name: "org.glassfish.jaxb:*"
         versions: ">= 3.0"
     open-pull-requests-limit: 15
