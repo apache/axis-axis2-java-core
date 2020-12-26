@@ -21,29 +21,19 @@ package org.apache.axis2.transport.http;
 
 import junit.framework.TestCase;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  *
  */
 public class TransportHeadersTest extends TestCase {
 
-    public void testServletRequest() {
-        // This just validates that the HttpServletRequest test class below works as expected
-        HttpServletRequest req = new TestServletRequest();
-        assertEquals("h1Value", req.getHeader("header1"));
-        assertEquals("h2Value", req.getHeader("header2"));
-        assertEquals("h3Value", req.getHeader("header3"));
-        assertNull(req.getHeader("newHeader1"));
-        assertNull(req.getHeader("newHeader2"));
-
-        Enumeration headers = req.getHeaderNames();
-        assertNotNull(headers);
-    }
-
     public void testLocalMap() {
-        HttpServletRequest req = new TestServletRequest();
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        req.addHeader("header1", "h1Value");
+        req.addHeader("header2", "h2Value");
+        req.addHeader("header3", "h3Value");
+        
         TransportHeaders headers = new TransportHeaders(req);
         String checkValue = null;
         assertNull(headers.headerMap);
@@ -92,7 +82,11 @@ public class TransportHeadersTest extends TestCase {
 
     public void testNoPopulateOnGet() {
         // Doing a get before a put shouldn't expand the headerMap.
-        HttpServletRequest req = new TestServletRequest();
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        req.addHeader("header1", "h1Value");
+        req.addHeader("header2", "h2Value");
+        req.addHeader("header3", "h3Value");
+        
         TransportHeaders headers = new TransportHeaders(req);
         String checkValue = null;
         assertNull(headers.headerMap);
