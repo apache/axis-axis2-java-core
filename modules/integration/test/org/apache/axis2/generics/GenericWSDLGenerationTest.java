@@ -46,8 +46,8 @@ public class GenericWSDLGenerationTest   extends XMLTestCase {
             builder.generateWSDL();
             FileReader control = new FileReader(wsdlLocation);
             StringReader test = new StringReader(new String(out.toByteArray()));
-            Diff myDiff = new Diff(XMLUnit.buildDocument(XMLUnit.getControlParser(), control),
-		               XMLUnit.buildDocument(XMLUnit.getControlParser(), test),
+            Diff myDiff = new Diff(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
+		               XMLUnit.buildDocument(XMLUnit.newControlParser(), test),
 		               new WSDLDifferenceEngine(new WSDLController()), new WSDLElementQualifier());
             if (!myDiff.similar())
 	            fail(myDiff.toString());
