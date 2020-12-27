@@ -22,8 +22,8 @@ package org.apache.axis2.transport.testkit.message;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class RESTMessage {
     public static class Parameter {

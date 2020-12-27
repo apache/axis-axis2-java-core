@@ -32,7 +32,7 @@ import org.apache.axis2.transport.testkit.tests.TestResourceSet;
 import org.apache.axis2.transport.testkit.tests.TestResourceSetTransition;
 import org.apache.axis2.transport.testkit.tests.ManagedTestCase;
 import org.apache.axis2.transport.testkit.util.TestKitLogManager;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;

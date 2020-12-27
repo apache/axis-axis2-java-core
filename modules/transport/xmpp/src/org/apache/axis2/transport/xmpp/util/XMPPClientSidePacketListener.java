@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.PacketListener;

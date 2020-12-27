@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.axis2.transport.testkit.Adapter;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class TestResource {
     private enum Status { UNRESOLVED, RESOLVED, SETUP, RECYCLED };

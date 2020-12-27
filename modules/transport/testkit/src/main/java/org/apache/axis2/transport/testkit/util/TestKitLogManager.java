@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.apache.axis2.transport.testkit.tests.ManagedTestCase;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.appender.WriterAppender;

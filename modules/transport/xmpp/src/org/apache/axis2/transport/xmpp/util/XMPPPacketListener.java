@@ -48,7 +48,7 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.xmpp.XMPPSender;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.MultipleEntryHashMap;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.PacketListener;
