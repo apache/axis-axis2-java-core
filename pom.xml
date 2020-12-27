@@ -524,7 +524,7 @@
         <rhino.version>1.6R7</rhino.version>
         <slf4j.version>1.7.30</slf4j.version>
         <spring.version>5.3.2</spring.version>
-        <wsdl4j.version>1.6.2</wsdl4j.version>
+        <wsdl4j.version>1.6.3</wsdl4j.version>
         <xalan.version>2.7.2</xalan.version>
         <xmlbeans.version>2.6.0</xmlbeans.version>
         <xml_resolver.version>1.2</xml_resolver.version>
