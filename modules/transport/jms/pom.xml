@@ -54,12 +54,14 @@
                         <configuration>
                             <name>aspectjweaver</name>
                             <value>%file%</value>
-                            <artifacts>
-                                <artifact>
-                                    <groupId>org.aspectj</groupId>
-                                    <artifactId>aspectjweaver</artifactId>
-                                </artifact>
-                            </artifacts>
+                            <artifactSet>
+                                <artifacts>
+                                    <artifact>
+                                        <groupId>org.aspectj</groupId>
+                                        <artifactId>aspectjweaver</artifactId>
+                                    </artifact>
+                                </artifacts>
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>

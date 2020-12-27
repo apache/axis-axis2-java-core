@@ -82,12 +82,14 @@
                         <configuration>
                             <name>webapp</name>
                             <value>%file%</value>
-                            <dependencySet>
-                                <scope>test</scope>
-                                <includes>
-                                    <include>*:axis2-webapp:war:*</include>
-                                </includes>
-                            </dependencySet>
+                            <artifactSet>
+                                <dependencySet>
+                                    <scope>test</scope>
+                                    <includes>
+                                        <include>*:axis2-webapp:war:*</include>
+                                    </includes>
+                                </dependencySet>
+                            </artifactSet>
                         </configuration>
                     </execution>
                     <execution>
@@ -98,12 +100,14 @@
                         <configuration>
                             <name>echo-service-location.txt</name>
                             <value>%file%</value>
-                            <dependencySet>
-                                <scope>test</scope>
-                                <includes>
-                                    <include>*:echo:aar:*</include>
-                                </includes>
-                            </dependencySet>
+                            <artifactSet>
+                                <dependencySet>
+                                    <scope>test</scope>
+                                    <includes>
+                                        <include>*:echo:aar:*</include>
+                                    </includes>
+                                </dependencySet>
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>

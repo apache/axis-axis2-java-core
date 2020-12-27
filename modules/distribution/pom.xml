@@ -346,12 +346,14 @@
                         <configuration>
                             <name>webapp</name>
                             <value>%file%</value>
-                            <dependencySet>
-                                <scope>test</scope>
-                                <includes>
-                                    <include>*:axis2-webapp:war:*</include>
-                                </includes>
-                            </dependencySet>
+                            <artifactSet>
+                                <dependencySet>
+                                    <scope>test</scope>
+                                    <includes>
+                                        <include>*:axis2-webapp:war:*</include>
+                                    </includes>
+                                </dependencySet>
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>

@@ -1231,7 +1231,7 @@
                 <plugin>
                     <groupId>com.github.veithen.alta</groupId>
                     <artifactId>alta-maven-plugin</artifactId>
-                    <version>0.6.2</version>
+                    <version>0.7.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
