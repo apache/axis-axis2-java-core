@@ -529,7 +529,7 @@
         <xalan.version>2.7.2</xalan.version>
         <xmlbeans.version>2.6.0</xmlbeans.version>
         <xml_resolver.version>1.2</xml_resolver.version>
-        <commons.lang.version>2.3</commons.lang.version>
+        <commons.lang.version>2.6</commons.lang.version>
         <commons.cli.version>1.4</commons.cli.version>
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
