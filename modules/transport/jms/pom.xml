@@ -178,7 +178,7 @@
     </dependencies>
     
     <properties>
-        <jms-1.1-spec.version>1.1</jms-1.1-spec.version>
+        <jms-1.1-spec.version>1.1.1</jms-1.1-spec.version>
     </properties>
 
 </project>
