@@ -122,7 +122,7 @@
                         <id>process-resources</id>
                         <phase>process-resources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <tstamp>
                                     <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en" />
                                 </tstamp>
@@ -133,7 +133,7 @@
                                         <filter token="today" value=" Built on : ${build.time}" />
                                     </filterset>
                                 </copy>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

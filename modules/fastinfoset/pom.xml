@@ -176,7 +176,7 @@
                         <id>gen-ts</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <mkdir dir="target/test-classes" />
 
                                 <property name="axis2.home" value="${basedir}/target" />
@@ -212,7 +212,7 @@
                                     <classpath location="${compiled.classes.dir}" />
                                     <arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or" />
                                 </java>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

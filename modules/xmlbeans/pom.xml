@@ -122,10 +122,10 @@
                         <id>gen-cp</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <property name="cp" refid="maven.runtime.classpath" />
                                 <echo message="${cp}" file="target/cp.txt" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

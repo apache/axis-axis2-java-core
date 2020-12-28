@@ -723,7 +723,7 @@
                         <id>build-repo</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <property name="repo.dir" value="${project.build.directory}/repo" />
                                 <property name="services.dir" value="${repo.dir}/services" />
                                 <property name="servicejars.dir" value="${repo.dir}/servicejars" />
@@ -1339,7 +1339,7 @@
                                         <include name="**/axis2.xml" />
                                     </fileset>
                                 </copy>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

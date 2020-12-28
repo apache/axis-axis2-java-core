@@ -521,7 +521,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <unzip src="${project.build.directory}/axis2-${project.version}-bin.zip" dest="${project.build.directory}" />
                                 
                                 <!-- Build the web app -->
@@ -540,7 +540,7 @@
                                 <!-- Test of the json sample -->
                                 <ant dir="${project.build.directory}/axis2-${project.version}/samples/json" target="generate.service" />
                                 <ant dir="${project.build.directory}/axis2-${project.version}/samples/json" target="client.jar" />
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

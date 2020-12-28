@@ -193,7 +193,7 @@
                         <id>build-repo</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <copy toDir="target/test-classes/">
                                     <fileset dir="test-resources/">
                                         <include name="**/*.properties" />
@@ -202,7 +202,7 @@
                                         <include name="org/apache/axis2/jaxws/description/HandlerConfigFile.xml" />
                                     </fileset>
                                 </copy>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

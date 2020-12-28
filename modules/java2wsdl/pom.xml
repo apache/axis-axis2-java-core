@@ -160,7 +160,7 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <echo message="Generating p2n.wsdl" />
                                 
                                 <java classname="org.apache.ws.java2wsdl.Java2WSDL" classpathref="maven.test.classpath" fork="true" failonerror="true">
@@ -175,7 +175,7 @@
                                     <arg value="-stn" />
                                     <arg value="http://www.example.org/calculator-service" />
                                 </java>
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

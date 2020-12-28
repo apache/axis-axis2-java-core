@@ -489,7 +489,7 @@
                         <id>gen-ts</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <condition property="test.skip">
                                     <equals arg1="true" arg2="${maven.test.skip}" />
                                 </condition>
@@ -498,7 +498,7 @@
                                 <property name="maven.class.path" refid="maven.runtime.classpath" />
                                 <property name="maven.test.path" refid="maven.compile.classpath" />
                                 <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="generate-test-sources" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -508,7 +508,7 @@
                         <id>build-repo</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <condition property="test.skip">
                                     <equals arg1="true" arg2="${maven.test.skip}" />
                                 </condition>
@@ -523,7 +523,7 @@
                                     <path refid="maven.runtime.classpath" />
                                 </path>
                                 <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="build-repos" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

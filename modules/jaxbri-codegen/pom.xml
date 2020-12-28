@@ -130,7 +130,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.test.classpath" />
                                     <arg line="-d jaxbri -ss -ssi -sd -o '${project.build.directory}/gen/Test01' -u -uri src/test/wsdl/Test01.wsdl" />
@@ -139,7 +139,7 @@
                                     <classpath refid="maven.test.classpath" />
                                     <arg line="-d jaxbri -o '${project.build.directory}/gen/Test01' -u -uri src/test/wsdl/Test01.wsdl" />
                                 </java>
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                     <execution>
@@ -149,11 +149,11 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <property name="axis2.home" value="${basedir}/target" />
                                 <property name="maven.class.path" refid="maven.test.classpath" />
                                 <ant dir="${project.build.directory}/gen/Test01" />
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

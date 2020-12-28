@@ -189,14 +189,14 @@
                         <id>process-resources</id>
                         <phase>process-resources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <tstamp>
                                     <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en" />
                                 </tstamp>
                                 <filter token="axisVersion" value="${project.version}" />
                                 <filter token="TODAY" value="${build.time}" />
                                 <copy toDir="${basedir}/target/classes/org/apache/axis2/i18n" overwrite="true" filtering="on" file="${basedir}/src/org/apache/axis2/i18n/resource.properties" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -206,7 +206,7 @@
                         <id>process-test-resources</id>
                         <phase>process-test-resources</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <copy todir="${project.build.directory}/test-resources">
                                     <fileset dir="${basedir}/test-resources" />
                                 </copy>
@@ -216,7 +216,7 @@
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/module1" />
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/serviceModule" />
                                 <copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -226,10 +226,10 @@
                         <id>test-compile</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <property name="maven.build.dir" location="${basedir}/target" />
                                 <ant antfile="j2secbuild.xml" inheritall="true" inheritrefs="true" dir="test-resources/" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

@@ -163,7 +163,7 @@
                         <id>generate-test-sources</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
                                 <property name="maven.class.path" refid="maven.test.classpath" />
                                 <echo>Building WSDLs...</echo>
@@ -173,7 +173,7 @@
                                     <path refid="maven.compile.classpath" />
                                 </path>
                                 <ant antfile="build-wsdls.xml" inheritall="true" inheritrefs="true" dir="." target="wsdl-codegen" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -183,7 +183,7 @@
                         <id>process-resources</id>
                         <phase>process-resources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <tstamp>
                                     <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en" />
                                 </tstamp>
@@ -194,7 +194,7 @@
                                         <filter token="today" value=" Built on : ${build.time}" />
                                     </filterset>
                                 </copy>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

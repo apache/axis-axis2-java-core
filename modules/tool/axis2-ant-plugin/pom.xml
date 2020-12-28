@@ -114,7 +114,7 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                            <tasks unless="maven.test.skip">
+                            <target unless="maven.test.skip">
                                 <taskdef name="java2wsdl" classname="org.apache.axis2.tool.ant.Java2WSDLTask">
                                     <classpath>
                                         <path refid="maven.test.classpath" />
@@ -139,7 +139,7 @@
                                 <java2wsdl className="test.Service" outputLocation="${project.build.directory}/java2wsdl" outputFileName="mappings.wsdl" schemaTargetNamespace="http://www.example.org/schema/test-service">
                                     <mapping package="test" namespace="http://www.example.org/schema/test" />
                                 </java2wsdl>
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
