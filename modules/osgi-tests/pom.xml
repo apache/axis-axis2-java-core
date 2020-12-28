@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
+            <artifactId>jakarta.mail</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -125,10 +125,6 @@
                                         <groupId>org.apache.geronimo.specs</groupId>
                                         <artifactId>geronimo-servlet_2.5_spec</artifactId>
                                         <version>1.2</version>
-                                    </artifact>
-                                    <artifact>
-                                        <groupId>com.sun.activation</groupId>
-                                        <artifactId>javax.activation</artifactId>
                                     </artifact>
                                     <artifact>
                                         <groupId>org.apache.servicemix.bundles</groupId>

@@ -22,6 +22,8 @@ updates:
       # 1.7 is the last version to support Java 8.
       - dependency-name: "com.google.googlejavaformat:google-java-format"
         versions: ">= 1.8"
+      - dependency-name: "com.sun.mail:jakarta.mail"
+        versions: ">= 2.0"
       - dependency-name: "com.sun.xml.messaging.saaj:saaj-impl"
         versions: ">= 2.0"
       - dependency-name: "com.sun.xml.ws:*"

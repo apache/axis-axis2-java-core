@@ -107,7 +107,7 @@
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
+            <artifactId>jakarta.mail</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -117,7 +117,7 @@
         </dependency>
         <dependency>
             <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
+            <artifactId>jakarta.activation</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
