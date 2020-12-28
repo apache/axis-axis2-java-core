@@ -86,24 +86,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.messaging.saaj</groupId>
-            <artifactId>saaj-impl</artifactId>
-            <version>${saaj.impl.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>saaj-api</artifactId>
-            <version>${saaj.api.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.googlejavaformat</groupId>
             <artifactId>google-java-format</artifactId>
             <version>1.3</version>
-        </dependency>
-	<dependency>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>javax.xml.soap-api</artifactId>
-            <version>${soap-api.version}</version>
         </dependency>
         <dependency>
             <!-- Both google-java-format and Maven depend on Guava. We need to select

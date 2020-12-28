@@ -66,9 +66,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>javax.xml.soap-api</artifactId>
-            <version>${soap-api.version}</version>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -112,7 +111,6 @@
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-            <version>1.3.28</version>
             <scope>test</scope>
         </dependency>
         <dependency>

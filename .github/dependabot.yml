@@ -19,8 +19,12 @@ updates:
     schedule:
       interval: "daily"
     ignore:
+      - dependency-name: "com.sun.xml.messaging.saaj:saaj-impl"
+        versions: ">= 2.0"
       - dependency-name: "com.sun.xml.ws:*"
         versions: ">= 3.0"
+      - dependency-name: "jakarta.xml.soap:jakarta.xml.soap-api"
+        versions: ">= 2.0"
       # Jetty 9 supports Servlets 3.1.
       - dependency-name: "javax.servlet:javax.servlet-api"
         versions: "> 3.1.0"
