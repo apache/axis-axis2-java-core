@@ -67,12 +67,8 @@ public class OSGiTest {
                 url("link:classpath:org.apache.james.apache-mime4j-core.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-api.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-impl.link"),
-                // commons-file upload 1.4 changed the MANIFEST.MF file from:
-                // Bundle-SymbolicName: org.apache.commons.fileupload
-                // to:
-                // Bundle-SymbolicName: org.apache.commons.commons-fileupload
                 url("link:classpath:org.apache.commons.commons-fileupload.link"),
-                url("link:classpath:org.apache.commons.io.link"),
+                url("link:classpath:org.apache.commons.commons-io.link"),
                 url("link:classpath:org.apache.servicemix.bundles.commons-httpclient.link"), // TODO: still necessary???
                 url("link:classpath:org.apache.servicemix.bundles.commons-codec.link"), // TODO: still necessary???
                 url("link:classpath:org.apache.httpcomponents.httpcore.link"),
