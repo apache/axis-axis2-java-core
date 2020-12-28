@@ -27,7 +27,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTopic;
-import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.axis2.transport.testkit.name.Name;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
@@ -43,8 +42,7 @@ public class ActiveMQTestEnvironment extends JMSTestEnvironment {
     private void setUp() throws Exception {
         broker = new BrokerService();
         broker.setBrokerName(BROKER_NAME);
-        broker.setDataDirectory("target/activemq-data");
-        broker.setPersistenceAdapter(new MemoryPersistenceAdapter());
+        broker.setPersistent(false);
         broker.start();
         connectionFactory = new ActiveMQConnectionFactory("vm://" + BROKER_NAME);
     }

@@ -12,8 +12,8 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.activemq.tooling</groupId>
-                <artifactId>maven-activemq-plugin</artifactId>
-                <version>5.1.0</version>
+                <artifactId>activemq-maven-plugin</artifactId>
+                <version>5.16.0</version>
                 <configuration>
                     <fork>true</fork>
                 </configuration>
@@ -30,14 +30,8 @@
                     </dependency>
                     <dependency>
                         <groupId>org.apache.activemq</groupId>
-                        <artifactId>activemq-core</artifactId>
-                        <version>5.1.0</version>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>javax.activation</groupId>
-                                <artifactId>activation</artifactId>
-                            </exclusion>
-                        </exclusions>
+                        <artifactId>activemq-broker</artifactId>
+                        <version>5.16.0</version>
                     </dependency>
                     <dependency>
                         <groupId>commons-io</groupId>

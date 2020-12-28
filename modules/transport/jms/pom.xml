@@ -137,16 +137,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
-            <version>5.1.0</version>
-            <scope>test</scope>
-            <exclusions>
-                <!-- We want to choose the JAF implementation ourselves -->
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.16.0</version>
         </dependency>
 
         <dependency>
