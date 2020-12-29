@@ -133,9 +133,9 @@
         <resources>
             <resource>
                 <directory>conf</directory>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                </excludes>
+                <includes>
+                    <include>axis2.xml</include>
+                </includes>
                 <filtering>false</filtering>
             </resource>
             <resource>
