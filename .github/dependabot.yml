@@ -39,6 +39,9 @@ updates:
         versions: "> 3.1.0"
       - dependency-name: "javax.xml.bind:jaxb-api"
         versions: ">= 3.0"
+      # Embedding Qpid is a pain and APIs have changed a lot over time. We don't try to keep up with
+      # these changes. It's only used for integration tests anyway.
+      - dependency-name: "org.apache.qpid:*"
       - dependency-name: "org.eclipse.jetty:*"
         versions: ">= 10.0"
       - dependency-name: "org.glassfish.jaxb:*"
