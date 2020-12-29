@@ -139,6 +139,7 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
             <version>5.16.0</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
