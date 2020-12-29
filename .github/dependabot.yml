@@ -43,4 +43,6 @@ updates:
         versions: ">= 10.0"
       - dependency-name: "org.glassfish.jaxb:*"
         versions: ">= 3.0"
+      # Don't upgrade Rhino unless somebody is willing to figure out the necessary code changes.
+      - dependency-name: "rhino:js"
     open-pull-requests-limit: 15
