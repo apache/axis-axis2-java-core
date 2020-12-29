@@ -21,10 +21,9 @@ package org.apache.axis2.transport.testkit.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.StringWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.OutputStreamWriter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import org.apache.axis2.transport.testkit.tests.ManagedTestCase;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.appender.WriterAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.Logger;
@@ -45,22 +43,26 @@ public class TestKitLogManager {
     
     private final File logDir;
     private File testCaseDir;
-    private Appender appender;
+    private WriterAppender appender;
     private int sequence;
     private List<OutputStream> logs;
 
-    private static final Logger logger =
-      (Logger) LogManager.getLogger(TestKitLogManager.class);
- 
-    
     private TestKitLogManager() {
         logDir = new File("target" + File.separator + "testkit-logs");
     }
     
     public void setTestCase(ManagedTestCase testCase) throws IOException {
+        Logger rootLogger = (Logger) LogManager.getRootLogger();
         if (appender != null) {
-            ((Logger) LogManager.getRootLogger()).removeAppender(appender);
+            rootLogger.removeAppender(appender);
+            appender.stop();
             appender = null;
+        }
+        if (logs != null) {
+            for (OutputStream log : logs) {
+                IOUtils.closeQuietly(log);
+            }
+            logs = null;
         }
         if (testCase == null) {
             testCaseDir = null;
@@ -73,15 +75,15 @@ public class TestKitLogManager {
             LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
             Configuration config = ctx.getConfiguration();
 
-            StringWriter output = new StringWriter();
-            appender = WriterAppender.newBuilder().setTarget(output).setName("debug").setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.TTCC_CONVERSION_PATTERN).build()).setConfiguration(config).build();
+            appender = WriterAppender.newBuilder()
+                    .setTarget(new OutputStreamWriter(createLog("debug")))
+                    .setName("debug")
+                    .setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.TTCC_CONVERSION_PATTERN).build())
+                    .setConfiguration(config)
+                    .build();
 
-            if (appender != null) {
-                if (!appender.isStarted()) {
-                    appender.start();
-                }
-                config.addAppender(appender);
-            }
+            appender.start();
+            rootLogger.addAppender(appender);
         }
     }
     
@@ -91,10 +93,9 @@ public class TestKitLogManager {
 
     public synchronized OutputStream createLog(String name) throws IOException {
         testCaseDir.mkdirs();
-        OutputStream log = new FileOutputStream(new File(testCaseDir, StringUtils.leftPad(String.valueOf(sequence++),
-2, '0') + "-" + name + ".log"));
+        OutputStream log = new FileOutputStream(
+                new File(testCaseDir, StringUtils.leftPad(String.valueOf(sequence++), 2, '0') + "-" + name + ".log"));
         logs.add(log);
         return log;
     }
-    
 }
