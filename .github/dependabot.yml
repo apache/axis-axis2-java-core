@@ -30,6 +30,8 @@ updates:
         versions: ">= 2.0"
       - dependency-name: "com.sun.xml.ws:*"
         versions: ">= 3.0"
+      - dependency-name: "jakarta.servlet.jsp:jakarta.servlet.jsp-api"
+        versions: ">= 3.0"
       - dependency-name: "jakarta.xml.soap:jakarta.xml.soap-api"
         versions: ">= 2.0"
       # Jetty 9 supports Servlets 3.1.
