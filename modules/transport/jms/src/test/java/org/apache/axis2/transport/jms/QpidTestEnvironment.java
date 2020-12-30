@@ -53,7 +53,6 @@ public class QpidTestEnvironment extends JMSTestEnvironment {
         broker = new Broker();
         BrokerOptions options = new BrokerOptions();
         options.setConfigFile("src/test/conf/qpid/config.xml");
-        options.setLogConfigFile("src/test/conf/qpid/log4j.xml");
         options.addPort(port);
         broker.startup(options);
         // null means the default virtual host
