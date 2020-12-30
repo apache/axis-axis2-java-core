@@ -119,7 +119,7 @@ public class FaultyWebServiceTests {
 
     @Test
     public void testFaultyWebService_badEndpoint() throws Exception {
-        String host = "this.is.a.bad.endpoint.terrible.in.fact";
+        String host = "this.endpoint.is.invalid";
         String badEndpoint = "http://" + host;
 
         checkUnknownHostURL(badEndpoint);
@@ -185,7 +185,7 @@ public class FaultyWebServiceTests {
 
     @Test
     public void testFaultyWebService_badEndpoint_oneWay() throws Exception {
-        String host = "this.is.a.bad.endpoint.terrible.in.fact";
+        String host = "this.endpoint.is.invalid";
         String badEndpoint = "http://" + host;
         
         checkUnknownHostURL(badEndpoint);
@@ -240,7 +240,7 @@ public class FaultyWebServiceTests {
     public void testFaultyWebService_badEndpoint_AsyncCallback()
     throws Exception {
 
-        String host = "this.is.a.bad.endpoint.terrible.in.fact";
+        String host = "this.endpoint.is.invalid";
         String badEndpoint = "http://" + host;
 
         TestLogger.logger.debug("------------------------------");
@@ -294,7 +294,7 @@ public class FaultyWebServiceTests {
     public void testFaultyWebService_badEndpoint_AsyncPolling()
     throws Exception {
 
-        String host = "this.is.a.bad.endpoint.terrible.in.fact";
+        String host = "this.endpoint.is.invalid";
         String badEndpoint = "http://" + host;
 
         TestLogger.logger.debug("------------------------------");

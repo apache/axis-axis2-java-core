@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 
 public class DispatchTestConstants {
 
-    public static final String BADURL = "http://this.is.not.a.valid.hostname.at.all.no.way:9999/wacky";
+    public static final String BADURL = "http://this.hostname.is.invalid:9999/wacky";
     public static final QName QNAME_SERVICE = new QName("http://ws.apache.org/axis2", "EchoService");
     public static final QName QNAME_PORT = new QName("http://ws.apache.org/axis2", "EchoServiceSOAP11port0");
 

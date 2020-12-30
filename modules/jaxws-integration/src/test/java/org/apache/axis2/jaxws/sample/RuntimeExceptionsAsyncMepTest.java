@@ -63,7 +63,7 @@ public class RuntimeExceptionsAsyncMepTest {
 
     private static final String CONNECT_EXCEPTION_ENDPOINT = "http://localhost:6061/axis2/services/AsyncService2.DocLitWrappedPortImplPort";
 
-    static final String HOST_NOT_FOUND_ENDPOINT = "http://this.endpoint.does.not.exist/nope";
+    static final String HOST_NOT_FOUND_ENDPOINT = "http://this.endpoint.is.invalid/nope";
 
     /*
      * For async-on-the-wire exchanges, we need to enable WS-Addressing and get a transport

@@ -88,7 +88,7 @@ public class AddNumbersHandlerTests {
     @ClassRule
     public static final Axis2Server server = new Axis2Server("target/repo");
     
-    String invalidAxisEndpoint = "http://invalidHostName:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
+    String invalidAxisEndpoint = "http://rfc2606.invalid:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
 
     static File requestFile = null;
     static {
