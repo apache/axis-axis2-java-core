@@ -1360,6 +1360,18 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>com.github.veithen.maven</groupId>
+                <artifactId>hermetic-maven-plugin</artifactId>
+                <version>0.5.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-policy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- Make test execution deterministic -->
@@ -1369,6 +1381,10 @@
                     <systemProperties>
                         <property>
                             <name>java.io.tmpdir</name>
+                            <value>${project.build.directory}/tmp</value>
+                        </property>
+                        <property>
+                            <name>user.home</name>
                             <value>${project.build.directory}/tmp</value>
                         </property>
                     </systemProperties>
@@ -1381,6 +1397,10 @@
                     <systemProperties>
                         <property>
                             <name>java.io.tmpdir</name>
+                            <value>${project.build.directory}/tmp</value>
+                        </property>
+                        <property>
+                            <name>user.home</name>
                             <value>${project.build.directory}/tmp</value>
                         </property>
                     </systemProperties>

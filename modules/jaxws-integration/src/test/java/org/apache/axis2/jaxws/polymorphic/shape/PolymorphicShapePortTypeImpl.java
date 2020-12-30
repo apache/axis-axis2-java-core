@@ -32,7 +32,7 @@ import javax.jws.WebService;
         portName="PolymorphicShapePort",
         targetNamespace="http://sei.shape.polymorphic.jaxws.axis2.apache.org",
         endpointInterface="org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType", 
-		wsdlLocation="src/test/java/org/apache/axis2/jaxws/polymorphic/shape/META-INF/shapes.wsdl")
+		wsdlLocation="META-INF/shapes.wsdl")
 public class PolymorphicShapePortTypeImpl implements PolymorphicShapePortType {
 
 	public Shape draw(Shape request) {
