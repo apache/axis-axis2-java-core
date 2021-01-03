@@ -530,7 +530,6 @@
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
-        <jaxws.tools.version>2.3.3</jaxws.tools.version>
         <jaxws.rt.version>2.3.3</jaxws.rt.version>
         <jaxws.api.version>2.3.1</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
@@ -621,11 +620,6 @@
                 <version>1.4.2</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-rt</artifactId>
-                <version>2.3.3</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.xml.messaging.saaj</groupId>
                 <artifactId>saaj-impl</artifactId>
                 <version>1.5.2</version>
@@ -633,7 +627,7 @@
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-tools</artifactId>
-                <version>${jaxws.tools.version}</version>
+                <version>${jaxws.rt.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.ws</groupId>
