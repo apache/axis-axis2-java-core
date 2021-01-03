@@ -46,3 +46,33 @@ jobs:
       run: mvn -B -e -Papache-release -Dgpg.skip=true verify
     - name: Remove Snapshots
       run: find ~/.m2/repository -name '*-SNAPSHOT' -a -type d -print0 | xargs -0 rm -rf
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    name: Deploy
+    runs-on: ubuntu-18.04
+    needs: build
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Cache Maven Repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: maven-deploy-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          maven-deploy-
+          maven-
+    - name: Set up Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: 15
+        server-id: apache.snapshots.https
+        server-username: NEXUS_USER
+        server-password: NEXUS_PW
+    - name: Deploy
+      run: mvn -B -e -Papache-release -Dgpg.skip=true -DskipTests=true deploy
+      env:
+        NEXUS_USER: ${{ secrets.NEXUS_USER }}
+        NEXUS_PW: ${{ secrets.NEXUS_PW }}
+    - name: Remove Snapshots
+      run: find ~/.m2/repository -name '*-SNAPSHOT' -a -type d -print0 | xargs -0 rm -rf
