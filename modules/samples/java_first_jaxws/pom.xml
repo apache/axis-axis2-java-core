@@ -127,7 +127,7 @@
                      using the following command: mvn cargo:start -->
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.8.3</version>
+                <version>1.8.4</version>
             </plugin>
         </plugins>
         <sourceDirectory>src/main</sourceDirectory>
