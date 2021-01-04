@@ -103,56 +103,36 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>reserve-network-port</id>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
-                        <phase>pre-integration-test</phase>
-                        <configuration>
-                            <portNames>
-                                <portName>jetty.stopPort</portName>
-                                <portName>jetty.httpPort</portName>
-                            </portNames>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <configuration>
-                    <stopKey>foo</stopKey>
-                    <stopPort>${jetty.stopPort}</stopPort>
-                    <stopWait>10</stopWait>
-                    <httpConnector>
-                        <port>${jetty.httpPort}</port>
-                    </httpConnector>
-                    <war>${webapp}</war>
-                    <webApp>
-                        <contextPath>/axis2</contextPath>
-                    </webApp>
-                </configuration>
+                <groupId>com.github.veithen.daemon</groupId>
+                <artifactId>daemon-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>start-jetty</id>
-                        <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>deploy-war</goal>
+                            <goal>start</goal>
                         </goals>
                         <configuration>
-                            <!-- TODO: necessary? -->
-                            <daemon>true</daemon>
+                            <daemonArtifact>
+                                <artifactId>jetty-daemon</artifactId>
+                            </daemonArtifact>
+                            <daemonConfiguration>
+                                <resourceBases>
+                                    <resourceBase>${webapp}</resourceBase>
+                                </resourceBases>
+                                <contextPath>/axis2</contextPath>
+                            </daemonConfiguration>
+                            <ports>
+                                <port>
+                                    <name>http</name>
+                                    <propertyName>jetty.httpPort</propertyName>
+                                </port>
+                            </ports>
                         </configuration>
                     </execution>
                     <execution>
                         <id>stop-jetty</id>
-                        <phase>post-integration-test</phase>
                         <goals>
-                            <goal>stop</goal>
+                            <goal>stop-all</goal>
                         </goals>
                     </execution>
                 </executions>

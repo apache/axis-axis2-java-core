@@ -1238,6 +1238,11 @@
                     <version>9.3.25.v20180904</version>
                 </plugin>
                 <plugin>
+                    <groupId>com.github.veithen.daemon</groupId>
+                    <artifactId>daemon-maven-plugin</artifactId>
+                    <version>0.3.0</version>
+                </plugin>
+                <plugin>
                     <groupId>com.github.veithen.invoker</groupId>
                     <artifactId>resolver-proxy-maven-plugin</artifactId>
                     <version>0.1.3</version>
