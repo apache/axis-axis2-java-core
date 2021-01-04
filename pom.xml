@@ -564,6 +564,9 @@
             <id>eclipse_4_16</id>
             <layout>p2</layout>
             <url>http://download.eclipse.org/eclipse/updates/4.16/R-4.16-202006040540</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <dependencyManagement>
