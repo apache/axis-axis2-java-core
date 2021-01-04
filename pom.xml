@@ -1235,7 +1235,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.3.25.v20180904</version>
+                    <version>9.4.35.v20201120</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.veithen.daemon</groupId>
