@@ -22,6 +22,10 @@ package org.apache.axis2.transport.testkit.http;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import junit.framework.Assert;
 
 import org.apache.axis2.context.MessageContext;
@@ -29,17 +33,13 @@ import org.apache.axis2.transport.testkit.axis2.MessageContextValidator;
 import org.apache.axis2.transport.testkit.endpoint.EndpointErrorListener;
 import org.apache.axis2.transport.testkit.endpoint.InOutEndpoint;
 import org.apache.commons.io.IOUtils;
-import org.mortbay.http.HttpException;
-import org.mortbay.http.HttpRequest;
-import org.mortbay.http.HttpResponse;
 
 public class JettyEchoEndpoint extends JettyEndpoint implements InOutEndpoint, MessageContextValidator {
     @Override
-    protected void handle(String pathParams, HttpRequest request,
-            HttpResponse response) throws HttpException, IOException {
+    protected void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         response.setContentType(request.getContentType());
-        response.addField("X-Test-Header", "test value");
+        response.addHeader("X-Test-Header", "test value");
         IOUtils.copy(request.getInputStream(), response.getOutputStream());
     }
 

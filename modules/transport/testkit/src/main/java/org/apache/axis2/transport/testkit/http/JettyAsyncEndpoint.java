@@ -21,15 +21,16 @@ package org.apache.axis2.transport.testkit.http;
 
 import java.io.IOException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.axis2.transport.testkit.endpoint.AsyncEndpoint;
 import org.apache.axis2.transport.testkit.endpoint.InOnlyEndpointSupport;
 import org.apache.axis2.transport.testkit.message.IncomingMessage;
 import org.apache.axis2.transport.testkit.name.Name;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.mortbay.http.HttpException;
-import org.mortbay.http.HttpRequest;
-import org.mortbay.http.HttpResponse;
 
 @Name("jetty")
 public abstract class JettyAsyncEndpoint<M> extends JettyEndpoint implements AsyncEndpoint<M> {
@@ -41,13 +42,13 @@ public abstract class JettyAsyncEndpoint<M> extends JettyEndpoint implements Asy
     }
     
     @Override
-    protected void handle(String pathParams, HttpRequest request, HttpResponse response)
-            throws HttpException, IOException {
+    protected void handle(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         
         support.putMessage(handle(request));
     }
     
-    protected abstract IncomingMessage<M> handle(HttpRequest request) throws HttpException, IOException;
+    protected abstract IncomingMessage<M> handle(HttpServletRequest request) throws ServletException, IOException;
     
     public void clear() throws Exception {
         support.clear();

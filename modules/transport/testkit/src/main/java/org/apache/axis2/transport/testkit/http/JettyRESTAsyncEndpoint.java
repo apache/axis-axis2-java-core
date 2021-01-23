@@ -24,20 +24,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.axis2.transport.testkit.message.IncomingMessage;
 import org.apache.axis2.transport.testkit.message.RESTMessage;
 import org.apache.axis2.transport.testkit.message.RESTMessage.Parameter;
-import org.mortbay.http.HttpException;
-import org.mortbay.http.HttpRequest;
 
 public class JettyRESTAsyncEndpoint extends JettyAsyncEndpoint<RESTMessage> {
     @Override
-    protected IncomingMessage<RESTMessage> handle(HttpRequest request)
-            throws HttpException, IOException {
+    protected IncomingMessage<RESTMessage> handle(HttpServletRequest request)
+            throws ServletException, IOException {
         
         List<Parameter> parameters = new LinkedList<Parameter>();
-        for (Map.Entry<String,List<String>> entry :
-                ((Map<String,List<String>>)request.getParameters()).entrySet()) {
+        for (Map.Entry<String,String[]> entry :
+                request.getParameterMap().entrySet()) {
             for (String value : entry.getValue()) {
                 parameters.add(new Parameter(entry.getKey(), value));
             }

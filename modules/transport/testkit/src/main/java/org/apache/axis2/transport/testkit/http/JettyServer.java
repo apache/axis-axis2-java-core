@@ -23,30 +23,34 @@ import org.apache.axis2.transport.testkit.channel.Channel;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.SocketListener;
-import org.mortbay.jetty.Server;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
 
 public class JettyServer {
     public static final JettyServer INSTANCE = new JettyServer();
     
     private @Transient Server server;
-    private @Transient HttpContext context;
+    private @Transient HandlerList handlerList;
     
     private JettyServer() {}
     
     @Setup @SuppressWarnings("unused")
     private void setUp(HttpTestEnvironment env) throws Exception {
-        server = new Server();
-        SocketListener listener = new SocketListener();
-        listener.setPort(env.getServerPort());
-        server.addListener(listener);
-        context = new HttpContext(server, Channel.CONTEXT_PATH + "/*");
+        server = new Server(env.getServerPort());
+        ContextHandler context = new ContextHandler(server, Channel.CONTEXT_PATH);
+        handlerList = new HandlerList();
+        context.setHandler(handlerList);
         server.start();
     }
     
-    public HttpContext getContext() {
-        return context;
+    public void addHandler(Handler handler) {
+        handlerList.addHandler(handler);
+    }
+
+    public void removeHandler(Handler handler) {
+        handlerList.removeHandler(handler);
     }
 
     @TearDown @SuppressWarnings("unused")

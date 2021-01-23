@@ -26,14 +26,15 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Enumeration;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.message.IncomingMessage;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.Transient;
 import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.io.IOUtils;
-import org.mortbay.http.HttpException;
-import org.mortbay.http.HttpRequest;
 
 public class JettyByteArrayAsyncEndpoint extends JettyAsyncEndpoint<byte[]> {
     private @Transient TestKitLogManager logManager;
@@ -44,24 +45,24 @@ public class JettyByteArrayAsyncEndpoint extends JettyAsyncEndpoint<byte[]> {
     }
     
     @Override
-    protected IncomingMessage<byte[]> handle(HttpRequest request) throws HttpException, IOException {
+    protected IncomingMessage<byte[]> handle(HttpServletRequest request) throws ServletException, IOException {
         byte[] data = IOUtils.toByteArray(request.getInputStream());
         logRequest(request, data);
         ContentType contentType;
         try {
             contentType = new ContentType(request.getContentType());
         } catch (ParseException ex) {
-            throw new HttpException(500, "Unparsable Content-Type");
+            throw new ServletException("Unparsable Content-Type");
         }
         return new IncomingMessage<byte[]>(contentType, data);
     }
 
-    private void logRequest(HttpRequest request, byte[] data) throws IOException {
+    private void logRequest(HttpServletRequest request, byte[] data) throws IOException {
         OutputStream out = logManager.createLog("jetty");
         PrintWriter pw = new PrintWriter(new OutputStreamWriter(out), false);
-        for (Enumeration<?> e = request.getFieldNames(); e.hasMoreElements(); ) {
+        for (Enumeration<?> e = request.getHeaderNames(); e.hasMoreElements(); ) {
             String name = (String)e.nextElement();
-            for (Enumeration<?> e2 = request.getFieldValues(name); e2.hasMoreElements(); ) {
+            for (Enumeration<?> e2 = request.getHeaders(name); e2.hasMoreElements(); ) {
                 pw.print(name);
                 pw.print(": ");
                 pw.println((String)e2.nextElement());

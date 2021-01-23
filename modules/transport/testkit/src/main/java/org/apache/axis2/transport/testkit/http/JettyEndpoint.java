@@ -21,45 +21,46 @@ package org.apache.axis2.transport.testkit.http;
 
 import java.io.IOException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.mortbay.http.HttpException;
-import org.mortbay.http.HttpHandler;
-import org.mortbay.http.HttpRequest;
-import org.mortbay.http.HttpResponse;
-import org.mortbay.http.handler.AbstractHttpHandler;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 public abstract class JettyEndpoint {
     private @Transient JettyServer server;
-    private @Transient HttpHandler handler;
+    private @Transient Handler handler;
 
     @Setup @SuppressWarnings({ "unused", "serial" })
     private void setUp(JettyServer server, HttpChannel channel) throws Exception {
         this.server = server;
         final String path = "/" + channel.getServiceName();
-        handler = new AbstractHttpHandler() {
-            public void handle(String pathInContext, String pathParams,
-                    HttpRequest request, HttpResponse response) throws HttpException,
-                    IOException {
-                
-                if (pathInContext.equals(path)) {
-                    JettyEndpoint.this.handle(pathParams, request, response);
-                    request.setHandled(true);
+        handler = new AbstractHandler() {
+            @Override
+            public void handle(String target, Request baseRequest, HttpServletRequest request,
+                    HttpServletResponse response) throws IOException, ServletException {
+                if (target.equals(path)) {
+                    JettyEndpoint.this.handle(request, response);
+                    baseRequest.setHandled(true);
                 }
             }
         };
-        server.getContext().addHandler(handler);
+        server.addHandler(handler);
         handler.start();
     }
     
     @TearDown @SuppressWarnings("unused")
     private void tearDown() throws Exception {
         handler.stop();
-        server.getContext().removeHandler(handler);
+        server.removeHandler(handler);
     }
     
-    protected abstract void handle(String pathParams, HttpRequest request, HttpResponse response)
-            throws HttpException, IOException;
+    protected abstract void handle(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException;
     
 }
