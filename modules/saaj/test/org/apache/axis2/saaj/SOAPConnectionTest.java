@@ -21,17 +21,16 @@ package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
 
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.HttpException;
-import org.mortbay.http.HttpHandler;
-import org.mortbay.http.HttpRequest;
-import org.mortbay.http.HttpResponse;
-import org.mortbay.http.SocketListener;
-import org.mortbay.http.handler.AbstractHttpHandler;
-import org.mortbay.jetty.Server;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
@@ -111,33 +110,29 @@ public class SOAPConnectionTest extends Assert {
 
     @Validated @Test
     public void testGet() throws Exception {
-        Server server = new Server();
-        SocketListener listener = new SocketListener();
-        server.addListener(listener);
-        HttpContext context = new HttpContext(server, "/*");
-        HttpHandler handler = new AbstractHttpHandler() {
-            public void handle(String pathInContext, String pathParams,
-                    HttpRequest request, HttpResponse response) throws HttpException, IOException {
-
+        Server server = new Server(0);
+        Handler handler = new AbstractHandler() {
+            @Override
+            public void handle(String target, Request baseRequest, HttpServletRequest request,
+                    HttpServletResponse response) throws IOException, ServletException {
                 try {
                     SOAPMessage message = MessageFactory.newInstance().createMessage();
                     SOAPBody body = message.getSOAPBody();
                     body.addChildElement("root");
                     response.setContentType(SOAPConstants.SOAP_1_1_CONTENT_TYPE);
                     message.writeTo(response.getOutputStream());
-                    request.setHandled(true);
+                    baseRequest.setHandled(true);
                 } catch (SOAPException ex) {
                     throw new RuntimeException("Failed to generate SOAP message", ex);
                 }
             }
         };
-        context.addHandler(handler);
+        server.setHandler(handler);
         server.start();
         try {
             SOAPConnectionFactory sf = new SOAPConnectionFactoryImpl();
             SOAPConnection con = sf.createConnection();
-            URL urlEndpoint = new URL("http", "localhost", listener.getPort(), "/test");
-            SOAPMessage reply = con.get(urlEndpoint);
+            SOAPMessage reply = con.get(new URL(server.getURI().toURL(), "/test"));
             SOAPElement bodyElement = (SOAPElement)reply.getSOAPBody().getChildElements().next();
             assertEquals("root", bodyElement.getLocalName());
         } finally {
