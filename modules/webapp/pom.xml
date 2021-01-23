@@ -285,7 +285,6 @@
                 <!-- Compile the JSPs so that syntax errors are detected during the build. -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jspc-maven-plugin</artifactId>
-                <version>9.4.35.v20201120</version>
                 <executions>
                     <execution>
                         <goals>
