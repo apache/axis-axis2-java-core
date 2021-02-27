@@ -59,11 +59,6 @@
             <artifactId>jibx-run</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-testutils</artifactId>
             <version>${project.version}</version>
