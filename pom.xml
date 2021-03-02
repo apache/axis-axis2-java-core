@@ -1259,6 +1259,7 @@
                         <javaHome>${java.home}</javaHome>
                         <!-- Enable the JaCoCo agent. -->
                         <mavenOpts>${argLine}</mavenOpts>
+                        <skipInvocation>${skipTests}</skipInvocation>
                     </configuration>
                 </plugin>
                 <plugin>
