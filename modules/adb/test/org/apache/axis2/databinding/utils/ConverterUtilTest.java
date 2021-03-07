@@ -21,7 +21,7 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -581,6 +581,6 @@ public class ConverterUtilTest extends TestCase {
         String totalDigitsFromXsd = "3";
         String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
         long result = ConverterUtil.compare(value, decimalNotationString);
-        assertThat(result).isAtLeast(0L);
+        assertThat(result).isGreaterThanOrEqualTo(0L);
     }
 }

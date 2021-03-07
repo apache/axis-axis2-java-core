@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.schema.axis2_5771;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -36,7 +36,7 @@ public class IgnoreUnexpectedTest {
         Handler handler = mock(Handler.class);
         logger.addHandler(handler);
         try {
-            assertThat(CabinType.Factory.fromValue(value)).isSameInstanceAs(expected);
+            assertThat(CabinType.Factory.fromValue(value)).isSameAs(expected);
             if (expected == null) {
                 verify(handler).publish(any(LogRecord.class));
             } else {

@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxbri.axis2_5919;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import org.apache.axis2.testutils.Axis2Server;

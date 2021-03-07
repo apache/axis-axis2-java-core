@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.deployment.repository.util;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;

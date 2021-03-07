@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.databinding.axis2_5741;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.xml.ws.BindingProvider;
 

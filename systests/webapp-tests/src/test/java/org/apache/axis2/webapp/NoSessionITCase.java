@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.webapp;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;

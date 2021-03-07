@@ -18,7 +18,8 @@
  */
 package org.apache.axis2.databinding.axis2_5758;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Offset.offset;
 
 import org.apache.axis2.databinding.axis2_5758.client.StockQuoteServiceStub;
 import org.apache.axis2.databinding.axis2_5758.client.TradePriceRequest;
@@ -42,6 +43,6 @@ public class ServiceTest {
         request.setTickerSymbol(null);
         assertThat(stub.getLastTradePrice(request).getPrice()).isNaN();
         request.setTickerSymbol("GOOG");
-        assertThat(stub.getLastTradePrice(request).getPrice()).isWithin(0.001f).of(100.0f);
+        assertThat(stub.getLastTradePrice(request).getPrice()).isCloseTo(100.0f, offset(0.001f));
     }
 }

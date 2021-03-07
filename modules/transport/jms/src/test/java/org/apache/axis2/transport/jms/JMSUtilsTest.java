@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.transport.jms;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +35,6 @@ public class JMSUtilsTest {
         Session session = mock(Session.class);
         MessageConsumer consumer = mock(MessageConsumer.class);
         when(session.createConsumer(queue, null)).thenReturn(consumer);
-        assertThat(JMSUtils.createConsumer(session, queue, null)).isSameInstanceAs(consumer);
+        assertThat(JMSUtils.createConsumer(session, queue, null)).isSameAs(consumer);
     }
 }

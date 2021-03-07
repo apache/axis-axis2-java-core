@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.databinding.axis2_5750;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.axis2.databinding.axis2_5750.client.FixedValue;
 import org.apache.axis2.databinding.axis2_5750.client.FixedValueServiceStub;
