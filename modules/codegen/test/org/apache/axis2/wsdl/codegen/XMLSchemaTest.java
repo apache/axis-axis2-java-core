@@ -19,13 +19,15 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-import junit.framework.TestCase;
 import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.custommonkey.xmlunit.Diff;
 
 import javax.xml.transform.stream.StreamSource;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +38,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-public abstract class XMLSchemaTest extends TestCase {
+public abstract class XMLSchemaTest {
 
     public final String XMLSchemaNameSpace = "xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"";
 
@@ -58,13 +60,13 @@ public abstract class XMLSchemaTest extends TestCase {
 
     public void assertSimilarXML(String XML1, String XML2) throws Exception {
         Diff myDiff = new Diff(XML1, XML2);
-        assertTrue("XML similar " + myDiff.toString(), myDiff.similar());
+        assertTrue(myDiff.similar(), () -> "XML similar " + myDiff.toString());
 
     }
 
     public void assertIdenticalXML(String XML1, String XML2) throws Exception {
         Diff myDiff = new Diff(XML1, XML2);
-        assertTrue("XML similar " + myDiff.toString(), myDiff.identical());
+        assertTrue(myDiff.identical(), () -> "XML similar " + myDiff.toString());
 
     }
 

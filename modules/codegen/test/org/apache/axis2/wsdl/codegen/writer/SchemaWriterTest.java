@@ -23,24 +23,19 @@ import java.io.File;
 
 import org.apache.axis2.wsdl.codegen.XMLSchemaTest;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-@RunWith(JUnit4.class)
 public class SchemaWriterTest extends XMLSchemaTest{
-    @Rule
-    public final TemporaryFolder tmpFolder = new TemporaryFolder();
+    @TempDir
+    File tmpFolder;
 
     @Test
     public void testWriteSchema() throws Exception{
-        File baseFolder = tmpFolder.getRoot();
-        SchemaWriter writer = new SchemaWriter(baseFolder);
+        SchemaWriter writer = new SchemaWriter(tmpFolder);
         XmlSchema schema=loadSingleSchemaFile(1);
         writer.writeSchema(schema, "generated.xsd");
-        String s1=readXMLfromSchemaFile(new File(baseFolder, "generated.xsd").getPath());
+        String s1=readXMLfromSchemaFile(new File(tmpFolder, "generated.xsd").getPath());
         String s2=readXMLfromSchemaFile(customDirectoryLocation+"sampleSchema1.xsd");
         assertSimilarXML(s1, s2);
         

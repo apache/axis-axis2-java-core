@@ -19,7 +19,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import junit.framework.TestCase;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -32,15 +31,21 @@ import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-public class SchemaUnwrapperExtensionTest extends TestCase {
+public class SchemaUnwrapperExtensionTest {
 
     private AxisMessage axisMessage;
     private AxisService axisService;
@@ -51,7 +56,8 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
     private static final String PARAMETER_FOUR = "ParameterFour";
     private static final String ADD_OPERATION = "Add";
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         AxisOperation axisOperation = new InOutAxisOperation(new QName(ADD_OPERATION));
         axisMessage = new AxisMessage();
         axisMessage.setName("AddRequest");
@@ -65,6 +71,7 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
     }
 
     /** This refers to the schema-1.xsd which has an AddRequest element which is of complex type */
+    @Test
     public void testScenarioOne() {
         String schemaLocation = "test-resources/schemas/schema-1.xsd";
 
@@ -92,6 +99,7 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
      * This refers to the schema-2.xsd which has an AddRequest element which is of AddRequestType.
      * AddRequestType is a complex type
      */
+    @Test
     public void testScenarioTwo() {
         String schemaLocation = "test-resources/schemas/schema-2.xsd";
 
@@ -117,6 +125,7 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
      * 1. AddRequest is of AddRequestType 2. AddRequestType extends from AbstractParameterType 3.
      * AbstractParameterType has primitive types only
      */
+    @Test
     public void testScenarioThree() {
         String schemaLocation = "test-resources/schemas/schema-3.xsd";
 
@@ -143,6 +152,7 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
      * it AddRequestType has more stuff defined in a sequence, in addition to the extension. 3.
      * AbstractParameterType has primitive types only
      */
+    @Test
     public void testScenarioFour() {
         String schemaLocation = "test-resources/schemas/schema-4.xsd";
 

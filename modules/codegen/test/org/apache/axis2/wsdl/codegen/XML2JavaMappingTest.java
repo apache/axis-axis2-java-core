@@ -15,9 +15,13 @@
  */
 package org.apache.axis2.wsdl.codegen;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XML2JavaMappingTest extends TestCase {
+import org.junit.jupiter.api.Test;
+
+public class XML2JavaMappingTest {
+    @Test
     public void testVersion() throws Exception {
         Class iface = Class.forName("sample.axisversion.xsd.Version");
         assertNotNull(iface.getMethod("getVersion"));
@@ -29,6 +33,6 @@ public class XML2JavaMappingTest extends TestCase {
         } catch (NoSuchMethodException e) {
             caughtException = true;
         }
-        assertTrue("Didn't catch expected Exception!", caughtException);
+        assertTrue(caughtException, "Didn't catch expected Exception!");
     }
 }

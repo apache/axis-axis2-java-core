@@ -20,34 +20,34 @@
 
 package org.apache.axis2.wsdl.codegen;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.wsdl.codegen.XMLSchemaTest;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CodeGenConfigurationTest extends XMLSchemaTest{
     
     protected AxisService service;
     private ArrayList<XmlSchema> schemas;
     
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         service = new AxisService();
         schemas = new ArrayList<XmlSchema>();
         loadSampleSchemaFile(schemas);
         service.addSchema(schemas);
-        super.setUp();
     }
     
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
         service=null;
         schemas=null;
-        
-        super.tearDown();
     }
     
     @Test

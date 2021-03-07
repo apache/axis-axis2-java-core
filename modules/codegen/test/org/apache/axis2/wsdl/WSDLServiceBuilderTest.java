@@ -19,25 +19,28 @@
 
 package org.apache.axis2.wsdl;
 
-import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.ListenerManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-public class WSDLServiceBuilderTest extends TestCase {
+public class WSDLServiceBuilderTest {
 
     private ConfigurationContext configContext;
     ListenerManager lm;
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
         lm = new ListenerManager();
@@ -45,10 +48,12 @@ public class WSDLServiceBuilderTest extends TestCase {
         lm.start();
     }
 
-    protected void tearDown() throws AxisFault {
+    @AfterEach
+    void tearDown() throws AxisFault {
         configContext.terminate();
     }
 
+    @Test
     public void testWSDLClient() throws Exception {
         File testResourceFile = new File("target/test-classes");
         File outLocation = new File("target/test-resources");

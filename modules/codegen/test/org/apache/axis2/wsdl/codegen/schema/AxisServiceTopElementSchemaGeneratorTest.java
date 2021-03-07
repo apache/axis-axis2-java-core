@@ -19,6 +19,10 @@
 
 package org.apache.axis2.wsdl.codegen.schema;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +44,9 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.codegen.XMLSchemaTest;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AxisServiceTopElementSchemaGeneratorTest extends XMLSchemaTest {
     
@@ -51,8 +57,8 @@ public class AxisServiceTopElementSchemaGeneratorTest extends XMLSchemaTest {
     private Map schemaMap;
     private Set topElements;
 
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         service = new AxisService();
         schemas = new ArrayList<XmlSchema>();
         loadSampleSchemaFile(schemas);
@@ -85,20 +91,17 @@ public class AxisServiceTopElementSchemaGeneratorTest extends XMLSchemaTest {
 
         schemaMap = generator.getSchemaMap(topElements);
         generator.getXmlSchemaList(schemaMap);
-
-        super.setUp();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         service = null;
         generator = null;
         schemaMap.clear();
         topElements = null;
-        super.tearDown();
     }
 
-
+    @Test
     public void testSchemaGeneration() throws Exception {
 
         AxisServiceTopElementSchemaGenerator schemaGenerator = new AxisServiceTopElementSchemaGenerator(null);

@@ -19,32 +19,32 @@
 
 package org.apache.axis2.wsdl.codegen.jaxws;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class JAXWSCodeGenerationEngineTest.
  */
-public class JAXWSCodeGenerationEngineTest extends TestCase {
+public class JAXWSCodeGenerationEngineTest {
 
     final String filePath = "./target/sample";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    void setUp() throws Exception {
         System.setProperty("javax.xml.accessExternalSchema", "all");
         File dir = new File(filePath);
-        assertEquals("Generated directory dtill exists ", false, dir.exists());
+        assertEquals(false, dir.exists(), "Generated directory dtill exists ");
     }
 
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-
-        super.tearDown();
         File file = new File(filePath);
         if (file.exists() && file.isDirectory()) {
             for (File child : file.listFiles()) {
@@ -54,6 +54,7 @@ public class JAXWSCodeGenerationEngineTest extends TestCase {
         file.delete();
     }
 
+    @Test
     public void testGenerateWithMixOptions() throws CodeGenerationException {
         String[] args = { "-jws", "-uri",
                 "test-resources/wsdls//SimpleService.wsdl", "-o", "./target" };
@@ -63,13 +64,12 @@ public class JAXWSCodeGenerationEngineTest extends TestCase {
                 commandLineOptionParser, args);
         engine.generate();
         File dir = new File(filePath);
-        assertEquals("Generated directory does not exists ", true, dir.exists());
-        assertEquals("Generated directory does not exists ", true,
-                dir.isDirectory());
-        assertEquals("Incorrect number of generated files", 6,
-                dir.listFiles().length);
+        assertEquals(true, dir.exists(), "Generated directory does not exists ");
+        assertEquals(true, dir.isDirectory(), "Generated directory does not exists ");
+        assertEquals(6, dir.listFiles().length, "Incorrect number of generated files");
     }
 
+    @Test
     public void testGenerateWithAxisOptions() throws CodeGenerationException {
         String[] args = { "-jws", "-uri",
                 "test-resources/wsdls//SimpleService.wsdl", "-o", "./target" };
@@ -79,13 +79,12 @@ public class JAXWSCodeGenerationEngineTest extends TestCase {
                 commandLineOptionParser, args);
         engine.generate();
         File dir = new File(filePath);
-        assertEquals("Generated directory does not exists ", true, dir.exists());
-        assertEquals("Generated directory does not exists ", true,
-                dir.isDirectory());
-        assertEquals("Incorrect number of generated files", 6,
-                dir.listFiles().length);
+        assertEquals(true, dir.exists(), "Generated directory does not exists ");
+        assertEquals(true, dir.isDirectory(), "Generated directory does not exists ");
+        assertEquals(6, dir.listFiles().length, "Incorrect number of generated files");
     }
 
+    @Test
     public void testGenerateWithJAXWSOptions() throws CodeGenerationException {
         String[] originalArgs = { "-jws", "-Xdebug", "-verbose",
                 "test-resources/wsdls/SimpleService.wsdl", "-d", "./target" };
@@ -96,11 +95,9 @@ public class JAXWSCodeGenerationEngineTest extends TestCase {
                 commandLineOptionParser, originalArgs);
         engine.generate();
         File dir = new File(filePath);
-        assertEquals("Generated directory does not exists ", true, dir.exists());
-        assertEquals("Generated directory does not exists ", true,
-                dir.isDirectory());
-        assertEquals("Incorrect number of generated files", 6,
-                dir.listFiles().length);
+        assertEquals(true, dir.exists(), "Generated directory does not exists ");
+        assertEquals(true, dir.isDirectory(), "Generated directory does not exists ");
+        assertEquals(6, dir.listFiles().length, "Incorrect number of generated files");
     }
 
 }
