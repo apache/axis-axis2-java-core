@@ -19,18 +19,21 @@
 
 package org.temp;
 
-import junit.framework.TestCase;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.custommonkey.xmlunit.Diff;
+import org.junit.jupiter.api.Assertions;
 
 import javax.xml.transform.stream.StreamSource;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-public abstract class XMLSchemaTest extends TestCase {
+public abstract class XMLSchemaTest {
 
     public final String XMLSchemaNameSpace = "xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"";
 
@@ -52,13 +55,13 @@ public abstract class XMLSchemaTest extends TestCase {
 
     public void assertSimilarXML(String XML1, String XML2) throws Exception {
         Diff myDiff = new Diff(XML1, XML2);
-        assertTrue("XML similar " + myDiff.toString(), myDiff.similar());
+        assertTrue(myDiff.similar(), () -> "XML similar " + myDiff.toString());
 
     }
 
     public void assertIdenticalXML(String XML1, String XML2) throws Exception {
         Diff myDiff = new Diff(XML1, XML2);
-        assertTrue("XML similar " + myDiff.toString(), myDiff.identical());
+        assertTrue(myDiff.identical(), () -> "XML similar " + myDiff.toString());
 
     }
 

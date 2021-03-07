@@ -31,6 +31,9 @@ import javax.management.RuntimeErrorException;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxbri.JaxbSchemaGenerator;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 public class JaxbSchemaGeneratorTest extends XMLSchemaTest {
@@ -46,18 +49,16 @@ public class JaxbSchemaGeneratorTest extends XMLSchemaTest {
         this.generator = generator;
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    void setUp() throws Exception {
         axisService = new AxisService();
 
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         axisService = null;
         generator = null;
-        super.tearDown();
     }
 
     public static class TestWebService {
@@ -252,31 +253,38 @@ public class JaxbSchemaGeneratorTest extends XMLSchemaTest {
        return readXMLfromSchemaFile(fileName);
     }
 
+    @Test
     public void testNoParameter() throws Exception {
         testClass(NoParameterOrReturnType.class);
     }
 
+    @Test
     public void testNoParameterWithDefaultShchema() throws Exception {
         testClass(NoParameterOrReturnType.class, CustomSchemaLocation);
 
     }
 
+    @Test
     public void testParametersWithDefaultSchema() throws Exception {
         testClass(PrimitivesAsParameters.class, CustomSchemaLocation);
     }
 
+    @Test
     public void testWithMappingSchema() throws Exception {
         testClassWithMapping(MappingCheck.class, MappingFileLocation);
     }
 
+    @Test
     public void testPrimitivesAsParameters() throws Exception {
         testClass(PrimitivesAsParameters.class);
     }
 
+    @Test
     public void testCollectionsAsParameters() throws Exception {
         testClass(ColectionAsParameter.class);
     }
 
+    @Test
     public void testPrimitiveArrraysAsParaameters() throws Exception {
         testClass(PrimitiveArraysAsParametrs.class);
     }
@@ -285,54 +293,67 @@ public class JaxbSchemaGeneratorTest extends XMLSchemaTest {
         testClass(StringAsReturnType.class);
     }
 
+    @Test
     public void testIntAsReturnType() throws Exception {
         testClass(intAsReturnType.class);
     }
 
+    @Test
     public void testDoubleAsReturnType() throws Exception {
         testClass(doubleAsReturnType.class);
     }
 
+    @Test
     public void testCharAsReturnType() throws Exception {
         testClass(charAsReturnType.class);
     }
 
+    @Test
     public void testRunTimeException() throws Exception {
         testClass(RunTimeExceptionCheck.class);
     }
 
+    @Test
     public void testIntArrayAsReturnType() throws Exception {
         testClass(IntArrayAsReturnType.class);
     }
 
+    @Test
     public void testDoubleArrayAsReturnType() throws Exception {
         testClass(DoubleArrayAsReturnType.class);
     }
 
+    @Test
     public void testCharArrayAsReturnType() throws Exception {
         testClass(CharArrayAsReturnType.class);
     }
 
+    @Test
     public void testEnumAsParameter() throws Exception {
         testEnumClass(EnumAsParameter.class);
     }
 
+    @Test
     public void testEnumAsReturnTYpe() throws Exception {
         testEnumClass(EnumAsReturnType.class);
     }
 
+    @Test
     public void testDOMAsParameter() throws Exception {
         testDOMClass(DOMasParameter.class);
     }
 
+    @Test
     public void testDOMAsReturnType() throws Exception {
         testDOMClass(DomAsReturnType.class);
     }
 
+    @Test
     public void testListAsParameter() throws Exception {
         testClass(ListAsParameter.class);
     }
 
+    @Test
     public void testListAsReturnType() throws Exception {
         testClass(ListAsReturnType.class);
     }

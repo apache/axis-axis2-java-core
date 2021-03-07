@@ -20,9 +20,8 @@
 package org.apache.axis2.jaxbri;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,18 +29,16 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.axis2.jaxbri.CodeGenerationUtility;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class CodeGenerationUtilityTest {
-    @Rule
-    public final TemporaryFolder outputLocation = new TemporaryFolder();
+    @TempDir
+    Path outputLocation;
 
     private static List<XmlSchema> loadSampleSchemaFile() {
         return Collections.singletonList(new XmlSchemaCollection().read(new StreamSource(
@@ -52,11 +49,11 @@ public class CodeGenerationUtilityTest {
     public void testProcessSchemas() {
         CodeGenConfiguration codeGenConfiguration = new CodeGenConfiguration();
         codeGenConfiguration.setBaseURI("localhost/test");
-        codeGenConfiguration.setOutputLocation(outputLocation.getRoot());
+        codeGenConfiguration.setOutputLocation(outputLocation.toFile());
         TypeMapper mapper = CodeGenerationUtility.processSchemas(loadSampleSchemaFile(), null, codeGenConfiguration);
         Map map = mapper.getAllMappedNames();
         String s = map.get(new QName("http://www.w3schools.com", "note")).toString();
-        assertEquals("com.w3schools.Note", s);
+        assertThat(s).isEqualTo("com.w3schools.Note");
     }
 
     @Test
@@ -64,8 +61,8 @@ public class CodeGenerationUtilityTest {
         CodeGenConfiguration codeGenConfiguration = new CodeGenConfiguration();
         codeGenConfiguration.setBaseURI("dummy");
         codeGenConfiguration.setUri2PackageNameMap(Collections.singletonMap("http://www.w3schools.com", "test"));
-        codeGenConfiguration.setOutputLocation(outputLocation.getRoot());
+        codeGenConfiguration.setOutputLocation(outputLocation.toFile());
         CodeGenerationUtility.processSchemas(loadSampleSchemaFile(), null, codeGenConfiguration);
-        assertThat(new File(outputLocation.getRoot(), "src/test/Note.java").exists()).isTrue();
+        assertThat(outputLocation.resolve("src/test/Note.java")).exists();
     }
 }

@@ -21,15 +21,18 @@ package org.temp.doclitbare;
 
 import org.apache.axis2.jaxbri.JaxbSchemaGenerator;
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-public class DocLitBareWSDLTest extends XMLTestCase {
+public class DocLitBareWSDLTest {
     private String wsdlLocation = System.getProperty("basedir", ".") + "/" + "test-resources/wsdl/DocLitBareService.wsdl";
 
+    @Test
     public void testVersion() {
         XMLUnit.setIgnoreWhitespace(true);
         File testResourceFile = new File(wsdlLocation);
