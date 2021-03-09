@@ -18,10 +18,12 @@
  */
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
+import org.apache.catalina.tribes.MembershipProvider;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.util.UUIDGenerator;
@@ -37,6 +39,9 @@ public class WkaMembershipService implements MembershipService {
 
     private final MembershipManager membershipManager;
 
+    private MembershipProvider membershipProvider;
+
+    private Channel channel;
 
     /**
      * The implementation specific properties
@@ -64,6 +69,16 @@ public class WkaMembershipService implements MembershipService {
 
     public Properties getProperties() {
         return properties;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 
     public void start() throws Exception {
@@ -163,5 +178,14 @@ public class WkaMembershipService implements MembershipService {
 
     public void broadcast(ChannelMessage channelMessage) throws ChannelException {
         //Nothing to implement at the momenet
+    }
+
+    @Override
+    public MembershipProvider getMembershipProvider() {
+        return membershipProvider;
+    }
+
+    public void setMembershipProvider(MembershipProvider memberProvider) {
+        this.membershipProvider = memberProvider;
     }
 }

@@ -30,6 +30,9 @@ import org.apache.catalina.tribes.group.RpcMessage;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.util.Logs;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.Serializable;
 
 /**
@@ -38,6 +41,8 @@ import java.io.Serializable;
  * are set before message deserialization
  */
 public class Axis2GroupChannel extends GroupChannel{
+
+    private static final Log log = LogFactory.getLog(Axis2GroupChannel.class);
 
     @Override
     public void messageReceived(ChannelMessage msg) {

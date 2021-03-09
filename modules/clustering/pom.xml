@@ -31,7 +31,7 @@
     <name>Apache Axis2 - Clustering</name>
     <description>Axis2 Clustering module</description>
     <properties>
-        <tomcat.version>6.0.53</tomcat.version>
+        <tomcat.version>10.0.2</tomcat.version>
     </properties>
     <dependencies>
         <dependency>
@@ -64,12 +64,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
-            <artifactId>tribes</artifactId>
+            <artifactId>tomcat-tribes</artifactId>
             <version>${tomcat.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
-            <artifactId>juli</artifactId>
+            <artifactId>tomcat-juli</artifactId>
             <version>${tomcat.version}</version>
         </dependency>
     </dependencies>
