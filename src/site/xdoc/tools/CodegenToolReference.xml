@@ -335,7 +335,7 @@ using the target namespace of the WSDL) will be used. Maps to the
 <td>databindingName</td>
 <td>Data binding framework name. Maps to the -d option of the
 command line tool. Possible values include "adb", "xmlbeans",
-"jibx".</td>
+"jibx","jaxbri".</td>
 </tr>
 <tr>
 <td>serviceName</td>
