@@ -19,26 +19,38 @@
 
 package org.apache.axis2.json.gson;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.HttpEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
 public class UtilTest {
 
-    public static String post(String jsonString, String strURL, String contentType, String charSet)
+    public static String post(String jsonString, String strURL)
             throws IOException {
-        PostMethod post = new PostMethod(strURL);
-        RequestEntity entity = new StringRequestEntity(jsonString, contentType, charSet);
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+        HttpEntity stringEntity = new StringEntity(jsonString,ContentType.APPLICATION_JSON);
+	HttpPost httpPost = new HttpPost(strURL);
+        httpPost.setEntity(stringEntity);
+	CloseableHttpClient httpclient = HttpClients.createDefault();
+
         try {
-            int result = httpclient.executeMethod(post);
-            return post.getResponseBodyAsString();
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+	    int status = response.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = response.getEntity();
+                return entity != null ? EntityUtils.toString(entity,"UTF-8") : null;
+            } else {
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            }
         }finally {
-            post.releaseConnection();
+            httpclient.close();
         }
     }
 }

@@ -19,45 +19,57 @@
 
 package sample.json.client;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.HttpEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public class JsonClient{
 
     private String url = "http://localhost:8080/axis2/services/JsonService/echoUser";
-    private String contentType = "application/json";
-    private String charSet = "UTF-8";
 
     public static void main(String[] args)throws IOException {
-	String echoUser = "{\"echoUser\":[{\"arg0\":{\"name\":\"My_Name\",\"surname\":\"MY_Surname\",\"middleName\":" + "\"My_MiddleName\",\"age\":123,\"address\":{\"country\":\"My_Country\",\"city\":\"My_City\",\"street\":" + "\"My_Street\",\"building\":\"My_Building\",\"flat\":\"My_Flat\",\"zipCode\":\"My_ZipCode\"}}}]}";
+
+        String echoUser = "{\"echoUser\":[{\"arg0\":{\"name\":\"My_Name\",\"surname\":\"MY_Surname\",\"middleName\":" +
+            "\"My_MiddleName\",\"age\":123,\"address\":{\"country\":\"My_Country\",\"city\":\"My_City\",\"street\":" +
+            "\"My_Street\",\"building\":\"My_Building\",\"flat\":\"My_Flat\",\"zipCode\":\"My_ZipCode\"}}}]}";
 
         JsonClient jsonClient = new JsonClient();
-        jsonClient.post(echoUser);
+        String echo = jsonClient.post(echoUser);
+        System.out.println (echo);
+
     }
 
-    public boolean post(String message) throws UnsupportedEncodingException {
-        PostMethod post = new PostMethod(url);
-        RequestEntity entity = new StringRequestEntity(message , contentType, charSet);
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+    public String post(String message) throws IOException {
+
+        HttpEntity stringEntity = new StringEntity(message,ContentType.APPLICATION_JSON);
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(stringEntity);
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+
         try {
-            int result = httpclient.executeMethod(post);
-            System.out.println("Response status code: " + result);
-            System.out.println("Response body: ");
-            System.out.println(post.getResponseBodyAsString());
-        } catch (HttpException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            post.releaseConnection();
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            HttpEntity entity = null;
+            int status = response.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
+                entity = response.getEntity();
+            } else {
+                throw new ClientProtocolException("Unexpected HTTP response status: " + status);
+            }
+            if (entity == null || EntityUtils.toString(entity,"UTF-8") == null) {
+                throw new ClientProtocolException("Error connecting to url: "+url+" , unexpected response: " + EntityUtils.toString(entity,"UTF-8"));
+            }
+            return EntityUtils.toString(entity,"UTF-8");
+        }finally {
+            httpclient.close();
         }
-       return false;
     }
+
 }

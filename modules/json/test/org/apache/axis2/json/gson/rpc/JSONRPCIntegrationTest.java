@@ -29,15 +29,12 @@ public class JSONRPCIntegrationTest {
     @ClassRule
     public static Axis2Server server = new Axis2Server("target/repo/gson");
     
-    String contentType = "application/json";
-    String charSet = "UTF-8";
-
     @Test
     public void testJsonRpcMessageReceiver() throws Exception {
         String jsonRequest = "{\"echoPerson\":[{\"arg0\":{\"name\":\"Simon\",\"age\":\"35\",\"gender\":\"male\"}}]}";
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "echoPerson";
         String expectedResponse = "{\"response\":{\"name\":\"Simon\",\"age\":\"35\",\"gender\":\"male\"}}";
-        String response = UtilTest.post(jsonRequest, echoPersonUrl, contentType, charSet);
+        String response = UtilTest.post(jsonRequest, echoPersonUrl);
         Assert.assertNotNull(response);
         Assert.assertEquals(expectedResponse , response);
     }
@@ -46,7 +43,7 @@ public class JSONRPCIntegrationTest {
     public void testJsonInOnlyRPCMessageReceiver() throws Exception {
         String jsonRequest = "{\"ping\":[{\"arg0\":{\"name\":\"Simon\",\"age\":\"35\",\"gender\":\"male\"}}]}";
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "ping";
-        String response = UtilTest.post(jsonRequest, echoPersonUrl, contentType, charSet);
+        String response = UtilTest.post(jsonRequest, echoPersonUrl);
         Assert.assertEquals("", response);
     }
 }

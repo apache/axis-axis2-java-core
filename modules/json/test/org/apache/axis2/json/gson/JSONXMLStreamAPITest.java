@@ -32,8 +32,6 @@ public class JSONXMLStreamAPITest {
     public void xmlStreamAPITest()throws Exception{
         String getLibURL = server.getEndpoint("LibraryService") + "getLibrary";
         String echoLibURL = server.getEndpoint("LibraryService") + "echoLibrary";
-        String contentType = "application/json";
-        String charSet = "UTF-8";
 
         String echoLibrary = "{\"echoLibrary\":{\"args0\":{\"admin\":{\"address\":{\"city\":\"My City\",\"country\":" +
                 "\"My Country\",\"street\":\"My Street\",\"zipCode\":\"00000\"},\"age\":24,\"name\":\"micheal\"," +
@@ -67,11 +65,11 @@ public class JSONXMLStreamAPITest {
                 "{\"author\":\"Jhon_4\",\"numOfPages\":175,\"publisher\":\"Foxier\",\"reviewers\":[\"rev1\",\"rev2\"," +
                 "\"rev3\"]}],\"staff\":50}}}";
 
-        String actualResponse = UtilTest.post(echoLibrary, echoLibURL, contentType, charSet);
+        String actualResponse = UtilTest.post(echoLibrary, echoLibURL);
         Assert.assertNotNull(actualResponse);
         Assert.assertEquals(echoLibraryResponse , actualResponse);
 
-        String actualRespose_2 = UtilTest.post(getLibrary, getLibURL, contentType, charSet);
+        String actualRespose_2 = UtilTest.post(getLibrary, getLibURL);
         Assert.assertNotNull(actualRespose_2);
         Assert.assertEquals(getLibraryResponse, actualRespose_2);
 
