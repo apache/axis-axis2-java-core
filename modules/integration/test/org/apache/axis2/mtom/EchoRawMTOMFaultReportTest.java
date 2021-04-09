@@ -31,18 +31,30 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.NoHttpResponseException;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 import javax.xml.namespace.QName;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 
 public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 
@@ -82,50 +94,52 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
     }
 
     public void testEchoFaultSync() throws Exception {
-        HttpClient client = new HttpClient();
+	HttpPost httpPost = new HttpPost("http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/EchoService/mtomSample");
 
-        PostMethod httppost = new PostMethod("http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT)
-                + "/axis2/services/EchoService/mtomSample");
-
-        HttpMethodRetryHandler myretryhandler = new HttpMethodRetryHandler() {
-            public boolean retryMethod(final HttpMethod method,
-                                       final IOException exception,
-                                       int executionCount) {
-                if (executionCount >= 10) {
-                    return false;
-                }
-                if (exception instanceof NoHttpResponseException) {
-                    return true;
-                }
-                if (!method.isRequestSent()) {
-                    return true;
-                }
-                // otherwise do not retry
-                return false;
-            }
-        };
-        httppost.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                                          myretryhandler);
-        httppost.setRequestEntity(new InputStreamRequestEntity(
+        httpPost.setEntity(new InputStreamEntity(
                 new FileInputStream(TestingUtils.prefixBaseDirectory("test-resources/mtom/wmtom.bin"))));
 
-        httppost.setRequestHeader("Content-Type",
-                                  "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"");
-        try {
-            client.executeMethod(httppost);
+	Header header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"");
 
-            if (httppost.getStatusCode() ==
-                    HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+	List<Header> headers = new ArrayList();
+        headers.add(header);
+	
+	CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).setRetryHandler(new HttpRequestRetryHandler() {
+                @Override
+                public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+                    if (executionCount >= 10) {
+                        return false;
+                    }
+                    if (exception instanceof NoHttpResponseException) {
+                        return true;
+                    }
+                    if (exception instanceof InterruptedIOException) {
+                        return true;
+                    }
+                    HttpClientContext clientContext = HttpClientContext.adapt(context);
+                    if (!clientContext.isRequestSent()) {
+                        return true;
+                    }
+                    // otherwise do not retry
+                    return false;
+                }
+            }).build();
+
+
+        try {
+            CloseableHttpResponse hcResponse = httpclient.execute(httpPost);
+	    int status = hcResponse.getStatusLine().getStatusCode();
+            if (status == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 
                 // TODO: There is a missing wsa:Action header in the SOAP message.  Fix or look for correct fault text!
 
 //                assertEquals("HTTP/1.1 500 Internal server error",
 //                             httppost.getStatusLine().toString());
             }
-        } catch (NoHttpResponseException e) {
-        } finally {
-            httppost.releaseConnection();
+	    System.out.println("\ntestEchoFaultSync() result status: " + status + " , statusLine: " + hcResponse.getStatusLine());
+
+        }finally {
+            httpclient.close();
         }
-    }
+    }	
 }

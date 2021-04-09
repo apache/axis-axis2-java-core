@@ -34,11 +34,19 @@ import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import javax.xml.namespace.QName;
+import java.io.InterruptedIOException;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -132,43 +140,59 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
         axisConfig.addService(axisService);
         assertEquals("StockService", axisService.getName());
 
-        HttpClient httpClient = new HttpClient();
-
         String url1 = "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
                       + "/axis2/services/StockService/add/IBM/value/34.7";
 
-        GetMethod method1 = new GetMethod(url1);
+	HttpGet httpGet = new HttpGet(url1);
+
+	CloseableHttpClient httpclient = HttpClients.createDefault();
 
         try {
-            int statusCode = httpClient.executeMethod(method1);
-            if (statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: " + method1.getStatusLine());
+            CloseableHttpResponse hcResponse = httpclient.execute(httpGet);
+	    int status = hcResponse.getStatusLine().getStatusCode();
+            if (status != HttpStatus.SC_OK) {
+                throw new ClientProtocolException("url request failed: " + hcResponse.getStatusLine());
             }
-            OMElement response = AXIOMUtil.stringToOM(new String(method1.getResponseBody()));
-            OMElement returnElem = response.getFirstChildWithName(new QName("return"));
+	    HttpEntity responseEntity = hcResponse.getEntity();
+            if(responseEntity==null) {
+                throw new ClientProtocolException("url request returned null entity: " + hcResponse.getStatusLine());
+            }
+            String responseStr = EntityUtils.toString(responseEntity);
+            OMElement axisResponse = AXIOMUtil.stringToOM(responseStr);
+            OMElement returnElem = axisResponse.getFirstChildWithName(new QName("return"));
             assertEquals("IBM stock added with value : 34.7", returnElem.getText());
 
-        } finally {
-            method1.releaseConnection();
+        }finally {
+            httpclient.close();
         }
 
+        String url2 = "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/StockService/get/IBM";
 
-        String url2 = "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
-                             + "/axis2/services/StockService/get/IBM";
-        GetMethod method2 = new GetMethod(url2);
+	httpGet = null;
+	httpclient = null;
+
+	httpGet = new HttpGet(url2);
+
+	httpclient = HttpClients.createDefault();
 
         try {
-            int statusCode = httpClient.executeMethod(method2);
-
-            if (statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: " + method2.getStatusLine());
+            CloseableHttpResponse hcResponse = httpclient.execute(httpGet);
+	    int status = hcResponse.getStatusLine().getStatusCode();
+            if (status != HttpStatus.SC_OK) {
+                throw new ClientProtocolException("url request failed: " + hcResponse.getStatusLine());
             }
-            OMElement response = AXIOMUtil.stringToOM(new String(method2.getResponseBody()));
-            OMElement returnElem = response.getFirstChildWithName(new QName("return"));
+	    HttpEntity responseEntity = hcResponse.getEntity();
+            if(responseEntity==null) {
+                throw new ClientProtocolException("url request returned null entity: " + hcResponse.getStatusLine());
+            }
+
+            String responseStr = EntityUtils.toString(responseEntity);
+            OMElement axisResponse = AXIOMUtil.stringToOM(responseStr);
+            OMElement returnElem = axisResponse.getFirstChildWithName(new QName("return"));
             assertEquals("34.7", returnElem.getText());
 
-        } finally {
-            method2.releaseConnection();
+        }finally {
+            httpclient.close();
         }
 
     }
