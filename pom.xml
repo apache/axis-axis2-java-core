@@ -92,7 +92,6 @@
         <module>modules/osgi-tests</module>
         <module>modules/transport/local</module>
         <module>modules/transport/http</module>
-        <module>modules/transport/http-hc3</module>
         <module>modules/transport/base</module>
         <module>modules/transport/jms</module>
         <module>modules/transport/mail</module>
@@ -501,7 +500,6 @@
         <aspectj.version>1.9.6</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
         <commons.fileupload.version>1.4</commons.fileupload.version>
-        <commons.httpclient.version>3.1</commons.httpclient.version>
         <commons.logging.version>1.2</commons.logging.version>
         <fi.version>2.0.0</fi.version>
         <geronimo.spec.annotation.version>1.1.1</geronimo.spec.annotation.version>
@@ -825,11 +823,6 @@
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jaxws_2.2_spec</artifactId>
                 <version>${geronimo.spec.jaxws.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>${commons.httpclient.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
