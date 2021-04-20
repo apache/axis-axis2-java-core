@@ -108,7 +108,7 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "commons-http-enabledRepository"), null);
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "httpcomponents-enabledRepository"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -136,7 +136,7 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "commons-http-enabledRepository"), null);
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "httpcomponents-enabledRepository"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 

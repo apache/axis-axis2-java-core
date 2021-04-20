@@ -114,7 +114,7 @@ public class EchoRawMTOMStreamingTest extends UtilServerBasedTestCase implements
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        Constants.TESTING_PATH + "commons-http-enabledRepository", null);
+                        Constants.TESTING_PATH + "httpcomponents-enabledRepository", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);

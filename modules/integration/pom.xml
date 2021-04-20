@@ -324,14 +324,14 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>commons-http-enabled</id>
+                        <id>httpcomponents-enabled</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>create-test-repository</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/test-resources/commons-http-enabledRepository</outputDirectory>
-                            <axis2xml>test/org/apache/axis2/engine/commons-http-enabled-axis2.xml</axis2xml>
+                            <outputDirectory>target/test-resources/httpcomponents-enabledRepository</outputDirectory>
+                            <axis2xml>test/org/apache/axis2/engine/httpcomponents-enabled-axis2.xml</axis2xml>
                             <includeModules>false</includeModules>
                         </configuration>
                     </execution>

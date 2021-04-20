@@ -104,7 +104,7 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "commons-http-enabledRepository"), null);
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "httpcomponents-enabledRepository"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
