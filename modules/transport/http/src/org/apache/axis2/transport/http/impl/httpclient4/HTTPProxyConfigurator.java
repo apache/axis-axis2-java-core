@@ -50,7 +50,7 @@ public class HTTPProxyConfigurator {
     private static Log log = LogFactory.getLog(HTTPProxyConfigurator.class);
 
     /**
-     * Configure HTTP Proxy settings of commons-httpclient HostConfiguration.
+     * Configure HTTP Proxy settings of httpcomponents HostConfiguration.
      * Proxy settings can be get from axis2.xml, Java proxy settings or can be
      * override through property in message context.
      * <p/>
