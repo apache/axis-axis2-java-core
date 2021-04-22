@@ -31,42 +31,43 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+	    <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.8.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.8.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.8.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.schema</groupId>
-            <artifactId>XmlSchema</artifactId>
-            <version>SNAPSHOT</version>
+            <groupId>org.apache.ws.xmlschema</groupId>
+            <artifactId>xmlschema-core</artifactId>
+            <version>2.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>SNAPSHOT</version>
+            <version>3.1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -84,9 +85,9 @@
             <version>1.3</version>
         </dependency>
         <dependency>
-            <groupId>woodstox</groupId>
-            <artifactId>wstx</artifactId>
-            <version>asl-3.2.4</version>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>4.4.1</version>
         </dependency>
         <dependency>
             <groupId>stax</groupId>
@@ -111,12 +112,12 @@
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-transport-http</artifactId>
-			<version>SNAPSHOT</version>
+                        <version>1.8.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-transport-local</artifactId>
-			<version>SNAPSHOT</version>
+                        <version>1.8.0-SNAPSHOT</version>
 		</dependency>
 
        </dependencies>
@@ -128,6 +129,14 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warSourceDirectory>${basedir}/src/webapp</warSourceDirectory>
+                </configuration>
+            </plugin>
+	    <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -152,21 +161,5 @@
             </testResource>
         </testResources>
     </build>
-
-    <!--  needed for XmlSchema -->
-    <repositories>
-        <repository>
-            <id>ibiblio</id>
-            <name>ibiblio maven repository</name>
-            <url>http://ibiblio.org/maven/</url>
-            <layout>legacy</layout>
-        </repository>
-        <repository>
-            <id>apache</id>
-            <name>Apache maven repository</name>
-            <url>http://www.apache.org/dist/java-repository/</url>
-            <layout>legacy</layout>
-        </repository>
-    </repositories>
 
 </project>
