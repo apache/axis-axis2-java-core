@@ -84,7 +84,7 @@ system is as follows:</p>
 &lt;/transportReceiver&gt;</pre>
 The above elements show how to define transport receivers in
 axis2.xml. Here the "name" attribute of the &lt;transportReceiver/&gt; element identifies the
-type of the transport receiver. It can be HTTP, TCP, SMTP, CommonsHTTP, etc.
+type of the transport receiver. It can be HTTP, TCP, SMTP, etc.
 When the system starts up or when you set the transport at the client side,
 you can use these transport names to load the appropriate transport. The "class"
 attribute is for specifying the actual java class that will implement the required
@@ -100,7 +100,7 @@ For example, consider Axis2 running under Apache Tomcat. Then Axis2 can use
 TCP transport senders to send messages rather than HTTP. The method of
 specifying transport senders is as follows:</p>
 <pre> 
-&lt;transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;
+&lt;transportSender name="http" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt;
         &lt;parameter name="PROTOCOL" locked="xsd:false"&gt;HTTP/1.0&lt;/parameter&gt;
  &lt;/transportSender&gt; 
  </pre>

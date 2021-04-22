@@ -37,7 +37,7 @@ description.</p>
   <li><b>HTTP</b> - In the HTTP transport, the transport Listener is either a
     Servlet or a Simple HTTP server provided by Axis2. The transport Sender
     uses sockets to connect and send the SOAP message. Currently we have the
-    commons-httpclient based HTTP Transport sender as the default
+    Apache Httpcomponents based HTTP Transport sender as the default
   transport.</li>
   <li><b>TCP</b> - This is the most simple transport, but needs Addressing
     support to be functional.</li>
@@ -215,7 +215,7 @@ did for the TransportReceiver.</p>
   &lt;/transportSender&gt;
   </pre>
 <p>Have a look at
-org.apache.Axis2.transport.http.CommonsHTTPTransportSender which is used to
+org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender which is used to
 send HTTP responses.</p>
 
 <p>Once we have written our transport receiver and our transport sender, and

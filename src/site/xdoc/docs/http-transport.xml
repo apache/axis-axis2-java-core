@@ -35,7 +35,7 @@ as the transport mechanism.</p>
 
 <h2>Contents</h2>
 <ul>
-  <li><a href="#CommonsHTTPTransportSender">CommonsHTTPTransportSender</a>
+  <li><a href="#HTTPClient4TransportSender">HTTPClient4TransportSender</a>
     <ul>
       <li><a href="#httpsupport">HTTPS support</a></li>
     </ul>
@@ -47,26 +47,26 @@ as the transport mechanism.</p>
   <li><a href="#reusing_httpclient_object">Reusing the httpclient object</a></li>
   <li><a href="#setting_cached_httpclient_object">Setting the cached httpclient object</a></li>
 </ul>
-<a name="CommonsHTTPTransportSender"></a>
+<a name="HTTPClient4TransportSender"></a>
 
-<h2>CommonsHTTPTransportSender</h2>
+<h2>HTTPClient4TransportSender</h2>
 
-<p>CommonsHTTPTransportSender is the transport sender that is used by default in both
+<p>HTTPClient4TransportSender is the transport sender that is used by default in both
 the Server and Client APIs. As its name implies, it is based on <a
-        xmlns="http://www.w3.org/1999/xhtml" xml:space="preserve" href="http://hc.apache.org/httpclient-3.x/">commons-httpclient-3.1</a>.
+        xmlns="http://www.w3.org/1999/xhtml" xml:space="preserve" href="http://hc.apache.org/">Apache HttpComponents</a>.
 For maximum flexibility, this sender supports both the HTTP GET and POST interfaces.
 (REST in Axis2 also supports both interfaces.)</p>
 
 <p>Axis2 uses a single HTTPClient instance per ConfigurationContext (which usually means per instance
 of ServiceClient).  This pattern allows for HTTP 1.1 to automatically reuse TCP connections - in earlier versions of Axis2 the REUSE_HTTP_CLIENT configuration property was necessary to enable this functionality, but as of 1.5 this is no longer necessary.</p>
 
-<p>Commons HttpClient also provides HTTP 1.1, Chunking and KeepAlive support for Axis2.</p>
+<p>Apache HttpComponents also provides HTTP 1.1, Chunking and KeepAlive support for Axis2.</p>
 
 
 <p>The &lt;transportSender/&gt; element defines transport senders in
 the axis2.xml configuration file as follows:</p>
 <pre>
-&lt;transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;
+&lt;transportSender name="http" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt;
    &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
    &lt;parameter name="Transfer-Encoding"&gt;chunked&lt;/parameter&gt;
 &lt;/transportSender&gt;
@@ -94,10 +94,10 @@ encoding style (UTF-8, UTF-16, etc.) is provided via MessageContext.</p>
 <a name="httpsupport"></a>
 
 <h3>HTTPS support</h3>
-CommonsHTTPTransportSender can be also used to communicate over https.
+HTTPClient4TransportSender can be also used to communicate over https.
 
 <pre>
-   &lt;transportSender name="<b>https</b>" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;
+   &lt;transportSender name="<b>https</b>" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt;
       &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
       &lt;parameter name="Transfer-Encoding"&gt;chunked&lt;/parameter&gt;
    &lt;/transportSender&gt;
@@ -112,7 +112,7 @@ use the Protocol.registerProtocol feature of HttpClient. You can
 overwrite the "https" protocol, or use a different protocol for your
 SSL client authentication communications if you don't want to mess
 with regular https. Find more information at
-<a href="http://jakarta.apache.org/commons/httpclient/sslguide.html">http://jakarta.apache.org/commons/httpclient/sslguide.html</a></p>
+<a href="https://hc.apache.org">https://hc.apache.org</a></p>
 <a name="timeout_config"></a>
 
 <h2>Timeout Configuration</h2>
@@ -162,13 +162,13 @@ options.setProperty(org.apache.axis2.context.MessageContextConstants.HTTP_PROTOC
 
 <h2>Proxy Authentication</h2>
 
-<p>The Commons-http client has built-in support for proxy
+<p>The Apache Httpcomponents client has built-in support for proxy
 authentication. Axis2 uses deployment time and runtime mechanisms to
 authenticate proxies. At deployment time, the user has to change the
 axis2.xml as follows. This authentication is available for both HTTP and
 HTTPS.</p>
 <pre>
-&lt;transportSender name="<b>http</b>" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;
+&lt;transportSender name="<b>http</b>" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt;
    &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
    &lt;parameter name="PROXY" proxy_host="proxy_host_name" proxy_port="proxy_host_port"&gt;userName:domain:passWord&lt;/parameter&gt;
 &lt;/transportSender&gt;</pre>

@@ -705,7 +705,7 @@ the SOAP message.</p>
 <ol>
 <li>HTTP - In HTTP transport, the transport listener is a servlet
 or org.apache.axis2.transport.http.SimpleHTTPServer provided by
-Axis2. The transport sender uses commons-httpclient to connect and
+Axis2. The transport sender uses apache httpcomponents to connect and
 send the SOAP message.</li>
 <li>Local - This transport can be used for in-VM communication.</li>
 <li>Transports for TCP, SMTP, JMS and other protocols are available

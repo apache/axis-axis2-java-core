@@ -345,13 +345,13 @@ referenced in the module.xml :</b></p>
 <p>See the user guide for more information on Axis2 modules.</p>
 <a name="transports" id="transports"></a>
 <h2>Transports for HTTP Connection</h2>
-<p>Axis2 comes with the CommonsHTTPTransportSender which is based
-on commons-httpclient.</p>
+<p>Axis2 comes with the HTTPClient4TransportSender which is based
+on Apache Httpcomponents.</p>
 <p>It should be noted that axis2.xml should be configured to call
 the commons transports in this manner:</p>
 <pre>
 ...
-&lt;transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt; 
+&lt;transportSender name="http" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt; 
    &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
    &lt;parameter name="Transfer-Encoding"&gt;chunked&lt;/parameter&gt;
 &lt;/transportSender&gt;
