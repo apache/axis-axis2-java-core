@@ -26,7 +26,7 @@ import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSend
 import org.apache.http.client.methods.HttpGet;
 
 
-public class HTTPClient4TransportSenderTest extends CommonsHTTPTransportSenderTest{
+public class HTTPClient4TransportSenderTest extends HTTPTransportSenderTest{
 
     @Override
     protected TransportSender getTransportSender() {

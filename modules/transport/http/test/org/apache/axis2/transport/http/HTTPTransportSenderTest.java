@@ -54,7 +54,7 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.message.BasicRequestLine;
 
-public abstract class CommonsHTTPTransportSenderTest extends TestCase  {
+public abstract class HTTPTransportSenderTest extends TestCase  {
     
     protected abstract TransportSender getTransportSender();
 
