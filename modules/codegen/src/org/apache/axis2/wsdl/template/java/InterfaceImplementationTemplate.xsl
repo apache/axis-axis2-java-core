@@ -448,6 +448,8 @@
                org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(
                                            org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 org.apache.axiom.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
+                _returnEnv.buildWithAttachments();
+
                 <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
                 <xsl:choose>
                     <xsl:when test="$style='document' or $style='rpc'">
