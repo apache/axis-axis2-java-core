@@ -204,7 +204,7 @@ public abstract class HTTPSender {
                     processResponse = true;
                     fault = false;
                 } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
-                           || statusCode == HttpStatus.SC_BAD_REQUEST) {
+                           || statusCode == HttpStatus.SC_BAD_REQUEST || statusCode == HttpStatus.SC_NOT_FOUND) {
                     processResponse = true;
                     fault = true;
                 } else {
