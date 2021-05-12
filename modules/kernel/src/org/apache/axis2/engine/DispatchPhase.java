@@ -45,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +68,7 @@ public class DispatchPhase extends Phase {
        Boolean disableAck = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_RESPONSE_ACK);
        if(disableAck == null) {
           disableAck = (Boolean) (msgContext.getAxisService() != null ? msgContext.getAxisService().getParameterValue(Constants.Configuration.DISABLE_RESPONSE_ACK) : null);
-       }    
+       }
        
        return disableAck;
     }
@@ -79,6 +80,8 @@ public class DispatchPhase extends Phase {
             AxisFault fault = new AxisFault(Messages.getMessage("servicenotfoundforepr",
                                                     ((toEPR != null) ? toEPR.getAddress() : "")));
             fault.setFaultCode(org.apache.axis2.namespace.Constants.FAULT_CLIENT);
+            Integer not_found = HttpServletResponse.SC_NOT_FOUND;
+            msgContext.setProperty(Constants.HTTP_RESPONSE_STATE, not_found.toString());
             throw fault;
         }
 
