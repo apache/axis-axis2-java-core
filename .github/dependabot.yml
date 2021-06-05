@@ -30,6 +30,9 @@ updates:
         versions: ">= 2.0"
       - dependency-name: "com.sun.xml.ws:*"
         versions: ">= 3.0"
+      # IO-734
+      - dependency-name: "commons-io:commons-io"
+        versions: "2.9.0"
       - dependency-name: "jakarta.activation:jakarta.activation-api"
         versions: ">= 1.2.2"
       - dependency-name: "jakarta.servlet.jsp:jakarta.servlet.jsp-api"
