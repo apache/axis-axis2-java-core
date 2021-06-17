@@ -68,9 +68,30 @@
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.squareup.moshi</groupId>
+            <artifactId>moshi</artifactId>
+            <version>1.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.moshi</groupId>
+            <artifactId>moshi-adapters</artifactId>
+            <version>1.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
@@ -230,6 +251,49 @@
                                         <phase>Transport</phase>
                                         <name>JSONMessageHandler</name>
                                         <className>org.apache.axis2.json.gson.JSONMessageHandler</className>
+                                    </handler>
+                                </handlers>
+                            </generatedAxis2xml>
+                            <serviceDescriptions>
+                                <serviceDescription>
+                                    <directory>${project.build.directory}/gen/resources</directory>
+                                </serviceDescription>
+                            </serviceDescriptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>moshi-repo</id>
+                        <goals>
+                            <goal>create-test-repository</goal>
+                        </goals>
+                        <configuration>
+                            <inputDirectory>test-repository/moshi</inputDirectory>
+                            <outputDirectory>${project.build.directory}/repo/moshi</outputDirectory>
+                            <generatedAxis2xml>
+                                <messageFormatters>
+                                    <messageFormatter>
+                                        <contentType>application/json</contentType>
+                                        <className>org.apache.axis2.json.moshi.JsonFormatter</className>
+                                    </messageFormatter>
+                                </messageFormatters>
+                                <messageBuilders>
+                                    <messageBuilder>
+                                        <contentType>application/json</contentType>
+                                        <className>org.apache.axis2.json.moshi.JsonBuilder</className>
+                                    </messageBuilder>
+                                </messageBuilders>
+                                <handlers>
+                                    <handler>
+                                        <flow>InFlow</flow>
+                                        <phase>Transport</phase>
+                                        <name>RequestURIOperationDispatcher</name>
+                                        <className>org.apache.axis2.dispatchers.RequestURIOperationDispatcher</className>
+                                    </handler>
+                                    <handler>
+                                        <flow>InFlow</flow>
+                                        <phase>Transport</phase>
+                                        <name>JSONMessageHandler</name>
+                                        <className>org.apache.axis2.json.moshi.JSONMessageHandler</className>
                                     </handler>
                                 </handlers>
                             </generatedAxis2xml>
