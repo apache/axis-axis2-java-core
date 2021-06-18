@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.moshi.factory;
+package org.apache.axis2.json.factory;
 
 
 public class JsonObject {

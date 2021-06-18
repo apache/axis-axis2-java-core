@@ -21,11 +21,11 @@ package org.apache.axis2.json.gson;
 
 import com.google.gson.stream.JsonWriter;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.json.gson.factory.JSONType;
-import org.apache.axis2.json.gson.factory.JsonConstant;
-import org.apache.axis2.json.gson.factory.JsonObject;
-import org.apache.axis2.json.gson.factory.XmlNode;
-import org.apache.axis2.json.gson.factory.XmlNodeGenerator;
+import org.apache.axis2.json.factory.JSONType;
+import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonObject;
+import org.apache.axis2.json.factory.XmlNode;
+import org.apache.axis2.json.factory.XmlNodeGenerator;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.NamespaceContext;

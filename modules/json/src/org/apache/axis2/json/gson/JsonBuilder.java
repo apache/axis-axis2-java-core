@@ -27,7 +27,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.json.gson.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonConstant;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

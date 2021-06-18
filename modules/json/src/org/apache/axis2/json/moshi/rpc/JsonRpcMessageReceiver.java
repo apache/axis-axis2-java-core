@@ -23,7 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.json.moshi.MoshiXMLStreamReader;
-import org.apache.axis2.json.moshi.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonConstant;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

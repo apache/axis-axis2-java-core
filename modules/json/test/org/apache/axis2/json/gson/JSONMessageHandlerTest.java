@@ -33,7 +33,7 @@ import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.json.gson.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonConstant;
 import org.apache.axis2.json.gson.rpc.JsonRpcMessageReceiver;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.gson.factory;
+package org.apache.axis2.json.factory;
 
 
 public class JsonConstant {
@@ -31,6 +31,8 @@ public class JsonConstant {
     public static final String IS_JSON_STREAM = "isJsonStream";
 
     public static final String GSON_XML_STREAM_READER = "GsonXMLStreamReader";
+
+    public static final String MOSHI_XML_STREAM_READER = "MoshiXMLStreamReader";
 
     public static final String XMLNODES = "xmlnodes";
 

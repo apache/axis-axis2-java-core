@@ -17,28 +17,11 @@
  * under the License.
  */
 
-package org.apache.axis2.json.moshi.factory;
+package org.apache.axis2.json.factory;
 
-
-public class JsonConstant {
-
-
-    public static final String RESPONSE = "response";
-
-    public static final String RETURN_OBJECT = "returnObject";
-    public static final String RETURN_TYPE = "returnType";
-
-    public static final String IS_JSON_STREAM = "isJsonStream";
-
-    public static final String GSON_XML_STREAM_READER = "GsonXMLStreamReader";
-
-    public static final String MOSHI_XML_STREAM_READER = "MoshiXMLStreamReader";
-
-    public static final String XMLNODES = "xmlnodes";
-
-
-//    error messages
-
-    public static final String IN_JSON_MESSAGE_NOT_VALID = "Input JSON message is not valid ";
-
+public enum JSONType {
+    ARRAY,
+    NESTED_ARRAY,
+    NESTED_OBJECT,
+    OBJECT,
 }

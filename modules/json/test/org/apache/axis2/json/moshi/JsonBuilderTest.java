@@ -22,7 +22,7 @@ package org.apache.axis2.json.moshi;
 import com.squareup.moshi.JsonReader;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.json.moshi.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonConstant;
 import org.junit.Assert;
 import org.junit.Test;
 

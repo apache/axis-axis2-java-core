@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.gson.factory;
+package org.apache.axis2.json.factory;
 
 import org.apache.axis2.AxisFault;
 import org.apache.ws.commons.schema.utils.XmlSchemaRef;

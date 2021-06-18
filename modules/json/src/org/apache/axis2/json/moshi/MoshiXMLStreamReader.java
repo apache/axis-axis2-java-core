@@ -24,11 +24,11 @@ import static com.squareup.moshi.JsonReader.Token.NULL;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.json.moshi.factory.JSONType;
-import org.apache.axis2.json.moshi.factory.JsonConstant;
-import org.apache.axis2.json.moshi.factory.JsonObject;
-import org.apache.axis2.json.moshi.factory.XmlNode;
-import org.apache.axis2.json.moshi.factory.XmlNodeGenerator;
+import org.apache.axis2.json.factory.JSONType;
+import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonObject;
+import org.apache.axis2.json.factory.XmlNode;
+import org.apache.axis2.json.factory.XmlNodeGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
