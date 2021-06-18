@@ -48,7 +48,7 @@ public class JsonBuilder implements Builder {
         if (inputStream != null) {
             try {
                 charSetEncoding = (String) messageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-                if (charSetEncoding != null && charSetEncoding.indexOf("UTF-8") != -1) {
+                if (charSetEncoding != null && charSetEncoding.indexOf("UTF-8") == -1) {
                     log.warn("JsonBuilder.processDocument() detected encoding that is not UTF-8: " +charSetEncoding+ " , Moshi JsonReader internally invokes new JsonUtf8Reader()");
                 }
                 BufferedSource source = Okio.buffer(Okio.source(inputStream));
