@@ -33,7 +33,9 @@ public class JSONRPCIntegrationTest {
     public void testJsonRpcMessageReceiver() throws Exception {
         String jsonRequest = "{\"echoPerson\":[{\"arg0\":{\"name\":\"Simon\",\"age\":\"35\",\"gender\":\"male\"}}]}";
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "echoPerson";
-        String expectedResponse = "{\"response\":{\"name\":\"Simon\",\"age\":\"35\",\"gender\":\"male\"}}";
+	// moshi uses alphabetical order, not field declaration order like gson
+        // String expectedResponse = "{\"response\":{\"name\":\"Simon\",\"age\":\"35\",\"gender\":\"male\"}}";
+        String expectedResponse = "{\"response\":{\"age\":\"35\",\"gender\":\"male\",\"name\":\"Simon\"}}";
         String response = UtilTest.post(jsonRequest, echoPersonUrl);
         Assert.assertNotNull(response);
         Assert.assertEquals(expectedResponse , response);
