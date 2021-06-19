@@ -272,8 +272,6 @@ public class CorbaDeployer extends AbstractDeployer implements DeploymentConstan
                     loadMessageReceiver(loader, "org.apache.axis2.corba.receivers.CorbaInOnlyMessageReceiver"));
             service.addMessageReceiver("http://www.w3.org/ns/wsdl/in-out",
                     loadMessageReceiver(loader, "org.apache.axis2.corba.receivers.CorbaMessageReceiver"));
-            service.addMessageReceiver("http://www.w3.org/ns/wsdl/in-opt-out",
-                    loadMessageReceiver(loader, "org.apache.axis2.corba.receivers.CorbaInOutAsyncMessageReceiver"));
 
             if (messageReceiver != null) {
                 HashMap mrs = processMessageReceivers(loader, messageReceiver);
