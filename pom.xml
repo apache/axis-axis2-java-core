@@ -1618,7 +1618,7 @@ $${type_declaration}</template></templates>]]></value>
             <extension>
                 <groupId>com.github.veithen.maven</groupId>
                 <artifactId>p2-maven-connector</artifactId>
-                <version>0.5.0</version>
+                <version>0.5.1</version>
             </extension>
         </extensions>
     </build>
