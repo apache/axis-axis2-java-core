@@ -204,7 +204,7 @@ In order to prepare the release artifacts for vote, execute the following steps:
 If the vote passes, execute the following steps:
 
 1.  Promote the artifacts in the staging repository. See
-    [here](https://docs.sonatype.org/display/Repository/Releasing+a+Staging+Repository)
+    [here](https://central.sonatype.org/publish/release/#close-and-drop-or-release-your-staging-repository)
     for detailed instructions for this step.
 
 2.  Publish the distributions:
