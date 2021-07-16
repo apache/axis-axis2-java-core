@@ -20,6 +20,7 @@
 package org.apache.axis2.json.gson;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -98,7 +99,10 @@ public class JsonFormatter implements MessageFormatter {
 
             } else {
                 try {
-                    Gson gson = new Gson();
+                    GsonBuilder gsonBuilder = new GsonBuilder(); 
+                    // XSS protection, encode JSON Strings as HTML
+                    gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlXssSerializer());
+                    Gson gson = gsonBuilder.create();
                     jsonWriter.beginObject();
                     jsonWriter.name(JsonConstant.RESPONSE);
                     Type returnType = (Type) outMsgCtxt.getProperty(JsonConstant.RETURN_TYPE);
