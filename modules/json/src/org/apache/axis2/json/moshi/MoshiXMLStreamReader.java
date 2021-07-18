@@ -135,6 +135,7 @@ public class MoshiXMLStreamReader implements XMLStreamReader {
             configContext.setProperty(JsonConstant.XMLNODES, newNodeMap);
         }
         isProcessed = true;
+        log.debug("MoshiXMLStreamReader.process() completed");
     }
 
 

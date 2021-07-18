@@ -121,6 +121,7 @@ public class JsonFormatter implements MessageFormatter {
                     throw AxisFault.makeFault(e);
                 }
             }
+            log.debug("JsonFormatter.writeTo() has completed");
         } catch (Exception e) {
             msg = "Exception occurred when try to encode output stream using  " +
                     Constants.Configuration.CHARACTER_SET_ENCODING + " charset";

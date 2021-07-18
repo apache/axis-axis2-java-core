@@ -65,12 +65,15 @@ public class JSONMessageHandler extends AbstractHandler {
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         AxisOperation axisOperation = msgContext.getAxisOperation();
         if (axisOperation != null) {
+            log.debug("Axis operation has been found from the MessageContext, proceeding with the JSON request");
             MessageReceiver messageReceiver = axisOperation.getMessageReceiver();
             if (messageReceiver instanceof JsonRpcMessageReceiver || messageReceiver instanceof JsonInOnlyRPCMessageReceiver) {
                 // do not need to parse XMLSchema list, as  this message receiver will not use GsonXMLStreamReader  to read the inputStream.
             } else {
+                log.debug("JSON MessageReceiver found, proceeding with the JSON request");
                 Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
                 if (tempObj != null) {
+                    log.debug("JSON MessageReceiver found JSON stream, proceeding with the JSON request");
                     boolean isJSON = Boolean.valueOf(tempObj.toString());
                     Object o = msgContext.getProperty(JsonConstant.GSON_XML_STREAM_READER);
                     if (o != null) {
@@ -80,11 +83,10 @@ public class JSONMessageHandler extends AbstractHandler {
                         gsonXMLStreamReader.initXmlStreamReader(elementQname, schemas, msgContext.getConfigurationContext());
                         OMXMLParserWrapper stAXOMBuilder = OMXMLBuilderFactory.createStAXOMBuilder(gsonXMLStreamReader);
                         OMElement omElement = stAXOMBuilder.getDocumentElement();
+                        log.debug("GsonXMLStreamReader found elementQname: " + elementQname);
                         msgContext.getEnvelope().getBody().addChild(omElement);
                     } else {
-                        if (log.isDebugEnabled()) {
-                            log.debug("GsonXMLStreamReader is null");
-                        }
+                        log.error("GsonXMLStreamReader is null");
                         throw new AxisFault("GsonXMLStreamReader should not be null");
                     }
                 } else {
@@ -92,10 +94,7 @@ public class JSONMessageHandler extends AbstractHandler {
                 }
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Axis operation is null");
-            }
-            // message hasn't been dispatched to operation, ignore it
+            log.debug("Axis operation is null, message hasn't been dispatched to operation, ignore it");
         }
         return InvocationResponse.CONTINUE;
     }

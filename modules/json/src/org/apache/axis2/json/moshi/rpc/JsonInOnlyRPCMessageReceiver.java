@@ -57,6 +57,7 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
                 Object serviceObj = getTheImplementationObject(inMessage);
                 AxisOperation op = inMessage.getOperationContext().getAxisOperation();
                 String operation = op.getName().getLocalPart();
+                log.debug("JsonInOnlyRPCMessageReceiver.invokeBusinessLogic() executing invokeService() with operation: " + operation);
                 invokeService(jsonReader, serviceObj, operation);
             } else {
                 throw new AxisFault("MoshiXMLStreamReader should have put as a property of messageContext " +

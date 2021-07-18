@@ -133,6 +133,7 @@ public class GsonXMLStreamReader implements XMLStreamReader {
             newNodeMap.put(elementQname, mainXmlNode);
             configContext.setProperty(JsonConstant.XMLNODES, newNodeMap);
         }
+        log.debug("GsonXMLStreamReader.process() completed");
         isProcessed = true;
     }
 

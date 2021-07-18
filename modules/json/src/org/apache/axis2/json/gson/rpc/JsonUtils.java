@@ -51,12 +51,17 @@ public class JsonUtils {
             }
             jsonReader.beginObject();
             String messageName=jsonReader.nextName();     // get message name from input json stream
+            if (messageName == null || !messageName.equals(operation.getName())) {
+                log.error("JsonUtils.invokeServiceClass() throwing IOException, messageName: " +messageName+ " is unknown, it does not match the axis2 operation, the method name: " + operation.getName());
+                throw new IOException("Bad Request");
+            }
             jsonReader.beginArray();
     
             int i = 0;
             for (Class paramType : paramClasses) {
                 jsonReader.beginObject();
                 argNames[i] = jsonReader.nextName();
+                log.debug("JsonUtils.invokeServiceClass() on messageName: " +messageName+ " , is currently processing argName: " + argNames[i]);
                 methodParam[i] = gson.fromJson(jsonReader, paramType);   // gson handle all types well and return an object from it
                 jsonReader.endObject();
                 i++;
@@ -77,9 +82,11 @@ public class JsonUtils {
         for (Method method : methodSet) {
             String mName = method.getName();
             if (mName.equals(methodName)) {
+                log.debug("JsonUtils.getOpMethod() returning methodName: " +methodName);
                 return method;
             }
         }
+        log.debug("JsonUtils.getOpMethod() returning null");
         return null;
     }
 

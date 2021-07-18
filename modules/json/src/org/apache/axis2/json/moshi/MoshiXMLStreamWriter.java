@@ -130,6 +130,7 @@ public class MoshiXMLStreamWriter implements XMLStreamWriter {
         }
         isProcessed = true;
         this.jsonWriter.beginObject();
+        log.debug("MoshiXMLStreamWriter.process() completed");
     }
 
 

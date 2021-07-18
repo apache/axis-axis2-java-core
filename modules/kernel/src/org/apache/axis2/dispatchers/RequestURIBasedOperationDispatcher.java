@@ -60,7 +60,7 @@ public class RequestURIBasedOperationDispatcher extends AbstractOperationDispatc
                 return service.getOperation(operationName);
             } else {
                 log.debug(messageContext.getLogIDString() +
-                        " Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
+                        " Attempted to check for Operation using target endpoint URI, but the operation fragment was missing on filePart: " + filePart + " , service name: " + service.getName());
                 return null;
             }
         } else {

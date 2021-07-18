@@ -65,6 +65,7 @@ public class JsonBuilder implements Builder {
                 log.debug("Inputstream is null, This is possible with GET request");
             }
         }
+        log.debug("JsonBuilder.processDocument() has completed, returning default envelope");
         // dummy envelope
         SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         return soapFactory.getDefaultEnvelope();

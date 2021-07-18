@@ -65,10 +65,12 @@ public class JSONMessageHandler extends AbstractHandler {
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         AxisOperation axisOperation = msgContext.getAxisOperation();
         if (axisOperation != null) {
+            log.debug("Axis operation has been found from the MessageContext, proceeding with the JSON request");
             MessageReceiver messageReceiver = axisOperation.getMessageReceiver();
             if (messageReceiver instanceof JsonRpcMessageReceiver || messageReceiver instanceof JsonInOnlyRPCMessageReceiver) {
                 // do not need to parse XMLSchema list, as  this message receiver will not use MoshiXMLStreamReader  to read the inputStream.
             } else {
+                log.debug("JSON MessageReceiver found, proceeding with the JSON request");
                 Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
                 if (tempObj != null) {
                     boolean isJSON = Boolean.valueOf(tempObj.toString());
@@ -82,9 +84,7 @@ public class JSONMessageHandler extends AbstractHandler {
                         OMElement omElement = stAXOMBuilder.getDocumentElement();
                         msgContext.getEnvelope().getBody().addChild(omElement);
                     } else {
-                        if (log.isDebugEnabled()) {
-                            log.debug("MoshiXMLStreamReader is null");
-                        }
+                        log.error("MoshiXMLStreamReader is null");
                         throw new AxisFault("MoshiXMLStreamReader should not be null");
                     }
                 } else {
@@ -92,10 +92,7 @@ public class JSONMessageHandler extends AbstractHandler {
                 }
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Axis operation is null");
-            }
-            // message hasn't been dispatched to operation, ignore it
+            log.debug("Axis operation is null, message hasn't been dispatched to operation, ignore it");
         }
         return InvocationResponse.CONTINUE;
     }

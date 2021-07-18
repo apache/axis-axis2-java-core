@@ -104,6 +104,10 @@ public class JsonUtils {
     
             jsonReader.beginObject();
             String messageName=jsonReader.nextName();     // get message name from input json stream
+            if (messageName == null || !messageName.equals(operation.getName())) {
+                log.error("JsonUtils.invokeServiceClass() throwing IOException, messageName: " +messageName+ " is unknown, it does not match the axis2 operation, the method name: " + operation.getName());
+                throw new IOException("Bad Request");
+            }
             jsonReader.beginArray();
     
             int i = 0;
