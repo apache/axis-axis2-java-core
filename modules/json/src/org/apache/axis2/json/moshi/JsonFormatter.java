@@ -60,7 +60,7 @@ public class JsonFormatter implements MessageFormatter {
         String msg;
 
         try {
-            Moshi moshi = new Moshi.Builder().add(Date.class, new Rfc3339DateJsonAdapter()).build();
+            Moshi moshi = new Moshi.Builder().add(String.class, new JsonHtmlXssSerializer()).add(Date.class, new Rfc3339DateJsonAdapter()).build();
             JsonAdapter<Object> adapter = moshi.adapter(Object.class);
             BufferedSink sink = Okio.buffer(Okio.sink(outputStream));
             jsonWriter = JsonWriter.of(sink);
