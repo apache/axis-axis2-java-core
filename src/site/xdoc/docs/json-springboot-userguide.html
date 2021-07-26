@@ -1,0 +1,104 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content=""/>
+  <title>Axis2 Advanced User's Guide</title>
+</head>
+
+<body dir="ltr" lang="en-US">
+<a name="_Toc96697849" id="_Toc96697849"></a>
+
+<h1 align="center">Apache Axis2 JSON with Spring Boot User's Guide</h1>
+
+<p>This guide will help you get started with Axis2 and JSON, using Spring Boot! 
+It gives a detailed description on how to write Web services and also
+Web service clients via JSON and Curl, how to write a custom login, 
+and how to use them in a token based Web service that also helps prevent cross site 
+scripting (XSS). 
+</p>
+<a name="Introduction"></a>
+
+<h2>Introduction</h2>
+
+<p>This user guide is written based on the Axis2 Standard Binary
+Distribution. The Standard Binary Distribution can be directly <a
+href="../download.cgi">downloaded</a> or built using
+the Source Distribution. If
+you choose the latter, then the <a href="installationguide.html">Installation
+Guide</a> will instruct you on how to build Axis2 Standard Binary
+Distribution using the source.</p>
+
+<p>The source code for this guide provides a pom.xml for an entire demo application built by maven.
+</p>
+
+<p>Please note that Axis2 is an open-source effort. If you feel the code
+could use some new features or fixes, please get involved and lend us a hand!
+The Axis developer community welcomes your participation.</p>
+
+<p>Let us know what you think! Send your feedback to "<a
+href="mailto:java-user@axis.apache.org?subject=[Axis2]">java-user@axis.apache.org</a>".
+(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.) Kindly
+prefix the subject of the mail with [Axis2].</p>
+
+<h2>Getting Started</h2>
+
+<p>The first two sections of the user guide explain how to write and deploy a
+new Web Service using Axis2, and how to write a Web Service client using
+Axis2. The next section - <a href="#config"> Configuring Axis2</a> - provides
+an introduction to important configuration options in Axis2.
+
+<p>In this (first) section, we will learn how to write and deploy Web
+JSON based services using Axis2. All the samples mentioned in this guide are located in
+the <b>"samples/userguide/src/springbootdemo"</b> directory of <a
+href="../download.cgi">Axis2 standard binary
+distribution</a>.</p>
+
+<p>Please deploy the result of the maven build via 'mvn clean install', axis2-json-api.war, into your servlet container and ensure that it installs without any errors.</p>
+<a name="ws_codegen"></a><a name="Web_Services_Using_Axis2"></a>
+
+<h2>Creating a New Web Service</h2>
+
+<p>
+Areas out of scope for this guide are the JWT and JWE, since they require 
+elliptic curve cryptography. 
+
+https://datatracker.ietf.org/doc/html/rfc7519
+https://datatracker.ietf.org/doc/html/rfc7516
+
+DB operations are also out of scope. Very limited credential validation is done. 
+The NoOpPasswordEncoder Spring class included in this guide is meant for demos
+and testing only. 
+
+This guide provides two JSON based web services, LoginTokenizerService and TestwsService.
+
+The login, if successful, will return a simple token not meant for anything beyond demos.
+
+Axis2 JSON support is via POJO Objects. LoginTokenizerRequest and LoginTokenizerResponse are coded in the LoginTokenizerService as the names would indicate. 
+
+Also provided is a test service, TestwsService. It includes two POJO Objects as would
+be expected, TestwsRequest and TestwsResponse. This service attempts to return 
+a String with some Javascript, that is HTML encoded by Axis2 and thereby
+eliminating the possibility of Javascript running the response. 
+</ol>
+</body>
+</html>

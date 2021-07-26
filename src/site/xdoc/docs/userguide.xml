@@ -35,8 +35,10 @@ Apache Axis2. It also covers some advanced topics, such as how to
 use Axis2 to create and deploy Web services as well as how to use
 WSDL to generate both clients and services.</p>
 For experienced users of Apache Axis2, we recommend the <a href=
-"adv-userguide.html">Advanced User's Guide.</a> <a name="intro" id=
-"intro"></a>
+"adv-userguide.html">Advanced User's Guide.</a> 
+For users of JSON and Spring Boot, see the sample application in the <a href=
+"json-springboot-userguide.html">JSON and Spring Boot User's Guide.</a> 
+<a name="intro" id= "intro"></a>
 <h1>Introducing Axis2</h1>
 <p>This section introduces Axis2 and its structure, including an
 explanation of various directories/files included in the latest

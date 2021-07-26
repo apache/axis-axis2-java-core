@@ -17,32 +17,23 @@
  * under the License.
  */
 
-package org.apache.axis2.json.moshi;
-
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.JsonReader;
-import com.squareup.moshi.JsonWriter;
-import java.io.IOException;
+package org.apache.axis2.json.gson;
 
 import org.owasp.encoder.Encode;
 
-public final class JsonHtmlXssSerializer extends JsonAdapter<String> {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
 
-    @Override
-    public synchronized String fromJson(JsonReader reader) throws IOException {
-        if (reader.peek() == JsonReader.Token.NULL) {
-            return reader.nextNull();
-        }
-        String string = reader.nextString();
-        return string;
-    }
-  
-    @Override
-    public synchronized void toJson(JsonWriter writer, String value) throws IOException {
-        if (value == null) {
-            writer.nullValue();
-        } else {
-            writer.value(Encode.forHtmlContent(value));
-        }
-    }
+public class JsonHtmlEncoder implements JsonSerializer<String> {
+
+	@Override
+	public JsonElement serialize(String src, Type typeOfSrc,
+			JsonSerializationContext context) {
+
+		return new JsonPrimitive(Encode.forHtmlContent(src));
+
+	}
 }

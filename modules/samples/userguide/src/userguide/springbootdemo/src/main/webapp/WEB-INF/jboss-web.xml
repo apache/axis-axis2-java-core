@@ -1,0 +1,10 @@
+<?xml version="1.0"?>                                                                                                                                                               
+<!DOCTYPE jboss-web PUBLIC                                                                                                                                                          
+   "-//JBoss//DTD Web Application 5.0//EN"                                                                                                                                          
+   "http://www.jboss.org/j2ee/dtd/jboss-web_5_0.dtd">                                                                                                                               
+<!-- force JBoss home page to the one and only war file that has this file defined on each server.
+     There can only be one root context per server.
+-->
+<jboss-web>
+ <!--deleteThisCommentForRootContext <context-root>/</context-root> deleteThisCommentForRootContext-->
+</jboss-web>

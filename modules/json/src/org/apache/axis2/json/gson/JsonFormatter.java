@@ -101,7 +101,7 @@ public class JsonFormatter implements MessageFormatter {
                 try {
                     GsonBuilder gsonBuilder = new GsonBuilder(); 
                     // XSS protection, encode JSON Strings as HTML
-                    gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlXssSerializer());
+                    gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlEncoder());
                     Gson gson = gsonBuilder.create();
                     jsonWriter.beginObject();
                     jsonWriter.name(JsonConstant.RESPONSE);

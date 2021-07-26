@@ -1,0 +1,13 @@
+<jboss-deployment-structure>
+    <deployment>
+        <exclude-subsystems>
+            <subsystem name="jaxrs" />
+        </exclude-subsystems>
+        <exclusions>
+            <module name="org.apache.log4j" /> <module name="org.apache.commons.logging" />
+        </exclusions>
+        <dependencies> 
+            <module name="jdk.unsupported" slot="main" export="true" />
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

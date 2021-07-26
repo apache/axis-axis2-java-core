@@ -8,6 +8,9 @@ of the Axis2 Advanced User's Guide found in the Documents Distribution.
 The sample explains how to write a Web service and Web service client with 
 Apache Axis2 using XML based client APIs (Axis2's Primary APIs).
 
+For new applications, json-springboot-userguide.html brings Axis2 into 
+modern API's and contemporary servers. 
+
 Introduction
 ============
 
@@ -41,7 +44,7 @@ contain the Web services which are invoked by the above clients.
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.8.0 or later
 
 Building the Service
 ====================
