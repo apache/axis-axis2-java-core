@@ -49,9 +49,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LoginTokenizerService {
+public class LoginService {
 
-    private static final Logger logger = LogManager.getLogger(LoginTokenizerService.class);
+    private static final Logger logger = LogManager.getLogger(LoginService.class);
 
     @Autowired
     SpringSecurityDAOImpl springSecurityDAOImpl;
@@ -63,21 +63,21 @@ public class LoginTokenizerService {
     private WSSecUtils wssecutils;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public LoginTokenizerResponse doLogin(LoginTokenizerRequest request) {
+    public LoginResponse doLogin(LoginRequest request) {
 
         Long startTime = System.currentTimeMillis();
 
         String uuid = UUID.randomUUID().toString();
 
-        String logPrefix = "LoginTokenizerService.doLogin() , "
+        String logPrefix = "LoginService.doLogin() , "
                 + " , uuid: " + uuid + " , request: " + request.toString() + " , ";
 
         logger.warn(logPrefix + "starting ... ");
-        LoginTokenizerResponse response = new LoginTokenizerResponse();
+        LoginResponse response = new LoginResponse();
 
         try {
             if (request == null) {
-                logger.error(logPrefix + "returning with failure status on null LoginTokenizerRequest");
+                logger.error(logPrefix + "returning with failure status on null LoginRequest");
                 response.setStatus("FAILED");
                 return response;
             }
@@ -201,9 +201,9 @@ public class LoginTokenizerService {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private boolean generateTokenForReturn(HttpServletRequest httpServletRequest, LoginTokenizerRequest request, LoginTokenizerResponse response, String currentUserIPAddress, String email, String uuid) {
+    private boolean generateTokenForReturn(HttpServletRequest httpServletRequest, LoginRequest request, LoginResponse response, String currentUserIPAddress, String email, String uuid) {
 
-        String logPrefix = "LoginTokenizerService.generateTokenForReturn() , "
+        String logPrefix = "LoginService.generateTokenForReturn() , "
                 + " , uuid: " + uuid + " , ";
 
         try {

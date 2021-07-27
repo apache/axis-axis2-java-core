@@ -340,8 +340,8 @@
                                 <!--  used for local deploys, ignored otherwise -->
                                 <touch file="target/deploy/axis2-json-api.war.dodeploy">
                                 </touch>
-                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/LoginTokenizer.aar">
-                                    <metainf file="resources-axis2/login_tokenizer_resources/services.xml"/>
+                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/Login.aar">
+                                    <metainf file="resources-axis2/login_resources/services.xml"/>
                                 </jar>
                                 <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/testws.aar">
                                     <metainf file="resources-axis2/test_service_resources/services.xml"/>
@@ -352,8 +352,8 @@
                                     </fileset>
                                 </copy>
                                 <unzip src="${project.build.directory}/axis2-json-api-0.0.1-SNAPSHOT.war" dest="${project.build.directory}/exploded"/>
-                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/LoginTokenizer.aar">
-                                    <metainf file="resources-axis2/login_tokenizer_resources/services.xml"/>
+                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/Login.aar">
+                                    <metainf file="resources-axis2/login_resources/services.xml"/>
                                 </jar>
                                 <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/testws.aar">
                                     <metainf file="resources-axis2/test_service_resources/services.xml"/>

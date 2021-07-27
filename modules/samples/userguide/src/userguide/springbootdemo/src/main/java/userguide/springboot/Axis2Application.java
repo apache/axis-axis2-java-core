@@ -122,7 +122,7 @@ public class Axis2Application extends SpringBootServletInitializer {
             public boolean matches(HttpServletRequest request) {
                 String logPrefix = "AnonRequestMatcher.matches , ";
                 boolean result = request.getRequestURI().contains(
-                        "/services/loginTokenizerService");
+                        "/services/loginService");
                 logger.debug(logPrefix
                         + "inside AnonRequestMatcher.matches, will return result: "
                         + result + " , on request.getRequestURI() : "
@@ -165,7 +165,7 @@ public class Axis2Application extends SpringBootServletInitializer {
 
             @Override
             public Collection<ConfigAttribute> getAllConfigAttributes() {
-                String logPrefix = "SecurityConfigurationTokenWebServices.getAllConfigAttributes , ";
+                String logPrefix = "SecureResouceMetadataSource.getAllConfigAttributes , ";
                 logger.debug(logPrefix + "returning ROLE_USER ...");
                 List<ConfigAttribute> attrs = SecurityConfig.createList("ROLE_USER");
                 return attrs;
@@ -257,7 +257,7 @@ public class Axis2Application extends SpringBootServletInitializer {
         
         @Override
         protected void configure(final HttpSecurity http) throws Exception {
-            String logPrefix = "SecurityConfigurationTokenWebServices.configure(final HttpSecurity http) , ";
+            String logPrefix = "StatelessSecurityContextRepository.configure(final HttpSecurity http) , ";
             logger.debug(logPrefix + "inside Spring Boot filter config ...");
         }
         
@@ -350,7 +350,7 @@ public class Axis2Application extends SpringBootServletInitializer {
       
         @Bean(name = "springSecurityFilterChain")
         public FilterChainProxy springSecurityFilterChain() throws ServletException, Exception {
-            String logPrefix = "SecurityConfigurationTokenWebServices.springSecurityFilterChain , ";
+            String logPrefix = "GenericAccessDecisionManager.springSecurityFilterChain , ";
             logger.debug(logPrefix + "inside main filter config ...");
 
             final List<SecurityFilterChain> listOfFilterChains = new ArrayList<SecurityFilterChain>();
@@ -371,7 +371,7 @@ public class Axis2Application extends SpringBootServletInitializer {
          */
         @Bean
         FilterRegistrationBean disableWSLoginFilterAutoRegistration(final WSLoginFilter wsLoginFilter) {
-            String logPrefix = "SecurityConfigurationLogin.disableWSLoginFilterAutoRegistration , ";
+            String logPrefix = "GenericAccessDecisionManager.disableWSLoginFilterAutoRegistration , ";
             logger.debug(logPrefix + "executing registration.setEnabled(false) on wsLoginFilter ...");
             final FilterRegistrationBean registration = new FilterRegistrationBean(wsLoginFilter);
             registration.setEnabled(false);
@@ -383,7 +383,7 @@ public class Axis2Application extends SpringBootServletInitializer {
          */
         @Bean
         FilterRegistrationBean disableJWTAuthenticationFilterAutoRegistration(final JWTAuthenticationFilter filter) {
-            String logPrefix = "SecurityConfigurationTokenWebServices.disableJWTAuthenticationFilterAutoRegistration , ";
+            String logPrefix = "GenericAccessDecisionManager.disableJWTAuthenticationFilterAutoRegistration , ";
             logger.debug(logPrefix + "executing registration.setEnabled(false) on JWTAuthenticationFilter ...");
             final FilterRegistrationBean registration = new FilterRegistrationBean(filter);
             registration.setEnabled(false);
@@ -395,7 +395,7 @@ public class Axis2Application extends SpringBootServletInitializer {
          */
         @Bean
         FilterRegistrationBean disableHTTPPostOnlyRejectionFilterAutoRegistration(final HTTPPostOnlyRejectionFilter filter) {
-            String logPrefix = "SecurityConfigurationTokenWebServices.disableHTTPPostOnlyRejectionFilterAutoRegistration , ";
+            String logPrefix = "GenericAccessDecisionManager.disableHTTPPostOnlyRejectionFilterAutoRegistration , ";
             logger.debug(logPrefix + "executing registration.setEnabled(false) on HTTPPostOnlyRejectionFilter ...");
             final FilterRegistrationBean registration = new FilterRegistrationBean(filter);
             registration.setEnabled(false);
@@ -407,7 +407,7 @@ public class Axis2Application extends SpringBootServletInitializer {
          */
         @Bean
         FilterRegistrationBean disableRequestAndResponseValidatorFilterAutoRegistration(final RequestAndResponseValidatorFilter filter) {
-            String logPrefix = "SecurityConfigurationTokenWebServices.disableRequestAndResponseValidatorFilterAutoRegistration , ";
+            String logPrefix = "GenericAccessDecisionManager.disableRequestAndResponseValidatorFilterAutoRegistration , ";
             logger.debug(logPrefix + "executing registration.setEnabled(false) on RequestLoggingFilter ...");
             final FilterRegistrationBean registration = new FilterRegistrationBean(filter);
             registration.setEnabled(false);

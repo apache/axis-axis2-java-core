@@ -18,7 +18,7 @@
   -->
 <service name="testws">
     <description>
-        Alpha Theory testws Resources
+        testws Resources
     </description>
     <parameter name="ServiceObjectSupplier">org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier</parameter>
     <parameter name="SpringBeanName">testwsService</parameter>

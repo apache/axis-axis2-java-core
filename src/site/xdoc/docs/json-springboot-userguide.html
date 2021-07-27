@@ -22,19 +22,19 @@
 <html>
 <head>
   <meta http-equiv="content-type" content=""/>
-  <title>Axis2 Advanced User's Guide</title>
+  <title>Apache Axis2 JSON and REST with Spring Boot User's Guide</title>
 </head>
 
 <body dir="ltr" lang="en-US">
 <a name="_Toc96697849" id="_Toc96697849"></a>
 
-<h1 align="center">Apache Axis2 JSON with Spring Boot User's Guide</h1>
+<h1 align="center">Apache Axis2 JSON and REST with Spring Boot User's Guide</h1>
 
-<p>This guide will help you get started with Axis2 and JSON, using Spring Boot! 
-It gives a detailed description on how to write Web services and also
-Web service clients via JSON and Curl, how to write a custom login, 
-and how to use them in a token based Web service that also helps prevent cross site 
-scripting (XSS). 
+<p>This guide will help you get started with Axis2 and JSON via REST, using 
+Spring Security with Spring Boot!  It gives a detailed description on how to write 
+JSON based REST Web services and also Web service clients via JSON and Curl, how to 
+write a custom login, and how to use them in a token based Web service that also helps 
+prevent cross site scripting (XSS). 
 </p>
 <a name="Introduction"></a>
 
@@ -62,43 +62,164 @@ prefix the subject of the mail with [Axis2].</p>
 
 <h2>Getting Started</h2>
 
-<p>The first two sections of the user guide explain how to write and deploy a
-new Web Service using Axis2, and how to write a Web Service client using
-Axis2. The next section - <a href="#config"> Configuring Axis2</a> - provides
-an introduction to important configuration options in Axis2.
+<p>This user guide explains how to write and deploy a
+new JSON and REST based Web Service using Axis2, and how to write a Web Service client 
+using JSON with Curl.
+</p>
 
-<p>In this (first) section, we will learn how to write and deploy Web
-JSON based services using Axis2. All the samples mentioned in this guide are located in
+<p>All the sample code mentioned in this guide is located in
 the <b>"samples/userguide/src/springbootdemo"</b> directory of <a
 href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
-
+<p>
+This quide supplies a pom.xml for building an exploded WAR with Spring Boot - 
+however this WAR does not have an embedded web server such as Tomcat. 
+</p>
+<p>
+The testing was carried out on Wildfly, by installing the WAR in its app server. 
+</p>
 <p>Please deploy the result of the maven build via 'mvn clean install', axis2-json-api.war, into your servlet container and ensure that it installs without any errors.</p>
-<a name="ws_codegen"></a><a name="Web_Services_Using_Axis2"></a>
 
 <h2>Creating a New Web Service</h2>
 
 <p>
-Areas out of scope for this guide are the JWT and JWE, since they require 
-elliptic curve cryptography. 
-
+Areas out of scope for this guide are JWT and JWE for token generation and validation, 
+since they require elliptic curve cryptography. A sample token that is not meant for 
+production is generated in this demo - with the intent that the following standards
+should be used in its place. This demo merely shows a place to implement these
+standards.
+</p>
+<p>
 https://datatracker.ietf.org/doc/html/rfc7519
 https://datatracker.ietf.org/doc/html/rfc7516
-
-DB operations are also out of scope. Very limited credential validation is done. 
+</p>
+<p>
+Tip: com.nimbusds is recommended as an open-source Java implementation of these 
+standards, for both token generation and validation.
+</p>
+<p>
+DB operations are also out of scope. There is a minimal DAO layer for authentication. 
+Very limited credential validation is done. 
+</p>
+<p>
 The NoOpPasswordEncoder Spring class included in this guide is meant for demos
-and testing only. 
-
-This guide provides two JSON based web services, LoginTokenizerService and TestwsService.
-
+and testing only. Do not use this code as is in production.
+</p>
+<p>
+This guide provides two JSON based web services, LoginService and TestwsService.
+</p>
+<p>
 The login, if successful, will return a simple token not meant for anything beyond demos.
-
-Axis2 JSON support is via POJO Objects. LoginTokenizerRequest and LoginTokenizerResponse are coded in the LoginTokenizerService as the names would indicate. 
-
+The intent of this guide is to show a place that the JWT and JWE standards can be 
+implemented.
+</p>
+<p>
+Axis2 JSON support is via POJO Objects. LoginRequest and LoginResponse are coded in the LoginService as the names would indicate. 
+</p>
+<p>
 Also provided is a test service, TestwsService. It includes two POJO Objects as would
 be expected, TestwsRequest and TestwsResponse. This service attempts to return 
 a String with some Javascript, that is HTML encoded by Axis2 and thereby
-eliminating the possibility of Javascript running the response. 
-</ol>
+eliminating the possibility of a Javascript engine executing the response i.e. a 
+reflected XSS attack. 
+</p>
+<p>
+Concerning Spring Security and Spring Boot, the Axis2Application class that 
+extends SpringBootServletInitializer as typically done utilizes 
+List<SecurityFilterChain> as a binary choice; A login url will match, otherwise invoke 
+JWTAuthenticationFilter. All URL's to other services besides the login, will proceed 
+after JWTAuthenticationFilter verifies the token.
+</p>
+<p>
+The JWTAuthenticationFilter class expects a token from the web services JSON client in 
+the form of "Authorization: Bearer mytoken".
+</p>
+<p>
+The Axis2WebAppInitializer class supplied in this guide, is the config class 
+that registers AxisServlet with spring boot.
+</p>
+<p>
+Axis2 web services are installed via a WEB-INF/services directory that contains
+files with an .aar extention for each service. These aar files are similar to
+jar files, and contain a services.xml that defines the web service behavior. 
+The pom.xml supplied in this guide generates these files.
+</p>
+<p>
+Tip: don't expose methods in your web services that are not meant to be exposed, 
+such as getters and setters. Axis2 determines the avaliable methods by reflection.
+For JSON, the message name at the start of the JSON received by the Axis2 server 
+defines the Axis2 operation to invoke.  It is recommended that only one method per 
+class be exposed as a starting point. The place to add method exclusion is the 
+services.xml file: 
+</p>
+<p>
+    <excludeOperations>
+        <operation>setMyVar</operation>
+    </excludeOperations>
+</p>
+<p>
+The axis2.xml file can define Moshi or GSON as the JSON engine. GSON was the original 
+however development has largely ceased. Moshi is very similar and is widely considered 
+to be the superior implementation in terms of performance. GSON will likely continue to
+be supported in Axis2 because it is helpful to have two JSON implementations to compare 
+with for debugging.  
+</p>
+<p>
+JSON based web services in the binary distribution of axis2.xml are not enabled by 
+default. See the supplied axis2.xml of this guide, and note the places were it has 
+"moshi". Just replace "moshi" with "gson" as a global search and replace to switch to 
+GSON. 
+</p>
+<p>
+Axis2 web services that are JSON based must be invoked from a client that sets an
+HTTP header as "Content-Type: application/json". In order for axis2 to properly
+handle JSON requests, this header behavior needs to be defined in the file
+WEB-INF/conf/axis2.xml.
+</p>
+<p>
+        <messageFormatter contentType="application/json"
+                          class="org.apache.axis2.json.moshi.JsonFormatter"/>
+</p>
+<p>
+Other required classes for JSON in the axis2.xml file include JsonRpcMessageReceiver,
+JsonInOnlyRPCMessageReceiver, JsonBuilder, and JSONMessageHandler.
+</p>
+<p>
+Invoking the client for a login that returns a token can be done as follows:
+</p>
+<p>
+curl -v -H "Content-Type: application/json" -X POST --data @/home/myuser/login.dat http://localhost:8080/axis2-json-api/services/loginService
+</p>
+<p>
+Where the contents of /home/myuser/login.dat are:
+</p>
+<p>
+{"doLogin":[{"arg0":{"email":java-dev@axis.apache.org,"credentials":userguide}}]}
+</p>
+<p>
+Response: 
+</p>
+<p>
+{"response":{"status":"OK","token":"95104Rn2I2oEATfuI90N","uuid":"99b92d7a-2799-4b20-b029-9fbd6108798a"}}
+</p>
+<p>
+Invoking the client for a Test Service that validates a sample token can be done as 
+follows:
+</p>
+<p>
+curl -v -H "Authorization: Bearer I2SpAHWrU5gYbGNwNNKg" -H "Content-Type: application/json" -X POST --data @/root/test.dat http://localhost:8080/axis2-json-api/services/testws'
+</p>
+<p>
+Where the contents of /home/myuser/test.dat are:
+</p>
+<p>
+{"doTestws":[{"arg0":{"messagein":hello}}]}
+</p>
+<p>
+Response, HTML encoded to prevent XSS: 
+</p>
+<p>
+{"response":{"messageout":"&lt;script xmlns=\"http://www.w3.org/1999/xhtml\"&gt;alert('Hello');&lt;/script&gt; \"&gt;","status":"OK"}}
+</p>
 </body>
 </html>

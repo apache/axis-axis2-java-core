@@ -16,12 +16,12 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<service name="loginTokenizerService">
+<service name="loginService">
     <description>
-        Alpha Theory Login Tokenizer Resources
+        Login Resources
     </description>
     <parameter name="ServiceObjectSupplier">org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier</parameter>
-    <parameter name="SpringBeanName">loginTokenizerService</parameter>
+    <parameter name="SpringBeanName">loginService</parameter>
     <operation name="doLogin">
         <messageReceivers>
             <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"

@@ -19,45 +19,37 @@
  */
 package userguide.springboot.webservices.secure;
 
-public class LoginTokenizerResponse {
-
-    String status;
+public class LoginRequest {
     
-    String token;
+    String email;
     
-    String uuid;
-    
-    public String getUuid() {
-        return uuid;
+    String credentials;
+
+    public String getEmail() {
+        return  email != null ? email.trim() : null;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getStatus() {
-        return status;
+    public String getCredentials() {
+        return credentials;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setCredentials(String credentials) {
+        this.credentials = credentials;
     }
 
-    public String getToken() {
-        return token;
-    }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public LoginTokenizerResponse(String status, String token) {
-        this.status = status;
-        this.token = token;
+    public LoginRequest(String email, String credentials) {
+        this.email = email;
+        this.credentials = credentials;
     }
     
-    public LoginTokenizerResponse() {
-        
+    @Override
+    public String toString() {
+	// implement toString() for debugging in trace mode of axis2
+        return "LoginRequest [email=" + email + ", credentials=not_shown ]";
     }
-
 }
