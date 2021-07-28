@@ -26,67 +26,42 @@
     <body>
         <section name="Introduction">
             <p>
-                This document provides information on how to use SVN to get an
-                SVN checkout/update, make commits to the repository, etc., in the
+                This document provides information on how to use Git to get an
+                GitHub checkout/update, make commits to the repository, etc., in the
                 process of contributing to Apache projects (specifically Axis2).
                 Instructions on configuring IDEs for development and using Maven to
                 build the project is also included here.
             </p>
         </section>
-        <section name="Working with Subversion (SVN)">
+        <section name="Working with GitHub (Git)">
             <p>
-                The Axis2 development team uses Subversion (SVN) for source
-                control. Subversion is a compelling replacement for CVS, developed
-                under the auspices of the Tigris community and licensed under an
-                Apache compatible license. To learn more about Subversion or to
-                download the latest distribution, visit the <a href=
-                "http:///subversion.tigris.org">Subversion project
-                site</a>. If you are looking for guidance on setting up and
-                installing Subversion, please read the ASF <a href=
-                "http://www.apache.org/dev/version-control.html">Source
-                Code Repositories page</a>.
+                The Axis2 development team uses GitHub (Git) for source
+                control.
             </p>
         </section>
-        <section name="Checkout Axis2 from Subversion">
+        <section name="Checkout Axis2 from Git">
             <p>
                 To check out the latest version of Axis2 from the Foundation's
-                Subversion repository, you must use one of the following URLs
-                depending on your level of access to the Axis2 source code:
+                GitHub repository, you must use the following URL:
             </p>
             <ul>
-                <li><b>If you are not a committer:</b> <a href=
-                "http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/">http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/</a></li>
-                <li><b>If you are a committer:</b> <a href=
-                "https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/">https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/</a></li>
+                <li><b>If you are a committer or not a committer, the link is the same:</b> <a href=
+                "https://github.com/apache/axis-axis2-java-core">https://github.com/apache/axis-axis2-java-core</a></li>
             </ul>
             <p>
-                If you are a committer, make sure that you have selected an
-                svnpasswd. To do this, you must log into svn.apache.org. For more
-                information, please read the ASF <a href=
-                "http://www.apache.org/dev/version-control.html">Source Code Repositories page</a>.
-            </p>
-            <p>
-                Once you have successfully installed Subversion, you can check
+                Once you have successfully installed Git, you can check
                 out Axis2 trunk by following these steps:
             </p>
             <ol type="1">
-                <li>Run <strong>svn co &lt;repository URL&gt; axis2</strong> where
-                the repository URL is one of the URLs from the previous list.</li>
+                <li>Run <strong>git clone &lt;repository URL&gt; axis2</strong> where
+                the repository URL from the previous list.</li>
                 <li>This step will check out the latest version of the Axis2 Java
-                codebase to a directory named "axis2". The second parameter to the
-                <strong>svn co</strong> selects a directory to create on your local
-                machine. If you want to checkout Axis2 to a different directory,
-                feel free to change axis2 to any other directory name.</li>
-                <li>To update your working copy to the latest version from the
-                repository, execute the <strong>svn update</strong> command.</li>
-                <li>If you would like to submit a patch, you can execute
-                <strong>svn diff</strong> to create a unified diff for submission
-                to the Axis2 JIRA issue tracker.</li>
+                codebase to a directory named "axis-axis2-java-core".</li>
             </ol>
         </section>
-        <section name="Installing Maven 2">
+        <section name="Installing Maven 3">
             <p>
-                Axis2's build is based on Maven 2. Maven is a build system that
+                Axis2's build is based on Maven 3. Maven is a build system that
                 allows for the reuse of common build projects across multiple
                 projects. For information about obtaining, installing, and
                 configuring Maven 2, please see the <a href=

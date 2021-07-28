@@ -125,6 +125,7 @@ recommendations.</p>
 <ul>
 <li>Send SOAP messages</li>
 <li>Receive and process SOAP messages</li>
+<li>Receive and process JSON messages</li>
 <li>Create a Web service out of a plain Java class</li>
 <li>Create implementation classes for both the server and client
 using WSDL</li>

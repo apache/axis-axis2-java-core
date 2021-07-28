@@ -102,6 +102,8 @@ and running an Axis2 service created from WSDL</a></li>
 "userguide-samples.html#services"><strong>Services</strong></a></li>
 <li><a href="userguide-samples.html#wsdl"><strong>Sample WSDL
 files</strong></a></li>
+<li><a href="userguide-samples.html#json"><strong>Sample using Rest with JSON
+and Spring Boot with Spring Security</strong></a></li>
 <li><a href="userguide-samples.html#others"><strong>Other
 Samples</strong></a></li>
 </ul>
@@ -154,6 +156,12 @@ of WS-Addressing actions.</p>
 the Document/Literal WSDL pattern, rather than RPC.</p>
 <p><strong>perf.wsdl</strong>: Demonstrates the use of array values
 as input values.</p>
+<a name="json" id="json"></a>
+<h2>Sample webapp that uses JSON, Spring Boot, Spring Security, and Moshi</h2>
+<p>A complete Axis2 webapp via Maven that demonstrates JSON and Moshi securely with 
+Spring Boot is located in the <b>"samples/userguide/src/springbootdemo"</b> directory of <a
+href="../download.cgi">Axis2 standard binary
+distribution</a>.</p>
 <a name="others" id="others"></a>
 <h2>Other samples</h2>
 <h3>In AXIS2_HOME/samples Directory:</h3>
