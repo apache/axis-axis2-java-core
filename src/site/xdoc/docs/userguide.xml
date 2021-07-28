@@ -54,6 +54,8 @@ Axis2?</strong></a></li>
 hood?</strong></a></li>
 <li><a href="userguide.html#handlessoap"><strong>How Axis2 handles
 SOAP messages</strong></a></li>
+<li><a href="userguide.html#handlesjson">How Axis2 handles JSON
+messages</a></li>
 <li><a href="userguide.html#distributions"><strong>Axis2
 Distributions</strong></a></li>
 <li><a href="userguide.html#sbd"><strong>The Axis2 Standard Binary
@@ -202,6 +204,20 @@ and handlers.</p>
 Axis2 system. These modules, such as Rampart, which provides an
 implementation of WS-Security, are the main extensibility
 mechanisms in Axis2.</p>
+<a name="handlesjson" id="handlesjson"></a>
+<h2>How Axis2 Handles JSON Messages</h2>
+<p>Axis2 with REST provides GSON or the newer Moshi library as the JSON parser.
+With the proper axis2.xml configuration, this support is triggered by the HTTP header 
+"Content-Type: application/json". </p>
+<p>More docs concerning Axis2 and JSON can be found in the <a href="
+json_support_gson.html">Pure JSON Support</a> and <a href="
+json_gson_user_guide.html">JSON User Guide.</a>
+</p>	
+<p>
+For users of JSON and Spring Boot - or anyone interesed in a complete JSON example that 
+includes Spring Security - see the sample application in the <a href=
+"json-springboot-userguide.html">JSON and Spring Boot User's Guide.</a> 
+</p>
 <a name="distributions" id="distributions"></a>
 <h2>Axis2 Distributions</h2>
 <p>Axis2 is released in several <a href="../download.cgi">

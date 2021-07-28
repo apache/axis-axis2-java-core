@@ -41,6 +41,8 @@ and capabilities. These services are listed in this section.</p>
 hood?</a></li>
 <li><a href="userguide.html#handlessoap">How Axis2 handles SOAP
 messages</a></li>
+<li><a href="userguide.html#handlesjson">How Axis2 handles JSON
+messages</a></li>
 <li><a href="userguide.html#distributions">Axis2
 distributions</a></li>
 <li><a href="userguide.html#sbd">The Axis2 Standard Binary
