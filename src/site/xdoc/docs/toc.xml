@@ -115,6 +115,7 @@ Support</a></li>
         <li><a href="json_support_gson.html#native_approach">Native Approach</a></li>
         <li><a href="json_support_gson.html#xml_stream_api_base_approach">XML Stream API Base Approach</a></li>
         <li><a href="json_gson_user_guide.html">User Guide</a></li>
+        <li><a href="json-springboot-userguide.html">JSON and REST with Spring Boot User's Guide</a></li>
     </ul>
     </li>
 </ul>

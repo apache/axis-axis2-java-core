@@ -36,6 +36,10 @@ JSON based REST Web services and also Web service clients via JSON and Curl, how
 write a custom login, and how to use them in a token based Web service that also helps 
 prevent cross site scripting (XSS). 
 </p>
+<p>More docs concerning Axis2 and JSON can be found in the <a href="
+json_support_gson.html">Pure JSON Support</a> and <a href="
+json_gson_user_guide.html">JSON User Guide</a>
+</p>	
 <a name="Introduction"></a>
 
 <h2>Introduction</h2>
@@ -48,7 +52,7 @@ you choose the latter, then the <a href="installationguide.html">Installation
 Guide</a> will instruct you on how to build Axis2 Standard Binary
 Distribution using the source.</p>
 
-<p>The source code for this guide provides a pom.xml for an entire demo application built by maven.
+<p>The source code for this guide provides a pom.xml for an entire demo WAR application built by maven.
 </p>
 
 <p>Please note that Axis2 is an open-source effort. If you feel the code
@@ -91,6 +95,8 @@ standards.
 </p>
 <p>
 https://datatracker.ietf.org/doc/html/rfc7519
+</p>
+<p>
 https://datatracker.ietf.org/doc/html/rfc7516
 </p>
 <p>
@@ -126,7 +132,7 @@ reflected XSS attack.
 <p>
 Concerning Spring Security and Spring Boot, the Axis2Application class that 
 extends SpringBootServletInitializer as typically done utilizes 
-List<SecurityFilterChain> as a binary choice; A login url will match, otherwise invoke 
+List of SecurityFilterChain as a binary choice; A login url will match, otherwise invoke 
 JWTAuthenticationFilter. All URL's to other services besides the login, will proceed 
 after JWTAuthenticationFilter verifies the token.
 </p>
@@ -155,7 +161,7 @@ services.xml file:
 <pre>
     &lt;message name="requestMessage"&gt;
     &lt;excludeOperations&gt;
-        &lt;operation>setMyVar&lt;</operation&gt;
+        &lt;operation>setMyVar&lt;/operation&gt;
     &lt;/excludeOperations&gt;
 </pre>
 <p>
@@ -209,7 +215,7 @@ Invoking the client for a Test Service that validates a sample token can be done
 follows:
 </p>
 <p>
-curl -v -H "Authorization: Bearer I2SpAHWrU5gYbGNwNNKg" -H "Content-Type: application/json" -X POST --data @/root/test.dat http://localhost:8080/axis2-json-api/services/testws'
+	curl -v -H "Authorization: Bearer I2SpAHWrU5gYbGNwNNKg" -H "Content-Type: application/json" -X POST --data @/home/myuser/test.dat http://localhost:8080/axis2-json-api/services/testws'
 </p>
 <p>
 Where the contents of /home/myuser/test.dat are below. arg0 is the var name 
@@ -219,7 +225,7 @@ and is used by Axis2 as part of the reflection based code:
 {"doTestws":[{"arg0":{"messagein":hello}}]}
 </p>
 <p>
-Response, HTML encoded to prevent XSS. For the escaped results see ./src/site/xdoc/docs/json-springboot-userguide.xml.
+Response, HTML encoded to prevent XSS. For the results with encoding see ./src/site/xdoc/docs/json-springboot-userguide.xml.
 </p>
 <p>
 {"response":{"messageout":"&lt;script xmlns=\"http://www.w3.org/1999/xhtml\"&gt;alert('Hello');&lt;/script&gt; \"&gt;","status":"OK"}}

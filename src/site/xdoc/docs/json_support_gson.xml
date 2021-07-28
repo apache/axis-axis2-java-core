@@ -26,6 +26,14 @@
 
     <body>
         <h1>New JSON support in Apache Axis2</h1>
+	<p>Update: Moshi support is now included as an alternative to GSON,
+           though both are supported and will continue to be. Both libs are very
+	   similar in features though Moshi is widely considered to have better
+	   performance. GSON development has largely ceased. Switching between
+	   Moshi and GSON is a matter of editing the axis2.xml file. 
+	   For users of JSON and Spring Boot, see the sample application in 
+	   the <a href="json-springboot-userguide.html">JSON and Spring Boot User's Guide.</a> 
+	</p>
         <p>This documentation explains how the existing JSON support in Apache Axis2 have been improved with two new
             methods named, Native approach and XML stream API based approach. Here it initially explains about the
             drawbacks of the old JSON support, how to overcome those drawbacks with the new approaches and, how to use
