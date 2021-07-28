@@ -31,7 +31,7 @@
 				</tr>
 				<tr>
 					<td align="center">
-					Copyright &#169; 1999-2006, The Apache Software Foundation<br />Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
+					Copyright &#169; 1999-2021, The Apache Software Foundation<br />Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
 					</td>
 				</tr>
 			</table>
