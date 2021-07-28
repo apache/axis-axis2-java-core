@@ -26,7 +26,7 @@
     <body>
         <section name="Introduction">
             <p>
-                This document provides information on how to use Git to get an
+                This document provides information on how to use Git to get a
                 GitHub checkout/update, make commits to the repository, etc., in the
                 process of contributing to Apache projects (specifically Axis2).
                 Instructions on configuring IDEs for development and using Maven to
