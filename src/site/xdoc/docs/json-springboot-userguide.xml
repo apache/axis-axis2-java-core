@@ -132,7 +132,7 @@ reflected XSS attack.
 <p>
 Concerning Spring Security and Spring Boot, the Axis2Application class that 
 extends SpringBootServletInitializer as typically done utilizes 
-List of SecurityFilterChain as a binary choice; A login url will match, otherwise invoke 
+a List of SecurityFilterChain as a binary choice; A login url will match, otherwise invoke 
 JWTAuthenticationFilter. All URL's to other services besides the login, will proceed 
 after JWTAuthenticationFilter verifies the token.
 </p>
@@ -215,11 +215,11 @@ Invoking the client for a Test Service that validates a sample token can be done
 follows:
 </p>
 <p>
-	curl -v -H "Authorization: Bearer I2SpAHWrU5gYbGNwNNKg" -H "Content-Type: application/json" -X POST --data @/home/myuser/test.dat http://localhost:8080/axis2-json-api/services/testws'
+	curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" -H "Content-Type: application/json" -X POST --data @/home/myuser/test.dat http://localhost:8080/axis2-json-api/services/testws'
 </p>
 <p>
 Where the contents of /home/myuser/test.dat are below. arg0 is the var name 
-and is used by Axis2 as part of the reflection based code:
+and is used by Axis2 as part of its reflection based code:
 </p>
 <p>
 {"doTestws":[{"arg0":{"messagein":hello}}]}
