@@ -142,7 +142,7 @@ the form of "Authorization: Bearer mytoken".
 </p>
 <p>
 The Axis2WebAppInitializer class supplied in this guide, is the config class 
-that registers AxisServlet with spring boot.
+that registers AxisServlet with Spring Boot.
 </p>
 <p>
 Axis2 web services are installed via a WEB-INF/services directory that contains
