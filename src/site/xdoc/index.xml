@@ -24,7 +24,7 @@
     </properties>
     <body>
 <h1>Welcome to Apache Axis2/Java</h1>
-<p>Apache Axis2&#x2122; is a Web Services / SOAP / WSDL engine, the successor to the
+<p>Apache Axis2&#x2122; is a Web Services JSON / SOAP / WSDL engine, the successor to the
 widely used <a href=
 "http://ws.apache.org/axis/">Apache Axis</a> SOAP stack.
 There are two implementations
@@ -50,11 +50,16 @@ also has integrated support for the widely popular <a href=
 services</a>. The same business logic implementation can offer both
 a WS-* style interface as well as a REST/POX style interface
 simultaneously.</p>
+<p>Apache Axis2 over time has expanded to contemporary JSON 
+(JavaScript Object Notation) web services, and that area
+is where new development is occuring. In addition to GSON
+for the Java serialization/deserialization of JSON, Moshi
+is now supported since GSON development has largely ceased.</p>
 <p>Apache Axis2 is more efficient, more modular and more
-XML-oriented than the older version. It is carefully designed to
-support the easy addition of plug-in "modules" that extend their
-functionality for features such as security and reliability. The
-<a href="modules/index.html">Modules</a>
+XML-oriented / JSON-orientated than the older version. It is 
+carefully designed to support the easy addition of plug-in "modules" 
+that extend their functionality for features such as security and 
+reliability. The <a href="modules/index.html">Modules</a>
 currently available or under development include:</p>
 <ul>
 <li><a href=
@@ -68,7 +73,9 @@ core</li>
 </ul>
 <p>Apache Axis2 is built on <a href=
 "http://ws.apache.org/axiom/">Apache AXIOM</a>, a
-new high performant, pull-based XML object model.</p>
+new high performant, pull-based XML object model - however for JSON
+based web services, Moshi (or GSON) takes its place and largely follows 
+the same pull-based concepts.</p>
 <p>Axis2 comes with many new features, enhancements and industry
 specification implementations. The key features offered are as
 follows:</p>
@@ -144,6 +151,13 @@ supports the Web Service Description Language, version <a href=
 build stubs to access remote services, and also to automatically
 export machine-readable descriptions of your deployed services from
 Axis2.</p>
+</li>
+<li>
+<p style="margin-bottom: 0in"><strong>JSON support</strong> - Axis2
+supports the creation of Web Services using JavaScript Object Notation, with <a href=
+"https://github.com/google/gson">GSON</a> and <a href=
+"https://github.com/square/moshi">Moshi</a>, which allows you to easily
+build POJO based services that receive and return JSON.</p>
 </li>
 <li>
 <p style="margin-bottom: 0in"><strong>Composition and

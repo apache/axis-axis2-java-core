@@ -31,10 +31,11 @@
 <h1 align="center">Apache Axis2 JSON and REST with Spring Boot User's Guide</h1>
 
 <p>This guide will help you get started with Axis2 and JSON via REST, using 
-Spring Security with Spring Boot!  It gives a detailed description on how to write 
-JSON based REST Web services and also Web service clients via JSON and Curl, how to 
-write a custom login, and how to use them in a token based Web service that also helps 
-prevent cross site scripting (XSS). 
+<a href="https://spring.io/projects/spring-security">Spring Security</a> with 
+<a href="https://spring.io/projects/spring-boot">Spring Boot!</a>
+It gives a detailed description on how to write JSON based REST Web services and also 
+Web service clients via JSON and Curl, how to write a custom login, and how to use them 
+in a token based Web service that also helps prevent cross site scripting (XSS). 
 </p>
 <p>More docs concerning Axis2 and JSON can be found in the <a href="
 json_support_gson.html">Pure JSON Support</a> and <a href="
@@ -84,7 +85,7 @@ The testing was carried out on Wildfly, by installing the WAR in its app server.
 </p>
 <p>Please deploy the result of the maven build via 'mvn clean install', axis2-json-api.war, into your servlet container and ensure that it installs without any errors.</p>
 
-<h2>Creating a New Web Service</h2>
+<h2>Creating secure Web Services</h2>
 
 <p>
 Areas out of scope for this guide are JWT and JWE for token generation and validation, 
@@ -129,12 +130,14 @@ a String with some Javascript, that is HTML encoded by Axis2 and thereby
 eliminating the possibility of a Javascript engine executing the response i.e. a 
 reflected XSS attack. 
 </p>
+
 <p>
 Concerning Spring Security and Spring Boot, the Axis2Application class that 
-extends SpringBootServletInitializer as typically done utilizes 
-a List of SecurityFilterChain as a binary choice; A login url will match, otherwise invoke 
-JWTAuthenticationFilter. All URL's to other services besides the login, will proceed 
-after JWTAuthenticationFilter verifies the token.
+extends <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/SecurityFilterChain.html">SpringBootServletInitializer</a> as typically 
+done utilizes a List of <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/SecurityFilterChain.html">SecurityFilterChain</a> as a 
+binary choice; A login url will match, otherwise invoke JWTAuthenticationFilter. All URL's 
+to other services besides the login, will proceed after JWTAuthenticationFilter verifies the 
+token.
 </p>
 <p>
 The JWTAuthenticationFilter class expects a token from the web services JSON client in 
@@ -159,13 +162,13 @@ class be exposed as a starting point. The place to add method exclusion is the
 services.xml file: 
 </p>
 <pre>
-    &lt;message name="requestMessage"&gt;
     &lt;excludeOperations&gt;
         &lt;operation>setMyVar&lt;/operation&gt;
     &lt;/excludeOperations&gt;
 </pre>
+
 <p>
-The axis2.xml file can define Moshi or GSON as the JSON engine. GSON was the original 
+The axis2.xml file can define <a href= "https://github.com/google/gson">GSON</a> or <a href= "https://github.com/square/moshi">Moshi</a> as the JSON engine. GSON was the original 
 however development has largely ceased. Moshi is very similar and is widely considered 
 to be the superior implementation in terms of performance. GSON will likely continue to
 be supported in Axis2 because it is helpful to have two JSON implementations to compare 
@@ -195,40 +198,40 @@ JsonInOnlyRPCMessageReceiver, JsonBuilder, and JSONMessageHandler.
 <p>
 Invoking the client for a login that returns a token can be done as follows:
 </p>
-<p>
+<pre>
 curl -v -H "Content-Type: application/json" -X POST --data @/home/myuser/login.dat http://localhost:8080/axis2-json-api/services/loginService
-</p>
+</pre>
 <p>
 Where the contents of /home/myuser/login.dat are:
 </p>
-<p>
+<pre>
 {"doLogin":[{"arg0":{"email":java-dev@axis.apache.org,"credentials":userguide}}]}
-</p>
+</pre>
 <p>
 Response: 
 </p>
-<p>
+<pre>
 {"response":{"status":"OK","token":"95104Rn2I2oEATfuI90N","uuid":"99b92d7a-2799-4b20-b029-9fbd6108798a"}}
-</p>
+</pre>
 <p>
 Invoking the client for a Test Service that validates a sample token can be done as 
 follows:
 </p>
+<pre>
+curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" -H "Content-Type: application/json" -X POST --data @/home/myuser/test.dat http://localhost:8080/axis2-json-api/services/testws'
+</pre>
 <p>
-	curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" -H "Content-Type: application/json" -X POST --data @/home/myuser/test.dat http://localhost:8080/axis2-json-api/services/testws'
-</p>
-<p>
-Where the contents of /home/myuser/test.dat are below. arg0 is the var name 
+Where the contents of /home/myuser/test.dat are below. arg0 is a var name 
 and is used by Axis2 as part of its reflection based code:
 </p>
-<p>
+<pre>
 {"doTestws":[{"arg0":{"messagein":hello}}]}
-</p>
+</pre>
 <p>
-Response, HTML encoded to prevent XSS. For the results with encoding see ./src/site/xdoc/docs/json-springboot-userguide.xml.
+Response, HTML encoded to prevent XSS. For the results with encoding see src/site/xdoc/docs/json-springboot-userguide.xml.
 </p>
-<p>
+<pre>
 {"response":{"messageout":"&lt;script xmlns=\"http://www.w3.org/1999/xhtml\"&gt;alert('Hello');&lt;/script&gt; \"&gt;","status":"OK"}}
-</p>
+</pre>
 </body>
 </html>
