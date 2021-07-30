@@ -42,7 +42,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <spring-boot.version>2.5.2</spring-boot.version>
-        <forceHttps>false</forceHttps>
     </properties>
 
     <dependencies>
@@ -337,9 +336,6 @@
                         <phase>install</phase>
                         <configuration>
                             <tasks>
-                                <!--  used for local deploys, ignored otherwise -->
-                                <touch file="target/deploy/axis2-json-api.war.dodeploy">
-                                </touch>
                                 <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/Login.aar">
                                     <metainf file="resources-axis2/login_resources/services.xml"/>
                                 </jar>
