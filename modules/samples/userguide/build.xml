@@ -30,7 +30,7 @@
 
 
     <target name="run.client.all"
-            depends="run.client.ping,run.client.blocking,run.client.blockingdual,run.client.nonblocking,run.client.nonblockingdual,run.client.servicewithmodule">
+            depends="run.client.rest,run.client.ping,run.client.blocking,run.client.blockingdual,run.client.nonblocking,run.client.nonblockingdual,run.client.servicewithmodule">
     </target>
     
     <target name="compile">
@@ -128,6 +128,14 @@
         </java>
     </target>
     
+    <target name="run.client.rest" depends="compile">
+        <java classname="userguide.clients.RESTClient"
+              classpathref="axis.classpath" fork="true">
+            <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
+	    <jvmarg value="-Daxis2.xml=conf/axis2.xml"/>
+        </java>
+    </target>
+
     <target name="run.client.servicewithmodule" depends="compile">
     	<echo message="${mainDir}" />
 	<echo message="${mainDir}/repository/conf/axis2.xml" />
