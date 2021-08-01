@@ -178,8 +178,12 @@ In order to prepare the release artifacts for vote, execute the following steps:
 
 5.  Create a staging area for the Maven site:
 
-        svn cp https://svn.apache.org/repos/asf/axis/site/axis2/java/core \
-               https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging
+        git clone https://gitbox.apache.org/repos/asf/axis-site.git
+        cd axis-site
+        cp -r axis2/java/core/ axis2/java/core-staging
+        git add  axis2/java/core-staging
+        git commit -am "core-staging"
+        git push
 
 6.  Change to the `target/checkout` directory and prepare the site using the following commands:
 
@@ -188,10 +192,6 @@ In order to prepare the release artifacts for vote, execute the following steps:
 
     Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there
     are no unexpected changes to the site. Then commit the changes.
-    Note that this may fail because of [INFRA-11007](https://issues.apache.org/jira/browse/INFRA-11007).
-    In this case, switch to the Subversion master using the following command before trying to commit again:
-
-        svn switch --relocate https://svn.apache.org/ https://svn-master.apache.org/
 
 7.  Start the release vote by sending a mail to `java-dev@axis.apache.org`.
     The mail should mention the following things:
