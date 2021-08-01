@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
-        <version>1.8.0-SNAPSHOT</version>
+        <version>1.8.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -34,7 +34,8 @@
         <connection>scm:svn:http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/adb-tests</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/modules/adb-tests</developerConnection>
         <url>http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/modules/adb-tests</url>
-    </scm>
+      <tag>v1.8.0</tag>
+  </scm>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

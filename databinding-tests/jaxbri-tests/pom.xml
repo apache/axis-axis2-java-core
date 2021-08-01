@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>databinding-tests</artifactId>
-        <version>1.8.0-SNAPSHOT</version>
+        <version>1.8.0</version>
     </parent>
 
     <artifactId>jaxbri-tests</artifactId>
@@ -321,7 +321,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <generatedAxis2xml/>
+                    <generatedAxis2xml />
                 </configuration>
             </plugin>
         </plugins>
