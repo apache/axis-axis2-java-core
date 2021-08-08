@@ -73,7 +73,7 @@
         </menu>
         <menu name="Get Involved">
             <item name="Overview" href="overview.html" />
-            <item name="Checkout the Source" href="svn.html" />
+            <item name="Checkout the Source" href="git.html" />
             <item name="Mailing Lists" href="mail-lists.html" />
             <item name="Release Process" href="release-process.html"/>
             <item name="Developer Guidelines" href="guidelines.html" />

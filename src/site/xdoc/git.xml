@@ -53,7 +53,7 @@
                 out Axis2 trunk by following these steps:
             </p>
             <ol type="1">
-                <li>Run <strong>git clone &lt;repository URL&gt; axis2</strong> where
+                <li>Run <strong>git clone &lt;repository URL&gt;</strong> where
                 the repository URL from the previous list.</li>
                 <li>This step will check out the latest version of the Axis2 Java
                 codebase to a directory named "axis-axis2-java-core".</li>
@@ -64,7 +64,7 @@
                 Axis2's build is based on Maven 3. Maven is a build system that
                 allows for the reuse of common build projects across multiple
                 projects. For information about obtaining, installing, and
-                configuring Maven 2, please see the <a href=
+                configuring Maven 3, please see the <a href=
                 "http://maven.apache.org">Maven project page</a>.
                 To use Maven to build the Axis2 project, Please install
                 <a href="http://maven.apache.org/download.html">Maven2</a> and
