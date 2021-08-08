@@ -204,7 +204,7 @@ In order to prepare the release artifacts for vote, execute the following steps:
 If the vote passes, execute the following steps:
 
 1.  Promote the artifacts in the staging repository. See
-    [here](https://central.sonatype.org/publish/release/#close-and-drop-or-release-your-staging-repository)
+    [here](https://maven.apache.org/developers/release/maven-project-release-procedure.html)
     for detailed instructions for this step.
 
 2.  Publish the distributions:
