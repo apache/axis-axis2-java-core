@@ -38,7 +38,7 @@ Web service clients via JSON and Curl, how to write a custom login, and how to u
 in a token based Web service that also helps prevent cross site scripting (XSS). 
 </p>
 <p>More docs concerning Axis2 and JSON can be found in the <a href="
-json_support_gson.html">Pure JSON Support</a> and <a href="
+json_support_gson.html">Pure JSON Support documentation</a> and <a href="
 json_gson_user_guide.html">JSON User Guide</a>
 </p>	
 <a name="Introduction"></a>
@@ -133,7 +133,7 @@ reflected XSS attack.
 
 <p>
 Concerning Spring Security and Spring Boot, the Axis2Application class that 
-extends <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/SecurityFilterChain.html">SpringBootServletInitializer</a> as typically 
+extends <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/web/servlet/support/SpringBootServletInitializer.html">SpringBootServletInitializer</a> as typically 
 done utilizes a List of <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/SecurityFilterChain.html">SecurityFilterChain</a> as a 
 binary choice; A login url will match, otherwise invoke JWTAuthenticationFilter. All URL's 
 to other services besides the login, will proceed after JWTAuthenticationFilter verifies the 
