@@ -360,14 +360,14 @@ distribution</a>) can be built using Maven commands.
 <p>Required jar files do not come with the distribution and they
 will also have to be built by running the maven command. Before we
 go any further, it is necessary to install <a href=
-"http://maven.apache.org/">Maven2</a> and
+"http://maven.apache.org/">Maven3</a> and
 set up its environment, as explained below.</p>
 <a name="env-src" id="env-src"></a>
 <h3>Setting Up the Environment and Tools</h3>
 <a name="maven" id="maven"></a>
 <h4>Maven</h4>
 <p>The Axis2 build is based on <a href=
-"http://maven.apache.org/">Maven2</a> .
+"http://maven.apache.org/">Maven3</a> .
 Hence the only prerequisite to build Axis2 from the source
 distribution is to have Maven installed. Extensive instruction
 guides are available at the Maven site. This guide however contains
