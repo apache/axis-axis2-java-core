@@ -29,7 +29,7 @@
            <p>Update: This documentation represents early forms of JSON 
               conventions, Badgerfish and Mapped. GSON support was added a few
 	      years later. Moshi support is now included as an alternative to 
-	      GSON. For users of JSON seeking modern features, see <a href=
+	      GSON. For users of JSON seeking modern features, see the <a href=
 	      "json_support_gson.html">JSON Support Guide.</a>. For users of 
               JSON and Spring Boot, see the sample application in the <a href=
 	      "json-springboot-userguide.html">JSON and Spring Boot User's Guide.</a> 
