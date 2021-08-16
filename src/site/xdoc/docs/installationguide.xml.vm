@@ -117,19 +117,18 @@ Download</a> Source Distribution</p>
 <tbody>
 <tr>
 <td>Java Development Kit (JDK)</td>
-<td>1.5 or later (For instructions on setting up the JDK in
+<td>1.8 or later (For instructions on setting up the JDK in
 different operating systems, visit <a href=
 "http://java.sun.com/">http://java.sun.com</a>)</td>
 </tr>
 <tr>
 <td>Disk</td>
-<td>Approximately 11 MB separately for standard binary
+<td>Approximately 35 MB separately for standard binary
 distribution</td>
 </tr>
 <tr>
 <td>Operating system</td>
-<td>Tested on Windows XP, Linux, Mac OS X, Fedora core, Ubuntu,
-Gentoo</td>
+<td>Tested on Windows, Mac OS X, Ubuntu(Linux)</td>
 </tr>
 <tr>
 <td><strong>Build Tool</strong>-<a href=
@@ -137,7 +136,7 @@ Gentoo</td>
 <p>To run samples and to build WAR files from Axis2 binary
 distribution.</p>
 </td>
-<td>Version 1.6.5 or higher (<a href=
+<td>Version 1.10 or higher (<a href=
 "http://ant.apache.org/bindownload.cgi">download</a>).</td>
 </tr>
 <tr>
@@ -146,10 +145,10 @@ distribution.</p>
 <p>Required <em>only</em> for building Axis2 from Source
 Distribution</p>
 </td>
-<td>2.0.7 or higher in Maven 2.x series (<a href=
+<td>3.6.3 or higher in Maven 3.x series (<a href=
 "http://maven.apache.org/download.html">download</a>).
-<strong>Please download Maven 2.x version. Axis2 does not support
-Maven 1.x anymore.</strong></td>
+<strong>Please download Maven 3.x version. Axis2 does not support
+Maven 1.x nor 2.x anymore.</strong></td>
 </tr>
 </tbody>
 </table>
@@ -172,7 +171,7 @@ compliant servlet container</li>
 <h3>1. Download and Install the Apache Axis2 Binary
 Distribution</h3>
 <p><a href="http://java.sun.com/j2se/">Download</a> and install a
-Java Development Kit (JDK) release (version 1.5 or later). Install
+Java Development Kit (JDK) release (version 1.8 or later). Install
 the JDK according to the instructions included with the release.
 Set an environment variable JAVA_HOME to the pathname of the
 directory into which you installed the JDK release.</p>
@@ -195,7 +194,7 @@ be available by visiting http://localhost:8080/axis2/services/</p>
 <h3>3. Building the Axis2 Web Application (axis2.war) Using
 Standard Binary Distribution</h3>
 <p><a href="http://ant.apache.org/bindownload.cgi">Download</a> and
-install Apache Ant (version 1.6.5 or later). Install Apache Ant
+install Apache Ant (version 1.10 or later). Install Apache Ant
 according to the instructions included with the Ant release.</p>
 <p>Locate the Ant build file (build.xml) inside the webapp
 directory, which resides in your Axis2 home directory (i.e:-
