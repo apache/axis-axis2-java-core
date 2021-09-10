@@ -155,7 +155,7 @@ The pom.xml supplied in this guide generates these files.
 </p>
 <p>
 Tip: don't expose methods in your web services that are not meant to be exposed, 
-such as getters and setters. Axis2 determines the avaliable methods by reflection.
+such as getters and setters. Axis2 determines the available methods by reflection.
 For JSON, the message name at the start of the JSON received by the Axis2 server 
 defines the Axis2 operation to invoke.  It is recommended that only one method per 
 class be exposed as a starting point. The place to add method exclusion is the 
