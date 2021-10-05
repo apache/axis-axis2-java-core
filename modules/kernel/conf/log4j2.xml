@@ -6,16 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apache" level="warn" additivity="false" >
+        <!-- Logger name="org.apache.axis2" level="debug" additivity="false" >
             <AppenderRef ref="Console"/>
-        </Logger>
-        <Logger name="org.apache.axis2" level="debug" additivity="false" >
-            <AppenderRef ref="Console"/>
-        </Logger>
-        <Logger name="org.springframework" level="warn" additivity="false" >
-            <AppenderRef ref="Console"/>
-        </Logger>
-        <Root level="debug">
+        </Logger -->
+        <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
