@@ -265,6 +265,25 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * @parameter default-value="${project.build.sourceEncoding}"
      */
     private String encoding;
+
+    /**
+     * Skeleton interface name - used to specify a name for skeleton interface other than the default one.
+     * In general, you should use the {@code serviceName} parameter or ensure only one service exist.
+     * Should be used together with {@code generateServerSideInterface}.
+     * Maps to the -sin option of the command line tool.
+     *
+     * @parameter property="axis2.wsdl2code.skeletonInterfaceName"
+     */
+    private String skeletonInterfaceName;
+
+    /**
+     * Skeleton class name - used to specify a name for skeleton class other than the default one.
+     * In general, you should use the {@code serviceName} parameter or ensure only one service exist.
+     * Maps to the -scn option of the command line tool.
+     *
+     * @parameter property="axis2.wsdl2code.skeletonClassName"
+     */
+    private String skeletonClassName;
     
     private CodeGenConfiguration buildConfiguration() throws CodeGenerationException, MojoFailureException {
         CodeGenConfiguration config = new CodeGenConfiguration();
@@ -334,7 +353,9 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
         config.setPortName(portName);
         config.setUri2PackageNameMap(getNamespaceToPackagesMap());
         config.setOutputEncoding(encoding);
-        
+        config.setSkeltonInterfaceName(skeletonInterfaceName);
+        config.setSkeltonClassName(skeletonClassName);
+
         config.loadWsdl(wsdlFile);
         
         return config;
