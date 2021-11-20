@@ -493,7 +493,7 @@
     <properties>
         <neethi.version>3.1.1</neethi.version>
         <woden.version>1.0M10</woden.version>
-        <axiom.version>1.3.0</axiom.version>
+        <axiom.version>1.3.1-SNAPSHOT</axiom.version>
         <xmlschema.version>2.2.5</xmlschema.version>
         <activation.version>1.2.1</activation.version>
         <ant.version>1.10.11</ant.version>
