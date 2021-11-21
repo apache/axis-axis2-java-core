@@ -184,8 +184,7 @@ public class FaultsServiceSoapBindingImpl implements FaultsServicePortType {
         
         // Alternate Approach
         org.apache.axiom.soap.SOAPFactory asf = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getSOAP11Factory();
-        org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl axiomEnv = (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl) asf.createSOAPEnvelope();
-        javax.xml.soap.SOAPEnvelope env = new SOAPEnvelopeImpl(axiomEnv);
+        javax.xml.soap.SOAPEnvelope env = new SOAPEnvelopeImpl(asf.createSOAPEnvelope());
         SOAPBody body = env.addBody();
         soapFault = body.addFault();
         return soapFault;

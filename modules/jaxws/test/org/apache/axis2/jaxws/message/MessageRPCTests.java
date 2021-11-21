@@ -22,8 +22,8 @@ package org.apache.axis2.jaxws.message;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
@@ -232,8 +232,8 @@ public class MessageRPCTests extends TestCase {
         // PERFORMANCE CHECK:
         // The param in the body should be an OMSourcedElement
         OMElement o = env.getBody().getFirstElement().getFirstElement();
-        assertTrue(o instanceof OMSourcedElementImpl);
-        assertTrue(((OMSourcedElementImpl)o).isExpanded() == false);
+        assertTrue(o instanceof OMSourcedElement);
+        assertTrue(((OMSourcedElement)o).isExpanded() == false);
         
         // Serialize the Envelope using the same mechanism as the 
         // HTTP client.
