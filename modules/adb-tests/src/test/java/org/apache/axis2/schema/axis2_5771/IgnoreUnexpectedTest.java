@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -40,7 +40,7 @@ public class IgnoreUnexpectedTest {
             if (expected == null) {
                 verify(handler).publish(any(LogRecord.class));
             } else {
-                verifyZeroInteractions(handler);
+                verifyNoInteractions(handler);
             }
         } finally {
             logger.removeHandler(handler);
