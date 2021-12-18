@@ -537,6 +537,7 @@
              we can't use the project.version variable directly because of the dot. See
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
         <axis2_version>${project.version}</axis2_version>
+        <project.build.outputTimestamp>2021-12-18T16:00:00Z</project.build.outputTimestamp>
     </properties>
     <pluginRepositories>
         <pluginRepository>
