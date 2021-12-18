@@ -57,4 +57,7 @@ updates:
         versions: ">= 3.0"
       # Don't upgrade Rhino unless somebody is willing to figure out the necessary code changes.
       - dependency-name: "rhino:js"
+      # maven-plugin-plugin 3.6.2 is affected by MPLUGIN-384
+      - dependency-name: "org.apache.maven.plugins:maven-plugin-plugin"
+        versions: "3.6.2"
     open-pull-requests-limit: 15
