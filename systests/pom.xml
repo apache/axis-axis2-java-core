@@ -17,8 +17,9 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
@@ -27,7 +28,17 @@
 
     <artifactId>systests</artifactId>
     <packaging>pom</packaging>
+
     <url>http://axis.apache.org/axis2/java/core/</url>
+
+    <modules>
+        <module>echo</module>
+        <module>SOAP12TestModuleB</module>
+        <module>SOAP12TestModuleC</module>
+        <module>SOAP12TestServiceB</module>
+        <module>SOAP12TestServiceC</module>
+        <module>webapp-tests</module>
+    </modules>
 
     <build>
         <plugins>
@@ -39,13 +50,4 @@
             </plugin>
         </plugins>
     </build>
-    
-    <modules>
-        <module>echo</module>
-        <module>SOAP12TestModuleB</module>
-        <module>SOAP12TestModuleC</module>
-        <module>SOAP12TestServiceB</module>
-        <module>SOAP12TestServiceC</module>
-        <module>webapp-tests</module>
-    </modules>
 </project>

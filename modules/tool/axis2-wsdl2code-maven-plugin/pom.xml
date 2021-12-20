@@ -19,31 +19,36 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
         <version>1.8.1-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
+
     <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-    <name>Apache Axis2 - tool - WSDL2Code Maven Plugin</name>
     <packaging>maven-plugin</packaging>
+
+    <name>Apache Axis2 - tool - WSDL2Code Maven Plugin</name>
     <description>The Axis 2 Plugin for Maven allows client side and server side sources from a WSDL.</description>
     <url>http://axis.apache.org/axis2/java/core/tools/maven-plugins/axis2-wsdl2code-maven-plugin</url>
+
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
     <distributionManagement>
         <site>
             <id>site</id>
             <url>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging/tools/maven-plugins/axis2-wsdl2code-maven-plugin</url>
         </site>
     </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -156,17 +161,16 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
         </dependency>
-        <dependency>
-            <!-- Maven supports SLF4J, so use it. -->
+        <dependency><!-- Maven supports SLF4J, so use it. -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
-        <dependency>
-            <!-- JiBX uses log4j -->
+        <dependency><!-- JiBX uses log4j -->
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -221,6 +225,7 @@
             </plugin>
         </plugins>
     </build>
+
     <reporting>
         <plugins>
             <plugin>

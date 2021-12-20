@@ -19,153 +19,24 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
         <version>24</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2</artifactId>
     <version>1.8.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <name>Apache Axis2 - Root</name>
-    <inceptionYear>2004</inceptionYear>
     <url>http://axis.apache.org/axis2/java/core/</url>
-    <issueManagement>
-        <system>jira</system>
-        <url>http://issues.apache.org/jira/browse/AXIS2</url>
-    </issueManagement>
-    <modules>
-        <module>modules/resource-bundle</module> <!-- Must be first in the list! -->
-        <module>apidocs</module>
-        <module>modules/adb</module>
-        <module>modules/adb-codegen</module>
-        <module>modules/adb-tests</module>
-        <module>modules/addressing</module>
-        <module>modules/codegen</module>
-        <module>modules/fastinfoset</module>
-        <module>modules/integration</module>
-        <module>modules/java2wsdl</module>
-        <module>modules/jibx</module>
-        <module>modules/jibx-codegen</module>
-        <module>modules/json</module>
-        <module>modules/kernel</module>
-        <module>modules/mex</module>
-        <module>modules/mtompolicy</module>
-        <module>modules/mtompolicy-mar</module>
-        <module>modules/ping</module>
-        <module>modules/samples/version</module>
-        <module>modules/soapmonitor/servlet</module>
-        <module>modules/soapmonitor/module</module>
-        <module>modules/schema-validation</module>
-        <module>modules/spring</module>
-        <module>modules/testutils</module>
-        <module>modules/tool/maven-shared</module>
-        <module>modules/tool/axis2-aar-maven-plugin</module>
-        <module>modules/tool/axis2-ant-plugin</module>
-        <module>modules/tool/axis2-eclipse-codegen-plugin</module>
-        <module>modules/tool/axis2-eclipse-service-plugin</module>
-        <module>modules/tool/axis2-idea-plugin</module>
-        <module>modules/tool/axis2-java2wsdl-maven-plugin</module>
-        <module>modules/tool/axis2-mar-maven-plugin</module>
-        <module>modules/tool/axis2-repo-maven-plugin</module>
-        <module>modules/tool/axis2-wsdl2code-maven-plugin</module>
-        <module>modules/tool/axis2-xsd2java-maven-plugin</module>
-        <module>modules/tool/simple-server-maven-plugin</module>
-        <module>modules/tool/archetype/quickstart</module>
-        <module>modules/tool/archetype/quickstart-webapp</module>
-        <module>modules/webapp</module>
-        <module>modules/xmlbeans</module>
-        <module>modules/xmlbeans-codegen</module>
-        <module>modules/scripting</module>
-        <module>modules/jaxbri-codegen</module>
-        <module>modules/metadata</module>
-        <module>modules/saaj</module>
-        <module>modules/jaxws</module>
-        <module>modules/jaxws-mar</module>
-        <module>modules/jaxws-integration</module>
-        <module>modules/clustering</module>
-        <module>modules/corba</module>
-        <module>modules/osgi</module>
-        <module>modules/osgi-tests</module>
-        <module>modules/transport/local</module>
-        <module>modules/transport/http</module>
-        <module>modules/transport/base</module>
-        <module>modules/transport/jms</module>
-        <module>modules/transport/mail</module>
-        <module>modules/transport/tcp</module>
-        <module>modules/transport/testkit</module>
-        <module>modules/transport/udp</module>
-        <module>modules/transport/xmpp</module>
-        <module>modules/distribution</module>
-        <module>modules/samples</module>
-        <module>databinding-tests</module>
-        <module>systests</module>
-    </modules>
-    <profiles>
-        <profile>
-            <id>apache-release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <!-- Skip the execution configured in org.apache:apache. We use our own configuration. -->
-                                <id>attach-sources</id>
-                                <phase>none</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <!-- Override the execution defined in org.apache:apache
-                                     so that the source-release assembly is not built.
-                                     We define our own source distribution in modules/distribution. -->
-                                <id>source-release-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <skipAssembly>true</skipAssembly>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-    <mailingLists>
-        <mailingList>
-            <name>Axis2 Developer List</name>
-            <subscribe>java-dev-subscribe@axis.apache.org</subscribe>
-            <unsubscribe>java-dev-unsubscribe@axis.apache.org</unsubscribe>
-            <post>java-dev@axis.apache.org</post>
-            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-dev/</archive>
-            <otherArchives>
-                <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-dev</otherArchive>
-            </otherArchives>
-        </mailingList>
-        <mailingList>
-            <name>Axis2 User List</name>
-            <subscribe>java-user-subscribe@axis.apache.org</subscribe>
-            <unsubscribe>java-user-unsubscribe@axis.apache.org</unsubscribe>
-            <post>java-user@axis.apache.org</post>
-            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-user/</archive>
-            <otherArchives>
-                <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-user</otherArchive>
-            </otherArchives>
-        </mailingList>
-    </mailingLists>
+    <inceptionYear>2004</inceptionYear>
+
     <developers>
         <developer>
             <name>Saminda Abeyruwan</name>
@@ -478,18 +349,115 @@
             <organization>Software AG</organization>
         </contributor>
     </contributors>
+
+    <mailingLists>
+        <mailingList>
+            <name>Axis2 Developer List</name>
+            <subscribe>java-dev-subscribe@axis.apache.org</subscribe>
+            <unsubscribe>java-dev-unsubscribe@axis.apache.org</unsubscribe>
+            <post>java-dev@axis.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-dev/</archive>
+            <otherArchives>
+                <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-dev</otherArchive>
+            </otherArchives>
+        </mailingList>
+        <mailingList>
+            <name>Axis2 User List</name>
+            <subscribe>java-user-subscribe@axis.apache.org</subscribe>
+            <unsubscribe>java-user-unsubscribe@axis.apache.org</unsubscribe>
+            <post>java-user@axis.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/axis-java-user/</archive>
+            <otherArchives>
+                <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-user</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+
+    <modules>
+        <module>modules/resource-bundle</module> <!-- Must be first in the list! -->
+        <module>apidocs</module>
+        <module>modules/adb</module>
+        <module>modules/adb-codegen</module>
+        <module>modules/adb-tests</module>
+        <module>modules/addressing</module>
+        <module>modules/codegen</module>
+        <module>modules/fastinfoset</module>
+        <module>modules/integration</module>
+        <module>modules/java2wsdl</module>
+        <module>modules/jibx</module>
+        <module>modules/jibx-codegen</module>
+        <module>modules/json</module>
+        <module>modules/kernel</module>
+        <module>modules/mex</module>
+        <module>modules/mtompolicy</module>
+        <module>modules/mtompolicy-mar</module>
+        <module>modules/ping</module>
+        <module>modules/samples/version</module>
+        <module>modules/soapmonitor/servlet</module>
+        <module>modules/soapmonitor/module</module>
+        <module>modules/schema-validation</module>
+        <module>modules/spring</module>
+        <module>modules/testutils</module>
+        <module>modules/tool/maven-shared</module>
+        <module>modules/tool/axis2-aar-maven-plugin</module>
+        <module>modules/tool/axis2-ant-plugin</module>
+        <module>modules/tool/axis2-eclipse-codegen-plugin</module>
+        <module>modules/tool/axis2-eclipse-service-plugin</module>
+        <module>modules/tool/axis2-idea-plugin</module>
+        <module>modules/tool/axis2-java2wsdl-maven-plugin</module>
+        <module>modules/tool/axis2-mar-maven-plugin</module>
+        <module>modules/tool/axis2-repo-maven-plugin</module>
+        <module>modules/tool/axis2-wsdl2code-maven-plugin</module>
+        <module>modules/tool/axis2-xsd2java-maven-plugin</module>
+        <module>modules/tool/simple-server-maven-plugin</module>
+        <module>modules/tool/archetype/quickstart</module>
+        <module>modules/tool/archetype/quickstart-webapp</module>
+        <module>modules/webapp</module>
+        <module>modules/xmlbeans</module>
+        <module>modules/xmlbeans-codegen</module>
+        <module>modules/scripting</module>
+        <module>modules/jaxbri-codegen</module>
+        <module>modules/metadata</module>
+        <module>modules/saaj</module>
+        <module>modules/jaxws</module>
+        <module>modules/jaxws-mar</module>
+        <module>modules/jaxws-integration</module>
+        <module>modules/clustering</module>
+        <module>modules/corba</module>
+        <module>modules/osgi</module>
+        <module>modules/osgi-tests</module>
+        <module>modules/transport/local</module>
+        <module>modules/transport/http</module>
+        <module>modules/transport/base</module>
+        <module>modules/transport/jms</module>
+        <module>modules/transport/mail</module>
+        <module>modules/transport/tcp</module>
+        <module>modules/transport/testkit</module>
+        <module>modules/transport/udp</module>
+        <module>modules/transport/xmpp</module>
+        <module>modules/distribution</module>
+        <module>modules/samples</module>
+        <module>databinding-tests</module>
+        <module>systests</module>
+    </modules>
+
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
     </scm>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://issues.apache.org/jira/browse/AXIS2</url>
+    </issueManagement>
     <distributionManagement>
         <site>
             <id>site</id>
             <url>scm:git:https://gitbox.apache.org/repos/asf/axis-site.git</url>
         </site>
     </distributionManagement>
+
     <properties>
         <neethi.version>3.2.0</neethi.version>
         <woden.version>1.0M10</woden.version>
@@ -539,37 +507,7 @@
         <axis2_version>${project.version}</axis2_version>
         <project.build.outputTimestamp>2021-12-18T16:00:00Z</project.build.outputTimestamp>
     </properties>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>apache.snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>https://repository.apache.org/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-        <pluginRepository>
-            <id>sonatype-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
-    <repositories>
-        <repository>
-            <id>eclipse_4_16</id>
-            <layout>p2</layout>
-            <url>http://download.eclipse.org/eclipse/updates/4.16/R-4.16-202006040540</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -927,8 +865,7 @@
                 <artifactId>maven-archiver</artifactId>
                 <version>${maven.archiver.version}</version>
             </dependency>
-            <dependency>
-                <!-- Some plexus-archiver versions seem to trigger OOM errors; see MSOURCES-98. -->
+            <dependency><!-- Some plexus-archiver versions seem to trigger OOM errors; see MSOURCES-98. -->
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
                 <version>4.2.6</version>
@@ -1101,6 +1038,39 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>eclipse_4_16</id>
+            <layout>p2</layout>
+            <url>http://download.eclipse.org/eclipse/updates/4.16/R-4.16-202006040540</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshot Repository</name>
+            <url>https://repository.apache.org/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -1436,8 +1406,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <!-- Always build source JARs -->
+            <plugin><!-- Always build source JARs -->
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
@@ -1615,6 +1584,18 @@ $${type_declaration}</template></templates>]]></value>
                     </bundles>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tidy-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <extensions>
             <extension>
@@ -1624,6 +1605,7 @@ $${type_declaration}</template></templates>]]></value>
             </extension>
         </extensions>
     </build>
+
     <reporting>
         <plugins>
             <plugin>
@@ -1641,4 +1623,45 @@ $${type_declaration}</template></templates>]]></value>
             </plugin>
         </plugins>
     </reporting>
+
+    <profiles>
+        <profile>
+            <id>apache-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Skip the execution configured in org.apache:apache. We use our own configuration. -->
+                                <id>attach-sources</id>
+                                <phase>none</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Override the execution defined in org.apache:apache
+                                     so that the source-release assembly is not built.
+                                     We define our own source distribution in modules/distribution. -->
+                                <id>source-release-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <skipAssembly>true</skipAssembly>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
