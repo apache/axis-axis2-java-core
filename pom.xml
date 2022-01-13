@@ -868,7 +868,7 @@
             <dependency><!-- Some plexus-archiver versions seem to trigger OOM errors; see MSOURCES-98. -->
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.2.6</version>
+                <version>4.2.7</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
