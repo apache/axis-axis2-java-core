@@ -383,10 +383,10 @@
      * the essentials, without these Axis is not going to work
      */
     needed = needClass(out, "org.apache.axis2.transport.http.AxisServlet",
-            "axis2-1.0.jar",
+            "fatal error",
             "Apache-Axis",
             "Axis2 will not work",
-            "http://xml.apache.org/axis2/");
+            "https://axis.apache.org/axis2");
     needed += needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
             "Jakarta-Commons Logging",
