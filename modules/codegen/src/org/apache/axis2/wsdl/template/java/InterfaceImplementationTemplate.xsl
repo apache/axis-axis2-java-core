@@ -59,9 +59,9 @@
         protected org.apache.axis2.description.AxisOperation[] _operations;
 
         //hashmaps to keep the fault mapping
-        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,String> faultExceptionNameMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,String>();
-        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,String> faultExceptionClassNameMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,String>();
-        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,String> faultMessageMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,String>();
+        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,java.lang.String> faultExceptionNameMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,java.lang.String>();
+        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,java.lang.String> faultExceptionClassNameMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,java.lang.String>();
+        private java.util.Map&lt;org.apache.axis2.client.FaultMapKey,java.lang.String> faultMessageMap = new java.util.HashMap&lt;org.apache.axis2.client.FaultMapKey,java.lang.String>();
 
         private static int counter = 0;
 
