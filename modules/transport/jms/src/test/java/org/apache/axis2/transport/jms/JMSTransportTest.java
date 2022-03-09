@@ -52,11 +52,9 @@ public class JMSTransportTest extends TestCase {
         // SYNAPSE-436:
         suite.addExclude("(&(test=EchoXML)(replyDestType=topic)(endpoint=axis))");
         
-        // Although Qpid is compiled for Java 1.5, it uses classes only present in 1.6.
-        if (System.getProperty("java.version").startsWith("1.5.")) {
-            System.out.println("Excluding Qpid tests; please run the build with Java 1.6 to include them");
-            suite.addExclude("(broker=qpid)");
-        }
+        // Qpid has been removed because after major changes it is too hard
+	// to maintain
+        suite.addExclude("(broker=qpid)");
 
         // Example to run a few use cases.. please leave these commented out - asankha
         //suite.addExclude("(|(test=AsyncXML)(test=MinConcurrency)(destType=topic)(broker=qpid)(destType=topic)(replyDestType=topic)(client=jms)(endpoint=mock)(cfOnSender=true))");
@@ -65,7 +63,7 @@ public class JMSTransportTest extends TestCase {
 
         TransportTestSuiteBuilder builder = new TransportTestSuiteBuilder(suite);
 
-        JMSTestEnvironment[] environments = new JMSTestEnvironment[] { new QpidTestEnvironment(), new ActiveMQTestEnvironment() };
+        JMSTestEnvironment[] environments = new JMSTestEnvironment[] { new ActiveMQTestEnvironment() };
         for (boolean singleCF : new boolean[] { false, true }) {
             for (boolean cfOnSender : new boolean[] { false, true }) {
                 for (JMSTestEnvironment env : environments) {
@@ -99,7 +97,7 @@ public class JMSTransportTest extends TestCase {
         builder.addEchoEndpoint(new MockEchoEndpoint());
         builder.addEchoEndpoint(new AxisEchoEndpoint());
 
-        for (JMSTestEnvironment env : new JMSTestEnvironment[] { new QpidTestEnvironment(), new ActiveMQTestEnvironment() }) {
+        for (JMSTestEnvironment env : new JMSTestEnvironment[] { new ActiveMQTestEnvironment() }) {
             suite.addTest(new MinConcurrencyTest(new AsyncChannel[] {
                     new JMSAsyncChannel("endpoint1", JMSConstants.DESTINATION_TYPE_QUEUE, ContentTypeMode.TRANSPORT),
                     new JMSAsyncChannel("endpoint2", JMSConstants.DESTINATION_TYPE_QUEUE, ContentTypeMode.TRANSPORT) },
