@@ -52,15 +52,6 @@ public class JMSTransportTest extends TestCase {
         // SYNAPSE-436:
         suite.addExclude("(&(test=EchoXML)(replyDestType=topic)(endpoint=axis))");
         
-        // Qpid has been removed because after major changes it is too hard
-	// to maintain
-        suite.addExclude("(broker=qpid)");
-
-        // Example to run a few use cases.. please leave these commented out - asankha
-        //suite.addExclude("(|(test=AsyncXML)(test=MinConcurrency)(destType=topic)(broker=qpid)(destType=topic)(replyDestType=topic)(client=jms)(endpoint=mock)(cfOnSender=true))");
-        //suite.addExclude("(|(test=EchoXML)(destType=queue)(broker=qpid)(cfOnSender=true)(singleCF=false)(destType=queue)(client=jms)(endpoint=mock))");
-        //suite.addExclude("(|(test=EchoXML)(test=AsyncXML)(test=AsyncSwA)(test=AsyncTextPlain)(test=AsyncBinary)(test=AsyncSOAPLarge)(broker=qpid))");
-
         TransportTestSuiteBuilder builder = new TransportTestSuiteBuilder(suite);
 
         JMSTestEnvironment[] environments = new JMSTestEnvironment[] { new ActiveMQTestEnvironment() };
