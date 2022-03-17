@@ -1067,7 +1067,7 @@ public class JavaBeanWriter implements BeanWriter {
                 }
             }else{
                 if(metainf.getMinLengthFacet()!=-1){
-                    XSLTUtils.addAttribute(model, "maxLenFacet", Long.MAX_VALUE + "", property);
+                    XSLTUtils.addAttribute(model, "maxLenFacet", Long.MAX_VALUE + "L", property);
                 }
             }
         }
