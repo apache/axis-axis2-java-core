@@ -115,7 +115,7 @@ configure your own HttpClient class and customize it as desired.  </p>
 reused httpclient, or any other advanced parameters, you need to
 set the cached httpclient object when your application starts up
 (before any actual axis request). You can set the relevant property
-as shown below by using HTTPConstants.REUSE_HTTP_CLIENT.  </p>
+as shown below by using HTTPConstants.CACHED_HTTP_CLIENT.  </p>
 
 <p>The following code was testing Axis2 on Wildfly 20, the cert was obtained by
 'openssl s_client -connect myserver:8443 -showcerts' </p>
