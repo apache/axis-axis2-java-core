@@ -38,6 +38,7 @@ as the transport mechanism.</p>
   <li><a href="#HTTPClient4TransportSender">HTTPClient4TransportSender</a>
     <ul>
       <li><a href="#httpsupport">HTTPS support</a></li>
+      <li><a href="#further">HTTPS support</a></li>
     </ul>
   </li>
   <li><a href="#timeout_config">Timeout Configuration</a></li>
@@ -105,15 +106,84 @@ HTTPClient4TransportSender can be also used to communicate over https.
 
 <p>Please note that by default HTTPS works only when the server does not
 expect to authenticate the clients (1-way SSL only) and where the
-server has the clients' public keys in its trust store.
+server has the clients' public keys in its trust store.  </p>
 
-If you want to perform SSL client authentication (2-way SSL), you may
-use the Protocol.registerProtocol feature of HttpClient. You can
-overwrite the "https" protocol, or use a different protocol for your
-SSL client authentication communications if you don't want to mess
-with regular https. Find more information at
-<a href="https://hc.apache.org">https://hc.apache.org</a></p>
-<a name="timeout_config"></a>
+<p>If you want to perform SSL client authentication (2-way SSL), you may
+configure your own HttpClient class and customize it as desired.  </p>
+
+<p>To control the max connections per host attempted in parallel by a
+reused httpclient, or any other advanced parameters, you need to
+set the cached httpclient object when your application starts up
+(before any actual axis request). You can set the relevant property
+as shown below by using HTTPConstants.REUSE_HTTP_CLIENT.  </p>
+
+<p>The following code was testing Axis2 on Wildfly 20, the cert was obtained by
+'openssl s_client -connect myserver:8443 -showcerts' </p>
+
+<pre>
+        String wildflyserver_cert_path = "src/wildflyserver.crt";
+        Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream(new File(wildflyserver_cert_path)));
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("server", certificate);
+
+        TrustManagerFactory trustManagerFactory = null;
+        trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+            throw new Exception("Unexpected default trust managers:" + Arrays.toString(trustManagers));
+        }
+
+        SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+        sslContext.init(null, trustManagers, new SecureRandom());
+
+	// NoopHostnameVerifier to trust self-singed cert
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+
+        Registry&lt;ConnectionSocketFactory&gt; socketFactoryRegistry = RegistryBuilder.&lt;ConnectionSocketFactory&gt;create().register("https", sslsf).build();
+
+	// This code is taken from HTTPSenderImpl, from 200 connections to 20
+        HttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        ((PoolingHttpClientConnectionManager)connManager).setMaxTotal(20);
+        ((PoolingHttpClientConnectionManager)connManager).setDefaultMaxPerRoute(20);
+
+        HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(connManager).setConnectionManagerShared(true).build();
+	Options options = new Options();
+        options.setTo("myurl");
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setTimeOutInMilliSeconds(120000);
+        options.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
+        ServiceClient sender = new ServiceClient();
+        sender.setOptions(options);
+
+</pre>
+
+<a name="further"></a>
+<h2>Further customization</h2>
+
+<p>
+References to the core HTTP classes used by Axis2 Stub classes can be obtained below.
+</p>
+
+<pre>
+TransportOutDescription transportOut = new TransportOutDescription("https");
+HTTPClient4TransportSender sender = new HTTPClient4TransportSender();
+sender.init(stub._getServiceClient().getServiceContext().getConfigurationContext(), transportOut);
+transportOut.setSender(sender);
+options.setTransportOut(transportOut);
+</pre>
+
+<h2>Async Thread Pool</h2>
+
+<p>
+For Async requests, the axis2 thread pool core size is set to 5. That can 
+be changed as shown below.
+</p>
+
+<pre>
+configurationContext.setThreadPool(new ThreadPool(200, Integer.MAX_VALUE));
+</pre>
 
 <h2>Timeout Configuration</h2>
 
@@ -295,17 +365,8 @@ object, you can set the relevant property in the Stub:
     <a name="setting_cached_httpclient_object"></a>
 <h2>Setting the cached httpclient object</h2>
 
-To control the max connections per host attempted in parallel by a
-reused httpclient (this can be worthwhile as the default value is 2
-connections per host), or any other advanced parameters, you need to
-set the cached httpclient object when your application starts up
-(before any actual axis request). You can set the relevant property in
-the Stub:
-
+    See the SSL example for a definition of the HTTPClient Object.
     <pre>
-MultiThreadedHttpConnectionManager conmgr = new MultiThreadedHttpConnectionManager();
-conmgr.getParams().setDefaultMaxConnectionsPerHost(10);
-HttpClient client = new HttpClient(conmgr);
 configurationContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, client);
 </pre>
 
