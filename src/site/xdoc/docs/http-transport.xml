@@ -109,7 +109,8 @@ expect to authenticate the clients (1-way SSL only) and where the
 server has the clients' public keys in its trust store.  </p>
 
 <p>If you want to perform SSL client authentication (2-way SSL), you may
-configure your own HttpClient class and customize it as desired.  </p>
+configure your own HttpClient class and customize it as desired - see the
+example below.  </p>
 
 <p>To control the max connections per host attempted in parallel by a
 reused httpclient, or any other advanced parameters, you need to
