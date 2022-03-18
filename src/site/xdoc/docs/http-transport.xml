@@ -38,7 +38,7 @@ as the transport mechanism.</p>
   <li><a href="#HTTPClient4TransportSender">HTTPClient4TransportSender</a>
     <ul>
       <li><a href="#httpsupport">HTTPS support</a></li>
-      <li><a href="#further">HTTPS support</a></li>
+      <li><a href="#further">Further customization</a></li>
     </ul>
   </li>
   <li><a href="#timeout_config">Timeout Configuration</a></li>
