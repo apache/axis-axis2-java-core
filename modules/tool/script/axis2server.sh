@@ -61,6 +61,5 @@ while [ $# -ge 1 ]; do
 done
 
 java $JAVA_OPTS -classpath "$AXIS2_CLASSPATH" \
-    -Djava.endorsed.dirs="$AXIS2_HOME/lib/endorsed":"$JAVA_HOME/jre/lib/endorsed":"$JAVA_HOME/lib/endorsed" \
     org.apache.axis2.transport.SimpleAxis2Server \
     -repo "$AXIS2_HOME"/repository -conf "$AXIS2_HOME"/conf/axis2.xml $*

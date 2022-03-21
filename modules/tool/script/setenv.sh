@@ -97,7 +97,6 @@ if $cygwin; then
   AXIS2_HOME=`cygpath --absolute --windows "$AXIS2_HOME"`
   CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
   AXIS2_CLASSPATH=`cygpath --path --windows "$AXIS2_CLASSPATH"`
-  JAVA_ENDORSED_DIRS=`cygpath --path --windows "$JAVA_ENDORSED_DIRS"`
 fi
 
 export AXIS2_HOME

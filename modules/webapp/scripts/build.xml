@@ -72,7 +72,6 @@
 		<war destfile="dist/axis2.war" webxml="webapp/WEB-INF/web.xml">
 			<lib dir="lib">
 				<include name="**" />
-				<exclude name="endorsed/**" />
 				<exclude name="**servlet**" />
 				<exclude name="axis2-ant-plugin-*.jar" />
 				<exclude name="axis2-*-codegen-*.jar"/>
