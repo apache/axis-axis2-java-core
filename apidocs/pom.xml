@@ -310,6 +310,7 @@
                             <goal>javadoc-no-fork</goal>
                         </goals>
                         <configuration>
+			    <source>8</source>
                             <reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
                             <destDir>.</destDir>
                         </configuration>

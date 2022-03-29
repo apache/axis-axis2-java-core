@@ -1047,6 +1047,7 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.3.2</version>
                     <configuration>
+			<source>8</source>
                         <detectOfflineLinks>false</detectOfflineLinks>
                         <doclint>none</doclint>
                         <quiet>true</quiet>
