@@ -1252,7 +1252,7 @@
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <!-- We require a recent Java version for the build, but we enforce compatibility with older versions using Animal Sniffer -->
-                                    <version>1.8.0</version>
+                                    <version>11</version>
                                 </requireJavaVersion>
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
