@@ -242,7 +242,7 @@ public class JAXBContextFromClasses {
                 jc = _newInstance(best.toArray(clsArray), cl, properties);
             } catch (Throwable t) {
                 if (log.isDebugEnabled()) {
-                    log.debug("The JAXBContext creation failed with the primary list");
+                    log.debug("The JAXBContext creation failed with the primary list", t);
                     log.debug("Will try a more brute force algorithm");
                     log.debug("  The reason is " + t);
                 }
