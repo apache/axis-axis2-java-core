@@ -1368,7 +1368,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <argLine>${argLine} -Xms256m -Xmx512m</argLine>
+                    <argLine>${argLine} -Xms256m -Xmx512m --add-opens java.desktop/java.awt=ALL-UNNAMED --add-opens java.xml/javax.xml.namespace=ALL-UNNAMED</argLine>
                     <!-- Enable the next 2 lines if you want to attach a debugger
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
                     <includes>
