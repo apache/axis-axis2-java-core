@@ -498,7 +498,7 @@
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
-        <jaxws.rt.version>2.3.3</jaxws.rt.version>
+        <jaxws.rt.version>2.3.5</jaxws.rt.version>
         <jaxws.api.version>2.3.3</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
