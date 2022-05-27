@@ -23,6 +23,7 @@ package org.apache.axis2.kernel;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.CachedFileDataSource;
 import org.apache.axiom.attachments.lifecycle.LifecycleManager;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
@@ -55,7 +56,9 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 
 public class TransportUtils {
 
@@ -409,23 +412,19 @@ public class TransportUtils {
 
     public static void processContentTypeForAction(String contentType, MessageContext msgContext) {
         //Check for action header and set it in as soapAction in MessageContext
-        int index = contentType.indexOf("action");
-        if (index > -1) {
-            String transientString = contentType.substring(index, contentType.length());
-            int equal = transientString.indexOf("=");
-            int firstSemiColon = transientString.indexOf(";");
-            String soapAction; // This will contain "" in the string
-            if (firstSemiColon > -1) {
-                soapAction = transientString.substring(equal + 1, firstSemiColon);
-            } else {
-                soapAction = transientString.substring(equal + 1, transientString.length());
+        try {
+            ContentType ct = new ContentType(contentType);
+            String startInfo = ct.getParameter("start-info");
+            if (startInfo != null) {
+                Optional.ofNullable(new ContentType(startInfo).getParameter("action"))
+                        .ifPresent(msgContext::setSoapAction);
             }
-            if ((soapAction != null) && soapAction.startsWith("\"")
-                    && soapAction.endsWith("\"")) {
-                soapAction = soapAction
-                        .substring(1, soapAction.length() - 1);
+            Optional.ofNullable(ct.getParameter("action"))
+                    .ifPresent(msgContext::setSoapAction);
+        } catch (ParseException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to parse Content-Type Header: " + e.getMessage(), e);
             }
-            msgContext.setSoapAction(soapAction);
         }
     }
 
