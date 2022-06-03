@@ -31,7 +31,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.transport.base.BaseUtils;
 import org.apache.axis2.transport.base.event.TransportError;
 import org.apache.axis2.transport.base.event.TransportErrorListener;

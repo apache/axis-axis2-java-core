@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport;
+package org.apache.axis2.kernel;
 
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisServer;

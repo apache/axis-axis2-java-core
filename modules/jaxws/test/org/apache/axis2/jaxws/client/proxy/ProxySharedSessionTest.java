@@ -40,7 +40,7 @@ import org.apache.axis2.jaxws.client.InterceptableClientTestCase;
 import org.apache.axis2.jaxws.client.TestClientInvocationController;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 
 /**
  * Testing shared session property

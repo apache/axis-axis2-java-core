@@ -24,7 +24,7 @@ import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.MessageFormatter;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -25,10 +25,10 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.MessageFormatter;
+import org.apache.axis2.kernel.OutTransportInfo;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.base.*;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.jms.iowrappers.BytesMessageOutputStream;
 import org.apache.commons.io.output.WriterOutputStream;
 

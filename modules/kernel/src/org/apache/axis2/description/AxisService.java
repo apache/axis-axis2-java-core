@@ -56,7 +56,7 @@ import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.util.IOUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;

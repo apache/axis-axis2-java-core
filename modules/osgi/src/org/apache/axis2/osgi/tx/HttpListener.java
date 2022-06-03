@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.osgi.tx;
 
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.context.MessageContext;

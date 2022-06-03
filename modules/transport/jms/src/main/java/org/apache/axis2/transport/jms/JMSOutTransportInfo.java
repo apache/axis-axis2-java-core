@@ -15,7 +15,7 @@
 */
 package org.apache.axis2.transport.jms;
 
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.OutTransportInfo;
 import org.apache.axis2.transport.base.BaseUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

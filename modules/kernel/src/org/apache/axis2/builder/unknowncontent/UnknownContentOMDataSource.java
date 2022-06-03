@@ -34,7 +34,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.MessageFormatter;
 
 public class UnknownContentOMDataSource implements OMDataSource {
 

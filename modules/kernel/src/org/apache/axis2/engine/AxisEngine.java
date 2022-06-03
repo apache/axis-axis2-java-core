@@ -41,7 +41,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MessageContextBuilder;

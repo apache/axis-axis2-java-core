@@ -16,7 +16,7 @@
 
 package org.apache.axis2.transport.base.datagram;
 
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.OutTransportInfo;
 
 public class DatagramOutTransportInfo implements OutTransportInfo {
     private String contentType;

@@ -30,7 +30,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPVersion;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;

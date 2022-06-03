@@ -18,7 +18,7 @@
  */
 
 
-package org.apache.axis2.transport;
+package org.apache.axis2.kernel;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.CachedFileDataSource;
@@ -42,7 +42,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.wsdl.WSDLConstants;

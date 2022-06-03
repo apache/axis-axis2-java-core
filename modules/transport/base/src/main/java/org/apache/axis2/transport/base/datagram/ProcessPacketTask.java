@@ -24,7 +24,7 @@ import java.io.InputStream;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.kernel.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axis2.transport.base.MetricsCollector;

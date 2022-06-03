@@ -25,7 +25,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 
 public class LifecycleFixTransportListenerProxy implements TransportListener {
     private final TransportListener target;

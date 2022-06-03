@@ -21,7 +21,7 @@ package org.apache.axis2.transport.tcp;
 
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.kernel.TransportUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.util.MessageContextBuilder;

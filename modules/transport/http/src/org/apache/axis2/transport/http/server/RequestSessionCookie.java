@@ -20,7 +20,7 @@
 package org.apache.axis2.transport.http.server;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpException;

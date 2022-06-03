@@ -45,7 +45,7 @@ public class MessageFormatterDeploymentTest extends AbstractTestCase {
         AxisConfiguration axisConfig = fsc.getAxisConfiguration();
         String className =
                 axisConfig.getMessageFormatter("application/soap+xml").getClass().getName();
-        assertEquals("org.apache.axis2.transport.http.SOAPMessageFormatter", className);
+        assertEquals("org.apache.axis2.kernel.http.SOAPMessageFormatter", className);
     }
 
     public void testBuilderSelectionInvalidEntry() throws AxisFault {

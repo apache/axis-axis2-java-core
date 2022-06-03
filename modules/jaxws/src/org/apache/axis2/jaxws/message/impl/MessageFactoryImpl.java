@@ -31,7 +31,7 @@ import org.apache.axis2.jaxws.message.databinding.OMBlock;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.util.WrappedDataHandler;
 
 import javax.xml.soap.AttachmentPart;

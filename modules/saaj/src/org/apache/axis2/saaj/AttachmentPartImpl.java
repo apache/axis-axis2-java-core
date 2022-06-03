@@ -23,7 +23,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.saaj.util.SAAJDataSource;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 
 import javax.activation.DataHandler;
 import javax.xml.soap.AttachmentPart;

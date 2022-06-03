@@ -30,7 +30,8 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.http.HTTPConstants;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.transport.http.server.HttpFactory;
 import org.apache.axis2.transport.http.server.SessionManager;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
@@ -59,6 +60,9 @@ public class SimpleHTTPServer implements TransportListener {
     int port = -1;
 
     public static int DEFAULT_PORT = 8080;
+
+    public static String PARAM_PORT = "port";
+
 
     protected ConfigurationContext configurationContext;
     private TransportInDescription trpInDesc;
@@ -238,7 +242,7 @@ public class SimpleHTTPServer implements TransportListener {
      * @param serviceName
      * @param ip
      * @return an EndpointReference
-     * @see org.apache.axis2.transport.TransportListener#getEPRForService(String,String)
+     * @see org.apache.axis2.kernel.TransportListener#getEPRForService(String,String)
      */
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         if (embedded == null) {
@@ -272,7 +276,7 @@ public class SimpleHTTPServer implements TransportListener {
      * @param serviceName
      * @param ip
      * @return an EndpointReference
-     * @see org.apache.axis2.transport.TransportListener#getEPRForService(String,String)
+     * @see org.apache.axis2.kernel.TransportListener#getEPRForService(String,String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
         return getEPRsForService(serviceName, ip)[0];

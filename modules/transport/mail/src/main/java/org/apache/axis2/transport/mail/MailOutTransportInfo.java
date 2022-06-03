@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.OutTransportInfo;
 
 import javax.mail.internet.InternetAddress;
 

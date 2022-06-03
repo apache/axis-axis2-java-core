@@ -26,8 +26,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.kernel.TransportSender;
+import org.apache.axis2.kernel.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

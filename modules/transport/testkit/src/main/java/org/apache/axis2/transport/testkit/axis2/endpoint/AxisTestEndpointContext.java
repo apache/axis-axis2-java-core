@@ -26,7 +26,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.transport.UtilsTransportServer;
 import org.apache.axis2.transport.testkit.axis2.TransportDescriptionFactory;
 import org.apache.axis2.transport.testkit.tests.Setup;

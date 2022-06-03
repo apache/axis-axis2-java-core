@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.OutTransportInfo;
 import org.apache.axis2.transport.http.server.AxisHttpResponse;
 import org.apache.http.RequestLine;
 import org.apache.http.message.BasicHttpRequest;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.transport.http;
+package org.apache.axis2.kernel.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

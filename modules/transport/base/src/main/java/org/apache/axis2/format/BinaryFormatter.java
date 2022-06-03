@@ -31,7 +31,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMText;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.http.util.URLTemplatingUtil;
+import org.apache.axis2.kernel.http.util.URLTemplatingUtil;
 import org.apache.axis2.transport.base.BaseConstants;
 
 public class BinaryFormatter implements MessageFormatterEx {

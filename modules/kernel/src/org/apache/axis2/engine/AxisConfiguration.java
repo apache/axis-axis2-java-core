@@ -64,7 +64,7 @@ import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.FaultyServiceData;

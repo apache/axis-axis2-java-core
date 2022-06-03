@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 /**
  * Message builder able to convert a byte stream into a SOAP infoset.
- * Message builders are used by {@link org.apache.axis2.transport.TransportListener}
+ * Message builders are used by {@link org.apache.axis2.kernel.TransportListener}
  * implementations to process the raw payload of the message and turn it into SOAP.
  * Transports should use
  * {@link MessageProcessorSelector#getMessageBuilder(String, MessageContext)}

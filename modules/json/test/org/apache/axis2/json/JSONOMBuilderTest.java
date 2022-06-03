@@ -36,8 +36,8 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.transport.http.SOAPMessageFormatter;
+import org.apache.axis2.kernel.TransportUtils;
+import org.apache.axis2.kernel.http.SOAPMessageFormatter;
 import org.codehaus.jettison.json.JSONException;
 import org.xml.sax.SAXException;
 

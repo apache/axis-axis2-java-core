@@ -29,7 +29,7 @@ import org.apache.axis2.format.TextMessageBuilder;
 import org.apache.axis2.format.TextMessageBuilderAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.kernel.TransportUtils;
 import org.apache.axis2.transport.base.BaseUtils;
 import org.apache.axis2.transport.jms.iowrappers.BytesMessageDataSource;
 import org.apache.axis2.transport.jms.iowrappers.BytesMessageInputStream;

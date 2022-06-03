@@ -22,7 +22,7 @@ package org.apache.axis2;
 
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.kernel.TransportUtils;
 
 /**
  * Class Constants
@@ -409,7 +409,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         /**
          * This is used to specify the message format which the message needs to be serializes.
          *
-         * @see org.apache.axis2.transport.MessageFormatter
+         * @see org.apache.axis2.kernel.MessageFormatter
          */
         public static final String MESSAGE_TYPE = "messageType";
         

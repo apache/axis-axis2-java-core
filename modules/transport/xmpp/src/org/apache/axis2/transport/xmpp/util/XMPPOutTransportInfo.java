@@ -21,7 +21,7 @@ package org.apache.axis2.transport.xmpp.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.OutTransportInfo;
 
 /**
  * 

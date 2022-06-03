@@ -30,7 +30,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;

@@ -36,7 +36,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.Utils;
@@ -756,14 +756,14 @@ public class Options implements Externalizable, SafeSerializable {
      * <h3>HTTP Constants</h3>
      * <ul>
      * <a name="CHUNKED"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.CHUNKED</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.CHUNKED</b>
      * <p>This will enable/disable chunking support. </p>
      * <p/>
      * <p>Possible values are:</p>
      * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
      * </li>
      * <p><a name="NTLM"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.NTLM_AUTHENTICATION</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.NTLM_AUTHENTICATION</b>
      * <p>This enables the user to pass in NTLM authentication information, such as host, port, realm, username, password to be used with HTTP transport sender. </p>
      * <p>The value should always be an instance of:  </p>
      * <pre>org.apache.axis2.transport.http.HttpTransportProperties.
@@ -771,7 +771,7 @@ public class Options implements Externalizable, SafeSerializable {
      * </li>
      * <p/>
      * <p><a name="PROXY"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.PROXY</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.PROXY</b>
      * <p>This enables the user to pass in proxy information, such as proxy host name, port, domain, username, password to be used with HTTP transport sender. </p>
      * <p>The value should always be an instance of:</p>
      * <pre>org.apache.axis2.transport.http.HttpTransportProperties.ProxyProperties</pre>
@@ -780,38 +780,38 @@ public class Options implements Externalizable, SafeSerializable {
      * <pre>org.apache.axis2.transport.http.HttpTransportProperties.BasicAuthentication</pre>
      * </li>
      * <p><a name="SO_TIMEOUT"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.SO_TIMEOUT</b>
      * <p>This enables the user to pass in socket timeout value as an Integer. If nothing is set, the default value is 60000 milliseconds.</p>
      * </li>
      * <p><a name="CON_TIMEOUT"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.CONNECTION_TIMEOUT</b>
      * <p/>
      * <p>This enables the user to pass in connection timeout value as an Integer. If nothing is set, the default value is 60000 milliseconds.</p>
      * </li>
      * <p><a name="USER_AGENT"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.USER_AGENT</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.USER_AGENT</b>
      * <p>This enables the user to set the user agent header in the outgoing HTTP request. Default value is "Axis2"</p>
      * </li>
      * <p><a name="GZIP"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.MC_GZIP_REQUEST</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.MC_GZIP_REQUEST</b>
      * <p>If set this will GZip your request and send over to the destination. Before doing this, you must make sure that the receiving end supports GZip compressed streams. <br></p>
      * <p/>
      * <p>Possible values are: </p>
      * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
      * </li>
      * <p><a name="ACCEPT_GZIP"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.MC_ACCEPT_GZIP</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.MC_ACCEPT_GZIP</b>
      * <p>Whether or not you send a gzip-ped request, you can choose to receive GZIP back from the server using this flag.</p>
      * <p>Possible values are: </p>
      * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
      * </li>
      * <p/>
      * <p><a name="COOKIE"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.COOKIE_STRING</b>
      * <p>This enables the user to set the cookie string header in the outgoing HTTP request.</p>
      * </li>
      * <p><a name="HTTP_PROTOCOL_VERSION"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.HTTP_PROTOCOL_VERSION</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.HTTP_PROTOCOL_VERSION</b>
      * <p>This will set the HTTP protocol version to be used in sending the SOAP requests. </p>
      * <p>Possible values are :</p>
      * <pre>
@@ -820,17 +820,17 @@ public class Options implements Externalizable, SafeSerializable {
      * HTTP/1.0 - HTTPConstants.HEADER_PROTOCOL_10
      * </pre><p>    Default is to use HTTP/1.1.</li>
      * <p><a name="HTTP_HEADERS"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.HTTP_HEADERS</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.HTTP_HEADERS</b>
      * <p>You might sometimes want to send your own custom HTTP headers. You can set an ArrayList filled with </p>
      * <pre>org.apache.commons.httpclient.Header</pre><p> objects using the above property. You must not try to override the Headers the Axis2 engine is setting to the outgoing message.</p>
      * </li>
      * <p><a name="REUSE_HTTP_CLIENT"></a></p>
      * <p/>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.REUSE_HTTP_CLIENT</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.REUSE_HTTP_CLIENT</b>
      * <p>You might want to use the same HTTPClient instance for multiple invocations. This flag will notify the engine to use the same HTTPClient between invocations.</p>
      * </li>
      * <p><a name="CACHED_HTTP_CLIENT"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.CACHED_HTTP_CLIENT</b>
+     * <li><b>org.apache.axis2.kernel.http.HTTPConstants.CACHED_HTTP_CLIENT</b>
      * <p>If user had requested to re-use an HTTPClient using the above property, this property can be used to set a custom HTTPClient to be re-used.</p>
      * </li>
      * </ul>

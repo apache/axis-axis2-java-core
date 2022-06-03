@@ -31,7 +31,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

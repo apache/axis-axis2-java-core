@@ -32,7 +32,7 @@ import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.commons.logging.Log;

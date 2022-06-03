@@ -18,7 +18,7 @@
  */
 
 
-package org.apache.axis2.transport;
+package org.apache.axis2.kernel;
 
 public interface OutTransportInfo {
     public abstract void setContentType(String contentType);

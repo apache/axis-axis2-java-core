@@ -2407,13 +2407,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             methodElement.appendChild(generateOptionParamComponent(doc,
                     "org.apache.axis2.Constants.Configuration.CONTENT_TYPE",
                     "\"" +
-                            org.apache.axis2.transport.http.HTTPConstants
+                            org.apache.axis2.kernel.http.HTTPConstants
                                     .MEDIA_TYPE_X_WWW_FORM +
                             "\""));
             methodElement.appendChild(generateOptionParamComponent(doc,
                     "org.apache.axis2.Constants.Configuration.MESSAGE_TYPE",
                     "\"" +
-                            org.apache.axis2.transport.http.HTTPConstants
+                            org.apache.axis2.kernel.http.HTTPConstants
                                     .MEDIA_TYPE_X_WWW_FORM +
                             "\""));
             methodElement.appendChild(generateOptionParamComponent(doc,
@@ -2527,7 +2527,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (!"".equals(transferCoding)) {
             if ("gzip".equals(transferCoding) || "compress".equals(transferCoding)) {
                 methodElement.appendChild(generateOptionParamComponent(doc,
-                        "org.apache.axis2.transport.http.HTTPConstants.MC_GZIP_REQUEST",
+                        "org.apache.axis2.kernel.http.HTTPConstants.MC_GZIP_REQUEST",
                         "true"));
             }
         }

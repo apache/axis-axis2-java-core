@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.tcp;
 
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.OutTransportInfo;
 
 import java.io.OutputStream;
 import java.net.Socket;

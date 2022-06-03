@@ -26,7 +26,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.commons.logging.Log;

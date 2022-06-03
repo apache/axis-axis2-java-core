@@ -38,7 +38,7 @@ import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;

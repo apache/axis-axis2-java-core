@@ -21,8 +21,8 @@ package org.apache.axis2.transport.testkit.axis2;
 
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.TransportListener;
+import org.apache.axis2.kernel.TransportSender;
 
 public class SimpleTransportDescriptionFactory implements TransportDescriptionFactory {
     private final String name;

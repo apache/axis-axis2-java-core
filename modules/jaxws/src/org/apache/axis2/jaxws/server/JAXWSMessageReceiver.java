@@ -42,7 +42,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.InvocationListenerRegistry;
 import org.apache.axis2.jaxws.util.Constants;
-import org.apache.axis2.transport.RequestResponseTransport;
+import org.apache.axis2.kernel.RequestResponseTransport;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;

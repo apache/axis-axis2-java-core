@@ -26,7 +26,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 
 /**
  * Represents an incoming transport deployed in Axis2.

@@ -27,7 +27,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.http.util.URIEncoderDecoder;
+import org.apache.axis2.kernel.http.util.URIEncoderDecoder;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

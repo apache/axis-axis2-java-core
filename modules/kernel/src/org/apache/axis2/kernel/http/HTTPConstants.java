@@ -18,7 +18,7 @@
  */
 
 
-package org.apache.axis2.transport.http;
+package org.apache.axis2.kernel.http;
 
 import java.io.UnsupportedEncodingException;
 

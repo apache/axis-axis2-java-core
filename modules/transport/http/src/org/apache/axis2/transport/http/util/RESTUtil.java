@@ -35,8 +35,8 @@ import org.apache.axis2.dispatchers.RequestURIBasedDispatcher;
 import org.apache.axis2.dispatchers.RequestURIOperationDispatcher;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.TransportUtils;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 
 import javax.xml.stream.XMLStreamException;

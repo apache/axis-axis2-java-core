@@ -36,7 +36,7 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.transport.xmpp.util.XMPPConnectionFactory;
 import org.apache.axis2.transport.xmpp.util.XMPPConstants;
 import org.apache.axis2.transport.xmpp.util.XMPPPacketListener;

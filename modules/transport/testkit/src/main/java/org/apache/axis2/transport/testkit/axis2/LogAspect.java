@@ -41,7 +41,7 @@ import org.aspectj.lang.annotation.Aspect;
 public class LogAspect {
     private static final Log log = LogFactory.getLog(LogAspect.class);
     
-    @Around("call(void org.apache.axis2.transport.MessageFormatter.writeTo(" +
+    @Around("call(void org.apache.axis2.kernel.MessageFormatter.writeTo(" +
     		"       org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat," +
     		"       java.io.OutputStream, boolean))" +
     		" && args(msgContext, format, out, preserve)")

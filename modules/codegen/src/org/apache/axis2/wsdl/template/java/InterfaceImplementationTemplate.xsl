@@ -482,7 +482,7 @@
                                 java.lang.Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
                                              <xsl:value-of select="$outputtype"/>.class);
-                                org.apache.axis2.transport.TransportUtils.detachInputStream(_returnMessageContext);
+                                org.apache.axis2.kernel.TransportUtils.detachInputStream(_returnMessageContext);
                                <xsl:choose>
                                    <xsl:when test="$outputparamcount=1">
                                         return get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of

@@ -35,7 +35,7 @@ import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.WSDL20DefaultValueHolder;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.http.util.URIEncoderDecoder;
+import org.apache.axis2.kernel.http.util.URIEncoderDecoder;
 import org.apache.axis2.util.MultipleEntryHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

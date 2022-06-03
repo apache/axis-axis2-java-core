@@ -37,7 +37,7 @@ import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.rpc.receivers.RPCUtil;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;

@@ -21,7 +21,8 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.http.HTTPConstants;
+import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
 import org.apache.http.client.methods.HttpGet;
 

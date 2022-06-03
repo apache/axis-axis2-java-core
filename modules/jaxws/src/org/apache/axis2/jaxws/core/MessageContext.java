@@ -28,7 +28,7 @@ import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.kernel.TransportUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;

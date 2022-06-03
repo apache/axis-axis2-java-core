@@ -28,8 +28,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.transport.OutTransportInfo;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.OutTransportInfo;
+import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMOutputFormat;
 

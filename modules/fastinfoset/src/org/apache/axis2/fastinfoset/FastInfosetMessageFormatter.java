@@ -25,7 +25,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,7 +43,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
     /**
      * Fast Infoset message formatter doesn't need to handle SOAP. Hence do nothing.
      * 
-     * @see org.apache.axis2.transport.MessageFormatter#formatSOAPAction(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.lang.String)
+     * @see org.apache.axis2.kernel.MessageFormatter#formatSOAPAction(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.lang.String)
      */
     public String formatSOAPAction(MessageContext messageContext,
             OMOutputFormat format, String soapAction) {
@@ -54,7 +54,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
     /**
      * Returns the content type
      * 
-     * @see org.apache.axis2.transport.MessageFormatter#getContentType(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.lang.String)
+     * @see org.apache.axis2.kernel.MessageFormatter#getContentType(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.lang.String)
      */
     public String getContentType(MessageContext messageContext,
             OMOutputFormat format, String soapAction) {
@@ -77,7 +77,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
      * Returns the target address to send the response
      * FIXME This is very HTTP specific. What about other transport?
      * 
-     * @see org.apache.axis2.transport.MessageFormatter#getTargetAddress(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.net.URL)
+     * @see org.apache.axis2.kernel.MessageFormatter#getTargetAddress(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.net.URL)
      */
     public URL getTargetAddress(MessageContext messageContext,
             OMOutputFormat format, URL targetURL) throws AxisFault {
@@ -108,7 +108,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
     /**
      * Write the SOAP envelop to the given OutputStream.
      * 
-     * @see org.apache.axis2.transport.MessageFormatter#writeTo(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.io.OutputStream, boolean)
+     * @see org.apache.axis2.kernel.MessageFormatter#writeTo(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.io.OutputStream, boolean)
      */
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
             OutputStream outputStream, boolean preserve) throws AxisFault {

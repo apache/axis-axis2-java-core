@@ -19,7 +19,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
@@ -30,6 +29,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
+import org.apache.axis2.kernel.OutTransportInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;

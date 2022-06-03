@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.transport.RequestResponseTransport;
+import org.apache.axis2.kernel.RequestResponseTransport;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
 

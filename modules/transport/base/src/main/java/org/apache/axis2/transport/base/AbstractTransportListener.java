@@ -29,7 +29,7 @@ import org.apache.axis2.transport.base.threads.WorkerPoolFactory;
 import org.apache.axis2.transport.base.tracker.AxisServiceFilter;
 import org.apache.axis2.transport.base.tracker.AxisServiceTracker;
 import org.apache.axis2.transport.base.tracker.AxisServiceTrackerListener;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.commons.logging.Log;

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport;
+package org.apache.axis2.kernel;
 
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
@@ -38,7 +38,7 @@ import java.net.URL;
  * <p/>
  * <messageFormatters>
  * <messageFormatter contentType="application/soap+xml"
- * class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
+ * class="org.apache.axis2.kernel.http.SOAPMessageFormatter"/>
  * </messageFormatters>
  * </p>
  */

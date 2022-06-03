@@ -18,7 +18,7 @@
  */
 
 
-package org.apache.axis2.transport;
+package org.apache.axis2.kernel;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;

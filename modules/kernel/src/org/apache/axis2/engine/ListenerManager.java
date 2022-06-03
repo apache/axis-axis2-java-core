@@ -26,8 +26,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.TransportListener;
+import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.util.OnDemandLogger;
 
 import java.util.HashMap;
@@ -240,7 +240,7 @@ public class ListenerManager {
      *
      * <p>It is not possible to add a listener which is already initialized but not started to the
      * listener manager, even though the above is a condition that has to be satisfied there is no
-     * means of enforcing that, becuase the {@link org.apache.axis2.transport.TransportListener}
+     * means of enforcing that, because the {@link org.apache.axis2.kernel.TransportListener}
      * API doesn't provide a mechanism to test whether it is initialized or started.</p>
      *
      * <p>If the caller is using an already intialized listener, then it is the responsability of

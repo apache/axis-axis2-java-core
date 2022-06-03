@@ -41,7 +41,7 @@ import org.apache.axis2.engine.Phase;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.saaj.util.UnderstandAllHeadersHandler;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;

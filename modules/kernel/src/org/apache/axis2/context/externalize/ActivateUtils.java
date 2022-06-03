@@ -39,7 +39,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;

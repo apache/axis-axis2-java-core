@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http;
+package org.apache.axis2.kernel.http;
 
 import org.apache.axiom.mime.Header;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -27,8 +27,8 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.OMMultipartWriter;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.http.util.URLTemplatingUtil;
+import org.apache.axis2.kernel.MessageFormatter;
+import org.apache.axis2.kernel.http.util.URLTemplatingUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -43,12 +43,15 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.transport.RequestResponseTransport;
-import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.transport.http.server.HttpUtils;
-import org.apache.axis2.transport.http.util.QueryStringParser;
+
+import org.apache.axis2.kernel.http.HTTPConstants;
+import org.apache.axis2.kernel.RequestResponseTransport;
+import org.apache.axis2.kernel.TransportListener;
+import org.apache.axis2.kernel.TransportUtils;
+import org.apache.axis2.kernel.http.util.QueryStringParser;
 import org.apache.axis2.transport.http.util.RESTUtil;
+import org.apache.axis2.transport.http.AxisServletListener;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.OnDemandLogger;
@@ -855,7 +858,7 @@ public class AxisServlet extends HttpServlet {
             this.request = request;
             this.response = response;
             messageContext = createMessageContext(this.request, this.response, false);
-            messageContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
+            messageContext.setProperty(org.apache.axis2.kernel.http.HTTPConstants.HTTP_METHOD,
                     httpMethodString);
         }
 

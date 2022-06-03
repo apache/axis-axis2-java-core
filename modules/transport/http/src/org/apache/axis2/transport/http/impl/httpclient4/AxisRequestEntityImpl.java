@@ -20,7 +20,7 @@
 package org.apache.axis2.transport.http.impl.httpclient4;
 
 import org.apache.axis2.transport.http.AxisRequestEntity;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.message.BasicHeader;

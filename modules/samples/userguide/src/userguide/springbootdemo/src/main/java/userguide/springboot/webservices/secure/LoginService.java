@@ -41,7 +41,7 @@ import userguide.springboot.hibernate.dao.SpringSecurityDAOImpl;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;

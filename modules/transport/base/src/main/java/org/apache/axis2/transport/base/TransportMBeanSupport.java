@@ -25,8 +25,8 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.TransportListener;
+import org.apache.axis2.kernel.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

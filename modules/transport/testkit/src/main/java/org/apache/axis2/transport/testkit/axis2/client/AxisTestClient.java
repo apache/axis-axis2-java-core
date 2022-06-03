@@ -31,7 +31,7 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.axis2.transport.base.ManagementSupport;
 import org.apache.axis2.transport.testkit.MessageExchangeValidator;

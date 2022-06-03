@@ -23,7 +23,7 @@ import javax.activation.DataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.kernel.MessageFormatter;
 
 /**
  * Message formatter with extended capabilities.

@@ -28,8 +28,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.http.util.URIEncoderDecoder;
+import org.apache.axis2.kernel.MessageFormatter;
+import org.apache.axis2.kernel.http.util.URIEncoderDecoder;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

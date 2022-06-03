@@ -24,7 +24,7 @@ import junit.framework.Assert;
 import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.MediaType;
 import org.apache.axis2.saaj.util.SAAJDataSource;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

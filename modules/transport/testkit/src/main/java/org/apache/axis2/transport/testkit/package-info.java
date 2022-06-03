@@ -273,7 +273,7 @@
  *   <dt><tt>XX-builder.log</tt></dt>
  *   <dd><p>These files are produced when Axis2 test clients and endpoints are used.
  *       <tt>XX-formatter.log</tt> will contain the payload of an incoming message as seen by the
- *       {@link org.apache.axis2.transport.MessageFormatter}. <tt>XX-builder.log</tt> on the other
+ *       {@link org.apache.axis2.kernel.MessageFormatter}. <tt>XX-builder.log</tt> on the other
  *       hand will contain the payload of an outgoing message as produced by the
  *       {@link org.apache.axis2.builder.Builder}. Note that the number of log files depends on
  *       serveral factors, such as the MEP, whether the client or endpoint is Axis2 based or not and

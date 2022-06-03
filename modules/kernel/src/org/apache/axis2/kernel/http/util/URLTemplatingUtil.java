@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http.util;
+package org.apache.axis2.kernel.http.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;

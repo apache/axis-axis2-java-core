@@ -20,7 +20,7 @@
 
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.kernel.OutTransportInfo;
 
 import javax.servlet.http.HttpServletResponse;
 

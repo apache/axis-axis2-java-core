@@ -19,7 +19,7 @@
 
 package org.apache.axis2.format;
 
-import org.apache.axis2.transport.http.util.URLTemplatingUtil;
+import org.apache.axis2.kernel.http.util.URLTemplatingUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.om.OMOutputFormat;

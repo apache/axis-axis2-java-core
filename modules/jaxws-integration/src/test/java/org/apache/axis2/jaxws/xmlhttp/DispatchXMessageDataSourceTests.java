@@ -127,9 +127,9 @@ public class DispatchXMessageDataSourceTests {
         Map attachments = new HashMap();
         Map requestContext = dispatch.getRequestContext();
 
-//        requestContext.put(org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT , new 
+//        requestContext.put(org.apache.axis2.kernel.http.HTTPConstants.SO_TIMEOUT , new 
 //        Integer(999999));
-//        requestContext.put(org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT, new 
+//        requestContext.put(org.apache.axis2.kernel.http.HTTPConstants.CONNECTION_TIMEOUT, new 
 //        Integer(999999));
 
         requestContext.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,

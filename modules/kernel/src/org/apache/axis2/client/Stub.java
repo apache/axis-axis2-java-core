@@ -41,7 +41,7 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 
 import java.util.ArrayList;
 import java.util.Iterator;

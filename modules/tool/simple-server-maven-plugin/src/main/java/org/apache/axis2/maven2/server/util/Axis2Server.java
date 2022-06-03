@@ -19,7 +19,7 @@ package org.apache.axis2.maven2.server.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.transport.SimpleAxis2Server;
+import org.apache.axis2.kernel.SimpleAxis2Server;
 import org.apache.maven.plugin.logging.Log;
 
 import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_REPO_LOCATION;

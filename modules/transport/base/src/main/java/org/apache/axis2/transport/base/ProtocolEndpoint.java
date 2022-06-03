@@ -105,7 +105,7 @@ public abstract class ProtocolEndpoint {
      * @return an array of endpoint references
      * @throws AxisFault
      * 
-     * @see org.apache.axis2.transport.TransportListener#getEPRsForService(String, String)
+     * @see org.apache.axis2.kernel.TransportListener#getEPRsForService(String, String)
      */
     public abstract EndpointReference[] getEndpointReferences(AxisService service, String ip) throws AxisFault;
 

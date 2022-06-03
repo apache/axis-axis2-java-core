@@ -33,7 +33,7 @@ import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.util.CatalogURIResolver;
-import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
