@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>databinding-tests</artifactId>
-        <version>1.8.1</version>
+        <version>1.8.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>jaxbri-tests</artifactId>
@@ -329,8 +329,4 @@
             </plugin>
         </plugins>
     </build>
-
-  <scm>
-    <tag>v1.8.1</tag>
-  </scm>
 </project>
