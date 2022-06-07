@@ -1554,6 +1554,7 @@ $${type_declaration}</template></templates>]]></value>
                     </bundles>
                 </configuration>
             </plugin>
+            <!-- FIXME 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tidy-maven-plugin</artifactId>
@@ -1566,6 +1567,7 @@ $${type_declaration}</template></templates>]]></value>
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
         <extensions>
             <extension>
