@@ -1555,6 +1555,7 @@ $${type_declaration}</template></templates>]]></value>
                 </configuration>
             </plugin>
             <!-- FIXME , what is wrong with systests/echo/pom.xml ? 
+            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tidy-maven-plugin</artifactId>
@@ -1567,7 +1568,6 @@ $${type_declaration}</template></templates>]]></value>
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
         <extensions>
             <extension>
