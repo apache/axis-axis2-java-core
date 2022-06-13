@@ -214,11 +214,11 @@ If the vote passes, execute the following steps:
 
 3.  Publish the site:
 
-        svn co --depth=immediates https://svn.apache.org/repos/asf/axis/site/axis2/java/ axis2-site
-        cd axis2-site
-        svn rm core
-        svn mv core-staging core
-        svn commit
+        git clone https://gitbox.apache.org/repos/asf/axis-site.git
+        git rm -r core
+        git mv core-staging core
+        git commit -am "Axis2 X.Y.Z site"
+        git push
 
 It may take several hours before everything has been synchronized. Before proceeding, check that
 
