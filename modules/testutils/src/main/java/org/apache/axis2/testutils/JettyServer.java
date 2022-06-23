@@ -73,7 +73,7 @@ public class JettyServer extends AbstractAxis2Server {
     private final boolean secure;
     private File keyStoreFile;
     private SSLContext clientSslContext;
-    private SslContextFactory serverSslContextFactory;
+    private SslContextFactory.Server serverSslContextFactory;
     private Server server;
     
     /**
@@ -140,7 +140,7 @@ public class JettyServer extends AbstractAxis2Server {
         trustStore.load(null, null);
         trustStore.setCertificateEntry(CERT_ALIAS, cert);
         
-        serverSslContextFactory = new SslContextFactory();
+        serverSslContextFactory = new SslContextFactory.Server();
         serverSslContextFactory.setKeyStorePath(keyStoreFile.getAbsolutePath());
         serverSslContextFactory.setKeyStorePassword(keyStorePassword);
         serverSslContextFactory.setKeyManagerPassword(keyPassword);
