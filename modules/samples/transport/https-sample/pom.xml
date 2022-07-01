@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.apache.axis2.examples</groupId>
         <artifactId>samples</artifactId>
-        <version>1.8.1-SNAPSHOT</version>
+        <version>1.8.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -48,4 +48,8 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+  <scm>
+    <tag>v1.8.1</tag>
+  </scm>
 </project>
