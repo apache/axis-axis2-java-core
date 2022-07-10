@@ -45,6 +45,13 @@
         <module>transport/jms-sample</module>
     </modules>
 
+    <scm>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <repositories>
         <repository>
             <!-- Necessary because the samples are copied into the binary distribution -->

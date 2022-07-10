@@ -37,6 +37,13 @@
 	<name>Axis2 quickstart archetype </name>
 	<description>Maven archetype for creating a  Axis2 web Service </description>
 
+	<scm>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary</url>
+        <tag>HEAD</tag>
+    </scm>
+
 	<build>
 		<resources>
 			<resource>
