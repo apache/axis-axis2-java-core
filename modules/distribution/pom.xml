@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2</artifactId>
-        <version>1.8.2-SNAPSHOT</version>
+        <version>1.8.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -40,7 +40,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary</url>
-        <tag>HEAD</tag>
+        <tag>v1.8.2</tag>
     </scm>
 
     <properties>
