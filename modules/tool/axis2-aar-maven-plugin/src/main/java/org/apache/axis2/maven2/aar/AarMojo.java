@@ -75,6 +75,12 @@ public class AarMojo extends AbstractAarMojo {
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
+     * Timestamp for reproducible output archive entries.
+     */
+    @Parameter(defaultValue = "${project.build.outputTimestamp}")
+    private String outputTimestamp;
+
+    /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment
      * instead.
      */
@@ -130,6 +136,7 @@ public class AarMojo extends AbstractAarMojo {
         MavenArchiver archiver = new MavenArchiver();
         archiver.setArchiver(jarArchiver);
         archiver.setOutputFile(aarFile);
+        archiver.configureReproducibleBuild(outputTimestamp);
         jarArchiver.addDirectory(aarDirectory);
 
         // create archive

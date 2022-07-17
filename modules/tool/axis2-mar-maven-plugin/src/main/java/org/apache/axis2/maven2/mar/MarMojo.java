@@ -76,6 +76,12 @@ public class MarMojo extends AbstractMarMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
+     * Timestamp for reproducible output archive entries.
+     */
+    @Parameter(defaultValue = "${project.build.outputTimestamp}")
+    private String outputTimestamp;
+
+    /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      */
     @Parameter
@@ -134,6 +140,7 @@ public class MarMojo extends AbstractMarMojo
         MavenArchiver archiver = new MavenArchiver();
         archiver.setArchiver( jarArchiver );
         archiver.setOutputFile( marFile );
+        archiver.configureReproducibleBuild( outputTimestamp );
         jarArchiver.addDirectory( marDirectory );
 
         // create archive
