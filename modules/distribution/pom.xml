@@ -377,9 +377,10 @@
                         <configuration>
                             <scripts>
                                 <script>
-                                    import java.util.Date 
-                                    import java.text.MessageFormat 
-                                    project.properties['buildTimestamp'] = MessageFormat.format("{0,date,dd-MM-yyyy}", new Date())
+                                    import java.time.*
+                                    import java.time.format.*
+
+                                    project.properties['buildTimestamp'] = DateTimeFormatter.ofPattern("dd-MM-yyyy").withZone(ZoneId.of("Z")).format(OffsetDateTime.parse(project.properties['project.build.outputTimestamp']).toInstant())
                                     project.properties['release_version'] = project.version.replaceAll("-SNAPSHOT", "")
                                 </script>
                             </scripts>

@@ -1445,9 +1445,10 @@
                         <configuration>
                             <scripts>
                                 <script>
-                                    import java.util.Date
-                                    import java.text.MessageFormat
-                                    project.properties['release_date'] = MessageFormat.format("{0,date,MMMMM dd, yyyy}", new Date())
+                                    import java.time.*
+                                    import java.time.format.*
+
+                                    project.properties['release_date'] = DateTimeFormatter.ofPattern("MMMM dd, yyyy").withZone(ZoneId.of("Z")).format(OffsetDateTime.parse(project.properties['project.build.outputTimestamp']).toInstant())
                                     project.properties['release_version'] = project.version.replaceAll("-SNAPSHOT", "")
                                     project.properties['skipSiteSite'] = String.valueOf(!new File(project.basedir, 'src/site/site.xml').exists())
                                 </script>
