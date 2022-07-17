@@ -20,21 +20,20 @@ package org.apache.axis2.maven2.wsdl2code;
 
 import java.io.File;
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Generates source code from a WSDL.
- * 
- * @goal generate-sources
- * @phase generate-sources
- * @threadSafe
  */
+@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class GenerateSourcesMojo extends AbstractWSDL2CodeMojo {
     /**
      * The output directory, where the generated sources are being created.
-     *
-     * @parameter property="axis2.wsdl2code.target" default-value="${project.build.directory}/generated-sources/wsdl2code"
      */
+    @Parameter(property = "axis2.wsdl2code.target", defaultValue = "${project.build.directory}/generated-sources/wsdl2code")
     private File outputDirectory;
     
     @Override

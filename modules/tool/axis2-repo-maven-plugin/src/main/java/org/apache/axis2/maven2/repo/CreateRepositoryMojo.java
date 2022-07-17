@@ -22,35 +22,30 @@ package org.apache.axis2.maven2.repo;
 import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Creates an Axis2 repository from the project's runtime dependencies. This goal is typically
  * used to build an Axis2 repository that will be packaged into some kind of distribution.
- * 
- * @goal create-repository
- * @phase package
- * @requiresDependencyResolution runtime
- * @threadSafe
  */
+@Mojo(name = "create-repository", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
 public class CreateRepositoryMojo extends AbstractCreateRepositoryMojo {
     /**
      * Input directory with additional files to be copied to the repository.
-     * 
-     * @parameter default-value="src/main/repository"
      */
+    @Parameter(defaultValue = "src/main/repository")
     private File inputDirectory;
     
     /**
      * The output directory where the repository will be created.
-     * 
-     * @parameter default-value="${project.build.directory}/repository"
      */
+    @Parameter(defaultValue = "${project.build.directory}/repository")
     private File outputDirectory;
     
-    /**
-     * @parameter property="project.build.outputDirectory"
-     * @readonly
-     */
+    @Parameter(property = "project.build.outputDirectory", readonly = true)
     private File buildOutputDirectory;
     
     @Override

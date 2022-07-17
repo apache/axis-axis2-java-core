@@ -28,6 +28,7 @@ import org.apache.axis2.wsdl.codegen.extension.JiBXExtension;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -38,204 +39,159 @@ import java.util.Properties;
 public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "project", readonly = true, required = true)
     private MavenProject project;
 
     /**
      * The WSDL file, which is being read.
-     *
-     * @parameter property="axis2.wsdl2code.wsdlFile" default-value="src/main/resources/service.wsdl"
      */
+    @Parameter(property = "axis2.wsdl2code.wsdlFile", defaultValue = "src/main/resources/service.wsdl")
     private String wsdlFile;
 
     /**
      * Package name of the generated sources; will be used to create a package structure below the
      * output directory.
-     *
-     * @parameter property="axis2.wsdl2code.package"
      */
+    @Parameter(property = "axis2.wsdl2code.package")
     private String packageName;
 
     /**
      * The programming language of the generated sources.
-     *
-     * @parameter property="axis2.wsdl2code.language" default-value="java"
      */
+    @Parameter(property = "axis2.wsdl2code.language", defaultValue = "java")
     private String language;
 
     /**
      * The databinding framework, which is being used by the generated sources.
-     *
-     * @parameter property="axis2.wsdl2code.databindingName" default-value="adb"
      */
+    @Parameter(property = "axis2.wsdl2code.databindingName", defaultValue = "adb")
     private String databindingName;
 
     /**
      * The binding file for JiBX databinding.
-     *
-     * @parameter property="axis2.wsdl2code.jibxBindingFile"
      */
+    @Parameter(property = "axis2.wsdl2code.jibxBindingFile")
     private String jibxBindingFile;
 
     /**
      * Port name, for which to generate sources. By default, sources will be generated for a
      * randomly picked port.
-     *
-     * @parameter property="axis2.wsdl2code.portName"
      */
+    @Parameter(property = "axis2.wsdl2code.portName")
     private String portName;
 
     /**
      * Service name, for which to generate sources. By default, sources will be generated for all
      * services.
-     *
-     * @parameter property="axis2.wsdl2code.serviceName"
      */
+    @Parameter(property = "axis2.wsdl2code.serviceName")
     private String serviceName;
 
     /**
      * Mode, for which sources are being generated; either of "sync", "async" or "both".
-     *
-     * @parameter property="axis2.wsdl2code.syncMode" default-value="both"
      */
+    @Parameter(property = "axis2.wsdl2code.syncMode", defaultValue = "both")
     private String syncMode;
 
     /**
      * Whether server side sources are being generated.
-     *
-     * @parameter property="axis2.wsdl2code.generateServerSide" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.generateServerSide", defaultValue = "false")
     private boolean generateServerSide;
 
     /**
      * Whether a test case is being generated.
-     *
-     * @parameter property="axis2.wsdl2code.generateTestCase" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.generateTestCase", defaultValue = "false")
     private boolean generateTestcase;
 
     /**
      * Whether a "services.xml" file is being generated.
-     *
-     * @parameter property="axis2.wsdl2code.generateServicesXml" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.generateServicesXml", defaultValue = "false")
     private boolean generateServicesXml;
 
     /**
      * Whether to generate simply all classes. This is only valid in conjunction with
      * "generateServerSide".
-     *
-     * @parameter property="axis2.wsdl2code.generateAllClasses" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.generateAllClasses", defaultValue = "false")
     private boolean generateAllClasses;
 
     /**
      * Whether to unpack classes.
-     *
-     * @parameter property="axis2.wsdl2code.unpackClasses" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.unpackClasses", defaultValue = "false")
     private boolean unpackClasses;
 
     /**
      * Whether to generate the server side interface.
-     *
-     * @parameter property="axis2.wsdl2code.generateServerSideInterface" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.generateServerSideInterface", defaultValue = "false")
     private boolean generateServerSideInterface = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.repositoryPath"
-     */
+    @Parameter(property = "axis2.wsdl2code.repositoryPath")
     private String repositoryPath = null;
 
-    /**
-     * @parameter property="axis2.wsdl2code.externalMapping"
-     */
+    @Parameter(property = "axis2.wsdl2code.externalMapping")
     private File externalMapping = null;
 
-    /**
-     * @parameter property="axis2.wsdl2code.wsdlVersion" default-value="1.1"
-     */
+    @Parameter(property = "axis2.wsdl2code.wsdlVersion", defaultValue = "1.1")
     private String wsdlVersion;
 
-    /**
-     * @parameter property="axis2.wsdl2code.targetSourceFolderLocation" default-value="src"
-     */
+    @Parameter(property = "axis2.wsdl2code.targetSourceFolderLocation", defaultValue = "src")
     private String targetSourceFolderLocation;
 
-    /**
-     * @parameter property="axis2.wsdl2code.targetResourcesFolderLocation"
-     */
+    @Parameter(property = "axis2.wsdl2code.targetResourcesFolderLocation")
     private String targetResourcesFolderLocation = null;
 
     /**
      * This will select between wrapped and unwrapped during code generation. Maps to the -uw option
      * of the command line tool.
-     * 
-     * @parameter property="axis2.wsdl2code.unwrap" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.unwrap", defaultValue = "false")
     private boolean unwrap = false;
 
     /**
      * Set this to true to generate code for all ports.
-     * 
-     * @parameter property="axis2.wsdl2code.allPorts" default-value="false"
      */
+    @Parameter(property = "axis2.wsdl2code.allPorts", defaultValue = "false")
     private boolean allPorts = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.backwardCompatible" default-value="false" *
-     */
+    @Parameter(property = "axis2.wsdl2code.backwardCompatible", defaultValue = "false")
     private boolean backwardCompatible = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.flattenFiles" default-value="false" *
-     */
+    @Parameter(property = "axis2.wsdl2code.flattenFiles", defaultValue = "false")
     private boolean flattenFiles = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.skipMessageReceiver" default-value="false" *
-     */
+    @Parameter(property = "axis2.wsdl2code.skipMessageReceiver", defaultValue = "false")
     private boolean skipMessageReceiver = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.skipBuildXML" default-value="false" *
-     */
+    @Parameter(property = "axis2.wsdl2code.skipBuildXML", defaultValue = "false")
     private boolean skipBuildXML = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.skipWSDL" default-value="false" *
-     */
+    @Parameter(property = "axis2.wsdl2code.skipWSDL", defaultValue = "false")
     private boolean skipWSDL = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.overWrite" default-value="false" *
-     */
+    @Parameter(property = "axis2.wsdl2code.overWrite", defaultValue = "false")
     private boolean overWrite = false;
 
-    /**
-     * @parameter property="axis2.wsdl2code.suppressPrefixes" default-value="false" *
-     */
+    @Parameter(property = "axis2.wsdl2code.suppressPrefixes", defaultValue = "false")
     private boolean suppressPrefixes = false;
 
     /**
      * Specify databinding specific extra options
-     *
-     * @parameter property="axis2.java2wsdl.options"
      */
+    @Parameter(property = "axis2.java2wsdl.options")
     private Properties options;
 
     /**
      * Map of namespace URI to packages in the format {@code uri1=package1,uri2=package2,...}. Using
      * this parameter is discouraged. In general, you should use the {@code namespaceUris}
      * parameter. However, the latter cannot be set on the command line.
-     * 
-     * @parameter property="axis2.wsdl2code.namespaceToPackages"
      */
+    @Parameter(property = "axis2.wsdl2code.namespaceToPackages")
     private String namespaceToPackages = null;
 
     /**
@@ -248,22 +204,20 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      *   &lt;/namespaceMapping>
      *   ...
      * &lt;/namespaceMapping></pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private NamespaceMapping[] namespaceMappings;
     
     /**
-     * @parameter
      * @deprecated Use {@code namespaceMappings} instead.
      */
+    @Parameter
     private NamespaceMapping[] namespaceURIs = null;
     
     /**
      * The charset encoding to use for generated source files.
-     * 
-     * @parameter default-value="${project.build.sourceEncoding}"
      */
+    @Parameter(defaultValue = "${project.build.sourceEncoding}")
     private String encoding;
 
     /**
@@ -271,18 +225,16 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * In general, you should use the {@code serviceName} parameter or ensure only one service exist.
      * Should be used together with {@code generateServerSideInterface}.
      * Maps to the -sin option of the command line tool.
-     *
-     * @parameter property="axis2.wsdl2code.skeletonInterfaceName"
      */
+    @Parameter(property = "axis2.wsdl2code.skeletonInterfaceName")
     private String skeletonInterfaceName;
 
     /**
      * Skeleton class name - used to specify a name for skeleton class other than the default one.
      * In general, you should use the {@code serviceName} parameter or ensure only one service exist.
      * Maps to the -scn option of the command line tool.
-     *
-     * @parameter property="axis2.wsdl2code.skeletonClassName"
      */
+    @Parameter(property = "axis2.wsdl2code.skeletonClassName")
     private String skeletonClassName;
     
     private CodeGenConfiguration buildConfiguration() throws CodeGenerationException, MojoFailureException {

@@ -24,6 +24,10 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
@@ -40,12 +44,8 @@ import java.util.Set;
 /**
  * Takes a Java class as input and converts it into an equivalent
  * WSDL file.
- * 
- * @goal java2wsdl
- * @phase process-classes
- * @requiresDependencyResolution compile
- * @threadSafe
  */
+@Mojo(name = "java2wsdl", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class Java2WSDLMojo extends AbstractMojo {
     public static final String OPEN_BRACKET = "[";
     public static final String CLOSE_BRACKET = "]";
@@ -53,120 +53,117 @@ public class Java2WSDLMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     * @parameter property="project"
-     * @read-only
-     * @required
      */
+    @Parameter(property = "project", readonly = true, required = true)
     private MavenProject project;
 
     /**
      * Fully qualified name of the class, which is being inspected.
-     * @parameter property="axis2.java2wsdl.className"
-     * @required
      */
+    @Parameter(property = "axis2.java2wsdl.className", required = true)
     private String className;
 
     /**
      * Target namespace of the generated WSDL.
-     * @parameter property="axis2.java2wsdl.targetNamespace"
      */
+    @Parameter(property = "axis2.java2wsdl.targetNamespace")
     private String targetNamespace;
 
     /**
      * The namespace prefix, which is being used for the WSDL's
      * target namespace.
-     * @parameter property="axis2.java2wsdl.targetNamespacePrefix"
      */
+    @Parameter(property = "axis2.java2wsdl.targetNamespacePrefix")
     private String targetNamespacePrefix;
 
     /**
      * The generated schemas target namespace.
-     * @parameter property="axis2.java2wsdl.schemaTargetNamespace"
      */
+    @Parameter(property = "axis2.java2wsdl.schemaTargetNamespace")
     private String schemaTargetNamespace;
 
     /**
      * The generated schemas target namespace prefix.
-     * @parameter property="axis2.java2wsdl.schemaTargetNamespacePrefix"
      */
+    @Parameter(property = "axis2.java2wsdl.schemaTargetNamespacePrefix")
     private String schemaTargetNamespacePrefix;
 
     /**
      * Name of the generated service.
-     * @parameter property="axis2.java2wsdl.serviceName"
      */
+    @Parameter(property = "axis2.java2wsdl.serviceName")
     private String serviceName;
 
     /**
      * Name of the service file, which is being generated.
-     * @parameter property="axis2.java2wsdl.outputFileName" default-value="${project.build.directory}/generated-resources/service.wsdl"
      */
+    @Parameter(property = "axis2.java2wsdl.outputFileName", defaultValue = "${project.build.directory}/generated-resources/service.wsdl")
     private String outputFileName;
 
     /**
      * Style for the wsdl
-     * @parameter property="axis2.java2wsdl.style"
      */
+    @Parameter(property = "axis2.java2wsdl.style")
     private String style;
 
     /**
      * Use for the wsdl
-     * @parameter property="axis2.java2wsdl.use"
      */
+    @Parameter(property = "axis2.java2wsdl.use")
     private String use;
 
     /**
      * Version for the wsdl
-     * @parameter property="axis2.java2wsdl.wsdlVersion"
      */
+    @Parameter(property = "axis2.java2wsdl.wsdlVersion")
     private String wsdlVersion;
 
     /**
      * Namespace Generator
-     * @parameter property="axis2.java2wsdl.nsGenClassName"
      */
+    @Parameter(property = "axis2.java2wsdl.nsGenClassName")
     private String nsGenClassName;
 
     /**
      * Schema Generator
-     * @parameter property="axis2.java2wsdl.schemaGenClassName"
      */
+    @Parameter(property = "axis2.java2wsdl.schemaGenClassName")
     private String schemaGenClassName;
 
     /**
      * Location URI in the wsdl
-     * @parameter property="axis2.java2wsdl.locationUri"
      */
+    @Parameter(property = "axis2.java2wsdl.locationUri")
     private String locationUri;
 
     /**
      * attrFormDefault setting for the schema
-     * @parameter property="axis2.java2wsdl.attrFormDefault"
      */
+    @Parameter(property = "axis2.java2wsdl.attrFormDefault")
     private String attrFormDefault;
 
     /**
      * elementFormDefault setting for the schema
-     * @parameter property="axis2.java2wsdl.elementFormDefault"
      */
+    @Parameter(property = "axis2.java2wsdl.elementFormDefault")
     private String elementFormDefault;
 
     /**
      * Switch on the Doc/Lit/Bare style schema
-     * @parameter property="axis2.java2wsdl.docLitBare"
      */
+    @Parameter(property = "axis2.java2wsdl.docLitBare")
     private String docLitBare;
 
     /**
      * Additional classes for which we need to generate schema
-     * @parameter property="axis2.java2wsdl.extraClasses"
      */
+    @Parameter(property = "axis2.java2wsdl.extraClasses")
     private String[] extraClasses;
 
     /**
      * Specify namespaces explicitly for packages
-     * @parameter property="axis2.java2wsdl.package2Namespace"
      */
+    @Parameter(property = "axis2.java2wsdl.package2Namespace")
     private Properties package2Namespace;
 
     private void addToOptionMap(Map map, String option, String value) {

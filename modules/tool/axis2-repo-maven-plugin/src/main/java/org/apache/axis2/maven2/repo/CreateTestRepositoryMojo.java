@@ -24,48 +24,37 @@ import java.io.File;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Creates an Axis2 repository from the project's dependencies in scope test. This goal is
  * typically used to build an Axis2 repository for use during unit tests. Note that this goal
  * is skipped if the <code>maven.test.skip</code> property is set to <code>true</code>.
- * 
- * @goal create-test-repository
- * @phase process-test-classes
- * @requiresDependencyResolution test
- * @threadSafe
  */
+@Mojo(name = "create-test-repository", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class CreateTestRepositoryMojo extends AbstractCreateRepositoryMojo {
     /**
      * Input directory with additional files to be copied to the repository.
-     * 
-     * @parameter default-value="src/test/repository"
      */
+    @Parameter(defaultValue = "src/test/repository")
     private File inputDirectory;
     
     /**
      * The output directory where the repository will be created.
-     * 
-     * @parameter default-value="${project.build.directory}/test-repository"
      */
+    @Parameter(defaultValue = "${project.build.directory}/test-repository")
     private File outputDirectory;
     
-    /**
-     * @parameter property="maven.test.skip"
-     * @readonly
-     */
+    @Parameter(property = "maven.test.skip", readonly = true)
     private boolean skip;
     
-    /**
-     * @parameter property="project.build.outputDirectory"
-     * @readonly
-     */
+    @Parameter(property = "project.build.outputDirectory", readonly = true)
     private File buildOutputDirectory;
     
-    /**
-     * @parameter property="project.build.testOutputDirectory"
-     * @readonly
-     */
+    @Parameter(property = "project.build.testOutputDirectory", readonly = true)
     private File buildTestOutputDirectory;
     
     @Override

@@ -20,15 +20,14 @@
 package org.apache.axis2.maven2.mar;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Generate the exploded mar
- *
- * @goal exploded
- * @phase package
- * @requiresDependencyResolution runtime
- * @threadSafe
  */
+@Mojo(name = "exploded", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
 public class MarExplodedMojo
     extends AbstractMarMojo
 {

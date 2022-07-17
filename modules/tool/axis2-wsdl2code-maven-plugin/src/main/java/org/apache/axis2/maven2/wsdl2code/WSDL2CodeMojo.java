@@ -21,24 +21,24 @@ package org.apache.axis2.maven2.wsdl2code;
 
 import java.io.File;
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Generates source code from a WSDL.
  * 
- * @goal wsdl2code
- * @phase generate-sources
- * @threadSafe
  * @deprecated This goal is identical to axis2-wsdl2code:generate-sources; either switch to that
  *             goal or use the new axis2-wsdl2code:generate-test-sources goal if you need to
  *             generate code for use in unit tests only.
  */
+@Mojo(name = "wsdl2code", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, threadSafe = true)
 public class WSDL2CodeMojo extends GenerateSourcesMojo {
     /**
      * The output directory, where the generated sources are being created.
-     *
-     * @parameter property="axis2.wsdl2code.target" default-value="${project.build.directory}/generated-sources/axis2/wsdl2code"
      */
+    @Parameter(property = "axis2.wsdl2code.target", defaultValue = "${project.build.directory}/generated-sources/axis2/wsdl2code")
     private File outputDirectory;
 
     @Override

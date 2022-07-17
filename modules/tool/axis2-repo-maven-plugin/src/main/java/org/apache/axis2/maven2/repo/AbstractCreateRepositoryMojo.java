@@ -60,144 +60,119 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
-    /**
-     * @parameter property="project.artifacts"
-     * @readonly
-     * @required
-     */
+    @org.apache.maven.plugins.annotations.Parameter(property = "project.artifacts", readonly = true, required = true)
     private Set<Artifact> projectArtifacts;
     
-    /**
-     * @parameter property="project.collectedProjects"
-     * @required
-     * @readonly
-     */
+    @org.apache.maven.plugins.annotations.Parameter(property = "project.collectedProjects", required = true, readonly = true)
     private List<MavenProject> collectedProjects;
     
     /**
      * The directory (relative to the repository root) where AAR files are copied. This should be
      * set to the same value as the <tt>ServicesDirectory</tt> property in <tt>axis2.xml</tt>.
-     * 
-     * @parameter default-value="services"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "services")
     private String servicesDirectory;
     
     /**
      * The directory (relative to the repository root) where MAR files are copied. This should be
      * set to the same value as the <tt>ModulesDirectory</tt> property in <tt>axis2.xml</tt>.
-     * 
-     * @parameter default-value="modules"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "modules")
     private String modulesDirectory;
     
     /**
      * The directory (relative to the repository root) where JAX-WS service JARs will be deployed.
-     * 
-     * @parameter default-value="servicejars"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "servicejars")
     private String jaxwsServicesDirectory;
     
     /**
      * The <tt>axis2.xml</tt> file to be copied into the repository.
-     * 
-     * @parameter
      */
+    @org.apache.maven.plugins.annotations.Parameter
     private File axis2xml;
     
     /**
      * If present, an <tt>axis2.xml</tt> file will be generated (Experimental).
-     * 
-     * @parameter
      */
+    @org.apache.maven.plugins.annotations.Parameter
     private GeneratedAxis2Xml generatedAxis2xml;
     
     /**
      * The directory (relative to the repository root) where the <tt>axis2.xml</tt> file will be
      * written. If this parameter is not set, then the file will be written into the repository
      * root.
-     * 
-     * @parameter
      */
+    @org.apache.maven.plugins.annotations.Parameter
     private String configurationDirectory;
     
     /**
      * Specifies whether the plugin should scan the project dependencies for AAR and MAR artifacts.
-     * 
-     * @parameter default-value="true"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "true")
     private boolean useDependencies;
     
     /**
      * Specifies whether the plugin should scan Maven modules for AAR and MAR artifacts. This
      * parameter only has an effect for multimodule projects.
-     * 
-     * @parameter default-value="true"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "true")
     private boolean useModules;
     
     /**
      * Specifies whether the plugin should generate <tt>services.list</tt> and <tt>modules.list</tt>
      * files.
-     * 
-     * @parameter default-value="false"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "false")
     private boolean generateFileLists;
     
     /**
      * Specifies whether the plugin strips version numbers from AAR files.
-     * 
-     * @parameter default-value="true"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "true")
     private boolean stripServiceVersion;
     
     /**
      * Specifies whether the plugin strips version numbers from MAR files.
-     * 
-     * @parameter default-value="false"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "false")
     private boolean stripModuleVersion;
     
     /**
      * Specifies whether modules should be deployed to the repository.
-     * 
-     * @parameter default-value="true"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "true")
     private boolean includeModules;
     
     /**
      * Comma separated list of modules (by artifactId) to include in the repository.
-     * 
-     * @parameter
      */
+    @org.apache.maven.plugins.annotations.Parameter
     private String modules;
     
     /**
      * Specifies whether services should be deployed to the repository.
-     * 
-     * @parameter default-value="true"
      */
+    @org.apache.maven.plugins.annotations.Parameter(defaultValue = "true")
     private boolean includeServices;
     
     /**
      * Comma separated list of services (by artifactId) to include in the repository.
-     * 
-     * @parameter
      */
+    @org.apache.maven.plugins.annotations.Parameter
     private String services;
     
     /**
      * A list of JAX-WS service JARs to be generated (by packaging class files from the current
      * project).
-     * 
-     * @parameter
      */
+    @org.apache.maven.plugins.annotations.Parameter
     private JAXWSService[] jaxwsServices;
     
     /**
      * A list of service descriptions that should be processed to build exploded AARs.
-     * 
-     * @parameter
      */
+    @org.apache.maven.plugins.annotations.Parameter
     private ServiceDescription[] serviceDescriptions;
     
     protected abstract String getScope();

@@ -24,6 +24,10 @@ import org.apache.axis2.maven2.server.util.RepoHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
@@ -39,65 +43,52 @@ import static org.apache.axis2.maven2.server.util.Constants.DEFAULT_CONF_FILE_NA
  * Run simple Axis 2Server.
  * 
  * @since 1.7.0
- * @goal run 
- * @execute phase="compile"  // TODO - check this again.
- * @requiresDependencyResolution runtime 
- * @threadSafe
  */
+@Mojo(
+    name = "run",
+    defaultPhase = LifecyclePhase.COMPILE,  // TODO - check this again.
+    requiresDependencyResolution = ResolutionScope.RUNTIME,
+    threadSafe = true)
 public class SimpleHttpServerMojo extends AbstractMojo {
 
     // configuration parameters.
     /**
      * The repository path.
-     * 
-     * @parameter
      */
+    @Parameter
     private String repoPath;
 
     /**
      * Path to axis2.xml configuration file.
-     * 
-     * @parameter
      */
+    @Parameter
     private String confPath;
 
     /**
      * This parameter indicate service type whether it's JAX-WS or not.
-     * 
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private boolean jaxwsService;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private String stdServiceSrcDir;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private String jaxwsServiceSrcDir;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private String moduleSrcDir;
 
-    /**
-     * @parameter 
-     */
+    @Parameter
     private String port;
     
     /**
      * Indicates whether to fork the server.
-     * 
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private boolean fork;
     
-    /**
-     * @parameter default-value="1024"
-     */
+    @Parameter(defaultValue = "1024")
     private int dataBufferSize;
 
     /*
@@ -106,37 +97,26 @@ public class SimpleHttpServerMojo extends AbstractMojo {
 
     /**
      * The plugin descriptor
-     * 
-     * @parameter default-value="${descriptor}"
-     * @required
      */
+    @Parameter(defaultValue = "${descriptor}", required = true)
     private PluginDescriptor descriptor;
 
     /**
      * Build directory of current project.
-     * 
-     * @parameter default-value="${project.build.directory}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
     private String buildDir;
 
     /**
      * Project version
-     * 
-     * @parameter default-value="${project.version}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue="${project.version}", required = true, readonly = true)
     private String projectVersion;
 
     /**
      * Project Id
-     * 
-     * @parameter default-value="${project.artifactId}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.artifactId}", required = true, readonly = true)
     private String projectId;
 
     private Axis2Server server;

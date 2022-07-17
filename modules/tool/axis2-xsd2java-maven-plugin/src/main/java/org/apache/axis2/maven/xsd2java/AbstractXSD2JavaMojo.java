@@ -28,6 +28,7 @@ import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.xml.sax.InputSource;
@@ -35,56 +36,42 @@ import org.xml.sax.InputSource;
 public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
     /**
      * The maven project.
-     * 
-     * @parameter property="project"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "project", readonly = true, required = true)
     private MavenProject project;
 
     /**
      * The list of XSD files for which to generate the Java code.
-     * 
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private File[] xsdFiles;
 
     /**
      * Mapping of namespaces to target Java packages.
-     * 
-     * @parameter
      */
+    @Parameter
     private NamespaceMapping[] namespaceMappings;
 
     /**
      * The Java package to use for schema items without namespace.
-     * 
-     * @parameter
      */
+    @Parameter
     private String noNamespacePackageName;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private String mapperClassPackage;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private boolean helperMode;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     private String packageName;
 
     /**
      * Specifies whether unexpected elements should be ignored (log warning) instead of creating an
      * exception.
-     * 
-     * @parameter
      */
+    @Parameter
     private boolean ignoreUnexpected;
 
     public void execute() throws MojoExecutionException, MojoFailureException {

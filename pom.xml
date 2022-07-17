@@ -501,6 +501,7 @@
         <jaxws.rt.version>2.3.3</jaxws.rt.version>
         <jaxws.api.version>2.3.3</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
+        <maven-plugin-tools.version>3.6.4</maven-plugin-tools.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
@@ -860,6 +861,11 @@
                 <artifactId>maven-archiver</artifactId>
                 <version>${maven.archiver.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${maven-plugin-tools.version}</version>
+            </dependency>
             <dependency><!-- Some plexus-archiver versions seem to trigger OOM errors; see MSOURCES-98. -->
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
@@ -1116,7 +1122,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.4</version>
+                    <version>${maven-plugin-tools.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>

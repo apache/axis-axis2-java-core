@@ -20,21 +20,20 @@ package org.apache.axis2.maven.xsd2java;
 
 import java.io.File;
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Generates Java classes from the specified schema files.
- * 
- * @goal generate-sources
- * @phase generate-sources
- * @threadSafe
  */
+@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class GenerateSourcesMojo extends AbstractXSD2JavaMojo {
     /**
      * The output directory for the generated Java code.
-     *
-     * @parameter default-value="${project.build.directory}/generated-sources/xsd2java"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/xsd2java")
     private File outputDirectory;
     
     @Override

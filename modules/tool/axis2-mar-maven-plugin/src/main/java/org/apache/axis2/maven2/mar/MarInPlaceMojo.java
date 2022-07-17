@@ -20,14 +20,13 @@
 package org.apache.axis2.maven2.mar;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Generates mar in the source directory
- *
- * @goal inplace
- * @requiresDependencyResolution runtime
- * @threadSafe
  */
+@Mojo(name = "inplace", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
 public class MarInPlaceMojo 
   extends AbstractMarMojo
 {
