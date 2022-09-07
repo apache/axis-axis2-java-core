@@ -43,7 +43,7 @@
     </scm>
 
     <properties>
-        <moshi.version>1.13.0</moshi.version>
+        <moshi.version>1.14.0</moshi.version>
     </properties>
 
     <dependencies>
