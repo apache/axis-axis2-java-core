@@ -483,7 +483,7 @@
         <jaxbri.version>2.3.6</jaxbri.version>
         <jetty.version>10.0.12</jetty.version>
         <jibx.version>1.4.2</jibx.version>
-        <log4j2.version>2.18.0</log4j2.version>
+        <log4j2.version>2.19.0</log4j2.version>
         <maven.archiver.version>3.6.0</maven.archiver.version>
         <maven.version>3.8.6</maven.version>
         <plexus.utils.version>3.4.2</plexus.utils.version>
