@@ -1204,9 +1204,9 @@
                     <version>0.4.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.github.veithen.invoker</groupId>
+                    <groupId>com.github.veithen.maven</groupId>
                     <artifactId>resolver-proxy-maven-plugin</artifactId>
-                    <version>0.1.3</version>
+                    <version>0.4.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-invoker-plugin</artifactId>
