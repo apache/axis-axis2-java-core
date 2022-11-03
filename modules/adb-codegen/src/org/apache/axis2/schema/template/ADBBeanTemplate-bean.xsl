@@ -1096,7 +1096,7 @@
                                                 <xsl:choose>
                                                     <xsl:when test="@binary">
                                                         try {
-                                                            org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>[i], null, true);
+                                                            org.apache.axiom.util.stax.XMLStreamWriterUtils.writeBlob(xmlWriter, org.apache.axiom.util.activation.DataHandlerUtils.toBlob(<xsl:value-of select="$varName"/>[i]), null, true);
                                                         } catch (java.io.IOException ex) {
                                                             throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>[" + i + "]", ex);
                                                         }
@@ -1190,7 +1190,7 @@
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)  {
                                        try {
-                                           org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>, null, true);
+                                           org.apache.axiom.util.stax.XMLStreamWriterUtils.writeBlob(xmlWriter, org.apache.axiom.util.activation.DataHandlerUtils.toBlob(<xsl:value-of select="$varName"/>), null, true);
                                        } catch (java.io.IOException ex) {
                                            throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>", ex);
                                        }
@@ -1384,7 +1384,7 @@
                                                 if (<xsl:value-of select="$varName"/>!=null)
                                                 {
                                                     try {
-                                                        org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>, null, true);
+                                                        org.apache.axiom.util.stax.XMLStreamWriterUtils.writeBlob(xmlWriter, org.apache.axiom.util.activation.DataHandlerUtils.toBlob(<xsl:value-of select="$varName"/>), null, true);
                                                     } catch (java.io.IOException ex) {
                                                         throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>", ex);
                                                     }
@@ -2395,7 +2395,7 @@
                                                   } else {
                                                 </xsl:if>
 
-                                                    <xsl:value-of select="$listName"/>.add(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
+                                                    <xsl:value-of select="$listName"/>.add(org.apache.axiom.util.activation.DataHandlerUtils.toDataHandler(org.apache.axiom.util.stax.XMLStreamReaderUtils.getBlobFromElement(reader)));
 
                                                 <xsl:if test="@nillable">}</xsl:if>
                                                 //loop until we find a start element that is not part of this array
@@ -2423,7 +2423,7 @@
                                                               } else {
                                                             </xsl:if>
 
-                                                                <xsl:value-of select="$listName"/>.add(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
+                                                                <xsl:value-of select="$listName"/>.add(org.apache.axiom.util.activation.DataHandlerUtils.toDataHandler(org.apache.axiom.util.stax.XMLStreamReaderUtils.getBlobFromElement(reader)));
 
                                                             <xsl:if test="@nillable">}</xsl:if>
                                                         }else{
@@ -2656,7 +2656,7 @@
                                              reader.next();
                                         } else {
                                     </xsl:if>
-                                            object.set<xsl:value-of select="$javaName"/>(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
+                                            object.set<xsl:value-of select="$javaName"/>(org.apache.axiom.util.activation.DataHandlerUtils.toDataHandler(org.apache.axiom.util.stax.XMLStreamReaderUtils.getBlobFromElement(reader)));
                                     <xsl:if test="@nillable">
                                         }
                                     </xsl:if>

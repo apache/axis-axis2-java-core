@@ -19,27 +19,27 @@
 
 package org.apache.axis2.databinding.utils.reader;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axiom.ext.stax.datahandler.DataHandlerProvider;
-import org.apache.axiom.ext.stax.datahandler.DataHandlerReader;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.ext.stax.BlobProvider;
+import org.apache.axiom.ext.stax.BlobReader;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 
-public class WrappingXMLStreamReader implements ADBXMLStreamReader, DataHandlerReader {
+public class WrappingXMLStreamReader implements ADBXMLStreamReader, BlobReader {
 
     private XMLStreamReader reader;
-    private DataHandlerReader dataHandlerReader;
+    private BlobReader blobReader;
     private int depth;
     private boolean done;
 
     public WrappingXMLStreamReader(XMLStreamReader reader) {
         this.reader = reader;
-        dataHandlerReader = XMLStreamReaderUtils.getDataHandlerReader(reader);
+        blobReader = XMLStreamReaderUtils.getBlobReader(reader);
     }
 
     public boolean isDone() {
@@ -52,32 +52,32 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader, DataHandlerR
 
     @Override
     public boolean isBinary() {
-        return dataHandlerReader != null && dataHandlerReader.isBinary();
+        return blobReader != null && blobReader.isBinary();
     }
 
     @Override
     public boolean isOptimized() {
-        return dataHandlerReader.isOptimized();
+        return blobReader.isOptimized();
     }
 
     @Override
     public boolean isDeferred() {
-        return dataHandlerReader.isDeferred();
+        return blobReader.isDeferred();
     }
 
     @Override
     public String getContentID() {
-        return dataHandlerReader.getContentID();
+        return blobReader.getContentID();
     }
 
     @Override
-    public DataHandler getDataHandler() throws XMLStreamException {
-        return dataHandlerReader.getDataHandler();
+    public Blob getBlob() throws XMLStreamException {
+        return blobReader.getBlob();
     }
 
     @Override
-    public DataHandlerProvider getDataHandlerProvider() {
-        return dataHandlerReader.getDataHandlerProvider();
+    public BlobProvider getBlobProvider() {
+        return blobReader.getBlobProvider();
     }
 
     public int next() throws XMLStreamException {

@@ -22,6 +22,7 @@ package org.apache.axis2.databinding.utils;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axiom.util.stax.XMLStreamWriterUtils;
@@ -1506,7 +1507,7 @@ public class ConverterUtil {
         } else if (value instanceof DataHandler) {
             addTypeAttribute(xmlStreamWriter,"base64Binary");
             try {
-                XMLStreamWriterUtils.writeDataHandler(xmlStreamWriter, (DataHandler)value, null, true);
+                XMLStreamWriterUtils.writeBlob(xmlStreamWriter, DataHandlerUtils.toBlob((DataHandler)value), null, true);
             } catch (IOException ex) {
                 throw new XMLStreamException("Unable to read data handler", ex);
             }
@@ -1613,7 +1614,7 @@ public class ConverterUtil {
 
                 if (Constants.XSD_NAMESPACE.equals(attributeNameSpace)) {
                     if ("base64Binary".equals(attributeType)) {
-                        returnObject = XMLStreamReaderUtils.getDataHandlerFromElement(xmlStreamReader);
+                        returnObject = DataHandlerUtils.toDataHandler(XMLStreamReaderUtils.getBlobFromElement(xmlStreamReader));
                     } else {
                         String attribValue = xmlStreamReader.getElementText();
                         if (attribValue != null) {

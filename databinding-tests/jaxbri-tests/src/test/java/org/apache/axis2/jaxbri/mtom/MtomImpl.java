@@ -26,8 +26,8 @@ import java.util.UUID;
 import javax.activation.DataHandler;
 
 import org.apache.axiom.blob.Blob;
-import org.apache.axiom.blob.BlobDataSource;
 import org.apache.axiom.mime.PartDataHandler;
+import org.apache.axiom.util.activation.BlobDataSource;
 
 public class MtomImpl implements MtomSkeletonInterface {
     private final Map<String,Blob> documents = new HashMap<String,Blob>();

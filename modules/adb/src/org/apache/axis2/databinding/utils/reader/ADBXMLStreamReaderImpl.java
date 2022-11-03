@@ -19,8 +19,9 @@
 
 package org.apache.axis2.databinding.utils.reader;
 
-import org.apache.axiom.ext.stax.datahandler.DataHandlerProvider;
-import org.apache.axiom.ext.stax.datahandler.DataHandlerReader;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.ext.stax.BlobProvider;
+import org.apache.axiom.ext.stax.BlobReader;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -60,7 +61,7 @@ import java.lang.reflect.Array;
  * possible
  * <p/>
  */
-public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, DataHandlerReader {
+public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, BlobReader {
     private static final AtomicInteger nsPrefix = new AtomicInteger();
     
     private Object[] properties;
@@ -181,32 +182,32 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader, DataHandlerRe
 
     @Override
     public boolean isBinary() {
-        return state == DELEGATED_STATE && childReader instanceof DataHandlerReader && ((DataHandlerReader)childReader).isBinary();
+        return state == DELEGATED_STATE && childReader instanceof BlobReader && ((BlobReader)childReader).isBinary();
     }
 
     @Override
     public boolean isOptimized() {
-        return ((DataHandlerReader)childReader).isOptimized();
+        return ((BlobReader)childReader).isOptimized();
     }
 
     @Override
     public boolean isDeferred() {
-        return ((DataHandlerReader)childReader).isDeferred();
+        return ((BlobReader)childReader).isDeferred();
     }
 
     @Override
     public String getContentID() {
-        return ((DataHandlerReader)childReader).getContentID();
+        return ((BlobReader)childReader).getContentID();
     }
 
     @Override
-    public DataHandler getDataHandler() throws XMLStreamException {
-        return ((DataHandlerReader)childReader).getDataHandler();
+    public Blob getBlob() throws XMLStreamException {
+        return ((BlobReader)childReader).getBlob();
     }
 
     @Override
-    public DataHandlerProvider getDataHandlerProvider() {
-        return ((DataHandlerReader)childReader).getDataHandlerProvider();
+    public BlobProvider getBlobProvider() {
+        return ((BlobReader)childReader).getBlobProvider();
     }
 
     public void require(int i, String string, String string1)

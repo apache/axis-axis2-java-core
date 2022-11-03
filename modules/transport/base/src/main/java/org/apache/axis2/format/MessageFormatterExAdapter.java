@@ -23,11 +23,11 @@ import java.net.URL;
 
 import javax.activation.DataSource;
 
-import org.apache.axiom.blob.BlobDataSource;
 import org.apache.axiom.blob.Blobs;
 import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.blob.MemoryBlobOutputStream;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.util.activation.BlobDataSource;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.MessageFormatter;

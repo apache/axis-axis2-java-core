@@ -19,8 +19,10 @@
 
 package org.apache.axis2.databinding.utils.reader;
 
-import org.apache.axiom.ext.stax.datahandler.DataHandlerProvider;
-import org.apache.axiom.ext.stax.datahandler.DataHandlerReader;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.ext.stax.BlobProvider;
+import org.apache.axiom.ext.stax.BlobReader;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
@@ -30,7 +32,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 
-public class ADBDataHandlerStreamReader implements ADBXMLStreamReader, DataHandlerReader {
+public class ADBDataHandlerStreamReader implements ADBXMLStreamReader, BlobReader {
     private static final int START_ELEMENT_STATE = 0;
     private static final int TEXT_STATE = 1;
     private static final int END_ELEMENT_STATE = 2;
@@ -86,12 +88,12 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader, DataHandl
     }
 
     @Override
-    public DataHandler getDataHandler() throws XMLStreamException {
-        return value;
+    public Blob getBlob() throws XMLStreamException {
+        return DataHandlerUtils.toBlob(value);
     }
 
     @Override
-    public DataHandlerProvider getDataHandlerProvider() {
+    public BlobProvider getBlobProvider() {
         throw new UnsupportedOperationException();
     }
 
