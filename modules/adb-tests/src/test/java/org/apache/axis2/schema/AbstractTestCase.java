@@ -47,6 +47,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.ContentTransferEncoding;
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.MultipartBodyWriter;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -374,7 +376,7 @@ public abstract class AbstractTestCase extends TestCase {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         OMOutputFormat format = new OMOutputFormat();
         MultipartBodyWriter mpWriter = new MultipartBodyWriter(buffer, format.getMimeBoundary());
-        OutputStream rootPartWriter = mpWriter.writePart("application/xop+xml; charset=UTF-8; type=\"text/xml\"", "binary", format.getRootContentId(), null);
+        OutputStream rootPartWriter = mpWriter.writePart(new ContentType("application/xop+xml; charset=UTF-8; type=\"text/xml\""), ContentTransferEncoding.BINARY, format.getRootContentId(), null);
         envelope.serialize(rootPartWriter, format);
         rootPartWriter.close();
         mpWriter.complete();

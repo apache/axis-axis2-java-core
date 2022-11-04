@@ -20,6 +20,8 @@
 package org.apache.axis2.kernel.http;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.ContentType;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -206,7 +208,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 }
                 OMOutputFormat innerFormat = new OMOutputFormat(format);
                 innerFormat.setMimeBoundary(innerBoundary);
-                innerOutputStream = mpw.writePart("multipart/related; boundary=\"" + innerBoundary + "\"", partCID);
+                innerOutputStream = mpw.writePart(new ContentType(MediaType.MULTIPART_RELATED, "boundary", innerBoundary), partCID);
                 attachmentsWriter = new OMMultipartWriter(innerOutputStream, innerFormat);
             }
             

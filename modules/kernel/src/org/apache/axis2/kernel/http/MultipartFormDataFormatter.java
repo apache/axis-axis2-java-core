@@ -19,7 +19,9 @@
 
 package org.apache.axis2.kernel.http;
 
+import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.Header;
+import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -180,7 +182,7 @@ public class MultipartFormDataFormatter implements MessageFormatter {
         return omElement;
     }
     
-    public static final String DEFAULT_CONTENT_TYPE = "text/plain; charset=US-ASCII";
+    public static final ContentType DEFAULT_CONTENT_TYPE = new ContentType(MediaType.TEXT_PLAIN, "charset", "US-ASCII");
     public static final String DISPOSITION_TYPE = "form-data";
     
 }
