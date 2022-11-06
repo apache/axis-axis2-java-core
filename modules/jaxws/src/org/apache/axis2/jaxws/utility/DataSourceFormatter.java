@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.impl.OMMultipartWriter;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
@@ -69,9 +70,9 @@ public class DataSourceFormatter implements MessageFormatter {
                     dataHandler = new WrappedDataHandler(dataHandler, contentType);
                 }
                 try {
-                    mpw.writePart(dataHandler, format.getRootContentId());
+                    mpw.writePart(DataHandlerUtils.toBlob(dataHandler), format.getRootContentId());
                     for (String cid : attachments.keySet()) {
-                        mpw.writePart(attachments.get(cid), cid);
+                        mpw.writePart(DataHandlerUtils.toBlob(attachments.get(cid)), cid);
                     }
                     mpw.complete();
                     outputStream.flush();

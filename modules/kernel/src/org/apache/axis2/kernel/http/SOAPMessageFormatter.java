@@ -30,6 +30,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPMessage;
 import org.apache.axiom.util.UIDGenerator;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -214,7 +215,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
             
             Attachments attachments = msgCtxt.getAttachmentMap();
             for (String contentID : attachments.getAllContentIDs()) {
-                attachmentsWriter.writePart(attachments.getDataHandler(contentID), contentID);
+                attachmentsWriter.writePart(DataHandlerUtils.toBlob(attachments.getDataHandler(contentID)), contentID);
             }
             
             if (MM7CompatMode) {

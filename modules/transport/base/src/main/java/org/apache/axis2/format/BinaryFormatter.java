@@ -22,28 +22,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.util.URLTemplatingUtil;
 import org.apache.axis2.transport.base.BaseConstants;
 
 public class BinaryFormatter implements MessageFormatterEx {
-    private DataHandler getDataHandler(MessageContext messageContext) {
+    private Blob getBlob(MessageContext messageContext) {
         OMElement firstChild = messageContext.getEnvelope().getBody().getFirstElement();
         if (BaseConstants.DEFAULT_BINARY_WRAPPER.equals(firstChild.getQName())) {
             OMNode omNode = firstChild.getFirstOMChild();
             if (omNode != null && omNode instanceof OMText) {
-                Object dh = ((OMText)omNode).getDataHandler();
-                if (dh != null && dh instanceof DataHandler) {
-                    return (DataHandler)dh;
-                }
+                return ((OMText)omNode).getBlob();
             }
         }
         return null;
@@ -51,10 +49,10 @@ public class BinaryFormatter implements MessageFormatterEx {
     
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
             OutputStream outputStream, boolean preserve) throws AxisFault {
-        DataHandler dh = getDataHandler(messageContext);
-        if (dh != null) {
+        Blob blob = getBlob(messageContext);
+        if (blob != null) {
             try {
-                dh.writeTo(outputStream);
+                blob.writeTo(outputStream);
             } catch (IOException e) {
                 throw new AxisFault("Error serializing binary content of element : " +
                                 BaseConstants.DEFAULT_BINARY_WRAPPER, e);
@@ -64,9 +62,9 @@ public class BinaryFormatter implements MessageFormatterEx {
 
     public String getContentType(MessageContext messageContext,
             OMOutputFormat format, String soapAction) {
-        DataHandler dh = getDataHandler(messageContext);
-        if (dh != null) {
-            return dh.getContentType();
+        Blob blob = getBlob(messageContext);
+        if (blob != null) {
+            return DataHandlerUtils.toDataHandler(blob).getContentType();
         } else {
             return null;
         }
@@ -84,6 +82,6 @@ public class BinaryFormatter implements MessageFormatterEx {
 
     public DataSource getDataSource(MessageContext messageContext,
             OMOutputFormat format, String soapAction) throws AxisFault {
-        return getDataHandler(messageContext).getDataSource();
+        return DataHandlerUtils.toDataHandler(getBlob(messageContext)).getDataSource();
     }
 }

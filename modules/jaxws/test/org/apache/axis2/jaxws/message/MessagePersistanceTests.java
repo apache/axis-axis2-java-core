@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.message;
 
 import junit.framework.TestCase;
 
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
@@ -515,19 +516,19 @@ public class MessagePersistanceTests extends TestCase {
         env = restoredMC.getEnvelope();
         env.build();
         
-        DataHandler dh = null;
+        Blob blob = null;
         for (Iterator<OMNode> it = env.getDescendants(false); it.hasNext(); ) {
             OMNode node = it.next();
             if (node instanceof OMText) {
                 OMText text = (OMText)node;
                 if (text.isBinary()) {
-                    dh = text.getDataHandler();
+                    blob = text.getBlob();
                     break;
                 }
             }
         }
         
-        assertTrue(dh != null);       
+        assertTrue(blob != null);       
     }
     
     /**

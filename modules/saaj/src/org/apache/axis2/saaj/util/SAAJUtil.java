@@ -19,10 +19,12 @@
 
 package org.apache.axis2.saaj.util;
 
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -106,8 +108,8 @@ public class SAAJUtil {
         OMElement docElem = (OMElement)message.getSOAPPart().getDocumentElement();
         OMAttachmentAccessor attachmentAccessor = new OMAttachmentAccessor() {
             @Override
-            public DataHandler getDataHandler(String contentID) {
-                return attachments.get(contentID);
+            public Blob getBlob(String contentID) {
+                return DataHandlerUtils.toBlob(attachments.get(contentID));
             }
         };
         return OMXMLBuilderFactory.createSOAPModelBuilder(OMAbstractFactory.getMetaFactory(),

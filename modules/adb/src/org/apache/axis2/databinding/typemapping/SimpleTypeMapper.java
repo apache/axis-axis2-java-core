@@ -23,6 +23,7 @@ import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.databinding.types.HexBinary;
 import org.apache.axis2.databinding.utils.ConverterUtil;
@@ -199,7 +200,7 @@ public class SimpleTypeMapper {
         if (node instanceof OMText) {
             OMText txt = (OMText)node;
             if (txt.isOptimized()) {
-                return (DataHandler)txt.getDataHandler();
+                return DataHandlerUtils.getDataHandler(txt.getBlob());
             } else {
                 return new DataHandler(new ByteArrayDataSource(Base64Utils.decode(txt.getText())));
             }

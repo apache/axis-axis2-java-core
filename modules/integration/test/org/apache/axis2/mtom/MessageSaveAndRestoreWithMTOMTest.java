@@ -22,6 +22,8 @@ package org.apache.axis2.mtom;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -160,8 +162,8 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
 
         compareWithCreatedOMText(binaryNode);
 
-        DataHandler actualDH = (DataHandler)binaryNode.getDataHandler();
-        BufferedImage bi = ImageIO.read(actualDH.getDataSource().getInputStream());
+        Blob actualBlob = binaryNode.getBlob();
+        BufferedImage bi = ImageIO.read(actualBlob.getInputStream());
     }
 
     protected OMElement createEnvelope() throws Exception {

@@ -22,6 +22,8 @@ package org.apache.axis2.mtom;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -188,10 +190,8 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         compareWithCreatedOMText(binaryNode);
 
         // Save the image
-        DataHandler actualDH;
-        actualDH = (DataHandler)binaryNode.getDataHandler();
-        ImageIO.read(actualDH.getDataSource()
-                .getInputStream());
+        Blob actualBlob = binaryNode.getBlob();
+        ImageIO.read(actualBlob.getInputStream());
     }
 
     public void testEchoXMLSyncSeperateListener() throws Exception {

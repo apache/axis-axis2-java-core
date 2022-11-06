@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.activation.DataHandler;
-
 import junit.framework.Assert;
 
 import org.apache.axiom.attachments.Attachments;
@@ -51,7 +49,7 @@ public interface MessageDecoder<T,U> {
             OMNode child = wrapper.getFirstOMChild();
             Assert.assertTrue(child instanceof OMText);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ((DataHandler)((OMText)child).getDataHandler()).writeTo(baos);
+            ((OMText)child).getBlob().writeTo(baos);
             return baos.toByteArray();
         }
     };

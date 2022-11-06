@@ -29,6 +29,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPVersion;
 import org.apache.axiom.util.UIDGenerator;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.kernel.http.HTTPConstants;
 
@@ -403,7 +404,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 envelope.serialize(rootPartOutputStream);
                 rootPartOutputStream.close();
                 for (AttachmentPart ap : attachmentParts) {
-                    mpw.writePart(ap.getDataHandler(), ap.getContentId());
+                    mpw.writePart(DataHandlerUtils.toBlob(ap.getDataHandler()), ap.getContentId());
                 }
                 mpw.complete();
             }

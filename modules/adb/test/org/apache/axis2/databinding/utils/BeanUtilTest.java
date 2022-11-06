@@ -21,6 +21,7 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.om.*;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
@@ -164,7 +165,7 @@ public class BeanUtilTest extends TestCase {
                 new Object[] { dh }, new QName("urn:ns1", "part"), true, new TypeTable());
         OMText text = (OMText)element.getFirstElement().getFirstOMChild();
         assertTrue(text.isOptimized());
-        assertSame(dh, text.getDataHandler());
+        assertSame(dh, DataHandlerUtils.toDataHandler(text.getBlob()));
     }
 
     public void testProcessObjectWithWrongType() throws Exception {

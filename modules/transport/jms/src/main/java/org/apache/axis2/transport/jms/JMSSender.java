@@ -16,6 +16,7 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.OMNode;
@@ -33,7 +34,6 @@ import org.apache.axis2.transport.jms.iowrappers.BytesMessageOutputStream;
 import org.apache.commons.io.output.WriterOutputStream;
 
 import javax.jms.*;
-import javax.activation.DataHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -396,10 +396,10 @@ public class JMSSender extends AbstractTransportSender implements ManagementSupp
                 getFirstChildWithName(BaseConstants.DEFAULT_BINARY_WRAPPER);
             OMNode omNode = wrapper.getFirstOMChild();
             if (omNode != null && omNode instanceof OMText) {
-                Object dh = ((OMText) omNode).getDataHandler();
-                if (dh != null && dh instanceof DataHandler) {
+                Blob blob = ((OMText) omNode).getBlob();
+                if (blob != null) {
                     try {
-                        ((DataHandler) dh).writeTo(new BytesMessageOutputStream(bytesMsg));
+                        blob.writeTo(new BytesMessageOutputStream(bytesMsg));
                     } catch (IOException e) {
                         handleException("Error serializing binary content of element : " +
                             BaseConstants.DEFAULT_BINARY_WRAPPER, e);

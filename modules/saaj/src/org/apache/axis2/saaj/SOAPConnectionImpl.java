@@ -26,6 +26,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -362,7 +363,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
                     final OMText omText = (OMText)omChildNode;
                     if (omText.isOptimized()) { // is this an attachment?
-                        final DataHandler datahandler = (DataHandler)omText.getDataHandler();
+                        final DataHandler datahandler = DataHandlerUtils.toDataHandler(omText.getBlob());
                         AttachmentPart attachment = saajSOAPMsg.createAttachmentPart(datahandler);
                         final String id = IDGenerator.generateID();
                         attachment.setContentId("<" + id + ">");

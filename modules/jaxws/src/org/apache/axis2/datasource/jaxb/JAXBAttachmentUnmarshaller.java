@@ -19,8 +19,10 @@
 
 package org.apache.axis2.datasource.jaxb;
 
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -157,7 +159,8 @@ public final class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         if (blobcid.startsWith("cid:")) {
             blobcid = blobcid.substring(4);
         }
-        DataHandler dh = attachmentAccessor.getDataHandler(blobcid);
+        Blob blob = attachmentAccessor.getBlob(blobcid);
+        DataHandler dh = blob == null ? null : DataHandlerUtils.toDataHandler(blob);
         if (dh == null) {
             dh = context.getDataHandlerForSwA(blobcid);
         }

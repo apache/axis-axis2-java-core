@@ -94,7 +94,7 @@ public interface MessageEncoder<T,U> {
                 out.close();
                 Attachments attachments = message.getAttachments();
                 for (String id : attachments.getAllContentIDs()) {
-                    mpw.writePart(attachments.getDataHandler(id), id);
+                    mpw.writePart(attachments.getBlob(id), id);
                 }
                 mpw.complete();
             } else {
