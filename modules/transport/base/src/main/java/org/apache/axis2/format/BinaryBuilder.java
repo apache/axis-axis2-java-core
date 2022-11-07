@@ -29,6 +29,7 @@ import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
@@ -58,7 +59,7 @@ public class BinaryBuilder implements DataSourceMessageBuilder {
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement wrapper = factory.createOMElement(wrapperQName, null);
         DataHandler dataHandler = new DataHandler(dataSource);
-        wrapper.addChild(factory.createOMText(dataHandler, true));
+        wrapper.addChild(factory.createOMText(DataHandlerUtils.toBlob(dataHandler), true));
         msgContext.setDoingMTOM(true);
         return wrapper;
     }

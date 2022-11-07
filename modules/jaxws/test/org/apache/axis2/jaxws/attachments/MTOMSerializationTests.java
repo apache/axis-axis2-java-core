@@ -29,6 +29,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -245,7 +246,7 @@ public class MTOMSerializationTests extends TestCase {
         OMElement imageData = fac.createOMElement("imageData", omNs);
         input.addChild(imageData);
         
-        OMText binaryData = fac.createOMText(dataHandler, true);
+        OMText binaryData = fac.createOMText(DataHandlerUtils.toBlob(dataHandler), true);
         imageData.addChild(binaryData);
         
         return sendImage;

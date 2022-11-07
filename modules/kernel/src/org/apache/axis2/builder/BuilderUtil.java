@@ -38,6 +38,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axiom.soap.SOAPProcessingException;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -243,7 +244,7 @@ public class BuilderUtil {
         if (parameter instanceof DataHandler) {
             DataHandler dataHandler = (DataHandler)parameter;
             OMText dataText = bodyFirstChild.getOMFactory().createOMText(
-                    dataHandler, true);
+                    DataHandlerUtils.toBlob(dataHandler), true);
             soapFactory.createOMElement(key, ns, bodyFirstChild).addChild(
                     dataText);
         } else {

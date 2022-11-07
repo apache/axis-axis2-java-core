@@ -22,7 +22,8 @@ package org.apache.axis2.mtom;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.blob.Blobs;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -42,7 +43,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.io.InputStream;
 
@@ -84,16 +84,13 @@ public class EchoRawMTOMStreamingTest extends UtilServerBasedTestCase implements
 
     private OMElement createEnvelope() throws Exception {
 
-        DataHandler expectedDH;
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("mtomSample", omNs);
         data = fac.createOMElement("data", omNs);
-        expectedDH = new DataHandler(
-                new ByteArrayDataSource(new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
-                        98 }));
+        Blob blob = Blobs.createBlob(new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1, 98 });
         OMElement subData = fac.createOMElement("subData", omNs);
-        OMText textData = fac.createOMText(expectedDH, true);
+        OMText textData = fac.createOMText(blob, true);
         subData.addChild(textData);
         data.addChild(subData);
         rpcWrapEle.addChild(data);

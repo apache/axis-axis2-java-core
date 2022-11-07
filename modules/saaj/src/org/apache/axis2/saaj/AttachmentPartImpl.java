@@ -21,6 +21,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.saaj.util.SAAJDataSource;
 import org.apache.axis2.kernel.http.HTTPConstants;
@@ -282,7 +283,7 @@ public class AttachmentPartImpl extends AttachmentPart {
         if (datahandler != null) {
             this.dataHandler = datahandler;
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
-            omText = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getOMFactory().createOMText(datahandler, true);
+            omText = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getOMFactory().createOMText(DataHandlerUtils.toBlob(datahandler), true);
         } else {
             throw new IllegalArgumentException("Cannot set null DataHandler");
         }

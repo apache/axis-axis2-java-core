@@ -22,13 +22,14 @@ import javax.activation.DataHandler;
 import javax.jws.WebService;
 import javax.xml.ws.soap.MTOM;
 
-import org.apache.axiom.testutils.activation.RandomDataSource;
+import org.apache.axiom.testutils.blob.RandomBlob;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 
 @WebService(endpointInterface="org.apache.axis2.databinding.mtom.service.MTOMService")
 @MTOM
 public class MTOMServiceImpl implements MTOMService {
     @Override
     public DataHandler getContent() {
-        return new DataHandler(new RandomDataSource(654321L, 1000000));
+        return DataHandlerUtils.toDataHandler(new RandomBlob(654321L, 1000000));
     }
 }

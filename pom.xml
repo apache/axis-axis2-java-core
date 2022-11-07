@@ -671,12 +671,22 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>axiom-activation</artifactId>
+                <version>${axiom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-jaxb</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>testutils</artifactId>
+                <version>${axiom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>blob-testutils</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>

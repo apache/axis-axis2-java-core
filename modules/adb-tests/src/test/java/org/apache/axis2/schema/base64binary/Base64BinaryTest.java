@@ -20,7 +20,8 @@
 package org.apache.axis2.schema.base64binary;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.testutils.activation.RandomDataSource;
+import org.apache.axiom.testutils.blob.RandomBlob;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.schema.AbstractTestCase;
 import org.w3.www._2005._05.xmlmime.*;
 
@@ -82,9 +83,9 @@ public class Base64BinaryTest extends AbstractTestCase {
     public void testBase64BinaryUnbounded() throws Exception {
         TestBase64BinaryUnbounded bean = new TestBase64BinaryUnbounded();
         bean.setParam(new DataHandler[] {
-                new DataHandler(new RandomDataSource(1024)),
-                new DataHandler(new RandomDataSource(1024)),
-                new DataHandler(new RandomDataSource(1024))
+                DataHandlerUtils.toDataHandler(new RandomBlob(1024)),
+                DataHandlerUtils.toDataHandler(new RandomBlob(1024)),
+                DataHandlerUtils.toDataHandler(new RandomBlob(1024)),
         });
         testSerializeDeserialize(bean);
     }

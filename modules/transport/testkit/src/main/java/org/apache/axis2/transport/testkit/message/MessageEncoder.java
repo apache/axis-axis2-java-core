@@ -23,10 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 
-import javax.activation.DataHandler;
-
 import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.blob.Blobs;
 import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -136,8 +134,7 @@ public interface MessageEncoder<T,U> {
             SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
             SOAPEnvelope envelope = factory.getDefaultEnvelope();
             OMElement wrapper = factory.createOMElement(BaseConstants.DEFAULT_BINARY_WRAPPER);
-            DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(message));
-            wrapper.addChild(factory.createOMText(dataHandler, true));
+            wrapper.addChild(factory.createOMText(Blobs.createBlob(message), true));
             envelope.getBody().addChild(wrapper);
             result.setEnvelope(envelope);
             return result;

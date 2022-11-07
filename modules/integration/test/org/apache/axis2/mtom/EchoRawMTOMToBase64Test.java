@@ -22,7 +22,8 @@ package org.apache.axis2.mtom;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.blob.Blobs;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -48,7 +49,6 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
@@ -96,8 +96,8 @@ public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
         OMElement rpcWrapEle = fac.createOMElement("echoMTOMtoBase64", omNs);
         OMElement data = fac.createOMElement("data", omNs);
         byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, 98 };
-        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
-        expectedTextData = fac.createOMText(dataHandler, true);
+        Blob blob = Blobs.createBlob(byteArray);
+        expectedTextData = fac.createOMText(blob, true);
         data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
         return rpcWrapEle;

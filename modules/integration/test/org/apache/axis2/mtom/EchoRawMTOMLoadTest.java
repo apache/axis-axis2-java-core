@@ -27,6 +27,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -95,7 +96,7 @@ public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements Test
             OMElement subData = fac.createOMElement("subData", omNs);
             DataHandler dataHandler = new DataHandler("Thilina", "text/plain");
             //new ByteArrayDataSource(expectedByteArray));
-            textData = fac.createOMText(dataHandler, true);
+            textData = fac.createOMText(DataHandlerUtils.toBlob(dataHandler), true);
             subData.addChild(textData);
             data.addChild(subData);
 

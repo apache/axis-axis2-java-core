@@ -55,6 +55,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.*;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.classloader.BeanInfoCache;
@@ -1215,7 +1216,7 @@ public class BeanUtil {
                         } else {
                             wrappingElement = fac.createOMElement(partName, null);
                         }
-                        OMText text = fac.createOMText((DataHandler)arg, true);
+                        OMText text = fac.createOMText(DataHandlerUtils.toBlob((DataHandler)arg), true);
                         wrappingElement.addChild(text);
                         objects.add(wrappingElement);
                     }else if (SimpleTypeMapper.isEnum(arg.getClass())) {

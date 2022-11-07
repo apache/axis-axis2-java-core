@@ -20,8 +20,10 @@
 package org.apache.axis2.saaj.integration;
 
 import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.testutils.activation.RandomDataSource;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.testutils.blob.RandomBlob;
 import org.apache.axiom.testutils.io.IOTestUtils;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
@@ -40,7 +42,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
@@ -210,8 +211,8 @@ public class IntegrationTest {
         request.addAttachmentPart(textAttach);
 
         // Add an application/octet-stream attachment to the SOAP request
-        DataHandler binaryDH = new DataHandler(new RandomDataSource(54321, 15000));
-        AttachmentPart binaryAttach = request.createAttachmentPart(binaryDH);
+        Blob blob = new RandomBlob(54321, 15000);
+        AttachmentPart binaryAttach = request.createAttachmentPart(DataHandlerUtils.toDataHandler(blob));
         binaryAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
         binaryAttach.setContentId("submitSample@apache.org");
         request.addAttachmentPart(binaryAttach);
@@ -228,7 +229,7 @@ public class IntegrationTest {
         assertThat(attachIter.hasNext()).isTrue();
         AttachmentPart attachment = (AttachmentPart)attachIter.next();
         assertThat(attachment.getContentType()).isEqualTo("application/octet-stream");
-        IOTestUtils.compareStreams(binaryDH.getInputStream(), "expected", attachment.getDataHandler().getInputStream(), "actual");
+        IOTestUtils.compareStreams(blob.getInputStream(), "expected", attachment.getDataHandler().getInputStream(), "actual");
         assertThat(attachIter.hasNext()).isFalse();
 
         sCon.close();

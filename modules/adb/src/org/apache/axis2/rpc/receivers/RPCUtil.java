@@ -27,6 +27,7 @@ import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -356,7 +357,7 @@ public class RPCUtil {
                         } else {
                             resElemt = fac.createOMElement(partName, null);
                         }
-                        OMText text = fac.createOMText((DataHandler)resObject, true);
+                        OMText text = fac.createOMText(DataHandlerUtils.toBlob((DataHandler)resObject), true);
                         resElemt.addChild(text);
                         envelope.getBody().addChild(resElemt);
                     } else {
@@ -515,7 +516,7 @@ public class RPCUtil {
                     	
                     } else if (SimpleTypeMapper.isDataHandler(resObject.getClass())) {
                         OMElement resElemt = fac.createOMElement(method.getName() + "Response", ns);
-                        OMText text = fac.createOMText((DataHandler)resObject, true);
+                        OMText text = fac.createOMText(DataHandlerUtils.toBlob((DataHandler)resObject), true);
                         OMElement returnElement;
                         if (service.isElementFormDefault()) {
                             returnElement = fac.createOMElement(Constants.RETURN_WRAPPER, ns);

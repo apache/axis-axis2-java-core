@@ -18,11 +18,10 @@
  */
 package org.apache.axis2.jaxbri.mtom;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-
-import org.apache.axiom.testutils.activation.RandomDataSource;
+import org.apache.axiom.blob.Blob;
+import org.apache.axiom.testutils.blob.RandomBlob;
 import org.apache.axiom.testutils.io.IOTestUtils;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.testutils.Axis2Server;
 import org.apache.axis2.testutils.ClientHelper;
 import org.junit.ClassRule;
@@ -39,12 +38,12 @@ public class MtomTest {
     public void test() throws Exception {
         MtomStub stub = clientHelper.createStub(MtomStub.class, "mtom");
         UploadDocument uploadRequest = new UploadDocument();
-        DataSource contentDS = new RandomDataSource(1234567L, 1024);
-        uploadRequest.setContent(new DataHandler(contentDS));
+        Blob blob = new RandomBlob(1234567L, 1024);
+        uploadRequest.setContent(DataHandlerUtils.toDataHandler(blob));
         UploadDocumentResponse uploadResponse = stub.uploadDocument(uploadRequest);
         RetrieveDocument retrieveRequest = new RetrieveDocument();
         retrieveRequest.setId(uploadResponse.getId());
         RetrieveDocumentResponse retrieveResponse = stub.retrieveDocument(retrieveRequest);
-        IOTestUtils.compareStreams(contentDS.getInputStream(), retrieveResponse.getContent().getInputStream());
+        IOTestUtils.compareStreams(blob.getInputStream(), retrieveResponse.getContent().getInputStream());
     }
 }

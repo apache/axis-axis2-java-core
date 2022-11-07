@@ -23,6 +23,7 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -50,7 +51,7 @@ public class EchoSwA {
         Attachments attachment = (msgCtx).getAttachmentMap();
 
         DataHandler dataHandler = attachment.getDataHandler(contentID);
-        OMText textNode = omEle.getOMFactory().createOMText(dataHandler, true);
+        OMText textNode = omEle.getOMFactory().createOMText(DataHandlerUtils.toBlob(dataHandler), true);
         omEle.build();
         child.detach();
         omEle.addChild(textNode);

@@ -20,7 +20,7 @@ package org.apache.axis2.databinding.mtom;
 
 import javax.activation.DataHandler;
 
-import org.apache.axiom.testutils.activation.RandomDataSource;
+import org.apache.axiom.testutils.blob.RandomBlob;
 import org.apache.axiom.testutils.io.IOTestUtils;
 import org.apache.axis2.Constants;
 import org.apache.axis2.databinding.mtom.client.MTOMServiceStub;
@@ -45,7 +45,7 @@ public class MTOMTest {
         stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         DataHandler content = stub.getContent(new GetContent()).getContent();
         IOTestUtils.compareStreams(
-                new RandomDataSource(654321L, 1000000).getInputStream(), "expected",
+                new RandomBlob(654321L, 1000000).getInputStream(), "expected",
                 content.getInputStream(), "actual");
     }
 }

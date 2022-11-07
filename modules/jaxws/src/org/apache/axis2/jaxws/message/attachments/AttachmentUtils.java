@@ -24,6 +24,7 @@ import org.apache.axiom.attachments.CachedFileDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,7 +50,7 @@ public class AttachmentUtils {
      */
     public static OMText makeBinaryOMNode(OMElement xop, DataHandler dh) {
         OMFactory factory = xop.getOMFactory();
-        OMText binaryNode = factory.createOMText(dh, true);
+        OMText binaryNode = factory.createOMText(DataHandlerUtils.toBlob(dh), true);
         return binaryNode;
     }
 

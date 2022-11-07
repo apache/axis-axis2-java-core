@@ -22,6 +22,7 @@ package org.apache.axis2.datasource.jaxb;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.util.UIDGenerator;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
@@ -202,7 +203,7 @@ public final class JAXBAttachmentMarshaller extends AttachmentMarshaller {
                 log.debug("adding DataHandler for MTOM");
             }
             if (writer instanceof MTOMXMLStreamWriter) {
-                cid = ((MTOMXMLStreamWriter)writer).prepareDataHandler(dh);
+                cid = ((MTOMXMLStreamWriter)writer).prepareBlob(DataHandlerUtils.toBlob(dh));
                 if (cid != null) {
                     if (log.isDebugEnabled()){ 
                         log.debug("The MTOM attachment is written as an attachment part.");

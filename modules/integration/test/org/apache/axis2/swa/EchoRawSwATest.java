@@ -29,6 +29,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -133,8 +134,8 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
 
     protected void compareDataHandlers(DataHandler dataHandler, DataHandler dataHandler2) {
         OMFactory factory = OMAbstractFactory.getOMFactory();
-        String originalTextValue = factory.createOMText(dataHandler, true).getText();
-        String returnedTextValue = factory.createOMText(dataHandler2, true).getText();
+        String originalTextValue = factory.createOMText(DataHandlerUtils.toBlob(dataHandler), true).getText();
+        String returnedTextValue = factory.createOMText(DataHandlerUtils.toBlob(dataHandler2), true).getText();
         assertEquals(returnedTextValue, originalTextValue);
     }
 }

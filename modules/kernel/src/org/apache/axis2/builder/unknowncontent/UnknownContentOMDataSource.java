@@ -34,6 +34,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.kernel.MessageFormatter;
 
 public class UnknownContentOMDataSource implements OMDataSource {
@@ -74,7 +75,7 @@ public class UnknownContentOMDataSource implements OMDataSource {
 	private OMElement createElement()
 	{
 		OMFactory factory = OMAbstractFactory.getOMFactory();
-		OMText textNode = factory.createOMText(genericContent, true);
+		OMText textNode = factory.createOMText(DataHandlerUtils.toBlob(genericContent), true);
 		OMElement wrapperElement = factory.createOMElement(unknownContentQName);
 		wrapperElement.addChild(textNode);
 		return wrapperElement;

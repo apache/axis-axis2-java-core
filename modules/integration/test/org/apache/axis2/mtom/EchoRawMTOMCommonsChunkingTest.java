@@ -28,6 +28,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -83,7 +84,7 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
         FileDataSource dataSource = new FileDataSource(fileName);
         expectedDH = new DataHandler(dataSource);
         OMElement subData = fac.createOMElement("subData", omNs);
-        OMText textData = fac.createOMText(expectedDH, true);
+        OMText textData = fac.createOMText(DataHandlerUtils.toBlob(expectedDH), true);
         subData.addChild(textData);
         data.addChild(subData);
         rpcWrapEle.addChild(data);

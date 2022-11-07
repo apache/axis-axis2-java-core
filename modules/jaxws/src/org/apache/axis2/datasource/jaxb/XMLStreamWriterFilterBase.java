@@ -20,10 +20,10 @@ package org.apache.axis2.datasource.jaxb;
 
 import java.io.OutputStream;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 
@@ -226,8 +226,8 @@ public abstract class XMLStreamWriterFilterBase extends MTOMXMLStreamWriter {
     }
 
     @Override
-    public String prepareDataHandler(DataHandler dataHandler) {
-        return delegate.prepareDataHandler(dataHandler);
+    public String prepareBlob(Blob blob) {
+        return delegate.prepareBlob(blob);
     }
 
     @Override
