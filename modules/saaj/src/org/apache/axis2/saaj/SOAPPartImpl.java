@@ -173,7 +173,7 @@ public class SOAPPartImpl extends SOAPPart {
         
         SOAPModelBuilder builder;
         if (isMTOM && attachments != null) {
-            builder = OMXMLBuilderFactory.createSOAPModelBuilder(metaFactory, attachments);
+            builder = OMXMLBuilderFactory.createSOAPModelBuilder(metaFactory, attachments.getMultipartBody());
         } else {
             builder = OMXMLBuilderFactory.createSOAPModelBuilder(metaFactory, inputStream, charset);
         }

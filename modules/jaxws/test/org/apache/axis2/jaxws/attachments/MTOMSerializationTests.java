@@ -29,6 +29,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.util.activation.DataHandlerContentTypeProvider;
 import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -162,6 +163,7 @@ public class MTOMSerializationTests extends TestCase {
         OMOutputFormat format = new OMOutputFormat();
         format.setDoOptimize(true);
         format.setSOAP11(true);
+        format.setContentTypeProvider(DataHandlerContentTypeProvider.INSTANCE);
                
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapOM.serializeAndConsume(baos, format);
@@ -219,6 +221,7 @@ public class MTOMSerializationTests extends TestCase {
         OMOutputFormat format = new OMOutputFormat();
         format.setDoOptimize(true);
         format.setSOAP11(true);
+        format.setContentTypeProvider(DataHandlerContentTypeProvider.INSTANCE);
                
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapOM.serializeAndConsume(baos, format);

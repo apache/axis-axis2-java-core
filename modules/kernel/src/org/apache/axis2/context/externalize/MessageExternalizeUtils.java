@@ -197,7 +197,7 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         if (isSOAP) {
             if (attachments.getAttachmentSpecType().equals(
                     MTOMConstants.MTOM_TYPE)) {
-                return OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
+                return OMXMLBuilderFactory.createSOAPModelBuilder(attachments.getMultipartBody());
             } else {
                 return OMXMLBuilderFactory.createSOAPModelBuilder(attachments.getRootPartInputStream(), charSetEncoding);
             }
@@ -206,7 +206,7 @@ public class MessageExternalizeUtils  implements ExternalizeConstants {
         // To handle REST XOP case
         else {
             if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
-                return OMXMLBuilderFactory.createOMBuilder(StAXParserConfiguration.DEFAULT, attachments);
+                return OMXMLBuilderFactory.createOMBuilder(StAXParserConfiguration.DEFAULT, attachments.getMultipartBody());
             } else {
                 return OMXMLBuilderFactory.createOMBuilder(attachments.getRootPartInputStream(), charSetEncoding);
             }

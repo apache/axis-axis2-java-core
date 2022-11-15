@@ -20,6 +20,7 @@
 package org.apache.axis2.kernel.http;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.ConfigurableDataHandler;
 import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.MediaType;
 import org.apache.axiom.om.OMContainer;
@@ -30,6 +31,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPMessage;
 import org.apache.axiom.util.UIDGenerator;
+import org.apache.axiom.util.activation.DataHandlerContentTypeProvider;
 import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -57,6 +59,11 @@ public class SOAPMessageFormatter implements MessageFormatter {
             log.debug("  preserve=" + preserve);
             log.debug("  isOptimized=" + format.isOptimized());
             log.debug("  isDoingSWA=" + format.isDoingSWA());
+        }
+        
+        if (format.isOptimized() || format.isDoingSWA()) {
+            format.setContentTypeProvider(DataHandlerContentTypeProvider.INSTANCE);
+            format.setContentTransferEncodingPolicy(ConfigurableDataHandler.CONTENT_TRANSFER_ENCODING_POLICY);
         }
         
         if (msgCtxt.isDoingMTOM()) {        	

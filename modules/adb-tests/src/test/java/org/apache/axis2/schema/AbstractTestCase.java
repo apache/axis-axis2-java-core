@@ -363,7 +363,7 @@ public abstract class AbstractTestCase extends TestCase {
         String contentType = format.getContentTypeForMTOM("text/xml");
         Attachments attachments = new Attachments(new ByteArrayInputStream(buffer.toByteArray()), contentType);
         assertEquals(countDataHandlers(bean) + 1, attachments.getAllContentIDs().length);
-        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments.getMultipartBody());
         OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), cache ? bodyElement.getXMLStreamReader() : bodyElement.getXMLStreamReaderWithoutCaching()));
     }
@@ -383,7 +383,7 @@ public abstract class AbstractTestCase extends TestCase {
 //        System.out.write(buffer.toByteArray());
         String contentType = format.getContentTypeForMTOM("text/xml");
         Attachments attachments = new Attachments(new ByteArrayInputStream(buffer.toByteArray()), contentType);
-        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments);
+        SOAPModelBuilder builder = OMXMLBuilderFactory.createSOAPModelBuilder(attachments.getMultipartBody());
         OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), bodyElement.getXMLStreamReaderWithoutCaching()));
     }

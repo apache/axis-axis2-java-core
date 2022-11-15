@@ -92,7 +92,7 @@ public class MessagePersistanceTests extends TestCase {
     
     private static SOAPEnvelope copy(SOAPEnvelope sourceEnv) {
         SOAPCloneOptions options = new SOAPCloneOptions();
-        options.setFetchDataHandlers(true);
+        options.setFetchBlobs(true);
         options.setPreserveModel(true);
         options.setCopyOMDataSources(true);
         return (SOAPEnvelope)sourceEnv.clone(options);
