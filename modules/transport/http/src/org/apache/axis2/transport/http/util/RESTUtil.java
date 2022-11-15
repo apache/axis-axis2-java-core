@@ -38,8 +38,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.kernel.TransportUtils;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
-import org.apache.commons.logging.Log;
-
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
