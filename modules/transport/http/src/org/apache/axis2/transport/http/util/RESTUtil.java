@@ -38,12 +38,14 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.kernel.TransportUtils;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.commons.logging.Log;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 /**
  *
  */
@@ -140,8 +142,21 @@ public class RESTUtil {
         try {
 
             if (contentType == null || "".equals(contentType)) {
-                contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM;
+                /*
+                 * Resolve https://issues.apache.org/jira/browse/AXIS2-5929
+                 * @author MARTI PAMIES SOLA
+                 * @since  2022-10-27 
+                 * If contentType is not provided (for example a GET request)
+                 * Test if client has indicated some mime type preference using Accept HTTP header.
+                 */
+                String acceptType=((HttpServletRequest)msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST)).getHeader("Accept");
+                if (acceptType == null || "".equals(acceptType)) {
+                    contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM;
+                } else {
+                    contentType=acceptType;
+                }
             }
+            
 
             // set the required properties so that even if there is an error during the dispatch
             // phase the response message will be passed to the client well. 
@@ -192,7 +207,19 @@ public class RESTUtil {
         try {
 
             if (contentType == null || "".equals(contentType)) {
-                contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM;
+                /*
+                 * Resolve https://issues.apache.org/jira/browse/AXIS2-5929
+                 * @author MARTI PAMIES SOLA
+                 * @since  2022-10-27 
+                 * If contentType is not provided (for example a GET request)
+                 * Test if client has indicated some mime type preference using Accept HTTP header.
+                 */
+                String acceptType=((HttpServletRequest)msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST)).getHeader("Accept");
+                if (acceptType == null || "".equals(acceptType)) {
+                    contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM;
+                } else {
+                    contentType=acceptType;
+                }
             }
 
             // set the required properties so that even if there is an error during the dispatch

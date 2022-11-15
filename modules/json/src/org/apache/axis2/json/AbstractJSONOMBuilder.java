@@ -86,7 +86,22 @@ public abstract class AbstractJSONOMBuilder implements Builder {
                 jsonString = requestURL.substring(index + 1);
                 reader = new StringReader(jsonString);
             } else {
-                throw new AxisFault("No JSON message received through HTTP GET or POST");
+                /*
+                 * Resolve https://issues.apache.org/jira/browse/AXIS2-5929
+                 * @author MARTI PAMIES SOLA
+                 * @since   2022-10-27 
+                 * Set JSON message from request URI if not present as parameter.
+                 * This allow requests like: .../ResoureName/ResourceID  or .../ResoureName
+                 * To be considered as valid and be able to return a specific resoruce or, all this type of resources
+                 * If not added this improvment, those request were considered as invalid and an exception was thrown.
+                 */
+            	String requestParam=requestURL;
+            	if (!(requestParam.equals(""))) {
+            		jsonString = requestParam;
+                    reader = new StringReader(jsonString);
+            	}else {
+        			throw new AxisFault("No JSON message received through HTTP GET or POST");
+            	}
             }
         } else {
             // Not sure where this is specified, but SOAPBuilder also determines the charset
