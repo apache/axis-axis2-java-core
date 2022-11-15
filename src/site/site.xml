@@ -92,7 +92,7 @@
             <item name="Project Team" href="team-list.html" />
             <item name="Issue Tracking" href="issue-tracking.html" />
             <item name="Source Code"
-                  href="http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/" />
+                  href="https://github.com/apache/axis-axis2-java-core" />
             <item name="Acknowledgements" href="thanks.html" />
         </menu>
         <menu name="Apache" inherit="bottom">
