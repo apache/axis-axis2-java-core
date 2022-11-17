@@ -76,4 +76,8 @@ updates:
       - dependency-name: "org.apache.maven.plugins:maven-plugin-plugin"
         versions:
         - "3.6.2"
+      # Spring 6 requires Java 17
+      - dependency-name: "org.springframework:*"
+        versions:
+          - ">= 6.0.0"
     open-pull-requests-limit: 15
