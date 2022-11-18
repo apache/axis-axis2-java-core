@@ -1053,7 +1053,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     (String) faultClassNameMap.get(key),
                     faultElement);
             addAttribute(doc, "serialVersionUID",
-                    "1L",
+                    String.valueOf(1L),
                     faultElement);
 
             //added the base exception class name
