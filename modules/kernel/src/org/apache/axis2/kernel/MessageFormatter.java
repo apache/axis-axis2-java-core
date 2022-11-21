@@ -19,12 +19,18 @@
 
 package org.apache.axis2.kernel;
 
+import org.apache.axiom.blob.Blobs;
+import org.apache.axiom.blob.MemoryBlob;
+import org.apache.axiom.blob.MemoryBlobOutputStream;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.util.activation.BlobDataSource;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
 import java.io.OutputStream;
 import java.net.URL;
+
+import javax.activation.DataSource;
 
 /**
  * <p/>
@@ -81,4 +87,21 @@ public interface MessageFormatter {
      */
     public String formatSOAPAction(MessageContext messageContext, OMOutputFormat format,
                                    String soapAction);
+
+    /**
+     * Get the formatted message as a {@link DataSource} object.
+     * 
+     * @param messageContext
+     * @param format
+     * @param soapAction
+     * @return
+     * @throws AxisFault
+     */
+    default DataSource getDataSource(MessageContext messageContext, OMOutputFormat format, String soapAction) throws AxisFault {
+        MemoryBlob blob = Blobs.createMemoryBlob();
+        MemoryBlobOutputStream out = blob.getOutputStream();
+        writeTo(messageContext, format, out, false);
+        out.close();
+        return new BlobDataSource(blob, getContentType(messageContext, format, soapAction));
+    }
 }

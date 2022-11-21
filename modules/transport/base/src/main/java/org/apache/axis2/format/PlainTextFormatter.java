@@ -19,6 +19,7 @@
 
 package org.apache.axis2.format;
 
+import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.kernel.http.util.URLTemplatingUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
@@ -34,7 +35,7 @@ import java.net.URL;
 
 import javax.activation.DataSource;
 
-public class PlainTextFormatter implements MessageFormatterEx {
+public class PlainTextFormatter implements MessageFormatter {
     public void writeTo(MessageContext messageContext, OMOutputFormat format, OutputStream outputStream, boolean preserve) throws AxisFault {
         OMElement textElt = messageContext.getEnvelope().getBody().getFirstElement();
         if (BaseConstants.DEFAULT_TEXT_WRAPPER.equals(textElt.getQName())) {

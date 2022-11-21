@@ -32,10 +32,11 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.kernel.http.util.URLTemplatingUtil;
 import org.apache.axis2.transport.base.BaseConstants;
 
-public class BinaryFormatter implements MessageFormatterEx {
+public class BinaryFormatter implements MessageFormatter {
     private Blob getBlob(MessageContext messageContext) {
         OMElement firstChild = messageContext.getEnvelope().getBody().getFirstElement();
         if (BaseConstants.DEFAULT_BINARY_WRAPPER.equals(firstChild.getQName())) {

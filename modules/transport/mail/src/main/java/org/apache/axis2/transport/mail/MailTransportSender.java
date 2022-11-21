@@ -19,8 +19,6 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.format.MessageFormatterEx;
-import org.apache.axis2.format.MessageFormatterExAdapter;
 import org.apache.axis2.transport.base.*;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axis2.context.ConfigurationContext;
@@ -409,14 +407,7 @@ public class MailTransportSender extends AbstractTransportSender
         message.setHeader(BaseConstants.SOAPACTION, msgContext.getSoapAction());
 
         // write body
-        MessageFormatterEx messageFormatterEx;
-        if (messageFormatter instanceof MessageFormatterEx) {
-            messageFormatterEx = (MessageFormatterEx)messageFormatter;
-        } else {
-            messageFormatterEx = new MessageFormatterExAdapter(messageFormatter);
-        }
-        
-        DataHandler dataHandler = new DataHandler(messageFormatterEx.getDataSource(msgContext, format, msgContext.getSoapAction()));
+        DataHandler dataHandler = new DataHandler(messageFormatter.getDataSource(msgContext, format, msgContext.getSoapAction()));
         
         MimeMultipart mimeMultiPart = null;
 
