@@ -19,9 +19,17 @@
 
 package org.apache.axis2.util;
 
-import javax.activation.DataHandler;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.apache.axiom.util.activation.DataHandlerWrapper;
+import javax.activation.CommandInfo;
+import javax.activation.CommandMap;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,30 +39,103 @@ import org.apache.commons.logging.LogFactory;
  * the DataHandler instance.   We'll delegate all method calls except for getContentType()
  * to the real DataHandler instance.   
  */
-public class WrappedDataHandler extends DataHandlerWrapper {
+public class WrappedDataHandler extends DataHandler {
     
     private static final Log log = LogFactory.getLog(WrappedDataHandler.class);
     
+    private final DataHandler parent;
     private final String contentType;
     
     /**
      * Constructs a new instance of the WrappedDataHandler.
-     * @param _delegate the real DataHandler instance being wrapped
-     * @param _contentType the user-defined contentType associated with the DataHandler instance
+     * @param parent the real DataHandler instance being wrapped
+     * @param contentType the user-defined contentType associated with the DataHandler instance
      */
-    public WrappedDataHandler(DataHandler _delegate, String _contentType) {
-        super(_delegate);
+    public WrappedDataHandler(DataHandler parent, String contentType) {
+        super((DataSource) null);
         
-        contentType = _contentType;
+        this.parent = parent;
+        this.contentType = contentType;
         
         if (log.isDebugEnabled()) {
             log.debug("Created instance of WrappedDatahandler: " + this.toString() + ", contentType=" + contentType
-                + "\nDelegate DataHandler: " + _delegate.toString());
+                + "\nDelegate DataHandler: " + parent.toString());
         }
     }
 
     @Override
     public String getContentType() {
-        return (contentType != null ? contentType : super.getContentType());
+        return contentType != null ? contentType : parent.getContentType();
+    }
+
+    @Override
+    public CommandInfo[] getAllCommands() {
+        return parent.getAllCommands();
+    }
+
+    @Override
+    public Object getBean(CommandInfo cmdinfo) {
+        return parent.getBean(cmdinfo);
+    }
+
+    @Override
+    public CommandInfo getCommand(String cmdName) {
+        return parent.getCommand(cmdName);
+    }
+
+    @Override
+    public Object getContent() throws IOException {
+        return parent.getContent();
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return parent.getDataSource();
+    }
+
+    @Override
+    public InputStream getInputStream() throws IOException {
+        return parent.getInputStream();
+    }
+
+    @Override
+    public String getName() {
+        return parent.getName();
+    }
+
+    @Override
+    public OutputStream getOutputStream() throws IOException {
+        return parent.getOutputStream();
+    }
+
+    @Override
+    public CommandInfo[] getPreferredCommands() {
+        return parent.getPreferredCommands();
+    }
+
+    @Override
+    public Object getTransferData(DataFlavor flavor)
+            throws UnsupportedFlavorException, IOException {
+        return parent.getTransferData(flavor);
+    }
+
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+        return parent.getTransferDataFlavors();
+    }
+
+    @Override
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+        return parent.isDataFlavorSupported(flavor);
+    }
+
+    @Override
+    public void setCommandMap(CommandMap commandMap) {
+        parent.setCommandMap(commandMap);
+    }
+
+    @Override
+    public void writeTo(OutputStream os) throws IOException {
+        parent.writeTo(os);
     }
 }
