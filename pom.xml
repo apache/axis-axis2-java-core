@@ -481,7 +481,7 @@
         <httpmime.version>4.5.14</httpmime.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>2.3.6</jaxbri.version>
-        <jetty.version>10.0.13</jetty.version>
+        <jetty.version>10.0.14</jetty.version>
         <jibx.version>1.4.2</jibx.version>
         <log4j2.version>2.20.0</log4j2.version>
         <maven.archiver.version>3.6.0</maven.archiver.version>
