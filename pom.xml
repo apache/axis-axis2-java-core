@@ -1264,7 +1264,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -1274,7 +1274,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.1.0</version>
+                                    <version>3.2.1</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <!-- We require a recent Java version for the build, but we enforce compatibility with older versions using Animal Sniffer -->
