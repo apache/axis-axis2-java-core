@@ -111,6 +111,9 @@ public class MultipartFormDataBuilder implements Builder {
         FileItemFactory factory = new DiskFileItemFactory();
         // Create a new file upload handler
         ServletFileUpload upload = new ServletFileUpload(factory);
+        // There must be a limit. 
+        // This is for contentType="multipart/form-data"
+        upload.setFileCountMax(1L);
         // Parse the request
         return upload.parseRequest(requestContext);
     }

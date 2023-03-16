@@ -155,6 +155,10 @@ final class AdminActions {
                 FileItemFactory factory = new DiskFileItemFactory();
                 //Create a new file upload handler
                 ServletFileUpload upload = new ServletFileUpload(factory);
+                // There must be a limit. This is for an aar file upload,
+                // presumably only one. See:
+                // https://axis.apache.org/axis2/java/core/docs/webadminguide.html#upservice
+                upload.setFileCountMax(1L);
                 List<?> items = upload.parseRequest(req);
                 // Process the uploaded items
                 Iterator<?> iter = items.iterator();
