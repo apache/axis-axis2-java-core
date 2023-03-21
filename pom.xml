@@ -486,7 +486,6 @@
         <log4j2.version>2.20.0</log4j2.version>
         <maven.archiver.version>3.6.0</maven.archiver.version>
         <maven.version>3.9.1</maven.version>
-        <plexus.utils.version>3.5.1</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
         <slf4j.version>2.0.7</slf4j.version>
         <spring.version>5.3.26</spring.version>
@@ -894,7 +893,7 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>${plexus.utils.version}</version>
+                <version>3.5.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>

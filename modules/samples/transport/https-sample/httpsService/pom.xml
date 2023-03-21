@@ -62,14 +62,6 @@
                     <alias>axis2key</alias>
                     <keyalg>RSA</keyalg>
                 </configuration>
-                <dependencies>
-                    <!-- Workaround for https://github.com/mojohaus/keytool/issues/57 -->
-                    <dependency>
-                        <groupId>org.codehaus.plexus</groupId>
-                        <artifactId>plexus-utils</artifactId>
-                        <version>${plexus.utils.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
