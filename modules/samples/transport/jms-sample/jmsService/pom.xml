@@ -24,7 +24,7 @@
             <plugin>
                 <groupId>org.apache.activemq.tooling</groupId>
                 <artifactId>activemq-maven-plugin</artifactId>
-                <version>5.18.0</version>
+                <version>5.18.1</version>
                 <configuration>
                     <fork>true</fork>
                 </configuration>
