@@ -69,11 +69,6 @@
             <groupId>org.apache.ws.xmlschema</groupId>
             <artifactId>xmlschema-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.axis2</groupId>
