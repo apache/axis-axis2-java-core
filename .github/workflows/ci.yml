@@ -26,8 +26,8 @@ env:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        fail-fast: false
         java: [ 11, 17, 19 ]
     name: "Java ${{ matrix.java }}"
     runs-on: ubuntu-22.04
