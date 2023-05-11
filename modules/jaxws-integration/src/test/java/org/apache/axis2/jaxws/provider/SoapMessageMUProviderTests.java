@@ -19,6 +19,9 @@
 
 package org.apache.axis2.jaxws.provider;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.BindingProvider;
@@ -38,10 +41,6 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import static org.apache.axis2.jaxws.framework.TestUtils.await;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -95,15 +94,15 @@ public class SoapMessageMUProviderTests {
         SOAPMessage response = dispatch.invoke(message);
 
         String string = AttachmentUtil.toString(response);
-        assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
-                                           + AttachmentUtil.msgEnvPlain));
+        assertThat(string).isEqualToIgnoringCase(AttachmentUtil.XML_HEADER
+                + AttachmentUtil.msgEnvPlain);
             
         // Try a second time
         response = dispatch.invoke(message);
 
         string = AttachmentUtil.toString(response);
-        assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
-                                           + AttachmentUtil.msgEnvPlain));
+        assertThat(string).isEqualToIgnoringCase(AttachmentUtil.XML_HEADER
+                + AttachmentUtil.msgEnvPlain);
     }
 
     /**
@@ -282,9 +281,9 @@ public class SoapMessageMUProviderTests {
         
         try {
             SOAPMessage response = dispatch.invoke(message);
-            assertNotNull("No response received", response);
+            assertThat(response).isNotNull();
             String responseString = AttachmentUtil.toString(response);
-            assertNotNull(responseString);
+            assertThat(responseString).isNotNull();
         } catch (Exception e) {
             fail("Should not have caught an exception: " + e.toString());
         }
@@ -317,7 +316,7 @@ public class SoapMessageMUProviderTests {
         Response<SOAPMessage> asyncResponse = null;
         try {
             asyncResponse = dispatch.invokeAsync(message);
-            assertNotNull("No response received", asyncResponse);
+            assertThat(asyncResponse).isNotNull();
         } catch (Exception e) {
             fail("Should not have caught an exception on the async invocation: " + e.toString());
         }
@@ -328,8 +327,8 @@ public class SoapMessageMUProviderTests {
             fail("Should have caught a mustUnderstand exception");
         } catch (Exception e) {
             // Expected path
-            assertTrue("Did not received expected exception", 
-                    e.getCause().toString().contains("Must Understand check failed for header http://ws.apache.org/axis2 : muserver"));
+            assertThat(e.getCause().toString()).contains(
+                    "Must Understand check failed for header http://ws.apache.org/axis2 : muserver");
         }
         
     }
@@ -370,12 +369,12 @@ public class SoapMessageMUProviderTests {
         
         try {
             Response<SOAPMessage> asyncResponse = dispatch.invokeAsync(message);
-            assertNotNull("No response received", asyncResponse);
+            assertThat(asyncResponse).isNotNull();
             await(asyncResponse);
             SOAPMessage response = asyncResponse.get();
-            assertNotNull("Response was nulL", response);
+            assertThat(response).isNotNull();
             String responseString = AttachmentUtil.toString(response);
-            assertNotNull(responseString);
+            assertThat(responseString).isNotNull();
         } catch (Exception e) {
             fail("Should not have caught an exception: " + e.toString());
         }
@@ -409,16 +408,17 @@ public class SoapMessageMUProviderTests {
         AsyncCallback<SOAPMessage> callback = new AsyncCallback<SOAPMessage>();
         try {
             asyncResponse = dispatch.invokeAsync(message, callback);
-            assertNotNull("No response received", asyncResponse);
+            assertThat(asyncResponse).isNotNull();
         } catch (Exception e) {
             fail("Should not have caught an exception on the async invocation: " + e.toString());
         }
         
         try {
             await(asyncResponse);
-            assertTrue("Did not receive exception", callback.hasError());
-            assertTrue("Did not received expected exception", 
-                    callback.getError().toString().contains("Must Understand check failed for header http://ws.apache.org/axis2 : muserver"));
+            assertThat(callback.hasError()).isTrue();
+            assertThat(
+                    callback.getError().toString()).contains(
+                            "Must Understand check failed for header http://ws.apache.org/axis2 : muserver");
         } catch (Exception e) {
             fail("Received unexpected exception: " + e.toString()); 
         }
@@ -464,16 +464,16 @@ public class SoapMessageMUProviderTests {
         AsyncCallback<SOAPMessage> callback = new AsyncCallback<SOAPMessage>();
         try {
             asyncResponse = dispatch.invokeAsync(message, callback);
-            assertNotNull("No response received", asyncResponse);
+            assertThat(asyncResponse).isNotNull();
         } catch (Exception e) {
             fail("Should not have caught an exception on the async invocation: " + e.toString());
         }
         
         try {
             await(asyncResponse);
-            assertFalse("Receive unexpected exception", callback.hasError());
+            assertThat(callback.hasError()).isFalse();
             SOAPMessage response = callback.getValue();
-            assertNotNull(response);
+            assertThat(response).isNotNull();
         } catch (Exception e) {
             fail("Received unexpected exception" + e.toString());
         }
