@@ -492,6 +492,7 @@
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xalan.version>2.7.2</xalan.version>
         <xmlbeans.version>3.0.1</xmlbeans.version>
+        <xmlunit.version>2.9.1</xmlunit.version>
         <xml_resolver.version>1.2</xml_resolver.version>
         <commons.cli.version>1.5.0</commons.cli.version>
         <!-- The build failing if tests are skipped is very annoying -->
@@ -832,7 +833,12 @@
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-legacy</artifactId>
-                <version>2.9.1</version>
+                <version>${xmlunit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-assertj3</artifactId>
+                <version>${xmlunit.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

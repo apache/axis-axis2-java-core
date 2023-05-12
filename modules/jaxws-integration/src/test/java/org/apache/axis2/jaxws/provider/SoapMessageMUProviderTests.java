@@ -35,6 +35,7 @@ import org.apache.axis2.jaxws.framework.ClientConfigurationContextBinder;
 import org.apache.axis2.testutils.Axis2Server;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.xmlunit.assertj3.XmlAssert;
 
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
@@ -93,16 +94,14 @@ public class SoapMessageMUProviderTests {
 
         SOAPMessage response = dispatch.invoke(message);
 
-        String string = AttachmentUtil.toString(response);
-        assertThat(string).isEqualToIgnoringCase(AttachmentUtil.XML_HEADER
-                + AttachmentUtil.msgEnvPlain);
+        XmlAssert.assertThat(response.getSOAPPart().getContent()).and(AttachmentUtil.msgEnvPlain)
+                .areIdentical();
             
         // Try a second time
         response = dispatch.invoke(message);
 
-        string = AttachmentUtil.toString(response);
-        assertThat(string).isEqualToIgnoringCase(AttachmentUtil.XML_HEADER
-                + AttachmentUtil.msgEnvPlain);
+        XmlAssert.assertThat(response.getSOAPPart().getContent()).and(AttachmentUtil.msgEnvPlain)
+                .areIdentical();
     }
 
     /**
