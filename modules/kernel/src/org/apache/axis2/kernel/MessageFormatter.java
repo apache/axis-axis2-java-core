@@ -23,7 +23,6 @@ import org.apache.axiom.blob.Blobs;
 import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.blob.MemoryBlobOutputStream;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.util.activation.BlobDataSource;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 

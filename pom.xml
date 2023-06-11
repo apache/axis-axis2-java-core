@@ -659,7 +659,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-activation</artifactId>
+                <artifactId>axiom-javax-activation</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
@@ -669,7 +669,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-jaxb</artifactId>
+                <artifactId>axiom-javax-jaxb</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>

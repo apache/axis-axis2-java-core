@@ -18,16 +18,13 @@
  */
 package org.apache.axis2.jaxbri.mtom;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.activation.DataHandler;
-
 import org.apache.axiom.blob.Blob;
 import org.apache.axiom.mime.activation.PartDataHandler;
-import org.apache.axiom.util.activation.BlobDataSource;
+import org.apache.axiom.util.activation.DataHandlerUtils;
 
 public class MtomImpl implements MtomSkeletonInterface {
     private final Map<String,Blob> documents = new HashMap<String,Blob>();
@@ -43,7 +40,7 @@ public class MtomImpl implements MtomSkeletonInterface {
 
     public RetrieveDocumentResponse retrieveDocument(RetrieveDocument retrieveDocument) {
         RetrieveDocumentResponse response = new RetrieveDocumentResponse();
-        response.setContent(new DataHandler(new BlobDataSource(documents.get(retrieveDocument.getId()), "application/octet-stream")));
+        response.setContent(DataHandlerUtils.toDataHandler(documents.get(retrieveDocument.getId())));
         return response;
     }
 }

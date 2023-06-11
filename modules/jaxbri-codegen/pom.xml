@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-jaxb</artifactId>
+            <artifactId>axiom-javax-jaxb</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

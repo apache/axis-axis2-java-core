@@ -67,7 +67,7 @@ public class OSGiTest {
                 url("link:classpath:org.apache.james.apache-mime4j-core.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-api.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-impl.link"),
-                url("link:classpath:org.apache.ws.commons.axiom.axiom-activation.link"),
+                url("link:classpath:org.apache.ws.commons.axiom.axiom-javax-activation.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-legacy-attachments.link"),
                 url("link:classpath:org.apache.commons.commons-fileupload.link"),
                 url("link:classpath:org.apache.commons.commons-io.link"),
