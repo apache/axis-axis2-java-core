@@ -1262,7 +1262,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.3.0</version>
+                                    <version>3.6.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <!-- We require a recent Java version for the build, but we enforce compatibility with older versions using Animal Sniffer -->
