@@ -1,0 +1,5 @@
+{
+	"name": "RHEL",
+	"dockerFile": "Dockerfile",
+	"runArgs": ["-u", "vscode"]
+}
