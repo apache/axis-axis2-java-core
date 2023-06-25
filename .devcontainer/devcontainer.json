@@ -1,0 +1,23 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "11",
+			"jdkDistro": "zulu",
+			"installMaven": "true"
+		},
+		"ghcr.io/devcontainers-contrib/features/mvnd-sdkman:2": {
+			"jdkVersion": "none"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.vscode-github-actions"
+			]
+		}
+	},
+	"hostRequirements": {
+		"memory": "8gb"
+	}
+}
