@@ -85,7 +85,7 @@
     <maintainer>
       <foaf:Person>
         <foaf:name>Axis2 Development Team</foaf:name>
-        <foaf:mbox rdf:resource="mailto:java-dev@axis.apache.org?subject=[Axis2]"/>
+        <foaf:mbox rdf:resource="mailto:java-dev@axis.apache.org?subject=%5BAxis2%5D"/>
       </foaf:Person>
     </maintainer>
     <asfext:implements><asfext:Standard>
