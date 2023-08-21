@@ -464,7 +464,7 @@
         <axiom.version>2.0.0-SNAPSHOT</axiom.version>
         <xmlschema.version>2.3.0</xmlschema.version>
         <activation.version>1.2.1</activation.version>
-        <ant.version>1.10.13</ant.version>
+        <ant.version>1.10.14</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.9.1</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
