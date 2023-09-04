@@ -40,7 +40,7 @@
     </scm>
 
     <properties>
-        <exam.version>4.13.4</exam.version>
+        <exam.version>4.13.5</exam.version>
     </properties>
 
     <dependencies>
