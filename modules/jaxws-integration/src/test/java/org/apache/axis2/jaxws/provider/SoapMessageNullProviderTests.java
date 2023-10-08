@@ -22,10 +22,10 @@ package org.apache.axis2.jaxws.provider;
 import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.testutils.Axis2Server;
@@ -55,7 +55,7 @@ public class SoapMessageNullProviderTests extends ProviderTestCase {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, server.getEndpoint("SoapMessageNullProviderService.SoapMessageNullProviderPort"));
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         SOAPMessage message = AttachmentUtil.toSOAPMessage(AttachmentUtil.msgEnvPlain);

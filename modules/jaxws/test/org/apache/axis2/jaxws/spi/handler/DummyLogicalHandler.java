@@ -22,9 +22,9 @@ package org.apache.axis2.jaxws.spi.handler;
 import org.apache.axis2.jaxws.unitTest.TestLogger;
 
 import javax.annotation.PostConstruct;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.LogicalMessageContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.LogicalHandler;
+import jakarta.xml.ws.handler.LogicalMessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 public class DummyLogicalHandler implements LogicalHandler<LogicalMessageContext> {
     

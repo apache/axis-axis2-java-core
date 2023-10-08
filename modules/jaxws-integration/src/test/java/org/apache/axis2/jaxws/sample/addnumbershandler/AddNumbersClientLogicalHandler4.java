@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 /*
  * You can't actually specify whether a handler is for client or server,
@@ -29,7 +29,7 @@ import javax.xml.ws.handler.MessageContext;
  * sure what direction we're going.
  */
 
-public class AddNumbersClientLogicalHandler4  implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
+public class AddNumbersClientLogicalHandler4  implements jakarta.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
     HandlerTracker tracker = new HandlerTracker(AddNumbersClientLogicalHandler4.class.getSimpleName());
 

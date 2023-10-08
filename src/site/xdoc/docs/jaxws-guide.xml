@@ -210,7 +210,7 @@ client:
       Edition 5 (Java EE 5). By placing the <code>@Resource</code>
       annotation on a service endpoint implementation, you can
       request a resource injection and collect the
-      <code>javax.xml.ws.WebServiceContext</code> interface related
+      <code>jakarta.xml.ws.WebServiceContext</code> interface related
       to that particular endpoint invocation. When the endpoint
       sees the <code>@Resource</code> annotation, the endpoint adds
       the annotated variable with an appropriate value before the
@@ -254,7 +254,7 @@ specification for more information on resource injection.<br />
 
     <li style="list-style: none"><br />
     The dynamic client API for JAX-WS is called the dispatch client
-    (<code>javax.xml.ws.Dispatch</code>). The dispatch client is an
+    (<code>jakarta.xml.ws.Dispatch</code>). The dispatch client is an
     XML messaging oriented client. The data is sent in either
     <code>PAYLOAD</code> or <code>MESSAGE</code> mode. When using
     the <code>PAYLOAD</code> mode, the dispatch client is only
@@ -456,9 +456,9 @@ specification for more information on resource injection.<br />
           implementation class.<br />
           <br />
           To develop a JAX-WS Web service, you must annotate your
-          Java class with the <code>javax.jws.WebService</code>
+          Java class with the <code>jakarta.jws.WebService</code>
           annotation for JavaBeans endpoints or the
-          <code>javax.jws.WebServiceProvider</code> annotation for
+          <code>jakarta.jws.WebServiceProvider</code> annotation for
           a Provider endpoint. These annotations define the Java
           class as a Web service endpoint. For a JavaBeans
           endpoint, the service endpoint interface or service
@@ -470,7 +470,7 @@ specification for more information on resource injection.<br />
           explicit or implicit service endpoint interface.<br />
           <br />
           All JavaBeans endpoints are required to have the
-          <code>@WebService (javax.jws.WebService)</code>
+          <code>@WebService (jakarta.jws.WebService)</code>
           annotation included on the bean class. If the service
           implementation bean also uses an SEI, then that endpoint
           interface must be referenced by the endpointInterface
@@ -480,7 +480,7 @@ specification for more information on resource injection.<br />
           bean.<br />
           <br />
           The JAX-WS programming model introduces the new Provider
-          API, <code>javax.xml.ws.Provider</code>, as an
+          API, <code>jakarta.xml.ws.Provider</code>, as an
           alternative to service endpoint interfaces. The
           <code>Provider</code> interface supports a more messaging
           oriented approach to Web services. With the
@@ -492,10 +492,10 @@ specification for more information on resource injection.<br />
           input and output types when working with various messages
           or message payloads. All Provider endpoints must be
           annotated with the <code>@WebServiceProvider
-          (javax.xml.ws.WebServiceProvider)</code> annotation. A
+          (jakarta.xml.ws.WebServiceProvider)</code> annotation. A
           service implementation cannot specify the
           <code>@WebService</code> annotation if it implements the
-          <code>javax.xml.ws.Provider</code> interface.<br />
+          <code>jakarta.xml.ws.Provider</code> interface.<br />
           <br />
           So the steps involved are:
 
@@ -511,13 +511,13 @@ specification for more information on resource injection.<br />
               you want to use an explicit SEI or if the bean itself
               will have an implicit SEI.<br />
               A Java class that implements a Web service must
-              specify either the <code>javax.jws.WebService</code>
-              or <code>javax.xml.ws.WebServiceProvider</code>
+              specify either the <code>jakarta.jws.WebService</code>
+              or <code>jakarta.xml.ws.WebServiceProvider</code>
               annotation. Both annotations must not be present on a
               Java class. The
-              <code>javax.xml.ws.WebServiceProvider</code>
+              <code>jakarta.xml.ws.WebServiceProvider</code>
               annotation is only supported on classes that
-              implement the <code>javax.xml.ws.Provider</code>
+              implement the <code>jakarta.xml.ws.Provider</code>
               interface.
 
               <ul>
@@ -525,7 +525,7 @@ specification for more information on resource injection.<br />
                 interface with the Java class, then use the
                 endpointInterface parameter to specify the service
                 endpoint interface class name to the
-                <code>javax.jws.WebService</code> annotation. You
+                <code>jakarta.jws.WebService</code> annotation. You
                 can add the <code>@WebMethod</code> annotation to
                 methods of a service endpoint interface to
                 customize the Java-to-WSDL mappings. All public
@@ -538,7 +538,7 @@ specification for more information on resource injection.<br />
 
                 <li>If you have an implicit service endpoint
                 interface with the Java class, then the
-                <code>javax.jws.WebService</code> annotation will
+                <code>jakarta.jws.WebService</code> annotation will
                 use the default values for the
                 <code>serviceName</code>, <code>portName</code>,
                 and <code>targetNamespace</code> parameters. To
@@ -555,7 +555,7 @@ specification for more information on resource injection.<br />
 
                 <li>If you are using the <code>Provider</code>
                 interface, use the
-                <code>javax.xml.ws.WebServiceProvider</code>
+                <code>jakarta.xml.ws.WebServiceProvider</code>
                 annotation on the Provider endpoint.</li>
               </ul>
             </li>
@@ -719,19 +719,19 @@ and creates the directory structure.<br />
       However, in some cases, you might desire to work at the XML
       message level. Support for invoking services at the XML
       message level is provided by the Dispatch client API. The
-      Dispatch client API, <code>javax.xml.ws.Dispatch</code>, is a
+      Dispatch client API, <code>jakarta.xml.ws.Dispatch</code>, is a
       dynamic JAX-WS client programming interface. To write a
       Dispatch client, you must have expertise with the Dispatch
       client APIs, the supported object types, and knowledge of the
       message representations for the associated WSDL file. The
       Dispatch client can send data in either <code>MESSAGE</code>
       or <code>PAYLOAD</code> mode. When using the
-      <code>javax.xml.ws.Service.Mode.MESSAGE</code> mode, the
+      <code>jakarta.xml.ws.Service.Mode.MESSAGE</code> mode, the
       Dispatch client is responsible for providing the entire SOAP
       envelope including the <code>&lt;soap:Envelope&gt;</code>,
       <code>&lt;soap:Header&gt;</code>, and
       <code>&lt;soap:Body&gt;</code> elements. When using the
-      <code>javax.xml.ws.Service.Mode.PAYLOAD</code> mode, the
+      <code>jakarta.xml.ws.Service.Mode.PAYLOAD</code> mode, the
       Dispatch client is only responsible for providing the
       contents of the <code>&lt;soap:Body&gt;</code> and JAX-WS
       includes the payload in a <code>&lt;soap:Envelope&gt;</code>
@@ -743,7 +743,7 @@ and creates the directory structure.<br />
       Dispatch client supports the following types of objects:
 
       <ul>
-        <li><code>javax.xml.transform.Source</code>: Use
+        <li><code>jakarta.xml.transform.Source</code>: Use
         <code>Source</code> objects to enable clients to use XML
         APIs directly. You can use <code>Source</code> objects with
         SOAP or HTTP bindings.</li>
@@ -753,12 +753,12 @@ and creates the directory structure.<br />
         create and manipulate XML with JAX-WS applications. JAXB
         objects can only be used with SOAP or HTTP bindings.</li>
 
-        <li><code>javax.xml.soap.SOAPMessage</code>: Use
+        <li><code>jakarta.xml.soap.SOAPMessage</code>: Use
         <code>SOAPMessage</code> objects so that clients can work
         with SOAP messages. You can only use
         <code>SOAPMessage</code> objects with SOAP bindings.</li>
 
-        <li><code>javax.activation.DataSource</code>: Use
+        <li><code>jakarta.activation.DataSource</code>: Use
         <code>DataSource</code> objects so that clients can work
         with Multipurpose Internet Mail Extension (MIME) messages.
         Use <code>DataSource</code> only with HTTP bindings.</li>
@@ -918,7 +918,7 @@ the <code>invoke()</code> method.<br />
       offers more flexibility than the existing Java API for
       XML-based RPC (JAX-RPC)-based Dynamic Invocation Interface
       (DII). The Dispatch client interface,
-      <code>javax.xml.ws.Dispatch</code>, is an XML messaging
+      <code>jakarta.xml.ws.Dispatch</code>, is an XML messaging
       oriented client that is intended for advanced XML developers
       who prefer to work at the XML level using XML constructs. To
       write a Dispatch client, you must have expertise with the
@@ -955,13 +955,13 @@ the <code>invoke()</code> method.<br />
         create and manipulate XML with JAX-WS applications. JAXB
         objects can only be used with SOAP and HTTP bindings.</li>
 
-        <li><code>javax.xml.soap.SOAPMessage</code>: Use
+        <li><code>jakarta.xml.soap.SOAPMessage</code>: Use
         <code>SOAPMessage</code> objects so that clients can work
         with SOAP messages. You can only use
         <code>SOAPMessage</code> objects with SOAP version 1.1 or
         SOAP version 1.2 bindings.</li>
 
-        <li><code>javax.activation.DataSource</code>: Use
+        <li><code>jakarta.activation.DataSource</code>: Use
         <code>DataSource</code> objects so that clients can work
         with Multipurpose Internet Mail Extension (MIME) messages.
         Use <code>DataSource</code> only with HTTP bindings.</li>
@@ -986,7 +986,7 @@ the <code>invoke()</code> method.<br />
         <code>Service.Mode.MESSAGE</code> method.</li>
 
         <li>Configure the request context properties on the
-        <code>javax.xml.ws.BindingProvider</code> interface. Use
+        <code>jakarta.xml.ws.BindingProvider</code> interface. Use
         the request context to specify additional properties such
         as enabling HTTP authentication or specifying the endpoint
         address.</li>
@@ -1082,15 +1082,15 @@ the <code>invoke()</code> method.<br />
       model, the client provides an <code>AsynchHandler</code>
       callback handler to accept and process the inbound response
       object. The client callback handler implements the
-      <code>javax.xml.ws.AsynchHandler</code> interface, which
+      <code>jakarta.xml.ws.AsynchHandler</code> interface, which
       contains the application code that is executed when an
       asynchronous response is received from the server. The
-      <code>javax.xml.ws.AsynchHandler</code> interface contains
+      <code>jakarta.xml.ws.AsynchHandler</code> interface contains
       the <code>handleResponse(java.xml.ws.Response)</code> method
       that is called after the run time has received and processed
       the asynchronous response from the server. The response is
       delivered to the callback handler in the form of a
-      <code>javax.xml.ws.Response</code> object. The response
+      <code>jakarta.xml.ws.Response</code> object. The response
       object returns the response content when the
       <code>get()</code> method is called. Additionally, if an
       error was received, then an exception is returned to the
@@ -1112,7 +1112,7 @@ the <code>invoke()</code> method.<br />
       actual response can then be retrieved. The response object
       returns the response content when the <code>get()</code>
       method is called. The client receives an object of type
-      <code>javax.xml.ws.Response</code> from the
+      <code>jakarta.xml.ws.Response</code> from the
       <code>invokeAsync</code> method. That <code>Response</code>
       object is used to monitor the status of the request to the
       server, determine when the operation has completed, and to
@@ -1173,10 +1173,10 @@ the <code>invoke()</code> method.<br />
 
           <ol>
             <li>Find the asynchronous callback method on the SEI or
-            <code>javax.xml.ws.Dispatch</code> interface. For an
+            <code>jakarta.xml.ws.Dispatch</code> interface. For an
             SEI, the method name ends in <code>Async</code> and has
             one more parameter than the synchronous method of type
-            <code>javax.xml.ws.AsyncHandler</code>. The
+            <code>jakarta.xml.ws.AsyncHandler</code>. The
             <code>invokeAsync(Object, AsyncHandler)</code> method
             is the one that is used on the Dispatch interface.</li>
 
@@ -1191,10 +1191,10 @@ the <code>invoke()</code> method.<br />
             with your client.</li>
 
             <li>Implement the
-            <code>javax.xml.ws.AsynchHandler</code> interface. The
-            <code>javax.xml.ws.AsynchHandler</code> interface only
+            <code>jakarta.xml.ws.AsynchHandler</code> interface. The
+            <code>jakarta.xml.ws.AsynchHandler</code> interface only
             has the
-            <code>handleResponse(javax.xml.ws.Response)</code>
+            <code>handleResponse(jakarta.xml.ws.Response)</code>
             method. The method must contain the logic for
             processing the response or possibly an exception. The
             method is called after the client run time has received
@@ -1215,9 +1215,9 @@ the <code>invoke()</code> method.<br />
 
           <ol>
             <li>Find the asynchronous polling method on the SEI or
-            <code>javax.xml.ws.Dispatch</code> interface. For an
+            <code>jakarta.xml.ws.Dispatch</code> interface. For an
             SEI, the method name ends in <code>Async</code> and has
-            a return type of <code>javax.xml.ws.Response</code>.
+            a return type of <code>jakarta.xml.ws.Response</code>.
             The <code>invokeAsync(Object)</code> method is used on
             the Dispatch interface.</li>
 
@@ -1225,7 +1225,7 @@ the <code>invoke()</code> method.<br />
             parameter data.</li>
 
             <li>The client receives the object type,
-            <code>javax.xml.ws.Response</code>, that is used to
+            <code>jakarta.xml.ws.Response</code>, that is used to
             monitor the status of the request to the server. The
             <code>isDone()</code> method indicates whether the
             invocation has completed. When the
@@ -1339,7 +1339,7 @@ asynchronous polling client:
       language (XML) message. The logical handlers operate on
       message context properties and message payload. These
       handlers must implement the
-      <code>javax.xml.ws.handler.LogicalHandler</code> interface. A
+      <code>jakarta.xml.ws.handler.LogicalHandler</code> interface. A
       logical handler receives a <code>LogicalMessageContext</code>
       object from which the handler can get the message
       information. Logical handlers can exist on both SOAP and
@@ -1349,9 +1349,9 @@ asynchronous polling client:
       protocol handlers operate on message context properties and
       protocol-specific messages. Protocol handlers are limited to
       SOAP-based configurations and must implement the
-      <code>javax.xml.ws.handler.soap.SOAPHandler</code> interface.
+      <code>jakarta.xml.ws.handler.soap.SOAPHandler</code> interface.
       Protocol handlers receive the message as a
-      <code>javax.xml.soap.SOAPMessage</code> to read the message
+      <code>jakarta.xml.soap.SOAPMessage</code> to read the message
       data.<br />
       <br />
       The JAX-WS runtime makes no distinction between server-side
@@ -1523,11 +1523,11 @@ classes contained in the handler.xml file in your class path.<br />
    import java.util.Set;
 
    import javax.xml.namespace.QName;
-   import javax.xml.ws.handler.MessageContext;
-   import javax.xml.ws.handler.soap.SOAPMessageContext;
+   import jakarta.xml.ws.handler.MessageContext;
+   import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
    public class SampleProtocolHandler implements
-           javax.xml.ws.handler.soap.SOAPHandler&lt;SOAPMessageContext&gt; {
+           jakarta.xml.ws.handler.soap.SOAPHandler&lt;SOAPMessageContext&gt; {
 
        public void close(MessageContext messagecontext) {
        }
@@ -1590,7 +1590,7 @@ classes contained in the handler.xml file in your class path.<br />
 
         <li>Enable session management on the client by setting the
         JAX-WS property,
-        <code>javax.xml.ws.session.maintain</code>, to true on the
+        <code>jakarta.xml.ws.session.maintain</code>, to true on the
         <code>BindingProvider</code>.
           <pre>
       Map&lt;String, Object&gt; rc = ((BindingProvider) port).getRequestContext();
@@ -1624,10 +1624,10 @@ classes contained in the handler.xml file in your class path.<br />
       provider-based endpoint.<br />
       <br />
       To enable MTOM on an endpoint, use the @BindingType
-      (javax.xml.ws.BindingType) annotation on a server endpoint
+      (jakarta.xml.ws.BindingType) annotation on a server endpoint
       implementation class to specify that the endpoint supports
       one of the MTOM binding types so that the response messages
-      are MTOM-enabled. The javax.xml.ws.SOAPBinding class defines
+      are MTOM-enabled. The jakarta.xml.ws.SOAPBinding class defines
       two different constants, SOAP11HTTP_MTOM_BINDING and
       SOAP12HTTP_MTOM_BINDING that you can use for the value of the
       @BindingType annotation. For example:
@@ -1638,7 +1638,7 @@ classes contained in the handler.xml file in your class path.<br />
    @BindingType(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 </pre><br />
       Enable MTOM on the client by using the
-      javax.xml.ws.soap.SOAPBinding client-side API. Enabling MTOM
+      jakarta.xml.ws.soap.SOAPBinding client-side API. Enabling MTOM
       on the client optimizes the binary messages that are sent to
       the server.
 

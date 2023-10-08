@@ -54,13 +54,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 
-import javax.activation.DataSource;
-import javax.xml.soap.SOAPMessage;
+import jakarta.activation.DataSource;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -69,13 +69,13 @@ import java.util.concurrent.FutureTask;
 
 /**
  * The ProviderDispatcher is used to invoke instances of a target endpoint that implement the {@link
- * javax.xml.ws.Provider} interface.
+ * jakarta.xml.ws.Provider} interface.
  * <p/>
  * The Provider<T> is a generic class, with certain restrictions on the parameterized type T.  This
  * implementation supports the following types:
  * <p/>
- * java.lang.String javax.activation.DataSource javax.xml.soap.SOAPMessage
- * javax.xml.transform.Source
+ * java.lang.String jakarta.activation.DataSource jakarta.xml.soap.SOAPMessage
+ * jakarta.xml.transform.Source
  */
 public class ProviderDispatcher extends JavaDispatcher {
 
@@ -102,7 +102,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     */
     public MessageContext invoke(MessageContext request) throws Exception {
         if (log.isDebugEnabled()) {
-            log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
+            log.debug("Preparing to invoke jakarta.xml.ws.Provider based endpoint");
             log.debug("Invocation pattern: two way, sync");
         }
 
@@ -117,6 +117,14 @@ public class ProviderDispatcher extends JavaDispatcher {
             final Object input = providerType.cast(param);
             log.debug("Invoking Provider<" + providerType.getName() + ">");
             if (input != null) {
+                // AXIS2-6051, this was previously returning class:
+                // Parameter type: org.apache.axis2.saaj.SOAPMessageImpl
+                //
+                // However, after the move to jakarta it is now returning: 
+                // Parameter type: com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl
+		//
+		// Even still, methods like addChildElement still invoke on
+		// org.apache.axis2.saaj.SOAPMessageImpl
                 log.debug("Parameter type: " + input.getClass().getName());
             }
             else {
@@ -168,7 +176,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     
     public void invokeOneWay(MessageContext request) {
         if (log.isDebugEnabled()) {
-            log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
+            log.debug("Preparing to invoke jakarta.xml.ws.Provider based endpoint");
             log.debug("Invocation pattern: one way");
         }
         
@@ -219,7 +227,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     
     public void invokeAsync(MessageContext request, EndpointCallback callback) {
         if (log.isDebugEnabled()) {
-            log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
+            log.debug("Preparing to invoke jakarta.xml.ws.Provider based endpoint");
             log.debug("Invocation pattern: two way, async");
         }
         
@@ -617,7 +625,7 @@ public class ProviderDispatcher extends JavaDispatcher {
             }
             Class interfaceName = (Class)paramType.getRawType();
 
-            if (interfaceName == javax.xml.ws.Provider.class) {
+            if (interfaceName == jakarta.xml.ws.Provider.class) {
                 if (paramType.getActualTypeArguments().length > 1) {
                     throw ExceptionFactory.makeWebServiceException(Messages.getMessage("pTypeErr"));
                 }
@@ -630,12 +638,12 @@ public class ProviderDispatcher extends JavaDispatcher {
 
     /*
     * Validate whether or not the Class passed in is a valid type of
-    * javax.xml.ws.Provider<T>.  Per the JAX-WS 2.0 specification, the
+    * jakarta.xml.ws.Provider<T>.  Per the JAX-WS 2.0 specification, the
     * parameterized type of a Provider can only be:
     *
-    *   javax.xml.transform.Source
-    *   javax.xml.soap.SOAPMessage
-    *   javax.activation.DataSource
+    *   jakarta.xml.transform.Source
+    *   jakarta.xml.soap.SOAPMessage
+    *   jakarta.activation.DataSource
     *   org.apache.axiom.om.OMElement
     *
     * We've also added support for String types which is NOT dictated

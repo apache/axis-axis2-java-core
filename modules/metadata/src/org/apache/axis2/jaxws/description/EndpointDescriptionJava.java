@@ -19,11 +19,11 @@
 
 package org.apache.axis2.jaxws.description;
 
-import javax.jws.WebService;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.ServiceMode;
+import jakarta.xml.ws.WebServiceProvider;
 import java.lang.annotation.Annotation;
 
 /**

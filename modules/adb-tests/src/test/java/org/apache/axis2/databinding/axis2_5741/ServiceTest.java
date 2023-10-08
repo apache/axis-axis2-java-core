@@ -20,7 +20,7 @@ package org.apache.axis2.databinding.axis2_5741;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.axis2.databinding.axis2_5741.client.FiverxLinkService;
 import org.apache.axis2.databinding.axis2_5741.client.FiverxLinkService_Service;

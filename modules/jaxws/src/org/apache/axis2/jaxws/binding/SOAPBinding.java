@@ -27,23 +27,23 @@ import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.AddressingFeature.Responses;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.soap.AddressingFeature.Responses;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An implementation of the <link>javax.xml.ws.soap.SOAPBinding</link>
+ * An implementation of the <link>jakarta.xml.ws.soap.SOAPBinding</link>
  * interface. This is the default binding for JAX-WS, and will exist for all
  * Dispatch and Dynamic Proxy instances unless the XML/HTTP Binding is
  * explicitly specificied.
  */
-public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBinding {
+public class SOAPBinding extends BindingImpl implements jakarta.xml.ws.soap.SOAPBinding {
     private boolean mtomEnabled = false;
     private int mtomThreshold = 0;
     private boolean respectBindingEnabled = false;
@@ -138,7 +138,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     /*
      * (non-Javadoc)
      * 
-     * @see javax.xml.ws.soap.SOAPBinding#getMessageFactory()
+     * @see jakarta.xml.ws.soap.SOAPBinding#getMessageFactory()
      */
     public MessageFactory getMessageFactory() {
         String bindingNamespace = null;
@@ -180,7 +180,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     /*
      * (non-Javadoc)
      * 
-     * @see javax.xml.ws.soap.SOAPBinding#getRoles()
+     * @see jakarta.xml.ws.soap.SOAPBinding#getRoles()
      */
     public Set<String> getRoles() {
         // do not allow null roles, per the JAX-WS CTS
@@ -192,7 +192,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     /*
      * (non-Javadoc)
      * 
-     * @see javax.xml.ws.soap.SOAPBinding#getSOAPFactory()
+     * @see jakarta.xml.ws.soap.SOAPBinding#getSOAPFactory()
      */
     public SOAPFactory getSOAPFactory() {
         String bindingNamespace = null;
@@ -234,7 +234,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     /*
      * (non-Javadoc)
      * 
-     * @see javax.xml.ws.soap.SOAPBinding#isMTOMEnabled()
+     * @see jakarta.xml.ws.soap.SOAPBinding#isMTOMEnabled()
      */
     public boolean isMTOMEnabled() {
         return mtomEnabled;
@@ -243,7 +243,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     /*
      * (non-Javadoc)
      * 
-     * @see javax.xml.ws.soap.SOAPBinding#setMTOMEnabled(boolean)
+     * @see jakarta.xml.ws.soap.SOAPBinding#setMTOMEnabled(boolean)
      */
     public void setMTOMEnabled(boolean flag) {
         mtomEnabled = flag;
@@ -252,7 +252,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     /*
      * (non-Javadoc)
      * 
-     * @see javax.xml.ws.soap.SOAPBinding#setRoles(java.util.Set)
+     * @see jakarta.xml.ws.soap.SOAPBinding#setRoles(java.util.Set)
      */
     public void setRoles(Set<String> set) {
         // Validate the values in the set

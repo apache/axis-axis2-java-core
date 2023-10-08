@@ -17,4 +17,4 @@
 * under the License.
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://calculator.jaxws.axis2.apache.org", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.axis2.jaxws.calculator.client;
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://calculator.jaxws.axis2.apache.org", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.axis2.jaxws.calculator.client;

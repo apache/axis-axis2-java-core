@@ -23,10 +23,10 @@ import org.apache.axis2.jaxws.proxy.gorilla_dlw.data.Fruit;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.AssertFault;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import java.util.List;
 
 /**
@@ -47,7 +47,7 @@ public class GorillaProxyImpl implements GorillaInterface {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface#echoString2(java.lang.String, javax.xml.ws.Holder)
+     * @see org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface#echoString2(java.lang.String, jakarta.xml.ws.Holder)
      */
     public void echoString2(String data, Holder<String> inout)
             throws AssertFault {
@@ -109,7 +109,7 @@ public class GorillaProxyImpl implements GorillaInterface {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface#echoString2Array(java.util.List, javax.xml.ws.Holder)
+     * @see org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface#echoString2Array(java.util.List, jakarta.xml.ws.Holder)
      */
     public void echoString2Array(List<String> data, Holder<List<String>> inout)
             throws AssertFault {

@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.samples.ping;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

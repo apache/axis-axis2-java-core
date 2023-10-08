@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.server;
 
-import javax.xml.ws.AsyncHandler;
+import jakarta.xml.ws.AsyncHandler;
 
 /**
  * This class is the default implementation of the AsyncHandlerProxyFactory

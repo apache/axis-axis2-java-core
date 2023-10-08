@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.ws.Action;
-import javax.xml.ws.FaultAction;
+import jakarta.xml.ws.Action;
+import jakarta.xml.ws.FaultAction;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 

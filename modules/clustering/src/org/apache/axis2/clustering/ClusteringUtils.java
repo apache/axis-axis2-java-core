@@ -24,7 +24,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisServiceGroup;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

@@ -31,13 +31,13 @@ import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.om.OMOutputFormat;
 
-import javax.mail.*;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimePart;
-import javax.activation.DataHandler;
+import jakarta.mail.*;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimePart;
+import jakarta.activation.DataHandler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

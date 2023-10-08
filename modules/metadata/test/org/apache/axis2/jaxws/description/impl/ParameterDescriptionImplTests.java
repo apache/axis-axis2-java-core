@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.description.impl;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import java.lang.reflect.Method;
 import java.util.List;
 

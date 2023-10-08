@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxws.server.endpoint.injection;
 
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 /*
  * WebserviceContext Injection is responsible to Injecting WebServiceContext Object to a JAXWS endpoint Instance at runtime.

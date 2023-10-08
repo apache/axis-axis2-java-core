@@ -27,15 +27,15 @@ import org.test.parallelasync.PingResponse;
 import org.test.parallelasync.SleepResponse;
 import org.test.parallelasync.WakeUpResponse;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.Response;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.ResponseWrapper;
 import java.util.concurrent.Future;
 
 /**
@@ -66,7 +66,7 @@ public interface AsyncPort {
      * 
      * @param message
      * @return
-     *     returns javax.xml.ws.Response<org.test.parallelasync.SleepResponse>
+     *     returns jakarta.xml.ws.Response<org.test.parallelasync.SleepResponse>
      */
     @WebMethod(operationName = "sleep", action = "http://org/test/parallelasync/sleep")
     @RequestWrapper(localName = "sleep", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.Sleep")
@@ -133,7 +133,7 @@ public interface AsyncPort {
      * 
      * @param request
      * @return
-     *     returns javax.xml.ws.Response<org.test.parallelasync.InvokeAsyncResponse>
+     *     returns jakarta.xml.ws.Response<org.test.parallelasync.InvokeAsyncResponse>
      */
     @WebMethod(operationName = "invokeAsync", action = "http://org/test/parallelasync/invokeAsync")
     @RequestWrapper(localName = "invokeAsync", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.InvokeAsync")
@@ -176,7 +176,7 @@ public interface AsyncPort {
      * 
      * @param request
      * @return
-     *     returns javax.xml.ws.Response<org.test.parallelasync.CustomAsyncResponse>
+     *     returns jakarta.xml.ws.Response<org.test.parallelasync.CustomAsyncResponse>
      */
     @WebMethod(operationName = "customAsync", action = "http://org/test/parallelasync/customAsync")
     @RequestWrapper(localName = "customAsync", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.CustomAsync")
@@ -219,7 +219,7 @@ public interface AsyncPort {
      * 
      * @param request
      * @return
-     *     returns javax.xml.ws.Response<org.test.parallelasync.AnotherResponse>
+     *     returns jakarta.xml.ws.Response<org.test.parallelasync.AnotherResponse>
      */
     @WebMethod(operationName = "another", action = "http://org/test/parallelasync/another")
     @RequestWrapper(localName = "another", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.Another")

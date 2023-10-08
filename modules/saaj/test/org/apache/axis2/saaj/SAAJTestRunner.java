@@ -104,26 +104,26 @@ public class SAAJTestRunner extends JUnit4ClassRunner {
             multiRunListener.setFailureMessage(
                     "Invalid test case; execution failed with SAAJ reference implementation");
 
-            System.setProperty("javax.xml.soap.MessageFactory",
+            System.setProperty("jakarta.xml.soap.MessageFactory",
             		"com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl");
-            System.setProperty("javax.xml.soap.SOAPFactory",
+            System.setProperty("jakarta.xml.soap.SOAPFactory",
             		"com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl");
-            System.setProperty("javax.xml.soap.SOAPConnectionFactory",
+            System.setProperty("jakarta.xml.soap.SOAPConnectionFactory",
             		"com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
-            System.setProperty("javax.xml.soap.MetaFactory",
+            System.setProperty("jakarta.xml.soap.MetaFactory",
             		"com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
 
             super.invokeTestMethod(method, multiRunNotifier);
         }
         if (multiRunListener.isShouldContinue()) {
             multiRunListener.setFailureMessage(null);
-            System.setProperty("javax.xml.soap.MessageFactory",
+            System.setProperty("jakarta.xml.soap.MessageFactory",
                     "org.apache.axis2.saaj.MessageFactoryImpl");
-            System.setProperty("javax.xml.soap.SOAPFactory",
+            System.setProperty("jakarta.xml.soap.SOAPFactory",
                     "org.apache.axis2.saaj.SOAPFactoryImpl");
-            System.setProperty("javax.xml.soap.SOAPConnectionFactory",
+            System.setProperty("jakarta.xml.soap.SOAPConnectionFactory",
                     "org.apache.axis2.saaj.SOAPConnectionFactoryImpl");
-            System.setProperty("javax.xml.soap.MetaFactory",
+            System.setProperty("jakarta.xml.soap.MetaFactory",
                     "org.apache.axis2.saaj.SAAJMetaFactoryImpl");
             super.invokeTestMethod(method, multiRunNotifier);
         }

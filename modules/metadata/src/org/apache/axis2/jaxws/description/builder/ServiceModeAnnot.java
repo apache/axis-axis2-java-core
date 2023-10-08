@@ -19,10 +19,10 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.lang.annotation.Annotation;
 
-public class ServiceModeAnnot implements javax.xml.ws.ServiceMode {
+public class ServiceModeAnnot implements jakarta.xml.ws.ServiceMode {
 
     private Service.Mode value = Service.Mode.PAYLOAD;
 
@@ -45,8 +45,8 @@ public class ServiceModeAnnot implements javax.xml.ws.ServiceMode {
     
     public static ServiceModeAnnot createFromAnnotation(Annotation annotation) {
         ServiceModeAnnot returnAnnot = null;
-        if (annotation != null && annotation instanceof javax.xml.ws.ServiceMode) {
-            javax.xml.ws.ServiceMode sm = (javax.xml.ws.ServiceMode) annotation;
+        if (annotation != null && annotation instanceof jakarta.xml.ws.ServiceMode) {
+            jakarta.xml.ws.ServiceMode sm = (jakarta.xml.ws.ServiceMode) annotation;
             returnAnnot = new ServiceModeAnnot(sm.value());
         }
         return returnAnnot;

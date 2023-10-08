@@ -20,10 +20,10 @@ package org.apache.axis2.kernel.http;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.activation.DataHandler;
-import javax.mail.BodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import junit.framework.TestCase;
 

@@ -66,8 +66,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
         </dependency>
         <dependency>
             <groupId>xml-resolver</groupId>
@@ -84,6 +84,15 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+	<dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -339,19 +348,19 @@
                             <value>./target/test-classes</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.MessageFactory</name>
+                            <name>jakarta.xml.soap.MessageFactory</name>
                             <value>org.apache.axis2.saaj.MessageFactoryImpl</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.SOAPFactory</name>
+                            <name>jakarta.xml.soap.SOAPFactory</name>
                             <value>org.apache.axis2.saaj.SOAPFactoryImpl</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.SOAPConnectionFactory</name>
+                            <name>jakarta.xml.soap.SOAPConnectionFactory</name>
                             <value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.MetaFactory</name>
+                            <name>jakarta.xml.soap.MetaFactory</name>
                             <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
                         </property>
                         <!-- Need this for the client side to pickup an axis2.xml to configure SoapMessageMUProviderChecker -->

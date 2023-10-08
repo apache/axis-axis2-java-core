@@ -52,14 +52,14 @@ public final class EndpointReferenceUtils {
 
     /**
      * Convert from a {@link EndpointReference} to a
-     * subclass of {@link javax.xml.ws.EndpointReference}.
+     * subclass of {@link jakarta.xml.ws.EndpointReference}.
      * 
      * @param axis2EPR
      * @param addressingNamespace
      * @return
      * @throws Exception
      */
-    public static javax.xml.ws.EndpointReference convertFromAxis2(EndpointReference axis2EPR, String addressingNamespace)
+    public static jakarta.xml.ws.EndpointReference convertFromAxis2(EndpointReference axis2EPR, String addressingNamespace)
     throws Exception {
         QName qname = new QName(addressingNamespace, "EndpointReference", "wsa");
         OMElement omElement =
@@ -74,13 +74,13 @@ public final class EndpointReferenceUtils {
 
     /**
      * Convert from a {@link Source} to a
-     * subclass of {@link javax.xml.ws.EndpointReference}.
+     * subclass of {@link jakarta.xml.ws.EndpointReference}.
      * 
      * @param eprInfoset
      * @return
      * @throws Exception
      */
-    public static javax.xml.ws.EndpointReference convertFromSource(Source eprInfoset)
+    public static jakarta.xml.ws.EndpointReference convertFromSource(Source eprInfoset)
     throws Exception {
         JAXWSEndpointReferenceFactory factory = (JAXWSEndpointReferenceFactory)
             FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
@@ -89,15 +89,15 @@ public final class EndpointReferenceUtils {
     }
     
     /**
-     * Convert from a {@link javax.xml.ws.EndpointReference} to a an instance of
+     * Convert from a {@link jakarta.xml.ws.EndpointReference} to a an instance of
      * {@link EndpointReference}.
      * 
      * @param axis2EPR
      * @param jaxwsEPR
-     * @return the WS-Addressing namespace of the <code>javax.xml.ws.EndpointReference</code>.
+     * @return the WS-Addressing namespace of the <code>jakarta.xml.ws.EndpointReference</code>.
      * @throws Exception
      */
-    public static String convertToAxis2(EndpointReference axis2EPR, javax.xml.ws.EndpointReference jaxwsEPR)
+    public static String convertToAxis2(EndpointReference axis2EPR, jakarta.xml.ws.EndpointReference jaxwsEPR)
     throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         jaxwsEPR.writeTo(new StreamResult(baos));
@@ -113,7 +113,7 @@ public final class EndpointReferenceUtils {
      * @param clazz
      * @return
      */
-    public static <T extends javax.xml.ws.EndpointReference> String getAddressingNamespace(Class<T> clazz) {
+    public static <T extends jakarta.xml.ws.EndpointReference> String getAddressingNamespace(Class<T> clazz) {
         JAXWSEndpointReferenceFactory factory = (JAXWSEndpointReferenceFactory)
             FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
         

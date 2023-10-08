@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.handler;
 
 import org.apache.axis2.jaxws.core.MessageContext;
 
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.Handler;
 import java.util.List;
 
 /**

@@ -18,17 +18,17 @@
  */
 package org.apache.axis2.jaxws.swamtom.server;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Holder;
-import javax.jws.WebParam.Mode;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.adapters.HexBinaryAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Holder;
+import jakarta.jws.WebParam.Mode;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.jws.soap.SOAPBinding.ParameterStyle;
 
 /**
  * Endpont that is a SOAP 1.1 MTOM Binding 
@@ -40,7 +40,7 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
             serviceName="SWAMTOMService", 
             wsdlLocation="META-INF/swamtomservice.wsdl", 
             targetNamespace="http://swamtomservice.test.org")
-@BindingType(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+@BindingType(jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 public class SWAMTOMPortTypeImpl {
 
     /**

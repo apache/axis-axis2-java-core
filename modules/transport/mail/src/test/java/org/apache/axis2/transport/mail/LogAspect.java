@@ -21,7 +21,7 @@ package org.apache.axis2.transport.mail;
 
 import java.io.OutputStream;
 
-import javax.mail.Message;
+import jakarta.mail.Message;
 
 import org.apache.axis2.transport.testkit.util.TestKitLogManager;
 import org.apache.commons.logging.Log;

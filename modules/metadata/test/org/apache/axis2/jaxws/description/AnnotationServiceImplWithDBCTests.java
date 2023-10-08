@@ -29,9 +29,9 @@ import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.ws.WebServiceException;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -92,7 +92,7 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
         String[] paramTypes = operations[0].getJavaParameters();
         assertNotNull(paramTypes);
         assertEquals(paramTypes.length, 1);
-        assertEquals("javax.xml.ws.Holder", paramTypes[0]);
+        assertEquals("jakarta.xml.ws.Holder", paramTypes[0]);
         
         // Test RequestWrapper annotations
         assertEquals(operations[0].getRequestWrapperLocalName(), "Echo");

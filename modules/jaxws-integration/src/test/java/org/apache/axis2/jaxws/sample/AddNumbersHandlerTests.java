@@ -36,31 +36,33 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.io.StringWriter;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFault;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Binding;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Response;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Binding;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.Parameter;
@@ -378,6 +380,7 @@ public class AddNumbersHandlerTests {
         } catch (Throwable e) {
             // An exception is expected
             t = e;
+	    e.printStackTrace();
             
         }  finally {
             AddNumbersProtocolHandler2.throwException = false;
@@ -390,9 +393,24 @@ public class AddNumbersHandlerTests {
         
         if (t instanceof SOAPFaultException) {
             expectedException = (SOAPFaultException) t;
-            String fault = ((SOAPFaultException)t).getFault().toString();
-            assertTrue("Expected SOAPFaultException to be thrown with AddNumbersProtocolHandler2 exception " + fault,
-                    fault.contains("AddNumbersProtocolHandler2"));
+            String fault = ((SOAPFaultException)t).getFault().getFaultString();
+            // String fault = ((SOAPFaultException)t).getFault().toString();
+            // AXIS2-6051, when this code previously
+            // received a javax.xml.ws.soap.SOAPFaultException
+            // it would have a <soapenv:Fault> in the stack trace.
+            // That is no longer the case when the Throwable
+            // is jakarta.xml.ws.soap.SOAPFaultException as
+            // it doesn't have the XML part in the stacktrace 
+            // anymore. For this test that means the
+	    // String returned from getFault() no 
+	    // longer has the stacktrace
+            StringWriter writer = new StringWriter();
+            expectedException.printStackTrace(new PrintWriter(writer));
+	    String stackTrace = writer.toString();
+	    System.out.println("testAddNumbersHandler_WithHandlerException fault: " + fault + " , Exception: " + t.getMessage() + " , expectedException: " + expectedException.getMessage() + " , expectedException as String: " + stackTrace);
+            assertTrue("Expected SOAPFaultException to be thrown with AddNumbersProtocolHandler2 exception " + stackTrace,
+                    stackTrace.contains("testAddNumbersHandler_WithHandlerException"));
+	    System.out.println("testAddNumbersHandler_WithHandlerException passed");
         } else {
             fail("Expected SOAPFaultException to be thrown, " +
                         "but the exception is: " + t);

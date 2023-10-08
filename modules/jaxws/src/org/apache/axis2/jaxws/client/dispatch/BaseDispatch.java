@@ -50,25 +50,25 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.Response;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.Service.Mode;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 public abstract class BaseDispatch<T> extends BindingProvider
-        implements javax.xml.ws.Dispatch {
+        implements jakarta.xml.ws.Dispatch {
 
     private static Log log = LogFactory.getLog(BaseDispatch.class);
 
@@ -332,8 +332,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * Operation resolution is also disabled if a non-null value is specified on the request context for the Action
      * 
      * @see org.apache.axis2.jaxws.Constants.DISPATCH_CLIENT_OUTBOUND_RESOLUTION
-     * @see javax.xml.ws.BindingProvider.SOAPACTION_USE_PROPERTY
-     * @see javax.xml.ws.BindingProvider.SOAPACTION_URI_PROPERTY
+     * @see jakarta.xml.ws.BindingProvider.SOAPACTION_USE_PROPERTY
+     * @see jakarta.xml.ws.BindingProvider.SOAPACTION_URI_PROPERTY
      * 
      * @return true if operation resolution should be performed on outbound 
      */
@@ -428,7 +428,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         setupMessageProperties(requestMsg);
         requestMsgCtx.setMessage(requestMsg);
         // handle HTTP_REQUEST_METHOD property
-        String method = (String)requestContext.get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD);
+        String method = (String)requestContext.get(jakarta.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD);
         if (method != null) {
             requestMsgCtx.setProperty(org.apache.axis2.Constants.Configuration.HTTP_METHOD, method);
         }
@@ -948,7 +948,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
     }
     
     private boolean isPOSTorPUTRequest() {
-        String method = (String)this.requestContext.get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD);
+        String method = (String)this.requestContext.get(jakarta.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD);
         // if HTTP_REQUEST_METHOD is not specified, assume it is a POST method
         return (method == null || 
                 HTTPConstants.HEADER_POST.equalsIgnoreCase(method) || 

@@ -22,8 +22,8 @@ package org.apache.axis2.jaxws.exception;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.ExceptionFactory;
 
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.WebServiceException;
 
 /**
  * Tests the ExceptionFactory

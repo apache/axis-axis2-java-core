@@ -28,8 +28,8 @@ import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.Constants;
@@ -106,7 +106,7 @@ class ArtifactProcessor {
 
 
                     // There is no default for @RequestWrapper/@ResponseWrapper classname  None is listed in Sec. 7.3 on p. 80 of
-                    // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
+                    // the JAX-WS spec, BUT Conformance(Using jakarta.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
                     // says the entire annotation "...MAY be omitted if all its properties would have default values."
                     // We will assume that this statement gives us the liberty to find a wrapper class/build a wrapper class or 
                     // implement an engine w/o the wrapper class.

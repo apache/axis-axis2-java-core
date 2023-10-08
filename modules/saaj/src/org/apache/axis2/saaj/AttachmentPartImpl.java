@@ -26,11 +26,11 @@ import org.apache.axiom.util.base64.Base64Utils;
 import org.apache.axis2.saaj.util.SAAJDataSource;
 import org.apache.axis2.kernel.http.HTTPConstants;
 
-import javax.activation.DataHandler;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
+import jakarta.activation.DataHandler;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPException;
 import javax.xml.transform.stream.StreamSource;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -63,7 +63,7 @@ public class AttachmentPartImpl extends AttachmentPart {
      */
     public boolean matches(MimeHeaders headers) {
         for (Iterator i = headers.getAllHeaders(); i.hasNext();) {
-            MimeHeader hdr = (javax.xml.soap.MimeHeader)i.next();
+            MimeHeader hdr = (jakarta.xml.soap.MimeHeader)i.next();
             String values[] = mimeHeaders.getHeader(hdr.getName());
             boolean found = false;
             if (values != null) {
@@ -95,7 +95,7 @@ public class AttachmentPartImpl extends AttachmentPart {
      *
      * @return the size of this <CODE>AttachmentPart</CODE> object in bytes or -1 if the size cannot
      *         be determined
-     * @throws javax.xml.soap.SOAPException if the content of this attachment is corrupted of if
+     * @throws jakarta.xml.soap.SOAPException if the content of this attachment is corrupted of if
      *                                      there was an exception while trying to determine the
      *                                      size.
      */
@@ -144,7 +144,7 @@ public class AttachmentPartImpl extends AttachmentPart {
      * <code>java.io.InputStream</code> object with the raw bytes.
      *
      * @return a Java object with the content of this <CODE> AttachmentPart</CODE> object
-     * @throws javax.xml.soap.SOAPException if there is no content set into this <CODE>AttachmentPart</CODE>
+     * @throws jakarta.xml.soap.SOAPException if there is no content set into this <CODE>AttachmentPart</CODE>
      *                                      object or if there was a data transformation error
      */
     public Object getContent() throws SOAPException {
@@ -253,7 +253,7 @@ public class AttachmentPartImpl extends AttachmentPart {
      *
      * @return the <CODE>DataHandler</CODE> object associated with this <CODE>AttachmentPart</CODE>
      *         object
-     * @throws javax.xml.soap.SOAPException if there is no data in this <CODE>AttachmentPart</CODE>
+     * @throws jakarta.xml.soap.SOAPException if there is no data in this <CODE>AttachmentPart</CODE>
      *                                      object
      */
     public DataHandler getDataHandler() throws SOAPException {

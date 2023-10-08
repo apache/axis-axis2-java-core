@@ -32,9 +32,9 @@ import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.xml.ws.soap.MTOMFeature;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.xml.ws.soap.MTOMFeature;
 import java.io.InputStream;
 import java.util.List;
 

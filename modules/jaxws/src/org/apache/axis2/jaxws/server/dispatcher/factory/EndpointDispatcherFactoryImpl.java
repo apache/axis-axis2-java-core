@@ -24,7 +24,7 @@ import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.JavaBeanDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.ProviderDispatcher;
 
-import javax.xml.ws.Provider;
+import jakarta.xml.ws.Provider;
 
 public class EndpointDispatcherFactoryImpl implements EndpointDispatcherFactory {
 

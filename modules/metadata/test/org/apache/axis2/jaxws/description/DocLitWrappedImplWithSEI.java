@@ -25,10 +25,10 @@ import org.test.proxy.doclitwrapped.FinancialOperation;
 import org.test.proxy.doclitwrapped.ReturnType;
 import org.test.proxy.doclitwrapped.TwoWayHolder;
 
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Response;
 import java.util.concurrent.Future;
 
 /**

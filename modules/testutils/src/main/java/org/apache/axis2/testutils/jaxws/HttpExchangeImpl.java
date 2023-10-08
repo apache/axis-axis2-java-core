@@ -29,8 +29,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.spi.http.HttpContext;
-import javax.xml.ws.spi.http.HttpExchange;
+import jakarta.xml.ws.spi.http.HttpContext;
+import jakarta.xml.ws.spi.http.HttpExchange;
 
 final class HttpExchangeImpl extends HttpExchange {
     private final HttpServletRequest request;

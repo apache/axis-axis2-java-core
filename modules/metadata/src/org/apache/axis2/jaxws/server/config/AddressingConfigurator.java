@@ -38,9 +38,9 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.soap.AddressingFeature.Responses;
+import jakarta.xml.ws.soap.Addressing;
+import jakarta.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.soap.AddressingFeature.Responses;
 
 /**
  * This class will enable/disable WS-Addressing for a JAX-WS 2.1 web service
@@ -48,7 +48,7 @@ import javax.xml.ws.soap.AddressingFeature.Responses;
  * annotation and/or a <code>SubmissionAddressing</code> annotation from the
  * endpoint implementation bean.
  * 
- * @see javax.xml.ws.soap.Addressing
+ * @see jakarta.xml.ws.soap.Addressing
  * @see org.apache.axis2.jaxws.addressing.SubmissionAddressing
  */
 public class AddressingConfigurator implements ServerConfigurator {

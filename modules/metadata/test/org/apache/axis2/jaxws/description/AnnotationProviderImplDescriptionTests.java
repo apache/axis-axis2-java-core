@@ -25,15 +25,15 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.apache.logging.log4j.Level;
 
-import javax.jws.WebService;
-import javax.xml.soap.SOAPMessage;
+import jakarta.jws.WebService;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.ServiceMode;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceProvider;
 
 public class AnnotationProviderImplDescriptionTests extends TestCase {
     static {
@@ -178,8 +178,8 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
 
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
         EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava)endpointDesc[0];
-        assertEquals(javax.xml.ws.Service.Mode.PAYLOAD, testEndpointDesc.getAnnoServiceModeValue());
-        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING,
+        assertEquals(jakarta.xml.ws.Service.Mode.PAYLOAD, testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals(jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING,
                      testEndpointDesc.getAnnoBindingTypeValue());
     }
 
@@ -225,7 +225,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
         EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava)endpointDesc[0];
         assertNull(testEndpointDesc.getAnnoServiceModeValue());
-        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING,
+        assertEquals(jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING,
                      testEndpointDesc.getAnnoBindingTypeValue());
     }
 }

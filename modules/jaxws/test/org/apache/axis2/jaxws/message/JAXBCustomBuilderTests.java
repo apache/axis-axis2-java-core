@@ -35,8 +35,8 @@ import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import test.EchoString;
 import test.ObjectFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;

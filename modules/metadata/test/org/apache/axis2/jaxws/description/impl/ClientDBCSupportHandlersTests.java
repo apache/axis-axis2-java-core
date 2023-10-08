@@ -26,9 +26,9 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceClient;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -132,7 +132,7 @@ public class ClientDBCSupportHandlersTests extends TestCase {
 }
 
 @WebServiceClient
-class ClientDBCSupportHandlersService extends javax.xml.ws.Service {
+class ClientDBCSupportHandlersService extends jakarta.xml.ws.Service {
     protected ClientDBCSupportHandlersService(URL wsdlDocumentLocation, QName serviceName) {
         super(wsdlDocumentLocation, serviceName);
     }

@@ -155,7 +155,7 @@
                             org.osgi.service.cm; version=1.2.0,
                             com.ibm.wsdl.util.xml,
                             com.ibm.wsdl,
-                            javax.activation,
+                            jakarta.activation,
                             javax.jws;version="2.0",
                             javax.mail;version="1.4",
                             javax.management,

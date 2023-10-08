@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.misc.b;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="bean2", namespace="urn://sample")
 public class Bean2 {

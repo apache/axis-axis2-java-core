@@ -16,4 +16,4 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://org/apache/axis2/jaxws/samples/echo/") package org.apache.axis2.jaxws.samples.echo;
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://org/apache/axis2/jaxws/samples/echo/") package org.apache.axis2.jaxws.samples.echo;

@@ -36,9 +36,9 @@ import org.test.sample.wrap.HeaderResponse;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceException;
 
 public class WrapTests {
     @ClassRule

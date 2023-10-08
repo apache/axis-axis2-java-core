@@ -111,7 +111,7 @@ public class JavaTypeMap implements TypeMap {
         //as for the base 64 encoded binary stuff we map it to a javax.
         // activation.Datahandler object
         addTypemapping(SchemaConstants.XSD_BASE64,
-                javax.activation.DataHandler.class.getName());
+                jakarta.activation.DataHandler.class.getName());
         
         addTypemapping(SchemaConstants.XSD_HEXBIN,
                 HexBinary.class.getName());

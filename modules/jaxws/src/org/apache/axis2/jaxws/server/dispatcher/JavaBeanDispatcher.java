@@ -235,9 +235,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     private MethodMarshaller getMethodMarshaller(Protocol protocol,
                                                  OperationDescription operationDesc,
                                                  MessageContext mc) {
-        javax.jws.soap.SOAPBinding.Style styleOnSEI =
+        jakarta.jws.soap.SOAPBinding.Style styleOnSEI =
                 endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
-        javax.jws.soap.SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
+        jakarta.jws.soap.SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
         if (styleOnMethod != null && styleOnSEI != styleOnMethod) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
         }

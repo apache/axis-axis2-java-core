@@ -37,18 +37,18 @@ import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.soap.SOAPBinding.Style;
+import jakarta.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -293,7 +293,7 @@ public abstract class XMLPartBase implements XMLPart {
 
 
     /* (non-Javadoc)
-    * @see org.apache.axis2.jaxws.message.XMLPart#setStyle(javax.jws.soap.SOAPBinding.Style)
+    * @see org.apache.axis2.jaxws.message.XMLPart#setStyle(jakarta.jws.soap.SOAPBinding.Style)
     */
     public void setStyle(Style style) throws WebServiceException {
         if (this.style != style) {

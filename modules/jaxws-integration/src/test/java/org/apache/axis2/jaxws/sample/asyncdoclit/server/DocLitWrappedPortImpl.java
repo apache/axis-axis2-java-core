@@ -19,9 +19,9 @@
 
 package org.apache.axis2.jaxws.sample.asyncdoclit.server;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceException;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceException;
 
 import org.test.asyncdoclit.ExceptionTypeEnum;
 import org.test.asyncdoclit.ThrowExceptionFaultBean;

@@ -22,7 +22,7 @@
  */
 package org.apache.axis2.jaxws.misc;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Sample Enum

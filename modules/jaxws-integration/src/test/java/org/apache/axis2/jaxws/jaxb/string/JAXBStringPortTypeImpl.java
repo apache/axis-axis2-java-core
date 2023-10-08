@@ -1,7 +1,7 @@
 package org.apache.axis2.jaxws.jaxb.string;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 @WebService(serviceName = "JAXBStringService", endpointInterface = "org.apache.axis2.jaxws.jaxb.string.JAXBStringPortType")
 public class JAXBStringPortTypeImpl implements JAXBStringPortType {

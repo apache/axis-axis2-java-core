@@ -35,12 +35,12 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Response;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.Handler;
 
 import org.apache.axis2.jaxws.TestLogger;
 

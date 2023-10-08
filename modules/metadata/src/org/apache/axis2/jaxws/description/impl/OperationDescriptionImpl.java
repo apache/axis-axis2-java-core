@@ -52,12 +52,12 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
-import javax.jws.WebResult;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.Oneway;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebParam.Mode;
+import jakarta.jws.WebResult;
+import jakarta.jws.soap.SOAPBinding;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
@@ -65,13 +65,13 @@ import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.extensions.AttributeExtensible;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Action;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.FaultAction;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.Response;
-import javax.xml.ws.ResponseWrapper;
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.Action;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.FaultAction;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.ResponseWrapper;
+import jakarta.xml.ws.WebFault;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -138,19 +138,19 @@ class OperationDescriptionImpl
     // Note this is the Method-level annotation.  See EndpointInterfaceDescription for the Type-level annotation
     // Also note this annotation is only allowed on methods if SOAPBinding.Style is DOCUMENT and if the method-level
     // annotation is absent, the behavior defined on the Type is used.
-    // per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
+    // per JSR-181 MR Sec 4.7 "Annotation: jakarta.jws.soap.SOAPBinding" pg 28
     private SOAPBinding soapBindingAnnotation;
-    private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
-    public static final javax.jws.soap.SOAPBinding.Style SoapBinding_Style_VALID =
-            javax.jws.soap.SOAPBinding.Style.DOCUMENT;
-    private javax.jws.soap.SOAPBinding.Use soapBindingUse;
-    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.Use SOAPBinding_Use_DEFAULT =
-            javax.jws.soap.SOAPBinding.Use.LITERAL;
-    private javax.jws.soap.SOAPBinding.ParameterStyle soapBindingParameterStyle;
-    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT =
-            javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+    private jakarta.jws.soap.SOAPBinding.Style soapBindingStyle;
+    public static final jakarta.jws.soap.SOAPBinding.Style SoapBinding_Style_VALID =
+            jakarta.jws.soap.SOAPBinding.Style.DOCUMENT;
+    private jakarta.jws.soap.SOAPBinding.Use soapBindingUse;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: jakarta.jws.soap.SOAPBinding" pg 28
+    public static final jakarta.jws.soap.SOAPBinding.Use SOAPBinding_Use_DEFAULT =
+            jakarta.jws.soap.SOAPBinding.Use.LITERAL;
+    private jakarta.jws.soap.SOAPBinding.ParameterStyle soapBindingParameterStyle;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: jakarta.jws.soap.SOAPBinding" pg 28
+    public static final jakarta.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT =
+            jakarta.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 
     // ANNOTATION: @WebMethod
     private WebMethod webMethodAnnotation;
@@ -462,9 +462,9 @@ class OperationDescriptionImpl
         // part for the first IN or IN/OUT non-header parameter.  If there are no parameters, then don't set
         // anything.  The AxisMessage name is used to do SOAP-body based routing of DOC/LIT/BARE
         // incoming messages.
-        if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
-                && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
-                && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+        if (getSoapBindingStyle() == jakarta.jws.soap.SOAPBinding.Style.DOCUMENT
+                && getSoapBindingUse() == jakarta.jws.soap.SOAPBinding.Use.LITERAL
+                && getSoapBindingParameterStyle() == jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE)
         {
             ParameterDescription[] paramDescs = getParameterDescriptions();
             if (paramDescs != null && paramDescs.length > 0) {
@@ -618,9 +618,9 @@ class OperationDescriptionImpl
             axisService.addOperation(newAxisOperation);
             // For a Doc/Lit/Bare operation, we also need to add the element mapping
         }
-        if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
-                && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
-                && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle
+        if (getSoapBindingStyle() == jakarta.jws.soap.SOAPBinding.Style.DOCUMENT
+                && getSoapBindingUse() == jakarta.jws.soap.SOAPBinding.Use.LITERAL
+                && getSoapBindingParameterStyle() == jakarta.jws.soap.SOAPBinding.ParameterStyle
                 .BARE) {
             AxisMessage axisMessage =
                     null;
@@ -783,7 +783,7 @@ class OperationDescriptionImpl
     }
 
     private boolean isWrappedParameters() {
-        return getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+        return getSoapBindingParameterStyle() == jakarta.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
     }
 
     private ParameterDescription[] createParameterDescriptions() {
@@ -922,7 +922,7 @@ class OperationDescriptionImpl
         }
 
         WebMethod wmAnnotation = (WebMethod) getAnnotation(javaMethod,WebMethod.class);
-        // Per JSR-181 MR Sec 4.2 "Annotation: javax.jws.WebMethod" pg 17,
+        // Per JSR-181 MR Sec 4.2 "Annotation: jakarta.jws.WebMethod" pg 17,
         // if @WebMethod specifies and operation name, use that.  Otherwise
         // default is the Java method name
         if (wmAnnotation != null && !DescriptionUtils.isEmpty(wmAnnotation.operationName())) {
@@ -1601,11 +1601,11 @@ class OperationDescriptionImpl
         return soapBindingAnnotation;
     }
 
-    public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
+    public jakarta.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
         return getAnnoSoapBindingStyle();
     }
 
-    public javax.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle() {
+    public jakarta.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle() {
         if (soapBindingStyle == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().style() != null) {
                 soapBindingStyle = getAnnoSoapBinding().style();
@@ -1617,11 +1617,11 @@ class OperationDescriptionImpl
         return soapBindingStyle;
     }
 
-    public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
+    public jakarta.jws.soap.SOAPBinding.Use getSoapBindingUse() {
         return getAnnoSoapBindingUse();
     }
 
-    public javax.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse() {
+    public jakarta.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse() {
         if (soapBindingUse == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().use() != null) {
                 soapBindingUse = getAnnoSoapBinding().use();
@@ -1633,11 +1633,11 @@ class OperationDescriptionImpl
         return soapBindingUse;
     }
 
-    public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
+    public jakarta.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
         return getAnnoSoapBindingParameterStyle();
     }
 
-    public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
+    public jakarta.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
         if (soapBindingParameterStyle == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().parameterStyle() != null) {
                 soapBindingParameterStyle = getAnnoSoapBinding().parameterStyle();

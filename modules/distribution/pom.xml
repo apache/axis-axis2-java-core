@@ -178,7 +178,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-javax-jaxb</artifactId>
+            <artifactId>axiom-jakarta-jaxb</artifactId>
         </dependency>
         
         <dependency>
@@ -292,6 +292,23 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+	<!-- AXIS2-6051, these jars are being brought in
+	     with the tranistion to jakarta -->
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>6.5.1</version>
+        </dependency>
         
         <!-- These are needed to run JAX-WS tools -->
         <!-- TODO: don't add them unless you also add the corresponding license files
@@ -394,6 +411,13 @@
                         </goals>
                         <configuration>
                             <scripts>
+				<!-- This executes ../webapp/scripts/build.xml
+                                    and for dist/axis2.war/WEB-INF/lib
+                                    the script uses:
+                                    ./target/axis2-1.8.3-SNAPSHOT/lib 		    
+			            When in doubt, look at the excludes
+			            section in bin-assembly.xml
+			        -->		    
                                 <script><![CDATA[
                                     import java.util.jar.*
                                     
@@ -409,6 +433,8 @@
                                     }
                                     jar.close()
                                     
+				    println("From dir: " +project.properties['webapp']+ " , found these files: " + expected);
+				    println("They all must be in this dir: " + project.build.directory + "axis2-" + project.version + "/dist/axis2.war");
                                     jar = new JarInputStream(new FileInputStream(new File(project.build.directory, "axis2-" + project.version + "/dist/axis2.war")))
                                     while(entry = jar.nextJarEntry) {
                                         if (entry.name != 'META-INF/' && !expected.remove(entry.name)) {

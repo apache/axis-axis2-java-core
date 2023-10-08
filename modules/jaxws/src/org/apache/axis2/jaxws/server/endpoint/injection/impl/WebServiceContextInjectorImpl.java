@@ -28,8 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Resource;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -52,7 +52,7 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjection#addMessageContext(javax.xml.ws.WebServiceContext, javax.xml.ws.handler.MessageContext)
+      * @see org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjection#addMessageContext(jakarta.xml.ws.WebServiceContext jakarta.xml.ws.handler.MessageContext)
       */
     public void addMessageContext(WebServiceContext wc, MessageContext mc) {
         WebServiceContextImpl wsContext = (WebServiceContextImpl)wc;
@@ -96,7 +96,7 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
            * if @Resource type is java.lang.Object then,
            * look for PropertyDescriptor who's write Method or setter is the Method on which you found the annotation and
            * make sure that the declared type of that property is javax.xml.WebServiceContext and invoke the Method with Resource.
-           * if @Resource type is javax.xml.ws.WebServiceContext, Invoke the Method with Resource.
+           * if @Resource type is jakarta.xml.ws.WebServiceContext Invoke the Method with Resource.
            */
         Method method = searchMethodsResourceAnnotation(serviceClazz);
         if (method != null) {

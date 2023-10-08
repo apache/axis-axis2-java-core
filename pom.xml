@@ -421,11 +421,18 @@
         <module>modules/saaj</module>
         <module>modules/jaxws</module>
         <module>modules/jaxws-mar</module>
+	<!-- FIXME AXIS2-6051, need to get
+	     xjc-maven-plugin to have a dependency
+             on jaxb-xjc as described in AXIOM-506
         <module>modules/jaxws-integration</module>
+	-->
         <module>modules/clustering</module>
         <module>modules/corba</module>
         <module>modules/osgi</module>
+	<!-- FIXME AXIS2-6051, need to figure out OSGI
+	     in the transition to jakarta
         <module>modules/osgi-tests</module>
+	-->
         <module>modules/transport/local</module>
         <module>modules/transport/http</module>
         <module>modules/transport/base</module>
@@ -463,7 +470,7 @@
         <woden.version>1.0M10</woden.version>
         <axiom.version>2.0.0-SNAPSHOT</axiom.version>
         <xmlschema.version>2.3.0</xmlschema.version>
-        <activation.version>1.2.1</activation.version>
+        <activation.version>2.1.2</activation.version>
         <ant.version>1.10.14</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.9.1</aspectj.version>
@@ -480,7 +487,7 @@
         <httpclient.version>4.5.14</httpclient.version>
         <httpmime.version>4.5.14</httpmime.version>
         <intellij.version>5.0</intellij.version>
-        <jaxbri.version>2.3.6</jaxbri.version>
+        <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>10.0.16</jetty.version>
         <jibx.version>1.4.2</jibx.version>
         <log4j2.version>2.20.0</log4j2.version>
@@ -497,8 +504,8 @@
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
-        <jaxws.rt.version>2.3.3</jaxws.rt.version>
-        <jaxws.api.version>2.3.3</jaxws.api.version>
+        <jaxws.rt.version>4.0.1</jaxws.rt.version>
+        <jaxws.api.version>4.0.0</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <maven-plugin-tools.version>3.8.2</maven-plugin-tools.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
@@ -526,11 +533,6 @@
                 <version>${activation.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.activation</groupId>
-                <artifactId>jakarta.activation</artifactId>
-                <version>${activation.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${jaxbri.version}</version>
@@ -543,17 +545,12 @@
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>2.3.3</version>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.xml.soap</groupId>
                 <artifactId>jakarta.xml.soap-api</artifactId>
-                <version>1.4.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.messaging.saaj</groupId>
-                <artifactId>saaj-impl</artifactId>
-                <version>1.5.3</version>
+                <version>3.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
@@ -659,7 +656,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-javax-activation</artifactId>
+                <artifactId>axiom-jakarta-activation</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
@@ -669,7 +666,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-javax-jaxb</artifactId>
+                <artifactId>axiom-jakarta-jaxb</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
@@ -749,9 +746,9 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.mail</groupId>
-                <artifactId>jakarta.mail</artifactId>
-                <version>1.6.7</version>
+                <groupId>jakarta.mail</groupId>
+                <artifactId>jakarta.mail-api</artifactId>
+                <version>2.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
@@ -814,10 +811,18 @@
                 <version>${woden.version}</version>
             </dependency>
             <dependency>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+
+	    <!--
+            <dependency>
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>jsr311-api</artifactId>
                 <version>${jsr311.api.version}</version>
             </dependency>
+	    -->	    
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-legacy</artifactId>
@@ -1184,12 +1189,12 @@
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
                     <artifactId>xjc-maven-plugin</artifactId>
-                    <version>0.1.1</version>
+                    <version>0.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
                     <artifactId>wsimport-maven-plugin</artifactId>
-                    <version>0.2.2</version>
+                    <version>0.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>

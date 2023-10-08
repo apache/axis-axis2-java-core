@@ -21,12 +21,12 @@ package org.apache.axis2.jaxws.description.builder;
 
 import org.w3c.dom.Element;
 
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.handler.MessageContext;
 import java.lang.annotation.Annotation;
 import java.security.Principal;
 
-public class WebServiceContextAnnot implements javax.xml.ws.WebServiceContext {
+public class WebServiceContextAnnot implements jakarta.xml.ws.WebServiceContext {
 
     private MessageContext messageContext;
     private Principal userPrincipal;

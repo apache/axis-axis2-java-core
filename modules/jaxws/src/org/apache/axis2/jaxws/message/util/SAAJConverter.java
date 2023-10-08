@@ -22,12 +22,12 @@ package org.apache.axis2.jaxws.message.util;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.ws.WebServiceException;
 
 /** SAAJConverter Provides Conversion between SAAJ and OM Constructed via the SAAJConverterFactory */
 public interface SAAJConverter {

@@ -27,9 +27,9 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import java.util.List;
 import java.util.Set;

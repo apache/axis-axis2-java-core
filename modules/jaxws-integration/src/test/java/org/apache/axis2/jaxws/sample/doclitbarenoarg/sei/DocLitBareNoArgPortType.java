@@ -24,10 +24,10 @@
 
 package org.apache.axis2.jaxws.sample.doclitbarenoarg.sei;
 
-import javax.jws.WebMethod;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 
 @WebService(name = "DocLitBareNoArgPortType", targetNamespace = "http://sei.doclitbarenoarg.sample.jaxws.axis2.apache.org")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)

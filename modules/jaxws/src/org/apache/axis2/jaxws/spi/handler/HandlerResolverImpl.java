@@ -28,11 +28,11 @@ import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.LogicalHandler;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import java.util.List;
  * This is an implementation of {@link HandlerResolver} that can be used with a JAX-WS client
  * to set the handler list.
  *
- * @see javax.xml.ws.Service#setHandlerResolver(HandlerResolver)
+ * @see jakarta.xml.ws.Service#setHandlerResolver(HandlerResolver)
  */
 public class HandlerResolverImpl extends BaseHandlerResolver {
 
@@ -78,7 +78,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
     
     /*
      *  (non-Javadoc)
-     * @see javax.xml.ws.handler.HandlerResolver#getHandlerChain(javax.xml.ws.handler.PortInfo)
+     * @see jakarta.xml.ws.handler.HandlerResolver#getHandlerChain(jakarta.xml.ws.handler.PortInfo)
      */
     public List<Handler> getHandlerChain(PortInfo portinfo) {
         ArrayList<Handler> handlers = new ArrayList<Handler>();

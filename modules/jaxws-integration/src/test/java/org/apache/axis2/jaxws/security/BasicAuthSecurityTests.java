@@ -30,10 +30,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 public class BasicAuthSecurityTests {
     @ClassRule
@@ -168,7 +168,7 @@ public class BasicAuthSecurityTests {
 		Service service = Service.create(SERVICE_QNAME);
 		
 		service.addPort(PORT_QNAME, binding, endpoint);
-		javax.xml.ws.Dispatch<String> dispatch = service.createDispatch(PORT_QNAME, String.class,mode);
+		jakarta.xml.ws.Dispatch<String> dispatch = service.createDispatch(PORT_QNAME, String.class,mode);
 
 		assertNotNull("Dispatch not null", dispatch);
 

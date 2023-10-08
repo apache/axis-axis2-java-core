@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.io.input.ReaderInputStream;

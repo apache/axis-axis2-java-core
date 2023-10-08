@@ -36,7 +36,7 @@ class DescriptionBuilderUtils {
 
     private static final Log log = LogFactory.getLog(DescriptionBuilderUtils.class);
 
-    static String JAXWS_HOLDER_CLASS = "javax.xml.ws.Holder";
+    static String JAXWS_HOLDER_CLASS = "jakarta.xml.ws.Holder";
 
     private static final String INT_PRIMITIVE = "int";
     private static final String INT_PRIMITIVE_ENCODING = "I";
@@ -60,8 +60,8 @@ class DescriptionBuilderUtils {
 
     /**
      * Returns a string representing the outermost generic raw type class, or null if the argument
-     * is not a generic.  For example if the string "javax.xml.ws.Holder<my.package.MyObject>" is
-     * passed in, the string "javax.xml.ws.Holder" will be returned.
+     * is not a generic.  For example if the string "jakarta.xml.ws.Holder<my.package.MyObject>" is
+     * passed in, the string "jakarta.xml.ws.Holder" will be returned.
      * <p/>
      * Note that generic arrays are supported.  For example, for "Holder<List<String>[][]", the
      * returned value will be "List[][]".
@@ -90,17 +90,17 @@ class DescriptionBuilderUtils {
 
     /**
      * Return the actual type in a JAX-WS holder declaration.  For example, for the argument
-     * "javax.xml.ws.Holder<my.package.MyObject>", return "my.package.MyObject". If the actual type
+     * "jakarta.xml.ws.Holder<my.package.MyObject>", return "my.package.MyObject". If the actual type
      * itself is a generic, then that raw type will be returned.  For example,
-     * "javax.xml.ws.Holder<java.util.List<my.package.MyObject>>" will return "java.util.List".
+     * "jakarta.xml.ws.Holder<java.util.List<my.package.MyObject>>" will return "java.util.List".
      * <p/>
      * Note that Holders of Arrays and of Generic Arrays are also supported.  For example, for
-     * "javax.xml.ws.Holder<String[]>", return "String[]".  For an array of a generic, the array of
-     * the raw type is returned.  For example, for "javax.xml.ws.Holder<List<String>[][]>", return
+     * "jakarta.xml.ws.Holder<String[]>", return "String[]".  For an array of a generic, the array of
+     * the raw type is returned.  For example, for "jakarta.xml.ws.Holder<List<String>[][]>", return
      * "List[][]".
      * <p/>
      * Important note!  The JAX-WS Holder generic only supports a single actual type, i.e. the
-     * generic is javax.xml.ws.Holder<T>.  This method is not general purpose; it does not support
+     * generic is jakarta.xml.ws.Holder<T>.  This method is not general purpose; it does not support
      * generics with multiple types such as Generic<K,V> at the outermost level.
      *
      * @param holderInputString
@@ -131,7 +131,7 @@ class DescriptionBuilderUtils {
 
 
     /**
-     * Check if the input String is a JAX-WS Holder.  For example "javax.xml.ws.Holder<my.package.MyObject>".
+     * Check if the input String is a JAX-WS Holder.  For example "jakarta.xml.ws.Holder<my.package.MyObject>".
      *
      * @param checkType
      * @return true if it is a JAX-WS Holder type; false otherwise.

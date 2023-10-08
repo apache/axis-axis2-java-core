@@ -23,12 +23,12 @@ import junit.framework.TestCase;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import java.util.ArrayList;
 
 /**

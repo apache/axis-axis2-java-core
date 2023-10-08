@@ -40,7 +40,7 @@ import java.util.Set;
  * is always last, it takes priority in all MEPContext methods.
  * 
  */
-public class MEPContext implements javax.xml.ws.handler.MessageContext {
+public class MEPContext implements jakarta.xml.ws.handler.MessageContext {
 
     // If this a request flow, then the MEP contains the request MC.
     // If this a response flow, then the MEP contains both the request MC and the response MC.
@@ -95,8 +95,8 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
     
     public void setResponseMessageContext(MessageContext responseMC) {
         if(this.responseMC != null) {
-            responseMC.setProperty(javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS, 
-                    this.responseMC.getProperty(javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS));
+            responseMC.setProperty(jakarta.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS, 
+                    this.responseMC.getProperty(jakarta.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS));
         }
         // TODO does ApplicationAccessLocked mean anything here? -- method is protected, so probably not
         this.responseMC = responseMC;

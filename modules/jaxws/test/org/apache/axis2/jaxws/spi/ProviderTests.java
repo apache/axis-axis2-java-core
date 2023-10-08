@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.apache.axis2.util.XMLUtils;
 import org.custommonkey.xmlunit.XMLTestCase;

@@ -31,8 +31,8 @@ import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.soap.MTOM;
-import javax.xml.ws.soap.MTOMFeature;
+import jakarta.xml.ws.soap.MTOM;
+import jakarta.xml.ws.soap.MTOMFeature;
 
 /**
  *

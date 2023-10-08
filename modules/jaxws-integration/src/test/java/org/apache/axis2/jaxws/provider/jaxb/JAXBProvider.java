@@ -24,16 +24,16 @@ import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
 import org.test.mtom.SendImageResponse;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.http.HTTPBinding;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -46,7 +46,7 @@ import java.io.ByteArrayOutputStream;
 public class JAXBProvider implements Provider<Source> {
     
     /**
-     * Required impl method from javax.xml.ws.Provider interface
+     * Required impl method from jakarta.xml.ws.Provider interface
      * @param obj
      * @return
      */

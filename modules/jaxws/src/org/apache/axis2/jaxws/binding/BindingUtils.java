@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.binding;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 
-import javax.xml.ws.Binding;
+import jakarta.xml.ws.Binding;
 
 public class BindingUtils {
 

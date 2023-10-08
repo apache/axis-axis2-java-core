@@ -22,12 +22,12 @@ package org.apache.axis2.jaxws.spi;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.core.MessageContext;
 
-import javax.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.WebServiceFeature;
 
 /**
  * 
  */
-public interface Binding extends javax.xml.ws.Binding {
+public interface Binding extends jakarta.xml.ws.Binding {
     public void setFeatures(WebServiceFeature... features);
     
     public WebServiceFeature getFeature(String id);

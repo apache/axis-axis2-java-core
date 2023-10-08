@@ -36,16 +36,16 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.apache.logging.log4j.Level;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
-import javax.xml.ws.WebFault;
+import jakarta.jws.Oneway;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.ResponseWrapper;
+import jakarta.xml.ws.WebFault;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -100,7 +100,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         String[] paramTypes = operations[0].getJavaParameters();
         assertNotNull(paramTypes);
         assertEquals(paramTypes.length, 1);
-        assertEquals("javax.xml.ws.Holder<java.lang.String>", paramTypes[0]);
+        assertEquals("jakarta.xml.ws.Holder<java.lang.String>", paramTypes[0]);
 
         // Test RequestWrapper annotations
         assertEquals(operations[0].getRequestWrapperLocalName(), "Echo");
@@ -191,7 +191,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     // Check the Java parameter
                     assertEquals(checkParams[0], "java.lang.String");
                     assertEquals(checkParams[1],
-                                 "javax.xml.ws.AsyncHandler<org.test.proxy.doclitwrapped.ReturnType>");
+                                 "jakarta.xml.ws.AsyncHandler<org.test.proxy.doclitwrapped.ReturnType>");
                     // Check the WebParam Names (see note above) 
                     assertEquals(2, webParamNames.length);
                     assertEquals("invoke_str", webParamNames[0]);
@@ -232,7 +232,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     assertEquals(checkParams[0], "java.lang.String");
                     assertEquals(checkParams[1], "int");
                     assertEquals(checkParams[2],
-                                 "javax.xml.ws.AsyncHandler<org.test.proxy.doclitwrapped.TwoWayHolder>");
+                                 "jakarta.xml.ws.AsyncHandler<org.test.proxy.doclitwrapped.TwoWayHolder>");
                     // Check the WebParam Names (see note above) 
                     assertEquals(3, webParamNames.length);
                     assertEquals("twoWayHolder_str", webParamNames[0]);
@@ -315,11 +315,11 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         assertNull(
                 ((EndpointInterfaceDescriptionJava)testEndpointInterfaceDesc).getAnnoSoapBinding());
-        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Style.DOCUMENT,
                      testEndpointInterfaceDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Use.LITERAL,
                      testEndpointInterfaceDesc.getSoapBindingUse());
-        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED,
+        assertEquals(jakarta.jws.soap.SOAPBinding.ParameterStyle.WRAPPED,
                      testEndpointInterfaceDesc.getSoapBindingParameterStyle());
 
         OperationDescription operationDesc =
@@ -350,11 +350,11 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         assertNotNull(
                 ((EndpointInterfaceDescriptionJava)testEndpointInterfaceDesc).getAnnoSoapBinding());
-        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Style.DOCUMENT,
                      testEndpointInterfaceDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Use.LITERAL,
                      testEndpointInterfaceDesc.getSoapBindingUse());
-        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
+        assertEquals(jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      testEndpointInterfaceDesc.getSoapBindingParameterStyle());
     }
 
@@ -365,21 +365,21 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         assertNotNull(
                 ((EndpointInterfaceDescriptionJava)testEndpointInterfaceDesc).getAnnoSoapBinding());
-        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Style.DOCUMENT,
                      testEndpointInterfaceDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Use.LITERAL,
                      testEndpointInterfaceDesc.getSoapBindingUse());
-        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
+        assertEquals(jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      testEndpointInterfaceDesc.getSoapBindingParameterStyle());
 
         OperationDescription operationDesc =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("echoString")[0];
         assertNotNull(operationDesc);
         assertNull(((OperationDescriptionJava)operationDesc).getAnnoSoapBinding());
-        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Style.DOCUMENT,
                      operationDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, operationDesc.getSoapBindingUse());
-        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Use.LITERAL, operationDesc.getSoapBindingUse());
+        assertEquals(jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      operationDesc.getSoapBindingParameterStyle());
 
         // Verify that the method annotation setting overrides the type annotatino setting
@@ -388,20 +388,20 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         assertNull(
                 ((EndpointInterfaceDescriptionJava)testEndpointInterfaceDesc).getAnnoSoapBinding());
-        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Style.DOCUMENT,
                      testEndpointInterfaceDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Use.LITERAL,
                      testEndpointInterfaceDesc.getSoapBindingUse());
-        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED,
+        assertEquals(jakarta.jws.soap.SOAPBinding.ParameterStyle.WRAPPED,
                      testEndpointInterfaceDesc.getSoapBindingParameterStyle());
 
         operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("echoString")[0];
         assertNotNull(operationDesc);
         assertNotNull(((OperationDescriptionJava)operationDesc).getAnnoSoapBinding());
-        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Style.DOCUMENT,
                      operationDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, operationDesc.getSoapBindingUse());
-        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
+        assertEquals(jakarta.jws.soap.SOAPBinding.Use.LITERAL, operationDesc.getSoapBindingUse());
+        assertEquals(jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      operationDesc.getSoapBindingParameterStyle());
     }
 
@@ -935,7 +935,6 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
             assertNotNull(operationDescs);
         }
 
-
         // method1
         OperationDescription operationDesc =
                 testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
@@ -1444,8 +1443,8 @@ class SOAPBindingDefaultTestImpl {
 // ============================================================================
 
 @WebService()
-@SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.LITERAL,
-             parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+@SOAPBinding(use = jakarta.jws.soap.SOAPBinding.Use.LITERAL,
+             parameterStyle = jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE)
 class SOAPBindingDocLitBareTestImpl {
     public String echoString(String s) {
         return s;
@@ -1458,8 +1457,8 @@ class SOAPBindingDocLitBareTestImpl {
 //============================================================================
 
 @WebService()
-@SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.ENCODED,
-          parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+@SOAPBinding(use = jakarta.jws.soap.SOAPBinding.Use.ENCODED,
+          parameterStyle = jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE)
 class SOAPBindingDocEncBareTestImpl {
  public String echoString(String s) {
      return s;
@@ -1472,8 +1471,8 @@ class SOAPBindingDocEncBareTestImpl {
 
 @WebService()
 class SOAPBindingDefaultMethodTestImpl {
-    @SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.LITERAL,
-                 parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+    @SOAPBinding(use = jakarta.jws.soap.SOAPBinding.Use.LITERAL,
+                 parameterStyle = jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE)
     public String echoString(String s) {
         return s;
     }
@@ -1490,16 +1489,16 @@ class DefaultReqRspWrapperTestImpl {
         return s;
     }
 
-    @SOAPBinding(parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+    @SOAPBinding(parameterStyle = jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE)
     public String bareParams(String s) {
         return s;
     }
 }
 
 @WebService
-@SOAPBinding(parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+@SOAPBinding(parameterStyle = jakarta.jws.soap.SOAPBinding.ParameterStyle.BARE)
 class DefaultReqRspWrapperBareTestImpl {
-    @SOAPBinding(parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED)
+    @SOAPBinding(parameterStyle = jakarta.jws.soap.SOAPBinding.ParameterStyle.WRAPPED)
     public String wrappedParams(String s) {
         return s;
     }
@@ -1566,7 +1565,8 @@ class ReqRspWrapperException extends Exception{
 //This an implied SEI which will be used to test the new Sun Behavior
 @WebService
 class WebMethodTestImpl1 {
-// No web method annotation
+// AXIS2-6051, added @WebMethod on update to jakarta libs
+@WebMethod(operationName = "renamedMethod1")
 public String method1(String s) {
    return s;
 }
@@ -1759,10 +1759,14 @@ class WebResultTestImpl {
 class WebParamTestImpl {
 
     // DOCUMENT / LITERAL / WRAPPED methods
+    // AXIS2-6051, added @WebMethod on update to jakarta libs
+    @WebMethod(operationName = "renamedMethod0")
     public String method0(String s) {
         return s;
     }
 
+    // AXIS2-6051, added @WebMethod on update to jakarta libs
+    @WebMethod(operationName = "renamedMethod00")
     public void method00() {
         return;
     }
@@ -1783,7 +1787,7 @@ class WebParamTestImpl {
     @WebResult(name = "resultName")
     public String method3(
             @WebParam(name = "param0NameMethod3") String s,
-            @WebParam(name = "param1NameMethod3") javax.xml.ws.Holder<Integer> holderInteger,
+            @WebParam(name = "param1NameMethod3") jakarta.xml.ws.Holder<Integer> holderInteger,
             Object objNoWebParamAnno,
             int intNoWebParamAnno,
             @WebParam(name = "lastParamNameMethod3") String last) {
@@ -1799,7 +1803,7 @@ class WebParamTestImpl {
             @WebParam(name = "param1NameMethod4", partName = "param1PartName",
                       targetNamespace = "http://param.4.1.result.test.target.namespace/") int i,
             Object objNoWebParamAnno,
-            javax.xml.ws.Holder<Integer> intNoWebParamAnno,
+            jakarta.xml.ws.Holder<Integer> intNoWebParamAnno,
             @WebParam(name = "lastParamNameMethod4") String last) {
 
         return s;
@@ -1815,10 +1819,10 @@ class WebParamTestImpl {
             @WebParam(name = "param1NameMethod5", partName = "param1PartName",
                       targetNamespace = "http://param.5.1.result.test.target.namespace/",
                       header = false) int i,
-            javax.xml.ws.Holder<Object> objNoWebParamAnno,
+            jakarta.xml.ws.Holder<Object> objNoWebParamAnno,
             int intNoWebParamAnno,
             @WebParam(name = "lastParamNameMethod5", mode = WebParam.Mode.OUT)
-            javax.xml.ws.Holder<String> last) {
+            jakarta.xml.ws.Holder<String> last) {
         return s;
     }
 
@@ -1836,11 +1840,15 @@ class WebParamTestImpl {
     }
 
     // DOCUMENT / LITERAL / BARE methods
+    // AXIS2-6051, added @WebMethod on update to jakarta libs
+    @WebMethod(operationName = "renamedMethod0")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public String method0_bare(String s) {
         return s;
     }
 
+    // AXIS2-6051, added @WebMethod on update to jakarta libs
+    @WebMethod(operationName = "renamedMethod00")
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void method00_bare() {
         return;
@@ -1864,7 +1872,7 @@ class WebParamTestImpl {
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     @WebResult(name = "resultName")
     public String method3_bare(
-            @WebParam(name = "param1NameMethod3") javax.xml.ws.Holder<Integer> holderInteger) {
+            @WebParam(name = "param1NameMethod3") jakarta.xml.ws.Holder<Integer> holderInteger) {
         return null;
     }
 
@@ -1873,7 +1881,7 @@ class WebParamTestImpl {
     @WebResult(name = "resultName", partName = "partName",
                targetNamespace = "http://result.test.target.namespace/")
     public String method4_bare(
-            javax.xml.ws.Holder<Integer> intNoWebParamAnno) {
+            jakarta.xml.ws.Holder<Integer> intNoWebParamAnno) {
 
         return null;
     }
@@ -1885,7 +1893,7 @@ class WebParamTestImpl {
     public void method5_bare(
             @WebParam(name = "lastParamNameMethod5", mode = WebParam.Mode.OUT,
                       targetNamespace = "http://method5.bare.result.test.target.namespace.5/")
-            javax.xml.ws.Holder<String> last) {
+            jakarta.xml.ws.Holder<String> last) {
         return;
     }
 
@@ -1894,7 +1902,7 @@ class WebParamTestImpl {
     @WebResult(name = "resultName5", partName = "partName5", header = true)
     public String method6_bare(
             @WebParam(name = "param0NameMethod6", partName = "param0PartName", header = true)
-            javax.xml.ws.Holder<String> s) {
+            jakarta.xml.ws.Holder<String> s) {
         return null;
     }
 }

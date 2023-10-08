@@ -30,12 +30,12 @@ import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimePartDataSource;
-import javax.xml.bind.attachment.AttachmentMarshaller;
+import jakarta.activation.DataHandler;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimePartDataSource;
+import jakarta.xml.bind.attachment.AttachmentMarshaller;
 import javax.xml.stream.XMLStreamWriter;
 
 import java.security.PrivilegedAction;
@@ -86,7 +86,7 @@ public final class JAXBAttachmentMarshaller extends AttachmentMarshaller {
 
     
     /* (non-Javadoc)
-     * @see javax.xml.bind.attachment.AttachmentMarshaller#addMtomAttachment(byte[], int, int, java.lang.String, java.lang.String, java.lang.String)
+     * @see jakarta.xml.bind.attachment.AttachmentMarshaller#addMtomAttachment(byte[], int, int, java.lang.String, java.lang.String, java.lang.String)
      */
     public final String addMtomAttachment(byte[] data, int offset, int length,
                                     String mimeType, String namespace, String localPart) {
@@ -155,7 +155,7 @@ public final class JAXBAttachmentMarshaller extends AttachmentMarshaller {
     
     
     /* (non-Javadoc)
-     * @see javax.xml.bind.attachment.AttachmentMarshaller#addMtomAttachment(javax.activation.DataHandler, java.lang.String, java.lang.String)
+     * @see jakarta.xml.bind.attachment.AttachmentMarshaller#addMtomAttachment(jakarta.activation.DataHandler, java.lang.String, java.lang.String)
      */
     public final String addMtomAttachment(DataHandler data, String namespace, String localPart) {
         if (log.isDebugEnabled()){ 
@@ -168,7 +168,7 @@ public final class JAXBAttachmentMarshaller extends AttachmentMarshaller {
     
     
     /* (non-Javadoc)
-     * @see javax.xml.bind.attachment.AttachmentMarshaller#addSwaRefAttachment(javax.activation.DataHandler)
+     * @see jakarta.xml.bind.attachment.AttachmentMarshaller#addSwaRefAttachment(jakarta.activation.DataHandler)
      */
     public final String addSwaRefAttachment(DataHandler data) {
         if (log.isDebugEnabled()){ 

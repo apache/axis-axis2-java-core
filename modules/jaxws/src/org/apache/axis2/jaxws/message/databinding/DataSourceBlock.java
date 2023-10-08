@@ -19,11 +19,11 @@
 
 package org.apache.axis2.jaxws.message.databinding;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 
 import org.apache.axis2.jaxws.message.Block;
 
-/** DataSourceBlock Block with a business object that is a javax.activation.DataSource */
+/** DataSourceBlock Block with a business object that is a jakarta.activation.DataSource */
 public interface DataSourceBlock extends Block<DataSource,Void> {
 
 }

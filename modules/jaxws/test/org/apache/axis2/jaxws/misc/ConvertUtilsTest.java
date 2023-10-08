@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.misc;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.utility.ConvertUtils;
 
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.util.ArrayList;
 
 /**

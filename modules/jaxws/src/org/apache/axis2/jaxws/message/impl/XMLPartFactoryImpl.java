@@ -29,7 +29,7 @@ import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 /** MessageFactoryImpl */
 public class XMLPartFactoryImpl implements XMLPartFactory {
@@ -65,9 +65,9 @@ public class XMLPartFactoryImpl implements XMLPartFactory {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.soap.SOAPEnvelope)
+      * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(jakarta.xml.soap.SOAPEnvelope)
       */
-    public XMLPart createFrom(javax.xml.soap.SOAPEnvelope soapEnvelope)
+    public XMLPart createFrom(jakarta.xml.soap.SOAPEnvelope soapEnvelope)
             throws XMLStreamException, WebServiceException {
         return new XMLPartImpl(soapEnvelope);
     }

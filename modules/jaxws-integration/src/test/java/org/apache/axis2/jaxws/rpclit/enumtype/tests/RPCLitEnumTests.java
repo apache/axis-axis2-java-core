@@ -29,8 +29,8 @@ import org.test.rpclit.schema.ElementString;
 
 import static org.junit.Assert.fail;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
 
 public class RPCLitEnumTests {
     @ClassRule

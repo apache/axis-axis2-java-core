@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxws.dispatch;
 
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 
 public class AsyncCallback<T> implements AsyncHandler<T> {
 

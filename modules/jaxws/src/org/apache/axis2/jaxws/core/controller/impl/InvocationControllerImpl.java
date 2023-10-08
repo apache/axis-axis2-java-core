@@ -36,10 +36,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
 
 import java.util.HashSet;
 import java.util.List;
@@ -234,7 +234,7 @@ public abstract class InvocationControllerImpl implements InvocationController {
 
     /*
      * (non-Javadoc)
-     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext, javax.xml.ws.AsyncHandler)
+     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext, jakarta.xml.ws.AsyncHandler)
      */
     public Future<?> invokeAsync(InvocationContext ic, AsyncHandler asyncHandler) {
         if (log.isDebugEnabled()) {

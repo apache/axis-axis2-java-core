@@ -25,7 +25,7 @@ import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
 import org.apache.axis2.jaxws.unitTest.TestLogger;
 
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 
 public class ResourceInjectionTests extends TestCase {
     private Object resource = new WebServiceContextImpl();

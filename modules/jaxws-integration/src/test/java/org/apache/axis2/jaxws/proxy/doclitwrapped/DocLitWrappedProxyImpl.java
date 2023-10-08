@@ -21,11 +21,11 @@ package org.apache.axis2.jaxws.proxy.doclitwrapped;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.soap.SOAPBinding;
 @WebServiceProvider(
         serviceName="ProxyDocLitWrappedService", 
         wsdlLocation="META-INF/ProxyDocLitWrapped.wsdl", 

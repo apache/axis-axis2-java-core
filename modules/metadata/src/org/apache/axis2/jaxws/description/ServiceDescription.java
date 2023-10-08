@@ -25,8 +25,8 @@ import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.AddressingFeature.Responses;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.soap.AddressingFeature.Responses;
 
 import java.util.Collection;
 import java.util.List;

@@ -40,18 +40,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Attr; 
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Transformer;
@@ -59,7 +59,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
@@ -121,7 +121,7 @@ public class SAAJConverterImpl implements SAAJConverter {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(javax.xml.soap.SOAPEnvelope)
+      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(jakarta.xml.soap.SOAPEnvelope)
       */
     public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope) {
         return toOM(saajEnvelope, null);
@@ -199,7 +199,7 @@ public class SAAJConverterImpl implements SAAJConverter {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(javax.xml.soap.SOAPElement)
+      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(jakarta.xml.soap.SOAPElement)
       */
     public OMElement toOM(SOAPElement soapElement) throws WebServiceException {
     	if (log.isDebugEnabled()) {
@@ -223,11 +223,11 @@ public class SAAJConverterImpl implements SAAJConverter {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, javax.xml.soap.SOAPElement)
+      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, jakarta.xml.soap.SOAPElement)
       */
     public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent) throws WebServiceException {
     	if (log.isDebugEnabled()) {
-    		log.debug("Converting OMElement to an SAAJ SOAPElement");
+    		log.debug("Converting OMElement: " +omElement.getText()+ " to an SAAJ SOAPElement");
     		log.debug("The conversion occurs due to " + JavaUtils.stackToString());
     	}
     	
@@ -256,7 +256,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, javax.xml.soap.SOAPElement, javax.xml.soap.SOAPFactory)
+      * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, jakarta.xml.soap.SOAPElement, jakarta.xml.soap.SOAPFactory)
       */
     public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf)
             throws WebServiceException {
@@ -470,6 +470,10 @@ public class SAAJConverterImpl implements SAAJConverter {
         String prefix = reader.getPrefix();
         prefix = (prefix == null) ? "" : prefix;
 
+        if (log.isDebugEnabled()) {
+            log.debug("updateTagData() proceeding on prefix: " +prefix+ " , on element name: " + element.getLocalName()); 
+        }
+
         // Make sure the prefix is correct
         if (prefix.length() > 0 && !element.getPrefix().equals(prefix)) {
             // Due to a bug in Axiom DOM or in the reader...not sure where yet,
@@ -519,6 +523,17 @@ public class SAAJConverterImpl implements SAAJConverter {
                                 "This erroneous declaration is skipped.");
                     }
                 } else {
+		    // AXIS2-6051, the move to jakarta broke
+		    // unit tests with an NPE on this data -
+		    // which with javax worked fine:
+		    // newPrefix: null, newNS: urn://sample, 
+		    // element name: detailEntry
+		    // Error: java.lang.NullPointerException: 
+		    // Cannot invoke "String.length()" because 
+		    // "prefix" is null at com.sun.xml.messaging.saaj.soap.impl.ElementImpl.addNamespaceDeclaration(ElementImpl.java:758) ~[saaj-impl-3.0.2.jar:3.0.2]
+                    if (log.isDebugEnabled()) {
+                        log.debug("updateTagData() proceeding on element.addNamespaceDeclaration() with newPrefix: " +newPrefix+ " , newNS: " +newNS+ " , on element name: " + element.getLocalName()); 
+                    }
                     element.addNamespaceDeclaration(newPrefix,
                                                 newNS);
                 }

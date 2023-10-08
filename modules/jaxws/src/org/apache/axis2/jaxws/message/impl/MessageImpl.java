@@ -44,19 +44,19 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
-import javax.jws.soap.SOAPBinding.Style;
+import jakarta.activation.DataHandler;
+import jakarta.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -490,7 +490,7 @@ public class MessageImpl implements Message {
         return xmlPart.getAsOMElement();
     }
     
-    public javax.xml.soap.SOAPEnvelope getAsSOAPEnvelope() throws WebServiceException {
+    public jakarta.xml.soap.SOAPEnvelope getAsSOAPEnvelope() throws WebServiceException {
         return xmlPart.getAsSOAPEnvelope();
     }
     

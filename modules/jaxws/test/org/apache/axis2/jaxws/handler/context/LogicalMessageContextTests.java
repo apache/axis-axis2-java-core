@@ -36,15 +36,15 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import test.EchoString;
 import test.ObjectFactory;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.LogicalMessage;
-import javax.xml.ws.handler.LogicalMessageContext;
+import jakarta.xml.ws.LogicalMessage;
+import jakarta.xml.ws.handler.LogicalMessageContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 

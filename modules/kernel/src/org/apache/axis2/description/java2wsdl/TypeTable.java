@@ -23,7 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.ws.commons.schema.constants.Constants;
 import org.w3c.dom.Document;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;

@@ -29,7 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 public class WSGenTests {
     @ClassRule
@@ -60,7 +60,7 @@ public class WSGenTests {
             TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
-            fail("We should not get an exception, but we did");
+            fail("We should not get an exception, but we did: " + e);
         }
     }
 }

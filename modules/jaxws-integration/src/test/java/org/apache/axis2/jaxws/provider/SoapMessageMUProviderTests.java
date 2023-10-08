@@ -23,13 +23,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Binding;
-import javax.xml.ws.Response; 
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Binding;
+import jakarta.xml.ws.Response; 
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.framework.ClientConfigurationContextBinder;
 import org.apache.axis2.testutils.Axis2Server;
@@ -37,9 +37,9 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.xmlunit.assertj3.XmlAssert;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import static org.apache.axis2.jaxws.framework.TestUtils.await;
 
@@ -82,7 +82,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         ((BindingProvider) dispatch).getRequestContext()
@@ -116,7 +116,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -155,7 +155,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -194,7 +194,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -223,7 +223,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -254,7 +254,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -279,11 +279,14 @@ public class SoapMessageMUProviderTests {
         SOAPMessage message = AttachmentUtil.toSOAPMessage(AttachmentUtil.msgEnv2);
         
         try {
+	    System.out.println("testClientResponseHandlerUnderstoodHeaders2 on SOAPMessage header: " + message.getSOAPPart().getEnvelope().getHeader());
             SOAPMessage response = dispatch.invoke(message);
             assertThat(response).isNotNull();
             String responseString = AttachmentUtil.toString(response);
             assertThat(responseString).isNotNull();
         } catch (Exception e) {
+	    System.out.println("testClientResponseHandlerUnderstoodHeaders2 on error: ");
+	    e.printStackTrace();
             fail("Should not have caught an exception: " + e.toString());
         }
         
@@ -301,7 +304,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -344,7 +347,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -392,7 +395,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -436,7 +439,7 @@ public class SoapMessageMUProviderTests {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, bindingID, getEndpointUrl());
 
-        javax.xml.ws.Dispatch<SOAPMessage> dispatch = null;
+        jakarta.xml.ws.Dispatch<SOAPMessage> dispatch = null;
         dispatch = svc.createDispatch(portName, SOAPMessage.class, mode);
 
         //force SOAPAction to match with wsdl action                        
@@ -483,7 +486,7 @@ public class SoapMessageMUProviderTests {
     // ============================================================================================
 
     class MustUnderstandClientHandler implements
-    javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+    jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
         public Set<QName> getHeaders() {
             // Understand the header {http://ws.apache.org/axis2}muserver that will be sent back
@@ -509,7 +512,7 @@ public class SoapMessageMUProviderTests {
     }
     
     class MustUnderstandClientHandler2 implements
-    javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+    jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
         public Set<QName> getHeaders() {
             // Understand the header {http://ws.apache.org/axis2}muserver2 that will be sent back

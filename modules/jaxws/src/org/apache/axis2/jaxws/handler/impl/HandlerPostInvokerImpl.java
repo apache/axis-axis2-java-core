@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.handler.impl;
 
 import org.apache.axis2.jaxws.handler.HandlerPostInvoker;
 
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 public class HandlerPostInvokerImpl implements HandlerPostInvoker {
 

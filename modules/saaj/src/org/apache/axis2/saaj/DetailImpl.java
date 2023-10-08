@@ -23,11 +23,11 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPFaultDetail;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;

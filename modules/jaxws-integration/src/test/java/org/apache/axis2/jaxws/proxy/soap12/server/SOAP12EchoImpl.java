@@ -21,12 +21,12 @@ package org.apache.axis2.jaxws.proxy.soap12.server;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.Service.Mode;
+import jakarta.xml.ws.ServiceMode;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 @WebServiceProvider(targetNamespace="http://jaxws.axis2.apache.org/proxy/soap12",
 					serviceName="SOAP12EchoService",

@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.core;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.Handler;
 import java.util.List;
 import java.util.concurrent.Executor;
 

@@ -26,7 +26,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 
 import javax.imageio.ImageIO;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 import junit.framework.TestCase;
 

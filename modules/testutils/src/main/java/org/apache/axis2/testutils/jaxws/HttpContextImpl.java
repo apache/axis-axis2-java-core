@@ -20,8 +20,8 @@ package org.apache.axis2.testutils.jaxws;
 
 import java.util.Set;
 
-import javax.xml.ws.spi.http.HttpContext;
-import javax.xml.ws.spi.http.HttpHandler;
+import jakarta.xml.ws.spi.http.HttpContext;
+import jakarta.xml.ws.spi.http.HttpHandler;
 
 final class HttpContextImpl extends HttpContext {
     HttpHandler getHandler() {

@@ -30,8 +30,8 @@ import java.util.Set;
 import javax.wsdl.Definition;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.spi.WebServiceFeatureAnnotation;
+import jakarta.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.spi.WebServiceFeatureAnnotation;
 
 public class AddressingWSDLExtensionValidator implements WSDLExtensionValidator
 {

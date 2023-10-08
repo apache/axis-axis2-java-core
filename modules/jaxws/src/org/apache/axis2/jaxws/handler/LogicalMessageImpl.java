@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,7 +51,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.LogicalMessage;
+import jakarta.xml.ws.LogicalMessage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class LogicalMessageImpl implements LogicalMessage {
     
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.LogicalMessage#getPayload()
+     * @see jakarta.xml.ws.LogicalMessage#getPayload()
      */
     public Source getPayload() {
         BlockFactory factory = (SourceBlockFactory) FactoryRegistry.getFactory(SourceBlockFactory.class);
@@ -79,7 +79,7 @@ public class LogicalMessageImpl implements LogicalMessage {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.LogicalMessage#getPayload(javax.xml.bind.JAXBContext)
+     * @see jakarta.xml.ws.LogicalMessage#getPayload(jakarta.xml.bind.JAXBContext)
      */
     public Object getPayload(JAXBContext context) {
         if (log.isDebugEnabled()) {
@@ -129,7 +129,7 @@ public class LogicalMessageImpl implements LogicalMessage {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.LogicalMessage#setPayload(java.lang.Object, javax.xml.bind.JAXBContext)
+     * @see jakarta.xml.ws.LogicalMessage#setPayload(java.lang.Object, jakarta.xml.bind.JAXBContext)
      */
     public void setPayload(Object obj, JAXBContext context) {
         BlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
@@ -139,7 +139,7 @@ public class LogicalMessageImpl implements LogicalMessage {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.LogicalMessage#setPayload(javax.xml.transform.Source)
+     * @see jakarta.xml.ws.LogicalMessage#setPayload(jakarta.xml.transform.Source)
      */
     public void setPayload(Source source) {
         BlockFactory factory = (SourceBlockFactory) FactoryRegistry.getFactory(SourceBlockFactory.class);

@@ -26,7 +26,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 public class PollingFuture implements AxisCallback {
 

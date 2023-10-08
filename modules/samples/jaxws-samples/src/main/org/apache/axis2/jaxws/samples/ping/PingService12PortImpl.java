@@ -18,11 +18,11 @@
  */
 package org.apache.axis2.jaxws.samples.ping;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 
-@javax.jws.WebService(endpointInterface = "org.apache.axis2.jaxws.samples.ping.PingService12PortType", targetNamespace = "http://org/apache/axis2/jaxws/samples/ping/", serviceName = "PingService12", portName = "PingService12Port", wsdlLocation = "WEB-INF/wsdl/Ping12.wsdl")
+@jakarta.jws.WebService(endpointInterface = "org.apache.axis2.jaxws.samples.ping.PingService12PortType", targetNamespace = "http://org/apache/axis2/jaxws/samples/ping/", serviceName = "PingService12", portName = "PingService12Port", wsdlLocation = "WEB-INF/wsdl/Ping12.wsdl")
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 public class PingService12PortImpl {
 

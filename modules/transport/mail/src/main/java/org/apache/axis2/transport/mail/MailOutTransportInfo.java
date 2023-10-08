@@ -21,7 +21,7 @@ package org.apache.axis2.transport.mail;
 
 import org.apache.axis2.kernel.OutTransportInfo;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 
 /**
  * The Mail OutTransportInfo is a holder of information to send an outgoing message

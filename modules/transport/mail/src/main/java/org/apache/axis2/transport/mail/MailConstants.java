@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.mail;
 
-import javax.mail.Session;
+import jakarta.mail.Session;
 
 public class MailConstants {
 

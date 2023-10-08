@@ -22,21 +22,21 @@ package org.apache.axis2.saaj;
 import junit.framework.Assert;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -724,6 +724,8 @@ public class SOAPFaultTest extends Assert {
     }
 
     // TODO: fix this test: it uses a fault code with unbound prefix
+    /*
+    */
     @Test
     public void testFaultCodeWithPrefix2() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -734,11 +736,17 @@ public class SOAPFaultTest extends Assert {
         SOAPFault sf = body.addFault();
 
         String prefix = "wso2";
-        sf.setFaultCode(prefix + ":Server");
+	QName code = new QName("http://www.w3.org/2003/05/soap-envelope", "Receiver");
+        if (code.getNamespaceURI() != null && !"".equals(code.getNamespaceURI())) {
+            sf.addNamespaceDeclaration(prefix, code.getNamespaceURI());
+        } else {
+            sf.addNamespaceDeclaration(prefix, sf.getNamespaceURI());
+        }
+        sf.setFaultCode(prefix + ":" + code.getLocalPart());
         String result = sf.getFaultCode();
 
         assertNotNull(result);
-        assertEquals(prefix + ":Server", result);
+        assertEquals(prefix + ":Receiver", result);
     }
 
     @Validated @Test

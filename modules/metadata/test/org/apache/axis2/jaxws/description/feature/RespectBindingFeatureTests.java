@@ -32,10 +32,10 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLExtensionValidatorUtil;
 import org.apache.axis2.util.JavaUtils;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.RespectBinding;
-import javax.xml.ws.soap.Addressing;
+import jakarta.xml.ws.RespectBinding;
+import jakarta.xml.ws.soap.Addressing;
 
 import java.net.URL;
 import java.util.HashMap;

@@ -63,7 +63,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -360,7 +360,7 @@ public class ConverterUtil {
         return Base64Utils.encode(bytes);
     }
 
-    public static String convertToString(javax.activation.DataHandler handler) {
+    public static String convertToString(jakarta.activation.DataHandler handler) {
         return getStringFromDatahandler(handler);
     }
 
@@ -544,7 +544,7 @@ public class ConverterUtil {
         return new HexBinary(s);
     }
 
-    public static javax.activation.DataHandler convertToBase64Binary(String s) {
+    public static jakarta.activation.DataHandler convertToBase64Binary(String s) {
         // reusing the byteArrayDataSource from the Axiom classes
         if ((s == null) || s.equals("")){
             return null;
@@ -555,7 +555,7 @@ public class ConverterUtil {
         return new DataHandler(byteArrayDataSource);
     }
 
-    public static javax.activation.DataHandler convertToDataHandler(String s) {
+    public static jakarta.activation.DataHandler convertToDataHandler(String s) {
         return convertToBase64Binary(s);
     }
 

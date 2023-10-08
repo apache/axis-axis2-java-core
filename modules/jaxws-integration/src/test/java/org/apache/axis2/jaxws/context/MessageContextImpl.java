@@ -22,9 +22,9 @@ package org.apache.axis2.jaxws.context;
 import org.apache.axis2.jaxws.context.sei.MessageContext;
 
 import javax.annotation.Resource;
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceContext;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceContext;
 
 @WebService(serviceName="MessageContextService",
         portName="MessageContextPort",
@@ -47,7 +47,7 @@ public class MessageContextImpl implements MessageContext {
         // make sure that its contents don't persist past the method invocation
         webServiceContext = ctxt;
         
-        javax.xml.ws.handler.MessageContext msgCtxt = ctxt.getMessageContext();
+        jakarta.xml.ws.handler.MessageContext msgCtxt = ctxt.getMessageContext();
         
         if (msgCtxt != null) {
             isFound.value = msgCtxt.containsKey(propertyName.value);

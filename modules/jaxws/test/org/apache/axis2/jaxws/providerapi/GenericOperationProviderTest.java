@@ -31,12 +31,12 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.dispatchers.GenericProviderDispatcher;
 
-import javax.jws.WebService;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.http.HTTPBinding;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.ServiceMode;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.http.HTTPBinding;
 
 /**
  * 
@@ -140,7 +140,7 @@ public class GenericOperationProviderTest extends TestCase {
 // Notice no WSDL is specified
 @WebServiceProvider()
 @BindingType(value=HTTPBinding.HTTP_BINDING)
-@ServiceMode(value=javax.xml.ws.Service.Mode.MESSAGE)
+@ServiceMode(value=jakarta.xml.ws.Service.Mode.MESSAGE)
 class HTTPBindingProviderImpl implements Provider<String> {
 
     public String invoke(String obj) {

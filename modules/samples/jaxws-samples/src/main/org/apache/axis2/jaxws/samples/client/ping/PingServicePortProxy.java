@@ -22,9 +22,9 @@ import org.apache.axis2.jaxws.samples.ping.PingStringInput;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 
 public class PingServicePortProxy {

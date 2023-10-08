@@ -28,12 +28,12 @@ import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPException;
 import javax.xml.transform.stax.StAXSource;
 
 import java.io.ByteArrayInputStream;
@@ -89,7 +89,7 @@ public class SAAJUtil {
      * @throws SOAPException
      */
     public static org.apache.axiom.soap.SOAPEnvelope toOMSOAPEnvelope(
-            javax.xml.soap.SOAPMessage message) throws SOAPException {
+            jakarta.xml.soap.SOAPMessage message) throws SOAPException {
         final Map<String,DataHandler> attachments = new HashMap<String,DataHandler>();
         for (Iterator it = message.getAttachments(); it.hasNext(); ) {
             AttachmentPart attachment = (AttachmentPart)it.next();

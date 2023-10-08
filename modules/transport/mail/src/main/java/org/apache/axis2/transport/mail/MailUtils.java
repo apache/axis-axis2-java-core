@@ -21,7 +21,7 @@ package org.apache.axis2.transport.mail;
 
 import java.io.PrintStream;
 
-import javax.mail.Session;
+import jakarta.mail.Session;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.ParameterInclude;

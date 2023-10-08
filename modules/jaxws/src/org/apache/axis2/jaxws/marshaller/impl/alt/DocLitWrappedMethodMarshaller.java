@@ -42,10 +42,10 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.WebParam.Mode;
-import javax.xml.bind.JAXBElement;
+import jakarta.jws.WebParam.Mode;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

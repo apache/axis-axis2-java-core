@@ -26,7 +26,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.attachments.MessageAttachmentContext;
 import org.apache.axis2.jaxws.spi.Constants;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import java.util.TreeSet;
 
 /*

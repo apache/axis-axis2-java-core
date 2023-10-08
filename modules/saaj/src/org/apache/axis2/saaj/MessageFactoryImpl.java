@@ -24,11 +24,11 @@ import org.apache.axiom.om.OMMetaFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.w3c.dom.Element;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -143,10 +143,10 @@ public class MessageFactoryImpl extends MessageFactory {
      * Specify whether MTOM messages should be processed or parsed literally.
      * <p>
      * The way MTOM messages are handled fundamentally differs between Axiom and SAAJ.
-     * While Axiom replaces xop:Include elements by {@link javax.activation.DataHandler} backed
+     * While Axiom replaces xop:Include elements by {@link jakarta.activation.DataHandler} backed
      * {@link org.apache.axiom.om.OMText} nodes, there is no such requirement in SAAJ. The only
-     * requirement there is that {@link SOAPMessage#getAttachment(javax.xml.soap.SOAPElement)}
-     * returns the relevant {@link javax.xml.soap.AttachmentPart} when applied to an
+     * requirement there is that {@link SOAPMessage#getAttachment(jakarta.xml.soap.SOAPElement)}
+     * returns the relevant {@link jakarta.xml.soap.AttachmentPart} when applied to an
      * xop:Include element.
      * <p>
      * This method allows to make this SAAJ implementation behave as Axiom, i.e. to substitute

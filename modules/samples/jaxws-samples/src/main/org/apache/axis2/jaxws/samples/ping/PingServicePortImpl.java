@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.samples.ping;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 
 @WebService(endpointInterface = "org.apache.axis2.jaxws.samples.ping.PingServicePortType", targetNamespace = "http://org/apache/axis2/jaxws/samples/ping/", serviceName = "PingService", portName = "PingServicePort", wsdlLocation = "WEB-INF/wsdl/Ping.wsdl")

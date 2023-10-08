@@ -17,4 +17,4 @@
  * under the License.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://org/apache/axis2/jaxws/samples/mtom/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.axis2.jaxws.samples.mtom;
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://org/apache/axis2/jaxws/samples/mtom/", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.axis2.jaxws.samples.mtom;

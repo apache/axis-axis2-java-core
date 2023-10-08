@@ -19,8 +19,8 @@
 
 package org.apache.ws.java2wsdl.jaxws;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 
 @WebService
 public class ServerInfo {

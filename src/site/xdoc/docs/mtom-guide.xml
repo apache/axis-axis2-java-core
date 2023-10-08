@@ -174,7 +174,7 @@ Mechanism).</strong></p>
 
 <p>AXIOM is (and may be the first) Object Model that has the ability to hold
 binary data. It has this ability as OMText can hold raw binary content in the
-form of javax.activation.DataHandler. OMText has been chosen for this purpose
+form of jakarta.activation.DataHandler. OMText has been chosen for this purpose
 with two reasons. One is that XOP (MTOM) is capable of optimizing only
 base64-encoded Infoset data that is in the canonical lexical form of XML
 Schema base64Binary datatype. Other one is to preserve the infoset in both
@@ -194,8 +194,8 @@ advised to send smaller binary attachments using base64encoding
 <pre>        OMElement imageElement = fac.createOMElement("image", omNs);
 
         // Creating the Data Handler for the file.  Any implementation of
-        // javax.activation.DataSource interface can fit here.
-        javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("SomeFile"));
+        // jakarta.activation.DataSource interface can fit here.
+        jakarta.activation.DataHandler dataHandler = new jakarta.activation.DataHandler(new FileDataSource("SomeFile"));
       
         //create an OMText node with the above DataHandler and set optimized to true
         OMText textData = <strong>fac.createOMText(dataHandler, true);</strong>
@@ -213,7 +213,7 @@ type of the actual binary representation.</p>
 <pre>        String base64String = "some_base64_encoded_string";
         OMText binaryNode =<strong>fac.createOMText(base64String,"image/jpg",true);</strong></pre>
 
-<p>Axis2 uses javax.activation.DataHandler to handle the binary data. All the
+<p>Axis2 uses jakarta.activation.DataHandler to handle the binary data. All the
 optimized binary content nodes will be serialized as Base64 Strings if "MTOM
 is not enabled". You can also create binary content nodes, which will not be
 optimized at any case. They will be serialized and sent as Base64 Strings.</p>
@@ -221,7 +221,7 @@ optimized at any case. They will be serialized and sent as Base64 Strings.</p>
 <p></p>
 <pre>        //create an OMText node with the above DataHandler and set "optimized" to false
         //This data will be send as Base64 encoded string regardless of MTOM is enabled or not
-        javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("SomeFile"));
+        jakarta.activation.DataHandler dataHandler = new jakarta.activation.DataHandler(new FileDataSource("SomeFile"));
         OMText textData = fac.createOMText(dataHandler, <strong>false</strong>); 
         image.addChild(textData);</pre>
 <a name="22"></a>
@@ -498,11 +498,11 @@ client:</p>
                 AttachmentType attachmentType = new AttachmentType();
                 Base64Binary base64Binary = new Base64Binary();
 
-                // Creating a javax.activation.FileDataSource from the input file.
+                // Creating a jakarta.activation.FileDataSource from the input file.
                 FileDataSource fileDataSource = new FileDataSource(file);
 
                 // Create a dataHandler using the fileDataSource. Any implementation of
-                // javax.activation.DataSource interface can fit here.
+                // jakarta.activation.DataSource interface can fit here.
                 DataHandler dataHandler = new DataHandler(fileDataSource);
                 base64Binary.setBase64Binary(dataHandler);
                 base64Binary.setContentType(dataHandler.getContentType());

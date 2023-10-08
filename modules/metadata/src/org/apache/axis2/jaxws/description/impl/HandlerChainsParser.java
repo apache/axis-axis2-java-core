@@ -23,11 +23,11 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;

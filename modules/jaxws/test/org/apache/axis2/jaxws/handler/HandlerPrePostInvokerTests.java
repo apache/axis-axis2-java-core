@@ -30,9 +30,9 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -157,7 +157,7 @@ public class HandlerPrePostInvokerTests extends TestCase {
             return null;
         }
 
-        public void close(javax.xml.ws.handler.MessageContext messagecontext) {
+        public void close(jakarta.xml.ws.handler.MessageContext messagecontext) {
         }
 
         public boolean handleFault(SOAPMessageContext messagecontext) {
@@ -179,7 +179,7 @@ public class HandlerPrePostInvokerTests extends TestCase {
             return null;
         }
 
-        public void close(javax.xml.ws.handler.MessageContext messagecontext) {
+        public void close(jakarta.xml.ws.handler.MessageContext messagecontext) {
         }
 
         public boolean handleFault(SOAPMessageContext messagecontext) {
@@ -206,13 +206,13 @@ public class HandlerPrePostInvokerTests extends TestCase {
     }
     
     private class HandlerPreInvokerImpl implements HandlerPreInvoker {
-        public void preInvoke(javax.xml.ws.handler.MessageContext mc) {
+        public void preInvoke(jakarta.xml.ws.handler.MessageContext mc) {
             preInvokerCalled = true;
         }
     }
     
     private class HandlerPostInvokerImpl implements HandlerPostInvoker {
-        public void postInvoke(javax.xml.ws.handler.MessageContext mc) {
+        public void postInvoke(jakarta.xml.ws.handler.MessageContext mc) {
             postInvokerCalled = true;
             if (mc instanceof SoapMessageContext) {
                 SoapMessageContext smc = (SoapMessageContext) mc;

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.ws.FaultAction;
+import jakarta.xml.ws.FaultAction;
 import java.lang.annotation.Annotation;
 
 public class FaultActionAnnot implements FaultAction {

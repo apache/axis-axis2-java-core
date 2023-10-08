@@ -20,9 +20,9 @@
 package org.apache.axis2.jaxws.description.echo;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebEndpoint;
+import jakarta.xml.ws.WebServiceClient;
 import java.net.MalformedURLException;
 import java.net.URL;
 

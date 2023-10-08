@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebMethodAnnot implements javax.jws.WebMethod {
+public class WebMethodAnnot implements jakarta.jws.WebMethod {
 
     private String operationName = "";
     private String action = "";

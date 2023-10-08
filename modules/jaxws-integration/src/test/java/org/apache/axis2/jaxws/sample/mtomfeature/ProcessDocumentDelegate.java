@@ -5,14 +5,14 @@
 
 package org.apache.axis2.jaxws.sample.mtomfeature;
 
-import javax.activation.DataHandler;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.ResponseWrapper;
 
 import org.apache.axis2.jaxws.sample.mtomfeature.ObjectFactory;
 
@@ -27,7 +27,7 @@ public interface ProcessDocumentDelegate {
      * 
      * @param arg0
      * @return
-     *     returns javax.activation.DataHandler
+     *     returns jakarta.activation.DataHandler
      */
     @WebMethod
     @WebResult(targetNamespace = "")

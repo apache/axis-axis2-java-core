@@ -31,13 +31,13 @@ import org.apache.axis2.wsdl.WSDLConstants;
 
 /**
  * This class will enable the JAX-WS 2.1 API methods to create instances of
- * {@link javax.xml.ws.EndpointReference} that target a particular web service
+ * {@link jakarta.xml.ws.EndpointReference} that target a particular web service
  * endpoint, identified by specifying the WSDL service name and port name of the
  * endpoint, to work correctly. This is achieved by enabling the implementation of 
  * {@link org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory}
  * to retrieve the context it needs from the invoking thread. The instances of
  * {@link org.apache.axis2.addressing.EndpointReference} that it produces can
- * then converted to instances of {@link javax.xml.ws.EndpointReference}, as
+ * then converted to instances of {@link jakarta.xml.ws.EndpointReference}, as
  * needed.
  * 
  */

@@ -1,6 +1,6 @@
 package org.apache.axis2.jaxws.addressbook;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 /**
  * JAX-WS service implementation that uses and implicit SEI rather than an explicit SEI.  An

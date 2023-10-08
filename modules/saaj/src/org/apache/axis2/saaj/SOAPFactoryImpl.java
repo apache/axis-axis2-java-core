@@ -27,13 +27,13 @@ import org.apache.axiom.om.dom.DOMMetaFactory;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
 import java.util.Locale;
 
 /**
@@ -50,7 +50,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      *
      * @param name a <code>Name</code> object with the XML name for the new element
      * @return the new <code>SOAPElement</code> object that was created
-     * @throws javax.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
+     * @throws jakarta.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
      *                                      object
      */
     public SOAPElement createElement(Name name) throws SOAPException {
@@ -74,7 +74,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      *
      * @param localName a <code>String</code> giving the local name for the new element
      * @return the new <code>SOAPElement</code> object that was created
-     * @throws javax.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
+     * @throws jakarta.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
      *                                      object
      */
     public SOAPElement createElement(String localName) throws SOAPException {
@@ -96,7 +96,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      * @param uri       a <code>String</code> giving the URI of the namespace to which the new
      *                  element belongs
      * @return the new <code>SOAPElement</code> object that was created
-     * @throws javax.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
+     * @throws jakarta.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
      *                                      object
      */
     public SOAPElement createElement(String localName, String prefix, String uri)
@@ -120,7 +120,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      * practical to use the <code>SOAPFault</code> abstraction.
      *
      * @return a <code>Detail</code> object
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error
+     * @throws jakarta.xml.soap.SOAPException if there is a SOAP error
      */
     public Detail createDetail() throws SOAPException {
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
@@ -142,7 +142,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      * @param uri       a <code>String</code> giving the URI of the namespace
      * @return a <code>Name</code> object initialized with the given local name, namespace prefix,
      *         and namespace URI
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error
+     * @throws jakarta.xml.soap.SOAPException if there is a SOAP error
      */
     public Name createName(String localName, String prefix, String uri) throws SOAPException {
         return new PrefixedQName(uri, localName, prefix);
@@ -156,7 +156,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      *
      * @param localName a <code>String</code> giving the local name
      * @return a <code>Name</code> object initialized with the given local name
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error
+     * @throws jakarta.xml.soap.SOAPException if there is a SOAP error
      */
     public Name createName(String localName) throws SOAPException {
         return new PrefixedQName(null, localName, null);

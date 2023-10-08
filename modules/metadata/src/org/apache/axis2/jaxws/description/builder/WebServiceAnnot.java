@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebServiceAnnot implements javax.jws.WebService {
+public class WebServiceAnnot implements jakarta.jws.WebService {
 
     private String name = "";
     private String targetNamespace = "";
@@ -72,8 +72,8 @@ public class WebServiceAnnot implements javax.jws.WebService {
     
     public static WebServiceAnnot createFromAnnotation(Annotation annotation) {
         WebServiceAnnot returnAnnot = null;
-        if (annotation != null && annotation instanceof javax.jws.WebService) {
-            javax.jws.WebService ws = (javax.jws.WebService) annotation;
+        if (annotation != null && annotation instanceof jakarta.jws.WebService) {
+            jakarta.jws.WebService ws = (jakarta.jws.WebService) annotation;
             return new WebServiceAnnot(ws.name(),
                                        ws.targetNamespace(),
                                        ws.serviceName(),

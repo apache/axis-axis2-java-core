@@ -19,8 +19,8 @@
 
 package org.apache.axis2.transport.mail;
 
-import javax.activation.DataHandler;
-import javax.mail.internet.MimeMessage;
+import jakarta.activation.DataHandler;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.axis2.transport.testkit.name.Key;
 

@@ -48,8 +48,8 @@ import org.test.mtom.SendImage;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;

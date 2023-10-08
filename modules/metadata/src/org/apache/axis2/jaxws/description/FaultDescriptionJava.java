@@ -20,7 +20,7 @@
 
 package org.apache.axis2.jaxws.description;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 public interface FaultDescriptionJava {
     public WebFault getAnnoWebFault();

@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Iterator;

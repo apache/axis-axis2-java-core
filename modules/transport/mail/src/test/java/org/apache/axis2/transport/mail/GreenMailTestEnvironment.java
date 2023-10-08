@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 
 import org.apache.axis2.transport.testkit.name.Key;
 import org.apache.axis2.transport.testkit.name.Name;

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.proxy.rpclit.sei;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 @WebFault(name = "myFault", targetNamespace = "http://org/apache/axis2/jaxws/proxy/rpclit")
 public class RPCFault extends Exception {

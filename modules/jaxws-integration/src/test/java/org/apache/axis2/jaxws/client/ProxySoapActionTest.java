@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.client;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.client.soapaction.BookStore;

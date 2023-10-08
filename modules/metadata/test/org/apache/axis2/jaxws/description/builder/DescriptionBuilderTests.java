@@ -24,8 +24,8 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderUtils;
 
-import javax.jws.WebParam.Mode;
-import javax.jws.WebService;
+import jakarta.jws.WebParam.Mode;
+import jakarta.jws.WebService;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +79,6 @@ public class DescriptionBuilderTests extends TestCase {
         assertNotNull("WebService endpointInterface not set",
                       webServiceAnnotImpl3.endpointInterface());
 
-        System.out.println("WebService name:" + webServiceAnnotImpl3.name());
     }
 
     public void testCreateWebServiceProviderAnnot() {
@@ -104,7 +103,7 @@ public class DescriptionBuilderTests extends TestCase {
         descriptionBuilderComposite.setWebServiceProviderAnnot(webServiceProviderAnnot);
 
 
-        javax.xml.ws.WebServiceProvider webServiceProviderAnnot3 =
+        jakarta.xml.ws.WebServiceProvider webServiceProviderAnnot3 =
                 descriptionBuilderComposite.getWebServiceProviderAnnot();
 
         assertEquals("WebServiceProvider port name not set properly",

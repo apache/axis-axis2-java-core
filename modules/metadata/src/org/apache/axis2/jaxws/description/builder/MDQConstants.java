@@ -35,12 +35,12 @@ public class MDQConstants {
     public static final String OBJECT_CLASS_NAME = "java.lang.Object";
 
     public static final String PROVIDER_SOURCE =
-            "javax.xml.ws.Provider<javax.xml.transform.Source>";
-    public static final String PROVIDER_SOAP = "javax.xml.ws.Provider<javax.xml.soap.SOAPMessage>";
+            "jakarta.xml.ws.Provider<javax.xml.transform.Source>";
+    public static final String PROVIDER_SOAP = "jakarta.xml.ws.Provider<jakarta.xml.soap.SOAPMessage>";
     public static final String PROVIDER_DATASOURCE =
-            "javax.xml.ws.Provider<javax.activation.DataSource>";
-    public static final String PROVIDER_STRING = "javax.xml.ws.Provider<java.lang.String>";
-    public static final String PROVIDER_OMELEMENT = "javax.xml.ws.Provider<org.apache.axiom.om.OMElement>";
+            "jakarta.xml.ws.Provider<jakarta.activation.DataSource>";
+    public static final String PROVIDER_STRING = "jakarta.xml.ws.Provider<java.lang.String>";
+    public static final String PROVIDER_OMELEMENT = "jakarta.xml.ws.Provider<org.apache.axiom.om.OMElement>";
 
     public static final String WSDL_FILE_NAME = "WSDL_FILE_NAME";
     public static final String SCHEMA_DOCS = "SCHEMA_DOCS";
@@ -50,7 +50,7 @@ public class MDQConstants {
     public static final String CONSTRUCTOR_METHOD = "<init>";
 
     public static final String RETURN_TYPE_FUTURE = "java.util.concurrent.Future";
-    public static final String RETURN_TYPE_RESPONSE = "javax.xml.ws.Response";
+    public static final String RETURN_TYPE_RESPONSE = "jakarta.xml.ws.Response";
     
     public static final String CLIENT_SERVICE_CLASS = "CLIENT_SERVICE_CLASS";
     public static final String CLIENT_SEI_CLASS = "CLIENT_SEI_CLASS";

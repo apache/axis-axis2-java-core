@@ -25,7 +25,7 @@ import java.util.Set;
 
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.RespectBindingFeature;
+import jakarta.xml.ws.RespectBindingFeature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;

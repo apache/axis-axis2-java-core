@@ -22,19 +22,19 @@ package org.apache.axis2.saaj;
 import junit.framework.Assert;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.Text;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
+import jakarta.xml.soap.Text;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,11 +57,11 @@ public class SOAPHeaderTest extends Assert {
 
     @Validated @Test
     public void testAddHeaderElements() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage =
-                javax.xml.soap.MessageFactory.newInstance().createMessage();
-        javax.xml.soap.SOAPEnvelope soapEnv =
+        jakarta.xml.soap.SOAPMessage soapMessage =
+                jakarta.xml.soap.MessageFactory.newInstance().createMessage();
+        jakarta.xml.soap.SOAPEnvelope soapEnv =
                 soapMessage.getSOAPPart().getEnvelope();
-        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        jakarta.xml.soap.SOAPHeader header = soapEnv.getHeader();
         try {
             header.addChildElement("ebxmlms1");
         } catch (Exception e) {
@@ -229,13 +229,13 @@ public class SOAPHeaderTest extends Assert {
 
     @Validated @Test
     public void testAddNotUnderstoodHeaderElement() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage =
-                javax.xml.soap.MessageFactory.newInstance(
+        jakarta.xml.soap.SOAPMessage soapMessage =
+                jakarta.xml.soap.MessageFactory.newInstance(
                         SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
 
-        javax.xml.soap.SOAPEnvelope soapEnv =
+        jakarta.xml.soap.SOAPEnvelope soapEnv =
                 soapMessage.getSOAPPart().getEnvelope();
-        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        jakarta.xml.soap.SOAPHeader header = soapEnv.getHeader();
 
         SOAPElement soapElement = header.addNotUnderstoodHeaderElement(
                 new QName("http://foo.org", "foo", "f"));
@@ -252,13 +252,13 @@ public class SOAPHeaderTest extends Assert {
 
     @Validated @Test
     public void testAddUpgradeHeaderElement() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage =
-                javax.xml.soap.MessageFactory.newInstance(
+        jakarta.xml.soap.SOAPMessage soapMessage =
+                jakarta.xml.soap.MessageFactory.newInstance(
                         SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
 
-        javax.xml.soap.SOAPEnvelope soapEnv =
+        jakarta.xml.soap.SOAPEnvelope soapEnv =
                 soapMessage.getSOAPPart().getEnvelope();
-        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        jakarta.xml.soap.SOAPHeader header = soapEnv.getHeader();
 
         // create a list of supported URIs.
         ArrayList supported = new ArrayList();
@@ -278,13 +278,13 @@ public class SOAPHeaderTest extends Assert {
 
     @Validated @Test
     public void testExamineHeaderElements() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage =
-                javax.xml.soap.MessageFactory.newInstance(
+        jakarta.xml.soap.SOAPMessage soapMessage =
+                jakarta.xml.soap.MessageFactory.newInstance(
                         SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
 
-        javax.xml.soap.SOAPEnvelope soapEnv =
+        jakarta.xml.soap.SOAPEnvelope soapEnv =
                 soapMessage.getSOAPPart().getEnvelope();
-        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        jakarta.xml.soap.SOAPHeader header = soapEnv.getHeader();
 
         SOAPHeaderElement soapHeaderElement =
                 header.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
@@ -304,12 +304,12 @@ public class SOAPHeaderTest extends Assert {
 
     @Validated @Test
     public void testExamineHeaderElements2() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage =
-                javax.xml.soap.MessageFactory.newInstance().createMessage();
+        jakarta.xml.soap.SOAPMessage soapMessage =
+                jakarta.xml.soap.MessageFactory.newInstance().createMessage();
 
-        javax.xml.soap.SOAPEnvelope soapEnv =
+        jakarta.xml.soap.SOAPEnvelope soapEnv =
                 soapMessage.getSOAPPart().getEnvelope();
-        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        jakarta.xml.soap.SOAPHeader header = soapEnv.getHeader();
         SOAPHeaderElement soapHeaderElement = null;
 
         try {

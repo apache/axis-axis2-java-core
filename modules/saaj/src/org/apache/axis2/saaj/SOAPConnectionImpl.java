@@ -45,20 +45,20 @@ import org.apache.axis2.saaj.util.UnderstandAllHeadersHandler;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConnection;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -113,7 +113,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
      *                 <code>java.net.URL</code>, and when JAXM is present <code>javax.xml.messaging.URLEndpoint</code>
      * @return the <CODE>SOAPMessage</CODE> object that is the response to the message that was
      *         sent
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error, or this SOAPConnection is
+     * @throws jakarta.xml.soap.SOAPException if there is a SOAP error, or this SOAPConnection is
      *                                      already closed
      */
     public SOAPMessage call(SOAPMessage request, Object endpoint) throws SOAPException {
@@ -270,7 +270,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
     /**
      * Closes this <CODE>SOAPConnection</CODE> object.
      *
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error, or this SOAPConnection is
+     * @throws jakarta.xml.soap.SOAPException if there is a SOAP error, or this SOAPConnection is
      *                                      already closed
      */
     public void close() throws SOAPException {
@@ -299,7 +299,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage response = mf.createMessage();
         SOAPPart sPart = response.getSOAPPart();
-        javax.xml.soap.SOAPEnvelope env = sPart.getEnvelope();
+        jakarta.xml.soap.SOAPEnvelope env = sPart.getEnvelope();
         SOAPBody body = env.getBody();
         SOAPHeader header = env.getHeader();
 
@@ -346,7 +346,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
      */
     private void toSAAJElement(SOAPElement saajEle,
                                OMNode omNode,
-                               javax.xml.soap.SOAPMessage saajSOAPMsg) throws SOAPException {
+                               jakarta.xml.soap.SOAPMessage saajSOAPMsg) throws SOAPException {
 
         if (omNode instanceof OMText) {
             return; // simply return since the text has already been added to saajEle

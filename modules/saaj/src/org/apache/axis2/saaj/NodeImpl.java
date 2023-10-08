@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.saaj;
 
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
 
 import org.apache.axiom.om.OMNode;
 

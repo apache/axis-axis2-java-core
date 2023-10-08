@@ -33,15 +33,15 @@ import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.kernel.http.HTTPConstants;
 
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -192,12 +192,12 @@ public class SOAPMessageImpl extends SOAPMessage {
      * Retrieves all the AttachmentPart objects that have header entries that match the specified
      * headers. Note that a returned attachment could have headers in addition to those specified.
      *
-     * @param headers a {@link javax.xml.soap.MimeHeaders} object containing the MIME headers for
+     * @param headers a {@link jakarta.xml.soap.MimeHeaders} object containing the MIME headers for
      *                which to search
-     * @return an iterator over all attachments({@link javax.xml.soap.AttachmentPart}) that have a
+     * @return an iterator over all attachments({@link jakarta.xml.soap.AttachmentPart}) that have a
      *         header that matches one of the given headers
      */
-    public Iterator getAttachments(javax.xml.soap.MimeHeaders headers) {
+    public Iterator getAttachments(jakarta.xml.soap.MimeHeaders headers) {
         Collection<AttachmentPart> matchingAttachmentParts = new ArrayList<AttachmentPart>();
         Iterator iterator = getAttachments();
         {
@@ -248,7 +248,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      *
      * @return a <CODE>MimeHeaders</CODE> object containing the <CODE>MimeHeader</CODE> objects
      */
-    public javax.xml.soap.MimeHeaders getMimeHeaders() {
+    public jakarta.xml.soap.MimeHeaders getMimeHeaders() {
         return mimeHeaders;
     }
 
@@ -421,7 +421,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      * <p/>
      * The valid property names include <code>WRITE_XML_DECLARATION</code> and
      * <code>CHARACTER_SET_ENCODING</code>. All of these standard SAAJ properties are prefixed by
-     * "javax.xml.soap". Vendors may also add implementation specific properties. These properties
+     * "jakarta.xml.soap". Vendors may also add implementation specific properties. These properties
      * must be prefixed with package names that are unique to the vendor.
      * <p/>
      * Setting the property <code>WRITE_XML_DECLARATION</code> to <code>"true"</code> will cause an
@@ -544,7 +544,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      * Gets the SOAP Header contained in this <code>SOAPMessage</code> object.
      *
      * @return the <code>SOAPHeader</code> object contained by this <code>SOAPMessage</code> object
-     * @throws javax.xml.soap.SOAPException if the SOAP Header does not exist or cannot be
+     * @throws jakarta.xml.soap.SOAPException if the SOAP Header does not exist or cannot be
      *                                      retrieved
      */
     public SOAPHeader getSOAPHeader() throws SOAPException {
@@ -555,7 +555,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      * Gets the SOAP Body contained in this <code>SOAPMessage</code> object.
      *
      * @return the <code>SOAPBody</code> object contained by this <code>SOAPMessage</code> object
-     * @throws javax.xml.soap.SOAPException if the SOAP Body does not exist or cannot be retrieved
+     * @throws jakarta.xml.soap.SOAPException if the SOAP Body does not exist or cannot be retrieved
      */
     public SOAPBody getSOAPBody() throws SOAPException {
         return this.soapPart.getEnvelope().getBody();

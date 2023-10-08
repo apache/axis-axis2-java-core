@@ -20,12 +20,12 @@ package org.apache.axis2.jaxws.sample.mtomfeature;
 
 import java.io.BufferedInputStream;
 
-import javax.activation.DataHandler;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.MTOM;
+import jakarta.activation.DataHandler;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.soap.MTOM;
 
 import org.apache.axis2.jaxws.TestLogger;
-@javax.jws.WebService (serviceName="ProcessDocumentService", endpointInterface="org.apache.axis2.jaxws.sample.mtomfeature.ProcessDocumentDelegate")
+@jakarta.jws.WebService (serviceName="ProcessDocumentService", endpointInterface="org.apache.axis2.jaxws.sample.mtomfeature.ProcessDocumentDelegate")
 @MTOM(threshold=0)
 public class ProcessDocumentPortBindingImpl implements ProcessDocumentDelegate {
 

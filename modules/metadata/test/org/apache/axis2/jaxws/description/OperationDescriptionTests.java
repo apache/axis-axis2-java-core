@@ -25,7 +25,7 @@ import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.wsdl.Definition;
 import java.net.URL;
 import java.util.HashMap;

@@ -18,7 +18,7 @@
 */
 package org.apache.axis2.jaxws.calculator;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 
 @WebFault(name = "AddNumbersException", targetNamespace = "http://calculator.jaxws.axis2.apache.org")

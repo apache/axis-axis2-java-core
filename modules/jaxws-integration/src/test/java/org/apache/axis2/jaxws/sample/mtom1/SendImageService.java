@@ -22,10 +22,10 @@ package org.apache.axis2.jaxws.sample.mtom1;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.jws.WebService;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 
 /**

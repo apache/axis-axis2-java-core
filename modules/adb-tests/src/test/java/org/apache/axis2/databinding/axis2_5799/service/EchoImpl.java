@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.databinding.axis2_5799.service;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 
 @WebService(endpointInterface="org.apache.axis2.databinding.axis2_5799.service.EchoPortType")
 public class EchoImpl implements EchoPortType {

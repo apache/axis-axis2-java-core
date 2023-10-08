@@ -30,8 +30,8 @@ import org.apache.axis2.jaxws.unitTest.TestLogger;
 import test.Data;
 import test.ObjectFactory;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

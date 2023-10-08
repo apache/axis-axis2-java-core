@@ -32,8 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
@@ -89,18 +89,18 @@ public class EndpointInterfaceDescriptionImpl
     // ANNOTATION: @SOAPBinding
     // Note this is the Type-level annotation.  See OperationDescription for the Method-level annotation
     private SOAPBinding soapBindingAnnotation;
-    private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
-    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.Style SOAPBinding_Style_DEFAULT =
-            javax.jws.soap.SOAPBinding.Style.DOCUMENT;
-    private javax.jws.soap.SOAPBinding.Use soapBindingUse;
-    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.Use SOAPBinding_Use_DEFAULT =
-            javax.jws.soap.SOAPBinding.Use.LITERAL;
-    private javax.jws.soap.SOAPBinding.ParameterStyle soapParameterStyle;
-    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT =
-            javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+    private jakarta.jws.soap.SOAPBinding.Style soapBindingStyle;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: jakarta.jws.soap.SOAPBinding" pg 28
+    public static final jakarta.jws.soap.SOAPBinding.Style SOAPBinding_Style_DEFAULT =
+            jakarta.jws.soap.SOAPBinding.Style.DOCUMENT;
+    private jakarta.jws.soap.SOAPBinding.Use soapBindingUse;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: jakarta.jws.soap.SOAPBinding" pg 28
+    public static final jakarta.jws.soap.SOAPBinding.Use SOAPBinding_Use_DEFAULT =
+            jakarta.jws.soap.SOAPBinding.Use.LITERAL;
+    private jakarta.jws.soap.SOAPBinding.ParameterStyle soapParameterStyle;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: jakarta.jws.soap.SOAPBinding" pg 28
+    public static final jakarta.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT =
+            jakarta.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 
     
     /**
@@ -458,6 +458,9 @@ public class EndpointInterfaceDescriptionImpl
      * @return
      */
     public OperationDescription[] getOperationForJavaMethod(String javaMethodName) {
+        if (log.isDebugEnabled()) {
+            log.debug("starting on javaMethodName : " + javaMethodName + " , on operationDescriptions.size: " + operationDescriptions.size());
+        }
         if (DescriptionUtils.isEmpty(javaMethodName)) {
             return null;
         }
@@ -466,9 +469,16 @@ public class EndpointInterfaceDescriptionImpl
         for (OperationDescription operation : getOperations()) {
             if (javaMethodName.equals(operation.getJavaMethodName())) {
                 matchingOperations.add(operation);
-            }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("getOperationForJavaMethod() found no match for javaMethodName: " + javaMethodName + "  on operation: " + operation.getJavaMethodName());
+                }
+	    }	    
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("getOperationForJavaMethod() found match size: " + matchingOperations.size());
+        }
         if (matchingOperations.size() == 0)
             return null;
         else
@@ -649,11 +659,11 @@ public class EndpointInterfaceDescriptionImpl
         return soapBindingAnnotation;
     }
 
-    public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
+    public jakarta.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
         return getAnnoSoapBindingStyle();
     }
 
-    public javax.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle() {
+    public jakarta.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle() {
         if (soapBindingStyle == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().style() != null) {
                 soapBindingStyle = getAnnoSoapBinding().style();
@@ -664,11 +674,11 @@ public class EndpointInterfaceDescriptionImpl
         return soapBindingStyle;
     }
 
-    public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
+    public jakarta.jws.soap.SOAPBinding.Use getSoapBindingUse() {
         return getAnnoSoapBindingUse();
     }
 
-    public javax.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse() {
+    public jakarta.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse() {
         if (soapBindingUse == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().use() != null) {
                 soapBindingUse = getAnnoSoapBinding().use();
@@ -679,11 +689,11 @@ public class EndpointInterfaceDescriptionImpl
         return soapBindingUse;
     }
 
-    public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
+    public jakarta.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
         return getAnnoSoapBindingParameterStyle();
     }
 
-    public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
+    public jakarta.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
         if (soapParameterStyle == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().parameterStyle() != null) {
                 soapParameterStyle = getAnnoSoapBinding().parameterStyle();

@@ -31,7 +31,7 @@ import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 
 import javax.xml.namespace.QName;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.wsdl.Definition;
 import java.net.URL;
 import java.util.HashMap;

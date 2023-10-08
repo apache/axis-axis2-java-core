@@ -22,14 +22,14 @@ package org.apache.axis2.jaxws.sample.faults;
 
 import org.test.faults.FaultyWebServiceResponse;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.Response;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.ResponseWrapper;
 import java.util.concurrent.Future;
 
 @WebService(name = "FaultyWebServicePortType", targetNamespace = "http://org/test/faults")
@@ -74,7 +74,7 @@ public interface FaultyWebServicePortType {
      * 
      * @param arg0
      * @return
-     *     returns javax.xml.ws.Response<org.test.faults.FaultyWebServiceResponse>
+     *     returns jakarta.xml.ws.Response<org.test.faults.FaultyWebServiceResponse>
      */
     @WebMethod(operationName = "faultyWebService")
     @RequestWrapper(localName = "faultyWebService", targetNamespace = "http://org/test/faults", className = "org.test.faults.FaultyWebService")

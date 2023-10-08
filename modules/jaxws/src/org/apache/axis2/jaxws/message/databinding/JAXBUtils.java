@@ -30,15 +30,15 @@ import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.ws.Holder;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.PropertyException;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,10 +111,10 @@ public class JAXBUtils {
     // This map is immutable after its static creation.
     private static final Map<String, List<Class>> specialMap = new HashMap<String, List<Class>>();
     static {
-        // The javax.xml.ws.wsaddressing package has a single class (W3CEndpointReference)
+        // The jakarta.xml.ws.wsaddressing package has a single class (W3CEndpointReference)
         List<Class> classes = new ArrayList<Class>();
         classes.add(W3CEndpointReference.class);
-        specialMap.put("javax.xml.ws.wsaddressing", classes);
+        specialMap.put("jakarta.xml.ws.wsaddressing", classes);
     }
     
     public static final String DEFAULT_NAMESPACE_REMAP = getDefaultNamespaceRemapProperty();
@@ -275,6 +275,9 @@ public class JAXBUtils {
             synchronized (innerMap) {
                 // Try to get the contextValue once more since sync was temporarily exited.
                 ClassLoader clKey = (cacheKey != null) ? cacheKey:cl;
+                if (clKey == null) {
+                    log.warn("getJAXBContext() detected null clKey");
+                }
                 contextValue = innerMap.get(clKey);
                 adjustPoolSize(innerMap);
                 if (forceArrays &&
@@ -300,6 +303,9 @@ public class JAXBUtils {
                             properties, 
                             classRefs);
                     
+                    if (contextValue == null) {
+                        log.warn("getJAXBContext() detected null contextValue on validContextPackages.size: " + validContextPackages.size() + " , classRefs.size: " + classRefs.size() + " , numPackages: " + numPackages + " , properties.size: " + properties.size());
+                    }
                     synchronized (jaxbMap) {
                         // Add the context value with the original package set
                         ConcurrentHashMap<ClassLoader, JAXBContextValue> map1 = null;
@@ -480,13 +486,13 @@ public class JAXBUtils {
         Iterator<String> it = contextPackages.iterator();
         while (it.hasNext()) {
             String p = it.next();
-            // Don't consider java and javax packages
+            // Don't consider java and jakarta packages
             // REVIEW: We might have to refine this
-            if (p.startsWith("javax.xml.ws.wsaddressing")) {
+            if (p.startsWith("jakarta.xml.ws.wsaddressing")) {
                 continue;
             }
             if (p.startsWith("java.") ||
-                    p.startsWith("javax.")) {
+                    p.startsWith("jakarta.")) {
                 it.remove();
             }
         }
@@ -640,9 +646,6 @@ public class JAXBUtils {
                     contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY);
                 }
             }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Successfully created JAXBContext " + contextValue.jaxbContext.toString());
         }
         return contextValue;
     }
@@ -1585,19 +1588,11 @@ public class JAXBUtils {
     }
     
     private static String getDefaultNamespaceRemapProperty() {
-        String external = "com.sun.xml.bind.defaultNamespaceRemap";
-        String internal = "com.sun.xml.internal.bind.defaultNamespaceRemap";
-        
-        Boolean isExternal = testJAXBProperty(external);
-        if (Boolean.TRUE.equals(isExternal)) {
-            return external;
-        }                
-        Boolean isInternal = testJAXBProperty(internal);
-        if (Boolean.TRUE.equals(isInternal)) {
-            return internal;
-        }
-        // hmm... both properties cannot be set
-        return external;
+	// AXIS2-6051, the migration to jakarta changed
+	// how this works
+        // String external = "com.sun.xml.bind.defaultNamespaceRemap";
+        // String internal = "com.sun.xml.internal.bind.defaultNamespaceRemap";
+        return "org.glassfish.jaxb.defaultNamespaceRemap";
     }
     
     private static Boolean testJAXBProperty(String propName) {

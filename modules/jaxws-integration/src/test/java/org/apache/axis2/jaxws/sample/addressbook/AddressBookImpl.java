@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.addressbook;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.apache.axis2.jaxws.sample.addressbook.data.AddressBookEntry;

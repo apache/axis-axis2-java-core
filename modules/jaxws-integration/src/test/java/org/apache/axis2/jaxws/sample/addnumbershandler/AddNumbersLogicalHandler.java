@@ -19,12 +19,12 @@
 
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
 public class AddNumbersLogicalHandler 
-implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
+implements jakarta.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
     
     HandlerTracker tracker = new HandlerTracker(AddNumbersLogicalHandler.class.getSimpleName());
     

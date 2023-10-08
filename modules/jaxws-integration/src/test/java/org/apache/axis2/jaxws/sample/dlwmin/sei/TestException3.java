@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.dlwmin.sei;
 
 import org.apache.axis2.jaxws.sample.dlwmin.types.ProcessFault3;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Checked Exception with a WebFault that locates an existing JAXB Bean

@@ -21,11 +21,11 @@ package org.apache.axis2.jaxws.security.server;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.http.HTTPBinding;
 
 @WebServiceProvider(serviceName="BasicAuthSecurityService",portName="SimpleProviderServiceSOAP11port0")
 @BindingType(SOAPBinding.SOAP11HTTP_BINDING)

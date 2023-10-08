@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxws.handler.header;
 
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 
 @WebService(serviceName="DemoService",
 		targetNamespace="http:demo/",

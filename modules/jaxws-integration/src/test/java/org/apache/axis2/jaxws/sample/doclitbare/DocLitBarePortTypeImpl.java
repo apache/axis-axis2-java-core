@@ -27,12 +27,12 @@ import org.apache.axis2.jaxws.sample.doclitbare.sei.FaultBeanWithWrapper;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.SimpleFault;
 import org.test.sample.doclitbare.Composite;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebParam.Mode;
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebParam.Mode;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 
 @WebService(serviceName="BareDocLitService",
 			endpointInterface="org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType")

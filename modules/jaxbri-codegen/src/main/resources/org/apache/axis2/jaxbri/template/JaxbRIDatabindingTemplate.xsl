@@ -34,12 +34,12 @@
 
         <xsl:variable name="firstType"><xsl:value-of select="param[1]/@type"/></xsl:variable>
         
-        private static final javax.xml.bind.JAXBContext wsContext;
+        private static final jakarta.xml.bind.JAXBContext wsContext;
         static {
-            javax.xml.bind.JAXBContext jc;
+            jakarta.xml.bind.JAXBContext jc;
             jc = null;
             try {
-				jc = javax.xml.bind.JAXBContext.newInstance(
+				jc = jakarta.xml.bind.JAXBContext.newInstance(
             <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
                 <xsl:if test="@type!=''">
                         <xsl:value-of select="@type"/>.class<xsl:if test="position() != last()">,
@@ -48,7 +48,7 @@
             </xsl:for-each>
 				);
             }
-            catch ( javax.xml.bind.JAXBException ex ) {
+            catch ( jakarta.xml.bind.JAXBException ex ) {
                 System.err.println("Unable to create JAXBContext: " + ex.getMessage());
                 ex.printStackTrace(System.err);
                 Runtime.getRuntime().exit(-1);
@@ -73,7 +73,7 @@
                     org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     java.lang.Object object = param; <!-- This is necessary to convert primitive types to their corresponding wrapper types (so that we can call getClass()) -->
                     envelope.getBody().addChild(factory.createOMElement(new org.apache.axiom.om.ds.jaxb.JAXBOMDataSource(wsContext,
-                            new javax.xml.bind.JAXBElement(elementQName, object.getClass(), object))));
+                            new jakarta.xml.bind.JAXBElement(elementQName, object.getClass(), object))));
                     return envelope;
                 }
 
@@ -83,12 +83,12 @@
                         private byte toByte (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Byte ret = (java.lang.Integer)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), byte.class).getValue();
                                 return ret.byteValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -97,12 +97,12 @@
                         private char toChar (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Character ret = (java.lang.Character)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), char.class).getValue();
                                 return ret.charValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -111,12 +111,12 @@
                         private double toDouble (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Double ret = (java.lang.Double)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), double.class).getValue();
                                 return ret.doubleValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -125,12 +125,12 @@
                         private float toFloat (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Float ret = (java.lang.Float)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), float.class).getValue();
                                 return ret.floatValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -139,12 +139,12 @@
                         private int toInt (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Integer ret = (java.lang.Integer)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), int.class).getValue();
                                 return ret.intValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -153,12 +153,12 @@
                         private long toLong (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Long ret = (java.lang.Long)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), long.class).getValue();
                                 return ret.longValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -167,12 +167,12 @@
                         private short toShort (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Short ret = (java.lang.Short)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), short.class).getValue();
                                 return ret.shortValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -181,12 +181,12 @@
                         private boolean toBoolean (
                             org.apache.axiom.om.OMElement param) throws org.apache.axis2.AxisFault{
                             try {
-                                javax.xml.bind.JAXBContext context = wsContext;
-                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+                                jakarta.xml.bind.JAXBContext context = wsContext;
+                                jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                                 java.lang.Boolean ret = (java.lang.Boolean)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), boolean.class).getValue();
                                 return ret.booleanValue();
-                            } catch (javax.xml.bind.JAXBException bex){
+                            } catch (jakarta.xml.bind.JAXBException bex){
                                 throw org.apache.axis2.AxisFault.makeFault(bex);
                             }
                         }
@@ -207,7 +207,7 @@
             java.lang.Class type) throws org.apache.axis2.AxisFault{
             try {
                 return org.apache.axiom.om.util.jaxb.JAXBUtils.unmarshal(param, wsContext, null, type, false).getValue();
-            } catch (javax.xml.bind.JAXBException bex){
+            } catch (jakarta.xml.bind.JAXBException bex){
                 throw org.apache.axis2.AxisFault.makeFault(bex);
             }
         }

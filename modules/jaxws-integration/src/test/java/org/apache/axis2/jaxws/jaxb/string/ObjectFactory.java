@@ -5,7 +5,7 @@
 
 package org.apache.axis2.jaxws.jaxb.string;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

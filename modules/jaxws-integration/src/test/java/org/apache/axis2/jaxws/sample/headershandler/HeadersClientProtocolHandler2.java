@@ -25,16 +25,16 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.Constants;
 
 public class HeadersClientProtocolHandler2 implements
-        javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+        jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
 	private HandlerTracker tracker = new HandlerTracker(HeadersClientProtocolHandler2.class.getSimpleName());
 	private TestHeaders headerUtil = new TestHeaders(this.getClass());

@@ -234,7 +234,7 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     }
     
     /**
-     * COPIED FROM javax.xml.ws.spi.FactoryFinder
+     * COPIED FROM jakarta.xml.ws.spi.FactoryFinder
      * 
      * Figure out which ClassLoader to use.  For JDK 1.2 and later use
      * the context ClassLoader.

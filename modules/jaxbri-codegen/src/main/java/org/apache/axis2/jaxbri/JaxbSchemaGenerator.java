@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxbri;
 
-import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
-import com.sun.xml.bind.v2.runtime.JaxBeanInfo;
+import org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl;
+import org.glassfish.jaxb.runtime.v2.runtime.JaxBeanInfo;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.util.Loader;
@@ -37,9 +37,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.SchemaOutputResolver;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.SchemaOutputResolver;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.dom.DOMResult;
@@ -190,7 +190,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             classTypeName = "base64Binary";
             isArrayType = false;
         }
-        if ("javax.activation.DataHandler".equals(classTypeName)) {
+        if ("jakarta.activation.DataHandler".equals(classTypeName)) {
             classTypeName = "base64Binary";
         }
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
@@ -238,7 +238,8 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
 
         Map<String, Object> map = new HashMap<String, Object>();
         if (defaultNs != null) {
-            map.put("com.sun.xml.bind.defaultNamespaceRemap", defaultNs);
+            map.put("org.glassfish.jaxb.defaultNamespaceRemap", defaultNs);
+            // map.put("com.sun.xml.bind.defaultNamespaceRemap", defaultNs);
         }
 
         for (Class<?> cls : classes) {

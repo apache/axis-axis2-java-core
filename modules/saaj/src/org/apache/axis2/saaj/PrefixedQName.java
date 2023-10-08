@@ -20,7 +20,7 @@
 package org.apache.axis2.saaj;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
+import jakarta.xml.soap.Name;
 
 /**
  * Class Prefixed QName

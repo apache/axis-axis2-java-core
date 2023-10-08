@@ -29,10 +29,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceContext;
 
 public class MessageContextTests {
     @ClassRule
@@ -44,35 +44,35 @@ public class MessageContextTests {
     public void testWSCtxt_WSDL_SERVICE_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "{" + wsc.targetNamespace() + "}" + wsc.name();
-        runTest(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, type_expected, value_expected, false);
+        runTest(jakarta.xml.ws.handler.MessageContext.WSDL_SERVICE, type_expected, value_expected, false);
     }
 
     @Test
     public void testWSCtxt_WSDL_PORT_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "{" + wsc.targetNamespace() + "}MessageContextPort";
-        runTest(javax.xml.ws.handler.MessageContext.WSDL_PORT, type_expected, value_expected, false);
+        runTest(jakarta.xml.ws.handler.MessageContext.WSDL_PORT, type_expected, value_expected, false);
     }
 
     @Test
     public void testWSCtxt_WSDL_OPERATION_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "isPropertyPresent";
-        runTest(javax.xml.ws.handler.MessageContext.WSDL_OPERATION, type_expected, value_expected, false);
+        runTest(jakarta.xml.ws.handler.MessageContext.WSDL_OPERATION, type_expected, value_expected, false);
     }
 
     @Test
     public void testWSCtxt_WSDL_INTERFACE_read() throws Exception {
         String type_expected = QName.class.getName();
         String value_expected = "{" + wsc.targetNamespace() + "}MessageContext";
-        runTest(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, type_expected, value_expected, false);
+        runTest(jakarta.xml.ws.handler.MessageContext.WSDL_INTERFACE, type_expected, value_expected, false);
     }
 
     @Test
     public void testWSCtxt_WSDL_DESCRIPTION_read() throws Exception {
         String type_expected = java.net.URI.class.getName();
         String value_expected = "META-INF/MessageContext.wsdl";
-        runTest(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, type_expected, value_expected, false);
+        runTest(jakarta.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, type_expected, value_expected, false);
     }
 
     private void runTest(String propName, String exType, String exValue, boolean isValueFullySpecified) throws Exception {

@@ -23,7 +23,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.PortInfo;
 
 public class PortInfoImpl implements PortInfo {
     private QName serviceName = null;

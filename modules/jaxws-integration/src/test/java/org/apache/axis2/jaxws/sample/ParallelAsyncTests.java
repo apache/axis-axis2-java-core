@@ -29,8 +29,8 @@ import org.junit.Test;
 import org.test.parallelasync.CustomAsyncResponse;
 import org.test.parallelasync.SleepResponse;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Response;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Response;
 
 import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.apache.axis2.jaxws.framework.TestUtils.withRetry;

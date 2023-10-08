@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.sample.addnumbers;
 
 import org.test.addnumbers.AddNumbersFault;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 
 /**

@@ -19,10 +19,10 @@
 
 package org.apache.axis2.jaxws.xmlhttp.provider.payload.string;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.http.HTTPBinding;
 
 /**
  * Sample XML/HTTP String Provider 

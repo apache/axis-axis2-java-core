@@ -35,7 +35,7 @@ import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.Response;
+import jakarta.xml.ws.Response;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 /**
  * The AsyncResponse class is used to collect the response information from Axis2 and deliver it to
- * a JAX-WS client.  AsyncResponse implements the <link>javax.xml.ws.Response</link> API that is
+ * a JAX-WS client.  AsyncResponse implements the <link>jakarta.xml.ws.Response</link> API that is
  * defined in the JAX-WS 2.0 specification.  The <code>Response</code> object will contain both the
  * object that is returned as the response along with a <link>java.util.Map</link> with the context
  * information of the response.
@@ -257,7 +257,7 @@ public abstract class AsyncResponse implements Response {
     }
 
     //-------------------------------------
-    // javax.xml.ws.Response APIs
+    // jakarta.xml.ws.Response APIs
     //-------------------------------------
 
     public boolean cancel(boolean mayInterruptIfRunning) {

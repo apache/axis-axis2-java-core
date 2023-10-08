@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.message.databinding;
 
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 
 import org.apache.axis2.jaxws.message.Block;
 

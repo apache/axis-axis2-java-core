@@ -20,7 +20,7 @@ package org.apache.axis2.jaxws.utility;
 
 import junit.framework.TestCase;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import java.beans.BeanInfo;
 import java.beans.Introspector;

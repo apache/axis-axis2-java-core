@@ -56,11 +56,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Response;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.Service.Mode;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.Service.Mode;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -227,7 +227,7 @@ public class AxisInvocationController extends InvocationControllerImpl {
 
     /*
     *  (non-Javadoc)
-    * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext, javax.xml.ws.AsyncHandler)
+    * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext, jakarta.xml.ws.AsyncHandler)
     */
     public Future<?> doInvokeAsync(MessageContext request, AsyncHandler callback) {
         // We need the qname of the operation being invoked to know which 

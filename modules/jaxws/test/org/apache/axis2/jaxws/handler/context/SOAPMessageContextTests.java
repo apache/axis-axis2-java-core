@@ -34,8 +34,8 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import test.EchoString;
 import test.ObjectFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.soap.SOAPMessage;
 
 public class SOAPMessageContextTests extends TestCase {
 

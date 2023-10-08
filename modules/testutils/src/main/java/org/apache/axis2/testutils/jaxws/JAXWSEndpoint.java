@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.testutils.jaxws;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

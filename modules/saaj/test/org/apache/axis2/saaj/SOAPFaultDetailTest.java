@@ -21,12 +21,12 @@ package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
 
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +61,7 @@ public class SOAPFaultDetailTest extends Assert {
         //smsg.writeTo(System.out);
         SOAPFault fault = body.getFault();
         fault.addDetail();
-        javax.xml.soap.Detail d = fault.getDetail();
+        jakarta.xml.soap.Detail d = fault.getDetail();
         Iterator i = d.getDetailEntries();
         while (i.hasNext()) {
             DetailEntry entry = (DetailEntry)i.next();

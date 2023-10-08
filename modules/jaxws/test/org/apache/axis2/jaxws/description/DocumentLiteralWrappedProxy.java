@@ -25,17 +25,17 @@ import org.test.proxy.doclitwrapped.FinancialOperation;
 import org.test.proxy.doclitwrapped.ReturnType;
 import org.test.proxy.doclitwrapped.TwoWayHolder;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.Response;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.Oneway;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebParam.Mode;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.ResponseWrapper;
 import java.util.concurrent.Future;
 
 /**
@@ -72,7 +72,7 @@ public interface DocumentLiteralWrappedProxy {
      * @param twoWayHolderInt
      * @param twoWayHolderStr
      * @return
-     *     returns javax.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.TwoWayHolder>
+     *     returns jakarta.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.TwoWayHolder>
      */
     @WebMethod(operationName = "twoWayHolder", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
     @RequestWrapper(localName = "twoWayHolder", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
@@ -120,7 +120,7 @@ public interface DocumentLiteralWrappedProxy {
      * 
      * @param twowayStr
      * @return
-     *     returns javax.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.ReturnType>
+     *     returns jakarta.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.ReturnType>
      */
     @WebMethod(operationName = "twoWay", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
     @RequestWrapper(localName = "twoWay", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWay")
@@ -164,7 +164,7 @@ public interface DocumentLiteralWrappedProxy {
      * 
      * @param invokeStr
      * @return
-     *     returns javax.xml.ws.Response<org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ReturnType>
+     *     returns jakarta.xml.ws.Response<org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ReturnType>
      */
     @WebMethod(operationName = "invoke", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
     @RequestWrapper(localName = "invoke", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.Invoke")
@@ -207,7 +207,7 @@ public interface DocumentLiteralWrappedProxy {
      * 
      * @param op
      * @return
-     *     returns javax.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.FinOpResponse>
+     *     returns jakarta.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.FinOpResponse>
      */
     @WebMethod(operationName = "finOp", action = "http://org.apache.axis2.proxy.doclitwrapped/finOp")
     @RequestWrapper(localName = "finOp", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.FinOp")

@@ -40,8 +40,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

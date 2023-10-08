@@ -26,16 +26,16 @@ import org.apache.axiom.soap.SOAPVersion;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
 
 /**
  *
  */
-public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements javax.xml.soap.SOAPEnvelope {
+public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements jakarta.xml.soap.SOAPEnvelope {
 
     private SOAPPartImpl soapPart;
 
@@ -54,11 +54,19 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      * @param uri       a <CODE>String</CODE> giving the URI of the namespace
      * @return a <CODE>Name</CODE> object initialized with the given local name, namespace prefix,
      *         and namespace URI
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error
+     * @throws jakarta.xml.soap.SOAPException if there is a SOAP error
      */
     public Name createName(String localName, String prefix, String uri) throws SOAPException {
         try {
             return new PrefixedQName(uri, localName, prefix);
+        } catch (Exception e) {
+            throw new SOAPException(e);
+        }
+    }
+
+    public Name createName(String localName, String prefix) throws SOAPException {
+        try {
+            return null;
         } catch (Exception e) {
             throw new SOAPException(e);
         }
@@ -71,7 +79,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      *
      * @param localName a <CODE>String</CODE> giving the local name
      * @return a <CODE>Name</CODE> object initialized with the given local name
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error
+     * @throws jakarta.xml.soap.SOAPException if there is a SOAP error
      */
     public Name createName(String localName) throws SOAPException {
         try {
@@ -90,7 +98,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      * unless the header has been removed and a new one has not been added.
      *
      * @return the <CODE>SOAPHeader</CODE> object or <CODE> null</CODE> if there is none
-     * @throws javax.xml.soap.SOAPException if there is a problem obtaining the <CODE>SOAPHeader</CODE>
+     * @throws jakarta.xml.soap.SOAPException if there is a problem obtaining the <CODE>SOAPHeader</CODE>
      *                                      object
      */
     public SOAPHeader getHeader() throws SOAPException {
@@ -108,7 +116,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      *
      * @return the <CODE>SOAPBody</CODE> object for this <CODE> SOAPEnvelope</CODE> object or
      *         <CODE>null</CODE> if there is none
-     * @throws javax.xml.soap.SOAPException if there is a problem obtaining the <CODE>SOAPBody</CODE>
+     * @throws jakarta.xml.soap.SOAPException if there is a problem obtaining the <CODE>SOAPBody</CODE>
      *                                      object
      */
     public SOAPBody getBody() throws SOAPException {
@@ -123,7 +131,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      * method should be called only after the existing header has been removed.
      *
      * @return the new <CODE>SOAPHeader</CODE> object
-     * @throws javax.xml.soap.SOAPException if this <CODE> SOAPEnvelope</CODE> object already
+     * @throws jakarta.xml.soap.SOAPException if this <CODE> SOAPEnvelope</CODE> object already
      *                                      contains a valid <CODE>SOAPHeader</CODE> object
      */
     public SOAPHeader addHeader() throws SOAPException {
@@ -146,7 +154,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl<SOAPEnvelope> implements j
      * method should be called only after the existing body has been removed.
      *
      * @return the new <CODE>SOAPBody</CODE> object
-     * @throws javax.xml.soap.SOAPException if this <CODE> SOAPEnvelope</CODE> object already
+     * @throws jakarta.xml.soap.SOAPException if this <CODE> SOAPEnvelope</CODE> object already
      *                                      contains a valid <CODE>SOAPBody</CODE> object
      */
     public SOAPBody addBody() throws SOAPException {

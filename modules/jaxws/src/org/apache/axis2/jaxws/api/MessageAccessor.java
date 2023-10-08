@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  * Value of the {@link org.apache.axis2.jaxws.Constants#JAXWS_MESSAGE_ACCESSOR} property.
  * Allows a user to gain access to certain Message information
  * that are not exposed by the Message on the
- * javax.xml.ws.handler.MessageContext
+ * jakarta.xml.ws.handler.MessageContext
  * 
  * The MessageAccessor is created with MessageAccessorFactory.
  * This allows embedding software to extend the MessageAccessor

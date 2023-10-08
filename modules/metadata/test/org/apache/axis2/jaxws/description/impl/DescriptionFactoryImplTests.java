@@ -35,7 +35,7 @@ import org.apache.axis2.jaxws.description.validator.EndpointDescriptionValidator
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.InputStream;
@@ -262,7 +262,7 @@ public class DescriptionFactoryImplTests extends TestCase {
         field.set(null, null);
     }
     
-    private static class ServiceSubclass extends javax.xml.ws.Service {
+    private static class ServiceSubclass extends jakarta.xml.ws.Service {
 
         protected ServiceSubclass(URL wsdlDocumentLocation, QName serviceName) {
             super(wsdlDocumentLocation, serviceName);

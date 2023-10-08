@@ -25,7 +25,7 @@ import org.apache.axiom.util.activation.DataHandlerUtils;
 import org.apache.axis2.schema.AbstractTestCase;
 import org.w3.www._2005._05.xmlmime.*;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 public class Base64BinaryTest extends AbstractTestCase {
 

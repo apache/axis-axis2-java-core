@@ -25,7 +25,7 @@ import org.apache.axis2.jaxws.description.DescriptionTestUtils;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceClient;
 import java.net.URL;
 
 /**
@@ -99,7 +99,7 @@ public class SparseAnnotTests extends TestCase {
 }
 
 @WebServiceClient(targetNamespace="originalTNS", wsdlLocation="originalWsdlLocation")
-class SparseAnnotServiceSubclass extends javax.xml.ws.Service {
+class SparseAnnotServiceSubclass extends jakarta.xml.ws.Service {
 
     protected SparseAnnotServiceSubclass(URL wsdlDocumentLocation, QName serviceName) {
         super(wsdlDocumentLocation, serviceName);

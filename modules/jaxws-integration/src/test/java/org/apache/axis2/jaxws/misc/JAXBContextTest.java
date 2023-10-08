@@ -25,8 +25,8 @@ package org.apache.axis2.jaxws.misc;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.junit.Test;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 
 import static org.junit.Assert.assertTrue;
 

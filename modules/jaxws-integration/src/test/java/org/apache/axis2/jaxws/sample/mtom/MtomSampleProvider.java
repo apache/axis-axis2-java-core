@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.mtom;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.xml.ws.Provider;
+import jakarta.xml.ws.Provider;
 
 public class MtomSampleProvider implements Provider<String> {
 

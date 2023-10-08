@@ -23,7 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Random;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.attachments.Attachments;

@@ -21,7 +21,7 @@ package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axis2.context.MessageContext;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 public interface AttachmentContext {
     MessageContext getMessageContext();

@@ -22,9 +22,9 @@ package org.apache.axis2.saaj;
 import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
 import java.util.Iterator;
 
 /**

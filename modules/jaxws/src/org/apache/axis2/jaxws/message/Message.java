@@ -22,9 +22,9 @@ package org.apache.axis2.jaxws.message;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
-import javax.activation.DataHandler;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.WebServiceException;
+import jakarta.activation.DataHandler;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import java.util.Map;
 

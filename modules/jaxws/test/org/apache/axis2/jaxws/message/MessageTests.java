@@ -44,14 +44,14 @@ import org.apache.axis2.jaxws.unitTest.TestLogger;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -481,7 +481,7 @@ public class MessageTests extends TestCase {
 
     public void testStringInflow2_soap12() throws Exception {
         // Only run test if an SAAJ 1.3 MessageFactory is available
-        javax.xml.soap.MessageFactory mf = null;
+        jakarta.xml.soap.MessageFactory mf = null;
         try {
             mf = getSAAJConverter().createMessageFactory(soap12env);
         } catch (Exception e) {
@@ -555,7 +555,7 @@ public class MessageTests extends TestCase {
 
     public void testStringInflow3_soap12() throws Exception {
         // Only run test if an SAAJ 1.3 MessageFactory is available
-        javax.xml.soap.MessageFactory mf = null;
+        jakarta.xml.soap.MessageFactory mf = null;
         try {
             mf = getSAAJConverter().createMessageFactory(soap12env);
         } catch (Exception e) {
@@ -754,7 +754,7 @@ public class MessageTests extends TestCase {
         Class[] classes = new Class[] {W3CEndpointReference.class};
         //JAXBContext jaxbContext = JAXBContext.newInstance(classes);
         //JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
-        JAXBBlockContext context = new JAXBBlockContext("javax.xml.ws.wsaddressing");
+        JAXBBlockContext context = new JAXBBlockContext("jakarta.xml.ws.wsaddressing");
         
         TestLogger.logger.debug("JAXBContext= " + context);
         

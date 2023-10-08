@@ -24,7 +24,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.imageio.ImageIO;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -32,7 +32,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -148,7 +148,7 @@ public class ConvertUtils {
         // then we're good.
         // REVIEW Do we want to support this
         /*
-        if (dest.getName().equals("javax.activation.DataHandler")) {
+        if (dest.getName().equals("jakarta.activation.DataHandler")) {
             String name = src.getName();
             if (src == String.class
                     || src == java.awt.Image.class

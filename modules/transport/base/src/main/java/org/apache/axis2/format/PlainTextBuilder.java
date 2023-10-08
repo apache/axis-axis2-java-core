@@ -24,7 +24,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAbstractFactory;

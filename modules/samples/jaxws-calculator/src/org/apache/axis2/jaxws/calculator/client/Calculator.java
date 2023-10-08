@@ -18,14 +18,14 @@
 */
 package org.apache.axis2.jaxws.calculator.client;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.ResponseWrapper;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 
 @WebService(name = "Calculator", targetNamespace = "http://calculator.jaxws.axis2.apache.org")
@@ -36,7 +36,7 @@ public interface Calculator {
 
 
     /**
-     * @return returns javax.xml.ws.wsaddressing.W3CEndpointReference
+     * @return returns jakarta.xml.ws.wsaddressing.W3CEndpointReference
      */
     @WebMethod
     @WebResult(targetNamespace = "http://calculator.jaxws.axis2.apache.org")

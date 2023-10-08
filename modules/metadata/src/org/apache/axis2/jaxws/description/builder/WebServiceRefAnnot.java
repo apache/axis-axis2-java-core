@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
+public class WebServiceRefAnnot implements jakarta.xml.ws.WebServiceRef {
 
     private String name = "";
     private String wsdlLocation = "";

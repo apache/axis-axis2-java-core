@@ -20,9 +20,9 @@ package org.apache.axis2.jaxws.handler;
 
 import java.util.Set;
 
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.MessageContext.Scope;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext.Scope;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 /*
  * You can't actually specify whether a handler is for client or server,
@@ -30,7 +30,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
  * sure what direction we're going.
  */
 
-public class RoleBasedMustUnderstandHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+public class RoleBasedMustUnderstandHandler implements jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
     public void close(MessageContext messagecontext) {
     }

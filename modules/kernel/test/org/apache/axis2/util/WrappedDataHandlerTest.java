@@ -20,7 +20,7 @@
 package org.apache.axis2.util;
 
 import java.net.URL;
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import junit.framework.TestCase;
 
 /**

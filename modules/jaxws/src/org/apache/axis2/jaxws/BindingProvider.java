@@ -41,13 +41,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Binding;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.soap.AddressingFeature.Responses;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.Binding;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.soap.AddressingFeature.Responses;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -314,9 +314,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
         if (properties != null
             && properties
-                         .containsKey(javax.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY)) {
+                         .containsKey(jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY)) {
             bValue = (Boolean) properties
-                .get(javax.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY);
+                .get(jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY);
         }
         if (mc.isMaintainSession() || bValue == true) {
             setupSessionContext(properties);
@@ -384,7 +384,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
     /*
      *  (non-Javadoc)
-     * @see javax.xml.ws.BindingProvider#getEndpointReference()
+     * @see jakarta.xml.ws.BindingProvider#getEndpointReference()
      */
     public EndpointReference getEndpointReference() {
         return getEndpointReference(W3CEndpointReference.class);
@@ -392,7 +392,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
     /*
      *  (non-Javadoc)
-     * @see javax.xml.ws.BindingProvider#getEndpointReference(java.lang.Class)
+     * @see jakarta.xml.ws.BindingProvider#getEndpointReference(java.lang.Class)
      */
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz) {
         EndpointReference jaxwsEPR = null;

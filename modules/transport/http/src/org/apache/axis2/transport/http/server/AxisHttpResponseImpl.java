@@ -95,6 +95,11 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
         
         this.response.setEntity(entity);
         
+	// AXIS2-6051, the move from javax to jakarta
+	// broke HTTPClient by sending Content-Length,
+	// resulting in:
+	// ProtocolException: Content-Length header already present
+	this.response.removeHeaders("Content-Length");
         this.httpproc.process(this.response, this.context);
         this.conn.sendResponse(this.response);
     }

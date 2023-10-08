@@ -21,11 +21,11 @@ package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 import java.util.concurrent.Future;
 
 /**
@@ -37,7 +37,7 @@ public class GetSyncOperationTests extends TestCase {
         ServiceDescription sDesc = 
             DescriptionFactory.createServiceDescription(null, 
                                                         new QName("org.apache.axis2.jaxws.description", "syncOperationTestService2"), 
-                                                        javax.xml.ws.Service.class);
+                                                        jakarta.xml.ws.Service.class);
         EndpointDescription eDesc = 
             DescriptionFactory.updateEndpoint(sDesc, 
                                               AsyncOnlySEI.class, 
@@ -65,7 +65,7 @@ public class GetSyncOperationTests extends TestCase {
         ServiceDescription sDesc = 
             DescriptionFactory.createServiceDescription(null, 
                                                         new QName("org.apache.axis2.jaxws.description", "syncOperationTestService1"), 
-                                                        javax.xml.ws.Service.class);
+                                                        jakarta.xml.ws.Service.class);
         EndpointDescription eDesc = 
             DescriptionFactory.updateEndpoint(sDesc, 
                                               SyncAndAsyncSEI.class, 
@@ -98,7 +98,7 @@ public class GetSyncOperationTests extends TestCase {
         ServiceDescription sDesc = 
             DescriptionFactory.createServiceDescription(null, 
                                                         new QName("org.apache.axis2.jaxws.description", "syncOperationTestService3"), 
-                                                        javax.xml.ws.Service.class);
+                                                        jakarta.xml.ws.Service.class);
         EndpointDescription eDesc = 
             DescriptionFactory.updateEndpoint(sDesc, 
                                               SyncAndAsyncSEIMismatchedCase.class, 

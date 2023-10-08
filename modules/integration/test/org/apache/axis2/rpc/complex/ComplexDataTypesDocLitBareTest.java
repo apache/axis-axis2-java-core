@@ -37,7 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.tempuri.complex.ComplexDataTypesDocLitBareStub;
 import org.tempuri.complex.ComplexDataTypesDocLitBareStub.RetArrayString2DResult;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.math.BigInteger;

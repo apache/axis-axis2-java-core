@@ -32,17 +32,17 @@ import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.spi.ServiceDelegate;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.spi.ServiceDelegate;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-public class Provider extends javax.xml.ws.spi.Provider {
+public class Provider extends jakarta.xml.ws.spi.Provider {
     private static final Log log = LogFactory.getLog(Provider.class);
     
 	private static final Element[] ZERO_LENGTH_ARRAY = new Element[0];

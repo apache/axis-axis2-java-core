@@ -23,7 +23,7 @@
 
 package org.apache.axis2.jaxws.sample.asyncdoclit.server;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 import org.test.asyncdoclit.ThrowExceptionFaultBean;
 
 @WebFault(name = "throwExceptionFaultBean", targetNamespace = "http://org/test/asyncdoclit")

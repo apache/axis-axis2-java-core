@@ -33,15 +33,15 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.LogicalMessage;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.LogicalMessage;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.handler.MessageContext;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
 public class HeadersServerLogicalHandler implements
-        javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
+        jakarta.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
 	private HandlerTracker tracker = new HandlerTracker(HeadersServerLogicalHandler.class.getSimpleName());
 	private TestHeaders headerUtil = new TestHeaders(this.getClass());

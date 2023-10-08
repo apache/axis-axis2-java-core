@@ -27,10 +27,10 @@ import org.test.parallelasync.InvokeAsyncResponse;
 import org.test.parallelasync.PingResponse;
 import org.test.parallelasync.SleepResponse;
 
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Response;
 import java.util.Hashtable;
 import java.util.concurrent.Future;
 

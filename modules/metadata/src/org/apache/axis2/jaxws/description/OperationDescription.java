@@ -112,8 +112,8 @@ public interface OperationDescription {
 
     /**
      * Answer if this operation corresponds to the JAX-WS Client-only async methods.  These methods
-     * are of the form: javax.xml.ws.Response<T> method(...) java.util.concurrent.Future<?>
-     * method(..., javax.xml.ws.AsyncHandler<T>)
+     * are of the form: jakarta.xml.ws.Response<T> method(...) java.util.concurrent.Future<?>
+     * method(..., jakarta.xml.ws.AsyncHandler<T>)
      *
      * @return
      */
@@ -191,11 +191,11 @@ public interface OperationDescription {
 
     public String[] getParamNames();
 
-    public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
+    public jakarta.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
 
-    public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();
+    public jakarta.jws.soap.SOAPBinding.Style getSoapBindingStyle();
 
-    public javax.jws.soap.SOAPBinding.Use getSoapBindingUse();
+    public jakarta.jws.soap.SOAPBinding.Use getSoapBindingUse();
 
     public OperationRuntimeDescription getOperationRuntimeDesc(String name);
 

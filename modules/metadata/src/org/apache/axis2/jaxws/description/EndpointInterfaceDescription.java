@@ -83,8 +83,8 @@ public interface EndpointInterfaceDescription {
      * carry an @WebMethod(exclude=true) annotation.
      * 
      * JAX-WS client-side async methods which have signatures of the following forms are 
-     * filtered out of this list: javax.xml.ws.Response<T>
-     * method(...) java.util.concurrent.Future<?> method(..., javax.xml.ws.AsyncHandler<T>)
+     * filtered out of this list: jakarta.xml.ws.Response<T>
+     * method(...) java.util.concurrent.Future<?> method(..., jakarta.xml.ws.AsyncHandler<T>)
      * <p/>
      * These methods are filtered because a common use case is to use the same SEI on both the
      * client and service implementation side, generating both the client and service implemntation
@@ -108,10 +108,10 @@ public interface EndpointInterfaceDescription {
 
     public abstract QName getPortType();
 
-    public abstract javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
+    public abstract jakarta.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
 
-    public abstract javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();
+    public abstract jakarta.jws.soap.SOAPBinding.Style getSoapBindingStyle();
 
-    public abstract javax.jws.soap.SOAPBinding.Use getSoapBindingUse();
+    public abstract jakarta.jws.soap.SOAPBinding.Use getSoapBindingUse();
 
 }

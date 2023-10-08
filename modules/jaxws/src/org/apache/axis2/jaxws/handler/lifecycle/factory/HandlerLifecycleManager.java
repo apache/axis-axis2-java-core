@@ -23,7 +23,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.Handler;
 
 /*
  * HandlerLifecycleManager is responsible to invoke lifycycle methods on Handler.

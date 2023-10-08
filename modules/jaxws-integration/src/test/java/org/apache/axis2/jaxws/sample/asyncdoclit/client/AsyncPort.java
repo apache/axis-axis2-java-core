@@ -25,15 +25,15 @@ package org.apache.axis2.jaxws.sample.asyncdoclit.client;
 
 import java.util.concurrent.Future;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.Response;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.ResponseWrapper;
 
 import org.test.asyncdoclit.AnotherResponse;
 import org.test.asyncdoclit.CustomAsyncResponse;
@@ -51,7 +51,7 @@ public interface AsyncPort {
      * 
      * @param message
      * @return
-     *     returns javax.xml.ws.Response<org.test.asyncdoclit.PingResponse>
+     *     returns jakarta.xml.ws.Response<org.test.asyncdoclit.PingResponse>
      */
     @WebMethod(operationName = "ping", action = "ping")
     @RequestWrapper(localName = "ping", targetNamespace = "http://org/test/asyncdoclit", className = "org.test.asyncdoclit.Ping")
@@ -94,7 +94,7 @@ public interface AsyncPort {
      * 
      * @param message
      * @return
-     *     returns javax.xml.ws.Response<org.test.asyncdoclit.SleepResponse>
+     *     returns jakarta.xml.ws.Response<org.test.asyncdoclit.SleepResponse>
      */
     @WebMethod(operationName = "sleep", action = "sleep")
     @RequestWrapper(localName = "sleep", targetNamespace = "http://org/test/asyncdoclit", className = "org.test.asyncdoclit.Sleep")
@@ -156,7 +156,7 @@ public interface AsyncPort {
      * 
      * @param request
      * @return
-     *     returns javax.xml.ws.Response<org.test.asyncdoclit.InvokeAsyncResponse>
+     *     returns jakarta.xml.ws.Response<org.test.asyncdoclit.InvokeAsyncResponse>
      */
     @WebMethod(operationName = "invokeAsync", action = "invokeAsync")
     @RequestWrapper(localName = "invokeAsync", targetNamespace = "http://org/test/asyncdoclit", className = "org.test.asyncdoclit.InvokeAsync")
@@ -199,7 +199,7 @@ public interface AsyncPort {
      * 
      * @param request
      * @return
-     *     returns javax.xml.ws.Response<org.test.asyncdoclit.CustomAsyncResponse>
+     *     returns jakarta.xml.ws.Response<org.test.asyncdoclit.CustomAsyncResponse>
      */
     @WebMethod(operationName = "customAsync", action = "customAsync")
     @RequestWrapper(localName = "customAsync", targetNamespace = "http://org/test/asyncdoclit", className = "org.test.asyncdoclit.CustomAsync")
@@ -242,7 +242,7 @@ public interface AsyncPort {
      * 
      * @param request
      * @return
-     *     returns javax.xml.ws.Response<org.test.asyncdoclit.AnotherResponse>
+     *     returns jakarta.xml.ws.Response<org.test.asyncdoclit.AnotherResponse>
      */
     @WebMethod(operationName = "another", action = "another")
     @RequestWrapper(localName = "another", targetNamespace = "http://org/test/asyncdoclit", className = "org.test.asyncdoclit.Another")
@@ -285,7 +285,7 @@ public interface AsyncPort {
      * 
      * @param exceptionType
      * @return
-     *     returns javax.xml.ws.Response<org.test.asyncdoclit.ThrowExceptionResponse>
+     *     returns jakarta.xml.ws.Response<org.test.asyncdoclit.ThrowExceptionResponse>
      */
     @WebMethod(operationName = "throwException", action = "throwException")
     @RequestWrapper(localName = "throwException", targetNamespace = "http://org/test/asyncdoclit", className = "org.test.asyncdoclit.ThrowException")

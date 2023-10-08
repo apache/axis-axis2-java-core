@@ -20,8 +20,8 @@
 package org.apache.axis2.jaxws.rpclit.enumtype.sei;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebEndpoint;
+import jakarta.xml.ws.WebServiceClient;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,7 +35,7 @@ import java.net.URL;
  */
 @WebServiceClient(name = "RPCLitEnumService", targetNamespace = "http://rpclit.test.org", wsdlLocation = "soapenc.wsdl")
 public class Service
-    extends javax.xml.ws.Service
+    extends jakarta.xml.ws.Service
 {
 
     private final static URL SERVICE_WSDL_LOCATION;

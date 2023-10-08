@@ -31,9 +31,9 @@ import org.apache.axis2.jaxws.description.builder.converter.ConverterUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.WebParam;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebParam;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.ws.Holder;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
@@ -173,7 +173,7 @@ class ParameterDescriptionImpl
         // isHolderType method yet because the class variable it is going to check (parameterHolderActualType)
         // hasn't been initialized yet.
         if (parameterGenericType != null &&
-                parameterGenericType.getRawType() == javax.xml.ws.Holder.class) {
+                parameterGenericType.getRawType() == jakarta.xml.ws.Holder.class) {
             // NOTE
             // If you change this code, please remember to change 
             // OperationDesc.getResultActualType

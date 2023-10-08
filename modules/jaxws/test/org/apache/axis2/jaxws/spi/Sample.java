@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.spi;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace="http://test",
             serviceName="TestService",

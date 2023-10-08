@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.addressing;
 
-import javax.xml.ws.spi.WebServiceFeatureAnnotation;
+import jakarta.xml.ws.spi.WebServiceFeatureAnnotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

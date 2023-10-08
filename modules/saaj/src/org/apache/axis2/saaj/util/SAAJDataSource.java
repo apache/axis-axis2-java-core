@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * 
  */
-public class SAAJDataSource implements javax.activation.DataSource {
+public class SAAJDataSource implements jakarta.activation.DataSource {
 
     /** The content type. This defaults to <code>application/octet-stream</code>. */
     protected String contentType = "application/octet-stream";

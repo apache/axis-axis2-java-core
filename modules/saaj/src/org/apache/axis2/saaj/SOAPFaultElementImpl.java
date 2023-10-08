@@ -21,7 +21,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMElement;
 
-import javax.xml.soap.SOAPFaultElement;
+import jakarta.xml.soap.SOAPFaultElement;
 
 public class SOAPFaultElementImpl<T extends OMElement> extends SOAPElementImpl<T> implements
         SOAPFaultElement {

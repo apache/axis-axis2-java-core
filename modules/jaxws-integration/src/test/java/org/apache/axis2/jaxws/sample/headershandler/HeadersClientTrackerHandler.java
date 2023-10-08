@@ -24,15 +24,15 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.Constants;
 
 public class HeadersClientTrackerHandler implements
-        javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+        jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
     
     public void close(MessageContext messagecontext) {
     }

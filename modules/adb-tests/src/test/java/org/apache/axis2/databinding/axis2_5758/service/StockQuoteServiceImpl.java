@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.databinding.axis2_5758.service;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(endpointInterface="org.apache.axis2.databinding.axis2_5758.service.StockQuotePortType")
 public class StockQuoteServiceImpl implements StockQuotePortType {

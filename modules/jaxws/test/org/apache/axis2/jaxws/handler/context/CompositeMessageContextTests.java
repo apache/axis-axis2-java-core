@@ -32,13 +32,13 @@ import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.ws.LogicalMessage;
-import javax.xml.ws.handler.LogicalMessageContext;
+import jakarta.xml.ws.LogicalMessage;
+import jakarta.xml.ws.handler.LogicalMessageContext;
 import java.io.ByteArrayOutputStream;
 
 /**

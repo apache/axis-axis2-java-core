@@ -21,10 +21,10 @@ package org.apache.axis2.jaxws.sample.dlwmin.sei;
 
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "Greeter")
 

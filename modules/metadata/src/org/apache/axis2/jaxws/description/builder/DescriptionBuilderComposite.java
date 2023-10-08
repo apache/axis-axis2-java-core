@@ -250,7 +250,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return webServiceAnnot = 
             (WebServiceAnnot) getCompositeAnnotation(webServiceAnnot,
                                                      WebServiceAnnot.class,
-                                                     javax.jws.WebService.class);
+                                                     jakarta.jws.WebService.class);
     }
     
     /** @return Returns the classModifiers. */
@@ -287,7 +287,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return handlerChainAnnot = 
             (HandlerChainAnnot) getCompositeAnnotation(handlerChainAnnot,
                                                        HandlerChainAnnot.class,
-                                                       javax.jws.HandlerChain.class);
+                                                       jakarta.jws.HandlerChain.class);
     }
 
     /** @return Returns the serviceModeAnnot. */
@@ -295,7 +295,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return serviceModeAnnot = 
             (ServiceModeAnnot) getCompositeAnnotation(serviceModeAnnot,
                                                       ServiceModeAnnot.class,
-                                                      javax.xml.ws.ServiceMode.class);
+                                                      jakarta.xml.ws.ServiceMode.class);
     }
 
     /** @return Returns the soapBindingAnnot. */
@@ -303,7 +303,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return soapBindingAnnot = 
             (SoapBindingAnnot) getCompositeAnnotation(soapBindingAnnot,
                                                       SoapBindingAnnot.class,
-                                                      javax.jws.soap.SOAPBinding.class);
+                                                      jakarta.jws.soap.SOAPBinding.class);
     }
 
     /** @return Returns the webFaultAnnot. */
@@ -311,7 +311,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return webFaultAnnot = 
             (WebFaultAnnot) getCompositeAnnotation(webFaultAnnot, 
                                                    WebFaultAnnot.class, 
-                                                   javax.xml.ws.WebFault.class);
+                                                   jakarta.xml.ws.WebFault.class);
     }
 
     /** @return Returns the webServiceClientAnnot. */
@@ -319,7 +319,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return webServiceClientAnnot = 
             (WebServiceClientAnnot) getCompositeAnnotation(webServiceClientAnnot, 
                                                            WebServiceClientAnnot.class,
-                                                           javax.xml.ws.WebServiceClient.class);
+                                                           jakarta.xml.ws.WebServiceClient.class);
     }
     
     public WebServiceClientAnnot getWebServiceClientAnnot(Object key) {
@@ -379,7 +379,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return webServiceProviderAnnot = 
             (WebServiceProviderAnnot) getCompositeAnnotation(webServiceProviderAnnot,
                                                              WebServiceProviderAnnot.class, 
-                                                             javax.xml.ws.WebServiceProvider.class);
+                                                             jakarta.xml.ws.WebServiceProvider.class);
     }
 
     /** @return Returns the webServiceRefAnnot list. */
@@ -406,7 +406,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public BindingTypeAnnot getBindingTypeAnnot() {
         return (BindingTypeAnnot) getCompositeAnnotation(bindingTypeAnnot,
                                                          BindingTypeAnnot.class,
-                                                         javax.xml.ws.BindingType.class);
+                                                         jakarta.xml.ws.BindingType.class);
     }
     
     public List<Annotation> getWebServiceFeatures() {

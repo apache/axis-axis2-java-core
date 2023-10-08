@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * This class can be used to create instances of {@link SubmissionEndpointReference}.
  *
- * @see javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder
+ * @see jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder
  */
 public final class SubmissionEndpointReferenceBuilder {
 	private static final Element[] ZERO_LENGTH_ARRAY = new Element[0];

@@ -51,13 +51,13 @@ import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -145,12 +145,12 @@ public class JAXWSProxyHandler extends BindingProvider implements
         }
 
         if (isBindingProviderInvoked(method)) {
-            // Since the JAX-WS proxy instance must also implement the javax.xml.ws.BindingProvider
+            // Since the JAX-WS proxy instance must also implement the jakarta.xml.ws.BindingProvider
             // interface, this object must handle those invocations as well.  In that case, we'll
             // delegate those calls to the BindingProvider object.
             if (debug) {
                 log.debug(
-                        "Invoking a public method on the javax.xml.ws.BindingProvider interface.");
+                        "Invoking a public method on the jakarta.xml.ws.BindingProvider interface.");
             }
             try {
                 return method.invoke(this, args);
@@ -511,14 +511,28 @@ public class JAXWSProxyHandler extends BindingProvider implements
         try {
 
             if (log.isDebugEnabled()) {
-                log.debug("Processing the response Message to create the return value(s).");
+                log.debug("createResponse() is processing the response Message to create the return value(s).");
             }
 
             // Find out if there was a fault on the response and create the appropriate 
             // exception type.
             if (hasFaultResponse(responseContext)) {
+		// AXIS2-6051, when this code previously
+		// received a javax.xml.ws.soap.SOAPFaultException
+		// it would have a <soapenv:Fault> in the stack trace.
+		// That is no longer the case when the Throwable
+		// is jakarta.xml.ws.soap.SOAPFaultException as
+		// it doesn't have the XML part in the stacktrace 
+		// anymore.
                 Throwable t = getFaultResponse(responseContext, operationDesc);
+                if (log.isDebugEnabled()) {
+                    log.debug("hasFaultResponse() returned true, will throw: " + t);
+                }
                 throw t;
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("hasFaultResponse() returned false");
+                }
             }
             
             // Get the classloader that was used for the request processing
@@ -544,8 +558,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
             Object object =
                     MethodMarshallerFactory.getMarshaller(operationDesc, true, cl)
                                        .demarshalResponse(responseMsg, args, operationDesc);
-            if (log.isDebugEnabled()) {
-                log.debug("The response was processed and the return value created successfully.");
+            if (log.isDebugEnabled() && object != null) {
+                log.debug("The response was processed by createResponse and the return value was created successfully on Object: " + object.toString());
             }
             return object;
         } finally {
@@ -578,15 +592,19 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 .demarshalFaultResponse(msg, opDesc);
                 if (log.isDebugEnabled() && object != null) {
                     log.debug("A fault was found and processed.");
-                    log.debug("Throwing a fault of type: " + object.getClass().getName() +
-                    " back to the clent.");
+                    log.debug("Throwing a fault of type: " + object.getClass().getName() + " back to the client.msgCtx.getLocalException() : " + msgCtx.getLocalException() + " . fault to String: " + object.toString());
                 }
                 if (msgCtx.getLocalException() != null) {
                     // If a local exception occured, set it as the initial cause of the 
                     // exception that will be returned
                     ExceptionFactory.setInitialCause((Throwable) object, msgCtx.getLocalException());
                 }
-                return (Throwable)object;
+
+                Throwable t = (Throwable)object;
+                if (log.isDebugEnabled() && object != null) {
+                    log.debug("getFaultResponse() is returning Throwable: " + t);
+                }
+                return t;
             } else if (msgCtx.getLocalException() != null) {
                 // use the factory, it'll throw the right thing:
                 return ExceptionFactory.makeWebServiceException(msgCtx.getLocalException());
@@ -596,10 +614,12 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 msgCtx.freeInputStream();
             }
             catch (Throwable t) {
+                log.error("getFaultResponse() threw error in finally block: " + t);
                 throw ExceptionFactory.makeWebServiceException(t);
             }
         }
 
+        log.error("getFaultResponse() is returning null");
         return null;
     }
 
@@ -621,7 +641,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         Class clazz = method.getDeclaringClass();
         if (clazz.isAssignableFrom(seiClazz) ||
                 clazz.isAssignableFrom(org.apache.axis2.jaxws.spi.BindingProvider.class) ||
-                clazz.isAssignableFrom(javax.xml.ws.BindingProvider.class)) {
+                clazz.isAssignableFrom(jakarta.xml.ws.BindingProvider.class)) {
             return true;
         }
         return false;

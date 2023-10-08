@@ -26,8 +26,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.ws.LogicalMessage;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.LogicalMessage;
+import jakarta.xml.ws.handler.MessageContext;
 import java.io.ByteArrayOutputStream;
 
 /*
@@ -36,7 +36,7 @@ import java.io.ByteArrayOutputStream;
  * sure what direction we're going.
  */
 
-public class AddNumbersClientLogicalHandler3  implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
+public class AddNumbersClientLogicalHandler3  implements jakarta.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
     HandlerTracker tracker = new HandlerTracker(AddNumbersClientLogicalHandler3.class.getSimpleName());
     

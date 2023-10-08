@@ -48,8 +48,8 @@ import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.Binding;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Binding;
+import jakarta.xml.ws.WebServiceException;
 import java.security.PrivilegedAction;
 
 /**

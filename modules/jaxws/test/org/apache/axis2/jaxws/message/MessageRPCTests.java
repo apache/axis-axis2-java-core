@@ -35,8 +35,8 @@ import org.apache.axis2.jaxws.unitTest.TestLogger;
 import org.test.stock1.ObjectFactory;
 import org.test.stock1.StockPrice;
 
-import javax.jws.soap.SOAPBinding.Style;
-import javax.xml.bind.JAXBElement;
+import jakarta.jws.soap.SOAPBinding.Style;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

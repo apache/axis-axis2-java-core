@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebParamAnnot implements javax.jws.WebParam {
+public class WebParamAnnot implements jakarta.jws.WebParam {
 
     private String name;
     private String targetNamespace;

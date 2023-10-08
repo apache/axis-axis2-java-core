@@ -33,10 +33,10 @@ import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 /** JAXBBlockFactoryImpl Creates a JAXBBlock */
 public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockFactory {

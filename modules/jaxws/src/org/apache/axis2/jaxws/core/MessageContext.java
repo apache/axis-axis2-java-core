@@ -31,9 +31,9 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.kernel.TransportUtils;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service.Mode;
+import jakarta.xml.ws.WebServiceException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ import java.util.Map;
 
 /**
  * The <code>org.apache.axis2.jaxws.core.MessageContext</code> is an interface that extends the
- * JAX-WS 2.0 <code>javax.xml.ws.handler.MessageContext</code> defined in the spec.  This
+ * JAX-WS 2.0 <code>jakarta.xml.ws.handler.MessageContext</code> defined in the spec.  This
  * encapsulates all of the functionality needed of the MessageContext for the other JAX-WS spec
  * pieces (the handlers for example) and also provides the needed bits of contextual information for
  * the rest of the JAX-WS implementation.

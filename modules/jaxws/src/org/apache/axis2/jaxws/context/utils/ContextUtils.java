@@ -48,9 +48,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext.Scope;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext.Scope;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -59,7 +59,7 @@ import java.util.List;
 public class ContextUtils {
     private static final Log log = LogFactory.getLog(ContextUtils.class);
     
-    private static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
+    private static final String WEBSERVICE_MESSAGE_CONTEXT = "jakarta.xml.ws.WebServiceContext";
 
     /**
      * Adds the appropriate properties to the MessageContext that the user will see
@@ -87,9 +87,9 @@ public class ContextUtils {
                         log.warn(Messages.getMessage("addPropertiesErr",
                                  wsdlLocation.toString(),description.getServiceQName().toString()));
                     }
-                    setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI, true);
+                    setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI, true);
                 }
-                setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.WSDL_SERVICE, description.getServiceQName(), true);
+                setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.WSDL_SERVICE, description.getServiceQName(), true);
             }
         }
 
@@ -103,7 +103,7 @@ public class ContextUtils {
         }
         List<Element> list = new ReferenceParameterList(header);
         
-        setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.REFERENCE_PARAMETERS, list);
+        setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.REFERENCE_PARAMETERS, list);
         if (log.isDebugEnabled()) {
             log.debug("Added reference parameter list.");
         }
@@ -114,7 +114,7 @@ public class ContextUtils {
             (ServletContext)jaxwsMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT);
         if (servletContext != null) {
             log.debug("Servlet Context Set");
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, servletContext);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.SERVLET_CONTEXT, servletContext);
         } else {
             log.debug("Servlet Context not found");
         }
@@ -126,7 +126,7 @@ public class ContextUtils {
                 log.debug("HTTPServletRequest not found");
             }
         } else {
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, req);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.SERVLET_REQUEST, req);
             if (log.isDebugEnabled()) {
                 log.debug("SERVLET_REQUEST Set");
             }
@@ -137,7 +137,7 @@ public class ContextUtils {
             } catch (Throwable t){
                 log.debug("exception in getPathInfo", t);
             }
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.PATH_INFO, pathInfo);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.PATH_INFO, pathInfo);
             if (log.isDebugEnabled()) {
                 if (pathInfo != null) {
                     log.debug("HTTP_REQUEST_PATHINFO Set");
@@ -146,7 +146,7 @@ public class ContextUtils {
                 }
             }
             String queryString = req.getQueryString();
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.QUERY_STRING, queryString);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.QUERY_STRING, queryString);
             if (log.isDebugEnabled()) {
                 if (queryString != null) {
                     log.debug("HTTP_REQUEST_QUERYSTRING Set");
@@ -155,7 +155,7 @@ public class ContextUtils {
                 }
             }
             String method = req.getMethod();
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD, method);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD, method);
             if (log.isDebugEnabled()) {
                 if (method != null) {
                     log.debug("HTTP_REQUEST_METHOD Set");
@@ -172,7 +172,7 @@ public class ContextUtils {
                 log.debug("Servlet Response not found");
             }
         } else {
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.SERVLET_RESPONSE, res);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.SERVLET_RESPONSE, res);
             if (log.isDebugEnabled()) {
                 log.debug("SERVLET_RESPONSE Set");
             }
@@ -189,7 +189,7 @@ public class ContextUtils {
         OperationDescription op = jaxwsMessageContext.getOperationDescription();
 
         if (op != null && soapMessageContext != null) {
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.WSDL_OPERATION, op.getName(), true);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.WSDL_OPERATION, op.getName(), true);
 
             EndpointInterfaceDescription eid = op.getEndpointInterfaceDescription();
             if (eid != null) {
@@ -202,9 +202,9 @@ public class ContextUtils {
                     }
                 }
                 if (ed != null) {
-                    setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.WSDL_PORT, ed.getPortQName(), true);
+                    setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.WSDL_PORT, ed.getPortQName(), true);
                 }
-                setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, portType, true);
+                setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.WSDL_INTERFACE, portType, true);
             }
         } else {
             if (log.isDebugEnabled()) {
@@ -222,13 +222,13 @@ public class ContextUtils {
         QName op = jaxwsMessageContext.getOperationName();    	
         
         if (op != null && soapMessageContext != null) {
-            setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.WSDL_OPERATION, op, true);
+            setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.WSDL_OPERATION, op, true);
 
             //EndpointInterfaceDescription eid = op.getEndpointInterfaceDescription();
             EndpointDescription ed = jaxwsMessageContext.getEndpointDescription();
             
             if (ed != null) {
-                setProperty(soapMessageContext, javax.xml.ws.handler.MessageContext.WSDL_PORT, ed.getPortQName(), true);
+                setProperty(soapMessageContext, jakarta.xml.ws.handler.MessageContext.WSDL_PORT, ed.getPortQName(), true);
             }
         } else {
             if (log.isDebugEnabled()) {

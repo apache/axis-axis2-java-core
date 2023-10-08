@@ -22,9 +22,9 @@ package org.apache.axis2.jaxws.description.sample.addnumbers;
 import org.apache.axis2.jaxws.unitTest.TestLogger;
 
 import javax.annotation.Resource;
-import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.util.Map;
 
 

@@ -23,8 +23,8 @@ import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

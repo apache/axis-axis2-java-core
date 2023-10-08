@@ -27,7 +27,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.transport.http.mock.server.AbstractHTTPServerTest;
 import org.apache.axis2.transport.http.mock.server.BasicHttpServer;
 
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import static com.google.common.truth.Truth.assertAbout;
 import static org.apache.axiom.truth.xml.XMLTruth.xml;

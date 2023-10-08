@@ -30,17 +30,17 @@ import org.test.polymorphicfaults.DerivedFault2;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 /**
  * This class provides server side implementation for the 
@@ -184,7 +184,7 @@ public class FaultsServiceSoapBindingImpl implements FaultsServicePortType {
         
         // Alternate Approach
         org.apache.axiom.soap.SOAPFactory asf = OMAbstractFactory.getMetaFactory(OMAbstractFactory.FEATURE_DOM).getSOAP11Factory();
-        javax.xml.soap.SOAPEnvelope env = new SOAPEnvelopeImpl(asf.createSOAPEnvelope());
+        jakarta.xml.soap.SOAPEnvelope env = new SOAPEnvelopeImpl(asf.createSOAPEnvelope());
         SOAPBody body = env.addBody();
         soapFault = body.addFault();
         return soapFault;

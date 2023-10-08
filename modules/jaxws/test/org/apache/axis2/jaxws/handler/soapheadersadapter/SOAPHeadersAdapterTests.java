@@ -28,17 +28,17 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 
@@ -55,6 +55,16 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+
+import java.io.StringWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
 
 public class SOAPHeadersAdapterTests extends TestCase {
 
@@ -652,8 +662,10 @@ public class SOAPHeadersAdapterTests extends TestCase {
         // should only be two header elements, so...
         assertFalse(it.hasNext());
         
-        assertTrue(headerElem1.toString().equals(acoh1));
-        assertTrue(headerElem2.toString().equals(acoh2));
+	// AXIS2-6051, SOAPHeaderElement.toString() doesn't
+	// work anymore so convert it to String manually
+        assertTrue(nodeToString(headerElem1).equals(acoh1));
+        assertTrue(nodeToString(headerElem2).equals(acoh2));
         
         // now that we've done a toString() on the header elements, they've been parsed and
         // processed by the underlying OM implementation...  let's remove one by way of SOAP
@@ -712,8 +724,10 @@ public class SOAPHeadersAdapterTests extends TestCase {
         // should only be two header elements, so...
         assertFalse(it.hasNext());
         
-        assertTrue(headerElem1.toString().equals(acoh1));
-        assertTrue(headerElem2.toString().equals(acoh2));
+	// AXIS2-6051, SOAPHeaderElement.toString() doesn't
+	// work anymore so convert it to String manually
+        assertTrue(nodeToString(headerElem1).equals(acoh1));
+        assertTrue(nodeToString(headerElem2).equals(acoh2));
         
         // now that we've done a toString() on the header elements, they've been parsed and
         // processed by the underlying OM implementation...  let's remove one by way of SOAP
@@ -978,5 +992,18 @@ public class SOAPHeadersAdapterTests extends TestCase {
 			super(mc.getMEPContext());
 		}
 	}
+
+	private String nodeToString(Node node) {
+		StringWriter sw = new StringWriter();
+		try {
+		    Transformer t = TransformerFactory.newInstance().newTransformer();
+		    t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		    t.transform(new DOMSource(node), new StreamResult(sw));
+		} catch (TransformerException te) {
+		    System.out.println("nodeToString Transformer Exception");
+		}
+		return sw.toString();
+	}
+
 	
 }

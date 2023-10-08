@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebResultAnnot implements javax.jws.WebResult {
+public class WebResultAnnot implements jakarta.jws.WebResult {
 
     private String name = "";
     private String targetNamespace = "";

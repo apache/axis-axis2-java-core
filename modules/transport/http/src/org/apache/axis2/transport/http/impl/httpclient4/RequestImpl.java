@@ -206,7 +206,15 @@ final class RequestImpl implements Request {
         }
 
         method.setConfig(requestConfig.build());
-
+	// AXIS2-6051, the move from javax to jakarta
+	// broke HTTPClient by sending Content-Length,
+	// resulting in:
+	// ProtocolException: Content-Length header already present
+	method.removeHeaders("Content-Length");
+        final org.apache.http.Header[] headers = method.getAllHeaders();
+        for (final org.apache.http.Header header : headers) {
+            log.debug("sending HTTP request header: " + header);
+        }
         response = httpClient.execute(httpHost, method, clientContext);
     }
 

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.sample.addressbook.data;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

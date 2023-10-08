@@ -25,8 +25,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.CommandLineOption;
@@ -103,11 +103,11 @@ public class Client {
 		MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentType attachmentType = new MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentType();
 		MTOMSampleMTOMSampleSOAP11Port_httpStub.Base64Binary base64Binary = new MTOMSampleMTOMSampleSOAP11Port_httpStub.Base64Binary();
 
-		// Creating a javax.activation.FileDataSource from the input file.
+		// Creating a jakarta.activation.FileDataSource from the input file.
 		FileDataSource fileDataSource = new FileDataSource(file);
 
 		// Create a dataHandler using the fileDataSource. Any implementation of
-		// javax.activation.DataSource interface can fit here.
+		// jakarta.activation.DataSource interface can fit here.
 		DataHandler dataHandler = new DataHandler(fileDataSource);
 		base64Binary.setBase64Binary(dataHandler);
         MTOMSampleMTOMSampleSOAP11Port_httpStub.ContentType_type0 param = new MTOMSampleMTOMSampleSOAP11Port_httpStub.ContentType_type0();

@@ -31,8 +31,8 @@ import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.handler.Handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -40,7 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Classes that would normally "implement javax.xml.ws.Binding"
+ * Classes that would normally "implement jakarta.xml.ws.Binding"
  * should extend this class instead.
  */
 public abstract class BindingImpl implements Binding {

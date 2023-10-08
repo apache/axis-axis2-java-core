@@ -27,13 +27,13 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.impl.DescriptionUtils;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -168,7 +168,7 @@ public class HandlerResolverTest extends TestCase {
 }
 
 @WebServiceClient
-class HandlerResolverTestService extends javax.xml.ws.Service {
+class HandlerResolverTestService extends jakarta.xml.ws.Service {
     protected HandlerResolverTestService(URL wsdlDocumentLocation, QName serviceName) {
         super(wsdlDocumentLocation, serviceName);
     }

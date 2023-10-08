@@ -24,6 +24,8 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPVersion;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -34,19 +36,29 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPBodyElement;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+// import org.apache.commons.collections4.IteratorUtils;
 import java.util.Locale;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
+import java.io.StringWriter;
 public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody> implements SOAPBody {
+
+    private static Log log = LogFactory.getLog(SOAPBodyImpl.class);
 
     private boolean isBodyElementAdded;
 
@@ -56,7 +68,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String)
     */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         if (omTarget.hasFault()) {
@@ -109,6 +121,28 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
     }
     
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
+
+	// TODO remove this if we ever find the problem with
+	// soapElement.getAllAttributes() as explained below
+	/*
+	if (log.isDebugEnabled()) {
+            String bodyStr = null;
+            try {
+                org.w3c.dom.Document document = soapElement.getOwnerDocument();
+                Source source = new DOMSource(document);
+                StringWriter out = new StringWriter(); 
+                Result result = new StreamResult(out); 
+                TransformerFactory tFactory = TransformerFactory.newInstance(); 
+                Transformer transformer = tFactory.newTransformer(); 
+                transformer.transform(source, result); 
+                bodyStr = out.toString();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+	    log.debug("saaj SOAPBodyImpl starting on soapElement class: " +soapElement.getClass().getProtectionDomain().getCodeSource().getLocation() + " , name : " +soapElement.getLocalName()+ " , soapElement namespaceURI " + soapElement.getNamespaceURI() +" , soapElement prefix: " +soapElement.getPrefix() + " , Document as String: " + bodyStr);
+	}
+	*/
+
         String namespaceURI = soapElement.getNamespaceURI();
         String prefix = soapElement.getPrefix();
         String localName = soapElement.getLocalName();
@@ -126,17 +160,50 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
                                                                         localName));            
         }
 
+	/*
+	if (log.isDebugEnabled()) {
+            long size = IteratorUtils.size(soapElement.getAllAttributes());
+            log.debug("saaj SOAPBodyImpl addChildElement() found attributes size: " + size);
+            
+            long size2 = IteratorUtils.size(soapElement.getChildElements());
+            log.debug("saaj SOAPBodyImpl getChildElements() found elements size: " + size2);
+	}
+	*/
+
         for (Iterator iter = soapElement.getAllAttributes(); iter.hasNext();) {
             Name name = (Name)iter.next();
-            childEle.addAttribute(name, soapElement.getAttributeValue(name));
+            try {
+		if (name.getLocalName().toLowerCase().equals("xmlns")  && (name.getPrefix() == null || name.getPrefix().equals(""))) {
+		}
+                childEle.addAttribute(name, soapElement.getAttributeValue(name));
+            } catch (Exception e) {
+
+                log.error("addAttribute() failed on soapElement name: " +soapElement.getLocalName()+ " , soapElement namespaceURI " +soapElement.getNamespaceURI() +" , soapElement prefix: " +soapElement.getPrefix() + " , attribute name: " +name.getLocalName()+ " , name URI: " +name.getURI()+ " , name prefix: " +name.getPrefix()+ " , namespace-qualified name of the XML name: " +name.getQualifiedName()+ " , attribute value: " +soapElement.getAttributeValue(name)+ " , error: " + e.getMessage(), e);
+                // throw e;
+		// FIXME, AXIS2-6051 the move to jakarta 
+		// now has attributes being returned in the 
+		// unit tests such as xmlns="urn://mtom.test.org"
+		// yet the same SOAPBody previously did not return
+		// attributes here. There is no prefix and there is
+		// an error because the Axiom method 
+		// validateAttributeName() receives an empty 
+		// namespaceURI, an empty prefix, localName: xmlns,
+		// and throws:
+		// NAMESPACE_ERR: An attempt is made to create or change an object in a way which is incorrect with regard to namespaces.
+		// Yet xmlns="urn://mtom.test.org" still ends up
+		// in the SOAPBody anyways.
+            }
         }
 
         for (Iterator iter = soapElement.getChildElements(); iter.hasNext();) {
             Object o = iter.next();
             if (o instanceof Text) {
                 childEle.addTextNode(((Text)o).getData());
+                log.debug("addTextNode() found: " + ((Text)o).getData());
             } else {
                 childEle.addChildElement((SOAPElement)o);
+		SOAPElement se = (SOAPElement)o;
+                log.debug("addChildElement() found: " + se.getLocalName());
             }
         }
 
@@ -145,11 +212,29 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         }
         target.appendChild(childEle.target);
         childEle.setParentElement(this);
+	// TODO remove this if we ever find the problem with
+	// soapElement.getAllAttributes() as explained above
+	/*
+        String bodyStr2 = null;
+        try {
+            org.w3c.dom.Document document2 = soapElement.getOwnerDocument();
+            Source source2 = new DOMSource(document2);
+            StringWriter out2 = new StringWriter(); 
+            Result result2 = new StreamResult(out2); 
+            TransformerFactory tFactory2 = TransformerFactory.newInstance(); 
+            Transformer transformer2 = tFactory2.newTransformer(); 
+            transformer2.transform(source2, result2); 
+            bodyStr2 = out2.toString();
+	    log.error("saaj childEle as String: " + bodyStr2);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+	}
+	*/
         return childEle;
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix, String uri)
             throws SOAPException {
@@ -388,7 +473,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         return document;
     }
 
-    private javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node node,
+    private jakarta.xml.soap.Node toSAAJNode(org.w3c.dom.Node node,
                                            SOAPElement parent) throws SOAPException {
         if (node == null) {
             return null;
@@ -456,10 +541,10 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node childSAAJNode = toSAAJNode(childNodes.item(i), saajEle);
-            if (childSAAJNode instanceof javax.xml.soap.Text) {
+            if (childSAAJNode instanceof jakarta.xml.soap.Text) {
                 saajEle.addTextNode(childSAAJNode.getValue());
             } else {
-                saajEle.addChildElement((javax.xml.soap.SOAPElement)childSAAJNode);
+                saajEle.addChildElement((jakarta.xml.soap.SOAPElement)childSAAJNode);
             }
         }
         return saajEle;
@@ -554,7 +639,7 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
         while (childIter.hasNext()) {
             org.w3c.dom.Node domNode = (org.w3c.dom.Node)childIter.next();
             org.w3c.dom.Node saajNode = toSAAJNode(domNode);
-            if (saajNode instanceof javax.xml.soap.Text) {
+            if (saajNode instanceof jakarta.xml.soap.Text) {
                 childElements.add(saajNode);
             } else if (!(saajNode instanceof SOAPBodyElement)) {
                 // silently replace node, as per saaj 1.2 spec

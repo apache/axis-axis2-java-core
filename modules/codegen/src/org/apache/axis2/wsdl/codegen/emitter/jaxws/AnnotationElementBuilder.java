@@ -29,7 +29,7 @@ public class AnnotationElementBuilder {
                                                     Document doc) {
 
         Element annotationElement = doc.createElement("annotation");
-        XSLTUtils.addAttribute(doc, "name", "javax.jws.WebService", annotationElement);
+        XSLTUtils.addAttribute(doc, "name", "jakarta.jws.WebService", annotationElement);
 
         Element paramElement = doc.createElement("param");
         XSLTUtils.addAttribute(doc, "type", "name", paramElement);
@@ -47,7 +47,7 @@ public class AnnotationElementBuilder {
     static Element buildWebServiceAnnotationElement(String endpointInterface, Document doc) {
 
         Element annotationElement = doc.createElement("annotation");
-        XSLTUtils.addAttribute(doc, "name", "javax.jws.WebService", annotationElement);
+        XSLTUtils.addAttribute(doc, "name", "jakarta.jws.WebService", annotationElement);
 
         Element paramElement = doc.createElement("param");
         XSLTUtils.addAttribute(doc, "type", "endpointInterface", paramElement);
@@ -59,7 +59,7 @@ public class AnnotationElementBuilder {
 
     static Element buildWebFaultAnnotationElement(String name, String targetNS, Document doc) {
         Element annotationElement = doc.createElement("annotation");
-        XSLTUtils.addAttribute(doc, "name", "javax.xml.ws.WebFault", annotationElement);
+        XSLTUtils.addAttribute(doc, "name", "jakarta.xml.ws.WebFault", annotationElement);
 
         Element paramElement = doc.createElement("param");
         XSLTUtils.addAttribute(doc, "type", "name", paramElement);
@@ -78,7 +78,7 @@ public class AnnotationElementBuilder {
                                                           Document doc) {
 
         Element annotationElement = doc.createElement("annotation");
-        XSLTUtils.addAttribute(doc, "name", "javax.xml.ws.WebServiceClient", annotationElement);
+        XSLTUtils.addAttribute(doc, "name", "jakarta.xml.ws.WebServiceClient", annotationElement);
 
         Element paramElement = doc.createElement("param");
         XSLTUtils.addAttribute(doc, "type", "name", paramElement);
@@ -100,7 +100,7 @@ public class AnnotationElementBuilder {
 
     static Element buildWebEndPointAnnotationElement(String name, Document doc) {
         Element annotationElement = doc.createElement("annotation");
-        XSLTUtils.addAttribute(doc, "name", "javax.xml.ws.WebEndpoint", annotationElement);
+        XSLTUtils.addAttribute(doc, "name", "jakarta.xml.ws.WebEndpoint", annotationElement);
 
         Element paramElement = doc.createElement("param");
         XSLTUtils.addAttribute(doc, "type", "name", paramElement);

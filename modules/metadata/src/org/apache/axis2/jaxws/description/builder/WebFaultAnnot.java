@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebFaultAnnot implements javax.xml.ws.WebFault {
+public class WebFaultAnnot implements jakarta.xml.ws.WebFault {
 
     private String name = "return";
     private String targetNamespace = "";

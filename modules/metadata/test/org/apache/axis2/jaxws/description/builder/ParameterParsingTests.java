@@ -21,25 +21,25 @@ package org.apache.axis2.jaxws.description.builder;
 
 import junit.framework.TestCase;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import java.util.List;
 
 /** Tests the parsing of Generics that are used in the DescriptionBuilderComposite processing. */
 public class ParameterParsingTests extends TestCase {
 
     public void testHolder() {
-        String holderInputString = "javax.xml.ws.Holder<java.lang.Object>";
+        String holderInputString = "jakarta.xml.ws.Holder<java.lang.Object>";
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
         pdc.setParameterType(holderInputString);
-        assertEquals("javax.xml.ws.Holder<java.lang.Object>", pdc.getParameterType());
+        assertEquals("jakarta.xml.ws.Holder<java.lang.Object>", pdc.getParameterType());
 
         assertTrue(DescriptionBuilderUtils.isHolderType(holderInputString));
         assertTrue(pdc.isHolderType());
         String holderResultString = DescriptionBuilderUtils.getRawType(holderInputString);
-        assertEquals("javax.xml.ws.Holder", holderResultString);
+        assertEquals("jakarta.xml.ws.Holder", holderResultString);
         holderResultString = pdc.getRawType();
-        assertEquals("javax.xml.ws.Holder", holderResultString);
-        javax.xml.ws.Holder validateHolder = new javax.xml.ws.Holder();
+        assertEquals("jakarta.xml.ws.Holder", holderResultString);
+        jakarta.xml.ws.Holder validateHolder = new jakarta.xml.ws.Holder();
         assertEquals(validateHolder.getClass(), pdc.getParameterTypeClass());
 
         String actualTypeResult = DescriptionBuilderUtils.getHolderActualType(holderInputString);
@@ -53,12 +53,12 @@ public class ParameterParsingTests extends TestCase {
     public void testHolderMyObject() {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
         pdc.setParameterType(
-                "javax.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject>");
-        assertEquals("javax.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject>",
+                "jakarta.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject>");
+        assertEquals("jakarta.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject>",
                      pdc.getParameterType());
 
         assertTrue(pdc.isHolderType());
-        assertEquals("javax.xml.ws.Holder", pdc.getRawType());
+        assertEquals("jakarta.xml.ws.Holder", pdc.getRawType());
         assertEquals(Holder.class, pdc.getParameterTypeClass());
 
         assertEquals("org.apache.axis2.jaxws.description.builder.MyObject",
@@ -85,15 +85,15 @@ public class ParameterParsingTests extends TestCase {
     }
 
     public void testHolderGeneric() {
-        String holderInputString = "javax.xml.ws.Holder<java.util.List<java.lang.Object>>";
+        String holderInputString = "jakarta.xml.ws.Holder<java.util.List<java.lang.Object>>";
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
         pdc.setParameterType(holderInputString);
-        assertEquals("javax.xml.ws.Holder<java.util.List<java.lang.Object>>",
+        assertEquals("jakarta.xml.ws.Holder<java.util.List<java.lang.Object>>",
                      pdc.getParameterType());
 
         assertTrue(pdc.isHolderType());
         String holderResultString = pdc.getRawType();
-        assertEquals("javax.xml.ws.Holder", holderResultString);
+        assertEquals("jakarta.xml.ws.Holder", holderResultString);
         assertEquals(Holder.class, pdc.getParameterTypeClass());
 
         String actualTypeResult = pdc.getHolderActualType();
@@ -182,8 +182,8 @@ public class ParameterParsingTests extends TestCase {
 
     public void testHolderOfPrimitiveArray() {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
-        pdc.setParameterType("javax.xml.ws.Holder<byte[]>");
-        assertEquals("javax.xml.ws.Holder<byte[]>", pdc.getParameterType());
+        pdc.setParameterType("jakarta.xml.ws.Holder<byte[]>");
+        assertEquals("jakarta.xml.ws.Holder<byte[]>", pdc.getParameterType());
 
         assertEquals(Holder.class, pdc.getParameterTypeClass());
         byte [] validateByteArray = new byte[10];
@@ -193,8 +193,8 @@ public class ParameterParsingTests extends TestCase {
     public void testHolderOfMyObjectArray() {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
         pdc.setParameterType(
-                "javax.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject[][]>");
-        assertEquals("javax.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject[][]>",
+                "jakarta.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject[][]>");
+        assertEquals("jakarta.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject[][]>",
                      pdc.getParameterType());
         assertEquals(Holder.class, pdc.getParameterTypeClass());
         MyObject[][] validateMyObject = new MyObject[5][10];
@@ -203,8 +203,8 @@ public class ParameterParsingTests extends TestCase {
 
     public void testHolderOfStringArray() {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
-        pdc.setParameterType("javax.xml.ws.Holder<java.lang.String[]>");
-        assertEquals("javax.xml.ws.Holder<java.lang.String[]>", pdc.getParameterType());
+        pdc.setParameterType("jakarta.xml.ws.Holder<java.lang.String[]>");
+        assertEquals("jakarta.xml.ws.Holder<java.lang.String[]>", pdc.getParameterType());
         assertEquals(String[].class, pdc.getHolderActualTypeClass());
     }
 
@@ -217,24 +217,24 @@ public class ParameterParsingTests extends TestCase {
 
     public void testHolderOfGenericArray() {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
-        pdc.setParameterType("javax.xml.ws.Holder<java.util.List<java.lang.String>[]>");
-        assertEquals("javax.xml.ws.Holder<java.util.List<java.lang.String>[]>",
+        pdc.setParameterType("jakarta.xml.ws.Holder<java.util.List<java.lang.String>[]>");
+        assertEquals("jakarta.xml.ws.Holder<java.util.List<java.lang.String>[]>",
                      pdc.getParameterType());
         assertEquals(List[].class, pdc.getHolderActualTypeClass());
     }
 
     public void testHolderOfGenericArrayMultiDimension() {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
-        pdc.setParameterType("javax.xml.ws.Holder<java.util.List<java.lang.String>[][][]>");
-        assertEquals("javax.xml.ws.Holder<java.util.List<java.lang.String>[][][]>",
+        pdc.setParameterType("jakarta.xml.ws.Holder<java.util.List<java.lang.String>[][][]>");
+        assertEquals("jakarta.xml.ws.Holder<java.util.List<java.lang.String>[][][]>",
                      pdc.getParameterType());
         assertEquals(List[][][].class, pdc.getHolderActualTypeClass());
     }
 
     public void testHolderOfGenericWildcardArray() {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
-        pdc.setParameterType("javax.xml.ws.Holder<java.util.List<?>[]>");
-        assertEquals("javax.xml.ws.Holder<java.util.List<?>[]>", pdc.getParameterType());
+        pdc.setParameterType("jakarta.xml.ws.Holder<java.util.List<?>[]>");
+        assertEquals("jakarta.xml.ws.Holder<java.util.List<?>[]>", pdc.getParameterType());
         assertEquals(List[].class, pdc.getHolderActualTypeClass());
     }
 

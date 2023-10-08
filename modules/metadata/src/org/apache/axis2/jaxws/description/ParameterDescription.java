@@ -20,7 +20,7 @@
 
 package org.apache.axis2.jaxws.description;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * A ParameterDescripton corresponds to parameter to a method on an SEI. That SEI could be explicit

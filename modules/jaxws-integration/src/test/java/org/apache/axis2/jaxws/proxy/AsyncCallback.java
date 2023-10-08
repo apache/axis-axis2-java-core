@@ -22,8 +22,8 @@ package org.apache.axis2.jaxws.proxy;
 import org.apache.axis2.jaxws.TestLogger;
 import org.test.proxy.doclitwrapped.ReturnType;
 
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -36,7 +36,7 @@ public class AsyncCallback implements AsyncHandler {
     }
 
     /* (non-Javadoc)
-     * @see javax.xml.ws.AsyncHandler#handleResponse(javax.xml.ws.Response)
+     * @see jakarta.xml.ws.AsyncHandler#handleResponse(jakarta.xml.ws.Response)
      */
     public void handleResponse(Response response) {
         try{

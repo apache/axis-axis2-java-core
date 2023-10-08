@@ -38,8 +38,8 @@ import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.xml.namespace.QName;
-import javax.xml.ws.RespectBinding;
-import javax.xml.ws.RespectBindingFeature;
+import jakarta.xml.ws.RespectBinding;
+import jakarta.xml.ws.RespectBindingFeature;
 
 import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
 import org.apache.axis2.jaxws.common.config.WSDLValidatorElement.State;

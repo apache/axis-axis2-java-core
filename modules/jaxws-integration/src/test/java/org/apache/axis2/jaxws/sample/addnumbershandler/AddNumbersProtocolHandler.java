@@ -22,17 +22,17 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 import org.apache.axis2.jaxws.TestLogger;
 
 import javax.annotation.PreDestroy;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+public class AddNumbersProtocolHandler implements jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
     private static final AtomicBoolean predestroyCalled = new AtomicBoolean();
 
     HandlerTracker tracker = new HandlerTracker(AddNumbersProtocolHandler.class.getSimpleName());

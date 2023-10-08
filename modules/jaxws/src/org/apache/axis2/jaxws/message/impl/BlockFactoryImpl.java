@@ -28,7 +28,7 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 /** BlockFactoryImpl Abstract Base Class for the Block Factories */
 public abstract class BlockFactoryImpl implements BlockFactory {

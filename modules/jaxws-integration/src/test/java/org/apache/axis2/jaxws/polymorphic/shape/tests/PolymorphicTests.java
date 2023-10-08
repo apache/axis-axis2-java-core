@@ -32,7 +32,7 @@ import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

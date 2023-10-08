@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class ResponseWrapperAnnot implements javax.xml.ws.ResponseWrapper {
+public class ResponseWrapperAnnot implements jakarta.xml.ws.ResponseWrapper {
 
     private String localName = "";
     private String targetNamespace = "";

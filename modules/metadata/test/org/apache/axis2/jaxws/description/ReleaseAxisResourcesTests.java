@@ -29,10 +29,10 @@ import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 
 import java.io.File;
 import java.net.URL;

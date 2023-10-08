@@ -20,7 +20,7 @@
 
 package org.apache.axis2.jaxws.sample.faultsservice;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * This is an example of a legacy exception  which may be the result of a JAX-RPC emission.

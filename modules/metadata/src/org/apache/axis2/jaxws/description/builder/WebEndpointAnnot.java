@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebEndpointAnnot implements javax.xml.ws.WebEndpoint {
+public class WebEndpointAnnot implements jakarta.xml.ws.WebEndpoint {
 
     private String name = "";
 

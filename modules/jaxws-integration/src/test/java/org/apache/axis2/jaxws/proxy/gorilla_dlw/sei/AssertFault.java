@@ -20,7 +20,7 @@
 
 package org.apache.axis2.jaxws.proxy.gorilla_dlw.sei;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 
 /**

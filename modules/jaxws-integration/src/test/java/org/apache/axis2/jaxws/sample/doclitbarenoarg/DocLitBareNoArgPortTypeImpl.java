@@ -20,7 +20,7 @@ package org.apache.axis2.jaxws.sample.doclitbarenoarg;
 
 import org.apache.axis2.jaxws.sample.doclitbarenoarg.sei.DocLitBareNoArgPortType;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(serviceName="BareDocLitNoArgService", 
             endpointInterface="org.apache.axis2.jaxws.sample.doclitbarenoarg.sei.DocLitBareNoArgPortType")

@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 /**
  * This class represents factories that can be use to create instances of
  * {@link EndpointReference} that can ultimately be converted into instances
- * of {@link javax.xml.ws.EndpointReference} that are suitable to be returned
+ * of {@link jakarta.xml.ws.EndpointReference} that are suitable to be returned
  * via the appropriate JAX-WS 2.1 API methods.
  * 
  */

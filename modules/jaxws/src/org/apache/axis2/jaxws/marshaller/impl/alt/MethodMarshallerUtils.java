@@ -56,20 +56,20 @@ import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
-import javax.jws.WebParam.Mode;
-import javax.jws.WebService;
-import javax.xml.bind.JAXBElement;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebParam.Mode;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPFault;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -1024,7 +1024,11 @@ public class MethodMarshallerUtils {
 					}
 
 					if (elementQName.equals(tryQName)) {
-						faultDesc = fd;
+                                            faultDesc = fd;
+					} else {
+                                            if (log.isErrorEnabled()) {
+                                                log.debug("Cannot set faultDesc, tryQName QName: " +tryQName+ " , is not equal to elementQName: " + elementQName);
+                                            }
 					}
 				}
             }
@@ -1050,9 +1054,10 @@ public class MethodMarshallerUtils {
             // This is a system exception if the method does not throw a checked exception or if
             // the detail block is missing or contains multiple items.
             exception = createSystemException(xmlfault, message);
+            log.debug("createSystemException() created Exception: " + exception);
         } else {
             if (log.isErrorEnabled()) {
-                log.debug("Ready to demarshal service exception.  The detail entry name is " +
+                log.error("Ready to demarshal service exception.  The detail entry name is " +
                         elementQName);
             }
             FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(faultDesc);
@@ -1308,22 +1313,23 @@ public class MethodMarshallerUtils {
         ProtocolException e = null;
         Protocol protocol = message.getProtocol();
         String text = xmlFault.getReason().getText();
+        log.warn("createSystemException() found xmlFault.getReason().getText(): " + text);
 
         if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
+            log.warn("On protocol: " +protocol+ " , constructing SOAPFaultException for " + text);
             // Throw a SOAPFaultException
-            if (log.isDebugEnabled()) {
-                log.debug("Constructing SOAPFaultException for " + text);
-            }
             String protocolNS = (protocol == Protocol.soap11) ?
                     SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE :
                     SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE;
             try {
                 // The following set of instructions is used to avoid 
                 // some unimplemented methods in the Axis2 SAAJ implementation
-                javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(protocolNS);
+                jakarta.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(protocolNS);
                 SOAPBody body = mf.createMessage().getSOAPBody();
                 SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
                 e = new SOAPFaultException(soapFault);
+                log.warn("On protocol: " +protocol+ " , constructing SOAPFaultException for " + text + " , soapFault.getFaultString() : " + soapFault.getFaultString() + " , message: " + e.getMessage());
+		e.printStackTrace();
             } catch (Exception ex) {
                 // Exception occurred during exception processing.
                 // TODO Probably should do something better here
@@ -1334,15 +1340,13 @@ public class MethodMarshallerUtils {
             }
         } else if (protocol == Protocol.rest) {
             if (log.isDebugEnabled()) {
-                log.debug("Constructing ProtocolException for " + text);
+                log.debug("Protocol.rest detected, constructing ProtocolException for XMLFault text: " + text);
             }
             // TODO Is there an explicit exception for REST
             e = ExceptionFactory.makeProtocolException(text, null);
         } else if (protocol == Protocol.unknown) {
             // REVIEW What should happen if there is no protocol
-            if (log.isDebugEnabled()) {
-                log.debug("Constructing ProtocolException for " + text);
-            }
+            log.error("protocol == Protocol.unknown, constructing ProtocolException for XMLFault text: " + text);
             e = ExceptionFactory.makeProtocolException(text, null);
         }
         return e;

@@ -62,8 +62,8 @@ import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -73,14 +73,14 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.MTOM;
-import javax.xml.ws.soap.MTOMFeature;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.ServiceMode;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.soap.MTOM;
+import jakarta.xml.ws.soap.MTOMFeature;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
@@ -176,16 +176,16 @@ public class EndpointDescriptionImpl
     private ServiceMode serviceModeAnnotation;
     private Service.Mode serviceModeValue;
     // Default ServiceMode.value per JAXWS Spec 7.1 "javax.xml.ServiceMode" pg 79
-    public static final javax.xml.ws.Service.Mode ServiceMode_DEFAULT =
-            javax.xml.ws.Service.Mode.PAYLOAD;
+    public static final jakarta.xml.ws.Service.Mode ServiceMode_DEFAULT =
+            jakarta.xml.ws.Service.Mode.PAYLOAD;
 
     // ANNOTATION: @BindingType
     private BindingType bindingTypeAnnotation;
     private String bindingTypeValue;
-    // Default BindingType.value per JAXWS Spec Sec 7.8 "javax.xml.ws.BindingType" pg 83 
+    // Default BindingType.value per JAXWS Spec Sec 7.8 "jakarta.xml.ws.BindingType" pg 83 
     // and Sec 1.4 "SOAP Transport and Transfer Bindings" pg 119
     public static final String BindingType_DEFAULT =
-            javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
+            jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
     
     // ANNOTATION: @RespectBinding
     private Boolean respectBinding = false;
@@ -413,8 +413,8 @@ public class EndpointDescriptionImpl
         String bindingType = getBindingType();
 
         boolean isSOAP11 =
-                (bindingType.equals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING) || 
-                        bindingType.equals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING))
+                (bindingType.equals(jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING) || 
+                        bindingType.equals(jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING))
                         ? true : false;
 
 
@@ -632,7 +632,7 @@ public class EndpointDescriptionImpl
         // annotations that are present are similar but different.  Conformance requirements 
         // per JAX-WS
         // - A Provider based implementation MUST carry the @WebServiceProvider annotation
-        //   per section 5.1 javax.xml.ws.Provider on page 63
+        //   per section 5.1 jakarta.xml.ws.Provider on page 63
         // - An Endpoint based implementation MUST carry the @WebService annotation per JSR-181 
         //   (reference TBD) and JAX-WS (reference TBD)
         // - An Endpoint based implementation @WebService annotation MAY reference an endpoint
@@ -685,7 +685,7 @@ public class EndpointDescriptionImpl
                 log.debug("WebServiceProvider without WSDL encountered");
             }
             String bindingType = getBindingType();
-            if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(bindingType)||
+            if (jakarta.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(bindingType)||
                     SOAPBinding.SOAP11HTTP_BINDING.equals(bindingType)||
                     SOAPBinding.SOAP12HTTP_BINDING.equals(bindingType)||
                     MDQConstants.SOAP_HTTP_BINDING.equals(bindingType)) {
@@ -1119,7 +1119,7 @@ public class EndpointDescriptionImpl
             String protocol = "http";
             if (bindingType.startsWith(SOAPBinding.SOAP12HTTP_BINDING)) {
                 Utils.addSoap12Endpoint(axisService, protocol, getPortQName().getLocalPart());
-            } else if (bindingType.startsWith(javax.xml.ws.http.HTTPBinding.HTTP_BINDING)) {
+            } else if (bindingType.startsWith(jakarta.xml.ws.http.HTTPBinding.HTTP_BINDING)) {
                 Utils.addHttpEndpoint(axisService, protocol, getPortQName().getLocalPart());
             } else {
                 // Assume SOAP 1.1 over HTTP for all other cases
@@ -1895,7 +1895,7 @@ public class EndpointDescriptionImpl
     private boolean validateClientBindingID(String bindingId) {
         boolean isValid = true;
         if (bindingId != null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
-                bindingId.equals(javax.xml.ws.http.HTTPBinding.HTTP_BINDING) ||
+                bindingId.equals(jakarta.xml.ws.http.HTTPBinding.HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING) ||

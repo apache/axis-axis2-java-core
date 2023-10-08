@@ -23,15 +23,15 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
 import org.test.rpclit.schema.ElementString;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 
 @WebService(serviceName="RPCLitEnumService",
 		endpointInterface="org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType")
 public class PortTypeImpl implements PortType {
 
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType#echoString(javax.xml.ws.Holder)
+     * @see org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType#echoString(jakarta.xml.ws.Holder)
      */
     public void echoString(Holder<ElementString> pString) {
        ElementString es = pString.value;

@@ -25,8 +25,8 @@ import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.common.config.WSDLValidatorElement;
@@ -138,7 +138,7 @@ public class EndpointDescriptionValidator extends Validator {
         // Validate that the WSDL value is valid
         else if (!SOAPBinding.SOAP11HTTP_BINDING.equals(wsdlBindingType)
                 && !SOAPBinding.SOAP12HTTP_BINDING.equals(wsdlBindingType)
-                && !javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(wsdlBindingType)
+                && !jakarta.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(wsdlBindingType)
                 && !MDQConstants.SOAP11JMS_BINDING.equals(wsdlBindingType)
                 && !MDQConstants.SOAP12JMS_BINDING.equals(wsdlBindingType)) {
             addValidationFailure(this, "Invalid wsdl binding value specified: " 

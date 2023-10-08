@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.description.builder.converter;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;

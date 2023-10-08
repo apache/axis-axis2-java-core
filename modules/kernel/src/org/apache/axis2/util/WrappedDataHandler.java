@@ -19,22 +19,21 @@
 
 package org.apache.axis2.util;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import jakarta.activation.ActivationDataFlavor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.activation.CommandInfo;
-import javax.activation.CommandMap;
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.CommandInfo;
+import jakarta.activation.CommandMap;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * This class acts as a wrapper for the javax.activation.DataHandler class.
+ * This class acts as a wrapper for the jakarta.activation.DataHandler class.
  * It is used to store away a (potentially) user-defined content-type value along with
  * the DataHandler instance.   We'll delegate all method calls except for getContentType()
  * to the real DataHandler instance.   
@@ -114,18 +113,18 @@ public class WrappedDataHandler extends DataHandler {
     }
 
     @Override
-    public Object getTransferData(DataFlavor flavor)
-            throws UnsupportedFlavorException, IOException {
+    public Object getTransferData(ActivationDataFlavor flavor)
+            throws IOException {
         return parent.getTransferData(flavor);
     }
 
     @Override
-    public DataFlavor[] getTransferDataFlavors() {
+    public ActivationDataFlavor[] getTransferDataFlavors() {
         return parent.getTransferDataFlavors();
     }
 
     @Override
-    public boolean isDataFlavorSupported(DataFlavor flavor) {
+    public boolean isDataFlavorSupported(ActivationDataFlavor flavor) {
         return parent.isDataFlavorSupported(flavor);
     }
 

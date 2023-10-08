@@ -21,8 +21,8 @@ package org.apache.axis2.saaj;
 
 import junit.framework.Assert;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

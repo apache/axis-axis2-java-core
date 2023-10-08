@@ -20,10 +20,10 @@
 
 package org.apache.axis2.jaxws.sample.wsgen;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-//import javax.xml.ws.RequestWrapper;
-//import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+//import jakarta.xml.ws.RequestWrapper;
+//import jakarta.xml.ws.ResponseWrapper;
 
 
 /**

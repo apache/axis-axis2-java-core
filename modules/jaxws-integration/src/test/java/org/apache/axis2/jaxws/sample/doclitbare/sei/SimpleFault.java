@@ -20,7 +20,7 @@
 
 package org.apache.axis2.jaxws.sample.doclitbare.sei;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 
 /**

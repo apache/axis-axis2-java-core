@@ -19,7 +19,7 @@
 
 package sample.jaxws;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(serviceName = "JAXWSVersion",
             portName="VersionPort",

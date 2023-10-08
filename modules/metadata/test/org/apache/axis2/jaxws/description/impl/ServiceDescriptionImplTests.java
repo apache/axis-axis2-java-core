@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.net.URL;
 
 /**
@@ -42,7 +42,7 @@ public class ServiceDescriptionImplTests extends TestCase {
 
         QName uniqueQName = new QName(namespaceURI, localPart + "_testNullWSDL");
         ServiceDescription serviceDescription =
-                new ServiceDescriptionImpl(null, uniqueQName, javax.xml.ws.Service.class);
+                new ServiceDescriptionImpl(null, uniqueQName, jakarta.xml.ws.Service.class);
         assertNotNull("Service description not created with null WSDL", serviceDescription);
     }
 
@@ -50,7 +50,7 @@ public class ServiceDescriptionImplTests extends TestCase {
 
         try {
             ServiceDescription serviceDescription =
-                    new ServiceDescriptionImpl(null, null, javax.xml.ws.Service.class);
+                    new ServiceDescriptionImpl(null, null, jakarta.xml.ws.Service.class);
             fail("Exception for null Service Name not thrown.");
         }
         catch (WebServiceException e) {
@@ -69,7 +69,7 @@ public class ServiceDescriptionImplTests extends TestCase {
         catch (WebServiceException e) {
             // Expected path
             // TODO Message text changed
-            //assertEquals("Did not receive correct exception", "Invalid Service Class; must be assignable to javax.xml.ws.Service", e.getMessage());
+            //assertEquals("Did not receive correct exception", "Invalid Service Class; must be assignable to jakarta.xml.ws.Service", e.getMessage());
         }
     }
 
@@ -96,7 +96,7 @@ public class ServiceDescriptionImplTests extends TestCase {
     }
 }
 
-class ServiceSubclass extends javax.xml.ws.Service {
+class ServiceSubclass extends jakarta.xml.ws.Service {
 
     protected ServiceSubclass(URL wsdlDocumentLocation, QName serviceName) {
         super(wsdlDocumentLocation, serviceName);

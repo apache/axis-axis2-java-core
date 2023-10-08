@@ -23,13 +23,13 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
-import javax.jws.soap.SOAPBinding.Style;
+import jakarta.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import java.util.Set;
 

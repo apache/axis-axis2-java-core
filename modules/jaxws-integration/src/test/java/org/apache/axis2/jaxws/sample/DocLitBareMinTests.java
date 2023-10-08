@@ -31,7 +31,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 public class DocLitBareMinTests {
     @ClassRule

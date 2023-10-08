@@ -26,7 +26,7 @@ import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(serviceName="PolymorphicShapeService",
         portName="PolymorphicShapePort",

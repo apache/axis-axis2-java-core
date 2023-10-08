@@ -27,7 +27,7 @@ import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 /**
  * SourceBlockFactoryImpl

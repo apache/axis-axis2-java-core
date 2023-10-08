@@ -129,7 +129,7 @@ public interface Constants {
     /**
      * This constant introduces an extension for @BindingType annotation.
      * When the value of BindingType annotation is set to this constant,
-     * the javax.xml.ws.Provider java endpoints will cater to SOAP11 and SOAP12
+     * the jakarta.xml.ws.Provider java endpoints will cater to SOAP11 and SOAP12
      * messages.
      */
     public static final String SOAP_HTTP_BINDING ="SOAP_HTTP_BINDING";
@@ -191,7 +191,7 @@ public interface Constants {
         "jaxws.jaxb.write.remove.illegal.chars";
     
     /**
-     * javax.xml.ws.handler.MessageContext  Property:
+     * jakarta.xml.ws.handler.MessageContext  Property:
      * Name: jaxws.message.as.string
      * Value: null or MessageAccessor
      * 
@@ -227,8 +227,8 @@ public interface Constants {
      * Operation resolution will also be disabled on a Dispatch<T> client if an Action was set on the 
      * request message context.  
      * 
-     * @see javax.xml.ws.BindingProvider.SOAPACTION_USE_PROPERTY
-     * @see javax.xml.ws.BindingProvider.SOAPACTION_URI_PROPERTY
+     * @see jakarta.xml.ws.BindingProvider.SOAPACTION_USE_PROPERTY
+     * @see jakarta.xml.ws.BindingProvider.SOAPACTION_URI_PROPERTY
      */
     public static final String  DISPATCH_CLIENT_OUTBOUND_RESOLUTION = "jaxws.dispatch.outbound.operation.resolution.enable"; 
 

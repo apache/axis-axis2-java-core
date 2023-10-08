@@ -29,7 +29,7 @@ import org.apache.axis2.context.MessageContext;
 import java.io.OutputStream;
 import java.net.URL;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 
 /**
  * <p/>

@@ -23,7 +23,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMNode;
 import org.w3c.dom.DOMException;
 
-import javax.xml.soap.Text;
+import jakarta.xml.soap.Text;
 
 public class TextImplEx extends NodeImpl<org.w3c.dom.CharacterData,OMNode> implements Text {
     public TextImplEx(String data) {

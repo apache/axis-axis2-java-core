@@ -34,7 +34,7 @@ import java.util.Set;
  * appropriate.
  * 
  */
-public class BaseMessageContext implements javax.xml.ws.handler.MessageContext {
+public class BaseMessageContext implements jakarta.xml.ws.handler.MessageContext {
     private static final Log log = LogFactory.getLog(BaseMessageContext.class);
 
     protected MessageContext messageCtx;
@@ -119,7 +119,7 @@ public class BaseMessageContext implements javax.xml.ws.handler.MessageContext {
         // inbound handler will not see the request headers while processing a response.
         Boolean outbound = (Boolean) messageCtx.getMEPContext().get(MESSAGE_OUTBOUND_PROPERTY);
         if (outbound != null && !outbound)
-            if (javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS.equals(keyString)) {
+            if (jakarta.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS.equals(keyString)) {
             shouldSpan = false;
         }
         return shouldSpan;
@@ -175,14 +175,14 @@ public class BaseMessageContext implements javax.xml.ws.handler.MessageContext {
     }
 
     /* (non-Javadoc)
-     * @see javax.xml.ws.handler.MessageContext#getScope(java.lang.String)
+     * @see jakarta.xml.ws.handler.MessageContext#getScope(java.lang.String)
      */
     public Scope getScope(String s) {
         return messageCtx.getMEPContext().getScope(s);
     }
 
     /* (non-Javadoc)
-     * @see javax.xml.ws.handler.MessageContext#setScope(java.lang.String, javax.xml.ws.handler.MessageContext.Scope)
+     * @see jakarta.xml.ws.handler.MessageContext#setScope(java.lang.String, jakarta.xml.ws.handler.MessageContext.Scope)
      */
     public void setScope(String s, Scope scope) {
         messageCtx.getMEPContext().setScope(s, scope);

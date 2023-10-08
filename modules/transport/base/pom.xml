@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-javax-activation</artifactId>
+            <artifactId>axiom-jakarta-activation</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

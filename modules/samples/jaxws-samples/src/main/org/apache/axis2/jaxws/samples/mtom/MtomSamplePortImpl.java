@@ -19,12 +19,12 @@
 
 package org.apache.axis2.jaxws.samples.mtom;
 
-@javax.jws.WebService(endpointInterface = "org.apache.axis2.jaxws.samples.mtom.MtomSample",
+@jakarta.jws.WebService(endpointInterface = "org.apache.axis2.jaxws.samples.mtom.MtomSample",
         targetNamespace = "http://org/apache/axis2/jaxws/samples/mtom/",
         serviceName = "MtomSampleService",
         portName = "MtomSamplePort",
         wsdlLocation = "WEB-INF/wsdl/ImageDepot.wsdl")
-@javax.xml.ws.BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+@jakarta.xml.ws.BindingType(value = jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 public class MtomSamplePortImpl {
 
     public ImageDepot sendImage(ImageDepot input) {

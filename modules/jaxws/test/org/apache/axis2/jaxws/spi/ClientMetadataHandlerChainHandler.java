@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxws.spi;
 
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import java.util.Set;
 
 /*
@@ -29,7 +29,7 @@ import java.util.Set;
  * sure what direction we're going.
  */
 
-public class ClientMetadataHandlerChainHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+public class ClientMetadataHandlerChainHandler implements jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
     public void close(MessageContext messagecontext) {
     }

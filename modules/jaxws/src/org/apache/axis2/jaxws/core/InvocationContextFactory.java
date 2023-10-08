@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.core;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.server.EndpointInvocationContextImpl;
 
-import javax.xml.ws.Binding;
+import jakarta.xml.ws.Binding;
 
 /** The InvocationContextFactory is used to create instances of an InvocationContext. */
 public class InvocationContextFactory {

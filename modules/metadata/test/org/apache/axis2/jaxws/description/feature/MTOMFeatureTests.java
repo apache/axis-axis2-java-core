@@ -24,9 +24,9 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.soap.MTOM;
+import jakarta.xml.ws.soap.MTOM;
 
 public class MTOMFeatureTests extends TestCase {
     

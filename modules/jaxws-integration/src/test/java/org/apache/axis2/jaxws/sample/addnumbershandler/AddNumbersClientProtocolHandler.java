@@ -19,14 +19,14 @@
 
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.MessageContext.Scope;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext.Scope;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ import java.util.Set;
  * sure what direction we're going.
  */
 
-public class AddNumbersClientProtocolHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
+public class AddNumbersClientProtocolHandler implements jakarta.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
     HandlerTracker tracker = new HandlerTracker(AddNumbersClientProtocolHandler.class.getSimpleName());
     boolean forcePivot = false;

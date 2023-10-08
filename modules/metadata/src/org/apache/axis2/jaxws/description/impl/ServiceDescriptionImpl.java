@@ -57,7 +57,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.resolver.Catalog;
 
-import javax.jws.HandlerChain;
+import jakarta.jws.HandlerChain;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
@@ -65,11 +65,11 @@ import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.soap.AddressingFeature.Responses;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.soap.AddressingFeature.Responses;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -163,9 +163,9 @@ public class ServiceDescriptionImpl
      *
      * @param wsdlURL      The WSDL file (this may be null).
      * @param serviceQName The name of the service in the WSDL.  This can not be null since a
-     *                     javax.xml.ws.Service can not be created with a null service QName.
+     *                     jakarta.xml.ws.Service can not be created with a null service QName.
      * @param serviceClass The JAX-WS service class.  This could be an instance of
-     *                     javax.xml.ws.Service or a generated service subclass thereof.  This will
+     *                     jakarta.xml.ws.Service or a generated service subclass thereof.  This will
      *                     not be null.
      */
     ServiceDescriptionImpl(URL wsdlURL, QName serviceQName, Class serviceClass) {
@@ -210,7 +210,7 @@ public class ServiceDescriptionImpl
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("serviceDescErr1", "null"));
         }
-        if (!javax.xml.ws.Service.class.isAssignableFrom(serviceClass)) {
+        if (!jakarta.xml.ws.Service.class.isAssignableFrom(serviceClass)) {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("serviceDescErr1", serviceClass.getName()));
         }
@@ -1595,9 +1595,9 @@ public class ServiceDescriptionImpl
                     throw ExceptionFactory.makeWebServiceException(
                     		Messages.getMessage("validateIntegrityErr1",composite.getClassName()));
                 }
-            }
+            } 
         }
-
+	
         //Verify that WebService and WebServiceProvider are not both specified
         //per JAXWS - Sec. 7.7
         if (composite.getWebServiceAnnot() != null &&
@@ -1608,6 +1608,8 @@ public class ServiceDescriptionImpl
 
         if (composite.getWebServiceProviderAnnot() != null) {
             if (!providerInterfaceValid) {
+                log.error("JAXWS error in validateIntegrity() , the interfaces found: " + composite.getInterfacesList() + " , were not one of the expected ones: " + MDQConstants.PROVIDER_SOURCE + " , " + MDQConstants.PROVIDER_SOAP + " , " + MDQConstants.PROVIDER_DATASOURCE + " , " + MDQConstants.PROVIDER_STRING + " , " + MDQConstants.PROVIDER_OMELEMENT);
+
                 throw ExceptionFactory.makeWebServiceException(
                 		Messages.getMessage("validateIntegrityErr3",composite.getClassName()));
             }
@@ -1708,7 +1710,7 @@ public class ServiceDescriptionImpl
 
             // Verify that the SOAPBinding annotations are supported.
             if (composite.getSoapBindingAnnot() != null) {
-                if (composite.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
+                if (composite.getSoapBindingAnnot().use() == jakarta.jws.soap.SOAPBinding.Use.ENCODED) {
                     throw ExceptionFactory.makeWebServiceException(
                     		Messages.getMessage("validateIntegrityErr13",composite.getClassName()));  
                 }
@@ -1744,7 +1746,7 @@ public class ServiceDescriptionImpl
         // Default for ServiceMode is 'PAYLOAD'. So, if it is specified  (explicitly or
         // implicitly) then verify that we are not implementing improper interfaces)
         if ((composite.getServiceModeAnnot() == null)
-                || composite.getServiceModeAnnot().value() == javax.xml.ws.Service.Mode.PAYLOAD) {
+                || composite.getServiceModeAnnot().value() == jakarta.xml.ws.Service.Mode.PAYLOAD) {
 
             Iterator<String> iter = composite.getInterfacesList().iterator();
 
@@ -1760,7 +1762,7 @@ public class ServiceDescriptionImpl
 
         } else {
             // We are in MESSAGE mode
-            // Conformance: JAXWS Spec.- Sec. 4.3 (javax.activation.DataSource)
+            // Conformance: JAXWS Spec.- Sec. 4.3 (jakarta.activation.DataSource)
 
             // REVIEW: Should the provider interface validation be moved to post-construction validation, 
             // since it seems that the logic to understand the default values for binding type 
@@ -1811,7 +1813,7 @@ public class ServiceDescriptionImpl
                     // Make sure BindingType is XML/HTTP with DataSource object
                     if (DescriptionUtils.isEmpty(bindingType)
                             || !bindingType
-                            .equals(javax.xml.ws.http.HTTPBinding.HTTP_BINDING))
+                            .equals(jakarta.xml.ws.http.HTTPBinding.HTTP_BINDING))
                     	
                         throw ExceptionFactory.makeWebServiceException(
                         		Messages.getMessage("validatePIsErr3",composite.getClassName()));
@@ -2138,7 +2140,7 @@ public class ServiceDescriptionImpl
         }
         // Verify that the SOAPBinding annotations are supported.
         if (seic.getSoapBindingAnnot() != null &&
-        		seic.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
+        		seic.getSoapBindingAnnot().use() == jakarta.jws.soap.SOAPBinding.Use.ENCODED) {
         	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("validateSEIErr3",seic.getClassName()));  
         }
 
@@ -2205,7 +2207,7 @@ public class ServiceDescriptionImpl
                 if (mdc.getSoapBindingAnnot() != null) {
 
                     // For this JAXWS engine, SOAPBinding.Use = ENCODED is unsupported
-                    if (mdc.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
+                    if (mdc.getSoapBindingAnnot().use() == jakarta.jws.soap.SOAPBinding.Use.ENCODED) {
                         throw ExceptionFactory.
                           makeWebServiceException(Messages.getMessage("soapBindingUseEncoded",
                                                                       mdc.getDeclaringClass(),
@@ -2215,7 +2217,7 @@ public class ServiceDescriptionImpl
 
                     // Verify that, if a SOAPBinding annotation exists, that its style be set to
                     // only DOCUMENT JSR181-Sec 4.7.1
-                    if (mdc.getSoapBindingAnnot().style() == javax.jws.soap.SOAPBinding.Style.RPC) {
+                    if (mdc.getSoapBindingAnnot().style() == jakarta.jws.soap.SOAPBinding.Style.RPC) {
                         throw ExceptionFactory.
                           makeWebServiceException(Messages.getMessage("soapBindingStyle",
                                                                       mdc.getDeclaringClass(),

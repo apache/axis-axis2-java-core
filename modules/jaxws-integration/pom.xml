@@ -92,10 +92,18 @@
             <artifactId>axis2-jaxws</artifactId>
             <version>${project.version}</version>
         </dependency>
+	<dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.1</version>
+        </dependency>
         <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>jakarta.activation</artifactId>
-            <scope>test</scope>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -1390,19 +1398,19 @@
                             <value>0</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.MessageFactory</name>
+                            <name>jakarta.xml.soap.MessageFactory</name>
                             <value>org.apache.axis2.saaj.MessageFactoryImpl</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.SOAPFactory</name>
+                            <name>jakarta.xml.soap.SOAPFactory</name>
                             <value>org.apache.axis2.saaj.SOAPFactoryImpl</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.SOAPConnectionFactory</name>
+                            <name>jakarta.xml.soap.SOAPConnectionFactory</name>
                             <value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
                         </property>
                         <property>
-                            <name>javax.xml.soap.MetaFactory</name>
+                            <name>jakarta.xml.soap.MetaFactory</name>
                             <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
                         </property>
                         <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->

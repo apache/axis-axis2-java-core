@@ -17,5 +17,5 @@
  * under the License.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://headers.message.jaxws.axis2.apache.org/types4")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://headers.message.jaxws.axis2.apache.org/types4")
 package org.apache.axis2.jaxws.message.headers;

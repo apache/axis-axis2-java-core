@@ -24,8 +24,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -114,7 +114,7 @@ public class SWAClient {
 		FileDataSource fileDataSource = new FileDataSource(file);
 
 		// Create a dataHandler using the fileDataSource. Any implementation of
-		// javax.activation.DataSource interface can fit here.
+		// jakarta.activation.DataSource interface can fit here.
 		DataHandler dataHandler = new DataHandler(fileDataSource);
 		String attachmentID = mc.addAttachment(dataHandler);
 

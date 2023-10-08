@@ -31,9 +31,9 @@ import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
 import org.apache.axis2.jaxws.description.builder.WsdlGenerator;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.wsdl.Definition;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;

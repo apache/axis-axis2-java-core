@@ -31,8 +31,8 @@ import org.apache.axis2.engine.ObjectSupplier;
 
 import junit.framework.TestCase;
 
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
 
 import static com.google.common.truth.Truth.assertAbout;

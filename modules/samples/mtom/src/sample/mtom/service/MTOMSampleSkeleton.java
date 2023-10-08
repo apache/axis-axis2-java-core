@@ -21,7 +21,7 @@ package sample.mtom.service;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import org.apache.ws.axis2.mtomsample.AttachmentResponse;
 import org.apache.ws.axis2.mtomsample.AttachmentType;

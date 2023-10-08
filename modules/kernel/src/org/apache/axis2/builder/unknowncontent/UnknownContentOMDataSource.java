@@ -21,7 +21,7 @@ package org.apache.axis2.builder.unknowncontent;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;

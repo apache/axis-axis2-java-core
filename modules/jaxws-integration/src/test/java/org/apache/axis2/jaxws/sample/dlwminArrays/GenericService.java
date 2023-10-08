@@ -22,10 +22,10 @@ package org.apache.axis2.jaxws.sample.dlwminArrays;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 
-@javax.jws.WebService (endpointInterface="org.apache.axis2.jaxws.sample.dlwminArrays.IGenericService", 
+@jakarta.jws.WebService (endpointInterface="org.apache.axis2.jaxws.sample.dlwminArrays.IGenericService", 
         targetNamespace="http://apache.org/axis2/jaxws/sample/dlwminArrays", 
         serviceName="GenericService", 
         portName="GenericServicePort")

@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class SoapBindingAnnot implements javax.jws.soap.SOAPBinding {
+public class SoapBindingAnnot implements jakarta.jws.soap.SOAPBinding {
 
     private Style style = Style.DOCUMENT;
     private Use use = Use.LITERAL;
@@ -43,8 +43,8 @@ public class SoapBindingAnnot implements javax.jws.soap.SOAPBinding {
     }
     public static SoapBindingAnnot createFromAnnotation(Annotation annotation) {
         SoapBindingAnnot returnAnnot = null;
-        if (annotation != null && annotation instanceof javax.jws.soap.SOAPBinding) {
-            javax.jws.soap.SOAPBinding sb = (javax.jws.soap.SOAPBinding) annotation;
+        if (annotation != null && annotation instanceof jakarta.jws.soap.SOAPBinding) {
+            jakarta.jws.soap.SOAPBinding sb = (jakarta.jws.soap.SOAPBinding) annotation;
             returnAnnot = new SoapBindingAnnot(sb.style(),
                                                sb.use(),
                                                sb.parameterStyle());

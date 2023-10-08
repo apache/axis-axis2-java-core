@@ -24,7 +24,7 @@ package org.apache.axis2.jaxws.nonanonymous.complextype;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(serviceName="EchoMessageService",
 	 	targetNamespace="http://testApp.jaxws",

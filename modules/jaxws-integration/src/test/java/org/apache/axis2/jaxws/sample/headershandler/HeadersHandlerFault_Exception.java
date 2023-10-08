@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.headershandler;
 
 import org.test.headershandler.HeadersHandlerFault;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 
 /**

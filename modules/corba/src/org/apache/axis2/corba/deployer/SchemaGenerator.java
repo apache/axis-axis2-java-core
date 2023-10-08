@@ -636,7 +636,7 @@ public class SchemaGenerator implements CorbaConstants {
             classTypeName = "base64Binary";
             isArrayType = false;
         }
-        if("javax.activation.DataHandler".equals(classTypeName)){
+        if("jakarta.activation.DataHandler".equals(classTypeName)){
             classTypeName = "base64Binary";
         }
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);

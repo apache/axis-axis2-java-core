@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionService;

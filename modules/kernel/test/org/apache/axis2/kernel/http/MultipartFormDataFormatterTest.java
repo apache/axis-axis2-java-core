@@ -22,7 +22,7 @@ package org.apache.axis2.kernel.http;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAbstractFactory;

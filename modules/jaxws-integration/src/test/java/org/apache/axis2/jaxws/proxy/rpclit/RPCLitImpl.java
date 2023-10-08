@@ -25,12 +25,12 @@ import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 import java.math.BigInteger;
 
 /**

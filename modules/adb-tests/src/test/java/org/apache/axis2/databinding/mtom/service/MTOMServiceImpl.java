@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.databinding.mtom.service;
 
-import javax.activation.DataHandler;
-import javax.jws.WebService;
-import javax.xml.ws.soap.MTOM;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.soap.MTOM;
 
 import org.apache.axiom.testutils.blob.RandomBlob;
 import org.apache.axiom.util.activation.DataHandlerUtils;

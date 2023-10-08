@@ -25,7 +25,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 
 public class MessageContextFactory {
 

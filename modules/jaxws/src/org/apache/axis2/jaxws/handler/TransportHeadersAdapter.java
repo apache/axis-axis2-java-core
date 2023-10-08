@@ -76,8 +76,8 @@ public class TransportHeadersAdapter implements Map {
 
         // The property is either a request or response
         String propertyName =
-                (isRequest) ? javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS
-                        : javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_HEADERS;
+                (isRequest) ? jakarta.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS
+                        : jakarta.xml.ws.handler.MessageContext.HTTP_RESPONSE_HEADERS;
 
 
         if (log.isDebugEnabled()) {
@@ -112,7 +112,7 @@ public class TransportHeadersAdapter implements Map {
         // If this is a response, then also set the property for the response code
         if (!isRequest) {
             Object value = mc.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
-            mc.setProperty(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE, value);
+            mc.setProperty(jakarta.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE, value);
         }
     }
 

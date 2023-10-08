@@ -22,7 +22,7 @@ package org.apache.axis2.transport.testkit.axis2;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.context.MessageContext;
@@ -62,7 +62,7 @@ public class LogAspect {
     }
     
     @AfterReturning(
-        pointcut="call(javax.activation.DataSource org.apache.axis2.format.MessageFormatterEx.getDataSource(..))",
+        pointcut="call(jakarta.activation.DataSource org.apache.axis2.format.MessageFormatterEx.getDataSource(..))",
         returning="dataSource")
     public void afterGetDataSource(DataSource dataSource) {
         if (TestKitLogManager.INSTANCE.isLoggingEnabled()) {

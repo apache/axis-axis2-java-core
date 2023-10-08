@@ -46,13 +46,13 @@ import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
 import org.w3c.dom.Node;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -23,7 +23,7 @@ import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 
-import javax.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.namespace.QName;
 
 import java.lang.annotation.Annotation;

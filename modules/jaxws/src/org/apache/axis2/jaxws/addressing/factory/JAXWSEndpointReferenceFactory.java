@@ -19,9 +19,9 @@
 
 package org.apache.axis2.jaxws.addressing.factory;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.transform.Source;
-import javax.xml.ws.EndpointReference;
+import jakarta.xml.ws.EndpointReference;
 
 /**
  * This class represents factories that can be used to generate instances of the

@@ -30,7 +30,7 @@ import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * JAXBCustomBuilder creates an OMSourcedElement backed by a JAXBDataSource

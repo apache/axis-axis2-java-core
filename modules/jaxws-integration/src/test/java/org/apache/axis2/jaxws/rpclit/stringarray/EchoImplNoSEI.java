@@ -19,10 +19,10 @@
 
 package org.apache.axis2.jaxws.rpclit.stringarray;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.Style;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.jws.soap.SOAPBinding.Style;
 
 @WebService(name = "EchoNoSEI", serviceName="RPCLitStringArrayEchoNoSEIService", targetNamespace = "http://sei.stringarray.rpclit.jaxws.axis2.apache.org")
 @SOAPBinding(style = Style.RPC)

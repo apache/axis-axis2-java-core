@@ -24,9 +24,9 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 /**
  * The client APIs should each implement the org.apache.axis2.jaxws.spi.BindingProvider
@@ -55,8 +55,8 @@ public class BindingProviderTests extends TestCase {
         Dispatch dsp = svc.createDispatch(portQName, Source.class, Service.Mode.MESSAGE);
         
         // Make sure we can cast the object to the right interfaces
-        assertTrue("The Dispatch object should also be a javax.xml.ws.BindingProvider", 
-                (dsp instanceof javax.xml.ws.BindingProvider));
+        assertTrue("The Dispatch object should also be a jakarta.xml.ws.BindingProvider", 
+                (dsp instanceof jakarta.xml.ws.BindingProvider));
         assertTrue("The Dispatch object should also be a org.apache.axis2.jaxws.spi.BindingProvider", 
                 dsp instanceof org.apache.axis2.jaxws.spi.BindingProvider);
         
@@ -77,8 +77,8 @@ public class BindingProviderTests extends TestCase {
         Sample s = svc.getPort(Sample.class);
         
         // Make sure we can cast the object to the right interfaces
-        assertTrue("The Proxy object should also be a javax.xml.ws.BindingProvider",
-                s instanceof javax.xml.ws.BindingProvider);
+        assertTrue("The Proxy object should also be a jakarta.xml.ws.BindingProvider",
+                s instanceof jakarta.xml.ws.BindingProvider);
         assertTrue("The Proxy object should also be a org.apache.axis2.jaxws.spi.BindingProvider",
                 s instanceof org.apache.axis2.jaxws.spi.BindingProvider);
         

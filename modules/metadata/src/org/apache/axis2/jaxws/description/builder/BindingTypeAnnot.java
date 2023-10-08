@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class BindingTypeAnnot implements javax.xml.ws.BindingType {
+public class BindingTypeAnnot implements jakarta.xml.ws.BindingType {
 
     private String value = "";
 
@@ -44,8 +44,8 @@ public class BindingTypeAnnot implements javax.xml.ws.BindingType {
     
     public static BindingTypeAnnot createFromAnnotation(Annotation annotation) {
         BindingTypeAnnot returnAnnot = null;
-        if (annotation != null && annotation instanceof javax.xml.ws.BindingType) {
-            javax.xml.ws.BindingType bt = (javax.xml.ws.BindingType) annotation;
+        if (annotation != null && annotation instanceof jakarta.xml.ws.BindingType) {
+            jakarta.xml.ws.BindingType bt = (jakarta.xml.ws.BindingType) annotation;
             returnAnnot = new BindingTypeAnnot(bt.value());
         }
         return returnAnnot;

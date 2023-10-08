@@ -27,8 +27,8 @@ import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.ws.WebServiceException;
 
 /**
  * XMLPartImpl

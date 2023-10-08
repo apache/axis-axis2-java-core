@@ -28,11 +28,11 @@ import org.apache.axis2.namespace.Constants;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -49,14 +49,14 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String)
     */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         return addHeaderElement(new PrefixedQName(null, localName, null));
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix) throws SOAPException {
         String namespaceURI = getNamespaceURI(prefix);
@@ -68,7 +68,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix, String uri)
             throws SOAPException {
@@ -80,14 +80,14 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.Name)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(jakarta.xml.soap.Name)
     */
     public SOAPElement addChildElement(Name name) throws SOAPException {
         return addHeaderElement(name);
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.SOAPElement)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(jakarta.xml.soap.SOAPElement)
     */
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
         OMNamespace ns = omTarget.getOMFactory().createOMNamespace(soapElement.getNamespaceURI(),
@@ -338,7 +338,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPHe
         while (childIter.hasNext()) {
             org.w3c.dom.Node domNode = (org.w3c.dom.Node)childIter.next();
             org.w3c.dom.Node saajNode = toSAAJNode(domNode);
-            if (saajNode instanceof javax.xml.soap.Text) {
+            if (saajNode instanceof jakarta.xml.soap.Text) {
                 childElements.add(saajNode);
             } else if (!(saajNode instanceof SOAPHeaderElement)) {
                 // silently replace node, as per saaj 1.2 spec

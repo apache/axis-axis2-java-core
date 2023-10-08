@@ -22,8 +22,8 @@ package org.apache.axis2.saaj;
 import java.io.InputStream;
 import java.net.URL;
 
-import javax.activation.DataSource;
-import javax.activation.URLDataSource;
+import jakarta.activation.DataSource;
+import jakarta.activation.URLDataSource;
 
 public class TestUtils {
     public static final String MTOM_TEST_MESSAGE_FILE = "message.bin";

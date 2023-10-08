@@ -25,9 +25,9 @@ import java.io.OutputStream;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.commons.io.output.CountingOutputStream;
 
-import javax.mail.internet.MimeMessage;
-import javax.mail.MessagingException;
-import javax.mail.Session;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
 
 /**
  * The default MimeMessage does not let us set a custom MessageID on a message being

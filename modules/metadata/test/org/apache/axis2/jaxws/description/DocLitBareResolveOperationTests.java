@@ -23,11 +23,11 @@ import junit.framework.TestCase;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 /**
  * Validate that the information needed to resolve an incoming Doc/Lit/Bare message is setup

@@ -20,8 +20,8 @@ package org.apache.axis2.jaxws.samples.client.echo;
 
 import org.apache.axis2.jaxws.samples.echo.EchoStringResponse;
 
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 import java.util.concurrent.ExecutionException;
 
 
@@ -31,7 +31,7 @@ public class EchoServiceCallbackHandler implements AsyncHandler<EchoStringRespon
 
     /*
     *
-    * @see javax.xml.ws.AsyncHandler#handleResponse(javax.xml.ws.Response)
+    * @see jakarta.xml.ws.AsyncHandler#handleResponse(jakarta.xml.ws.Response)
     */
     public void handleResponse(Response<EchoStringResponse> response) {
         try {

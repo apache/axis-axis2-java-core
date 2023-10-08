@@ -44,12 +44,12 @@ import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 import java.lang.reflect.Method;
 
 public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implements
         EndpointLifecycleManager {
-    public static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
+    public static final String WEBSERVICE_MESSAGE_CONTEXT = "jakarta.xml.ws.WebServiceContext";
     private static final Log log = LogFactory.getLog(EndpointLifecycleManagerImpl.class);
 
     public EndpointLifecycleManagerImpl(Object endpointInstance) {
@@ -146,7 +146,7 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
      */
     protected void performWebServiceContextUpdate(MessageContext mc)
                                                                     throws ResourceInjectionException {
-        javax.xml.ws.handler.MessageContext soapMessageContext = createSOAPMessageContext(mc);
+        jakarta.xml.ws.handler.MessageContext soapMessageContext = createSOAPMessageContext(mc);
         ServiceContext serviceContext = mc.getAxisMessageContext().getServiceContext();
 
         //Get WebServiceContext from ServiceContext
@@ -176,7 +176,7 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
      * and initializing the instance with a MessageContext.
      */
     protected WebServiceContext createWebServiceContext(MessageContext mc) {
-        javax.xml.ws.handler.MessageContext soapMessageContext = createSOAPMessageContext(mc);
+        jakarta.xml.ws.handler.MessageContext soapMessageContext = createSOAPMessageContext(mc);
         // Create WebServiceContext
         WebServiceContextImpl wsContext = new WebServiceContextImpl();
         //Add MessageContext for this request.
@@ -257,7 +257,7 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
         return instance;
     }
 
-    protected javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc) {
+    protected jakarta.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc) {
         SoapMessageContext soapMessageContext =
                 (SoapMessageContext) MessageContextFactory.createSoapMessageContext(mc);
         return soapMessageContext;
@@ -272,7 +272,7 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
     }
 
     protected void updateWebServiceContext(WebServiceContext wsContext,
-                                           javax.xml.ws.handler.MessageContext soapMessageContext)
+                                           jakarta.xml.ws.handler.MessageContext soapMessageContext)
                                                                                                   throws ResourceInjectionException {
         WebServiceContextInjector wci =
                 (WebServiceContextInjector) ResourceInjectionFactory.createResourceInjector(WebServiceContextInjector.class);

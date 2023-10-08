@@ -22,8 +22,8 @@ package org.apache.axis2.jaxws.dispatch;
 import org.apache.axis2.jaxws.TestLogger;
 import test.EchoStringResponse;
 
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 
 public class JAXBCallbackHandler<T> implements AsyncHandler<T> {
 

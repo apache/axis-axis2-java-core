@@ -25,7 +25,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 public final class MessageAttachmentContext implements AttachmentContext {
     

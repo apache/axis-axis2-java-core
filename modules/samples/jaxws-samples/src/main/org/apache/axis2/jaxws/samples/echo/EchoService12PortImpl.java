@@ -18,10 +18,10 @@
  */
 package org.apache.axis2.jaxws.samples.echo;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.soap.SOAPBinding;
 
-@javax.jws.WebService(endpointInterface = "org.apache.axis2.jaxws.samples.echo.EchoService12PortType", targetNamespace = "http://org/apache/axis2/jaxws/samples/echo/", serviceName = "EchoService12", portName = "EchoService12Port", wsdlLocation = "WEB-INF/wsdl/Echo12.wsdl")
+@jakarta.jws.WebService(endpointInterface = "org.apache.axis2.jaxws.samples.echo.EchoService12PortType", targetNamespace = "http://org/apache/axis2/jaxws/samples/echo/", serviceName = "EchoService12", portName = "EchoService12Port", wsdlLocation = "WEB-INF/wsdl/Echo12.wsdl")
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 public class EchoService12PortImpl {
 

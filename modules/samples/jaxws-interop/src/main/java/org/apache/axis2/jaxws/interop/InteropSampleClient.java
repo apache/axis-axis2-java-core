@@ -20,7 +20,7 @@
 package org.apache.axis2.jaxws.interop;
 
 import org.tempuri.*;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 public class InteropSampleClient
 {

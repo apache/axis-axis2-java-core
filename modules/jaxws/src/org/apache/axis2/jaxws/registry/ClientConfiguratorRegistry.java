@@ -25,9 +25,9 @@ import org.apache.axis2.jaxws.client.config.MTOMConfigurator;
 import org.apache.axis2.jaxws.client.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 
-import javax.xml.ws.RespectBindingFeature;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.soap.MTOMFeature;
+import jakarta.xml.ws.RespectBindingFeature;
+import jakarta.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.soap.MTOMFeature;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

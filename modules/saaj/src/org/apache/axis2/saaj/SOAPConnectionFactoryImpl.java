@@ -19,9 +19,9 @@
 
 package org.apache.axis2.saaj;
 
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPConnection;
+import jakarta.xml.soap.SOAPConnectionFactory;
+import jakarta.xml.soap.SOAPException;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class SOAPConnectionFactoryImpl extends SOAPConnectionFactory {
      * Create a new <CODE>SOAPConnection</CODE>.
      *
      * @return the new <CODE>SOAPConnection</CODE> object.
-     * @throws javax.xml.soap.SOAPException if there was an exception creating the
+     * @throws jakarta.xml.soap.SOAPException if there was an exception creating the
      *                                      <CODE>SOAPConnection</CODE> object.
      */
     public SOAPConnection createConnection() throws SOAPException {

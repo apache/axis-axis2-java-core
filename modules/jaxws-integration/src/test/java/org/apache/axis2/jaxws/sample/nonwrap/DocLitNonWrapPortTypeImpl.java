@@ -30,10 +30,10 @@ import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
 import org.test.sample.nonwrap.TwoWayHolder;
 
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Response;
 import java.util.concurrent.Future;
 
 @WebService(serviceName="DocLitNonWrapService",
@@ -73,7 +73,7 @@ public class DocLitNonWrapPortTypeImpl implements DocLitNonWrapPortType {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType#twoWayHolderAsync(org.test.sample.nonwrap.TwoWayHolder, javax.xml.ws.AsyncHandler)
+	 * @see org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType#twoWayHolderAsync(org.test.sample.nonwrap.TwoWayHolder, jakarta.xml.ws.AsyncHandler)
 	 */
 	public Future<?> twoWayHolderAsync(TwoWayHolder allByMyself,
 			AsyncHandler<TwoWayHolder> asyncHandler) {
@@ -82,7 +82,7 @@ public class DocLitNonWrapPortTypeImpl implements DocLitNonWrapPortType {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType#twoWayHolder(javax.xml.ws.Holder)
+	 * @see org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType#twoWayHolder(jakarta.xml.ws.Holder)
 	 */
 	public void twoWayHolder(Holder<TwoWayHolder> allByMyself) {
 		//TODO Auto-generated method stub
@@ -101,7 +101,7 @@ public class DocLitNonWrapPortTypeImpl implements DocLitNonWrapPortType {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType#twoWayAsync(org.test.sample.nonwrap.TwoWay, javax.xml.ws.AsyncHandler)
+	 * @see org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType#twoWayAsync(org.test.sample.nonwrap.TwoWay, jakarta.xml.ws.AsyncHandler)
 	 */
 	public Future<?> twoWayAsync(TwoWay allByMyself,
 			AsyncHandler<ReturnType> asyncHandler) {

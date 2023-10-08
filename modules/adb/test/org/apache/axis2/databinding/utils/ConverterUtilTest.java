@@ -32,8 +32,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.util.base64.Base64Utils;

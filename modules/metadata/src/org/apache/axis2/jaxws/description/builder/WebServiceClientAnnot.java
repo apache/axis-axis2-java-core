@@ -25,7 +25,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import java.lang.annotation.Annotation;
 
 
-public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
+public class WebServiceClientAnnot implements jakarta.xml.ws.WebServiceClient {
 
     private String name;
     private String targetNamespace;
@@ -70,8 +70,8 @@ public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
      */
     public static WebServiceClientAnnot createFromAnnotation(Annotation annotation) {
         WebServiceClientAnnot returnAnnot = null;
-        if (annotation != null && annotation instanceof javax.xml.ws.WebServiceClient) {
-            javax.xml.ws.WebServiceClient wsc = (javax.xml.ws.WebServiceClient) annotation;
+        if (annotation != null && annotation instanceof jakarta.xml.ws.WebServiceClient) {
+            jakarta.xml.ws.WebServiceClient wsc = (jakarta.xml.ws.WebServiceClient) annotation;
             returnAnnot = new WebServiceClientAnnot(wsc.name(),
                                                     wsc.targetNamespace(),
                                                     wsc.wsdlLocation());
@@ -93,15 +93,15 @@ public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
     public static WebServiceClientAnnot createFromAnnotation(Annotation baseAnnotation,
                                                              Annotation sparseAnnotation) {
         WebServiceClientAnnot returnAnnot = null;
-        javax.xml.ws.WebServiceClient baseWSCAnnotation = null;
-        javax.xml.ws.WebServiceClient sparseWSCAnnotation = null;
+        jakarta.xml.ws.WebServiceClient baseWSCAnnotation = null;
+        jakarta.xml.ws.WebServiceClient sparseWSCAnnotation = null;
         
-        if (baseAnnotation != null && baseAnnotation instanceof javax.xml.ws.WebServiceClient) {
-            baseWSCAnnotation = (javax.xml.ws.WebServiceClient) baseAnnotation;
+        if (baseAnnotation != null && baseAnnotation instanceof jakarta.xml.ws.WebServiceClient) {
+            baseWSCAnnotation = (jakarta.xml.ws.WebServiceClient) baseAnnotation;
         }
         
-        if (sparseAnnotation != null && sparseAnnotation instanceof javax.xml.ws.WebServiceClient) {
-            sparseWSCAnnotation = (javax.xml.ws.WebServiceClient) sparseAnnotation;
+        if (sparseAnnotation != null && sparseAnnotation instanceof jakarta.xml.ws.WebServiceClient) {
+            sparseWSCAnnotation = (jakarta.xml.ws.WebServiceClient) sparseAnnotation;
         }
         
         if (baseWSCAnnotation != null && sparseWSCAnnotation != null) {

@@ -53,7 +53,7 @@ import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.w3c.dom.Document;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.beans.BeanInfo;
@@ -875,6 +875,19 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         type.isPrimitive());
             }
 
+            NamespacePrefixList map = xmlSchema.getNamespaceContext();
+            if (map == null) {
+		log.warn("NamespacePrefixList is null from xmlSchema.getNamespaceContext(), returning with no further action");
+                return;
+            }
+            if (!(map instanceof NamespaceMap)) {
+		log.warn("NamespacePrefixList is not an instanceof NamespaceMap, returning with no further action");
+                return;
+            }
+            if ((map instanceof NamespaceMap) && ((NamespaceMap) map).values() == null) {
+		log.warn("NamespacePrefixList is an instanceof NamespaceMap but values are null, returning with no further action");
+                return;
+            }
             if (typeTable.getComplexSchemaType(propertyName) != null && !((NamespaceMap) xmlSchema.getNamespaceContext()).values().
                     contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
                 XmlSchemaImport importElement = new XmlSchemaImport(xmlSchema);

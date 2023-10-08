@@ -26,11 +26,11 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.Response;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
 
 import static org.apache.axis2.jaxws.framework.TestUtils.await;
 import static org.apache.axis2.jaxws.framework.TestUtils.checkUnknownHostURL;

@@ -69,7 +69,7 @@ public class DescriptionFactory {
      * @param wsdlURL      URL to the WSDL file to use; this may be null
      * @param serviceQName The ServiceQName for this service; may not be null
      * @param serviceClass The Service class; may not be null and must be assignable from
-     *                     javax.xml.ws.Service
+     *                     jakarta.xml.ws.Service
      * @return A ServiceDescription instance for a CLIENT access to the service.
      * @see #updateEndpoint(ServiceDescription, Class, QName, ServiceDescription.UpdateType)
      */

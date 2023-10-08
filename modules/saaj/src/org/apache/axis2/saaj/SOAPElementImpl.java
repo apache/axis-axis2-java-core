@@ -25,6 +25,9 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPVersion;
+// import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -34,16 +37,16 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPFaultElement;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFaultElement;
+import jakarta.xml.soap.SOAPHeader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -51,6 +54,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> implements SOAPElement {
+    private static Log log = LogFactory.getLog(SOAPElementImpl.class);
     private String encodingStyle;
 
     public SOAPElementImpl(T element) {
@@ -77,7 +81,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.Name)
+      * @see jakarta.xml.soap.SOAPElement#addChildElement(jakarta.xml.soap.Name)
       */
     public SOAPElement addChildElement(Name name) throws SOAPException {
         String prefix = name.getPrefix();
@@ -86,7 +90,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.SOAPElement)
+      * @see jakarta.xml.soap.SOAPElement#addChildElement(jakarta.xml.soap.SOAPElement)
       */
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
         String namespaceURI = soapElement.getNamespaceURI();
@@ -126,7 +130,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
+    * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix, String namespaceURI)
             throws SOAPException {
@@ -145,7 +149,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String)
+      * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String)
       */
     public SOAPElement addChildElement(String localName, String prefix) throws SOAPException {
         String namespaceURI = getNamespaceURI(prefix);
@@ -158,7 +162,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
+      * @see jakarta.xml.soap.SOAPElement#addChildElement(java.lang.String)
       */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         SOAPElementImpl<OMElement> childEle =
@@ -169,7 +173,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(java.lang.String, java.lang.String)
+      * @see jakarta.xml.soap.SOAPElement#addNamespaceDeclaration(java.lang.String, java.lang.String)
       */
     public SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException {
         if (uri == null) {
@@ -210,6 +214,9 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
      */
     public Iterator getAllAttributes() {
         final Iterator attribIter = omTarget.getAllAttributes();
+	// long size = IteratorUtils.size(attribIter);
+        // log.debug("saaj getAllAttributes starting on attributes size: " + size);
+
         Collection attribName = new ArrayList();
         Attr attr;
         while (attribIter.hasNext()) {
@@ -219,18 +226,22 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
                 qname = new PrefixedQName(attr.getNamespaceURI(),
                                           attr.getName(),
                                           attr.getPrefix());
+	        log.debug("getAllAttributes() adding qname: " + qname + " , with name: " + attr.getName() + " , namespaceURI: " + attr.getNamespaceURI() + " , prefix: " + attr.getPrefix());
             } else {
                 qname = new PrefixedQName(attr.getNamespaceURI(),
                                           attr.getLocalName(),
                                           attr.getPrefix());
+	        log.debug("getAllAttributes() adding qname: " + qname + " , with local name: " + attr.getLocalName() + " , namespaceURI: " + attr.getNamespaceURI() + " , prefix: " + attr.getPrefix());
             }
             attribName.add(qname);
         }
+	// size = IteratorUtils.size(attribIter);
+        // log.debug("saaj getAllAttributes returning on attributes size: " + size);
         return attribName.iterator();
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#getAttributeValue(javax.xml.soap.Name)
+      * @see jakarta.xml.soap.SOAPElement#getAttributeValue(jakarta.xml.soap.Name)
       */
     public String getAttributeValue(Name name) {
         //This method is waiting on the finalization of the name for a method
@@ -261,7 +272,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#getChildElements(javax.xml.soap.Name)
+      * @see jakarta.xml.soap.SOAPElement#getChildElements(jakarta.xml.soap.Name)
       */
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
@@ -274,7 +285,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#getElementName()
+      * @see jakarta.xml.soap.SOAPElement#getElementName()
       */
     public Name getElementName() {
         QName qName = omTarget.getQName();
@@ -284,14 +295,14 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#getEncodingStyle()
+      * @see jakarta.xml.soap.SOAPElement#getEncodingStyle()
       */
     public String getEncodingStyle() {
         return this.encodingStyle;
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#getNamespacePrefixes()
+      * @see jakarta.xml.soap.SOAPElement#getNamespacePrefixes()
       */
     public Iterator getNamespacePrefixes() {
         //Get all declared namespace, make a list of their prefixes and return an iterator over that list
@@ -308,7 +319,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#getNamespaceURI(java.lang.String)
+      * @see jakarta.xml.soap.SOAPElement#getNamespaceURI(java.lang.String)
       */
     public String getNamespaceURI(String prefix) {
         OMNamespace ns = omTarget.findNamespaceURI(prefix);
@@ -316,7 +327,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#getVisibleNamespacePrefixes()
+      * @see jakarta.xml.soap.SOAPElement#getVisibleNamespacePrefixes()
       */
     public Iterator getVisibleNamespacePrefixes() {
         //I'll recursively return all the declared namespaces till this node, including its parents etc.
@@ -450,7 +461,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#removeAttribute(javax.xml.soap.Name)
+      * @see jakarta.xml.soap.SOAPElement#removeAttribute(jakarta.xml.soap.Name)
       */
     public boolean removeAttribute(Name name) {
         org.apache.axiom.om.OMAttribute attr = omTarget.getAttribute(new QName(name.getURI(),
@@ -464,7 +475,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#removeContents()
+      * @see jakarta.xml.soap.SOAPElement#removeContents()
       */
     public void removeContents() {
         //We will get all the children and iteratively call the detach() on all of 'em.
@@ -476,7 +487,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#removeNamespaceDeclaration(java.lang.String)
+      * @see jakarta.xml.soap.SOAPElement#removeNamespaceDeclaration(java.lang.String)
       */
     public boolean removeNamespaceDeclaration(String prefix) {
         for (Iterator<OMNamespace> it = omTarget.getAllDeclaredNamespaces(); it.hasNext(); ) {
@@ -681,7 +692,7 @@ public class SOAPElementImpl<T extends OMElement> extends NodeImpl<Element,T> im
             } catch (SOAPException e) {
                 throw new RuntimeException("Cannot add text node", e);
             }
-        } else if (((org.w3c.dom.Node)firstChild).getNodeType() == javax.xml.soap.Node.TEXT_NODE
+        } else if (((org.w3c.dom.Node)firstChild).getNodeType() == jakarta.xml.soap.Node.TEXT_NODE
                 && firstChild.getNextOMSibling() == null) {
             ((org.w3c.dom.Text)firstChild).setData(value);
         } else {

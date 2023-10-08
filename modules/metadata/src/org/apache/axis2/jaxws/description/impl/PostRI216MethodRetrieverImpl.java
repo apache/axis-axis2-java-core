@@ -79,8 +79,8 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
          *  3. For each super class, if 'WebService' present, take all MDC's according to rules 1&2
          *    But, if WebService not present, grab only MDC's that are annotated.
          */
-        if (log.isTraceEnabled()) {
-            log.trace("retrieveMethods: Enter");
+        if (log.isDebugEnabled()) {
+            log.debug("retrieveMethods: Enter");
         }
 
         ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
@@ -118,8 +118,8 @@ public class PostRI216MethodRetrieverImpl extends MethodRetriever {
                 DescriptionBuilderComposite superDBC = eid.getEndpointDescriptionImpl()
                 .getServiceDescriptionImpl().getDBCMap().get(tempDBC.getSuperClassName());
 
-                if (log.isTraceEnabled())
-                    log.trace("superclass name for this DBC is:" + tempDBC.getSuperClassName());
+                if (log.isDebugEnabled())
+                    log.debug("superclass name for this DBC is:" + tempDBC.getSuperClassName());
 
                 //Verify that we can find the SEI in the composite list
                 if (superDBC == null) {

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.server;
 
-import javax.xml.ws.AsyncHandler;
+import jakarta.xml.ws.AsyncHandler;
 
 /**
  * This interface defines the plug-point that is responsible for creating a

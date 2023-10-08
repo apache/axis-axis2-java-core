@@ -31,7 +31,7 @@ import java.util.Map;
  * client - On the client side, this will be called with the request or response context from the
  * BindingProvider instance.
  * <p/>
- * server - On the server side, this will be called with the javax.xml.ws.handler.MessageContext
+ * server - On the server side, this will be called with the jakarta.xml.ws.handler.MessageContext
  * instance that the service endpoint will see.  This is the same context that will be injected
  */
 public interface ApplicationContextMigrator {

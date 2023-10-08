@@ -22,10 +22,10 @@ package org.apache.axis2.jaxws.sample.headershandler;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.WebServiceContext;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.WebServiceContext;
 
 import org.test.headershandler.HeadersHandlerResponse;
 

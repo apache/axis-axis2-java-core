@@ -21,13 +21,13 @@ package org.apache.axis2.jaxws.binding;
 
 import java.util.List;
 
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
 
 import org.apache.axis2.jaxws.description.EndpointDescription;
 
-public class HTTPBinding extends BindingImpl implements javax.xml.ws.http.HTTPBinding {
+public class HTTPBinding extends BindingImpl implements jakarta.xml.ws.http.HTTPBinding {
 
     public HTTPBinding(EndpointDescription ed) {
         super(ed);

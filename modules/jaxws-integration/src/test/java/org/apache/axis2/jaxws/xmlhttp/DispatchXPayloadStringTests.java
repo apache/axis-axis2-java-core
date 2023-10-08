@@ -27,9 +27,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
-import javax.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.http.HTTPBinding;
 
 public class DispatchXPayloadStringTests {
     @ClassRule

@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.soap.Addressing;
+import jakarta.xml.ws.soap.AddressingFeature;
 import java.lang.annotation.Annotation;
 
 public class AddressingAnnot implements Addressing {

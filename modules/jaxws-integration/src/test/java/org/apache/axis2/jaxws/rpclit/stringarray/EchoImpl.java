@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.rpclit.stringarray;
 
 import org.test.rpclit.stringarray.StringArray;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(serviceName="RPCLitStringArrayService",
 			endpointInterface="org.apache.axis2.jaxws.rpclit.stringarray.sei.Echo")

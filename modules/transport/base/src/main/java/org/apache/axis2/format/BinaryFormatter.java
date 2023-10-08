@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 
 import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMElement;

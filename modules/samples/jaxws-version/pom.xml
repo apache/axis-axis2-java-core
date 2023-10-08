@@ -45,6 +45,11 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${project.version}</version>
         </dependency>
+	<dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

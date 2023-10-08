@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.RespectBinding;
-import javax.xml.ws.RespectBindingFeature;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.RespectBinding;
+import jakarta.xml.ws.RespectBindingFeature;
+import jakarta.xml.ws.Service;
 
 import junit.framework.TestCase;
 

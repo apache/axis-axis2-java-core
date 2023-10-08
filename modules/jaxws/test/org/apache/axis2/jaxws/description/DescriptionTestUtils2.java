@@ -28,7 +28,7 @@ import org.apache.axis2.wsdl.WSDLUtil;
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -94,6 +94,12 @@ public class DescriptionTestUtils2 {
 //                Field serviceDelgateField = service.getClass().getDeclaredFields()[0];
                 Field serviceDelgateField = service.getClass().getDeclaredField("delegate");
                 serviceDelgateField.setAccessible(true);
+		// The jakarta transition from javax 
+		// changed the definition of the loaded class
+		// to META-INF/services/jakarta.xml.ws.spi.Provider
+		// Without that, a ClassCastException can occur 
+		// casting com.sun.xml.ws.client.WSServiceDelegate 
+		// to org.apache.axis2.jaxws.spi.ServiceDelegate 
                 returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
             } catch (NoSuchFieldException e) {
                 // This may be a generated service subclass, so get the delegate from the superclass

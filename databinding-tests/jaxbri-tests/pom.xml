@@ -40,7 +40,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-javax-jaxb</artifactId>
+            <artifactId>axiom-jakarta-jaxb</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -85,8 +85,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -26,12 +26,12 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.spi.ClientMetadataTest;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceException;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -993,7 +993,7 @@ interface ClientMetadataPortSEI {
 }
 
 @WebServiceClient()
-class ClientMetadataGeneratedService extends javax.xml.ws.Service {
+class ClientMetadataGeneratedService extends jakarta.xml.ws.Service {
     public ClientMetadataGeneratedService() {
         super(ReleaseServiceTests.getWsdlURL(ReleaseServiceTests.GENERATED_SERVICE_WSDL),
               new QName(ReleaseServiceTests.GENERATED_SERVICE_NS, ReleaseServiceTests.GENERATED_SERVICE_LP));
@@ -1008,7 +1008,7 @@ class ClientMetadataGeneratedService extends javax.xml.ws.Service {
  * Subclasses Service to track how many times the finalize() method is called.  This allows the
  * tests to tell when the Service instance is garbage collected.   
  */
-class TestFinalizerService extends javax.xml.ws.Service {
+class TestFinalizerService extends jakarta.xml.ws.Service {
     static int finalizerCalled = 0;
     public TestFinalizerService(QName qn) {
         super(null, qn);

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.description.EndpointDescription;
 

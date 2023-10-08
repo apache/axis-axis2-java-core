@@ -48,7 +48,7 @@ import org.tempuri.complex.data.arrays.xsd.ArrayOfshort;
 import org.tempuri.complex.data.arrays.xsd.ArrayOfstring;
 import org.tempuri.complex.data.xsd.*;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.math.BigInteger;

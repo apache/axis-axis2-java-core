@@ -24,13 +24,13 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
 import java.net.URL;
 
 /**
  * Tests building a ServiceDescription using WSDL and the JAXWS Service API.  
- * Note that a ServiceDescription is built when a javax.xml.ws.Service is created.  Since that is the actual API 
+ * Note that a ServiceDescription is built when a jakarta.xml.ws.Service is created.  Since that is the actual API 
  * that should be used, this test will create Service objects and then use introspection
  * to check the underlying ServiceDelegate which contains the ServiceDescription.
  */

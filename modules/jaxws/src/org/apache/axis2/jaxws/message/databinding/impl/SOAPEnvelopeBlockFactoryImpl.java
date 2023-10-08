@@ -28,9 +28,9 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 /** Creates a SOAPEnvelopeBlock */
 public class SOAPEnvelopeBlockFactoryImpl extends BlockFactoryImpl implements

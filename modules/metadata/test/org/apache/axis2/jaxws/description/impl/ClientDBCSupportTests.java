@@ -28,10 +28,10 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceClientAnnot;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceClient;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceClient;
 import java.net.URL;
 
 /**
@@ -184,7 +184,7 @@ public class ClientDBCSupportTests extends TestCase {
 }
 
 @WebServiceClient(targetNamespace="originalTNS", wsdlLocation="originalWsdlLocation")
-class ClientDBCSupportServiceSubclass extends javax.xml.ws.Service {
+class ClientDBCSupportServiceSubclass extends jakarta.xml.ws.Service {
 
     protected ClientDBCSupportServiceSubclass(URL wsdlDocumentLocation, QName serviceName) {
         super(wsdlDocumentLocation, serviceName);

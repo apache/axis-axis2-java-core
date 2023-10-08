@@ -20,8 +20,8 @@
 
 package org.apache.axis2.jaxws.unitTest.echo;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 
 /**
  * 

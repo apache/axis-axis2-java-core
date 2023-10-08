@@ -24,5 +24,5 @@
 // Generated on: 2007.03.21 at 10:56:51 AM CDT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://java.sun.com/xml/ns/javaee")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://java.sun.com/xml/ns/javaee")
 package org.apache.axis2.jaxws.description.xml.handler;

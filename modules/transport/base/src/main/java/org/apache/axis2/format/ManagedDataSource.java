@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.format;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 
 /**
  * Managed data source.

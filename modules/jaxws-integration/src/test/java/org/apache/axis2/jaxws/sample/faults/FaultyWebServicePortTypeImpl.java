@@ -25,9 +25,9 @@ package org.apache.axis2.jaxws.sample.faults;
 import org.test.faults.FaultyWebServiceFault;
 import org.test.faults.FaultyWebServiceResponse;
 
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 import java.util.concurrent.Future;
 
 @WebService(serviceName="FaultyWebServiceService",

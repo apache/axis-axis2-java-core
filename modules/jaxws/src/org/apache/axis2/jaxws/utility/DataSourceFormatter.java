@@ -34,10 +34,10 @@ import org.apache.axis2.util.WrappedDataHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;

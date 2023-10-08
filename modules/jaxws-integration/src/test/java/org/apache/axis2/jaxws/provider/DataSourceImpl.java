@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.provider;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * An impl class for javax.activation.DataSource interface.
+ * An impl class for jakarta.activation.DataSource interface.
  *
  */
 public class DataSourceImpl implements DataSource {
@@ -74,14 +74,14 @@ public class DataSourceImpl implements DataSource {
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.activation.DataSource#getContentType()
+	 * @see jakarta.activation.DataSource#getContentType()
 	 */
 	public String getContentType() {
 		return this.contentType;
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.activation.DataSource#getInputStream()
+	 * @see jakarta.activation.DataSource#getInputStream()
 	 */
 	public InputStream getInputStream() throws IOException {
 		if (this.byteArrayOS.size() != 0) {
@@ -97,14 +97,14 @@ public class DataSourceImpl implements DataSource {
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.activation.DataSource#getName()
+	 * @see jakarta.activation.DataSource#getName()
 	 */
 	public String getName() {
 		return this.fileName;
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.activation.DataSource#getOutputStream()
+	 * @see jakarta.activation.DataSource#getOutputStream()
 	 */
 	public OutputStream getOutputStream() throws IOException {
 		if (this.byteArrayOS.size() != 0) {

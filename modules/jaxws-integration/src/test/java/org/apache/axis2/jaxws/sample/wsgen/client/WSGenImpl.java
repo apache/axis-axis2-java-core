@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.wsgen.client;
 
 // SERVER-SIDE CLASS
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(endpointInterface = "org.apache.axis2.jaxws.sample.wsgen.WSGenInterface",
         serviceName="WSGenService",

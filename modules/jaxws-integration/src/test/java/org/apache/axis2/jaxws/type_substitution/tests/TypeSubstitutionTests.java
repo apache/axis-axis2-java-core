@@ -25,17 +25,25 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.util.Iterator;
 
 public class TypeSubstitutionTests {
@@ -68,8 +76,20 @@ public class TypeSubstitutionTests {
         SOAPMessage response = dispatch.invoke(request);
 
         SOAPBody body = response.getSOAPBody();
+	// AXIS2-6051, SOAPBody.toString no longer works
+        // TestLogger.logger.debug(">> Response [" + body + "]");
+	/*
+	org.w3c.dom.Document document = body.extractContentAsDocument();
+        Source source = new DOMSource(document);
+        StringWriter out = new StringWriter(); 
+        Result result = new StreamResult(out); 
+        TransformerFactory tFactory = TransformerFactory.newInstance(); 
+        Transformer transformer = tFactory.newTransformer(); 
+        transformer.transform(source, result); 
+        String bodyStr = out.toString();
 
-        TestLogger.logger.debug(">> Response [" + body + "]");
+        TestLogger.logger.debug(">> Response [" + bodyStr + "]");
+	*/
 
         QName expectedXsiType1 = new QName(NS, "fuji");
         QName expectedXsiType2 = new QName(NS, "freyburg");
@@ -82,26 +102,39 @@ public class TypeSubstitutionTests {
         assertTrue(iter.hasNext());
         
         element = (SOAPElement)iter.next();
-
-        iter = element.getChildElements(new QName("return"));
+	// {http://apple.org}getApplesResponse
+	QName appleResponse = element.getElementQName();
+        TestLogger.logger.debug("appleResponse: " + appleResponse);
+	iter = null;
+        iter = element.getChildElements(new QName(NS, "return"));
 
         // check value1
         assertTrue(iter.hasNext());
-        element = (SOAPElement)iter.next();
-        xsiType = getXsiTypeAttribute(element);
+        SOAPElement returnElement = (SOAPElement)iter.next();
+        // {http://apple.org}return	
+        QName returnName = returnElement.getElementQName();
+        TestLogger.logger.debug("returnName: " + returnName);
+	// {http://apple.org}fuji
+        xsiType = getXsiTypeAttribute(returnElement);
+        if (xsiType != null) {
+            TestLogger.logger.debug("found xsiType: " + xsiType + " , on getElementQName() : " + returnElement.getElementQName() + " , needs to match: " + expectedXsiType1);
+        }
         assertEquals("xsi:type 1", expectedXsiType1, xsiType);
+        TestLogger.logger.debug("xsi:type 1 passed");
         
         // check value2
         assertTrue(iter.hasNext());
         element = (SOAPElement)iter.next();
         xsiType = getXsiTypeAttribute(element);
         assertEquals("xsi:type 2", expectedXsiType2, xsiType);
+        TestLogger.logger.debug("xsi:type 2 passed");
     }
     
     private QName getXsiTypeAttribute(SOAPElement element) throws Exception {
         String value = element.getAttributeValue(XSI_TYPE);
         QName xsiType = null;
         if (value != null) {
+            TestLogger.logger.debug("getXsiTypeAttribute() found value: " + value);
             int pos = value.indexOf(":");
             if (pos != -1) {
                 String prefix = value.substring(0, pos);
@@ -109,7 +142,9 @@ public class TypeSubstitutionTests {
                 String namespace = element.getNamespaceURI(prefix);
                 xsiType = new QName(namespace, localName, prefix);
             } else {
-                xsiType = new QName(value);
+	        // AXIS2-6051, with jakarta this is now the default
+		// and the namespace is required
+                xsiType = new QName(NS, value);
             }
         }
         return xsiType;

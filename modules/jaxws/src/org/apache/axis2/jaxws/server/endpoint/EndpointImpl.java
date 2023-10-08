@@ -38,11 +38,11 @@ import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.ws.Binding;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.EndpointContext;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.Binding;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.EndpointContext;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-public class EndpointImpl extends javax.xml.ws.Endpoint {
+public class EndpointImpl extends jakarta.xml.ws.Endpoint {
 
     private boolean published;
     private Object implementor;
@@ -95,7 +95,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.Endpoint#getMetadata()
+    * @see jakarta.xml.ws.Endpoint#getMetadata()
     */
     public List<Source> getMetadata() {
         return this.metadata;
@@ -103,7 +103,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.Endpoint#setMetadata(java.util.List)
+    * @see jakarta.xml.ws.Endpoint#setMetadata(java.util.List)
     */
     public void setMetadata(List<Source> list) {
         this.metadata = list;
@@ -111,7 +111,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.Endpoint#getProperties()
+    * @see jakarta.xml.ws.Endpoint#getProperties()
     */
     public Map<String, Object> getProperties() {
         return this.properties;
@@ -119,7 +119,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.Endpoint#setProperties(java.util.Map)
+    * @see jakarta.xml.ws.Endpoint#setProperties(java.util.Map)
     */
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
@@ -127,7 +127,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.Endpoint#getBinding()
+    * @see jakarta.xml.ws.Endpoint#getBinding()
     */
     public Binding getBinding() {
         return binding;
@@ -135,7 +135,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#getExecutor()
+     * @see jakarta.xml.ws.Endpoint#getExecutor()
      */
     public Executor getExecutor() {
         return this.executor;
@@ -143,7 +143,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#getImplementor()
+     * @see jakarta.xml.ws.Endpoint#getImplementor()
      */
     public Object getImplementor() {
         return implementor;
@@ -151,7 +151,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#setEndpointContext(javax.xml.ws.EndpointContext)
+     * @see jakarta.xml.ws.Endpoint#setEndpointContext(jakarta.xml.ws.EndpointContext)
      */
     public void setEndpointContext(EndpointContext ctxt) {
          this.endpointCntx = ctxt;
@@ -159,7 +159,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#isPublished()
+     * @see jakarta.xml.ws.Endpoint#isPublished()
      */
     public boolean isPublished() {
         return published;
@@ -167,7 +167,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#publish(java.lang.Object)
+     * @see jakarta.xml.ws.Endpoint#publish(java.lang.Object)
      */
     public void publish(Object obj) {
         if (isPublishDisabled()) {
@@ -207,7 +207,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#publish(java.lang.String)
+     * @see jakarta.xml.ws.Endpoint#publish(java.lang.String)
      */
     public void publish(String s) {
         if (isPublishDisabled()) {
@@ -256,7 +256,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#setExecutor(java.util.concurrent.Executor)
+     * @see jakarta.xml.ws.Endpoint#setExecutor(java.util.concurrent.Executor)
      */
     public void setExecutor(Executor executor) {
         this.executor = executor;
@@ -264,7 +264,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#stop()
+     * @see jakarta.xml.ws.Endpoint#stop()
      */
     public void stop() {
         try {

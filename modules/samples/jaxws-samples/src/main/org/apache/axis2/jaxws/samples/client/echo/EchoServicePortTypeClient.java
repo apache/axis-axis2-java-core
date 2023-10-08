@@ -21,14 +21,14 @@ package org.apache.axis2.jaxws.samples.client.echo;
 import org.apache.axis2.jaxws.samples.echo.EchoStringInput;
 import org.apache.axis2.jaxws.samples.echo.EchoStringResponse;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Response;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.jws.soap.SOAPBinding.ParameterStyle;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 import java.util.concurrent.Future;
 
 
@@ -39,7 +39,7 @@ public interface EchoServicePortTypeClient {
 
     /**
      * @param parameter
-     * @return returns javax.xml.ws.Response<org.apache.axis2.jaxws.samples.client.echo.EchoStringResponse>
+     * @return returns jakarta.xml.ws.Response<org.apache.axis2.jaxws.samples.client.echo.EchoStringResponse>
      */
     @WebMethod(operationName = "echoOperation", action = "echoOperation")
     public Response<EchoStringResponse> echoOperationAsync(

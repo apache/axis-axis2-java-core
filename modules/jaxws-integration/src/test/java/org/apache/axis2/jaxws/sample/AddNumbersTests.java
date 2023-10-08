@@ -26,8 +26,8 @@ import org.apache.axis2.testutils.Axis2Server;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

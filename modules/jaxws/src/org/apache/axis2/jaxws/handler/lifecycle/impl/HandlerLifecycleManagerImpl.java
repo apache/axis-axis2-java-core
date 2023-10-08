@@ -30,7 +30,7 @@ import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescriptionFactory;
 
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.Handler;
 
 public class HandlerLifecycleManagerImpl extends BaseLifecycleManager implements HandlerLifecycleManager {
         

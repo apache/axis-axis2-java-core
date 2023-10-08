@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.jaxws.samples.echo;
 
-import javax.jws.WebService;
-import javax.jws.HandlerChain;
+import jakarta.jws.WebService;
+import jakarta.jws.HandlerChain;
 
 
 @WebService(endpointInterface = "org.apache.axis2.jaxws.samples.echo.EchoServicePortType", targetNamespace = "http://org/apache/axis2/jaxws/samples/echo/", serviceName = "EchoService", portName = "EchoServicePort", wsdlLocation = "WEB-INF/wsdl/Echo.wsdl")

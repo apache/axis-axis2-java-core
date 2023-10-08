@@ -26,11 +26,11 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.LogicalHandler;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -932,7 +932,7 @@ public class HandlerChainProcessorTests extends TestCase {
             return null;
         }
 
-        public void close(javax.xml.ws.handler.MessageContext messagecontext) {
+        public void close(jakarta.xml.ws.handler.MessageContext messagecontext) {
             result = result.concat("S1c:");
         }
 
@@ -975,7 +975,7 @@ public class HandlerChainProcessorTests extends TestCase {
             return null;
         }
 
-        public void close(javax.xml.ws.handler.MessageContext messagecontext) {
+        public void close(jakarta.xml.ws.handler.MessageContext messagecontext) {
             result = result.concat("S2c:");
         }
 
@@ -1014,7 +1014,7 @@ public class HandlerChainProcessorTests extends TestCase {
 
     private class LogicalHandler1 implements LogicalHandler<LogicalMessageContext> {
 
-        public void close(javax.xml.ws.handler.MessageContext messagecontext) {
+        public void close(jakarta.xml.ws.handler.MessageContext messagecontext) {
             result = result.concat("L1c:");
         }
 
@@ -1053,7 +1053,7 @@ public class HandlerChainProcessorTests extends TestCase {
 
     private class LogicalHandler2 implements LogicalHandler<LogicalMessageContext> {
 
-        public void close(javax.xml.ws.handler.MessageContext messagecontext) {
+        public void close(jakarta.xml.ws.handler.MessageContext messagecontext) {
             result = result.concat("L2c:");
         }
 

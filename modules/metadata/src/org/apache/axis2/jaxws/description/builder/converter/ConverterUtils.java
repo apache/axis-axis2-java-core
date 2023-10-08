@@ -30,10 +30,10 @@ import org.apache.axis2.jaxws.description.builder.TMAnnotationComposite;
 import org.apache.axis2.jaxws.description.builder.TMFAnnotationComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
 
-import javax.jws.HandlerChain;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlList;
-import javax.xml.ws.WebServiceRef;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.xml.bind.annotation.XmlList;
+import jakarta.xml.ws.WebServiceRef;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.GenericArrayType;

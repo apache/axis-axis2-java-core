@@ -39,11 +39,11 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerType;
 
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.PortInfo;
 
 import java.util.ArrayList;
 import java.util.Iterator;

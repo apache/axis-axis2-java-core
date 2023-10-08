@@ -44,14 +44,14 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.databinding.OMBlock;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 
-import javax.activation.DataSource;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
+import jakarta.activation.DataSource;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.Service.Mode;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceFeature;
 
 public class XMLDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(XMLDispatch.class);

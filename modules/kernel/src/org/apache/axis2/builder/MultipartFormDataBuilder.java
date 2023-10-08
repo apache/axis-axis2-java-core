@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.axiom.om.OMAbstractFactory;

@@ -35,14 +35,14 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
-import javax.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.soap.AddressingFeature;
 
 /**
  * This class will enable/disable WS-Addressing in a JAX-WS 2.1 client,
  * based on the configuration passed to it via an <code>AddressingFeature</code>
  * and/or a <code>SubmissionAddressingFeature</code>.
  *  
- *  @see javax.xml.ws.soap.AddressingFeature
+ *  @see jakata.xml.ws.soap.AddressingFeature
  *  @see org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature
  */
 public class AddressingConfigurator implements ClientConfigurator {

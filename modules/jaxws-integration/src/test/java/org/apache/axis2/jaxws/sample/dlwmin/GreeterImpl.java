@@ -26,8 +26,8 @@ import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException3;
 import org.apache.axis2.jaxws.sample.dlwmin.types.ProcessFault3;
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 
-import javax.jws.WebService;
-import javax.xml.ws.WebServiceException;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceException;
 
 @WebService(serviceName="GreeterService",
 			endpointInterface = "org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter",

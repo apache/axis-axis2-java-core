@@ -21,11 +21,11 @@ package org.apache.axis2.jaxws.proxy.doclitnonwrapped;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 @WebServiceProvider(
         serviceName="ProxyDocLitUnwrappedService", 
@@ -41,7 +41,7 @@ public class DocLitnonWrappedImpl implements Provider<String> {
 	}
 
     /* (non-Javadoc)
-     * @see javax.xml.ws.Provider#invoke(T)
+     * @see jakarta.xml.ws.Provider#invoke(T)
      */
     public String invoke(String invoke_str) {
         TestLogger.logger.debug("End point called with String value =" + invoke_str);

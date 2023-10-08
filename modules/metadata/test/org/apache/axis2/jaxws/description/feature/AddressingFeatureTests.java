@@ -29,10 +29,10 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.util.Utils;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.soap.AddressingFeature.Responses;
+import jakarta.xml.ws.soap.Addressing;
+import jakarta.xml.ws.soap.AddressingFeature.Responses;
 
 public class AddressingFeatureTests extends TestCase {
     

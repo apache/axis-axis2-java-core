@@ -37,13 +37,13 @@ import org.apache.axiom.soap.SOAPVersion;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPFaultElement;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFaultElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -169,7 +169,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPFault#getFaultActor()
+      * @see jakarta.xml.soap.SOAPFault#getFaultActor()
       */
     public String getFaultActor() {
         if (this.omTarget.getRole() != null) {
@@ -195,7 +195,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPFault#getFaultString()
+      * @see jakarta.xml.soap.SOAPFault#getFaultString()
       */
     public String getFaultString() {
 
@@ -212,7 +212,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPFault#getDetail()
+      * @see jakarta.xml.soap.SOAPFault#getDetail()
       */
     public Detail getDetail() {
         return (Detail)toSAAJNode((org.w3c.dom.Node)omTarget.getDetail());
@@ -247,7 +247,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPFault#addDetail()
+      * @see jakarta.xml.soap.SOAPFault#addDetail()
       */
     public Detail addDetail() throws SOAPException {
         if (isDetailAdded) {
@@ -265,7 +265,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl<org.apache.axiom.soap.SOA
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPFault#getFaultCodeAsName()
+      * @see jakarta.xml.soap.SOAPFault#getFaultCodeAsName()
       */
     public Name getFaultCodeAsName() {
         return new PrefixedQName(getFaultCodeAsQName());

@@ -26,21 +26,21 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.LogicalMessage;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.LogicalMessage;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import java.io.ByteArrayOutputStream;
 import java.io.StringBufferInputStream;
 import java.util.Map;
@@ -53,7 +53,7 @@ import java.util.StringTokenizer;
  */
 
 public class AddNumbersClientLogicalHandler 
-implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
+implements jakarta.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
     HandlerTracker tracker = new HandlerTracker(AddNumbersClientLogicalHandler.class.getSimpleName());
     
@@ -147,7 +147,7 @@ implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
             } else if (st.contains(">999</arg0>")) {
                 XMLFault xmlFault = MethodMarshallerUtils.createXMLFaultFromSystemException(new RuntimeException("I don't like the value 999"));
                 try {
-                    javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE);
+                    jakarta.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE);
                     SOAPMessage message = mf.createMessage();
                     SOAPBody body = message.getSOAPBody();
                     SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);

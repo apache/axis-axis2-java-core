@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebServiceProviderAnnot implements javax.xml.ws.WebServiceProvider {
+public class WebServiceProviderAnnot implements jakarta.xml.ws.WebServiceProvider {
 
     private String wsdlLocation = "";
     private String serviceName = "";
@@ -64,8 +64,8 @@ public class WebServiceProviderAnnot implements javax.xml.ws.WebServiceProvider 
     
     public static WebServiceProviderAnnot createFromAnnotation(Annotation annotation) {
         WebServiceProviderAnnot returnAnnot = null;
-        if (annotation != null && annotation instanceof javax.xml.ws.WebServiceProvider) {
-            javax.xml.ws.WebServiceProvider wsp = (javax.xml.ws.WebServiceProvider) annotation;
+        if (annotation != null && annotation instanceof jakarta.xml.ws.WebServiceProvider) {
+            jakarta.xml.ws.WebServiceProvider wsp = (jakarta.xml.ws.WebServiceProvider) annotation;
             returnAnnot = new WebServiceProviderAnnot(wsp.wsdlLocation(),
                                                       wsp.serviceName(),
                                                       wsp.portName(),

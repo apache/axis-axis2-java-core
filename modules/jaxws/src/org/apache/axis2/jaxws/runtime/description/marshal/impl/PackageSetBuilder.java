@@ -44,12 +44,12 @@ import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-import javax.xml.bind.JAXBElement;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Response;
 
 import java.io.File;
 import java.io.IOException;

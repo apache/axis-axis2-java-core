@@ -24,10 +24,10 @@ import org.apache.axis2.jaxws.client.TestClientInvocationController;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.MTOMFeature;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.soap.MTOMFeature;
 
 /**
  * This suite of tests is for the MTOMFeature configuration that can

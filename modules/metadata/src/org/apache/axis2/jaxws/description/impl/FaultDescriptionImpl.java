@@ -27,7 +27,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 

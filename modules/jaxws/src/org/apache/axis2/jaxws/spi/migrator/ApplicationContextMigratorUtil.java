@@ -28,7 +28,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.handler.MessageContext.Scope;
+import jakarta.xml.ws.handler.MessageContext.Scope;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;

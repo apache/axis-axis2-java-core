@@ -20,11 +20,11 @@
 package org.apache.axis2.description.java2wsdl;
 
 public interface AnnotationConstants {
-    String WEB_SERVICE = "javax.jws.WebService";
-    String WEB_METHOD = "javax.jws.WebMethod";
-    String WEB_PARAM = "javax.jws.WebParam";
-    String WEB_RESULT = "javax.jws.WebResult";
-    String WEB_SERVICE_PROVIDER = "javax.xml.ws.WebServiceProvider";
+    String WEB_SERVICE = "jakarta.jws.WebService";
+    String WEB_METHOD = "jakarta.jws.WebMethod";
+    String WEB_PARAM = "jakarta.jws.WebParam";
+    String WEB_RESULT = "jakarta.jws.WebResult";
+    String WEB_SERVICE_PROVIDER = "jakarta.xml.ws.WebServiceProvider";
     String TARGETNAMESPACE = "targetNamespace";
     String NAME = "name";
     String SERVICE_NAME = "serviceName";

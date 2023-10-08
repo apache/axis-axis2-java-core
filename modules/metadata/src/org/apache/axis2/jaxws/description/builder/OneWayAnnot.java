@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class OneWayAnnot implements javax.jws.Oneway {
+public class OneWayAnnot implements jakarta.jws.Oneway {
 
     /** A OneWayAnnot cannot be instantiated. */
     private OneWayAnnot() {

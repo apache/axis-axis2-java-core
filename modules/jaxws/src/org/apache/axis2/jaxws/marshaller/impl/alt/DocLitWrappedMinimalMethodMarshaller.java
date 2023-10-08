@@ -41,15 +41,15 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
-import javax.jws.WebService;
-import javax.jws.WebParam.Mode;
-import javax.jws.soap.SOAPBinding.Style;
-import javax.xml.bind.JAXBElement;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebService;
+import jakarta.jws.WebParam.Mode;
+import jakarta.jws.soap.SOAPBinding.Style;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceException;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;

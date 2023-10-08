@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.handler;
 
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 /*
  * HandlerPostInvoker - this is the interface returned by the

@@ -24,8 +24,8 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.ws.Service.Mode;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.ws.Service.Mode;
 
 /**
  * The JAXBDispatchAsyncListener is an extension of the {@link org.apache.axis2.jaxws.client.async.AsyncResponse}

@@ -21,11 +21,11 @@ package org.apache.axis2.jaxws.sample.dlwminArrays;
 
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.ResponseWrapper;
 
 @WebService(name = "GenericService", targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwminArrays")
 public interface IGenericService {

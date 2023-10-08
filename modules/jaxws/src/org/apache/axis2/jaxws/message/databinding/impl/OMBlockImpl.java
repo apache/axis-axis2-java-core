@@ -28,7 +28,7 @@ import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 /** OMBlockImpl Block with a business object that is an OMElement */
 public class OMBlockImpl extends BlockImpl<OMElement,Void> implements OMBlock {

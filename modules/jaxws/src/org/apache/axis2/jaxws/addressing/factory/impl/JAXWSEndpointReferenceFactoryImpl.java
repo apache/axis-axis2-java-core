@@ -27,20 +27,20 @@ import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.security.PrivilegedExceptionAction;
 
 /**
  * This class is used to generate instances of the following subclasses of
  * {@link EndpointReference}.
  *
- * @see javax.xml.ws.wsaddressing.W3CEndpointReference
+ * @see jakarta.xml.ws.wsaddressing.W3CEndpointReference
  * @see org.apache.axis2.jaxws.addressing.SubmissionEndpointReference
  */
 public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReferenceFactory {

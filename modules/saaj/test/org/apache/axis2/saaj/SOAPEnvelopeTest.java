@@ -23,24 +23,24 @@ import junit.framework.Assert;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.Text;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.DetailEntry;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPBodyElement;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
+import jakarta.xml.soap.Text;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -406,7 +406,9 @@ public class SOAPEnvelopeTest extends Assert {
         body.addAttribute(name3, value3);
 
         Iterator iterator = body.getAllAttributes();
-        assertTrue(getIteratorCount(iterator) == 3);
+        int count = getIteratorCount(iterator);
+        System.out.println("testAttributes() expects 3 and found getIteratorCount() " + count);
+        assertTrue(count == 3);
         iterator = body.getAllAttributes();
 
         boolean foundName1 = false;
@@ -447,9 +449,12 @@ public class SOAPEnvelopeTest extends Assert {
         body.addAttribute(name3, value3);
 
         Iterator iterator = body.getAllAttributes();
-        assertTrue(getIteratorCount(iterator) == 3);
-        iterator = body.getAllAttributes();
+        int count = getIteratorCount(iterator);
+        System.out.println("testAttributes2() expects 3 and found getIteratorCount() " + count);
+        assertTrue(count == 3);
 
+        iterator = null;
+        iterator = body.getAllAttributes();
         boolean foundName1 = false;
         boolean foundName2 = false;
         boolean foundName3 = false;
@@ -464,8 +469,11 @@ public class SOAPEnvelopeTest extends Assert {
             } else if (name.equals(name3)) {
                 foundName3 = true;
                 assertEquals(value3, body.getAttributeValue(name));
-            }
+            } else {
+                System.out.println("testAttributes2() found no match on name: " +name);
+	    }
         }
+        System.out.println("testAttributes2() found foundName1 " +foundName1+ " , foundName2: "  +foundName2+ " , foundName3: " +foundName3);
         assertTrue(foundName1 && foundName2 && foundName3);
     }
 
@@ -546,8 +554,9 @@ public class SOAPEnvelopeTest extends Assert {
         int count = 0;
         while (i.hasNext()) {
             count++;
-            i.next();
+	    System.out.println("getIteratorCount() found: " + i.next());
         }
+	System.out.println("getIteratorCount() returning: " + count);
         return count;
     }
 

@@ -18,8 +18,8 @@
 */
 package org.apache.axis2.jaxws.calculator.client;
 
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.soap.AddressingFeature;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class AddSEIClient {
 

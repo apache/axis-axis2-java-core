@@ -24,7 +24,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,8 +79,8 @@ public class AttachmentsAdapter implements Map<String, DataHandler> {
         
         // The property is either an inbound or outbound property
         String propertyName = (isOutbound) ?
-                javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS :
-                javax.xml.ws.handler.MessageContext.INBOUND_MESSAGE_ATTACHMENTS;
+                jakarta.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS :
+                jakarta.xml.ws.handler.MessageContext.INBOUND_MESSAGE_ATTACHMENTS;
         
         
         if (log.isDebugEnabled()) {

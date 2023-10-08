@@ -24,7 +24,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 /**
  * 
  */
-public interface BindingProvider extends javax.xml.ws.BindingProvider {
+public interface BindingProvider extends jakarta.xml.ws.BindingProvider {
     public EndpointDescription getEndpointDescription();
 
     public ServiceDelegate getServiceDelegate();

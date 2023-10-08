@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /**

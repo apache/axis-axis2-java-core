@@ -34,13 +34,13 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,7 +54,7 @@ import java.util.Set;
  * access to any properties that have been registered and set on the MessageContext.
  */
 public class SoapMessageContext extends BaseMessageContext implements
-        javax.xml.ws.handler.soap.SOAPMessageContext {
+        jakarta.xml.ws.handler.soap.SOAPMessageContext {
     private static final Log log = LogFactory.getLog(SoapMessageContext.class);
     
     // Cache the message object and SOAPMessage after transformation 

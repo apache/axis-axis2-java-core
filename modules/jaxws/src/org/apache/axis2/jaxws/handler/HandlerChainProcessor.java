@@ -39,15 +39,15 @@ import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.LogicalHandler;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -69,7 +69,7 @@ public class HandlerChainProcessor {
         REQUEST, RESPONSE
     };
 
-    private javax.xml.ws.handler.MessageContext currentMC;  // just a pointer
+    private jakarta.xml.ws.handler.MessageContext currentMC;  // just a pointer
     private LogicalMessageContext logicalMC = null;
     private SoapMessageContext soapMC = null;
 
@@ -202,11 +202,11 @@ public class HandlerChainProcessor {
         boolean result = true;
 
         if (direction == Direction.OUT) { // 9.3.2 outbound
-            currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+            currentMC.put(jakarta.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                             (direction == Direction.OUT));
             result = callGenericHandlers(mep, expectResponse, 0, handlers.size() - 1, direction);
         } else { // IN case - 9.3.2 inbound
-            currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+            currentMC.put(jakarta.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                             (direction == Direction.OUT));
             result = callGenericHandlers(mep, expectResponse, handlers.size() - 1, 0, direction);
         }
@@ -214,7 +214,7 @@ public class HandlerChainProcessor {
         // message context may have been changed to be response, and message
         // converted
         // according to the JAXWS spec 9.3.2.1 footnote 2
-        if ((Boolean) (currentMC.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY)) != (direction == Direction.OUT))
+        if ((Boolean) (currentMC.get(jakarta.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY)) != (direction == Direction.OUT))
             return false;
         return result;
 
@@ -504,7 +504,7 @@ public class HandlerChainProcessor {
                     log.debug("handleMessage() returned false");
                 }
                 if (expectResponse)
-                    currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+                    currentMC.put(jakarta.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                                     (direction != Direction.OUT));
                 return FAILED;
             }
@@ -519,7 +519,7 @@ public class HandlerChainProcessor {
             savedException = re;
             if (expectResponse)
                 // mark it as reverse direction
-                currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+                currentMC.put(jakarta.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                                 (direction != Direction.OUT));
             if (ProtocolException.class.isAssignableFrom(re.getClass())) {
                 convertToFaultMessage(mepCtx, re, proto, true);
@@ -602,7 +602,7 @@ public class HandlerChainProcessor {
         this.mepCtx = mepCtx;
 		sortChain();
         initContext(direction);
-		currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
+		currentMC.put(jakarta.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
 
         try {
             if (direction == Direction.OUT) {
@@ -718,7 +718,7 @@ public class HandlerChainProcessor {
                 // The following set of instructions is used to avoid 
                 // some unimplemented methods in the Axis2 SAAJ implementation
                 XMLFault xmlFault = MethodMarshallerUtils.createXMLFaultFromSystemException(e);
-                javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(protocolNS);
+                jakarta.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(protocolNS);
                 SOAPMessage message = mf.createMessage();
                 SOAPBody body = message.getSOAPBody();
                 SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
@@ -728,7 +728,11 @@ public class HandlerChainProcessor {
                 mepCtx.setMessage(msg);
 
             } else {
-                WebServiceException wse = ExceptionFactory.makeWebServiceException(Messages.getMessage("cFaultMsgErr"));
+		// REST most likely, this became an issue in 
+		// AXIS2-6051 and the move to jakarta
+                log.warn("convertToFaultMessage() skipping SOAPFault logic on protocol: " + protocol + " , original error: " + e.getMessage());
+                // WebServiceException wse = ExceptionFactory.makeWebServiceException(Messages.getMessage("cFaultMsgErr"));
+                WebServiceException wse = ExceptionFactory.makeWebServiceException(e.getMessage());
                 if (log.isDebugEnabled()) {
                     log.debug("end convertToFaultMessge due to error ", wse);
                 }

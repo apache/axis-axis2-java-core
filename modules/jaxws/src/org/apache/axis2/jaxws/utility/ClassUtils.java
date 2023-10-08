@@ -31,12 +31,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebFault;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceProvider;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebFault;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceProvider;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
@@ -285,13 +285,13 @@ public class ClassUtils {
             return true;
         }
 
-        // Check for a javax.xml.ws.Service class instance
+        // Check for a jakarta.xml.ws.Service class instance
         if (Service.class.isAssignableFrom(cls)) {
             return true;
         }
 
         String className = cls.getPackage() == null ? null : cls.getPackage().getName();
-        if (className != null && className.startsWith("javax.xml.ws") && !className.startsWith("javax.xml.ws.wsaddressing")) {
+        if (className != null && className.startsWith("jakarta.xml.ws") && !className.startsWith("jakarta.xml.ws.wsaddressing")) {
             return true;
         }
         

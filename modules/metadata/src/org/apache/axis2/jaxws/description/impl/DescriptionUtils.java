@@ -49,13 +49,13 @@ import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap12.SOAP12Body;
 import javax.wsdl.extensions.soap12.SOAP12Header;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -414,7 +414,7 @@ public class DescriptionUtils {
         Class returnType = method.getReturnType();
 
         if (methodName.endsWith("Async")
-            && (returnType.isAssignableFrom(javax.xml.ws.Response.class) || returnType
+            && (returnType.isAssignableFrom(jakarta.xml.ws.Response.class) || returnType
                 .isAssignableFrom(java.util.concurrent.Future.class))) {
             return true;
         } else {
@@ -637,7 +637,7 @@ public class DescriptionUtils {
         } else if (SOAPBinding.SOAP12HTTP_BINDING.equals(annotationBindingType)
                 || MDQConstants.SOAP12JMS_BINDING.equals(annotationBindingType)) {
             wsdlBindingType = EndpointDescriptionWSDL.SOAP12_WSDL_BINDING;
-        } else if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(annotationBindingType)) {
+        } else if (jakarta.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(annotationBindingType)) {
             wsdlBindingType = EndpointDescriptionWSDL.HTTP_WSDL_BINDING;
         }
         
@@ -674,7 +674,7 @@ public class DescriptionUtils {
                 soapBindingType = SOAPBinding.SOAP12HTTP_BINDING;
             } 
         } else if (EndpointDescriptionWSDL.HTTP_WSDL_BINDING.equals(wsdlBindingType)) {
-            soapBindingType = javax.xml.ws.http.HTTPBinding.HTTP_BINDING;
+            soapBindingType = jakarta.xml.ws.http.HTTPBinding.HTTP_BINDING;
         }
         return soapBindingType;
     }

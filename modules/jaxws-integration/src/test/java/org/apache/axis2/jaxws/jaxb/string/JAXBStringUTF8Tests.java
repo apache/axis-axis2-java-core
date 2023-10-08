@@ -7,7 +7,7 @@ import org.apache.axis2.testutils.Axis2Server;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 public class JAXBStringUTF8Tests {
     @ClassRule

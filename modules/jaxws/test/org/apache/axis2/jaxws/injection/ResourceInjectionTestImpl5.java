@@ -24,7 +24,7 @@ import org.apache.axis2.jaxws.unitTest.TestLogger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 
 
 public class ResourceInjectionTestImpl5 {

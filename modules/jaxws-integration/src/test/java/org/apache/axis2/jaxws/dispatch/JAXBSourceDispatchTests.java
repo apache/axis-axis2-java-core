@@ -26,16 +26,16 @@ import org.junit.Test;
 import org.test.dispatch.jaxbsource.Invoke;
 import org.test.dispatch.jaxbsource.ObjectFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.util.JAXBSource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
 
 import static org.junit.Assert.assertNotNull;
 

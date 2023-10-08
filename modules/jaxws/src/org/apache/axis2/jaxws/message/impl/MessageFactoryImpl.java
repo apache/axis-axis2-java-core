@@ -34,13 +34,13 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.util.WrappedDataHandler;
 
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -86,7 +86,7 @@ public class MessageFactoryImpl implements MessageFactory {
 
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.soap.SOAPMessage)
+      * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(jakarta.xml.soap.SOAPMessage)
       */
     public Message createFrom(SOAPMessage message) throws XMLStreamException, WebServiceException {
         try {

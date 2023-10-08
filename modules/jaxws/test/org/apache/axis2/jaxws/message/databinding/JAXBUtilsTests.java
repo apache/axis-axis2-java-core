@@ -26,8 +26,8 @@ import org.apache.ws.jaxb.a.Data2;
 import org.apache.ws.jaxb.a.Data3;
 import org.apache.ws.jaxb.b.BadData3;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.ws.Holder;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.ws.Holder;
 
 import java.util.TreeSet;
 

@@ -17,5 +17,5 @@
  * under the License.
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://ws.apache.org/axis2/tests")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://ws.apache.org/axis2/tests")
 package org.apache.axis2.jaxws.description.echo;

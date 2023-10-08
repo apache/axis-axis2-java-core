@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class HandlerChainAnnot implements javax.jws.HandlerChain {
+public class HandlerChainAnnot implements jakarta.jws.HandlerChain {
 
     private String file = "";
     private String name = "";
@@ -42,8 +42,8 @@ public class HandlerChainAnnot implements javax.jws.HandlerChain {
     
     public static HandlerChainAnnot createFromAnnotation(Annotation annotation) {
         HandlerChainAnnot returnAnnot = null;
-        if (annotation != null && annotation instanceof javax.jws.HandlerChain) {
-            javax.jws.HandlerChain hc = (javax.jws.HandlerChain) annotation;
+        if (annotation != null && annotation instanceof jakarta.jws.HandlerChain) {
+            jakarta.jws.HandlerChain hc = (jakarta.jws.HandlerChain) annotation;
             returnAnnot = new HandlerChainAnnot(hc.file(), hc.name());
         }
         return returnAnnot;

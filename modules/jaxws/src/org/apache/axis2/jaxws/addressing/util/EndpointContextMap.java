@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class stores the context needed to correctly produce instances of
- * {@link javax.xml.ws.EndpointReference} for a particular web service endpoint
+ * {@link jakarta.xml.ws.EndpointReference} for a particular web service endpoint
  * identified by an {@link EndpointKey}.
  *
  */

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.description;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 public interface ParameterDescriptionJava {
     public WebParam getAnnoWebParam();

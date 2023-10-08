@@ -29,20 +29,20 @@ import org.w3c.dom.Element;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.Text;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPBodyElement;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
+import jakarta.xml.soap.Text;
 import java.util.Iterator;
 import java.util.List;
 
@@ -87,8 +87,8 @@ public class SOAPElementTest extends Assert {
         Object o2 = soapEle.getChildElements().next();
 
         assertSame(o, o2); // both elements should be the same SAAJ Node
-        assertEquals(((javax.xml.soap.Text)o).getValue(),
-                     ((javax.xml.soap.Text)o2).getValue());
+        assertEquals(((jakarta.xml.soap.Text)o).getValue(),
+                     ((jakarta.xml.soap.Text)o2).getValue());
 
         int childrenCount = 0;
         for (Iterator iter = soapEle.getChildElements(); iter.hasNext();) {
@@ -103,8 +103,8 @@ public class SOAPElementTest extends Assert {
         assertSame(o, z1);   // should be same SAAJ Node
         assertSame(z1, z2);  // should be same SAAJ Node
 
-        assertEquals(((javax.xml.soap.Text)z1).getValue(),
-                     ((javax.xml.soap.Text)z2).getValue());
+        assertEquals(((jakarta.xml.soap.Text)z1).getValue(),
+                     ((jakarta.xml.soap.Text)z2).getValue());
 
         Node lastChildNode = (Node)soapEle.getLastChild();
         SOAPElement lastChildSOAPEle = (SOAPElement)lastChildNode;
@@ -123,8 +123,8 @@ public class SOAPElementTest extends Assert {
         Object o = soapEle.getChildElements().next();
         Object o2 = soapEle.getChildElements().next();
         assertSame(o, o2); // both elements should be the same SAAJ Node
-        assertEquals(((javax.xml.soap.Text)o).getValue(),
-                     ((javax.xml.soap.Text)o2).getValue());
+        assertEquals(((jakarta.xml.soap.Text)o).getValue(),
+                     ((jakarta.xml.soap.Text)o2).getValue());
 
         int childrenCount = 0;
         for (Iterator iter = soapEle.getChildElements(); iter.hasNext();) {
@@ -137,8 +137,8 @@ public class SOAPElementTest extends Assert {
         Object z2 = soapEle.getFirstChild();
         assertSame(o, z1);   // should be same SAAJ Node
         assertSame(z1, z2);  // should be same SAAJ Node
-        assertEquals(((javax.xml.soap.Text)z1).getValue(),
-                     ((javax.xml.soap.Text)z2).getValue());
+        assertEquals(((jakarta.xml.soap.Text)z1).getValue(),
+                     ((jakarta.xml.soap.Text)z2).getValue());
 
         SOAPElement lastChildSOAPEle = (SOAPElement)soapEle.getLastChild();
 
@@ -147,22 +147,22 @@ public class SOAPElementTest extends Assert {
         assertEquals("http://test.apache.org/", lastChildSOAPEle.getNamespaceURI());
         assertEquals("ch", lastChildSOAPEle.getPrefix());
         assertNotNull(lastChildSOAPEle.getParentNode());
-        assertTrue(lastChildSOAPEle.getPreviousSibling() instanceof javax.xml.soap.SOAPElement);
+        assertTrue(lastChildSOAPEle.getPreviousSibling() instanceof jakarta.xml.soap.SOAPElement);
         assertNull(lastChildSOAPEle.getNextSibling());
 
-        javax.xml.soap.Node firstChild = (javax.xml.soap.Node)soapEle.getFirstChild();
-        javax.xml.soap.Node nextSibling = (javax.xml.soap.Node)(firstChild.getNextSibling());
+        jakarta.xml.soap.Node firstChild = (jakarta.xml.soap.Node)soapEle.getFirstChild();
+        jakarta.xml.soap.Node nextSibling = (jakarta.xml.soap.Node)(firstChild.getNextSibling());
         assertNull(firstChild.getPreviousSibling());
 
-        assertTrue(firstChild instanceof javax.xml.soap.Text);
-        assertTrue(nextSibling instanceof javax.xml.soap.SOAPElement);
-        assertTrue(nextSibling.getPreviousSibling() instanceof javax.xml.soap.Text);
+        assertTrue(firstChild instanceof jakarta.xml.soap.Text);
+        assertTrue(nextSibling instanceof jakarta.xml.soap.SOAPElement);
+        assertTrue(nextSibling.getPreviousSibling() instanceof jakarta.xml.soap.Text);
         assertEquals("Child1", nextSibling.getLocalName());
         assertEquals("ch:Child1", nextSibling.getNodeName());
         assertEquals("http://test.apache.org/", nextSibling.getNamespaceURI());
         assertEquals("ch", nextSibling.getPrefix());
 
-        javax.xml.soap.Node nextSibling2 = (javax.xml.soap.Node)nextSibling.getNextSibling();
+        jakarta.xml.soap.Node nextSibling2 = (jakarta.xml.soap.Node)nextSibling.getNextSibling();
         assertEquals("Child2", nextSibling2.getLocalName());
         assertEquals("ch:Child2", nextSibling2.getNodeName());
         assertEquals("http://test.apache.org/", lastChildSOAPEle.getNamespaceURI());

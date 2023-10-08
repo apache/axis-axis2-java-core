@@ -64,10 +64,10 @@ public interface EndpointDescriptionWSDL {
      *     <wsdl:binding ...>
      *       <soap12:binding ...>
      * 
-     * Would return the value javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING which is
+     * Would return the value jakarta.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING which is
      *     "http://www.w3.org/2003/05/soap/bindings/HTTP/"
      *
-     * @return String constants defined in javax.xml.ws.soap.SOAPBinding
+     * @return String constants defined in jakarta.xml.ws.soap.SOAPBinding
      */
     public String getWSDLBindingType();
 

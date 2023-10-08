@@ -49,8 +49,8 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
     public static final String MAPPER_FILE_NAME = "mapper";
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
 
-    public static final String JAXB_RI_API_CLASS = "javax.xml.bind.JAXBContext";
-    public static final String JAXB_RI_IMPL_CLASS = "com.sun.xml.bind.v2.JAXBContextFactory";
+    public static final String JAXB_RI_API_CLASS = "jakarta.xml.bind.JAXBContext";
+    public static final String JAXB_RI_IMPL_CLASS = "org.glassfish.jaxb.runtime.v2.JAXBContextFactory";
     public static final String JAXB_RI_XJC_CLASS = "com.sun.tools.xjc.api.XJC";
 
     public static final String JAXB_RI_UTILITY_CLASS =
@@ -75,7 +75,7 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
                 cl.loadClass(JAXB_RI_IMPL_CLASS);
                 cl.loadClass(JAXB_RI_XJC_CLASS);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException("JAX-B RI JARs not on classpath");
+                throw new RuntimeException("JAX-B RI JARs not on classpath, error: " + e.getMessage());
             }
 
             // load the actual utility class

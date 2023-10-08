@@ -28,10 +28,10 @@ import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 
 import java.net.URI;
 import java.security.Principal;
@@ -47,7 +47,7 @@ public class WebServiceContextImpl implements WebServiceContext {
     }
 
     /* (non-Javadoc)
-     * @see javax.xml.ws.WebServiceContext#getMessageContext()
+     * @see jakarta.xml.ws.WebServiceContextgetMessageContext()
      */
     public MessageContext getMessageContext() {
         
@@ -62,7 +62,7 @@ public class WebServiceContextImpl implements WebServiceContext {
     }
 
     /* (non-Javadoc)
-     * @see javax.xml.ws.WebServiceContext#getUserPrincipal()
+     * @see jakarta.xml.ws.WebServiceContextgetUserPrincipal()
      */
     public Principal getUserPrincipal() {
         
@@ -93,7 +93,7 @@ public class WebServiceContextImpl implements WebServiceContext {
     }
 
     /* (non-Javadoc)
-     * @see javax.xml.ws.WebServiceContext#isUserInRole(java.lang.String)
+     * @see jakarta.xml.ws.WebServiceContextisUserInRole(java.lang.String)
      */
     public boolean isUserInRole(String user) {
         

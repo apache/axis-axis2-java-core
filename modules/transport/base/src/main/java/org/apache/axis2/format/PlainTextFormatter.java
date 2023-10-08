@@ -33,7 +33,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URL;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 
 public class PlainTextFormatter implements MessageFormatter {
     public void writeTo(MessageContext messageContext, OMOutputFormat format, OutputStream outputStream, boolean preserve) throws AxisFault {

@@ -24,7 +24,7 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import java.util.HashMap;
 import java.util.List;
 

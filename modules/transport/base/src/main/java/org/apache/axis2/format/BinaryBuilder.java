@@ -21,8 +21,8 @@ package org.apache.axis2.format;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;

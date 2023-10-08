@@ -29,8 +29,8 @@ import org.apache.axis2.jaxws.server.AsyncHandlerProxyFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.WebServiceException;
 import java.security.PrivilegedAction;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
@@ -42,7 +42,7 @@ import java.util.concurrent.FutureTask;
  * and will get registered with the Axis2 engine to receive the asynchronous callback responses.
  * This object is also responsible for taking the <link>java.util.concurrent.Executor</link> given
  * to it by the JAX-WS client and using that as the thread on which to deliver the async response
- * the JAX-WS <link>javax.xml.ws.AsynchHandler</link>.
+ * the JAX-WS <link>jakarta.xml.ws.AsynchHandler</link>.
  */
 public class CallbackFuture implements AxisCallback {
 

@@ -21,8 +21,8 @@ package org.apache.axis2.jaxws.type_substitution;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 
 @WebService(serviceName = "AppleFinderService",
             portName = "AppleFinderPort", 

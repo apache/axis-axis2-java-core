@@ -25,8 +25,8 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.WebServiceException;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;

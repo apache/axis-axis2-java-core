@@ -31,8 +31,8 @@ import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
 import org.test.sample.wrap.HeaderResponse;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 
 @WebService(serviceName="DocLitWrapService",
 			endpointInterface="org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap")
@@ -68,7 +68,7 @@ public class DocLitWrapImpl implements DocLitWrap {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#twoWayHolder(javax.xml.ws.Holder, javax.xml.ws.Holder)
+	 * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#twoWayHolder(jakarta.xml.ws.Holder, jakarta.xml.ws.Holder)
 	 */
 	public void twoWayHolder(Holder<String> twoWayHolderStr,
 			Holder<Integer> twoWayHolderInt) {

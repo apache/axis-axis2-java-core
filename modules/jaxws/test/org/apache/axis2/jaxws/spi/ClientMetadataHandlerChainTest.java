@@ -24,15 +24,15 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.impl.DescriptionUtils;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -586,7 +586,7 @@ interface ClientMetadataHandlerChainTestSEIWithHC {
 
 @WebServiceClient
 @HandlerChain(file="ClientMetadataHandlerChainTest.xml")
-class ClientMetadataHandlerChainTestServiceWithHC extends javax.xml.ws.Service {
+class ClientMetadataHandlerChainTestServiceWithHC extends jakarta.xml.ws.Service {
         public ClientMetadataHandlerChainTestServiceWithHC() {
             super(null,
                   new QName(ClientMetadataHandlerChainTest.namespaceURI, ClientMetadataHandlerChainTest.svcLocalPart));

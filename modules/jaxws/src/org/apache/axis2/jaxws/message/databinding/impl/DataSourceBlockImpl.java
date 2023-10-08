@@ -35,19 +35,19 @@ import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.io.ByteArrayOutputStream;
 
 /**
  * SourceBlock
  * <p/>
- * Block containing a business object that is a javax.activation.DataSource
+ * Block containing a business object that is a jakarta.activation.DataSource
  * <p/>
  */
 public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements DataSourceBlock {

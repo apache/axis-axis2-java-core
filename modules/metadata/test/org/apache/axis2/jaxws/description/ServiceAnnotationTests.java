@@ -24,9 +24,9 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.apache.logging.log4j.Level;
 
-import javax.jws.WebService;
-import javax.xml.ws.Provider;
-import javax.xml.ws.WebServiceProvider;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.WebServiceProvider;
 
 public class ServiceAnnotationTests extends TestCase {
     static {

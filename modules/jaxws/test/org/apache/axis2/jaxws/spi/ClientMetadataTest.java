@@ -31,9 +31,9 @@ import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -1080,7 +1080,7 @@ public class ClientMetadataTest extends TestCase {
 }
 
 @WebServiceClient(targetNamespace="originalTNS", wsdlLocation=ClientMetadataTest.originalWsdl)
-class ClientMetadataGeneratedService extends javax.xml.ws.Service {
+class ClientMetadataGeneratedService extends jakarta.xml.ws.Service {
     public ClientMetadataGeneratedService() {
         super(ClientMetadataTest.getWsdlURL(ClientMetadataTest.originalWsdl),
               new QName(ClientMetadataTest.namespaceURI, ClientMetadataTest.svcLocalPart));

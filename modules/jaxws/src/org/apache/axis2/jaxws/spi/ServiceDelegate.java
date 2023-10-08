@@ -29,18 +29,18 @@ import java.security.PrivilegedExceptionAction;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
 
-import javax.activation.DataSource;
-import javax.xml.bind.JAXBContext;
+import jakarta.activation.DataSource;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.Service.Mode;
+import jakarta.xml.ws.handler.HandlerResolver;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.client.ServiceClient;
@@ -68,9 +68,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * The ServiceDelegate serves as the backing implementation for all of the methods in the {@link
- * javax.xml.ws.Service} API.  This is the plug point for the client implementation.
+ * jakarta.xml.ws.Service} API.  This is the plug point for the client implementation.
  */
-public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
+public class ServiceDelegate extends jakarta.xml.ws.spi.ServiceDelegate {
     private static final Log log = LogFactory.getLog(ServiceDelegate.class);
     private static ThreadLocal<DescriptionBuilderComposite> sparseServiceCompositeThreadLocal = new ThreadLocal<DescriptionBuilderComposite>();
     private static ThreadLocal<DescriptionBuilderComposite> sparsePortCompositeThreadLocal = new ThreadLocal<DescriptionBuilderComposite>();
@@ -95,15 +95,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * 4) The metadata can be set prior to creating both generic Service and generated Service 
      *    instances.      
      * 
-     * This allows creating a generic Service (javax.xml.ws.Service) or a generated Service
-     * (subclass of javax.xml.ws.Service) specifying additional metadata via a
+     * This allows creating a generic Service (jakarta.xml.ws.Service) or a generated Service
+     * (subclass of jakarta.xml.ws.Service) specifying additional metadata via a
      * sparse composite.  This can be used by a runtime to create a Service for a requester using
      * additional metadata such as might come from a deployment descriptor or from resource
      * injection processing of @Resource or @WebServiceRef(s) annotations.  Additional metadata
      * may include things like @WebServiceClient.wsdlLocation or a @HandlerChain specification.
      * 
-     *    @see javax.xml.ws.Service#create(QName)
-     *    @see javax.xml.ws.Service#create(URL, QName)
+     *    @see jakarta.xml.ws.Service#create(QName)
+     *    @see jakarta.xml.ws.Service#create(URL, QName)
      * 
      * @param composite Additional metadata (if any) to be used in creation of the service
      */
@@ -160,8 +160,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * injection processing.  Additional metadata might include things like 
      * a @HandlerChain specification.
      * 
-     *    @see javax.xml.ws.Service#getPort(Class)
-     *    @see javax.xml.ws.Service#getPort(QName, Class)
+     *    @see jakarta.xml.ws.Service#getPort(Class)
+     *    @see jakarta.xml.ws.Service#getPort(QName, Class)
      * 
      * @param composite Additional metadata (if any) to be used in creation of the port
      */
@@ -239,9 +239,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#addPort(javax.xml.namespace.QName, java.lang.String, java.lang.String)
+    * @see jakarta.xml.ws.spi.ServiceDelegate#addPort(javax.xml.namespace.QName, java.lang.String, java.lang.String)
     */
-    // Creates a DISPATCH ONLY port.  Per JAXWS Sec 4.1 javax.xm..ws.Service, p. 49, ports added via addPort method
+    // Creates a DISPATCH ONLY port.  Per JAXWS Sec 4.1 jakarta.xm..ws.Service, p. 49, ports added via addPort method
     // are only suitibale for creating Distpach instances.
     public void addPort(QName portName, String bindingId, String endpointAddress)
             throws WebServiceException {
@@ -263,7 +263,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, java.lang.Class, javax.xml.ws.Service.Mode)
+    * @see jakarta.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, java.lang.Class, jakarta.xml.ws.Service.Mode)
     */
     public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Mode mode)
             throws WebServiceException {
@@ -272,7 +272,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, javax.xml.bind.JAXBContext, javax.xml.ws.Service.Mode)
+    * @see jakarta.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, jakarta.xml.bind.JAXBContext, jakarta.xml.ws.Service.Mode)
     */
     public Dispatch<java.lang.Object> createDispatch(QName portName, JAXBContext context, Mode mode) {
         return createDispatch(portName, context, mode, (WebServiceFeature[]) null);
@@ -485,7 +485,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
      * (non-Javadoc)
-     * @see javax.xml.ws.spi.ServiceDelegate#getPort(java.lang.Class)
+     * @see jakarta.xml.ws.spi.ServiceDelegate#getPort(java.lang.Class)
      */
     public <T> T getPort(Class<T> sei) throws WebServiceException {
         return getPort((QName) null, sei, (WebServiceFeature[]) null);
@@ -493,7 +493,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#getPort(javax.xml.namespace.QName, java.lang.Class)
+    * @see jakarta.xml.ws.spi.ServiceDelegate#getPort(javax.xml.namespace.QName, java.lang.Class)
     */
     public <T> T getPort(QName portName, Class<T> sei) throws WebServiceException {
         return getPort(portName, sei, (WebServiceFeature[]) null);
@@ -618,7 +618,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#getExecutor()
+    * @see jakarta.xml.ws.spi.ServiceDelegate#getExecutor()
     */
     public Executor getExecutor() {
         //FIXME: Use client provider executor too.
@@ -630,7 +630,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#getHandlerResolver()
+    * @see jakarta.xml.ws.spi.ServiceDelegate#getHandlerResolver()
     */
     public HandlerResolver getHandlerResolver() {
         verifyServiceDescriptionActive();
@@ -642,7 +642,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#getPorts()
+    * @see jakarta.xml.ws.spi.ServiceDelegate#getPorts()
     */
     public Iterator<QName> getPorts() {
         verifyServiceDescriptionActive();
@@ -651,7 +651,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#getServiceName()
+    * @see jakarta.xml.ws.spi.ServiceDelegate#getServiceName()
     */
     public QName getServiceName() {
         return serviceQname;
@@ -659,7 +659,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#getWSDLDocumentLocation()
+    * @see jakarta.xml.ws.spi.ServiceDelegate#getWSDLDocumentLocation()
     */
     public URL getWSDLDocumentLocation() {
         verifyServiceDescriptionActive();
@@ -677,7 +677,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#setExecutor(java.util.concurrent.Executor)
+    * @see jakarta.xml.ws.spi.ServiceDelegate#setExecutor(java.util.concurrent.Executor)
     */
     public void setExecutor(Executor e) {
         if (e == null) {
@@ -690,7 +690,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     /*
     * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#setHandlerResolver(javax.xml.ws.handler.HandlerResolver)
+    * @see jakarta.xml.ws.spi.ServiceDelegate#setHandlerResolver(jakarta.xml.ws.handler.HandlerResolver)
     */
     public void setHandlerResolver(HandlerResolver handlerresolver) {
         this.handlerResolver = handlerresolver;
