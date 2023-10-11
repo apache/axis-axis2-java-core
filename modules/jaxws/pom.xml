@@ -171,6 +171,14 @@
                 </includes>
             </resource>
             <resource>
+		<!-- AXIS2-6051, this directory is crucial
+                     as it defines the file
+                     resources/META-INF/services/jakarta.xml.ws.spi.Provider    
+		     If this file is missing or	gets renamed, 
+                     various errors can occur such as 
+                     "WSDL Metadata not available"
+
+                -->	    
                 <directory>resources</directory>
                 <includes>
                     <include>**/*</include>
