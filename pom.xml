@@ -424,8 +424,8 @@
 	<!-- FIXME AXIS2-6051, need to get
 	     xjc-maven-plugin to have a dependency
              on jaxb-xjc as described in AXIOM-506
-        <module>modules/jaxws-integration</module>
 	-->
+        <module>modules/jaxws-integration</module>
         <module>modules/clustering</module>
         <module>modules/corba</module>
         <module>modules/osgi</module>
@@ -1189,7 +1189,7 @@
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
                     <artifactId>xjc-maven-plugin</artifactId>
-                    <version>0.2.0</version>
+                    <version>0.2.1-SNAPSHOT</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
