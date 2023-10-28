@@ -4,7 +4,8 @@
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "11",
 			"jdkDistro": "zulu",
-			"installMaven": "true"
+			"installMaven": "true",
+			"mavenVersion": "3.9.1"
 		},
 		"ghcr.io/devcontainers-contrib/features/mvnd-sdkman:2": {
 			"jdkVersion": "none"
