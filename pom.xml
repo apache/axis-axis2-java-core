@@ -466,7 +466,6 @@
         <woden.version>1.0M10</woden.version>
         <axiom.version>2.0.0-SNAPSHOT</axiom.version>
         <xmlschema.version>2.3.0</xmlschema.version>
-        <activation.version>2.1.2</activation.version>
         <ant.version>1.10.14</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.9.1</aspectj.version>
@@ -526,7 +525,12 @@
             <dependency>
                 <groupId>jakarta.activation</groupId>
                 <artifactId>jakarta.activation-api</artifactId>
-                <version>${activation.version}</version>
+                <version>2.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>2.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
@@ -745,6 +749,11 @@
                 <groupId>jakarta.mail</groupId>
                 <artifactId>jakarta.mail-api</artifactId>
                 <version>2.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-mail</artifactId>
+                <version>2.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
