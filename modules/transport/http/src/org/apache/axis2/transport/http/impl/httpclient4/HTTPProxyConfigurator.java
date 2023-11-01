@@ -154,9 +154,10 @@ public class HTTPProxyConfigurator {
                 clientContext.setCredentialsProvider(credsProvider);
             }
             credsProvider.setCredentials(AuthScope.ANY, proxyCredentials);
+        }
+        if (proxyHost != null && proxyPort > 0) {
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
             requestConfig.setProxy(proxy);
-
         }
     }
 
