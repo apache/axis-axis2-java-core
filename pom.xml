@@ -889,11 +889,6 @@
                 <artifactId>maven-plugin-annotations</artifactId>
                 <version>${maven-plugin-tools.version}</version>
             </dependency>
-            <dependency><!-- Some plexus-archiver versions seem to trigger OOM errors; see MSOURCES-98. -->
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-archiver</artifactId>
-                <version>4.8.0</version>
-            </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
