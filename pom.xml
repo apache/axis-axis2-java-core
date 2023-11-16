@@ -489,7 +489,7 @@
         <maven.version>3.9.6</maven.version>
         <rhino.version>1.6R7</rhino.version>
         <slf4j.version>2.0.9</slf4j.version>
-        <spring.version>5.3.30</spring.version>
+        <spring.version>5.3.31</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xmlbeans.version>3.0.1</xmlbeans.version>
         <xmlunit.version>2.9.1</xmlunit.version>
