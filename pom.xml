@@ -465,7 +465,7 @@
         <neethi.version>3.2.0</neethi.version>
         <woden.version>1.0M10</woden.version>
         <axiom.version>2.0.0-SNAPSHOT</axiom.version>
-        <xmlschema.version>2.3.0</xmlschema.version>
+        <xmlschema.version>2.3.1</xmlschema.version>
         <ant.version>1.10.14</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.9.1</aspectj.version>
