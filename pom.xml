@@ -1209,7 +1209,7 @@
                 <plugin>
                     <groupId>com.github.veithen.daemon</groupId>
                     <artifactId>daemon-maven-plugin</artifactId>
-                    <version>0.4.2</version>
+                    <version>0.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
