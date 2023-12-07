@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 11, 17, 19 ]
+        java: [ 17, 19 ]
     name: "Java ${{ matrix.java }}"
     runs-on: ubuntu-22.04
     steps:
@@ -70,7 +70,7 @@ jobs:
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
-        java-version: 15
+        java-version: 17
         distribution: 'zulu'
         server-id: apache.snapshots.https
         server-username: NEXUS_USER
