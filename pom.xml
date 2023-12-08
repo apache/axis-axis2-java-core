@@ -1091,7 +1091,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>2.1.0</version>
+                    <version>3.0.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.groovy</groupId>
