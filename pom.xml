@@ -485,7 +485,7 @@
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>10.0.18</jetty.version>
         <jibx.version>1.4.2</jibx.version>
-        <maven.archiver.version>3.6.0</maven.archiver.version>
+        <maven.archiver.version>3.6.1</maven.archiver.version>
         <maven.version>3.9.6</maven.version>
         <rhino.version>1.6R7</rhino.version>
         <slf4j.version>2.0.9</slf4j.version>
