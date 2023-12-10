@@ -32,9 +32,6 @@ updates:
       - dependency-name: "com.sun.xml.messaging.saaj:saaj-impl"
         versions:
         - ">= 2.0"
-      - dependency-name: "com.sun.xml.ws:*"
-        versions:
-        - ">= 3.0"
       # IO-734
       - dependency-name: "commons-io:commons-io"
         versions:
