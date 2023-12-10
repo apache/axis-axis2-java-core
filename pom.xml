@@ -498,7 +498,7 @@
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
-        <jaxws.rt.version>4.0.1</jaxws.rt.version>
+        <jaxws.rt.version>4.0.2</jaxws.rt.version>
         <jaxws.api.version>4.0.0</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <maven-plugin-tools.version>3.10.2</maven-plugin-tools.version>
