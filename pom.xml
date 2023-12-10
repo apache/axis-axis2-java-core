@@ -1542,7 +1542,7 @@
             <plugin>
                 <groupId>com.github.veithen.maven</groupId>
                 <artifactId>eclipse-settings-maven-plugin</artifactId>
-                <version>0.2.0</version>
+                <version>0.3.0</version>
                 <executions>
                     <execution>
                         <goals>
