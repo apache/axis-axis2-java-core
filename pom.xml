@@ -606,12 +606,6 @@
                 <groupId>org.jibx</groupId>
                 <artifactId>jibx-bind</artifactId>
                 <version>${jibx.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jibx</groupId>
