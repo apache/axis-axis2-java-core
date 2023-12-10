@@ -48,7 +48,6 @@
 	<dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
-            <version>4.0.1</version>
         </dependency>
     </dependencies>
 

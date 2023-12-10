@@ -93,7 +93,6 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
-            <version>4.0.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.sun.xml.ws</groupId>
