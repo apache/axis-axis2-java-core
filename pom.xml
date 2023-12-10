@@ -485,7 +485,6 @@
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>10.0.18</jetty.version>
         <jibx.version>1.4.2</jibx.version>
-        <log4j2.version>2.20.0</log4j2.version>
         <maven.archiver.version>3.6.0</maven.archiver.version>
         <maven.version>3.9.6</maven.version>
         <rhino.version>1.6R7</rhino.version>
@@ -735,11 +734,6 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>jakarta.mail</groupId>
                 <artifactId>jakarta.mail-api</artifactId>
                 <version>2.1.2</version>
@@ -890,18 +884,10 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4j2.version}</version>
+                <artifactId>log4j-bom</artifactId>
+                <version>2.20.0</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>osgi.bundle</groupId>
