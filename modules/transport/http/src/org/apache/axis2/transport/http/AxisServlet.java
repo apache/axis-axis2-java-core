@@ -105,6 +105,7 @@ public class AxisServlet extends HttpServlet {
     protected transient String contextRoot = null;
 
     protected boolean disableREST = false;
+    protected boolean enableJSONOnly = false;
     private static final String LIST_SERVICES_SUFFIX = "/services/listServices";
     private static final String LIST_FAULTY_SERVICES_SUFFIX = "/services/ListFaultyServices";
     private boolean closeReader = true;
@@ -153,7 +154,12 @@ public class AxisServlet extends HttpServlet {
         MessageContext msgContext;
         OutputStream out = response.getOutputStream();
         String contentType = request.getContentType();
-        if (!HTTPTransportUtils.isRESTRequest(contentType)) {
+        if (enableJSONOnly && (contentType == null || contentType.isEmpty() || !HTTPTransportUtils.isJSONRequest(contentType))) {
+            log.error("doPost() returning with no action taken, enableJSONOnly is true in the axis2.xml file and the content-type is not application/json: " + contentType);
+            response.setContentType("application/json");
+            showJSONOnlyErrorMessage(response);
+            return;
+        } else if (!HTTPTransportUtils.isRESTRequest(contentType)) {
             msgContext = createMessageContext(request, response);
             msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
             try {
@@ -352,6 +358,19 @@ public class AxisServlet extends HttpServlet {
                 "and WEB-INF/web.xml</h2></body></html>");
         writer.flush();
         response.setStatus(HttpServletResponse.SC_ACCEPTED);
+    }
+
+    /**
+     * Private method that deals with disabling of SOAP and REST support.
+     *
+     * @param response
+     * @throws IOException
+     */
+    protected void showJSONOnlyErrorMessage(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        writer.println("{ \"status\": \"error\",\"message\":\"content-type of application/json is mandatory\"}");
+        writer.flush();
     }
 
     /**

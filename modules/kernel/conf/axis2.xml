@@ -25,6 +25,7 @@
     <parameter name="hotupdate">false</parameter>
     <parameter name="enableMTOM">false</parameter>
     <parameter name="enableSwA">false</parameter>
+    <parameter name="enableJSONOnly">false</parameter>
 
     <!--Uncomment if you want to enable file caching for attachments -->
     <!--parameter name="cacheAttachments">true</parameter>

@@ -325,6 +325,23 @@ public class HTTPTransportUtils {
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1);
     }
     
+    /**
+     * This will match for content types that will be regarded as JSON
+     * This contains,
+     * 1. application/json
+     * <p/>
+     * If the request does not contain a content type, this will return false.
+     *
+     * @param contentType content type to check
+     * @return Boolean
+     */
+    public static boolean isJSONRequest(String contentType) {
+        if (contentType == null || contentType.isEmpty()) {
+            return false;
+        }
+        return (contentType.toLowerCase().indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_JSON) != -1);
+    }
+
     public static EndpointReference[] getEPRsForService(ConfigurationContext configurationContext,
             TransportInDescription trpInDesc, String serviceName, String ip, int port) throws AxisFault {
         
