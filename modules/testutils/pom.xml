@@ -56,8 +56,22 @@
             <artifactId>jakarta.xml.ws-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
+            <artifactId>jetty-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-webapp</artifactId>
+            <version>12.0.5</version>
+        </dependency>
+	<dependency>
+            <groupId>org.eclipse.jetty.ee9</groupId>
+            <artifactId>jetty-ee9-nested</artifactId>
+            <version>12.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>

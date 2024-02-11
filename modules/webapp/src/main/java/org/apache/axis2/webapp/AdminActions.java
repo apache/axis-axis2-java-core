@@ -33,17 +33,16 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.AbstractAgent;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.RequestContext;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.RequestContext;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletRequestContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.util.Collection;
@@ -146,15 +145,12 @@ final class AdminActions {
 
     @Action(name="doUpload", post=true)
     public Redirect doUpload(HttpServletRequest req) throws ServletException {
-        RequestContext reqContext = new ServletRequestContext(req);
+        RequestContext reqContext = new JakartaServletRequestContext(req);
 
-        boolean isMultipart = ServletFileUpload.isMultipartContent(reqContext);
+        boolean isMultipart = JakartaServletFileUpload.isMultipartContent(reqContext);
         if (isMultipart) {
             try {
-                //Create a factory for disk-based file items
-                FileItemFactory factory = new DiskFileItemFactory();
-                //Create a new file upload handler
-                ServletFileUpload upload = new ServletFileUpload(factory);
+		JakartaServletFileUpload upload = new JakartaServletFileUpload<>(DiskFileItemFactory.builder().get());
                 // There must be a limit. This is for an aar file upload,
                 // presumably only one. See:
                 // https://axis.apache.org/axis2/java/core/docs/webadminguide.html#upservice
@@ -189,7 +185,7 @@ final class AdminActions {
                                 return new Redirect(UPLOAD).withStatus(false, "Received invalid filename");
                             }
                             File uploadedFile = new File(serviceDir, fileNameOnly);
-                            item.write(uploadedFile);
+                            item.write(uploadedFile.toPath());
                             return new Redirect(UPLOAD).withStatus(true, "File " + fileNameOnly + " successfully uploaded");
                         }
                     }

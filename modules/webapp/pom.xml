@@ -123,15 +123,15 @@
             <type>aar</type>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency><!-- Not required for the Maven build, but necessary to avoid errors when
                  importing the project into an IDE. -->
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>2.3.6</version>
+            <version>3.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -251,6 +251,14 @@
             <artifactId>woodstox-core</artifactId>
             <version>6.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-core</artifactId>
+        </dependency>
+	<!--
+	 [WEB-INF/lib/commons-fileupload2-jakarta-servlet6-2.0.0-M2.jar, WEB-INF/lib/jetty-jakarta-servlet-api-5.0.2.jar
+	-->
+
     </dependencies>
 
     <build>
@@ -300,6 +308,7 @@
             <plugin><!-- Compile the JSPs so that syntax errors are detected during the build. -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jspc-maven-plugin</artifactId>
+                <version>11.0.20</version>
                 <executions>
                     <execution>
                         <goals>

@@ -20,12 +20,15 @@
 package org.apache.axis2.builder;
 
 import java.io.InputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -34,12 +37,15 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.util.MultipleEntryHashMap;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.fileupload2.core.DiskFileItem;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItemFactory;
+import org.apache.commons.fileupload2.core.FileUploadException;
+import org.apache.commons.fileupload2.core.ParameterParser;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletRequestContext;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletDiskFileUpload;
+import org.apache.commons.io.Charsets;
 
 public class MultipartFormDataBuilder implements Builder {
 
@@ -50,8 +56,13 @@ public class MultipartFormDataBuilder implements Builder {
                                      MessageContext messageContext)
             throws AxisFault {
         MultipleEntryHashMap parameterMap;
-        HttpServletRequest request = (HttpServletRequest) messageContext
+        HttpServletRequest request = null;
+	try {
+            request = (HttpServletRequest) messageContext
                 .getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
+        }
         if (request == null) {
             throw new AxisFault("Cannot create DocumentElement without HttpServletRequest");
         }
@@ -82,7 +93,7 @@ public class MultipartFormDataBuilder implements Builder {
 
         MultipleEntryHashMap parameterMap = new MultipleEntryHashMap();
 
-        List items = parseRequest(new ServletRequestContext(request));
+        List items = parseRequest(new JakartaServletRequestContext(request));
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
             DiskFileItem diskFileItem = (DiskFileItem)iter.next();
@@ -105,12 +116,13 @@ public class MultipartFormDataBuilder implements Builder {
         return parameterMap;
     }
 
-    private static List parseRequest(ServletRequestContext requestContext)
+    private static List parseRequest(JakartaServletRequestContext requestContext)
             throws FileUploadException {
         // Create a factory for disk-based file items
-        FileItemFactory factory = new DiskFileItemFactory();
-        // Create a new file upload handler
-        ServletFileUpload upload = new ServletFileUpload(factory);
+	DiskFileItemFactory fileItemFactory = DiskFileItemFactory.builder()
+                .setCharset(StandardCharsets.UTF_8)
+                .get();
+        JakartaServletFileUpload upload = new JakartaServletFileUpload<>(fileItemFactory);
         // There must be a limit. 
         // This is for contentType="multipart/form-data"
         upload.setFileCountMax(1L);
@@ -121,17 +133,20 @@ public class MultipartFormDataBuilder implements Builder {
     private String getTextParameter(DiskFileItem diskFileItem,
                                     String characterEncoding) throws Exception {
 
-        String encoding = diskFileItem.getCharSet();
-
+        String encoding = null;
+	final ParameterParser parser = new ParameterParser();
+        parser.setLowerCaseNames(true);
+        // Parameter parser can handle null input
+        final Map<String, String> params = parser.parse(diskFileItem.getContentType(), ';');
+        encoding = params.get("charset");
         if (encoding == null) {
             encoding = characterEncoding;
         }
-
         String textValue;
         if (encoding == null) {
             textValue = new String(diskFileItem.get());
         } else {
-            textValue = new String(diskFileItem.get(), encoding);
+            textValue = new String(diskFileItem.get(), Charsets.toCharset(diskFileItem.getCharset(), StandardCharsets.ISO_8859_1));
         }
 
         return textValue;

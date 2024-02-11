@@ -44,8 +44,8 @@ import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.xml.WSDLReader;

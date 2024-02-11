@@ -401,8 +401,10 @@
         <module>modules/tool/maven-shared</module>
         <module>modules/tool/axis2-aar-maven-plugin</module>
         <module>modules/tool/axis2-ant-plugin</module>
+	<!--
         <module>modules/tool/axis2-eclipse-codegen-plugin</module>
         <module>modules/tool/axis2-eclipse-service-plugin</module>
+	-->
         <module>modules/tool/axis2-idea-plugin</module>
         <module>modules/tool/axis2-java2wsdl-maven-plugin</module>
         <module>modules/tool/axis2-mar-maven-plugin</module>
@@ -441,7 +443,11 @@
         <module>modules/distribution</module>
         <module>modules/samples</module>
         <module>databinding-tests</module>
+	<!-- FIXME AXIS2-6051 jwebunit hasn't been update since 2015
+             and is too broke to fix in a post jakarta world. 
+             TODO: find a replacement, or remove the code.
         <module>systests</module>
+	-->
     </modules>
 
     <scm>
@@ -470,7 +476,7 @@
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.21</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
-        <commons.fileupload.version>1.5</commons.fileupload.version>
+	<commons.fileupload.version>2.0.0-M2</commons.fileupload.version>
         <commons.logging.version>1.2</commons.logging.version>
         <fi.version>2.1.1</fi.version>
         <geronimo.spec.annotation.version>1.1.1</geronimo.spec.annotation.version>
@@ -483,13 +489,22 @@
         <httpmime.version>4.5.14</httpmime.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
+<<<<<<< Updated upstream
         <jetty.version>10.0.20</jetty.version>
+=======
+        <jetty.version>12.0.5</jetty.version>
+>>>>>>> Stashed changes
         <jibx.version>1.4.2</jibx.version>
         <maven.archiver.version>3.6.1</maven.archiver.version>
         <maven.version>3.9.6</maven.version>
         <rhino.version>1.6R7</rhino.version>
+<<<<<<< Updated upstream
         <slf4j.version>2.0.12</slf4j.version>
         <spring.version>5.3.31</spring.version>
+=======
+        <slf4j.version>2.0.11</slf4j.version>
+        <spring.version>6.1.3</spring.version>
+>>>>>>> Stashed changes
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xmlbeans.version>3.0.1</xmlbeans.version>
         <xmlunit.version>2.9.1</xmlunit.version>
@@ -592,9 +607,10 @@
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.0.0</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -789,8 +805,13 @@
                 <version>${httpmime.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-fileupload2-core</artifactId>
+                <version>${commons.fileupload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
                 <version>${commons.fileupload.version}</version>
             </dependency>
             <dependency>
@@ -890,54 +911,68 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>osgi.bundle</groupId>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.jobs</artifactId>
-                <version>3.10.800.v20200421-0950</version>
+                <version>3.15.100</version>
             </dependency>
             <dependency>
-                <groupId>osgi.bundle</groupId>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.resources</artifactId>
-                <version>3.13.700.v20200209-1624</version>
+                <version>3.20.0</version>
             </dependency>
-            <dependency>
-                <groupId>osgi.bundle</groupId>
+	    <dependency>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.runtime</artifactId>
-                <version>3.18.0.v20200506-2143</version>
+                <version>3.30.0</version>
             </dependency>
-            <dependency>
-                <groupId>osgi.bundle</groupId>
+	    <dependency>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.equinox.common</artifactId>
-                <version>3.12.0.v20200504-1602</version>
+                <version>3.14.0</version>
             </dependency>
-            <dependency>
-                <groupId>osgi.bundle</groupId>
+	    <dependency>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.jface</artifactId>
-                <version>3.20.0.v20200505-1952</version>
+                <version>3.32.0</version>
             </dependency>
             <dependency>
-                <groupId>osgi.bundle</groupId>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.osgi</artifactId>
-                <version>3.15.300.v20200520-1959</version>
+                <version>3.18.600</version>
             </dependency>
-            <dependency>
-                <groupId>osgi.bundle</groupId>
+	    <dependency>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.swt</artifactId>
-                <version>3.114.100.v20200604-0951</version>
+                <version>3.124.200</version>
             </dependency>
             <dependency>
-                <groupId>osgi.bundle</groupId>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-                <version>3.114.100.v20200604-0951</version>
+                <version>3.124.200</version>
             </dependency>
+	    <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.ui.ide</artifactId>
+                <version>3.14.200</version>
+            </dependency>
+	    <!--
             <dependency>
                 <groupId>osgi.bundle</groupId>
                 <artifactId>org.eclipse.ui.ide</artifactId>
                 <version>3.17.100.v20200530-0835</version>
             </dependency>
+	    -->
             <dependency>
-                <groupId>osgi.bundle</groupId>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.ui.workbench</artifactId>
-                <version>3.119.0.v20200521-1247</version>
+                <version>3.131.0</version>
+                <exclusions>
+		    <!-- FIXME -->	
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis-ext</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.intellij</groupId>
@@ -992,11 +1027,6 @@
                 <artifactId>jetty-server</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-webapp</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
 
             <!-- AspectJ is used in the unit tests of several transports -->            
             <dependency>
@@ -1014,9 +1044,9 @@
 
     <repositories>
         <repository>
-            <id>eclipse_4_16</id>
+            <id>eclipse_4_30</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/eclipse/updates/4.16/R-4.16-202006040540</url>
+            <url>http://download.eclipse.org/eclipse/updates/4.30/R-4.30-202312010110</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -1258,7 +1288,7 @@
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
                                     <banRepositories>true</banRepositories>
                                     <allowedRepositories>
-                                        <allowedRepository>eclipse_4_16</allowedRepository>
+                                        <allowedRepository>eclipse_4_30</allowedRepository>
                                     </allowedRepositories>
                                     <banPluginRepositories>true</banPluginRepositories>
                                     <!-- We still need to allow the Apache snapshot repository -->

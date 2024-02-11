@@ -20,12 +20,12 @@ package org.apache.axis2.testutils.jaxws;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.ee9.nested.Request;
+import org.eclipse.jetty.ee9.nested.AbstractHandler;
 
 final class JAXWSHandler extends AbstractHandler {
     private final HttpContextImpl httpContext;

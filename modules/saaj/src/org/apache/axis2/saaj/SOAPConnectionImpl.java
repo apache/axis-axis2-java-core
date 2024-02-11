@@ -45,6 +45,9 @@ import org.apache.axis2.saaj.util.UnderstandAllHeadersHandler;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
 import jakarta.xml.soap.AttachmentPart;
@@ -75,6 +78,8 @@ import java.util.StringTokenizer;
  *
  */
 public class SOAPConnectionImpl extends SOAPConnection {
+
+    private static Log log = LogFactory.getLog(SOAPConnectionImpl.class);
 
     /** Attribute which keeps track of whether this connection has been closed */
     private boolean closed = false;
@@ -430,6 +435,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
             if (responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 isFailure = true;
             } else if ((responseCode / 100) != 2) {
+	        log.error("Error code: " +responseCode+ " , received on URL: " + url);
+	        System.out.println("Error code: " +responseCode+ " , received on URL: " + url);
                 throw new SOAPException("Error response: (" + responseCode
                         + httpCon.getResponseMessage());
             }

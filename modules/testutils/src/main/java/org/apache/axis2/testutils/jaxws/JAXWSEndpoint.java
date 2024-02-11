@@ -22,6 +22,8 @@ import jakarta.xml.ws.Endpoint;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jetty.ee9.nested.ContextHandler;
+import org.eclipse.jetty.ee9.nested.HandlerCollection;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.junit.rules.ExternalResource;
@@ -41,7 +43,11 @@ public final class JAXWSEndpoint extends ExternalResource {
         server = new Server(0);
         HttpContextImpl httpContext = new HttpContextImpl();
         Endpoint.create(implementor).publish(httpContext);
-        server.setHandler(new JAXWSHandler(httpContext));
+
+        ContextHandler context = new ContextHandler(server);
+        HandlerCollection ee9HandlerCollection = new HandlerCollection();
+        ee9HandlerCollection.addHandler(new JAXWSHandler(httpContext));
+        context.setHandler(ee9HandlerCollection);
         server.start();
     }
 

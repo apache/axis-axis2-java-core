@@ -26,8 +26,8 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Enumeration;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.axiom.mime.ContentType;
 import org.apache.axis2.transport.testkit.message.IncomingMessage;

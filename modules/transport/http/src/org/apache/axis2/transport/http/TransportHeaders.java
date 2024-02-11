@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.http;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;

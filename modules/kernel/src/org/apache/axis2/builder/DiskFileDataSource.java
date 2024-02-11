@@ -24,7 +24,7 @@ import java.io.OutputStream;
 
 import jakarta.activation.DataSource;
 
-import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload2.core.DiskFileItem;
 
 public class DiskFileDataSource implements DataSource {
 
@@ -50,7 +50,7 @@ public class DiskFileDataSource implements DataSource {
         return this.diskFileItem.getOutputStream();
     }
 
-    public void delete() {
+    public void delete() throws IOException {
         this.diskFileItem.delete();
     }
 

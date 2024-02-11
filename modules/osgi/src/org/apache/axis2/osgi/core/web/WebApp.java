@@ -22,24 +22,33 @@ package org.apache.axis2.osgi.core.web;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.servlet.context.ServletContextHelper;
+import org.osgi.service.servlet.runtime.HttpServiceRuntime;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.HashMap;
 
 /**
  *
  * WebApp is a utility class for describing a WebApplication to be deployed into an OSGi
- * HTTP Service implementation. The WebApp implementation extends the OSGi <code>HttpContext</code>.
+ * HTTP Service implementation. The WebApp implementation extends the OSGi <code>ServletContextHelper</code>.
  */
-public class WebApp implements HttpContext {
+public class WebApp extends ServletContextHelper {
 	protected static WebAppDescriptor webAppDescriptor = null;
 
-	protected HttpService httpService;
+	protected HttpServiceRuntime httpServiceRuntime;
 
 	protected ServiceReference sRef;
+
+	protected Set<ServiceRegistration<?>> serviceRegistrations = new HashSet<ServiceRegistration<?>>();
 
 	public WebApp(WebAppDescriptor descriptor) {
 		webAppDescriptor = descriptor;
@@ -57,9 +66,9 @@ public class WebApp implements HttpContext {
 		return url;
 	}
 
-	public boolean handleSecurity(HttpServletRequest request,
-			HttpServletResponse response) throws java.io.IOException {
-		return true;
+	@Override
+	public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
+            return true;
 	}
 
 	/**
@@ -67,19 +76,22 @@ public class WebApp implements HttpContext {
 	 * @param bc the BundleContext of the WebApp host
 	 * @throws BundleException
 	 */
-	public void start(BundleContext bc) throws BundleException {
-		if ((sRef = bc.getServiceReference("org.osgi.service.http.HttpService")) == null)
-			throw new BundleException("Failed to get HttpServiceReference");
-		if ((httpService = (HttpService) bc.getService(sRef)) == null)
-			throw new BundleException("Failed to get HttpService");
+	public void start(BundleContext bc) throws BundleException {	
+		ServiceReference<HttpServiceRuntime> sRef = bc.getServiceReference(HttpServiceRuntime.class);
+		if (sRef == null)
+			throw new BundleException("Failed to get ServiceReference");
+		if ((httpServiceRuntime = bc.getService(sRef)) == null)
+			throw new BundleException("Failed to get httpServiceRuntime");
 		try {
 			WebAppDescriptor wad = webAppDescriptor;
 
 			for (int i = 0; i < wad.servlet.length; i++) {
 				ServletDescriptor servlet = wad.servlet[i];
 
-				httpService.registerServlet(wad.context + servlet.subContext,
-						servlet.servlet, servlet.initParameters, this);
+   // ServiceRegistration<?> registerService(String clazz, Object service, Dictionary<String, ?> properties);
+   // Dictionary<String,Object> props = new Hashtable<>(2);
+			        // serviceRegistrations.add(bc.registerService(wad.context + servlet.subContext, servlet.servlet, servlet.initParameters, this));
+			        serviceRegistrations.add(bc.registerService(ServletContextHelper.class, this, servlet.initParameters));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -93,19 +105,18 @@ public class WebApp implements HttpContext {
 	 * @throws BundleException
 	 */
 	public void stop(BundleContext bc) throws BundleException {
-		try {
-			for (int i = 0; i < webAppDescriptor.servlet.length; i++) {
-				ServletDescriptor servlet = webAppDescriptor.servlet[i];
-
-				httpService.unregister(webAppDescriptor.context
-						+ servlet.subContext);
-			}
-			bc.ungetService(sRef);
-			httpService = null;
-			webAppDescriptor = null;
-		} catch (Exception e) {
-			throw new BundleException("Failed to unregister resources", e);
-		}
+            try {
+                for (ServiceRegistration<?> serviceRegistration : serviceRegistrations) {
+                    serviceRegistration.unregister();
+                }
+            
+                serviceRegistrations.clear();
+                bc.ungetService(sRef);
+                httpServiceRuntime = null;
+                webAppDescriptor = null;
+            } catch (Exception e) {
+                throw new BundleException("Failed to unregister resources", e);
+            }
 	}
 
     public static WebAppDescriptor getWebAppDescriptor() {
@@ -116,12 +127,12 @@ public class WebApp implements HttpContext {
         WebApp.webAppDescriptor = webAppDescriptor;
     }
 
-    public HttpService getHttpService() {
-        return httpService;
+    public HttpServiceRuntime getHttpServiceRuntime() {
+        return httpServiceRuntime;
     }
 
-    public void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
+    public void setHttpServiceRuntime(HttpServiceRuntime httpServiceRuntime) {
+        this.httpServiceRuntime = httpServiceRuntime;
     }
 
     public ServiceReference getSRef() {

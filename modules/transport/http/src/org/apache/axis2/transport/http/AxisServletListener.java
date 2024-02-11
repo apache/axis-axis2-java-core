@@ -32,7 +32,7 @@ import org.apache.axis2.kernel.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * {@link TransportListener} implementation for {@link AxisServlet}. There will be one instance

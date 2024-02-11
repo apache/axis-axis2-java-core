@@ -19,7 +19,7 @@
 
 package org.apache.axis2.osgi.core.web;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 import java.util.Hashtable;
 
 /**

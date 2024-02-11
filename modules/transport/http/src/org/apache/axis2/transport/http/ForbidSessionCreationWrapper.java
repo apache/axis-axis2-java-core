@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.transport.http;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpSession;
 
 public class ForbidSessionCreationWrapper extends HttpServletRequestWrapper {
     public ForbidSessionCreationWrapper(HttpServletRequest request) {

@@ -20,6 +20,8 @@ package org.apache.axis2.testutils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -33,15 +35,15 @@ import java.util.Random;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.transport.http.AxisServlet;
@@ -185,7 +187,8 @@ public class JettyServer extends AbstractAxis2Server {
             log.error("Failed to create Axis2 webapp directory: " + webappDir.getAbsolutePath());
         }
         
-        context.setResourceBase(webappDir.getAbsolutePath());
+	Path webappPath = Paths.get(webappDir.getAbsolutePath());
+        context.setBaseResource(context.getResourceFactory().newResource(webappPath));
         context.setContextPath("/axis2");
         context.setParentLoaderPriority(true);
         context.setThrowUnavailableOnStartupException(true);
@@ -211,7 +214,7 @@ public class JettyServer extends AbstractAxis2Server {
             server.start();
         }
         catch (SecurityException e) {
-            if (e.getMessage().equals("class \"javax.servlet.ServletRequestListener\"'s signer information does not match signer information of other classes in the same package")) {
+            if (e.getMessage().equals("class \"jakarta.servlet.ServletRequestListener\"'s signer information does not match signer information of other classes in the same package")) {
                 log.error(
                  "It is likely your test classpath contains multiple different versions of servlet api.\n" +
                  "If you are running this test in an IDE, please configure it to exclude Rampart's core module servlet api dependency.");

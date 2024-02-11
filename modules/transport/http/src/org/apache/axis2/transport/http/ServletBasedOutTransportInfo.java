@@ -22,7 +22,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.kernel.OutTransportInfo;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class ServletBasedOutTransportInfo implements OutTransportInfo {
     private HttpServletResponse response;

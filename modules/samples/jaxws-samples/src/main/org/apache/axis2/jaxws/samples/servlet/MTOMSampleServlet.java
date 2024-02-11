@@ -21,10 +21,10 @@ package org.apache.axis2.jaxws.samples.servlet;
 
 import org.apache.axis2.jaxws.samples.client.mtom.SampleMTOMTests;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,7 +40,7 @@ import java.io.IOException;
  * web.servlet-mapping
  * url-pattern="/MTOMSampleServlet"
  */
-public class MTOMSampleServlet extends javax.servlet.http.HttpServlet implements javax.servlet.Servlet {
+public class MTOMSampleServlet extends jakarta.servlet.http.HttpServlet implements jakarta.servlet.Servlet {
     private static final long serialVersionUID = 1039362106123493799L;
     private static final String INDEX_JSP_LOCATION = "/WEB-INF/jsp/demoMTOM.jsp";
     private String uriString = "";

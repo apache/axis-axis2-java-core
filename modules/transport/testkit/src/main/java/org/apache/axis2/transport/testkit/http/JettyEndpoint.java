@@ -21,16 +21,18 @@ package org.apache.axis2.transport.testkit.http;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.ee9.nested.AbstractHandler;
+import org.eclipse.jetty.ee9.nested.ContextHandler;
+import org.eclipse.jetty.ee9.nested.Handler;
+import org.eclipse.jetty.ee9.nested.Request;
+import org.eclipse.jetty.server.Response;
 
 public abstract class JettyEndpoint {
     private @Transient JettyServer server;

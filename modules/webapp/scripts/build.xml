@@ -72,7 +72,7 @@
 		<war destfile="dist/axis2.war" webxml="webapp/WEB-INF/web.xml">
 			<lib dir="lib">
 				<include name="**" />
-				<exclude name="**servlet**" />
+				<exclude name="axis2-soapmonitor-servlet-*.jar" />
 				<exclude name="axis2-ant-plugin-*.jar" />
 				<exclude name="axis2-*-codegen-*.jar"/>
 				<exclude name="axis2-java2wsdl-*.jar"/>

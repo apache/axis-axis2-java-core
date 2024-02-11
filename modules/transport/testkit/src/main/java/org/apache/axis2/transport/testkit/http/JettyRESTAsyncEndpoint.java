@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.axis2.transport.testkit.message.IncomingMessage;
 import org.apache.axis2.transport.testkit.message.RESTMessage;

@@ -307,6 +307,10 @@
             <artifactId>woodstox-core</artifactId>
             <version>6.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+        </dependency>
         
         <!-- These are needed to run JAX-WS tools -->
         <!-- TODO: don't add them unless you also add the corresponding license files
@@ -414,8 +418,12 @@
                                     the script uses:
                                     ./target/axis2-1.8.3-SNAPSHOT/lib 		    
 			            When in doubt, look at the excludes
-			            section in bin-assembly.xml
-			        -->		    
+                                    section in bin-assembly.xml that
+                                    could be excluding jars with the 
+                                    wildcards in the filters.
+                                    To debug see logs for the message: 
+                                    "was removed by one or more filters"
+			        -->
                                 <script><![CDATA[
                                     import java.util.jar.*
                                     
@@ -432,7 +440,7 @@
                                     jar.close()
                                     
 				    println("From dir: " +project.properties['webapp']+ " , found these files: " + expected);
-				    println("They all must be in this dir: " + project.build.directory + "axis2-" + project.version + "/dist/axis2.war");
+					println("They all must be in this war: " + project.build.directory + "/axis2-" + project.version + "/dist/axis2.war");
                                     jar = new JarInputStream(new FileInputStream(new File(project.build.directory, "axis2-" + project.version + "/dist/axis2.war")))
                                     while(entry = jar.nextJarEntry) {
                                         if (entry.name != 'META-INF/' && !expected.remove(entry.name)) {

@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
 
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration

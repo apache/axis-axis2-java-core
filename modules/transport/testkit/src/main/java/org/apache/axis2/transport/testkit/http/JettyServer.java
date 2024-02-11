@@ -23,16 +23,18 @@ import org.apache.axis2.transport.testkit.channel.Channel;
 import org.apache.axis2.transport.testkit.tests.Setup;
 import org.apache.axis2.transport.testkit.tests.TearDown;
 import org.apache.axis2.transport.testkit.tests.Transient;
-import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.ee9.nested.AbstractHandler;
+import org.eclipse.jetty.ee9.nested.ContextHandler;
+import org.eclipse.jetty.ee9.nested.Handler;
+import org.eclipse.jetty.ee9.nested.HandlerCollection;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
 
 public class JettyServer {
     public static final JettyServer INSTANCE = new JettyServer();
     
     private @Transient Server server;
-    private @Transient HandlerList handlerList;
+    // ee9 specific nested HandlerCollection
+    private @Transient HandlerCollection ee9HandlerCollection;
     
     private JettyServer() {}
     
@@ -40,17 +42,17 @@ public class JettyServer {
     private void setUp(HttpTestEnvironment env) throws Exception {
         server = new Server(env.getServerPort());
         ContextHandler context = new ContextHandler(server, Channel.CONTEXT_PATH);
-        handlerList = new HandlerList();
-        context.setHandler(handlerList);
+        ee9HandlerCollection = new HandlerCollection();
+        context.setHandler(ee9HandlerCollection);
         server.start();
     }
     
     public void addHandler(Handler handler) {
-        handlerList.addHandler(handler);
+        ee9HandlerCollection.addHandler(handler);
     }
 
     public void removeHandler(Handler handler) {
-        handlerList.removeHandler(handler);
+        ee9HandlerCollection.removeHandler(handler);
     }
 
     @TearDown @SuppressWarnings("unused")

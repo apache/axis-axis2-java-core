@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.http;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
