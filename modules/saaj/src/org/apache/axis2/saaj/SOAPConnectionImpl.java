@@ -436,7 +436,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
                 isFailure = true;
             } else if ((responseCode / 100) != 2) {
 	        log.error("Error code: " +responseCode+ " , received on URL: " + url);
-	        System.out.println("Error code: " +responseCode+ " , received on URL: " + url);
                 throw new SOAPException("Error response: (" + responseCode
                         + httpCon.getResponseMessage());
             }
