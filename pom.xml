@@ -489,22 +489,16 @@
         <httpmime.version>4.5.14</httpmime.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
-<<<<<<< Updated upstream
         <jetty.version>10.0.20</jetty.version>
-=======
-        <jetty.version>12.0.5</jetty.version>
->>>>>>> Stashed changes
+        <jetty.version>12.0.6</jetty.version>
         <jibx.version>1.4.2</jibx.version>
         <maven.archiver.version>3.6.1</maven.archiver.version>
         <maven.version>3.9.6</maven.version>
         <rhino.version>1.6R7</rhino.version>
-<<<<<<< Updated upstream
         <slf4j.version>2.0.12</slf4j.version>
         <spring.version>5.3.31</spring.version>
-=======
         <slf4j.version>2.0.11</slf4j.version>
         <spring.version>6.1.3</spring.version>
->>>>>>> Stashed changes
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xmlbeans.version>3.0.1</xmlbeans.version>
         <xmlunit.version>2.9.1</xmlunit.version>
@@ -928,7 +922,7 @@
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.equinox.common</artifactId>
-                <version>3.14.0</version>
+                <version>3.18.200</version>
             </dependency>
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
@@ -953,7 +947,7 @@
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.ui.ide</artifactId>
-                <version>3.14.200</version>
+                <version>3.22.0</version>
             </dependency>
 	    <!--
             <dependency>
