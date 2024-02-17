@@ -214,8 +214,8 @@
                     <include>org/apache/axis2/soapmonitor/applet/**/*</include>
                     <include>WEB-INF/classes/**/*</include>
                     <include>WEB-INF/include/**/*</include>
-                    <include>WEB-INF/lib/taglibs-standard-impl-*.jar</include>
-                    <include>WEB-INF/lib/taglibs-standard-spec-*.jar</include>
+                    <include>WEB-INF/lib/jakarta.el-api-*.jar</include>
+                    <include>WEB-INF/lib/jakarta.servlet.jsp.jstl-*.jar</include>
                     <include>WEB-INF/lib/axis2-soapmonitor-servlet-*.jar</include>
                     <include>WEB-INF/tags/**/*</include>
                     <include>WEB-INF/views/**/*</include>
