@@ -443,11 +443,7 @@
         <module>modules/distribution</module>
         <module>modules/samples</module>
         <module>databinding-tests</module>
-	<!-- FIXME AXIS2-6051 jwebunit hasn't been update since 2015
-             and is too broke to fix in a post jakarta world. 
-             TODO: find a replacement, or remove the code.
         <module>systests</module>
-	-->
     </modules>
 
     <scm>
