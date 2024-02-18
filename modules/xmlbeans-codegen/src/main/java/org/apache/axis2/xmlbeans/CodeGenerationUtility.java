@@ -681,7 +681,7 @@ public class CodeGenerationUtility {
         }
         List<File> files = new Vector<File>();
         for (String javaFileName : javaFileNames.split("\\s")) {
-            try (Stream<Path> pathStream = Files.walk(Path.of(javaFileName),
+            try (Stream<Path> pathStream = Files.walk(new File(javaFileName).toPath(),
                     FileVisitOption.FOLLOW_LINKS)) {
                 pathStream
                         .filter(p -> (Files.isRegularFile(p) && p.getFileName().endsWith(".java")))
