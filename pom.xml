@@ -1030,16 +1030,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <repository>
-            <id>eclipse_4_30</id>
-            <layout>p2</layout>
-            <url>http://download.eclipse.org/eclipse/updates/4.30/R-4.30-202312010110</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>apache.snapshots</id>
@@ -1275,9 +1265,6 @@
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
                                     <banRepositories>true</banRepositories>
-                                    <allowedRepositories>
-                                        <allowedRepository>eclipse_4_30</allowedRepository>
-                                    </allowedRepositories>
                                     <banPluginRepositories>true</banPluginRepositories>
                                     <!-- We still need to allow the Apache snapshot repository -->
                                     <allowSnapshotRepositories>true</allowSnapshotRepositories>
@@ -1638,13 +1625,6 @@ $${type_declaration}</template></templates>]]></value>
                 </executions>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>com.github.veithen.maven</groupId>
-                <artifactId>p2-maven-connector</artifactId>
-                <version>0.6.0</version>
-            </extension>
-        </extensions>
     </build>
 
     <reporting>
