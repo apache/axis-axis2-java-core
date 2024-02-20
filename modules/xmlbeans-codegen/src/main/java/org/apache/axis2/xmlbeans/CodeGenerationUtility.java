@@ -684,7 +684,7 @@ public class CodeGenerationUtility {
             try (Stream<Path> pathStream = Files.walk(new File(javaFileName).toPath(),
                     FileVisitOption.FOLLOW_LINKS)) {
                 pathStream
-                        .filter(p -> (Files.isRegularFile(p) && p.getFileName().endsWith(".java")))
+                        .filter(p -> (Files.isRegularFile(p) && p.toString().endsWith(".java")))
                         .forEach(p -> files.add(p.toFile()));
             } catch (IOException ioe) {
                 log.info("Could not read javaFile: " + javaFileName);
