@@ -46,6 +46,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -53,6 +54,8 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.util.EntityUtils;
 
@@ -313,6 +316,16 @@ final class RequestImpl implements Request {
 
             }
             requestConfig.setTargetPreferredAuthSchemes(authPrefs);
+        }
+
+        if (authenticator.getPreemptiveAuthentication() && host != null) {
+            //Use authCache - could also set header
+            AuthCache authCache = clientContext.getAuthCache();
+            if (authCache == null) {
+                authCache = new BasicAuthCache();
+            }
+            authCache.put(new HttpHost(host), new BasicScheme());
+            clientContext.setAuthCache(authCache);
         }
     }
 }
