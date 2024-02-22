@@ -47,6 +47,7 @@ import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 public class FaultHandlingTest extends UtilServerBasedTestCase implements TestConstants {
@@ -63,6 +64,9 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
                 configurationContext.getAxisConfiguration().getInFlowPhases();
         Phase phaseOne = (Phase)inPhasesUptoAndIncludingPostDispatch.get(0);
         phaseOne.addHandler(new FaultHandler());
+        UtilServer.deployService(Utils.createSimpleService(serviceName,
+                Echo.class.getName(),
+                operationName));
     }
 
     public void testFaultHandlingWithParamsSetToMsgCtxt() throws AxisFault {
@@ -173,6 +177,7 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
     }
 
     protected void tearDown() throws Exception {
+        UtilServer.unDeployService(serviceName);
     }
 
     public void testExceptionInformationExtractionFromAxisFault() {
