@@ -45,6 +45,8 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
     public static final String XSDCONFIG_OPTION = "xc";
     public static final String XSDCONFIG_OPTION_LONG = "xsdconfig";
+    public static final String XSDCONFIG_JAVAFILES_OPTION = "xsdconfig-javafiles";
+    public static final String XSDCONFIG_CLASSPATH_OPTION = "xsdconfig-classpath";
 
 
     public static String MAPPINGS = "mappings";
