@@ -58,9 +58,6 @@ updates:
       # Embedding Qpid is a pain and APIs have changed a lot over time. We don't try to keep up with
       # these changes. It's only used for integration tests anyway.
       - dependency-name: "org.apache.qpid:*"
-      - dependency-name: "org.eclipse.jetty:*"
-        versions:
-        - ">= 11.0"
       - dependency-name: "org.glassfish.jaxb:*"
         versions:
         - ">= 3.0"
