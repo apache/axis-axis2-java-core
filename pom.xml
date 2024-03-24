@@ -468,7 +468,7 @@
         <xmlschema.version>2.3.1</xmlschema.version>
         <ant.version>1.10.14</ant.version>
         <antlr.version>2.7.7</antlr.version>
-        <aspectj.version>1.9.21.2</aspectj.version>
+        <aspectj.version>1.9.22</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
 	<commons.fileupload.version>2.0.0-M2</commons.fileupload.version>
         <commons.logging.version>1.2</commons.logging.version>
