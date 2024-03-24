@@ -15,9 +15,15 @@
 */
 package org.apache.axis2.transport.jms.ctype;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.InputStream;
 
+import javax.jms.BytesMessage;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
 
 import junit.framework.TestCase;
 
@@ -27,9 +33,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.mockejb.jms.BytesMessageImpl;
-import org.mockejb.jms.ObjectMessageImpl;
-import org.mockejb.jms.TextMessageImpl;
 
 public class ContentTypeRuleTest extends TestCase {
     private ContentTypeRuleSet ruleSet;
@@ -60,25 +63,25 @@ public class ContentTypeRuleTest extends TestCase {
     }
     
     public void test1() throws Exception {
-        Message message = new BytesMessageImpl();
-        message.setStringProperty("contentType", "application/xml");
+        Message message = mock(BytesMessage.class);
+        when(message.getStringProperty("contentType")).thenReturn("application/xml");
         assertContentTypeInfo("contentType", "application/xml", message);
         
-        assertContentTypeInfo(null, "text/plain", new TextMessageImpl());
-        assertContentTypeInfo(null, "application/octet-stream", new BytesMessageImpl());
-        assertEquals(null, ruleSet.getContentTypeInfo(new ObjectMessageImpl()));
+        assertContentTypeInfo(null, "text/plain", mock(TextMessage.class));
+        assertContentTypeInfo(null, "application/octet-stream", mock(BytesMessage.class));
+        assertEquals(null, ruleSet.getContentTypeInfo(mock(ObjectMessage.class)));
     }
     
     public void test2() throws Exception {
-        Message message = new BytesMessageImpl();
-        message.setStringProperty("contentType", "application/xml");
-        assertContentTypeInfo("contentType", "application/xml", message);
+        Message message1 = mock(BytesMessage.class);
+        when(message1.getStringProperty("contentType")).thenReturn("application/xml");
+        assertContentTypeInfo("contentType", "application/xml", message1);
         
-        message = new TextMessageImpl();
-        message.setStringProperty("ctype", "application/xml");
-        assertContentTypeInfo("ctype", "application/xml", message);
+        Message message2 = mock(TextMessage.class);
+        when(message2.getStringProperty("ctype")).thenReturn("application/xml");
+        assertContentTypeInfo("ctype", "application/xml", message2);
 
-        assertContentTypeInfo(null, "text/xml", new TextMessageImpl());
-        assertContentTypeInfo(null, "text/xml", new BytesMessageImpl());
+        assertContentTypeInfo(null, "text/xml", mock(TextMessage.class));
+        assertContentTypeInfo(null, "text/xml", mock(BytesMessage.class));
     }
 }
