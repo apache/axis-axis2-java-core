@@ -535,7 +535,7 @@
                                 <artifactItem>
                                     <groupId>org.codehaus.castor</groupId>
                                     <artifactId>castor</artifactId>
-                                    <version>1.0.4</version>
+                                    <version>1.2</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>xerces</groupId>
