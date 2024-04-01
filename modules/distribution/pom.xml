@@ -43,10 +43,6 @@
         <tag>HEAD</tag>
     </scm>
 
-    <properties>
-        <docs.folder.version>1_4</docs.folder.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
