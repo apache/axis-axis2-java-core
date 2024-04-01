@@ -62,7 +62,7 @@ public class LogAspect {
     }
     
     @AfterReturning(
-        pointcut="call(jakarta.activation.DataSource org.apache.axis2.format.MessageFormatterEx.getDataSource(..))",
+        pointcut="call(jakarta.activation.DataSource org.apache.axis2.kernel.MessageFormatter.getDataSource(..))",
         returning="dataSource")
     public void afterGetDataSource(DataSource dataSource) {
         if (TestKitLogManager.INSTANCE.isLoggingEnabled()) {
