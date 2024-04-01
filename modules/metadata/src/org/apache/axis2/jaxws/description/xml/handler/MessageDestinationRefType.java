@@ -56,7 +56,7 @@ import java.util.List;
  * Examples:
  * <p/>
  * <message-destination-ref> <message-destination-ref-name>jms/StockQueue
- * </message-destination-ref-name> <message-destination-type>javax.jms.Queue
+ * </message-destination-ref-name> <message-destination-type>jakarta.jms.Queue
  * </message-destination-type> <message-destination-usage>Consumes </message-destination-usage>
  * <message-destination-link>CorporateStocks </message-destination-link> </message-destination-ref>
  * <p/>

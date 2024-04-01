@@ -21,12 +21,12 @@ package org.apache.axis2.transport.jms;
 
 import java.util.Enumeration;
 
-import javax.jms.Connection;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueBrowser;
+import jakarta.jms.Session;
 import javax.naming.Context;
 
 import org.apache.axis2.addressing.EndpointReference;

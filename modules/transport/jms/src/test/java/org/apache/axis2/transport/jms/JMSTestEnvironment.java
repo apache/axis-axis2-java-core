@@ -19,10 +19,10 @@
 
 package org.apache.axis2.transport.jms;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.Queue;
-import javax.jms.Topic;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
 
 import org.apache.axis2.transport.testkit.name.Key;
 import org.apache.axis2.transport.testkit.tests.Transient;

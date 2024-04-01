@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.jms;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import javax.naming.Context;
 import javax.xml.namespace.QName;
 

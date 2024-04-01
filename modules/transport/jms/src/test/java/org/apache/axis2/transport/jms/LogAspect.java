@@ -24,9 +24,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
-import javax.jms.BytesMessage;
-import javax.jms.Message;
-import javax.jms.TextMessage;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Message;
+import jakarta.jms.TextMessage;
 
 import org.apache.axis2.transport.jms.iowrappers.BytesMessageInputStream;
 import org.apache.axis2.transport.testkit.util.TestKitLogManager;
@@ -40,8 +40,8 @@ import org.aspectj.lang.annotation.Before;
 public class LogAspect {
     private static final Log log = LogFactory.getLog(LogAspect.class);
     
-    @Before("(call(void javax.jms.MessageProducer.send(javax.jms.Message)) ||" +
-    		" call(void javax.jms.TopicPublisher.publish(javax.jms.Message))) && args(message)")
+    @Before("(call(void jakarta.jms.MessageProducer.send(jakarta.jms.Message)) ||" +
+    		" call(void jakarta.jms.TopicPublisher.publish(jakarta.jms.Message))) && args(message)")
     public void beforeSend(Message message) {
         try {
             OutputStream out = TestKitLogManager.INSTANCE.createLog("jms");

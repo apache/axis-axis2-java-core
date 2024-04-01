@@ -220,8 +220,8 @@ public class JMSConstants {
     public static final String JMS_MESSAGE_ID = "JMS_MESSAGE_ID";
     /**
      * A MessageContext property or client Option indicating the JMS delivery mode as an Integer or String
-     * Value 1 - javax.jms.DeliveryMode.NON_PERSISTENT
-     * Value 2 - javax.jms.DeliveryMode.PERSISTENT
+     * Value 1 - jakarta.jms.DeliveryMode.NON_PERSISTENT
+     * Value 2 - jakarta.jms.DeliveryMode.PERSISTENT
      */
     public static final String JMS_DELIVERY_MODE = "JMS_DELIVERY_MODE";
     /**
@@ -251,7 +251,7 @@ public class JMSConstants {
      */
     public static final String JMS_TIMESTAMP = "JMS_TIMESTAMP";
     /**
-     * A MessageContext property indicating the JMS type String returned by {@link javax.jms.Message.getJMSType()}
+     * A MessageContext property indicating the JMS type String returned by {@link jakarta.jms.Message.getJMSType()}
      */
     public static final String JMS_TYPE = "JMS_TYPE";
     /**

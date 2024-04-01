@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.jms;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;

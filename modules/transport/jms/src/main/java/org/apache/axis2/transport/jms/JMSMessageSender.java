@@ -24,15 +24,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.base.BaseConstants;
 
-import javax.jms.Connection;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.QueueSender;
-import javax.jms.Session;
-import javax.jms.TopicPublisher;
+import jakarta.jms.Connection;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueSender;
+import jakarta.jms.Session;
+import jakarta.jms.TopicPublisher;
 import javax.transaction.UserTransaction;
 
 /**

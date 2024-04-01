@@ -17,8 +17,8 @@ package org.apache.axis2.transport.jms.ctype;
 
 import java.util.Iterator;
 
-import javax.jms.BytesMessage;
-import javax.jms.TextMessage;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.TextMessage;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;

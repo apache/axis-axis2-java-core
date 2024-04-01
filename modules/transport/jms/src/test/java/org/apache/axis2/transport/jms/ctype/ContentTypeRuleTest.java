@@ -20,10 +20,10 @@ import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 
-import javax.jms.BytesMessage;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Message;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.TextMessage;
 
 import junit.framework.TestCase;
 

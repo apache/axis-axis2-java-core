@@ -18,8 +18,8 @@ package org.apache.axis2.transport.jms.ctype;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 /**
  * A set of content type rules.

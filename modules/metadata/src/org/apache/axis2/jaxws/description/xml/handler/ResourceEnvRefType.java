@@ -56,7 +56,7 @@ import java.util.List;
  * Example:
  * <p/>
  * <resource-env-ref> <resource-env-ref-name>jms/StockQueue </resource-env-ref-name>
- * <resource-env-ref-type>javax.jms.Queue </resource-env-ref-type> </resource-env-ref>
+ * <resource-env-ref-type>jakarta.jms.Queue </resource-env-ref-type> </resource-env-ref>
  * <p/>
  * <p/>
  * <p/>

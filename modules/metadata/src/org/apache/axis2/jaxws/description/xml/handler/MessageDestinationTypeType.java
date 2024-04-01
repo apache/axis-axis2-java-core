@@ -38,7 +38,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p/>
  * Example:
  * <p/>
- * <message-destination-type>javax.jms.Queue </message-destination-type>
+ * <message-destination-type>jakarta.jms.Queue </message-destination-type>
  * <p/>
  * <p/>
  * <p/>

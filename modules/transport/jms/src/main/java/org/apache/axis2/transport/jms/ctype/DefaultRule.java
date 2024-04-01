@@ -15,7 +15,7 @@
 */
 package org.apache.axis2.transport.jms.ctype;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
  * Content type rule that always matches and that returns a fixed (default) content type.

@@ -17,8 +17,8 @@ package org.apache.axis2.transport.jms.iowrappers;
 
 import java.io.OutputStream;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.JMSException;
 
 public class BytesMessageOutputStream extends OutputStream {
     private final BytesMessage message;

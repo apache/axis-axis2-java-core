@@ -37,7 +37,7 @@ import org.apache.axis2.context.MessageContext;
  * except if the content of the message is available as a string anyway.
  * <p>
  * This interface is currently used by the JMS transport to process
- * {@link javax.jms.TextMessage} instances.
+ * {@link jakarta.jms.TextMessage} instances.
  */
 public interface TextMessageBuilder extends Builder {
     public OMElement processDocument(Reader reader, String contentType,

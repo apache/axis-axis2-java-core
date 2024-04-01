@@ -17,9 +17,9 @@ package org.apache.axis2.transport.jms.iowrappers;
 
 import java.io.InputStream;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.MessageEOFException;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageEOFException;
 
 /**
  * Input stream that reads data from a JMS {@link BytesMessage}.

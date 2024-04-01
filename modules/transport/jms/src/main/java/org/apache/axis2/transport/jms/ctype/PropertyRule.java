@@ -15,8 +15,8 @@
 */
 package org.apache.axis2.transport.jms.ctype;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 /**
  * Content type rule that attempts to extract the content type from a message property.

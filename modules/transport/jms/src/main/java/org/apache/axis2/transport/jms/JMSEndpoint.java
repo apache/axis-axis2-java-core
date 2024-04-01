@@ -37,8 +37,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
-import javax.jms.BytesMessage;
-import javax.jms.TextMessage;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.TextMessage;
 import javax.naming.Context;
 
 /**

@@ -17,7 +17,7 @@ package org.apache.axis2.transport.jms.iowrappers;
 
 import java.io.IOException;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 public class JMSExceptionWrapper extends IOException {
     private static final long serialVersionUID = 852441109009079511L;

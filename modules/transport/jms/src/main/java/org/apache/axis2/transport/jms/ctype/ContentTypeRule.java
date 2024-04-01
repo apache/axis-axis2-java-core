@@ -15,8 +15,8 @@
 */
 package org.apache.axis2.transport.jms.ctype;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 /**
  * Interface implemented by content type rules.

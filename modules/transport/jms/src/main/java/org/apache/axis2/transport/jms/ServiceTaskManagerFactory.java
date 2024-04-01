@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.Session;
+import jakarta.jms.Session;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
