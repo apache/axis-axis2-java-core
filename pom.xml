@@ -483,7 +483,7 @@
         <httpmime.version>4.5.14</httpmime.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
-        <jetty.version>12.0.6</jetty.version>
+        <jetty.version>12.0.7</jetty.version>
         <jibx.version>1.4.2</jibx.version>
         <maven.archiver.version>3.6.2</maven.archiver.version>
         <maven.version>3.9.6</maven.version>
