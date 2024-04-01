@@ -24,8 +24,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.base.BaseConstants;
 
-import javax.jms.*;
-import javax.transaction.*;
+import javax.jms.Connection;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.QueueSender;
+import javax.jms.Session;
+import javax.jms.TopicPublisher;
+import javax.transaction.UserTransaction;
 
 /**
  * Performs the actual sending of a JMS message, and the subsequent committing of a JTA transaction

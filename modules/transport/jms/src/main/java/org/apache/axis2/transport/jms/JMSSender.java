@@ -29,16 +29,26 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.kernel.OutTransportInfo;
 import org.apache.axis2.kernel.http.HTTPConstants;
-import org.apache.axis2.transport.base.*;
+import org.apache.axis2.transport.base.AbstractTransportSender;
+import org.apache.axis2.transport.base.BaseConstants;
+import org.apache.axis2.transport.base.BaseUtils;
+import org.apache.axis2.transport.base.ManagementSupport;
 import org.apache.axis2.transport.jms.iowrappers.BytesMessageOutputStream;
 import org.apache.commons.io.output.WriterOutputStream;
 
-import javax.jms.*;
+import javax.jms.BytesMessage;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.*;
+import java.util.Map;
 
 /**
  * The TransportSender for JMS
