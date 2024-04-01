@@ -92,8 +92,6 @@ public class StockQuoteServiceSkeleton {
             throw new RuntimeException(e);
         } catch (ValidationException e) {
             throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
         return document.getOMDocumentElement();
     }

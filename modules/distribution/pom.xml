@@ -43,6 +43,10 @@
         <tag>HEAD</tag>
     </scm>
 
+    <properties>
+        <castor.version>1.4.1</castor.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -530,13 +534,23 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.codehaus.castor</groupId>
-                                    <artifactId>castor</artifactId>
-                                    <version>1.0.4</version>
+                                    <artifactId>castor-core</artifactId>
+                                    <version>${castor.version}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>xerces</groupId>
-                                    <artifactId>xercesImpl</artifactId>
-                                    <version>2.9.1</version>
+                                    <groupId>org.codehaus.castor</groupId>
+                                    <artifactId>castor-codegen</artifactId>
+                                    <version>${castor.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.codehaus.castor</groupId>
+                                    <artifactId>castor-xml</artifactId>
+                                    <version>${castor.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.codehaus.castor</groupId>
+                                    <artifactId>castor-xml-schema</artifactId>
+                                    <version>${castor.version}</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}/axis2-${project.version}/samples/databinding/lib</outputDirectory>
