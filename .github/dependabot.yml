@@ -55,9 +55,6 @@ updates:
       - dependency-name: "javax.servlet:javax.servlet-api"
         versions:
         - "> 3.1.0"
-      # Embedding Qpid is a pain and APIs have changed a lot over time. We don't try to keep up with
-      # these changes. It's only used for integration tests anyway.
-      - dependency-name: "org.apache.qpid:*"
       - dependency-name: "org.glassfish.jaxb:*"
         versions:
         - ">= 3.0"
