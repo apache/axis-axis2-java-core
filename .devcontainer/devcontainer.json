@@ -9,6 +9,10 @@
 		},
 		"ghcr.io/devcontainers-contrib/features/mvnd-sdkman:2": {
 			"jdkVersion": "none"
+		},
+		// Needed to run some of the samples.
+		"ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {
+			"jdkVersion": "none"
 		}
 	},
 	"customizations": {
