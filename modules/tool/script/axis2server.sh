@@ -61,5 +61,5 @@ while [ $# -ge 1 ]; do
 done
 
 java $JAVA_OPTS -classpath "$AXIS2_CLASSPATH" \
-    org.apache.axis2.transport.SimpleAxis2Server \
+    org.apache.axis2.kernel.SimpleAxis2Server \
     -repo "$AXIS2_HOME"/repository -conf "$AXIS2_HOME"/conf/axis2.xml $*
