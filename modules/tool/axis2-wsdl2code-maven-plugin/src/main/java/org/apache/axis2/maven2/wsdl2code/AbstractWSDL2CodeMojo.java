@@ -181,7 +181,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     private boolean suppressPrefixes = false;
 
     /**
-     * Specify databinding specific extra options. Example:
+     * Specify databinding-specific extra options. Example:
      * <pre>
      * &lt;options>
      *   &lt;property>
@@ -193,7 +193,9 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      * Possible key:value pairs:
      * <ul>
      *  <li><b>xsdconfig</b> or <b>xc</b> (XMLBeans databinding only):
-     *  location of an .xsdconfig file to pass on to XMLBeans</li>
+     *  location of an
+     *  <a href="https://cwiki.apache.org/confluence/display/xmlbeans/XsdConfigFile">.xsdconfig</a>
+     *  file to pass on to XMLBeans</li>
      *  <li><b>xsdconfig-javafiles</b> (XMLBeans databinding only):
      *  Java source files, or directories to be searched recursively for those,
      *  containing types referred to in the xsdconfig.
@@ -203,8 +205,6 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
      *  referred to in xsdconfig.</li>
      *  <li>...</li>
      * </ul>
-     *
-     * @parameter expression="${axis2.java2wsdl.options}"
      */
     @Parameter(property = "axis2.java2wsdl.options")
     private Properties options;
