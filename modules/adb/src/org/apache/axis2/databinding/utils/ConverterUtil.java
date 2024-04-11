@@ -1289,9 +1289,14 @@ public class ConverterUtil {
      * @return 0 if equal , + value if greater than , - value if less than
      */
     public static int compare(int intValue, String value) {
-        int other = Integer.parseInt(value);
-        return intValue < other ? -1 : (intValue == other ? 0 : 1);
-
+        int param;
+        try {
+            NumberFormat nf = NumberFormat.getInstance();
+            param = nf.parse(value).intValue();
+        } catch (Exception e) {
+            throw new ObjectConversionException(e);
+        }
+        return intValue < param ? -1 : (intValue == param ? 0 : 1);
     }
 
     /**
@@ -1319,7 +1324,14 @@ public class ConverterUtil {
      * @return 0 if equal , + value if greater than , - value if less than
      */
     public static long compare(long longValue, String value) {
-        return longValue - Long.parseLong(value);
+        long param;
+        try {
+            NumberFormat nf = NumberFormat.getInstance();
+            param = nf.parse(value).longValue();
+        } catch (Exception e) {
+            throw new ObjectConversionException(e);
+        }
+        return longValue - param;
     }
 
     /**
@@ -1328,7 +1340,14 @@ public class ConverterUtil {
      * @return 0 if equal , + value if greater than , - value if less than
      */
     public static int compare(short shortValue, String value) {
-        return shortValue - Short.parseShort(value);
+        short param;
+        try {
+            NumberFormat nf = NumberFormat.getInstance();
+            param = nf.parse(value).shortValue();
+        } catch (Exception e) {
+            throw new ObjectConversionException(e);
+        }
+        return shortValue - param;
     }
 
     /**
