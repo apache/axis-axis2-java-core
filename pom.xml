@@ -504,7 +504,7 @@
         <jaxws.api.version>4.0.0</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <maven-plugin-tools.version>3.12.0</maven-plugin-tools.version>
-        <activemq.version>6.1.0</activemq.version>
+        <activemq.version>6.1.2</activemq.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
