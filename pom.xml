@@ -488,7 +488,7 @@
         <maven.archiver.version>3.6.2</maven.archiver.version>
         <maven.version>3.9.6</maven.version>
         <rhino.version>1.6R7</rhino.version>
-        <slf4j.version>2.0.12</slf4j.version>
+        <slf4j.version>2.0.13</slf4j.version>
         <spring.version>5.3.33</spring.version>
         <slf4j.version>2.0.11</slf4j.version>
         <spring.version>6.1.3</spring.version>
