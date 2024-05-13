@@ -1625,7 +1625,7 @@ $${type_declaration}</template></templates>]]></value>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tidy-maven-plugin</artifactId>
-                <version>1.2.0</version>
+                <version>1.3.0</version>
                 <executions>
                     <execution>
                         <goals>
