@@ -139,7 +139,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         HttpMessageWriterFactory<ClassicHttpResponse> responseWriterFactory = new DefaultHttpResponseWriterFactory(this.http1Config);
         this.requestParser = requestParserFactory.create(this.http1Config);
         this.responseWriter = responseWriterFactory.create();
-	socketHolderRef = new AtomicReference<>(new SocketHolder(socket));
+	this.socketHolderRef = new AtomicReference<>(new SocketHolder(socket));
     }
 
     @Override
@@ -220,18 +220,18 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
     }
 
     // see org.apache.hc.core5.http.impl.io.DefaultBHttpServerConnection methods
-    // receiveRequest() and receiveRequestEntity()
+    // receiveRequestHeader() and receiveRequestEntity()
     @Override
     public ClassicHttpRequest receiveRequest() throws HttpException, IOException {
         String uuid = UUID.randomUUID().toString();
         // Prepare input stream
         final SocketHolder socketHolder = ensureOpen();
         this.in = socketHolder.getInputStream();
-	CharArrayBuffer headLine = new CharArrayBuffer(128);
+        CharArrayBuffer headLine = new CharArrayBuffer(128);
         this.inbuffer.clear();
         final int i = this.inbuffer.readLine(headLine, this.in);
         if (i == -1) {
-            throw new IOException("readLine() SessionInputBufferImpl returned -1 in method receiveRequest() with uuid: " +uuid+ "  ... at time: " +LocalDateTime.now());
+            throw new IOException("readLine() from SessionInputBufferImpl returned -1 in method receiveRequest() with uuid: " +uuid+ "  ... at time: " +LocalDateTime.now());
         }
 
 	final Header[] headers = AbstractMessageParser.parseHeaders(
@@ -254,6 +254,14 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
                 HEADERLOG.debug(">> " + header);
             }
         }
+	ProtocolVersion transportVersion = request.getVersion();
+        if (transportVersion != null && transportVersion.greaterEquals(HttpVersion.HTTP_2)) {
+            HEADERLOG.warn("receiveRequestHeader() received http2 version: " + transportVersion + " , however axis2 is configured for HTTP/1.1 and the connection will be downgraded to HTTP/1.1");
+                // Downgrade protocol version if greater than HTTP/1.1 
+            transportVersion = HttpVersion.HTTP_1_1;
+        }
+        this.version = transportVersion;
+	request.setScheme(this.scheme);
         return request;
     }
     
@@ -270,7 +278,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         final HttpEntity entity = response.getEntity();
         if (entity == null) {
             if (this.out != null) {
-                HEADERLOG.debug("AxisHttpConnectionImpl.sendResponseEntity() found null entity, will flush() and return  ... ");
+                HEADERLOG.debug("AxisHttpConnectionImpl.sendResponse() found null entity, will flush() and return  ... ");
                 this.outbuffer.flush(this.out);
 	    }
             return;
@@ -328,12 +336,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
     }
     
     public InputStream getInputStream() {
-        try {
-            return this.in;
-        } catch (Exception ex) {
-            HEADERLOG.error("getInputStream() error: " + ex.getMessage(), ex);
-	    return null;
-        }
+        return this.in;
     }
 
     public OutputStream getOutputStream() {

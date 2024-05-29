@@ -55,7 +55,6 @@ public class JavaNetClient implements AsyncTestClient<byte[]> {
     public void sendMessage(ClientOptions options, ContentType contentType, byte[] message) throws Exception {
         URL url = new URL(channel.getEndpointReference().getAddress());
         log.debug("Opening connection to " + url + " using " + URLConnection.class.getName());
-        System.out.println("Opening connection to " + url + " using " + URLConnection.class.getName());
         try {
             URLConnection connection = url.openConnection();
             connection.setDoOutput(true);

@@ -29,17 +29,17 @@ import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.core5.http.config.CharCodingConfig;
 import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
 import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
-import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
+import org.apache.hc.core5.http.config.CharCodingConfig;
 import org.apache.hc.core5.http.config.Http1Config;
 import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
@@ -150,12 +150,12 @@ public class HTTPSenderImpl extends HTTPSender {
 			SocketConfig socketConfig = SocketConfig.custom()
                             // set timeouts, ignore other defaults
                             .setSoTimeout(socketTO)
-                            .setSoKeepAlive(true)
-                            .setSoReuseAddress(true)
-                            .setTcpNoDelay(true)
-                            .setSoLinger(50, TimeUnit.MILLISECONDS)
-                            .setSndBufSize(8 * 1024)
-                            .setRcvBufSize(8 * 1024)
+                            // .setSoKeepAlive(true)
+                            // .setSoReuseAddress(true)
+                            // .setTcpNoDelay(true)
+                            // .setSoLinger(50, TimeUnit.MILLISECONDS)
+                            // .setSndBufSize(8 * 1024)
+                            // .setRcvBufSize(8 * 1024)
                             .build();
 
                         ConnectionConfig connectionConfig = ConnectionConfig.custom().setConnectTimeout(connectTO).build();

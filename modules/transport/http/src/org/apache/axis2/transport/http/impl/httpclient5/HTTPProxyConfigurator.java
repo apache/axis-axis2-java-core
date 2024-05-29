@@ -152,7 +152,6 @@ public class HTTPProxyConfigurator {
                 clientContext.setCredentialsProvider(credsProvider);
                 credsProvider.setCredentials(new AuthScope(null, -1), proxyCredentials);
             }
-            // TODO : Set preemptive authentication, but its not recommended in HC 4
             requestConfig.setAuthenticationEnabled(true);
             requestConfig.setProxy(proxy);
 	}

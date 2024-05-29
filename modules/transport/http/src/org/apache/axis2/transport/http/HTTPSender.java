@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.util.Timeout;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -270,7 +271,6 @@ public abstract class HTTPSender {
 
     private void addCustomHeaders(MessageContext msgContext, Request request) {
     
-	int xx = 0;    
         boolean isCustomUserAgentSet = false;
         // set the custom headers, if available
         Object httpHeadersObj = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
@@ -284,7 +284,6 @@ public abstract class HTTPSender {
                             isCustomUserAgentSet = true;
                         }
                         request.addHeader(nv.getName(), nv.getValue());
-			xx++;
                     }
                 }
     
@@ -299,7 +298,6 @@ public abstract class HTTPSender {
                         isCustomUserAgentSet = true;
                     }
                     request.addHeader(key, value);
-                    xx++;
                 }
             }
         } else {
@@ -423,11 +421,11 @@ public abstract class HTTPSender {
 
         if (tempSoTimeoutProperty != null) {
             // SO_TIMEOUT -- timeout for blocking reads
-            // request.setSocketTimeout(tempSoTimeoutProperty);
+            request.setResponseTimeout(tempSoTimeoutProperty);
         } else {
             // set timeout in client
             if (timeout > 0) {
-                // request.setSocketTimeout((int) timeout);
+                request.setResponseTimeout((int) timeout);
             }
         }
     }

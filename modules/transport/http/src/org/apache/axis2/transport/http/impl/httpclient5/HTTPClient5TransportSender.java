@@ -34,7 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The Class HTTPClient5TransportSender use HC HTTPClient 5.X. 
+ * The Class HTTPClient5TransportSender uses HTTPClient 5.X. 
  */
 public class HTTPClient5TransportSender extends AbstractHTTPTransportSender {
 

@@ -300,9 +300,8 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
                     while (iter.hasNext()) {
                         NamedValue nv = (NamedValue) iter.next();
                         if (nv != null) {
-			    Object object = nv.getValue();
                             ((AxisHttpResponse) transportInfo)
-                                    .addHeader(nv.getName(), object);	
+                                    .addHeader(nv.getName(), nv.getValue());	
                         }
                     }
                 } else if (customHeaders instanceof Map) {
@@ -319,7 +318,7 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
 		}	
             }
         } else {
-	    log.error("AbstractHTTPTransportSender.sendUsingOutputStream() found unkwown type, no action taken  ... type: " + transportInfo);    
+	    log.error("AbstractHTTPTransportSender.sendUsingOutputStream() found unknown type, no action taken  ... type: " + transportInfo);    
 	}	
 
         MessageFormatter messageFormatter = MessageProcessorSelector.getMessageFormatter(msgContext);

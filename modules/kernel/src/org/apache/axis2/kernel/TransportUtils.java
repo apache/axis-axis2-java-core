@@ -82,7 +82,6 @@ public class TransportUtils {
 //            if (envelope.isComplete())
 //                return envelope;
 //        }
-        System.out.println("Starting TransportUtils.createSOAPMessage() ...");
         try {
             InputStream inStream = (InputStream) msgContext
                     .getProperty(MessageContext.TRANSPORT_IN);
@@ -94,7 +93,6 @@ public class TransportUtils {
                 throw new AxisFault(Messages.getMessage("inputstreamNull"));
             }
 
-            System.out.println("Starting TransportUtils.createSOAPMessage() InputStream.available() :" + inStream.available());
             String contentType = (String) msgContext
                     .getProperty(Constants.Configuration.CONTENT_TYPE);
 

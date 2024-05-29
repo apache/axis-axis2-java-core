@@ -49,16 +49,16 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
             final HttpContext context) {
         super();
         if (conn == null) {
-            throw new IllegalArgumentException("HttpHeaders connection may not be null");
+            throw new IllegalArgumentException("Http connection may not be null");
         }
         if (request == null) {
-            throw new IllegalArgumentException("HttpHeaders request may not be null");
+            throw new IllegalArgumentException("Http request may not be null");
         }
         if (httpproc == null) {
-            throw new IllegalArgumentException("HttpHeaders processor may not be null");
+            throw new IllegalArgumentException("Http processor may not be null");
         }
         if (context == null) {
-            throw new IllegalArgumentException("HttpHeaders context may not be null");
+            throw new IllegalArgumentException("Http context may not be null");
         }
         this.request = request;
         this.conn = conn;

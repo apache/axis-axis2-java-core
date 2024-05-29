@@ -234,9 +234,6 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             ThreadContextMigratorUtil.performThreadCleanup(
                     Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
 
-	    // FIXME, comment out asap
-            e.printStackTrace();
-
             // TODO.  This is throwing a client exception ?
             // TODO Why are we preserving the stack information  ?  
             
