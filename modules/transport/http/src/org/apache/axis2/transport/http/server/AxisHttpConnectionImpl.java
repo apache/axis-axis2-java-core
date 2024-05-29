@@ -252,7 +252,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         }
 	ProtocolVersion transportVersion = request.getVersion();
         if (transportVersion != null && transportVersion.greaterEquals(HttpVersion.HTTP_2)) {
-            HEADERLOG.warn("receiveRequestHeader() received http2 version: " + transportVersion + " , however axis2 is configured for HTTP/1.1 and the connection will be downgraded to HTTP/1.1");
+            HEADERLOG.warn("receiveRequest() received http2 version: " + transportVersion + " , however axis2 is configured for HTTP/1.1 and the connection will be downgraded to HTTP/1.1");
                 // Downgrade protocol version if greater than HTTP/1.1 
             transportVersion = HttpVersion.HTTP_1_1;
         }

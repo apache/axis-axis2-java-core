@@ -42,7 +42,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.util.Timeout;
 
 import java.io.IOException;
 import java.io.InputStream;

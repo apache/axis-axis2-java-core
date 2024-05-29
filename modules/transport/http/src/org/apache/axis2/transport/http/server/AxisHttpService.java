@@ -52,14 +52,12 @@ import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.hc.core5.http.impl.Http1StreamListener;
 import org.apache.hc.core5.http.impl.ServerSupport;
 import org.apache.hc.core5.http.impl.io.DefaultClassicHttpResponseFactory;
-import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.http.message.RequestLine;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
-import org.apache.hc.core5.net.InetAddressUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -67,7 +65,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -92,8 +89,6 @@ public class AxisHttpService {
     private final ConfigurationContext configurationContext;
     private final Http1StreamListener streamListener;
     private final Worker worker;
-
-    private SocketConfig socketConfig;
 
     public AxisHttpService(
             final HttpProcessor httpProcessor,

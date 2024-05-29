@@ -19,18 +19,14 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.hc.client5.http.entity.EntityBuilder;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.ProtocolVersion;
 import org.apache.hc.core5.http.ProtocolException;
-import org.apache.hc.core5.http.config.Http1Config;
 import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
 import org.apache.hc.core5.http.io.entity.EmptyInputStream;
-import org.apache.hc.core5.http.message.BasicHeaderIterator;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
@@ -39,7 +35,6 @@ import org.apache.axis2.kernel.OutTransportInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
 import java.util.Iterator;
 
 public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo {
