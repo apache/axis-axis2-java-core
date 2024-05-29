@@ -35,64 +35,77 @@ import org.apache.axis2.kernel.RequestResponseTransport;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.Header;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseFactory;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.MethodNotSupportedException;
-import org.apache.http.ProtocolException;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.RequestLine;
-import org.apache.http.UnsupportedHttpVersionException;
-import org.apache.http.params.DefaultedHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpProcessor;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ConnectionReuseStrategy;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HeaderElements;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.HttpVersion;
+import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.http.impl.Http1StreamListener;
+import org.apache.hc.core5.http.impl.ServerSupport;
+import org.apache.hc.core5.http.impl.io.DefaultClassicHttpResponseFactory;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.RequestLine;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.net.InetAddressUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class is an extension of the default HTTP service responsible for
  * maintaining and populating the {@link MessageContext} for incoming Axis
  * requests.
+ *
+ * @see https://github.com/apache/httpcomponents-core/blob/master/httpcore5/src/main/java/org/apache/hc/core5/http/impl/io/HttpService.java
  */
 public class AxisHttpService {
 
     private static final Log LOG = LogFactory.getLog(AxisHttpService.class);
 
     private final HttpProcessor httpProcessor;
+    private final Http1Config http1Config;
     private final ConnectionReuseStrategy connStrategy;
-    private final HttpResponseFactory responseFactory;
+    private final DefaultClassicHttpResponseFactory responseFactory;
     private final ConfigurationContext configurationContext;
+    private final Http1StreamListener streamListener;
     private final Worker worker;
 
-    private HttpParams params;
+    private SocketConfig socketConfig;
 
     public AxisHttpService(
             final HttpProcessor httpProcessor,
+            final Http1Config http1Config,
             final ConnectionReuseStrategy connStrategy,
-            final HttpResponseFactory responseFactory,
+	    final Http1StreamListener streamListener,
+            final DefaultClassicHttpResponseFactory responseFactory,
             final ConfigurationContext configurationContext,
             final Worker worker) {
         super();
         if (httpProcessor == null) {
             throw new IllegalArgumentException("HTTP processor may not be null");
-        }
-        if (connStrategy == null) {
-            throw new IllegalArgumentException("Connection strategy may not be null");
         }
         if (responseFactory == null) {
             throw new IllegalArgumentException("Response factory may not be null");
@@ -104,68 +117,77 @@ public class AxisHttpService {
             throw new IllegalArgumentException("Configuration context may not be null");
         }
         this.httpProcessor = httpProcessor;
-        this.connStrategy = connStrategy;
+        this.http1Config = http1Config != null ? http1Config : Http1Config.DEFAULT;
+        this.connStrategy = connStrategy != null ? connStrategy : DefaultConnectionReuseStrategy.INSTANCE;
+	this.streamListener = streamListener;
         this.responseFactory = responseFactory;
         this.configurationContext = configurationContext;
         this.worker = worker;
 
     }
 
-    public HttpParams getParams() {
-        return this.params;
-    }
-
-    public void setParams(final HttpParams params) {
-        this.params = params;
-    }
-
-    public void handleRequest(final AxisHttpConnection conn, final HttpContext context)
+    public void handleRequest(final AxisHttpConnection conn, final HttpContext localContext)
             throws IOException, HttpException {
+
+	final AtomicBoolean responseSubmitted = new AtomicBoolean(false);
+	final HttpCoreContext context = HttpCoreContext.cast(localContext);
 
         MessageContext msgContext = configurationContext.createMessageContext();
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
 
         if (conn != null) {
+	    final InetSocketAddress remoteAddress = (InetSocketAddress) conn.getRemoteAddress();
+	    String remoteIPAddress = remoteAddress.getAddress().getHostAddress();
+	    final InetSocketAddress localAddress = (InetSocketAddress) conn.getLocalAddress();
+	    String localIPAddress = localAddress.getAddress().getHostAddress();
             msgContext.setProperty(MessageContext.REMOTE_ADDR,
-                                   conn.getRemoteAddress().getHostAddress());
+                                   remoteIPAddress);
             msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
-                                   conn.getLocalAddress().getHostAddress());
+                                   localIPAddress);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Remote address of the connection : " +
-                          conn.getRemoteAddress().getHostAddress());
+                          remoteIPAddress);
             }
         }
 
-        HttpResponse response;
+        ClassicHttpResponse response = null;
+        ClassicHttpRequest request = null;
         try {
-            HttpRequest request = conn.receiveRequest();
-            RequestLine requestLine = request.getRequestLine();
+            request = conn.receiveRequest();
+	    if (request == null) {
+                LOG.error("AxisHttpService.handleRequest() returning on null request, will close the connection");
+                conn.close();
+                return;
+            }
+            if (streamListener != null) {
+                streamListener.onRequestHead(conn, request);
+            }
+            RequestLine requestLine = new RequestLine(request);
             if (requestLine != null) {
                 msgContext.setProperty(HTTPConstants.HTTP_METHOD, requestLine.getMethod());
             }
-            request.setParams(
-                new DefaultedHttpParams(request.getParams(), this.params));
-            ProtocolVersion ver = request.getRequestLine().getProtocolVersion();
-            if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
+	    ProtocolVersion transportVersion = request.getVersion();
+            if (transportVersion != null && transportVersion.greaterEquals(HttpVersion.HTTP_2)) {
                 // Downgrade protocol version if greater than HTTP/1.1 
-                ver = HttpVersion.HTTP_1_1;
+                transportVersion = HttpVersion.HTTP_1_1;
+                LOG.warn("http2 or greater detected, the request has been downgraded to HTTP/1.1");
             }
 
+            context.setProtocolVersion(transportVersion != null ? transportVersion : this.http1Config.getVersion());
+	    context.setRequest(request);
             response = this.responseFactory.newHttpResponse
-                    (ver, HttpStatus.SC_OK, context);
-            response.setParams(
-                new DefaultedHttpParams(response.getParams(), this.params));
+                    (HttpStatus.SC_OK);
 
-            if (request instanceof HttpEntityEnclosingRequest) {
-                if (((HttpEntityEnclosingRequest) request).expectContinue()) {
-                    HttpResponse ack = this.responseFactory.newHttpResponse
-                            (ver, HttpStatus.SC_CONTINUE, context);
-                    ack.setParams(
-                        new DefaultedHttpParams(ack.getParams(), this.params));
-                    conn.sendResponse(ack);
-                    conn.flush();
+	    final HttpClientContext clientContext = HttpClientContext.adapt(context);
+            if (clientContext.getRequestConfig().isExpectContinueEnabled()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("isExpectContinueEnabled is true");
                 }
+                ClassicHttpResponse ack = this.responseFactory.newHttpResponse
+                        (HttpStatus.SC_CONTINUE);
+                conn.sendResponse(ack);
+                conn.flush();
             }
 
             // Create Axis request and response objects
@@ -204,34 +226,43 @@ public class AxisHttpService {
             }
 
         } catch (HttpException ex) {
-            response = this.responseFactory.newHttpResponse
-                    (HttpVersion.HTTP_1_0, HttpStatus.SC_INTERNAL_SERVER_ERROR,
-                     context);
-            response.setParams(
-                new DefaultedHttpParams(response.getParams(), this.params));
-            handleException(ex, response);
-            this.httpProcessor.process(response, context);
-            conn.sendResponse(response);
+            if (responseSubmitted.get()) {
+                throw ex;
+            }
+            try (final ClassicHttpResponse errorResponse = new BasicClassicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR)) {
+                handleException(ex, errorResponse);
+                errorResponse.setHeader(HttpHeaders.CONNECTION, HeaderElements.CLOSE);
+                context.setResponse(errorResponse);
+                this.httpProcessor.process(errorResponse, errorResponse.getEntity(), context);
+
+                conn.sendResponse(errorResponse);
+                if (streamListener != null) {
+                    streamListener.onResponseHead(conn, errorResponse);
+                }
+                conn.close();
+	    }
         }
 
         conn.flush();
-        if (!this.connStrategy.keepAlive(response, context)) {
-            conn.close();
-        } else {
-            conn.reset();
-        }
+	if (request != null && response != null) {
+            final boolean keepAlive = this.connStrategy.keepAlive(request, response, localContext);
+            if (!keepAlive) {
+                conn.close();
+            } else {
+                conn.reset();
+            }
+	    // AXIS2-6051, not sure if this is required though the core5 code HttpService does this
+	    response.close();
+	}	
     }
 
-    protected void handleException(final HttpException ex, final HttpResponse response) {
-        if (ex instanceof MethodNotSupportedException) {
-            response.setStatusCode(HttpStatus.SC_NOT_IMPLEMENTED);
-        } else if (ex instanceof UnsupportedHttpVersionException) {
-            response.setStatusCode(HttpStatus.SC_HTTP_VERSION_NOT_SUPPORTED);
-        } else if (ex instanceof ProtocolException) {
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-        } else {
-            response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        }
+    protected void handleException(final HttpException ex, final ClassicHttpResponse response) {
+        response.setCode(toStatusCode(ex));
+        response.setEntity(new StringEntity(ServerSupport.toErrorMessage(ex), ContentType.TEXT_PLAIN));
+    }
+
+    protected int toStatusCode(final Exception ex) {
+        return ServerSupport.toStatusCode(ex);
     }
 
     protected void doService(

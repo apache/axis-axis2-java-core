@@ -19,7 +19,8 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.http.HttpMessage;
+import org.apache.hc.core5.http.HttpMessage;
+import org.apache.hc.core5.http.impl.io.SocketHolder;
 
 import java.io.InputStream;
 
@@ -32,5 +33,7 @@ public interface AxisHttpRequest extends HttpMessage {
     String getContentType();
     
     InputStream getInputStream();
+
+    SocketHolder getSocketHolder();
     
 }

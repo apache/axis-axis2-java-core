@@ -81,7 +81,7 @@ public interface BasicHttpServer {
      * 
      * @return the url
      */
-    public String getUrl();
+    public String getUri();
 
     /**
      * Sets the headers.
@@ -113,7 +113,7 @@ public interface BasicHttpServer {
      * @param url
      *            the new url
      */
-    public void setUrl(String url);
+    public void setUri(String url);
 
     /**
      * Gets the entity content length.

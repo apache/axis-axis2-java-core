@@ -22,13 +22,14 @@ package org.apache.axis2.transport.http.mock;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.axis2.kernel.OutTransportInfo;
 import org.apache.axis2.transport.http.server.AxisHttpResponse;
-import org.apache.http.RequestLine;
-import org.apache.http.message.BasicHttpRequest;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.BasicHttpRequest;
+import org.apache.hc.core5.http.message.HeaderGroup;
+import org.apache.hc.core5.http.message.RequestLine;
 
 /**
  * The Class MockAxisHttpResponse is a mock implementation of AxisHttpResponse
@@ -39,73 +40,54 @@ import org.apache.http.message.BasicHttpRequest;
 public class MockAxisHttpResponse extends BasicHttpRequest implements AxisHttpResponse,
         OutTransportInfo, MockHTTPResponse {
 
-    private Map<String, String> headers = new HashMap<String, String>();
+    private HeaderGroup headerGroup;
     private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
     public MockAxisHttpResponse(RequestLine requestline) {
-        super(requestline);
+        super(requestline.getMethod(), requestline.getUri());
+	headerGroup = new HeaderGroup();
     }
 
     /**
-     * Gets all the headers as a Map of <Header-Name, Header-Value>.
+     * Gets all the headers as an array of org.apache.hc.core5.http.Header.
      * 
      * This method can be used in test cases to retrieve all headers written to
      * the HttpServletResponse.
      * 
      * @return the headers
      */
-    public Map<String, String> getHeaders() {
-        return headers;
+    @Override
+    public Header[] getHeaders() {
+        int size = headerGroup != null ? headerGroup.getHeaders().length : 0;
+        return headerGroup != null ? headerGroup.getHeaders() : null;
     }
 
+    @Override
+    public void setContentType(String contentType) {
+
+    }
+
+    @Override
     public void setStatus(int sc) {
 
     }
 
+    @Override
     public void sendError(int sc, String msg) {
 
     }
 
+    @Override
     public void sendError(int sc) {
-    }
-
-    public void setContentType(String contentType) {
-
     }
 
     public OutputStream getOutputStream() {
         return null;
     }
 
-    public void setDateHeader(String name, long date) {
-        headers.remove(name);
-        headers.put(name, new Date(date).toString());
-
-    }
-
-    public void addDateHeader(String name, long date) {
-        headers.put(name, new Date(date).toString());
-
-    }
-
-    public void setHeader(String name, String value) {
-        headers.remove(name);
-        headers.put(name, value);
-    }
-
-    public void addHeader(String name, String value) {
-        headers.put(name, value);
-
-    }
-
-    public void setIntHeader(String name, int value) {
-        headers.remove(name);
-        headers.put(name, String.valueOf(value));
-
-    }
-
-    public void addIntHeader(String name, int value) {
-        headers.put(name, String.valueOf(value));
+    @Override
+    public void addHeader(String name, Object value) {
+        headerGroup.addHeader(new BasicHeader(name, value));
     }
 
     public ByteArrayOutputStream getByteArrayOutputStream() {       

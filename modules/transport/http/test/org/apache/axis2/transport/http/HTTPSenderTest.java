@@ -84,6 +84,7 @@ public abstract class HTTPSenderTest extends AbstractHTTPServerTest {
      */
     public void testSendViaGet() throws Exception {
         int port = getBasicHttpServer().getPort();
+	System.out.println("testSendViaGet() prpoceeding on http://localhost:" + port + "/getService" );
         sendViaHTTP(Constants.Configuration.HTTP_METHOD_GET, "urn:getService", "http://localhost:"
                 + port + "/getService", true);
         assertEquals("Not the expected HTTP Method", Constants.Configuration.HTTP_METHOD_GET,

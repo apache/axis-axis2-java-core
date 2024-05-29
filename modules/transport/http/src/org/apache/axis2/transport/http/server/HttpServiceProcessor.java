@@ -21,10 +21,10 @@ package org.apache.axis2.transport.http.server;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.ConnectionClosedException;
-import org.apache.http.HttpException;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ConnectionClosedException;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 import java.io.IOException;
 import java.net.SocketException;

@@ -19,44 +19,46 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.ExecutionContext;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.ProtocolException;
+import org.apache.hc.core5.http.impl.io.SocketHolder;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 public class AxisHttpRequestImpl implements AxisHttpRequest {
 
-    private final HttpRequest request;
+    private final ClassicHttpRequest request;
     private final AxisHttpConnection conn;
     private final HttpProcessor httpproc;
     private final HttpContext context;
     
     public AxisHttpRequestImpl(
             final AxisHttpConnection conn,
-            final HttpRequest request, 
+            final ClassicHttpRequest request, 
             final HttpProcessor httpproc,
             final HttpContext context) {
         super();
         if (conn == null) {
-            throw new IllegalArgumentException("HTTP connection may not be null");
+            throw new IllegalArgumentException("HttpHeaders connection may not be null");
         }
         if (request == null) {
-            throw new IllegalArgumentException("HTTP request may not be null");
+            throw new IllegalArgumentException("HttpHeaders request may not be null");
         }
         if (httpproc == null) {
-            throw new IllegalArgumentException("HTTP processor may not be null");
+            throw new IllegalArgumentException("HttpHeaders processor may not be null");
         }
         if (context == null) {
-            throw new IllegalArgumentException("HTTP context may not be null");
+            throw new IllegalArgumentException("HttpHeaders context may not be null");
         }
         this.request = request;
         this.conn = conn;
@@ -65,26 +67,26 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
     }
     
     public void prepare() throws IOException, HttpException {
-        this.context.setAttribute(ExecutionContext.HTTP_CONNECTION, this.conn);
-        this.context.setAttribute(ExecutionContext.HTTP_REQUEST, this.request);
+        this.context.setAttribute(HttpCoreContext.CONNECTION_ENDPOINT, this.conn);
+        this.context.setAttribute(HttpCoreContext.HTTP_REQUEST, this.request);
         
-        this.httpproc.process(this.request, this.context);
+        this.httpproc.process(this.request, this.request.getEntity(), this.context);
     }
 
     public String getMethod() {
-        return this.request.getRequestLine().getMethod();
+        return this.request.getMethod();
     }
 
     public String getRequestURI() {
-        return this.request.getRequestLine().getUri();
+        return this.request.getRequestUri();
     }
 
-    public ProtocolVersion getProtocolVersion() {
-        return this.request.getRequestLine().getProtocolVersion();
+    public ProtocolVersion getVersion() {
+        return this.request.getVersion();
     }
 
     public String getContentType() {
-        Header header = this.request.getFirstHeader(HTTP.CONTENT_TYPE);
+        Header header = this.request.getFirstHeader(HttpHeaders.CONTENT_TYPE);
         if (header != null) {
             return header.getValue();
         } else {
@@ -92,8 +94,20 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
         }
     }
 
-    public InputStream getInputStream() {
-        return this.conn.getInputStream();
+    public void setVersion(final ProtocolVersion version) {
+        this.request.setVersion(version);
+    }
+
+    public org.apache.hc.core5.http.Header[] getHeaders() {
+        return this.request.getHeaders();
+    }
+
+    public org.apache.hc.core5.http.Header getHeader(final String name) throws ProtocolException {
+        return this.request.getHeader(name);
+    }
+
+    public int countHeaders(final String name) {
+        return this.request.countHeaders(name);
     }
 
     public void addHeader(final Header header) {
@@ -104,12 +118,16 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
         this.request.addHeader(name, value);
     }
 
+    public void addHeader(final String name, final Object value) {
+        this.request.addHeader(name, value);
+    }
+
     public boolean containsHeader(final String name) {
         return this.request.containsHeader(name);
     }
 
     public Header[] getAllHeaders() {
-        return this.request.getAllHeaders();
+        return this.request.getHeaders();
     }
 
     public Header getFirstHeader(final String name) {
@@ -124,20 +142,20 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
         return this.request.getLastHeader(name);
     }
 
-    public HeaderIterator headerIterator() {
+    public Iterator<Header> headerIterator() {
         return this.request.headerIterator();
     }
 
-    public HeaderIterator headerIterator(final String name) {
+    public Iterator<Header> headerIterator(final String name) {
         return this.request.headerIterator(name);
     }
 
-    public void removeHeader(final Header header) {
-        this.request.removeHeader(header);
+    public boolean removeHeader(final Header header) {
+        return this.request.removeHeader(header);
     }
 
-    public void removeHeaders(final String name) {
-        this.request.removeHeaders(name);
+    public boolean removeHeaders(final String name) {
+        return this.request.removeHeaders(name);
     }
 
     public void setHeader(final Header header) {
@@ -152,12 +170,14 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
         this.request.setHeaders(headers);
     }
 
-    public HttpParams getParams() {
-        return this.request.getParams();
+    public void setHeader(final String name, final Object value) {
+        this.request.setHeader(new BasicHeader(name, value));
     }
 
-    public void setParams(final HttpParams params) {
-        this.request.setParams(params);
+    public SocketHolder getSocketHolder() {
+        return this.conn.getSocketHolder();
     }
-    
+    public InputStream getInputStream() {
+        return this.conn.getInputStream();
+    }
 }

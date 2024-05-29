@@ -39,10 +39,15 @@ public class InteropSampleTest {
         MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, new ClientConfigurationFactory(null, "target/repo/axis2.xml"));
         BaseDataTypesDocLitBService service = new BaseDataTypesDocLitBService();
         IBaseDataTypesDocLitB proxy = service.getBasicHttpBindingIBaseDataTypesDocLitB();
+	System.out.println("InteropSampleTest has proxy reference ...");
         ((BindingProvider)proxy).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, server.getEndpoint("BaseDataTypesDocLitBService"));
+	System.out.println("InteropSampleTest retBool ...");
         assertThat(proxy.retBool(true)).isTrue();
+	System.out.println("InteropSampleTest retBool completed ...");
         assertThat(proxy.retInt(42)).isEqualTo(42);
+	System.out.println("InteropSampleTest retInt completed ...");
         String testString = "This is a test";
         assertThat(proxy.retString(testString)).isEqualTo(testString);
+	System.out.println("InteropSampleTest bye ...");
     }
 }

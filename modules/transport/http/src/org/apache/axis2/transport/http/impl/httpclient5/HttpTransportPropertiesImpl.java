@@ -17,13 +17,13 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http.impl.httpclient4;
+package org.apache.axis2.transport.http.impl.httpclient5;
 
 import org.apache.axis2.transport.http.HTTPAuthenticator;
 import org.apache.axis2.transport.http.HttpTransportProperties;
-import org.apache.http.HttpVersion;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.client.params.AuthPolicy;
+import org.apache.hc.core5.http.HttpVersion;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.StandardAuthScheme;
 
 public class HttpTransportPropertiesImpl extends HttpTransportProperties {
 
@@ -48,14 +48,16 @@ public class HttpTransportPropertiesImpl extends HttpTransportProperties {
      */
     public static class Authenticator extends HTTPAuthenticator {
 
-        /* port of the host that needed to be authenticated with */
-        private int port = AuthScope.ANY_PORT;
-        /* Realm for authentication scope */
-        private String realm = AuthScope.ANY_REALM;
+        /* port of the host that needed to be authenticated with.
+	 * May be -1 if applies to any port of the host.*/
+        private int port = -1;
+        /* Realm for authentication scope. 
+	 * May be null if applies to any realm on the host. */
+        private String realm = null;
         /* Default Auth Schems */
-        public static final String NTLM = AuthPolicy.NTLM;
-        public static final String DIGEST = AuthPolicy.DIGEST;
-        public static final String BASIC = AuthPolicy.BASIC;
+        public static final String NTLM = StandardAuthScheme.NTLM;
+        public static final String DIGEST = StandardAuthScheme.DIGEST;
+        public static final String BASIC = StandardAuthScheme.BASIC;
 
         public int getPort() {
             return port;
@@ -76,11 +78,11 @@ public class HttpTransportPropertiesImpl extends HttpTransportProperties {
         @Override
         public Object getAuthPolicyPref(String scheme) {
             if (BASIC.equals(scheme)) {
-                return AuthPolicy.BASIC;
+                return StandardAuthScheme.BASIC;
             } else if (NTLM.equals(scheme)) {
-                return AuthPolicy.NTLM;
+                return StandardAuthScheme.NTLM;
             } else if (DIGEST.equals(scheme)) {
-                return AuthPolicy.DIGEST;
+                return StandardAuthScheme.DIGEST;
             }
             return null;
         }

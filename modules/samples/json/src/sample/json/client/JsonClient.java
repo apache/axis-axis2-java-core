@@ -19,15 +19,15 @@
 
 package sample.json.client;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.HttpEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import java.io.IOException;
 
@@ -57,7 +57,7 @@ public class JsonClient{
         try {
             CloseableHttpResponse response = httpclient.execute(httpPost);
             HttpEntity entity = null;
-            int status = response.getStatusLine().getStatusCode();
+            int status = response.getCode();
             if (status >= 200 && status < 300) {
                 entity = response.getEntity();
             } else {
@@ -67,7 +67,9 @@ public class JsonClient{
                 throw new ClientProtocolException("Error connecting to url: "+url+" , unexpected response: " + EntityUtils.toString(entity,"UTF-8"));
             }
             return EntityUtils.toString(entity,"UTF-8");
-        }finally {
+        } catch (final Exception ex) {
+            throw new ClientProtocolException("Unexpected error: " + ex.getMessage());
+        } finally {
             httpclient.close();
         }
     }

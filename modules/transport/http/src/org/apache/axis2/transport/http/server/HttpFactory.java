@@ -26,20 +26,18 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.HttpResponseFactory;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.BasicHttpProcessor;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.ResponseConnControl;
-import org.apache.http.protocol.ResponseContent;
-import org.apache.http.protocol.ResponseDate;
-import org.apache.http.protocol.ResponseServer;
+
+import org.apache.hc.core5.http.ConnectionReuseStrategy;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.http.impl.io.DefaultClassicHttpResponseFactory;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
+import org.apache.hc.core5.http.protocol.ResponseConnControl;
+import org.apache.hc.core5.http.protocol.ResponseContent;
+import org.apache.hc.core5.http.protocol.ResponseDate;
+import org.apache.hc.core5.http.protocol.ResponseServer;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -233,29 +231,46 @@ public class HttpFactory {
      * Create the listener for request connections
      */
     public IOProcessor newRequestConnectionListener(
+	    String scheme,	    
             int port,
             final HttpConnectionManager manager, 
-            final HttpParams params) throws IOException {
+            final Http1Config http1Config, SocketConfig socketConfig) throws IOException {
         return new DefaultConnectionListener(
+		scheme,	
                 port, 
                 manager, 
                 new DefaultConnectionListenerFailureHandler(), 
-                params);
+                http1Config,
+                socketConfig);
     }
 
     /**
-     * Create and set the parameters applied to incoming request connections
+     * Create and set the parameters applied to incoming HTTP request connections
      */
-    public HttpParams newRequestConnectionParams() {
-        HttpParams params = new BasicHttpParams();
-        params
-                .setIntParameter(HttpConnectionParams.SO_TIMEOUT, requestSocketTimeout)
-                .setBooleanParameter(HttpConnectionParams.TCP_NODELAY, requestTcpNoDelay)
-                .setIntParameter(HttpConnectionParams.MAX_LINE_LENGTH, 4000)
-                .setIntParameter(HttpConnectionParams.MAX_HEADER_COUNT, 500)
-                .setIntParameter(HttpConnectionParams.SOCKET_BUFFER_SIZE, 8 * 1024)
-                .setParameter(HttpProtocolParams.ORIGIN_SERVER, originServer);
-        return params;
+    public Http1Config newRequestConnectionHttp1Config() {
+        // Create HTTP/1.1 protocol configuration
+        Http1Config http1Config = Http1Config.custom()
+            .setMaxHeaderCount(500)
+            .setMaxLineLength(4000)
+            .setMaxEmptyLineCount(1)
+            .build();
+
+	return http1Config;
+    }
+
+    /**
+     * Create and set the parameters applied to socket connections
+     */
+    public SocketConfig newSocketConfig() {
+
+        SocketConfig socketConfig = SocketConfig.custom()
+                 .setSoTimeout(requestSocketTimeout, TimeUnit.MILLISECONDS)
+                 .setTcpNoDelay(requestTcpNoDelay)
+                 .setSndBufSize(8 * 1024)
+                 .setRcvBufSize(8 * 1024)
+                 .build();
+
+        return socketConfig;
     }
 
     /**
@@ -263,9 +278,9 @@ public class HttpFactory {
      */
     public HttpConnectionManager newRequestConnectionManager(ExecutorService requestExecutor,
                                                              WorkerFactory workerFactory,
-                                                             HttpParams params) {
+							     Http1Config h1Config) {
         return new DefaultHttpConnectionManager(configurationContext, requestExecutor,
-                                                workerFactory, params);
+                                                workerFactory, h1Config);
     }
 
     /**
@@ -300,13 +315,16 @@ public class HttpFactory {
     }
 
     public HttpProcessor newHttpProcessor() {
-        BasicHttpProcessor httpProcessor = new BasicHttpProcessor();
-        httpProcessor.addInterceptor(new RequestSessionCookie());
-        httpProcessor.addInterceptor(new ResponseDate());
-        httpProcessor.addInterceptor(new ResponseServer());
-        httpProcessor.addInterceptor(new ResponseContent());
-        httpProcessor.addInterceptor(new ResponseConnControl());
-        httpProcessor.addInterceptor(new ResponseSessionCookie());
+        final HttpProcessorBuilder b = HttpProcessorBuilder.create();	
+        b.addAll(
+            new RequestSessionCookie());
+        b.addAll(
+            new ResponseDate(),
+            new ResponseServer(originServer),
+            new ResponseContent(),
+            new ResponseConnControl(),
+            new ResponseSessionCookie());
+        HttpProcessor httpProcessor = b.build();
         return httpProcessor;
     }
 
@@ -314,8 +332,8 @@ public class HttpFactory {
         return new DefaultConnectionReuseStrategy();
     }
 
-    public HttpResponseFactory newResponseFactory() {
-        return new DefaultHttpResponseFactory();
+    public DefaultClassicHttpResponseFactory newResponseFactory() {
+        return DefaultClassicHttpResponseFactory.INSTANCE;
     }
 
     // *****

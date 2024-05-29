@@ -22,11 +22,14 @@ package org.apache.axis2.transport.http.server;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.params.HttpParams;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.hc.core5.http.URIScheme;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.io.SocketConfig;
 
 /**
  * A simple, but configurable and extensible HTTP server.
@@ -39,7 +42,9 @@ public class SimpleHttpServer {
 
     private HttpFactory httpFactory;
     private int port;
-    private final HttpParams params;
+    private final Http1Config h1Config;
+    private final SocketConfig socketConfig;
+
     private final WorkerFactory workerFactory;
 
     private IOProcessor listener = null;
@@ -56,16 +61,16 @@ public class SimpleHttpServer {
         this.httpFactory = httpFactory;
         this.port = port;
         this.workerFactory = httpFactory.newRequestWorkerFactory();
-        this.params = httpFactory.newRequestConnectionParams();
-        this.params.setIntParameter(AxisParams.LISTENER_PORT, port);
+        this.h1Config = httpFactory.newRequestConnectionHttp1Config();
+	this.socketConfig = httpFactory.newSocketConfig();
     }
 
     public void init() throws IOException {
         requestExecutor = httpFactory.newRequestExecutor(port);
         connmanager =
-                httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params);
+                httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, h1Config);
         listenerExecutor = httpFactory.newListenerExecutor(port);
-        listener = httpFactory.newRequestConnectionListener(port, connmanager, params);
+        listener = httpFactory.newRequestConnectionListener(URIScheme.HTTP.id, port, connmanager, h1Config, socketConfig);
     }
 
     public void destroy() throws IOException, InterruptedException {

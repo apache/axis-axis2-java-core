@@ -105,8 +105,10 @@ public class BasicAuthSecurityTests {
         		                                SOAPBinding.SOAP11HTTP_BINDING);
         
         dispatch.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_ID);
+	//AXIS2-6051 ... password is now mandatory in httpclient5 / core5
+		dispatch.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
 
-        TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
+        TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService with xml: " + xmlString);
         String retVal = dispatch.invoke(xmlString);
        	TestLogger.logger.debug(">> Response [" + retVal + "]");
         

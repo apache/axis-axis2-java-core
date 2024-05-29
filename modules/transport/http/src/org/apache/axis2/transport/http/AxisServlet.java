@@ -68,11 +68,14 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
+
+import org.apache.hc.core5.http.ContentType;
 
 /**
  * Servlet implementing the HTTP and HTTPS transport. Note that this class doesn't implement

@@ -19,9 +19,9 @@
 
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.transport.http.impl.httpclient4.HTTPSenderImpl;
+import org.apache.axis2.transport.http.impl.httpclient5.HTTPSenderImpl;
 
-public class HTTPClient4SenderTest extends HTTPSenderTest {
+public class HTTPClient5SenderTest extends HTTPSenderTest {
 
     @Override
     protected HTTPSender getHTTPSender() {

@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.testutils;
 
+import java.time.LocalDateTime;
 import javax.net.ssl.SSLContext;
 
 import org.apache.axis2.AxisFault;
@@ -66,10 +67,12 @@ public class Axis2Server extends AbstractAxis2Server {
         port = PortAllocator.allocatePort();
         server = new SimpleHTTPServer(configurationContext, port);
         server.start();
+        System.out.println("[Axis2Server] Started at time: " +LocalDateTime.now()+ " , on port: " + port);
     }
 
     @Override
     protected void stopServer() {
+        System.out.println("[Axis2Server] stopServer() invoked, setting port to -1");
         port = -1;
         server.stop();
         server = null;

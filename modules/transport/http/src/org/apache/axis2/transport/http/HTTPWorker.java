@@ -34,13 +34,11 @@ import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.Worker;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpStatus;
-import org.apache.http.MethodNotSupportedException;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EncodingUtils;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.MethodNotSupportedException;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import java.io.IOException;
@@ -48,6 +46,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -87,7 +86,7 @@ public class HTTPWorker implements Worker {
                 response.setStatus(HttpStatus.SC_OK);
                 response.setContentType("text/html");
                 OutputStream out = response.getOutputStream();
-                out.write(EncodingUtils.getBytes(s, HTTP.ISO_8859_1));
+                out.write(s.getBytes(StandardCharsets.ISO_8859_1));
                 return;
             }
             if (uri.indexOf("?") < 0) {

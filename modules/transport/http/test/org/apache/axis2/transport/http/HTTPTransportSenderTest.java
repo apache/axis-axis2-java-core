@@ -24,6 +24,8 @@ import static org.apache.axiom.truth.xml.XMLTruth.xml;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -51,9 +53,11 @@ import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.transport.http.mock.MockAxisHttpResponse;
 import org.apache.axis2.transport.http.mock.MockHttpServletResponse;
 import org.apache.axis2.transport.http.mock.MockHTTPResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.RequestLine;
-import org.apache.http.message.BasicRequestLine;
+import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpVersion;
+import org.apache.hc.core5.http.Method;
+import org.apache.hc.core5.http.message.RequestLine;
 
 public abstract class HTTPTransportSenderTest extends TestCase  {
     
@@ -66,26 +70,36 @@ public abstract class HTTPTransportSenderTest extends TestCase  {
         SOAPEnvelope envelope = getEnvelope();
         httpResponse = configAndRun(httpResponse, info, null, getTransportSender());
 
-        assertEquals("Not the expected Header value", "application/xml", httpResponse.getHeaders()
-                .get("Content-Type"));
-        assertEquals("Not the expected Header value", "custom-value", httpResponse.getHeaders()
-                .get("Custom-header"));
+        final Header[] headers = httpResponse.getHeaders();
+	final Map<String,String> headerMap = new HashMap<>();
+	if (headers != null) {
+            for (final Header header: headers) {
+                headerMap.put(header.getName(), header.getValue());
+            }
+	}
+
+        assertEquals("Not the expected Header value", "application/xml", headerMap.get("Content-Type"));
+        assertEquals("Not the expected Header value", "custom-value", headerMap.get("Custom-header"));
         assertAbout(xml())
                 .that(new String(httpResponse.getByteArrayOutputStream().toByteArray()))
                 .hasSameContentAs(envelope.toString());
     }
     
     public void testInvokeWithAxisHttpResponseImpl() throws Exception {
-        RequestLine line = new BasicRequestLine("", "", new ProtocolVersion("http", 1, 0));
+        RequestLine line = new RequestLine(Method.POST.name(), "", HttpVersion.HTTP_1_1);
         MockHTTPResponse httpResponse = new MockAxisHttpResponse(line);
         SOAPEnvelope envelope = getEnvelope();
         httpResponse = (MockAxisHttpResponse) configAndRun(httpResponse,
                 (OutTransportInfo) httpResponse, null, getTransportSender());
 
-        assertEquals("Not the expected Header value", "application/xml", httpResponse.getHeaders()
-                .get("Content-Type"));
-        assertEquals("Not the expected Header value", "custom-value", httpResponse.getHeaders()
-                .get("Custom-header"));
+        final Header[] headers = httpResponse.getHeaders();
+	final Map<String,String> headerMap = new HashMap<>();
+        for (final Header header: headers) {
+            headerMap.put(header.getName(), header.getValue());
+        }
+
+        assertEquals("Not the expected Header value", "application/xml", headerMap.get("Content-Type"));
+        assertEquals("Not the expected Header value", "custom-value", headerMap.get("Custom-header"));
         assertAbout(xml())
                 .that(new String(httpResponse.getByteArrayOutputStream().toByteArray()))
                 .hasSameContentAs(envelope.toString());

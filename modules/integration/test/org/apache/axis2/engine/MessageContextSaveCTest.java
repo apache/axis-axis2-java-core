@@ -46,7 +46,7 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
+import org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -260,9 +260,9 @@ public class MessageContextSaveCTest extends TestCase {
         transportOut = new TransportOutDescription("null");
         transportOut2 = new TransportOutDescription("happy");
         transportOut3 = new TransportOutDescription("golucky");
-        transportOut.setSender(new HTTPClient4TransportSender());
-        transportOut2.setSender(new HTTPClient4TransportSender());
-        transportOut3.setSender(new HTTPClient4TransportSender());
+        transportOut.setSender(new HTTPClient5TransportSender());
+        transportOut2.setSender(new HTTPClient5TransportSender());
+        transportOut3.setSender(new HTTPClient5TransportSender());
 
         saveAxisConfiguration.addTransportOut(transportOut3);
         saveAxisConfiguration.addTransportOut(transportOut2);

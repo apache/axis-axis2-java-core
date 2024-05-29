@@ -22,18 +22,19 @@ package org.apache.axis2.transport.http.server;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.HTTPConstants;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.message.BufferedHeader;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.CharArrayBuffer;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.message.BufferedHeader;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.CharArrayBuffer;
 
 import java.io.IOException;
 
 public class ResponseSessionCookie implements HttpResponseInterceptor {
 
-    public void process(final HttpResponse response, final HttpContext context)
+    public void process(final HttpResponse response, EntityDetails entityDetails, final HttpContext context)
             throws HttpException, IOException {
         if (response == null) {
             throw new IllegalArgumentException("HTTP response may not be null");
@@ -68,12 +69,6 @@ public class ResponseSessionCookie implements HttpResponseInterceptor {
             buffer2.append("=");
             buffer2.append(sessionCookie);
             buffer2.append("; ");
-            int port = response.getParams().getIntParameter(AxisParams.LISTENER_PORT, 0);
-            if (port > 0) {
-                buffer2.append("Port=\"");
-                buffer2.append(Integer.toString(port));
-                buffer2.append("\"; ");
-            }
             buffer2.append("Version=1");
             response.addHeader(new BufferedHeader(buffer2));
         }

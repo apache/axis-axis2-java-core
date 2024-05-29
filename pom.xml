@@ -478,9 +478,8 @@
         <geronimo.spec.jaxws.version>1.2</geronimo.spec.jaxws.version>
         <google.gson.version>2.11.0</google.gson.version>
         <groovy.version>4.0.20</groovy.version>
-        <httpcore.version>4.4.16</httpcore.version>
-        <httpclient.version>4.5.14</httpclient.version>
-        <httpmime.version>4.5.14</httpmime.version>
+        <httpcore.version>5.3-alpha2</httpcore.version>
+        <httpclient.version>5.3.1</httpclient.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>12.0.7</jetty.version>
@@ -768,10 +767,16 @@
                 <version>2.16.0</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
                 <version>${httpcore.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+	    <!-- FIXME 
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-osgi</artifactId>
@@ -779,19 +784,10 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${httpclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient-osgi</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
-                <version>${httpmime.version}</version>
-            </dependency>
+            -->		    
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-core</artifactId>

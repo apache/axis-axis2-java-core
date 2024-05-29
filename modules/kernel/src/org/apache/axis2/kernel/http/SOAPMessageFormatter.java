@@ -95,6 +95,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 message.serialize(out, format, preserve);
             }
         } catch (IOException e) {
+	    // FIXME	
+            System.out.println("SOAPMessageFormatter error: " + e.getMessage());
+            e.printStackTrace();
             throw AxisFault.makeFault(e);
         } finally {
             if (log.isDebugEnabled()) {

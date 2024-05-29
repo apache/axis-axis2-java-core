@@ -19,24 +19,32 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.ExecutionContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpProcessor;
+import org.apache.hc.client5.http.entity.EntityBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.ProtocolException;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
+import org.apache.hc.core5.http.io.entity.EmptyInputStream;
+import org.apache.hc.core5.http.message.BasicHeaderIterator;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+
 import org.apache.axis2.kernel.OutTransportInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
+import java.util.Iterator;
 
 public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo {
 
-    private final HttpResponse response;
+    private final ClassicHttpResponse response;
     private final AxisHttpConnection conn;
     private final HttpProcessor httpproc;
     private final HttpContext context;
@@ -48,7 +56,7 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
     
     public AxisHttpResponseImpl(
             final AxisHttpConnection conn,
-            final HttpResponse response, 
+            final ClassicHttpResponse response, 
             final HttpProcessor httpproc,
             final HttpContext context) {
         super();
@@ -86,21 +94,21 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
         }
         this.commited = true;
         
-        this.context.setAttribute(ExecutionContext.HTTP_CONNECTION, this.conn);
-        this.context.setAttribute(ExecutionContext.HTTP_RESPONSE, this.response);
-        
-        BasicHttpEntity entity = new BasicHttpEntity();
-        entity.setChunked(true);
-        entity.setContentType(this.contentType);
-        
-        this.response.setEntity(entity);
-        
+        this.context.setAttribute(HttpCoreContext.CONNECTION_ENDPOINT, this.conn);
+        this.context.setAttribute(HttpCoreContext.HTTP_RESPONSE, this.response);
+
+        ContentType contentTypeObj = null;
+	if (this.contentType != null) {
+            contentTypeObj = ContentType.parse(this.contentType);
+	}	
+
 	// AXIS2-6051, the move from javax to jakarta
 	// broke HTTPClient by sending Content-Length,
 	// resulting in:
 	// ProtocolException: Content-Length header already present
 	this.response.removeHeaders("Content-Length");
-        this.httpproc.process(this.response, this.context);
+	this.response.setEntity(new BasicHttpEntity(EmptyInputStream.INSTANCE, contentTypeObj, true));
+        this.httpproc.process(this.response, this.response.getEntity(), this.context);
         this.conn.sendResponse(this.response);
     }
     
@@ -111,102 +119,129 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
         return this.outstream;
     }
 
-    public void sendError(int sc, final String msg) {
-        assertNotCommitted();
-        ProtocolVersion ver = this.response.getProtocolVersion();
-        this.response.setStatusLine(ver, sc, msg);
-    }
-
-    public void sendError(int sc) {
-        assertNotCommitted();
-        this.response.setStatusCode(sc);
-    }
-
-    public void setStatus(int sc) {
-        assertNotCommitted();
-        this.response.setStatusCode(sc);
-    }
-
-    public void setContentType(final String contentType) {
-        assertNotCommitted();
-        this.contentType = contentType;
-    }
-
-    public ProtocolVersion getProtocolVersion() {
-        return this.response.getProtocolVersion();
-    }
-
-    public void addHeader(final Header header) {
-        assertNotCommitted();
-        this.response.addHeader(header);
-    }
-
-    public void addHeader(final String name, final String value) {
-        assertNotCommitted();
-        this.response.addHeader(name, value);
-    }
-
-    public boolean containsHeader(final String name) {
-        return this.response.containsHeader(name);
-    }
-
-    public Header[] getAllHeaders() {
-        return this.response.getAllHeaders();
-    }
-
+    @Override
     public Header getFirstHeader(final String name) {
         return this.response.getFirstHeader(name);
     }
 
-    public Header[] getHeaders(String name) {
-        return this.response.getHeaders(name);
-    }
-
+    @Override
     public Header getLastHeader(final String name) {
         return this.response.getLastHeader(name);
     }
 
-    public HeaderIterator headerIterator() {
+    @Override
+    public Iterator<Header> headerIterator() {
         return this.response.headerIterator();
     }
 
-    public HeaderIterator headerIterator(String name) {
+    @Override
+    public Iterator<Header> headerIterator(String name) {
         return this.response.headerIterator(name);
     }
 
-    public void removeHeader(final Header header) {
-        assertNotCommitted();
-        this.response.removeHeader(header);
-    }
-
-    public void removeHeaders(final String name) {
-        assertNotCommitted();
-        this.response.removeHeaders(name);
-    }
-
+    @Override
     public void setHeader(final Header header) {
         assertNotCommitted();
         this.response.setHeader(header);
     }
 
-    public void setHeader(final String name, final String value) {
+    @Override
+    public void setHeader(final String name, final Object value) {
         assertNotCommitted();
         this.response.setHeader(name, value);
     }
 
+    @Override
     public void setHeaders(Header[] headers) {
         assertNotCommitted();
         this.response.setHeaders(headers);
     }
 
-    public HttpParams getParams() {
-        return this.response.getParams();
+    @Override
+    public void setStatus(int sc) {
+        assertNotCommitted();
+        this.response.setCode(sc);
     }
 
-    public void setParams(final HttpParams params) {
-        this.response.setParams(params);
+    @Override
+    public void sendError(int sc, final String msg) {
+        assertNotCommitted();
+        this.response.setCode(sc);
+        this.response.setReasonPhrase(msg);
     }
-    
+
+    @Override
+    public void sendError(int sc) {
+        assertNotCommitted();
+        this.response.setCode(sc);
+    }
+
+    @Override
+    public void setContentType(final String contentType) {
+        assertNotCommitted();
+        this.contentType = contentType;
+    }
+
+    @Override
+    public void addHeader(final Header header) {
+        assertNotCommitted();
+        response.addHeader(header);
+    }
+
+    @Override
+    public void addHeader(final String name, final Object value) {
+        assertNotCommitted();
+        response.addHeader(name, value);
+    }
+
+    @Override
+    public ProtocolVersion getVersion() {
+        return response.getVersion();
+    }
+
+    @Override
+    public void setVersion(final ProtocolVersion version) {
+        assertNotCommitted();
+        response.setVersion(version);
+    }
+
+    @Override
+    public Header[] getHeaders(final String name) {
+        return response.getHeaders(name);
+    }
+
+    @Override
+    public Header[] getHeaders() {
+        return response.getHeaders();
+    }
+
+    @Override
+    public boolean removeHeader(final Header header) {
+        assertNotCommitted();
+        return this.response.removeHeader(header);
+    }
+
+    @Override
+    public boolean removeHeaders(final String name) {
+        assertNotCommitted();
+        return this.response.removeHeaders(name);
+    }
+
+    @Override
+    public boolean containsHeader(final String name) {
+        return response.containsHeader(name);
+    }
+
+    @Override
+    public int countHeaders(final String name) {
+        return response.countHeaders(name);
+    }
+
+    @Override
+    public Header getHeader(final String name) throws ProtocolException {
+        return response.getHeader(name);
+    }
+
     class AutoCommitOutputStream extends OutputStream {
 
         private OutputStream out;

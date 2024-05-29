@@ -44,7 +44,7 @@ import org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
+import org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -169,7 +169,7 @@ public class OperationContextSaveTest extends TestCase {
         //-----------------------------------------------------------------
 
         transportOut = new TransportOutDescription("null");
-        transportOut.setSender(new HTTPClient4TransportSender());
+        transportOut.setSender(new HTTPClient5TransportSender());
 
         transportIn = new TransportInDescription("null");
 

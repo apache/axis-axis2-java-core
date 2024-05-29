@@ -57,6 +57,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -171,10 +172,11 @@ public class HTTPTransportUtils {
             soapVersion = initializeMessageContext(msgContext, soapActionHeader, requestURI, contentType);
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
+            InputStream is = handleGZip(msgContext, in);
             msgContext.setEnvelope(
                     TransportUtils.createSOAPMessage(
                             msgContext,
-                            handleGZip(msgContext, in), 
+                            is, 
                             contentType));
             return AxisEngine.receive(msgContext);
         } catch (SOAPProcessingException e) {
@@ -184,10 +186,13 @@ public class HTTPTransportUtils {
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         } catch (OMException e) {
+            log.error("HTTPTransportUtils.processHTTPPostRequest() OMException Exception:" + e.getMessage() + " , at time: " + LocalDateTime.now(), e);
             throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
+            throw AxisFault.makeFault(e);
+        } catch (Exception e) {
             throw AxisFault.makeFault(e);
         } finally {
             if ((msgContext.getEnvelope() == null) && soapVersion != VERSION_SOAP11) {
@@ -302,7 +307,7 @@ public class HTTPTransportUtils {
                             HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE))) {
                 in = new GZIPInputStream(in);
             }
-        }
+        } 
         return in;
     }
 

@@ -39,8 +39,9 @@ import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpStatus;
-import org.apache.http.protocol.HTTP;
+
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.HttpHeaders;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -269,6 +270,7 @@ public abstract class HTTPSender {
 
     private void addCustomHeaders(MessageContext msgContext, Request request) {
     
+	int xx = 0;    
         boolean isCustomUserAgentSet = false;
         // set the custom headers, if available
         Object httpHeadersObj = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
@@ -282,6 +284,7 @@ public abstract class HTTPSender {
                             isCustomUserAgentSet = true;
                         }
                         request.addHeader(nv.getName(), nv.getValue());
+			xx++;
                     }
                 }
     
@@ -296,9 +299,12 @@ public abstract class HTTPSender {
                         isCustomUserAgentSet = true;
                     }
                     request.addHeader(key, value);
+                    xx++;
                 }
             }
-        }
+        } else {
+            log.trace("addCustomHeaders() found no headers from HTTPConstants.HTTP_HEADERS");
+	}	
     
         // we have to consider the TRANSPORT_HEADERS map as well
         Map transportHeaders = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
@@ -326,7 +332,9 @@ public abstract class HTTPSender {
                     }
                 }
             }
-        }
+        } else {
+            log.trace("addCustomHeaders() found no headers from MessageContext.TRANSPORT_HEADERS");
+	}	
     
         if (!isCustomUserAgentSet) {
             String userAgentString = getUserAgent(msgContext);
@@ -355,11 +363,12 @@ public abstract class HTTPSender {
         Iterator iter = headers.keySet().iterator();
         while (iter.hasNext()) {
             String headerName = (String) iter.next();
-            if (HTTP.CONN_DIRECTIVE.equalsIgnoreCase(headerName)
-                    || HTTP.TRANSFER_ENCODING.equalsIgnoreCase(headerName)
-                    || HTTP.DATE_HEADER.equalsIgnoreCase(headerName)
-                    || HTTP.CONTENT_TYPE.equalsIgnoreCase(headerName)
-                    || HTTP.CONTENT_LEN.equalsIgnoreCase(headerName)) {
+            if (HttpHeaders.CONNECTION.equalsIgnoreCase(headerName)
+                    || HttpHeaders.TRANSFER_ENCODING.equalsIgnoreCase(headerName)
+                    || HttpHeaders.DATE.equalsIgnoreCase(headerName)
+                    || HttpHeaders.CONTENT_TYPE.equalsIgnoreCase(headerName)
+                    || HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(headerName)) {
+                log.trace("removeUnwantedHeaders() is removing header: " + headerName);
                 iter.remove();
             }
         }
@@ -414,11 +423,11 @@ public abstract class HTTPSender {
 
         if (tempSoTimeoutProperty != null) {
             // SO_TIMEOUT -- timeout for blocking reads
-            request.setSocketTimeout(tempSoTimeoutProperty);
+            // request.setSocketTimeout(tempSoTimeoutProperty);
         } else {
             // set timeout in client
             if (timeout > 0) {
-                request.setSocketTimeout((int) timeout);
+                // request.setSocketTimeout((int) timeout);
             }
         }
     }
@@ -433,7 +442,7 @@ public abstract class HTTPSender {
                 new CommonsTransportHeaders(request.getResponseHeaders()));
         msgContext.setProperty(
                 HTTPConstants.MC_HTTP_STATUS_CODE,
-                new Integer(request.getStatusCode()));
+                Integer.valueOf(request.getStatusCode()));
         
         String contentTypeString = request.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
         if (contentTypeString != null) {

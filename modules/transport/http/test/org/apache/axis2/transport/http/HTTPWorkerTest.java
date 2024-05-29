@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -31,10 +32,10 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.http.server.AxisHttpRequest;
 import org.apache.axis2.transport.http.server.AxisHttpResponse;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.params.HttpParams;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.ProtocolException;
+import org.apache.hc.core5.http.impl.io.SocketHolder;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.junit.Test;
 
@@ -81,155 +82,217 @@ public class HTTPWorkerTest extends XMLSchemaTest {
         // { section of the service method for xmlschema usage
         httpWorker.service(new AxisHttpRequest() {
 
-            public void setParams(HttpParams arg0) {
+            @Override
+            public ProtocolVersion getVersion() {
+                return null;
             }
 
+            @Override
+            public void setVersion(final ProtocolVersion localVersion) {
+            }
+
+            @Override
             public void setHeaders(Header[] arg0) {
             }
 
-            public void setHeader(String arg0, String arg1) {
+            @Override
+            public void setHeader(final String name, final Object value) {
             }
 
+            @Override
             public void setHeader(Header arg0) {
             }
 
-            public void removeHeaders(String arg0) {
+            @Override
+            public boolean removeHeaders(String arg0) {
+                return false;
             }
 
-            public void removeHeader(Header arg0) {
+            @Override
+            public boolean removeHeader(Header arg0) {
+                return false;
             }
 
-            public HeaderIterator headerIterator(String arg0) {
+            @Override
+            public Iterator<Header> headerIterator() {
+                return null;
+            }
+        
+            @Override
+            public Iterator<Header> headerIterator(final String name) {
+                return  null;
+            }
+
+            @Override
+            public SocketHolder getSocketHolder() {
                 return null;
             }
 
-            public HeaderIterator headerIterator() {
-                return null;
-            }
-
-            public ProtocolVersion getProtocolVersion() {
-                return null;
-            }
-
-            public HttpParams getParams() {
-                return null;
-            }
-
+            @Override
             public Header getLastHeader(String arg0) {
                 return null;
             }
 
+            @Override
             public Header[] getHeaders(String arg0) {
                 return null;
             }
 
+            @Override
+	    public Header[] getHeaders() {
+                return null;
+            }
+
+            @Override
+            public int countHeaders(final String name) {
+                return -1;
+            }
+
+            @Override
+            public Header getHeader(final String name) throws ProtocolException {
+                return null;
+            }
+
+            @Override
             public Header getFirstHeader(String arg0) {
                 return null;
             }
 
-            public Header[] getAllHeaders() {
-                return null;
-            }
-
+            @Override
             public boolean containsHeader(String arg0) {
                 return false;
             }
 
-            public void addHeader(String arg0, String arg1) {
+            @Override
+            public void addHeader(final String name, final Object value) {
             }
 
+            @Override
             public void addHeader(Header arg0) {
             }
 
+            @Override
             public String getRequestURI() {
                 return "/test/context/test_service/test_service?xsd=sampleSchema";
             }
 
+            @Override
             public String getMethod() {
                 return HTTPConstants.HEADER_GET;
             }
 
+            @Override
             public InputStream getInputStream() {
                 return null;
             }
 
+            @Override
             public String getContentType() {
                 return null;
             }
         }, new AxisHttpResponse() {
 
-            public void setParams(HttpParams arg0) {
+            @Override
+            public ProtocolVersion getVersion() {
+                return null;
             }
 
+            @Override
+            public void setVersion(final ProtocolVersion localVersion) {
+            }
+
+            @Override
             public void setHeaders(Header[] arg0) {
             }
 
-            public void setHeader(String arg0, String arg1) {
+            @Override
+            public void setHeader(final String name, final Object value) {
             }
 
+            @Override
             public void setHeader(Header arg0) {
             }
 
-            public void removeHeaders(String arg0) {
+            @Override
+            public void addHeader(final String name, final Object value) {
             }
 
-            public void removeHeader(Header arg0) {
+            @Override
+            public boolean removeHeaders(String arg0) {
+                return false;
             }
 
-            public HeaderIterator headerIterator(String arg0) {
+            @Override
+            public boolean removeHeader(Header arg0) {
+                return false;
+            }
+
+            @Override
+            public Iterator<Header> headerIterator() {
+                return null;
+            }
+        
+            @Override
+            public Iterator<Header> headerIterator(final String name) {
+                return  null;
+            }
+
+            @Override
+	    public Header[] getHeaders() {
                 return null;
             }
 
-            public HeaderIterator headerIterator() {
+            @Override
+            public Header getHeader(final String name) throws ProtocolException {
                 return null;
             }
 
-            public ProtocolVersion getProtocolVersion() {
-                return null;
+            @Override
+            public int countHeaders(final String name) {
+                return -1;
             }
 
-            public HttpParams getParams() {
-                return null;
-            }
-
+            @Override
             public Header getLastHeader(String arg0) {
                 return null;
             }
 
+            @Override
             public Header[] getHeaders(String arg0) {
                 return null;
             }
 
+            @Override
             public Header getFirstHeader(String arg0) {
                 return null;
             }
 
-            public Header[] getAllHeaders() {
-                return null;
-            }
-
+            @Override
             public boolean containsHeader(String arg0) {
                 return false;
             }
 
-            public void addHeader(String arg0, String arg1) {
-            }
-
+            @Override
             public void addHeader(Header arg0) {
             }
 
+            @Override
             public void setStatus(int sc) {
             }
 
+            @Override
             public void setContentType(String contentType) {
             }
 
+            @Override
             public void sendError(int sc) {
             }
 
+            @Override
             public void sendError(int sc, String msg) {
             }
 
+            @Override
             public OutputStream getOutputStream() {
                 return outputStream;
             }

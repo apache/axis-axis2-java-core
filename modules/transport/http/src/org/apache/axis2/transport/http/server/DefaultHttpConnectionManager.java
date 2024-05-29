@@ -22,17 +22,16 @@ package org.apache.axis2.transport.http.server;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.HttpResponseFactory;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpProcessor;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.ResponseConnControl;
-import org.apache.http.protocol.ResponseContent;
-import org.apache.http.protocol.ResponseDate;
-import org.apache.http.protocol.ResponseServer;
+import org.apache.hc.core5.http.ConnectionReuseStrategy;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.http.impl.io.DefaultClassicHttpResponseFactory;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
+import org.apache.hc.core5.http.protocol.ResponseConnControl;
+import org.apache.hc.core5.http.protocol.ResponseContent;
+import org.apache.hc.core5.http.protocol.ResponseDate;
+import org.apache.hc.core5.http.protocol.ResponseServer;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -50,7 +49,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
 
     private final WorkerFactory workerfactory;
 
-    private final HttpParams params;
+    private final Http1Config http1Config;
 
     /** The list of processors. */
     // XXX: is this list really needed?
@@ -61,7 +60,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
 
     public DefaultHttpConnectionManager(final ConfigurationContext configurationContext,
             final Executor executor, final WorkerFactory workerfactory,
-            final HttpParams params) {
+            final Http1Config http1Config) {
         super();
         if (configurationContext == null) {
             throw new IllegalArgumentException("Configuration context may not be null");
@@ -72,13 +71,10 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         if (workerfactory == null) {
             throw new IllegalArgumentException("Worker factory may not be null");
         }
-        if (params == null) {
-            throw new IllegalArgumentException("HTTP parameters may not be null");
-        }
         this.configurationContext = configurationContext;
         this.executor = executor;
         this.workerfactory = workerfactory;
-        this.params = params;
+        this.http1Config = http1Config != null ? http1Config : Http1Config.DEFAULT;
         this.processors = new LinkedList();
     }
 
@@ -86,9 +82,9 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             final ConfigurationContext configurationContext,
             final Executor executor,
             final WorkerFactory workerfactory,
-            final HttpParams params,
+            final Http1Config http1Config,
             final HttpFactory httpFactory) {
-        this(configurationContext, executor, workerfactory, params);
+        this(configurationContext, executor, workerfactory, http1Config);
         this.httpFactory = httpFactory;
     }
 
@@ -150,28 +146,30 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         // Assemble new Axis HTTP service
         HttpProcessor httpProcessor;
         ConnectionReuseStrategy connStrategy;
-        HttpResponseFactory responseFactory;
+        DefaultClassicHttpResponseFactory responseFactory;
 
         if (httpFactory != null) {
             httpProcessor = httpFactory.newHttpProcessor();
             connStrategy = httpFactory.newConnStrategy();
             responseFactory = httpFactory.newResponseFactory();
         } else {
-            BasicHttpProcessor p = new BasicHttpProcessor();
-            p.addInterceptor(new RequestSessionCookie());
-            p.addInterceptor(new ResponseDate());
-            p.addInterceptor(new ResponseServer());
-            p.addInterceptor(new ResponseContent());
-            p.addInterceptor(new ResponseConnControl());
-            p.addInterceptor(new ResponseSessionCookie());
-            httpProcessor = p;
+	    final HttpProcessorBuilder b = HttpProcessorBuilder.create();	
+	    b.addAll(
+                new RequestSessionCookie());
+	    b.addAll(
+                new ResponseDate(),
+                new ResponseServer(),
+                new ResponseContent(),
+                new ResponseConnControl(),
+                new ResponseSessionCookie());
+            httpProcessor = b.build();
             connStrategy = new DefaultConnectionReuseStrategy();
-            responseFactory = new DefaultHttpResponseFactory();
+            responseFactory = DefaultClassicHttpResponseFactory.INSTANCE;
         }
 
-        AxisHttpService httpService = new AxisHttpService(httpProcessor, connStrategy,
-            responseFactory, this.configurationContext, this.workerfactory.newWorker());
-        httpService.setParams(this.params);
+	/* AXIS2-6051, HttpService.setParams(params) is gone in core5 / httpclient5, pass Http1Config into AxisHttpService */
+        AxisHttpService httpService = new AxisHttpService(httpProcessor, http1Config, connStrategy,
+            null, responseFactory, this.configurationContext, this.workerfactory.newWorker());
 
         // Create I/O processor to execute HTTP service
         IOProcessorCallback callback = new IOProcessorCallback() {

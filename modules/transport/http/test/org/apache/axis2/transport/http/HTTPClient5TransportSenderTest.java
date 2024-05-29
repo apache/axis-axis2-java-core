@@ -23,21 +23,21 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.kernel.TransportSender;
-import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
 
 
-public class HTTPClient4TransportSenderTest extends HTTPTransportSenderTest{
+public class HTTPClient5TransportSenderTest extends HTTPTransportSenderTest{
 
     @Override
     protected TransportSender getTransportSender() {
-        return new HTTPClient4TransportSender();
+        return new HTTPClient5TransportSender();
     }
 
     public void testCleanup() throws AxisFault {
         TransportSender sender = getTransportSender();
         MessageContext msgContext = new MessageContext();
-        HttpGet httpMethod = new HttpGet();
+        HttpGet httpMethod = new HttpGet("");
         msgContext.setProperty(HTTPConstants.HTTP_METHOD, httpMethod);
         assertNotNull("HttpMethod can not be null",
                 msgContext.getProperty(HTTPConstants.HTTP_METHOD));

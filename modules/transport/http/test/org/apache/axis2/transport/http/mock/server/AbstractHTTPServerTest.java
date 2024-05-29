@@ -132,8 +132,8 @@ public abstract class AbstractHTTPServerTest extends TestCase {
      * 
      * @return the request url
      */
-    protected String getRequestURL() {
-        return basicHttpServer.getUrl();
+    protected String getRequestURI() {
+        return basicHttpServer.getUri();
 
     }
 

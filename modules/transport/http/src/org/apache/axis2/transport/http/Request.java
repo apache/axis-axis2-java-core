@@ -34,7 +34,7 @@ public interface Request {
     Header[] getRequestHeaders();
     void enableAuthentication(HTTPAuthenticator authenticator);
     void setConnectionTimeout(int timeout);
-    void setSocketTimeout(int timeout);
+    void setResponseTimeout(int timeout);
     void execute() throws IOException;
     int getStatusCode();
     String getStatusText();

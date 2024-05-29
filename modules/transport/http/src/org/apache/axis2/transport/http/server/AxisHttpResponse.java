@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.http.HttpMessage;
+import org.apache.hc.core5.http.HttpMessage;
 
 import java.io.OutputStream;
 

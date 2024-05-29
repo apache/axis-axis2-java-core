@@ -23,7 +23,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
-import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
+import org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -59,7 +59,7 @@ public class EngineWithoutPhaseResolvingTest extends TestCase {
         configContext = new ConfigurationContext(engineRegistry);
 
         TransportOutDescription transport = new TransportOutDescription("null");
-        transport.setSender(new HTTPClient4TransportSender());
+        transport.setSender(new HTTPClient5TransportSender());
 
         TransportInDescription transportIn = new TransportInDescription("null");
         AxisOperation axisOp = new InOutAxisOperation(operationName);

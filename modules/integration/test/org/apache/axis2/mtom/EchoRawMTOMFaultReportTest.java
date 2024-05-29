@@ -32,19 +32,24 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.NoHttpResponseException;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
 
 import javax.xml.namespace.QName;
 import java.util.List;
@@ -93,39 +98,64 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
     public void testEchoFaultSync() throws Exception {
 	HttpPost httpPost = new HttpPost("http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/EchoService/mtomSample");
 
+	String headerStr = "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"";
         httpPost.setEntity(new InputStreamEntity(
-                new FileInputStream(TestingUtils.prefixBaseDirectory("test-resources/mtom/wmtom.bin"))));
+                new FileInputStream(TestingUtils.prefixBaseDirectory("test-resources/mtom/wmtom.bin")), ContentType.parse(headerStr)));
 
 	Header header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"");
 
 	List<Header> headers = new ArrayList();
         headers.add(header);
 	
-	CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).setRetryHandler(new HttpRequestRetryHandler() {
-                @Override
-                public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-                    if (executionCount >= 10) {
-                        return false;
-                    }
-                    if (exception instanceof NoHttpResponseException) {
-                        return true;
-                    }
-                    if (exception instanceof InterruptedIOException) {
-                        return true;
-                    }
-                    HttpClientContext clientContext = HttpClientContext.adapt(context);
-                    if (!clientContext.isRequestSent()) {
-                        return true;
-                    }
-                    // otherwise do not retry
+        final HttpRequestRetryStrategy requestRetryStrategy = new HttpRequestRetryStrategy() {
+
+            @Override
+            public boolean retryRequest(
+                    final HttpRequest request,
+                    final IOException exception,
+                    final int executionCount,
+                    final HttpContext context) {
+
+                if (executionCount >= 10) {
                     return false;
                 }
-            }).build();
+                if (exception instanceof NoHttpResponseException) {
+                    return true;
+                }
+                if (exception instanceof InterruptedIOException) {
+                    return true;
+                }
+                // otherwise do not retry
+                return false;
+            }
 
+            @Override
+            public boolean retryRequest(
+                    final HttpResponse response,
+                    final int executionCount,
+                    final HttpContext context) {
+
+                if (executionCount >= 10) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public TimeValue getRetryInterval(
+                    final HttpResponse response,
+                    final int executionCount,
+                    final HttpContext context) {
+                return TimeValue.ofSeconds(1L);
+            }
+
+        };
+
+	CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).setRetryStrategy(requestRetryStrategy).build();
 
         try {
             CloseableHttpResponse hcResponse = httpclient.execute(httpPost);
-	    int status = hcResponse.getStatusLine().getStatusCode();
+	    int status = hcResponse.getCode();
             if (status == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 
                 // TODO: There is a missing wsa:Action header in the SOAP message.  Fix or look for correct fault text!
@@ -133,7 +163,7 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 //                assertEquals("HTTP/1.1 500 Internal server error",
 //                             httppost.getStatusLine().toString());
             }
-	    System.out.println("\ntestEchoFaultSync() result status: " + status + " , statusLine: " + hcResponse.getStatusLine());
+	    System.out.println("\ntestEchoFaultSync() result status: " + status + " , statusLine: " + new StatusLine(hcResponse));
 
         }finally {
             httpclient.close();

@@ -19,24 +19,21 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.http.HttpConnection;
-import org.apache.http.HttpException;
-import org.apache.http.HttpInetConnection;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpConnection;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.impl.io.SocketHolder;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface AxisHttpConnection extends HttpConnection, HttpInetConnection {
+public interface AxisHttpConnection extends HttpConnection {
 
-    HttpRequest receiveRequest()
-        throws HttpException, IOException;
-    
     InputStream getInputStream();
     
-    void sendResponse(HttpResponse response) 
+    void sendResponse(ClassicHttpResponse response) 
         throws HttpException, IOException;    
     
     OutputStream getOutputStream();
@@ -47,4 +44,7 @@ public interface AxisHttpConnection extends HttpConnection, HttpInetConnection {
     void reset()
         throws IOException;
 
+    ClassicHttpRequest receiveRequest() throws HttpException, IOException;
+
+    SocketHolder getSocketHolder();
 }

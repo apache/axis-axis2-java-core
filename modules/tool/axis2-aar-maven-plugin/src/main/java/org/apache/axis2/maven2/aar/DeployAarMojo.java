@@ -19,21 +19,20 @@
 
 package org.apache.axis2.maven2.aar;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.message.StatusLine;
 
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -112,23 +111,25 @@ public class DeployAarMojo extends AbstractAarMojo {
 	httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 
 	CloseableHttpClient httpclient = HttpClients.createDefault();
-	httpclient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
-                CookiePolicy.BROWSER_COMPATIBILITY);
+	//httpclient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
+        //        CookiePolicy.BROWSER_COMPATIBILITY);
 
         try {
             CloseableHttpResponse hcResponse = httpclient.execute(httpPost);
-	    int status = hcResponse.getStatusLine().getStatusCode();
+	    int status = hcResponse.getCode();
             if(status != 200) {
                 throw new MojoExecutionException("Failed to log in");
             }
 	    HttpEntity responseEntity = hcResponse.getEntity();
             if(responseEntity==null) {
-                throw new MojoExecutionException("url request returned null entity: " + hcResponse.getStatusLine());
+                throw new MojoExecutionException("url request returned null entity: " + new StatusLine(hcResponse));
             }
             String responseStr = EntityUtils.toString(responseEntity);
             if(responseStr.indexOf(LOGIN_FAILED_ERROR_MESSAGE)!=-1) {
                 throw new MojoExecutionException("Failed to log into Axis2 administration web console using credentials");
             }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error deploying aar", e);
         }finally {
             httpclient.close();
         }
@@ -138,7 +139,7 @@ public class DeployAarMojo extends AbstractAarMojo {
         getLog().debug("Uploading AAR to Axis2 Admin Web Console "+axis2AdminConsoleUploadURL);
 
 	MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.setMode(HttpMultipartMode.LEGACY);
         File file = project.getArtifact().getFile();
         FileBody fileBody = new FileBody(file);
         builder.addPart(project.getArtifact().getFile().getName(), fileBody);
@@ -148,12 +149,10 @@ public class DeployAarMojo extends AbstractAarMojo {
 
 	httpclient = null;
 	httpclient = HttpClients.createDefault();
-	httpclient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
-                CookiePolicy.BROWSER_COMPATIBILITY);
 
         try {
             CloseableHttpResponse hcResponse = httpclient.execute(httpPost);
-	    int status = hcResponse.getStatusLine().getStatusCode();
+	    int status = hcResponse.getCode();
             if(status != 200) {
                 throw new MojoExecutionException("Failed to log in");
             }
@@ -169,12 +168,17 @@ public class DeployAarMojo extends AbstractAarMojo {
 
 	httpclient = null;
 	httpclient = HttpClients.createDefault();
+	/* AXIS2-6051 in httpclient5 / core5 it is now CookieSpec that 
+	 * is set in RequestConfig. The default is 'Lax' which seems equivalent
+	 * to the deprecated property BROWSER_COMPATIBILITY: 
+	 * The policy that provides high degree of compatibilty with common cookie management of popular HTTP agents. 
 	httpclient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
                 CookiePolicy.BROWSER_COMPATIBILITY);
+        */
 
         try {
             CloseableHttpResponse hcResponse = httpclient.execute(get);
-	    int status = hcResponse.getStatusLine().getStatusCode();
+	    int status = hcResponse.getCode();
             if(status != 200) {
                 throw new MojoExecutionException("Failed to log out");
             }

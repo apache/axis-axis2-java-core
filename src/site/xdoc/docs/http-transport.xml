@@ -35,7 +35,7 @@ as the transport mechanism.</p>
 
 <h2>Contents</h2>
 <ul>
-  <li><a href="#HTTPClient4TransportSender">HTTPClient4TransportSender</a>
+  <li><a href="#HTTPClient5TransportSender">HTTPClient5TransportSender</a>
     <ul>
       <li><a href="#httpsupport">HTTPS support</a></li>
       <li><a href="#further">Further customization</a></li>
@@ -48,11 +48,11 @@ as the transport mechanism.</p>
   <li><a href="#reusing_httpclient_object">Reusing the httpclient object</a></li>
   <li><a href="#setting_cached_httpclient_object">Setting the cached httpclient object</a></li>
 </ul>
-<a name="HTTPClient4TransportSender"></a>
+<a name="HTTPClient5TransportSender"></a>
 
-<h2>HTTPClient4TransportSender</h2>
+<h2>HTTPClient5TransportSender</h2>
 
-<p>HTTPClient4TransportSender is the transport sender that is used by default in both
+<p>HTTPClient5TransportSender is the transport sender that is used by default in both
 the Server and Client APIs. As its name implies, it is based on <a
         xmlns="http://www.w3.org/1999/xhtml" xml:space="preserve" href="http://hc.apache.org/">Apache HttpComponents</a>.
 For maximum flexibility, this sender supports both the HTTP GET and POST interfaces.
@@ -67,7 +67,7 @@ of ServiceClient).  This pattern allows for HTTP 1.1 to automatically reuse TCP 
 <p>The &lt;transportSender/&gt; element defines transport senders in
 the axis2.xml configuration file as follows:</p>
 <pre>
-&lt;transportSender name="http" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt;
+&lt;transportSender name="http" class="org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender"&gt;
    &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
    &lt;parameter name="Transfer-Encoding"&gt;chunked&lt;/parameter&gt;
 &lt;/transportSender&gt;
@@ -95,10 +95,10 @@ encoding style (UTF-8, UTF-16, etc.) is provided via MessageContext.</p>
 <a name="httpsupport"></a>
 
 <h3>HTTPS support</h3>
-HTTPClient4TransportSender can be also used to communicate over https.
+HTTPClient5TransportSender can be also used to communicate over https.
 
 <pre>
-   &lt;transportSender name="<b>https</b>" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt;
+   &lt;transportSender name="<b>https</b>" class="org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender"&gt;
       &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
       &lt;parameter name="Transfer-Encoding"&gt;chunked&lt;/parameter&gt;
    &lt;/transportSender&gt;
@@ -169,7 +169,7 @@ References to the core HTTP classes used by Axis2 Stub classes can be obtained b
 
 <pre>
 TransportOutDescription transportOut = new TransportOutDescription("https");
-HTTPClient4TransportSender sender = new HTTPClient4TransportSender();
+HTTPClient5TransportSender sender = new HTTPClient5TransportSender();
 sender.init(stub._getServiceClient().getServiceContext().getConfigurationContext(), transportOut);
 transportOut.setSender(sender);
 options.setTransportOut(transportOut);
@@ -239,7 +239,7 @@ authenticate proxies. At deployment time, the user has to change the
 axis2.xml as follows. This authentication is available for both HTTP and
 HTTPS.</p>
 <pre>
-&lt;transportSender name="<b>http</b>" class="org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender"&gt;
+&lt;transportSender name="<b>http</b>" class="org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender"&gt;
    &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
    &lt;parameter name="PROXY" proxy_host="proxy_host_name" proxy_port="proxy_host_port"&gt;userName:domain:passWord&lt;/parameter&gt;
 &lt;/transportSender&gt;</pre>

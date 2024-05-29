@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http.impl.httpclient4;
+package org.apache.axis2.transport.http.impl.httpclient5;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,11 +34,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The Class HTTPClient4TransportSender use HC HTTPClient 4.X. 
+ * The Class HTTPClient5TransportSender use HC HTTPClient 5.X. 
  */
-public class HTTPClient4TransportSender extends AbstractHTTPTransportSender {
+public class HTTPClient5TransportSender extends AbstractHTTPTransportSender {
 
-    private static final Log log = LogFactory.getLog(HTTPClient4TransportSender.class);
+    private static final Log log = LogFactory.getLog(HTTPClient5TransportSender.class);
 
     @Override
     public void cleanup(MessageContext msgContext) throws AxisFault {

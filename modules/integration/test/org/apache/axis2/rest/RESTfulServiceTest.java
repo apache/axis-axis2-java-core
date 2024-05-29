@@ -35,15 +35,17 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.util.TimeValue;
 
 import javax.xml.namespace.QName;
 import java.io.InterruptedIOException;
@@ -149,13 +151,13 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
 
         try {
             CloseableHttpResponse hcResponse = httpclient.execute(httpGet);
-	    int status = hcResponse.getStatusLine().getStatusCode();
+	    int status = hcResponse.getCode();
             if (status != HttpStatus.SC_OK) {
-                throw new ClientProtocolException("url request failed: " + hcResponse.getStatusLine());
+                throw new ClientProtocolException("url request failed: " + new StatusLine(hcResponse));
             }
 	    HttpEntity responseEntity = hcResponse.getEntity();
             if(responseEntity==null) {
-                throw new ClientProtocolException("url request returned null entity: " + hcResponse.getStatusLine());
+                throw new ClientProtocolException("url request returned null entity: " + new StatusLine(hcResponse));
             }
             String responseStr = EntityUtils.toString(responseEntity);
             OMElement axisResponse = AXIOMUtil.stringToOM(responseStr);
@@ -177,13 +179,13 @@ public class RESTfulServiceTest extends UtilServerBasedTestCase {
 
         try {
             CloseableHttpResponse hcResponse = httpclient.execute(httpGet);
-	    int status = hcResponse.getStatusLine().getStatusCode();
+	    int status = hcResponse.getCode();
             if (status != HttpStatus.SC_OK) {
-                throw new ClientProtocolException("url request failed: " + hcResponse.getStatusLine());
+                throw new ClientProtocolException("url request failed: " + new StatusLine(hcResponse));
             }
 	    HttpEntity responseEntity = hcResponse.getEntity();
             if(responseEntity==null) {
-                throw new ClientProtocolException("url request returned null entity: " + hcResponse.getStatusLine());
+                throw new ClientProtocolException("url request returned null entity: " + new StatusLine(hcResponse));
             }
 
             String responseStr = EntityUtils.toString(responseEntity);

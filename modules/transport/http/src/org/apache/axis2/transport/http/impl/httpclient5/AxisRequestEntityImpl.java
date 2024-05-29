@@ -17,17 +17,19 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http.impl.httpclient4;
+package org.apache.axis2.transport.http.impl.httpclient5;
 
 import org.apache.axis2.transport.http.AxisRequestEntity;
 import org.apache.axis2.kernel.http.HTTPConstants;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.function.Supplier;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This Request Entity is used by the HttpComponentsTransportSender. This wraps the
@@ -41,12 +43,12 @@ public class AxisRequestEntityImpl implements HttpEntity {
     }
 
     @Override
-    public Header getContentType() {
-        return new BasicHeader(HTTPConstants.HEADER_CONTENT_TYPE, entity.getContentType());
+    public String getContentType() {
+        return entity.getContentType();
     }
 
     @Override
-    public Header getContentEncoding() {
+    public String getContentEncoding() {
         return null;
     }
 
@@ -68,11 +70,6 @@ public class AxisRequestEntityImpl implements HttpEntity {
     }
 
     @Override
-    public void consumeContent() {
-        // We don't need to do anything here.
-    }
-
-    @Override
     public long getContentLength() {
         return entity.getContentLength();
     }
@@ -85,5 +82,19 @@ public class AxisRequestEntityImpl implements HttpEntity {
     @Override
     public boolean isRepeatable() {
         return entity.isRepeatable();
+    }
+
+    @Override
+    public Supplier<List<? extends Header>> getTrailers() {
+        return null;
+    }
+
+    @Override
+    public Set<String> getTrailerNames() {
+        return null;
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

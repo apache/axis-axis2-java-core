@@ -21,16 +21,18 @@ package org.apache.axis2.transport.http.server;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.params.HttpParams;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.RejectedExecutionException;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.protocol.BasicHttpContext;
+
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponseFactory;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.impl.io.DefaultClassicHttpResponseFactory;
+import org.apache.hc.core5.http.io.SocketConfig;
 
 public class DefaultConnectionListener implements IOProcessor {
 
@@ -38,10 +40,12 @@ public class DefaultConnectionListener implements IOProcessor {
 
     private volatile boolean destroyed = false;
 
+    private final String scheme;
     private final int port;
     private final HttpConnectionManager connmanager;
     private final ConnectionListenerFailureHandler failureHandler;
-    private final HttpParams params;
+    private final Http1Config http1Config;
+    private final SocketConfig socketConfig;
 
     private ServerSocket serversocket = null;
 
@@ -49,10 +53,12 @@ public class DefaultConnectionListener implements IOProcessor {
      * Use this constructor to provide a custom ConnectionListenerFailureHandler, e.g. by subclassing DefaultConnectionListenerFailureHandler
      */
     public DefaultConnectionListener(
+	    String scheme,	    
             int port,
             final HttpConnectionManager connmanager,
             final ConnectionListenerFailureHandler failureHandler,
-            final HttpParams params) throws IOException {
+            final Http1Config http1Config,
+            final SocketConfig socketConfig) throws IOException {
         super();
         if (connmanager == null) {
             throw new IllegalArgumentException("Connection manager may not be null");
@@ -60,13 +66,18 @@ public class DefaultConnectionListener implements IOProcessor {
         if (failureHandler == null) {
             throw new IllegalArgumentException("Failure handler may not be null");
         }
-        if (params == null) {
-            throw new IllegalArgumentException("HTTP parameters may not be null");
+        if (http1Config == null) {
+            throw new IllegalArgumentException("http1Config may not be null");
         }
+        if (socketConfig == null) {
+            throw new IllegalArgumentException("socketConfig may not be null");
+        }
+        this.scheme = scheme;
         this.port = port;
         this.connmanager = connmanager;
         this.failureHandler = failureHandler;
-        this.params = params;
+        this.http1Config = http1Config;
+        this.socketConfig = socketConfig;
     }
 
     public void run() {
@@ -89,12 +100,12 @@ public class DefaultConnectionListener implements IOProcessor {
                         LOG.debug("Incoming HTTP connection from " +
                                 socket.getRemoteSocketAddress());
                     }
-                    AxisHttpConnection conn = new AxisHttpConnectionImpl(socket, this.params);
+                    AxisHttpConnection conn = new AxisHttpConnectionImpl(this.scheme, socket, this.http1Config, this.socketConfig);
                     try {
                         this.connmanager.process(conn);
                     } catch (RejectedExecutionException e) {
-                        conn.sendResponse(new DefaultHttpResponseFactory().newHttpResponse(
-                                HttpVersion.HTTP_1_0, HttpStatus.SC_SERVICE_UNAVAILABLE, new BasicHttpContext(null)));
+			HttpResponseFactory<ClassicHttpResponse> responseFactory = DefaultClassicHttpResponseFactory.INSTANCE;    
+                        conn.sendResponse(responseFactory.newHttpResponse(HttpStatus.SC_SERVICE_UNAVAILABLE));
                     }
                 } catch(java.io.InterruptedIOException ie) {
                     break;

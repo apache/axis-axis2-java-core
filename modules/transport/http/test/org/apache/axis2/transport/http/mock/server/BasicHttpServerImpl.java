@@ -25,49 +25,70 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.http.ConnectionClosedException;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpServerConnection;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentProducer;
-import org.apache.http.entity.EntityTemplate;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.impl.DefaultHttpServerConnection;
-import org.apache.http.message.BasicHttpRequest;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.protocol.BasicHttpProcessor;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.apache.http.protocol.HttpRequestHandlerRegistry;
-import org.apache.http.protocol.HttpService;
-import org.apache.http.protocol.ResponseConnControl;
-import org.apache.http.protocol.ResponseContent;
-import org.apache.http.protocol.ResponseDate;
-import org.apache.http.protocol.ResponseServer;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ConnectionClosedException;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.ExceptionListener;
+import org.apache.hc.core5.http.HttpConnection;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.URIScheme;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.config.CharCodingConfig;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.http.impl.io.DefaultBHttpServerConnectionFactory;
+import org.apache.hc.core5.http.impl.io.DefaultBHttpServerConnection;
+import org.apache.hc.core5.http.impl.io.DefaultClassicHttpResponseFactory;
+import org.apache.hc.core5.http.impl.io.HttpService;
+import org.apache.hc.core5.http.impl.Http1StreamListener;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.io.HttpServerConnection;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.HttpEntities;
+import org.apache.hc.core5.http.io.support.BasicHttpServerExpectationDecorator;
+import org.apache.hc.core5.http.io.support.BasicHttpServerRequestHandler;
+import org.apache.hc.core5.http.message.BasicHttpRequest;
+import org.apache.hc.core5.http.message.RequestLine;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.protocol.RequestHandlerRegistry;
+import org.apache.hc.core5.http.protocol.ResponseConnControl;
+import org.apache.hc.core5.http.protocol.ResponseContent;
+import org.apache.hc.core5.http.protocol.ResponseDate;
+import org.apache.hc.core5.http.protocol.ResponseServer;
+import org.apache.hc.core5.io.CloseMode;
 
 /**
  * The purpose of this server application is facilitate to HTTP related test
  * cases as a back end server based on httpcore. Original code copied from
  * ElementalHttpServer class from httpcore component of Apache HTTPComponents
  * project.
+ *
+ * AXIS2-6051: In the upgrade to httpclient5 and core5 the classes ClassicFileServerExample
+ * and ClassicTestServer are the replacements of ElementalHttpServer.  
  * 
- * @see http://svn.apache.org/repos/asf/httpcomponents/httpcore/trunk/httpcore/src
- *      /examples/org/apache/http/examples/ElementalHttpServer.java
+ * @see http://svn.apache.org/repos/asf/httpcomponents/httpcore/trunk/httpcore/src/examples/org/apache/http/examples/ElementalHttpServer.java
+ * @see https://hc.apache.org/httpcomponents-core-5.2.x/current/httpcore5/xref-test/org/apache/hc/core5/http/examples/ClassicFileServerExample.html     
+ * @see https://github.com/apache/httpcomponents-core/blob/master/httpcore5-testing/src/main/java/org/apache/hc/core5/testing/classic/ClassicTestServer.java
  * @since 1.7.0
  * 
  */
@@ -77,7 +98,7 @@ public class BasicHttpServerImpl implements BasicHttpServer {
     private Map<String, String> headers;
     private byte[] content;
     private String method;
-    private String url;
+    private String uri;
     private String responseTemplate;
     boolean close;
 
@@ -126,8 +147,8 @@ public class BasicHttpServerImpl implements BasicHttpServer {
         return method;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUri() {
+        return uri;
     }
 
     public void setHeaders(Map<String, String> headers) {
@@ -141,8 +162,8 @@ public class BasicHttpServerImpl implements BasicHttpServer {
         this.method = method;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUri(String url) {
+        this.uri = uri;
     }
 
     public int getEntityContentLength() {
@@ -175,132 +196,79 @@ public class BasicHttpServerImpl implements BasicHttpServer {
          * (non-Javadoc)
          * 
          * @see
-         * org.apache.http.protocol.HttpRequestHandler#handle(org.apache.http
-         * .HttpRequest, org.apache.http.HttpResponse,
-         * org.apache.http.protocol.HttpContext)
+         * org.apache.hc.core5.http.io.HttpRequestHandler#handle(org.apache.hc.core5.http.ClassicHttpRequest, org.apache.hc.core5.http.ClassicHttpResponse,
+         * org.apache.hc.core5.http.protocol.HttpContext)
          */
-        public void handle(final HttpRequest request, final HttpResponse response,
+        public void handle(final ClassicHttpRequest request, final ClassicHttpResponse response,
                 final HttpContext context) throws HttpException, IOException {
 
-            server.setMethod(request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH));
-            server.setUrl(request.getRequestLine().getUri());
+            server.setMethod(request.getMethod().toUpperCase(Locale.ENGLISH));
+            RequestLine requestLine = new RequestLine(request);
+            try {
+                server.setUri(requestLine.getUri());
+            } catch (final Exception ex) {
+                throw new HttpException("setUri() failed in BasicHttpServerImpl.handle(): " + ex.getMessage());
+            }
 
             // process HTTP Headers
-            for (Header header : request.getAllHeaders()) {
+            for (Header header : request.getHeaders()) {
                 server.getHeaders().put(header.getName(), header.getValue());
             }
 
-            // TODO implement processing for other Entity types
-            if (request instanceof HttpEntityEnclosingRequest) {
-                HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
-                byte[] entityContent = EntityUtils.toByteArray(entity);
+	    /*
+	     * In HttpClient 5.x one can enclose a request entity with any HTTP method 
+	     * even if violates semantic of the method. See: 
+	     * https://hc.apache.org/httpcomponents-client-5.3.x/migration-guide/migration-to-classic.html
+	     */
+	    final HttpEntity incomingEntity = request.getEntity();
+	    if (incomingEntity != null) {
+                final byte[] entityContent = EntityUtils.toByteArray(incomingEntity);
                 server.setContent(entityContent);
-            } else if (request instanceof BasicHttpRequest) {
+            } else {
                 BasicHttpRequest bhr = (BasicHttpRequest) request;
-                server.setContent(bhr.getRequestLine().getUri().getBytes());
-            }
+                server.setContent(requestLine.getUri().getBytes());
+	    }	    
 
             // Handle response based on "responseTemplate"
-            EntityTemplate body = null;
+            HttpEntity body = null;
             if (server.getResponseTemplate() == null
                     || server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_OK_XML)) {
-                response.setStatusCode(HttpStatus.SC_OK);
-                body = new EntityTemplate(new ContentProducer() {
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        writer.write("<Response>ok<Response>");
-                        writer.flush();
-                    }
-                });
+                response.setCode(HttpStatus.SC_OK);
 
-                response.setEntity(body);
+                body = HttpEntities.create(outStream -> outStream.write(("<Response>ok<Response>").getBytes(StandardCharsets.UTF_8)), ContentType.TEXT_HTML.withCharset(StandardCharsets.UTF_8));
 
             } else if (server.getResponseTemplate().equals(
                     BasicHttpServer.RESPONSE_HTTP_OK_LOOP_BACK)) {
-                response.setStatusCode(HttpStatus.SC_OK);
-                body = new EntityTemplate(new ContentProducer() {
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        writer.write(new String(server.getContent()));
-                        writer.flush();
-                    }
-                });
+                response.setCode(HttpStatus.SC_OK);
+                body = HttpEntities.create(outStream -> outStream.write(server.getContent()), ContentType.TEXT_HTML.withCharset(StandardCharsets.UTF_8));
+
             } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_404)) {
-                response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-                body = new EntityTemplate(new ContentProducer() {
-
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        writer.write("<html><body><h1>");
-                        writer.write(" not found - 404");
-                        writer.write("</h1></body></html>");
-                        writer.flush();
-                    }
-
-                });
+                response.setCode(HttpStatus.SC_NOT_FOUND);
+                body = HttpEntities.create(outStream -> outStream.write(("<html><body><h1> not found - 404 </h1></body></html>").getBytes(StandardCharsets.UTF_8)), ContentType.TEXT_HTML.withCharset(StandardCharsets.UTF_8));
                 
             } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_200)) {
-                response.setStatusCode(HttpStatus.SC_OK);
-                body = new EntityTemplate(new ContentProducer() {
+                response.setCode(HttpStatus.SC_OK);
+                body = HttpEntities.create(outStream -> outStream.write(("<Response> SC_ACCEPTED 202 <Response>").getBytes(StandardCharsets.UTF_8)), ContentType.TEXT_HTML.withCharset(StandardCharsets.UTF_8));
 
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        writer.write("<Response> SC_ACCEPTED 202 <Response>");
-                        writer.flush();
-                    }
-
-                });
-                
             } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_201)) {
-                response.setStatusCode(HttpStatus.SC_CREATED);
-                body = new EntityTemplate(new ContentProducer() {
-
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        //writer.write("<Response> SC_ACCEPTED 202 <Response>");
-                        writer.flush();
-                    }
-
-                });
+                response.setCode(HttpStatus.SC_CREATED);
                 
             } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_202)) {
-                response.setStatusCode(HttpStatus.SC_ACCEPTED);
-                body = new EntityTemplate(new ContentProducer() {
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        //writer.write("<Response> SC_ACCEPTED 202 <Response>");
-                        writer.flush();
-                    }
-
-                });
+                response.setCode(HttpStatus.SC_ACCEPTED);
                 
             } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_400)) {
-                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-                body = new EntityTemplate(new ContentProducer() {
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        //writer.write("<Response> SC_ACCEPTED 202 <Response>");
-                        writer.flush();
-                    }
-
-                });
+                response.setCode(HttpStatus.SC_BAD_REQUEST);
                 
             } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_500)) {
-                response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-                body = new EntityTemplate(new ContentProducer() {
-                    public void writeTo(final OutputStream outstream) throws IOException {
-                        OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        writer.write(" Server Error");
-                        writer.flush();
-                    }
-
-                });
+                response.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                body = HttpEntities.create(outStream -> outStream.write((" Server Error").getBytes(StandardCharsets.UTF_8)), ContentType.TEXT_HTML.withCharset(StandardCharsets.UTF_8));
                 
-            }            
-            
-            // TODO - customize to send content type depend on expectations.
-            body.setContentType("text/html; charset=UTF-8");
-            response.setEntity(body);
+            }
+
+	    if (body != null) {
+                response.setEntity(body);
+	    }
+
         }
 
     }
@@ -308,8 +276,12 @@ public class BasicHttpServerImpl implements BasicHttpServer {
     static class RequestListenerThread extends Thread {
 
         private final ServerSocket serversocket;
-        private final HttpParams params;
         private final HttpService httpService;
+        private final SocketConfig socketConfig;
+	private final ExceptionListener exceptionListener;
+	private final Http1StreamListener streamListener;
+
+        private final DefaultBHttpServerConnectionFactory connectionFactory;
 
         /**
          * Instantiates a new request listener thread.
@@ -322,29 +294,89 @@ public class BasicHttpServerImpl implements BasicHttpServer {
          */
         public RequestListenerThread(BasicHttpServer server) throws IOException {
             this.serversocket = new ServerSocket(0);
-            this.params = new BasicHttpParams();
-            // Basic configuration.
-            this.params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 5000)
-                    .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024)
-                    .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false)
-                    .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
-                    .setParameter(CoreProtocolPNames.ORIGIN_SERVER, "HttpComponents/1.1");
 
-            BasicHttpProcessor httpproc = new BasicHttpProcessor();
-            httpproc.addInterceptor(new ResponseDate());
-            httpproc.addInterceptor(new ResponseServer());
-            httpproc.addInterceptor(new ResponseContent());
-            httpproc.addInterceptor(new ResponseConnControl());
+            this.socketConfig = SocketConfig.custom()
+                 .setSoTimeout(5000, TimeUnit.MILLISECONDS)
+                 .setTcpNoDelay(true)
+                 .setSndBufSize(8 * 1024)
+                 .setRcvBufSize(8 * 1024)
+                 .build();
+
+	    this.exceptionListener = (new ExceptionListener() {
+
+                    @Override
+                    public void onError(final Exception ex) {
+                        if (ex instanceof SocketException) {
+                            System.out.println("BasicHttpServerImpl socket error: " + Thread.currentThread() + " " + ex.getMessage());
+                        } else {
+                            System.out.println("BasicHttpServerImpl error: " + Thread.currentThread() + " " + ex.getMessage());
+                            ex.printStackTrace(System.out);
+                        }
+                    }
+
+		    @Override
+                    public void onError(final HttpConnection connection, final Exception ex) {
+                        if (ex instanceof SocketTimeoutException) {
+                            System.out.println("BasicHttpServerImp SocketTimeoutException: " + Thread.currentThread() + " time out");
+                        } else if (ex instanceof SocketException || ex instanceof ConnectionClosedException) {
+                            System.out.println("BasicHttpServerImpl SocketException: " + Thread.currentThread() + " " + ex.getMessage());
+                        } else {
+                            System.out.println("BasicHttpServerImpl: " + Thread.currentThread() + " " + ex.getMessage());
+                            ex.printStackTrace(System.out);
+                        }
+                    }
+
+                });
+
+                this.streamListener = (new Http1StreamListener() {
+
+                    @Override
+                    public void onRequestHead(final HttpConnection connection, final HttpRequest request) {
+                        System.out.println(connection.getRemoteAddress() + " " + new RequestLine(request));
+
+                    }
+
+                    @Override
+                    public void onResponseHead(final HttpConnection connection, final HttpResponse response) {
+                        System.out.println(connection.getRemoteAddress() + " " + new StatusLine(response));
+                    }
+
+                    @Override
+                    public void onExchangeComplete(final HttpConnection connection, final boolean keepAlive) {
+                        if (keepAlive) {
+                            System.out.println(connection.getRemoteAddress() + " exchange completed (connection kept alive)");
+                        } else {
+                            System.out.println(connection.getRemoteAddress() + " exchange completed (connection closed)");
+                        }
+                    }
+
+                });
+
+            final HttpProcessorBuilder b = HttpProcessorBuilder.create();	
+            b.addAll(
+                new ResponseDate(),
+                new ResponseServer("HttpComponents/1.1"),
+                new ResponseContent(),
+                new ResponseConnControl());
+            HttpProcessor httpproc = b.build();
 
             // Set up request handlers
-            HttpRequestHandlerRegistry reqistry = new HttpRequestHandlerRegistry();
-            reqistry.register("*", new HttpServiceHandler(server));
+	    RequestHandlerRegistry<HttpRequestHandler> registry = new RequestHandlerRegistry<>();
+            registry.register(null, "*", new HttpServiceHandler(server));
+
+            // Create HTTP/1.1 protocol configuration
+            Http1Config h1Config = Http1Config.custom()
+                .setMaxHeaderCount(500)
+                .setMaxLineLength(8000)
+                .setMaxEmptyLineCount(4)
+                .build();
+
+
+	    this.connectionFactory = new DefaultBHttpServerConnectionFactory(URIScheme.HTTP.id, h1Config, CharCodingConfig.DEFAULT);
 
             // Set up the HTTP service
-            this.httpService = new HttpService(httpproc, new DefaultConnectionReuseStrategy(),
-                    new DefaultHttpResponseFactory());
-            this.httpService.setParams(this.params);
-            this.httpService.setHandlerResolver(reqistry);
+            this.httpService = new HttpService(httpproc, new BasicHttpServerExpectationDecorator(new BasicHttpServerRequestHandler(registry, DefaultClassicHttpResponseFactory.INSTANCE)), h1Config, DefaultConnectionReuseStrategy.INSTANCE, this.streamListener);
+
         }
 
         /**
@@ -362,34 +394,49 @@ public class BasicHttpServerImpl implements BasicHttpServer {
          * @see java.lang.Thread#run()
          */
         public void run() {
-            System.out.println("Listening on port " + this.serversocket.getLocalPort());
             while (!Thread.interrupted()) {
                 try {
                     // Set up HTTP connection
                     Socket socket = this.serversocket.accept();
-                    DefaultHttpServerConnection conn = new DefaultHttpServerConnection();
-                    System.out.println("Incoming connection from " + socket.getInetAddress());
-                    conn.bind(socket, this.params);
+                    socket.setSoTimeout(this.socketConfig.getSoTimeout().toMillisecondsIntBound());
+                    socket.setKeepAlive(this.socketConfig.isSoKeepAlive());
+                    socket.setTcpNoDelay(this.socketConfig.isTcpNoDelay());
+                    if (this.socketConfig.getRcvBufSize() > 0) {
+                        socket.setReceiveBufferSize(this.socketConfig.getRcvBufSize());
+                    }
+                    if (this.socketConfig.getSndBufSize() > 0) {
+                        socket.setSendBufferSize(this.socketConfig.getSndBufSize());
+                    }
+                    if (this.socketConfig.getSoLinger().toSeconds() >= 0) {
+                        socket.setSoLinger(true, this.socketConfig.getSoLinger().toSecondsIntBound());
+                    }
+                    final DefaultBHttpServerConnection conn = this.connectionFactory.createConnection(socket);
+                    conn.bind(socket);
 
                     // Start worker thread
-                    Thread t = new WorkerThread(this.httpService, conn);
+                    Thread t = new WorkerThread(this.httpService, conn, this.exceptionListener);
                     t.setDaemon(false);
                     t.start();
                 } catch (InterruptedIOException ex) {
                     break;
                 } catch (IOException e) {
-                    System.err.println("I/O error initialising connection thread: "
-                            + e.getMessage());
+                    System.err.println("I/O error in connection thread: "
+                            + e.getMessage() + " , at time: " +LocalDateTime.now());
                     break;
                 }
             }
         }
     }
 
+
+   /**
+    * @see https://github.com/apache/httpcomponents-core/blob/master/httpcore5/src/main/java/org/apache/hc/core5/http/impl/bootstrap/Worker.java
+    */
     static class WorkerThread extends Thread {
 
         private final HttpService httpservice;
         private final HttpServerConnection conn;
+	private final ExceptionListener exceptionListener;
 
         /**
          * Instantiates a new worker thread.
@@ -398,11 +445,14 @@ public class BasicHttpServerImpl implements BasicHttpServer {
          *            the httpservice
          * @param conn
          *            the conn
+         * @param exceptionListener
+         *            the exceptionListener
          */
-        public WorkerThread(final HttpService httpservice, final HttpServerConnection conn) {
+        public WorkerThread(final HttpService httpservice, final HttpServerConnection conn, ExceptionListener exceptionListener) {
             super();
             this.httpservice = httpservice;
             this.conn = conn;
+	    this.exceptionListener = exceptionListener;
         }
 
         /*
@@ -411,23 +461,18 @@ public class BasicHttpServerImpl implements BasicHttpServer {
          * @see java.lang.Thread#run()
          */
         public void run() {
-            System.out.println("New connection thread");
-            HttpContext context = new BasicHttpContext(null);
             try {
+                final BasicHttpContext localContext = new BasicHttpContext();
+                final HttpCoreContext context = HttpCoreContext.adapt(localContext);
                 while (!Thread.interrupted() && this.conn.isOpen()) {
                     this.httpservice.handleRequest(this.conn, context);
+                    localContext.clear();
                 }
-            } catch (ConnectionClosedException ex) {
-                System.err.println("Client closed connection");
-            } catch (IOException ex) {
-                System.err.println("I/O error: " + ex.getMessage());
-            } catch (HttpException ex) {
-                System.err.println("Unrecoverable HTTP protocol violation: " + ex.getMessage());
+                this.conn.close();
+            } catch (final Exception ex) {
+                this.exceptionListener.onError(this.conn, ex);
             } finally {
-                try {
-                    this.conn.shutdown();
-                } catch (IOException ignore) {
-                }
+                this.conn.close(CloseMode.IMMEDIATE);
             }
         }
 

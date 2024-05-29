@@ -20,7 +20,7 @@
 package org.apache.axis2.transport.http.mock;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
+import org.apache.hc.core5.http.Header;
 
 /**
  * The Interface MockHTTPResponse.
@@ -30,20 +30,20 @@ import java.util.Map;
 public interface MockHTTPResponse {
 
     /**
-     * Gets all the headers as a Map of <Header-Name, Header-Value>.
+     * Gets all the headers as an array of org.apache.hc.core5.http.Header.
      * 
      * This method can be used in test cases to retrieve all headers written to
      * the HttpServletResponse.
      * 
      * @return the headers
      */
-    public Map<String, String> getHeaders();
+    public Header[] getHeaders();
 
     /**
      * HTTP response write to a internal ByteArrayOutputStream and possible to
      * retrieve written content using this method.
      * 
-     * @return tByteArrayOutputStream
+     * @return ByteArrayOutputStream
      */
     public ByteArrayOutputStream getByteArrayOutputStream();
 

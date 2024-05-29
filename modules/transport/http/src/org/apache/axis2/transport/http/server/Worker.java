@@ -20,7 +20,7 @@
 package org.apache.axis2.transport.http.server;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.http.HttpException;
+import org.apache.hc.core5.http.HttpException;
 
 import java.io.IOException;
 

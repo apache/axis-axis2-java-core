@@ -28,7 +28,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.transport.http.impl.httpclient4.HTTPClient4TransportSender;
+import org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -96,9 +96,9 @@ public class OptionsSaveTest extends TestCase {
         TransportOutDescription transportOut = new TransportOutDescription("null");
         TransportOutDescription transportOut2 = new TransportOutDescription("happy");
         TransportOutDescription transportOut3 = new TransportOutDescription("golucky");
-        transportOut.setSender(new HTTPClient4TransportSender());
-        transportOut2.setSender(new HTTPClient4TransportSender());
-        transportOut3.setSender(new HTTPClient4TransportSender());
+        transportOut.setSender(new HTTPClient5TransportSender());
+        transportOut2.setSender(new HTTPClient5TransportSender());
+        transportOut3.setSender(new HTTPClient5TransportSender());
         options.setTransportOut(transportOut);
         axisConfiguration.addTransportOut(transportOut3);
         axisConfiguration.addTransportOut(transportOut2);

@@ -19,15 +19,15 @@
 
 package org.apache.axis2.json.moshi;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.HttpEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import java.io.IOException;
 
@@ -42,14 +42,16 @@ public class UtilTest {
 
         try {
             CloseableHttpResponse response = httpclient.execute(httpPost);
-	    int status = response.getStatusLine().getStatusCode();
+	    int status = response.getCode();
             if (status >= 200 && status < 300) {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity,"UTF-8") : null;
             } else {
                 throw new ClientProtocolException("Unexpected response status: " + status + " , on URL: " + strURL);
             }
-        }finally {
+	} catch (final Exception ex) {
+            throw new ClientProtocolException("Unexpected Exception: " + ex.getMessage() + " , on URL: " + strURL);
+        } finally {
             httpclient.close();
         }
     }

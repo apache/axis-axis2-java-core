@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http.impl.httpclient4;
+package org.apache.axis2.transport.http.impl.httpclient5;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -28,17 +28,15 @@ import org.apache.axis2.transport.http.HTTPTransportConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.NTCredentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.NTCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.core5.http.HttpHost;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -93,14 +91,14 @@ public class HTTPProxyConfigurator {
                     proxyPassword = "";
                 }
 
-                proxyCredentials = new UsernamePasswordCredentials(proxyUser, proxyPassword);
+                proxyCredentials = new UsernamePasswordCredentials(proxyUser, proxyPassword.toCharArray());
 
                 int proxyUserDomainIndex = proxyUser.indexOf("\\");
                 if (proxyUserDomainIndex > 0) {
                     String domain = proxyUser.substring(0, proxyUserDomainIndex);
                     if (proxyUser.length() > proxyUserDomainIndex + 1) {
                         String user = proxyUser.substring(proxyUserDomainIndex + 1);
-                        proxyCredentials = new NTCredentials(user, proxyPassword, proxyHost,
+                        proxyCredentials = new NTCredentials(user, proxyPassword.toCharArray(), proxyHost,
                                                              domain);
                     }
                 }
@@ -127,9 +125,9 @@ public class HTTPProxyConfigurator {
             String domain = proxyProperties.getDomain();
 
             if (userName != null && password != null && domain != null) {
-                proxyCredentials = new NTCredentials(userName, password, proxyHost, domain);
+                proxyCredentials = new NTCredentials(userName, password.toCharArray(), proxyHost, domain);
             } else if (userName != null && domain == null) {
-                proxyCredentials = new UsernamePasswordCredentials(userName, password);
+                proxyCredentials = new UsernamePasswordCredentials(userName, password.toCharArray());
             }
 
         }
@@ -145,19 +143,19 @@ public class HTTPProxyConfigurator {
             proxyPort = Integer.parseInt(port);
         }
 
-        if (proxyCredentials != null) {
+	// AXIS2-6051, CredentialsProvider no longer has setCredentialsProvider() however BasicCredentialsProvider
+	// does have it. clientContext.getCredentialsProvider() returns CredentialsProvider. 
+        HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+	if (proxyCredentials != null) {
+            if (clientContext.getCredentialsProvider() == null) {
+                BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+                clientContext.setCredentialsProvider(credsProvider);
+                credsProvider.setCredentials(new AuthScope(null, -1), proxyCredentials);
+            }
             // TODO : Set preemptive authentication, but its not recommended in HC 4
             requestConfig.setAuthenticationEnabled(true);
-            CredentialsProvider credsProvider = clientContext.getCredentialsProvider();
-            if (credsProvider == null) {
-                credsProvider = new BasicCredentialsProvider();
-                clientContext.setCredentialsProvider(credsProvider);
-            }
-            credsProvider.setCredentials(AuthScope.ANY, proxyCredentials);
-            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
             requestConfig.setProxy(proxy);
-
-        }
+	}
     }
 
     private static OMElement getProxyConfigurationElement(Parameter proxySettingsFromAxisConfig)

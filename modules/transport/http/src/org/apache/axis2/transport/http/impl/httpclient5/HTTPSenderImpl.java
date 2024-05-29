@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.transport.http.impl.httpclient4;
+package org.apache.axis2.transport.http.impl.httpclient5;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
@@ -28,18 +28,30 @@ import org.apache.axis2.transport.http.HTTPSender;
 import org.apache.axis2.transport.http.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.config.CharCodingConfig;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
+import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.io.DefaultHttpRequestWriterFactory;
+import org.apache.hc.core5.http.impl.io.DefaultHttpResponseParserFactory;
+import org.apache.hc.core5.http.io.HttpConnectionFactory;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.util.Timeout;
 
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -50,7 +62,13 @@ public class HTTPSenderImpl extends HTTPSender {
     @Override
     protected Request createRequest(MessageContext msgContext, String methodName, URL url,
             AxisRequestEntity requestEntity) throws AxisFault {
-        return new RequestImpl(getHttpClient(msgContext), msgContext, methodName, url, requestEntity);
+
+        try {
+            RequestImpl requestImpl = new RequestImpl(getHttpClient(msgContext), msgContext, methodName, url.toURI(), requestEntity);
+            return requestImpl;
+        } catch (Exception ex) {
+            throw AxisFault.makeFault(ex);
+        }
     }
 
     private HttpClient getHttpClient(MessageContext msgContext) {
@@ -103,9 +121,60 @@ public class HTTPSenderImpl extends HTTPSender {
                                 .register("https", new SSLConnectionSocketFactory(sslContext))
                                 .build();
 
-                        connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+                        Integer tempSoTimeoutProperty = (Integer) msgContext.getProperty(HTTPConstants.SO_TIMEOUT);
+                        Integer tempConnTimeoutProperty = (Integer) msgContext
+                                .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+                        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
+                
+			Timeout connectTO;
+                        if (tempConnTimeoutProperty != null) {
+                            // timeout for initial connection
+			    connectTO = Timeout.ofMilliseconds(tempConnTimeoutProperty);
+                        } else {
+			    // httpclient5 / core5 default	
+			    connectTO = Timeout.ofMinutes(3);
+			}
+			Timeout socketTO;
+                        if (tempSoTimeoutProperty != null) {
+                            // SO_TIMEOUT -- timeout for blocking reads
+			    socketTO = Timeout.ofMilliseconds(tempSoTimeoutProperty);
+                        } else {
+                            // set timeout in client
+                            if (timeout > 0) {
+			        socketTO = Timeout.ofMilliseconds(timeout);
+                            } else {
+                                log.error("Invalid timeout value detected: " + timeout + " , using 3 minute default");
+			        socketTO = Timeout.ofMilliseconds(180000);
+			    }	    
+                        }
+			SocketConfig socketConfig = SocketConfig.custom()
+                            // set timeouts, ignore other defaults
+                            .setSoTimeout(socketTO)
+                            .setSoKeepAlive(true)
+                            .setSoReuseAddress(true)
+                            .setTcpNoDelay(true)
+                            .setSoLinger(50, TimeUnit.MILLISECONDS)
+                            .setSndBufSize(8 * 1024)
+                            .setRcvBufSize(8 * 1024)
+                            .build();
+
+                        ConnectionConfig connectionConfig = ConnectionConfig.custom().setConnectTimeout(connectTO).build();
+
+                        // Create HTTP/1.1 protocol configuration
+                        Http1Config http1Config = Http1Config.custom()
+                            .setMaxHeaderCount(500)
+                            .setMaxLineLength(4000)
+                            .setMaxEmptyLineCount(1)
+                            .build();
+
+			final HttpConnectionFactory<ManagedHttpClientConnection> connFactory = new ManagedHttpClientConnectionFactory(
+                http1Config, CharCodingConfig.DEFAULT, new DefaultHttpRequestWriterFactory(), new DefaultHttpResponseParserFactory(http1Config));
+
+                        connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, connFactory);
                         ((PoolingHttpClientConnectionManager)connManager).setMaxTotal(200);
                         ((PoolingHttpClientConnectionManager)connManager).setDefaultMaxPerRoute(200);
+                        ((PoolingHttpClientConnectionManager)connManager).setDefaultSocketConfig(socketConfig);
+                        ((PoolingHttpClientConnectionManager)connManager).setDefaultConnectionConfig(connectionConfig);
                         configContext.setProperty(
                                 HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER, connManager);
                     }
