@@ -77,14 +77,11 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSession;
-
-import java.util.UUID;
 
 public class AxisHttpConnectionImpl implements AxisHttpConnection {
 
@@ -223,7 +220,6 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
     // receiveRequestHeader() and receiveRequestEntity()
     @Override
     public ClassicHttpRequest receiveRequest() throws HttpException, IOException {
-        String uuid = UUID.randomUUID().toString();
         // Prepare input stream
         final SocketHolder socketHolder = ensureOpen();
         this.in = socketHolder.getInputStream();
@@ -231,7 +227,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         this.inbuffer.clear();
         final int i = this.inbuffer.readLine(headLine, this.in);
         if (i == -1) {
-            throw new IOException("readLine() from SessionInputBufferImpl returned -1 in method receiveRequest() with uuid: " +uuid+ "  ... at time: " +LocalDateTime.now());
+            throw new IOException("readLine() from SessionInputBufferImpl returned -1 in method receiveRequest()");
         }
 
 	final Header[] headers = AbstractMessageParser.parseHeaders(
