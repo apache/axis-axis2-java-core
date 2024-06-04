@@ -39,13 +39,21 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.xmlbeans.BindingConfig;
 import org.apache.xmlbeans.Filer;
+import org.apache.xmlbeans.InterfaceExtension;
+import org.apache.xmlbeans.PrePostExtension;
 import org.apache.xmlbeans.SchemaGlobalElement;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeLoader;
 import org.apache.xmlbeans.SchemaTypeSystem;
+import org.apache.xmlbeans.UserType;
 import org.apache.xmlbeans.XmlBeans;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.config.BindingConfigImpl;
+import org.apache.xmlbeans.impl.tool.SchemaCompiler;
+import org.apache.xmlbeans.impl.xb.xmlconfig.ConfigDocument;
 import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
 import org.w3c.dom.Element;
 import org.xml.sax.EntityResolver;
@@ -65,6 +73,9 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,6 +85,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 /**
  * Framework-linked code used by XMLBeans data binding support. This is accessed via reflection from
@@ -178,7 +190,16 @@ public class CodeGenerationUtility {
                     .toArray(new XmlSchema[completeSchemaList.size()]));
             er.setBaseUri(cgconfig.getBaseURI());
 
-            String xsdConfigFile = (String)cgconfig.getProperties().get(XMLBeansExtension.XSDCONFIG_OPTION);
+            String xsdConfigFile = (String) cgconfig.getProperties().get(XMLBeansExtension.XSDCONFIG_OPTION_LONG);
+            if (xsdConfigFile == null) {
+                xsdConfigFile = (String) cgconfig.getProperties().get(XMLBeansExtension.XSDCONFIG_OPTION);
+            }
+            File[] javaFiles = getBindingConfigJavaFiles(
+                    (String) cgconfig.getProperty(XMLBeansExtension.XSDCONFIG_JAVAFILES_OPTION));
+            File[] classpath = getBindingConfigClasspath(
+                    (String) cgconfig.getProperty(XMLBeansExtension.XSDCONFIG_CLASSPATH_OPTION));
+            BindingConfig bindConf = new Axis2BindingConfig(cgconfig.getUri2PackageNameMap(),
+                    xsdConfigFile, javaFiles, classpath);
 
             //-Ejavaversion switch to XmlOptions to generate 1.5 compliant code
             XmlOptions xmlOptions	=	new XmlOptions();
@@ -187,14 +208,14 @@ public class CodeGenerationUtility {
             if(null!=cgconfig.getProperty("javaversion")){
             	xmlOptions.put(XmlOptions.GENERATE_JAVA_VERSION,cgconfig.getProperty("javaversion"));
             }
+
             sts = XmlBeans.compileXmlBeans(
                     // set the STS name; defaults to null, which makes the generated class
                     // include a unique (but random) STS name
                     typeSystemName,
                     null,
                     convertToSchemaArray(topLevelSchemaList),
-                    new Axis2BindingConfig(cgconfig.getUri2PackageNameMap(),
-                                           xsdConfigFile),
+                    bindConf,
                     XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(cgconfig),
                     xmlOptions);
@@ -490,15 +511,18 @@ public class CodeGenerationUtility {
     }
 
     /**
-     * Custom binding configuration for the code generator. This controls how the namespaces are
-     * suffixed/prefixed
+     * Custom binding configuration for the code generator. This controls how the
+     * namespaces are suffixed/prefixed. Keeps a reference to XMLBeans' own
+     * BindingConfigImpl constructed from an xsdconfig, these settings take
+     * precedence over ours.
      */
     private static class Axis2BindingConfig extends BindingConfig {
 
         private Map uri2packageMappings = null;
-        private XSDConfig xsdConfig = null;
+        private BindingConfig bindConf = null;
 
-        public Axis2BindingConfig(Map uri2packageMappings, String xsdConfigfile) {
+        public Axis2BindingConfig(Map uri2packageMappings, String xsdConfigfile, File[] javaFiles,
+                File[] classpath) {
             this.uri2packageMappings = uri2packageMappings;
             if (this.uri2packageMappings == null) {
                 //make an empty one to avoid nasty surprises
@@ -507,20 +531,52 @@ public class CodeGenerationUtility {
 
             // Do we have an xsdconfig file?
             if (xsdConfigfile != null) {
-                xsdConfig = new XSDConfig(xsdConfigfile);
+                bindConf = buildBindingConfig(xsdConfigfile, javaFiles, classpath);
             }
         }
 
+        /**
+         * Mostly stolen from {@link SchemaCompiler#loadTypeSystem}
+         */
+        private BindingConfig buildBindingConfig(String configPath, File[] javaFiles,
+                File[] classpath) {
+            SchemaTypeLoader loader = XmlBeans
+                    .typeLoaderForClassLoader(SchemaDocument.class.getClassLoader());
+            XmlOptions options = new XmlOptions();
+            options.put(XmlOptions.LOAD_LINE_NUMBERS);
+            // options.setEntityResolver(entResolver); // useless?
+            Map<String, String> MAP_COMPATIBILITY_CONFIG_URIS = new HashMap<String, String>();
+            MAP_COMPATIBILITY_CONFIG_URIS.put("http://www.bea.com/2002/09/xbean/config",
+                    "http://xml.apache.org/xmlbeans/2004/02/xbean/config");
+            options.setLoadSubstituteNamespaces(MAP_COMPATIBILITY_CONFIG_URIS);
+
+            XmlObject configdoc;
+            try {
+                configdoc = loader.parse(new File(configPath), null, options);
+            } catch (IOException ioe) {
+                log.error("Invalid xsd-conf: " + configPath);
+                return null;
+            } catch (XmlException xe) {
+                log.error("Invalid xsd-conf: " + configPath);
+                return null;
+            }
+            if (!(configdoc instanceof ConfigDocument) || !configdoc.validate()) {
+                log.error("Invalid xsd-conf: " + configdoc);
+                return null;
+            }
+            log.info("Loaded config file " + configPath);
+            ConfigDocument.Config[] configArr = { ((ConfigDocument) configdoc).getConfig() };
+
+            return BindingConfigImpl.forConfigDocuments(configArr, javaFiles, classpath);
+        }
+
         public String lookupPackageForNamespace(String uri) {
-            /* If the xsdconfig file has mappings, we'll use them instead of the -p option.
-             * If we have an xsdconfig file but no namespace to package mappings, then we'll
-             * defer to the -p option.
-             */
-            if (xsdConfig != null) {
-                if (xsdConfig.hasNamespaceToJavaPackageMappings) {
-                    log.debug("RETURNING " + uri + " = " +
-                            xsdConfig.getNamespacesToJavaPackages().get(uri));
-                    return (String)xsdConfig.getNamespacesToJavaPackages().get(uri);
+            // First try the xsdconfig. If that yields null, we'll look for our own -p option.
+            if (bindConf != null) {
+                String packageName = bindConf.lookupPackageForNamespace(uri);
+                if (packageName != null) {
+                    log.debug("RETURNING " + uri + " = " + packageName);
+                    return packageName;
                 }
             }
 
@@ -531,25 +587,125 @@ public class CodeGenerationUtility {
             }
         }
 
+        public String lookupPrefixForNamespace(String uri) {
+            if (bindConf != null) {
+                return bindConf.lookupPrefixForNamespace(uri);
+            } else {
+                return super.lookupPrefixForNamespace(uri);
+            }
+        }
+
+        public String lookupSuffixForNamespace(String uri) {
+            if (bindConf != null) {
+                return bindConf.lookupSuffixForNamespace(uri);
+            } else {
+                return super.lookupSuffixForNamespace(uri);
+            }
+        }
+
         public String lookupJavanameForQName(QName qname) {
-            /* The mappings are stored in the format:
-            * NAMESPACE:LOCAL_NAME, i.e.
-            * urn:weegietech:minerva:moduleType
-            */
-            if (xsdConfig != null) {
-                String key = qname.getNamespaceURI() + ":" + qname.getLocalPart();
-                if (xsdConfig.getSchemaTypesToJavaNames().containsKey(key)) {
-                    log.debug("RETURNING " + qname.getLocalPart() + " = " +
-                            xsdConfig.getSchemaTypesToJavaNames().get(key));
-                    return (String)xsdConfig.getSchemaTypesToJavaNames().get(key);
-                } else {
-                    return null;
-                }
+            if (bindConf != null) {
+                return bindConf.lookupJavanameForQName(qname);
             } else {
                 return super.lookupJavanameForQName(qname);
             }
-
         }
+
+        public String lookupJavanameForQName(QName qname, int kind) {
+            if (bindConf != null) {
+                return bindConf.lookupJavanameForQName(qname, kind);
+            } else {
+                return super.lookupJavanameForQName(qname, kind);
+            }
+        }
+
+        public InterfaceExtension[] getInterfaceExtensions() {
+            if (bindConf != null) {
+                return bindConf.getInterfaceExtensions();
+            } else {
+                return super.getInterfaceExtensions();
+            }
+        }
+
+        public InterfaceExtension[] getInterfaceExtensions(String fullJavaName) {
+            if (bindConf != null) {
+                return bindConf.getInterfaceExtensions(fullJavaName);
+            } else {
+                return super.getInterfaceExtensions(fullJavaName);
+            }
+        }
+
+        public PrePostExtension[] getPrePostExtensions() {
+            if (bindConf != null) {
+                return bindConf.getPrePostExtensions();
+            } else {
+                return super.getPrePostExtensions();
+            }
+        }
+
+        public PrePostExtension getPrePostExtension(String fullJavaName) {
+            if (bindConf != null) {
+                return bindConf.getPrePostExtension(fullJavaName);
+            } else {
+                return super.getPrePostExtension(fullJavaName);
+            }
+        }
+
+        public UserType[] getUserTypes() {
+            if (bindConf != null) {
+                return bindConf.getUserTypes();
+            } else {
+                return super.getUserTypes();
+            }
+        }
+
+        public UserType lookupUserTypeForQName(QName qname) {
+            if (bindConf != null) {
+                return bindConf.lookupUserTypeForQName(qname);
+            } else {
+                return super.lookupUserTypeForQName(qname);
+            }
+        }
+    }
+
+    /**
+     * Gives all *.java files in each of the given (file or directory) targets,
+     * searched recursively.
+     * 
+     * @param javaFileNames names of targets, seperated by whitespace
+     * 
+     */
+    private static File[] getBindingConfigJavaFiles(String javaFileNames) {
+        if (javaFileNames == null) {
+            return new File[0];
+        }
+        List<File> files = new Vector<File>();
+        for (String javaFileName : javaFileNames.split("\\s")) {
+            try (Stream<Path> pathStream = Files.walk(new File(javaFileName).toPath(),
+                    FileVisitOption.FOLLOW_LINKS)) {
+                pathStream
+                        .filter(p -> (Files.isRegularFile(p) && p.toString().endsWith(".java")))
+                        .forEach(p -> files.add(p.toFile()));
+            } catch (IOException ioe) {
+                log.info("Could not read javaFile: " + javaFileName);
+            }
+        }
+        return files.toArray(new File[0]);
+    }
+
+    /**
+     * Gives the Files whose names are given in the String, seperated by whitespace
+     */
+    private static File[] getBindingConfigClasspath(String classpathNames) {
+        if (classpathNames == null) {
+            return new File[0];
+        }
+        String[] classpaths = classpathNames.split("\\s");
+        File[] classpathFiles = new File[classpaths.length];
+        for (int i = 0; i < classpaths.length; i++) {
+            classpathFiles[i] = new File(classpaths[i]);
+        }
+        return classpathFiles;
     }
 
     /**
