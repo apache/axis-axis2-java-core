@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import jakarta.activation.DataHandler;
@@ -569,6 +570,8 @@ public class ConverterUtilTest extends TestCase {
 
     public void testCompareBigIntegerValueIsLessThanTotalDigitsFacetRestriction() {
         //AXIS2-5724 - Handle Decimal String value when casting to Long.
+        //AXIS2-6068 - ConverterUtilTest is locale-dependent
+        Locale.setDefault(Locale.US);
         BigInteger value = BigInteger.valueOf(100L);
         String totalDigitsFromXsd = "3";
         String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
