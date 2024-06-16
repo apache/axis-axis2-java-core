@@ -87,6 +87,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -1350,7 +1351,7 @@ public class ConverterUtil {
         //AXIS2-5724 - Handle Decimal String value when casting to Long.
         long param;
         try {
-            NumberFormat nf = NumberFormat.getInstance();
+            NumberFormat nf = NumberFormat.getInstance(Locale.US);
             param = nf.parse(value).longValue();
         } catch (Exception e) {
             throw new ObjectConversionException(e);
