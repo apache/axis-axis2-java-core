@@ -110,7 +110,7 @@ Guide</a> for instructions). From the <a href="#homepage">Axis2 Web
 Application Home page</a> you can go to the Administration page by
 clicking the 'Administration' link. The Login page shown below will
 appear requesting the user name and password. The default user name
-and password are are undefined by default as the values are blank
+and password are undefined by default as the values are blank
 in the axis2.xml file. You must edit the axis2.xml to enable a login
 by defining a username and password. Below is an arbitrary example.
 The username is 'admin' (without quotes) and the password is 'axis2'
