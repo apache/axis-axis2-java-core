@@ -23,8 +23,8 @@
     <!-- ================================================= -->
     <parameter name="enableMTOM">false</parameter>
 
-    <parameter name="userName">admin</parameter>
-    <parameter name="password">axis2</parameter>
+    <parameter name="userName"></parameter>
+    <parameter name="password"></parameter>
 
     <parameter name="seralizeLocation">.</parameter>
 

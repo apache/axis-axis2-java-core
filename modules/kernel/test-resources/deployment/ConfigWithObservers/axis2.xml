@@ -24,8 +24,8 @@
     <parameter name="hotdeployment">true</parameter>
     <parameter name="hotupdate">false</parameter>
 
-    <parameter name="userName">admin</parameter>
-    <parameter name="password">axis2</parameter>
+    <parameter name="userName"></parameter>
+    <parameter name="password"></parameter>
 
     <!--    The way of adding listener to the system-->
     <listener class="org.apache.axis2.deployment.AxisObserverImpl">

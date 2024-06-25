@@ -54,8 +54,8 @@
     <!--is set, then Axis2 tries to get the first exception and set its message as the faultreason/Reason.-->
     <parameter name="DrillDownToRootCauseForFaultReason">false</parameter>
 
-    <parameter name="userName">admin</parameter>
-    <parameter name="password">axis2</parameter>
+    <parameter name="userName"></parameter>
+    <parameter name="password"></parameter>
 
     <!--To override repository/services you need to uncomment following parameter and value SHOULD be absolute file path.-->
     <!--ServicesDirectory only works on the following cases-->

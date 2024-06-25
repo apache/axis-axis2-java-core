@@ -103,14 +103,17 @@ configuration will NOT be persistent, i.e., if the servlet
 container is restarted, then all the dynamic configuration changes
 will be lost.</p>
 <a name="login" id="login"></a>
-<h4>Log on to the Administration Site</h4>
+<h4>Log on to the Administration Site (DISABLED BY DEFAULT)</h4>
 <p>Once Apache Axis2 is successfully installed, the Web application
 can be accessed (see <a href="installationguide.html">Installation
 Guide</a> for instructions). From the <a href="#homepage">Axis2 Web
 Application Home page</a> you can go to the Administration page by
 clicking the 'Administration' link. The Login page shown below will
 appear requesting the user name and password. The default user name
-is 'admin' (without quotes) and default password is 'axis2'
+and password are are undefined by default as the values are blank
+in the axis2.xml file. You must edit the axis2.xml to enable a login
+by defining a username and password. Below is an arbitrary example.
+The username is 'admin' (without quotes) and the password is 'axis2'
 (without quotes).</p>
 <p align="center"><img alt="" src="images/adminlogin.jpg" /></p>
 <p>You can change the user name and password values by changing the

@@ -68,6 +68,7 @@
     <!--is set, then Axis2 tries to get the first exception and set its message as the faultreason/Reason.-->
     <parameter name="DrillDownToRootCauseForFaultReason">false</parameter>
 
+    <!-- AXIS2-6069, leave this in for unit tests but don't distribute it -->
     <parameter name="userName">admin</parameter>
     <parameter name="password">axis2</parameter>
 

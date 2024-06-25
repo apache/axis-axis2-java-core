@@ -25,8 +25,8 @@
     <parameter name="hotupdate">false</parameter>
     <parameter name="enableMTOM">true</parameter>
 
-    <parameter name="userName">admin</parameter>
-    <parameter name="password">axis2</parameter>
+    <parameter name="userName"></parameter>
+    <parameter name="password"></parameter>
 
     <parameter name="seralizeLocation">./target</parameter>
 
