@@ -115,7 +115,6 @@ public class SimpleHTTPServer implements TransportListener {
             if (httpFactory == null) {
                 httpFactory = new HttpFactory(configurationContext, port);
             }
-            System.out.println("[SimpleHTTPServer] init completed with port: " + port);
         } catch (Exception e1) {
             throw AxisFault.makeFault(e1);
         }
@@ -153,6 +152,7 @@ public class SimpleHTTPServer implements TransportListener {
             }
         }
 
+        System.out.println("[SimpleHTTPServer] Starting");
         System.out.println("[SimpleHTTPServer] Using the Axis2 Repository "
                            + new File(repository).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
@@ -185,6 +185,7 @@ public class SimpleHTTPServer implements TransportListener {
                 }
             }
 
+            System.out.println("[SimpleHTTPServer] Started");
         } catch (Throwable t) {
             log.fatal("Error starting SimpleHTTPServer", t);
             System.out.println("[SimpleHTTPServer] Shutting down");
@@ -210,7 +211,6 @@ public class SimpleHTTPServer implements TransportListener {
             embedded = new SimpleHttpServer(httpFactory, port);
             embedded.init();
             embedded.start();
-            System.out.println("[SimpleHTTPServer] start() completed");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
@@ -289,11 +289,9 @@ public class SimpleHTTPServer implements TransportListener {
      */
     public boolean isRunning() {
         if (embedded == null) {
-            System.out.println("[SimpleHTTPServer] isRunning() false on embedded == null");
             return false;
         }
 
-        System.out.println("[SimpleHTTPServer] isRunning() invoked, returning: " + embedded.isRunning());
         return embedded.isRunning();
     }
 
