@@ -58,7 +58,8 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
                 AxisOperation op = inMessage.getOperationContext().getAxisOperation();
                 String operation = op.getName().getLocalPart();
                 log.debug("JsonInOnlyRPCMessageReceiver.invokeBusinessLogic() executing invokeService() with operation: " + operation);
-                invokeService(jsonReader, serviceObj, operation);
+                String enableJSONOnly = (String)  inMessage.getAxisService().getParameterValue("enableJSONOnly");
+                invokeService(jsonReader, serviceObj, operation, enableJSONOnly);
             } else {
                 throw new AxisFault("MoshiXMLStreamReader should have put as a property of messageContext " +
                         "to evaluate JSON message");
@@ -68,7 +69,7 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
         }
     }
 
-    public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name) throws AxisFault {
+    public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name, String enableJSONOnly) throws AxisFault {
         String msg;
         Class implClass = serviceObj.getClass();
         Method[] allMethods = implClass.getDeclaredMethods();
@@ -76,7 +77,7 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
         Class[] paramClasses = method.getParameterTypes();
         try {
             int paramCount = paramClasses.length;
-            JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount);
+            JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount, enableJSONOnly);
         } catch (IllegalAccessException e) {
             msg = "Does not have access to " +
                     "the definition of the specified class, field, method or constructor";

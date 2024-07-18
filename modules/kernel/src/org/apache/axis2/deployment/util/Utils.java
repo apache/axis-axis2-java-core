@@ -27,6 +27,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.jaxrs.JAXRSModel;
+import org.apache.axis2.jaxrs.JAXRSUtils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentConstants;
@@ -60,6 +61,7 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -402,6 +404,77 @@ public class Utils {
         if (serviceClass == null) {
             return;
         }
+        String enableJSONOnly = (String) axisConfig.getParameterValue("enableJSONOnly");
+	if (enableJSONOnly !=null && enableJSONOnly.equalsIgnoreCase("true")) {
+            log.warn("on enableJSONOnly: " +enableJSONOnly+ " starting fillAxisService(), serviceClass.name: " + serviceClass.getName());
+            List<Method> serviceMethods = new ArrayList<Method>();
+            Map<String, Method> uniqueMethods = new LinkedHashMap<String, Method>();
+            for (Method method : serviceClass.getMethods()) {
+                if (method.getDeclaringClass() == Object.class) {
+                    continue;
+                }
+                if (!Modifier.isPublic(method.getModifiers())) {
+                    // skip non public methods
+                    continue;
+                }
+                String methodName = method.getName();
+                if (excludeOperations.contains(methodName)) {
+                    continue;
+                }
+                boolean addToService = false;
+                AxisOperation axisOperation = axisService.getOperation(new QName(methodName));
+                if (axisOperation == null) {
+                    axisOperation = getAxisOperationForJmethod(method);
+                    axisService.addOperation(axisOperation);
+                    log.warn("on methodName: " +methodName+ " , enableJSONOnly: " +enableJSONOnly+ " , axisOperation added to service: " +axisService.getName()+ " , operation: " + axisOperation.getName().getLocalPart());
+                }
+                // by now axis operation should be assigned but we better recheck & add the paramether
+                if (axisOperation != null) {
+                    axisOperation.addParameter("JAXRSAnnotaion", JAXRSUtils.getMethodModel(JAXRSUtils.getClassModel(serviceClass), method));
+                }
+                if (method.getDeclaringClass() != Object.class) {
+                    serviceMethods.add(method);
+                }
+            }
+            // The order of the methods returned by getMethods is undefined, but the test cases assume that the
+            // order is the same on all Java versions. Java 6 seems to use reverse lexical order, so we use that
+            // here to make things deterministic.
+            Collections.sort(serviceMethods, new Comparator<Method>() {
+                public int compare(Method o1, Method o2) {
+                    return -o1.getName().compareTo(o2.getName());
+                }
+            });
+    
+            log.debug("fillAxisService() on enableJSONOnly=true found serviceMethods: " +serviceMethods);
+
+            PhasesInfo pinfo = axisConfig.getPhasesInfo();
+
+            for (Method jmethod : serviceMethods) {
+                String opName = jmethod.getName();
+                AxisOperation operation = axisService
+                        .getOperation(new QName(opName));
+                // if the operation there in services.xml then try to set it schema
+                // element name
+                if (operation == null) {
+                    operation = axisService.getOperation(new QName(
+                            jmethod.getName()));
+                }
+                MessageReceiver mr =
+                        axisService.getMessageReceiver(operation.getMessageExchangePattern());
+                if (mr == null) {
+                    mr = axisConfig.getMessageReceiver(operation.getMessageExchangePattern());
+                }
+                if (operation.getMessageReceiver() == null) {
+                    operation.setMessageReceiver(mr);
+                }
+                pinfo.setOperationPhases(operation);
+                axisService.addOperation(operation);
+                axisService.addJSONMessageNameToOperationMapping(opName, operation);
+            }
+            log.warn("fillAxisService() completed on enableJSONOnly=true , axisService name: " + axisService.getName());
+	    return;
+	}
+
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         // adding name spaces
         NamespaceMap map = new NamespaceMap();

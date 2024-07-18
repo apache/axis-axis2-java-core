@@ -193,7 +193,7 @@ WEB-INF/conf/axis2.xml.
 </pre>
 <p>
 Other required classes for JSON in the axis2.xml file include JsonRpcMessageReceiver,
-JsonInOnlyRPCMessageReceiver, JsonBuilder, and JSONMessageHandler.
+JsonInOnlyRPCMessageReceiver, JsonBuilder, JSONBasedDefaultDispatcher and JSONMessageHandler.
 </p>
 <p>
 Invoking the client for a login that returns a token can be done as follows:

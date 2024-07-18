@@ -35,7 +35,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 
+import com.squareup.moshi.JsonReader;
+
 import javax.xml.namespace.QName;
+import java.io.IOException;
 import java.util.List;
 
 public class JSONMessageHandler extends AbstractHandler {
@@ -92,7 +95,34 @@ public class JSONMessageHandler extends AbstractHandler {
                 }
             }
         } else {
-            log.debug("Axis operation is null, message hasn't been dispatched to operation, ignore it");
+            String enableJSONOnly = (String) msgContext.getAxisService().getParameterValue("enableJSONOnly");
+            if (enableJSONOnly !=null && enableJSONOnly.equalsIgnoreCase("true")) {
+                log.warn("On enableJSONOnly=true Axis operation is null on JSON request, message hasn't been dispatched to an operation, proceeding on JSON message name discovery and AxisOperation mapping");
+                try{
+                    Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
+                    if (tempObj != null) {
+                        boolean isJSON = Boolean.valueOf(tempObj.toString());
+                        Object o = msgContext.getProperty(JsonConstant.MOSHI_XML_STREAM_READER);
+                        if (o != null) {
+                            MoshiXMLStreamReader moshiXMLStreamReader = (MoshiXMLStreamReader) o;
+                            JsonReader jsonReader = moshiXMLStreamReader.getJsonReader();
+                            jsonReader.beginObject();
+                            String messageName=jsonReader.nextName();     // get message name from input json stream
+                            if (messageName == null) {
+                                log.error("JSONMessageHandler can't find messageName: " +messageName);
+                                throw new IOException("Bad Request");
+                            } else {
+                                log.warn("JSONMessageHandler found messageName: " +messageName);
+                                msgContext.setProperty("jsonMessageName", messageName);
+                            }
+                        }
+	            }
+                } catch(Exception e){
+                   log.error("JSONMessageHandler error: " +e.getMessage());
+                }
+            } else {
+                log.warn("On enableJSONOnly=false Axis operation is null, ignore it");
+	    }
         }
         return InvocationResponse.CONTINUE;
     }

@@ -156,6 +156,12 @@ public class AxisService extends AxisDescription {
      */
     private Map<QName, AxisOperation> messageElementQNameToOperationMap = new HashMap<QName, AxisOperation>();
 
+    /*
+     * This is a map between the JSON Object name of a message specified in
+     * the received JSON stream to the Axis2 operations defined in the services.xml file
+     */
+    private Map<String, AxisOperation> jsonMessageNameToOperationMap = new HashMap<String, AxisOperation>();
+
     private int nsCount = 0;
     private static final Log log = LogFactory.getLog(AxisService.class);
     private URL fileName;
@@ -3230,6 +3236,64 @@ public class AxisService extends AxisDescription {
     public void setMessageElementQNameToOperationMap(
             Map messageElementQNameToOperationMap) {
         this.messageElementQNameToOperationMap = messageElementQNameToOperationMap;
+    }
+
+    /**
+     * Look up an AxisOperation for this service based off of a JSON message name
+     * from the first  'name' read from a JSON message.
+     * 
+     * @param messageName
+     *            The message name to search for.
+     * @return The AxisOperation registered to the JSON message name or null if no match was
+     *         found.
+     * @see #setJSONMessageNameToOperationMap(Map)
+     */
+    public AxisOperation getOperationByJSONMessageName(
+            String messageName) {
+
+        return (AxisOperation) jsonMessageNameToOperationMap
+                .get(messageName);
+    }
+
+    /**
+     * Set the map of JSON message names as Strings to AxisOperations for this
+     * service. This map is used during JSON Object name-based routing by
+     * reading the first name in a JSON message during the transport phase in
+     * JSONMessageHandler.
+     * 
+     * @param jsonMessageNameToOperationMap
+     *            The map from JSON message names to AxisOperations.
+     */
+    public void setJSONMessageNameToOperationMap(
+            Map jsonMessageNameToOperationMap) {
+        this.jsonMessageNameToOperationMap = jsonMessageNameToOperationMap;
+    }
+
+    /**
+     * Add an entry to the map between JSON message names in JSON and
+     * AxisOperations for this service.
+     * 
+     * @param messageName
+     *            The message name of the JSON on the first name from the input message that maps to the
+     *            given operation.
+     * @param operation
+     *            The AxisOperation to be mapped to.
+     * @see #setJSONMessageNameToOperationMap(Map)
+     */
+    public void addJSONMessageNameToOperationMapping(
+            String messageName, AxisOperation operation) {
+        // when setting an operation we have to set it only if the
+        // messegeName does not
+        // exist in the map.
+        if (jsonMessageNameToOperationMap.containsKey(messageName)
+                && jsonMessageNameToOperationMap.get(messageName) != operation) {
+            log.error("jsonMessageNameToOperationMap skipping 'put' on messageName: " + messageName + " , containsKey() returned true or value not equal to operation: " + operation.getName().getLocalPart());
+        } else {
+            jsonMessageNameToOperationMap.put(messageName,
+                    operation);
+            log.debug("jsonMessageNameToOperationMap 'put' on messageName: " + messageName + " with operation: " + operation.getName().getLocalPart());
+        }
+
     }
 
     /**

@@ -57,7 +57,8 @@ public class JsonRpcMessageReceiver extends RPCMessageReceiver {
                 Object serviceObj = getTheImplementationObject(inMessage);
                 AxisOperation op = inMessage.getOperationContext().getAxisOperation();
                 String operation = op.getName().getLocalPart();
-                invokeService(jsonReader, serviceObj, operation , outMessage);
+                String enableJSONOnly = (String)  inMessage.getAxisService().getParameterValue("enableJSONOnly");
+                invokeService(jsonReader, serviceObj, operation , outMessage, enableJSONOnly);
             } else {
                 throw new AxisFault("MoshiXMLStreamReader should be put as a property of messageContext " +
                         "to evaluate JSON message");
@@ -67,8 +68,7 @@ public class JsonRpcMessageReceiver extends RPCMessageReceiver {
         }
     }
 
-    public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name,
-                                   MessageContext outMes) throws AxisFault {
+    public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name, MessageContext outMes, String enableJSONOnly) throws AxisFault {
         String msg;
         Class implClass = serviceObj.getClass();
         Method[] allMethods = implClass.getDeclaredMethods();
@@ -76,7 +76,7 @@ public class JsonRpcMessageReceiver extends RPCMessageReceiver {
         Class[] paramClasses = method.getParameterTypes();
         try {
             int paramCount = paramClasses.length;
-            Object retObj = JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount);
+            Object retObj = JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount, enableJSONOnly);
 
             // handle response
             outMes.setProperty(JsonConstant.RETURN_OBJECT, retObj);

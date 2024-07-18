@@ -34,6 +34,8 @@ public class JsonConstant {
 
     public static final String MOSHI_XML_STREAM_READER = "MoshiXMLStreamReader";
 
+    public static final String JSON_MESSAGE_NAME = "jsonMessageName";
+
     public static final String XMLNODES = "xmlnodes";
 
 

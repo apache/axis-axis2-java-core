@@ -38,8 +38,8 @@ public class JsonUtils {
                                             Object service,
                                             Method operation ,
                                             Class[] paramClasses ,
-                                            int paramCount ) throws InvocationTargetException,
-            IllegalAccessException, IOException  {
+                                            int paramCount,
+		                            String enableJSONOnly ) throws InvocationTargetException, IllegalAccessException, IOException  {
 
         Object[] methodParam = new Object[paramCount];
 	try {
@@ -49,20 +49,27 @@ public class JsonUtils {
             if( ! jsonReader.isLenient()){
                 jsonReader.setLenient(true);
             }
-            jsonReader.beginObject();
-            String messageName=jsonReader.nextName();     // get message name from input json stream
-            if (messageName == null || !messageName.equals(operation.getName())) {
-                log.error("JsonUtils.invokeServiceClass() throwing IOException, messageName: " +messageName+ " is unknown, it does not match the axis2 operation, the method name: " + operation.getName());
-                throw new IOException("Bad Request");
-            }
+
+            if (enableJSONOnly ==null || enableJSONOnly.equalsIgnoreCase("false")) {
+                log.debug("JsonUtils.invokeServiceClass() detected enableJSONOnly=false, executing jsonReader.beginObject() and then jsonReader.beginArray() on method name: " + operation.getName());
+                jsonReader.beginObject();
+                String messageName=jsonReader.nextName();     // get message name from input json stream
+                if (messageName == null || !messageName.equals(operation.getName())) {
+                    log.error("JsonUtils.invokeServiceClass() throwing IOException, messageName: " +messageName+ " is unknown, it does not match the axis2 operation, the method name: " + operation.getName());
+                    throw new IOException("Bad Request");
+                }
+            } else {
+                log.debug("JsonUtils.invokeServiceClass() detected enableJSONOnly=true, executing jsonReader.beginArray()");
+	    }	    
+
             jsonReader.beginArray();
     
             int i = 0;
             for (Class paramType : paramClasses) {
                 jsonReader.beginObject();
                 argNames[i] = jsonReader.nextName();
-                log.debug("JsonUtils.invokeServiceClass() on messageName: " +messageName+ " , is currently processing argName: " + argNames[i]);
                 methodParam[i] = gson.fromJson(jsonReader, paramType);   // gson handle all types well and return an object from it
+                log.trace("JsonUtils.invokeServiceClass() completed processing on argNames: " +argNames[i]+ " , methodParam: " +methodParam[i].getClass().getName()+ " , from argNames.length: " + argNames.length);
                 jsonReader.endObject();
                 i++;
             }

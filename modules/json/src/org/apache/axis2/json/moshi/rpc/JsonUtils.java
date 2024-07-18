@@ -49,8 +49,8 @@ public class JsonUtils {
                                             Object service,
                                             Method operation ,
                                             Class[] paramClasses ,
-                                            int paramCount ) throws InvocationTargetException,
-            IllegalAccessException, IOException  {
+                                            int paramCount,
+		                            String enableJSONOnly ) throws InvocationTargetException, IllegalAccessException, IOException  {
 
         Object[] methodParam = new Object[paramCount];
 	try {
@@ -102,12 +102,17 @@ public class JsonUtils {
             Moshi moshiFrom = new Moshi.Builder().add(objectFactory).add(Date.class, new Rfc3339DateJsonAdapter()).build();
             String[] argNames = new String[paramCount];
     
-            jsonReader.beginObject();
-            String messageName=jsonReader.nextName();     // get message name from input json stream
-            if (messageName == null || !messageName.equals(operation.getName())) {
-                log.error("JsonUtils.invokeServiceClass() throwing IOException, messageName: " +messageName+ " is unknown, it does not match the axis2 operation, the method name: " + operation.getName());
-                throw new IOException("Bad Request");
-            }
+            if (enableJSONOnly ==null || enableJSONOnly.equalsIgnoreCase("false")) {
+                log.debug("JsonUtils.invokeServiceClass() detected enableJSONOnly=false, executing jsonReader.beginObject() and then jsonReader.beginArray() on method name: " + operation.getName());
+                jsonReader.beginObject();
+                String messageName=jsonReader.nextName();     // get message name from input json stream
+                if (messageName == null || !messageName.equals(operation.getName())) {
+                    log.error("JsonUtils.invokeServiceClass() throwing IOException, messageName: " +messageName+ " is unknown, it does not match the axis2 operation, the method name: " + operation.getName());
+                    throw new IOException("Bad Request");
+                }
+            } else {
+                log.debug("JsonUtils.invokeServiceClass() detected enableJSONOnly=true, executing jsonReader.beginArray()");
+	    }	    
             jsonReader.beginArray();
     
             int i = 0;
@@ -117,7 +122,7 @@ public class JsonUtils {
                 jsonReader.beginObject();
                 argNames[i] = jsonReader.nextName();
                 methodParam[i] = moshiFromJsonAdapter.fromJson(jsonReader);   // moshi handles all types well and returns an object from it
-                log.trace("JsonUtils.invokeServiceClass() completed processing on messageName: " +messageName+ " , arg name: " +argNames[i]+ " , methodParam: " +methodParam[i].getClass().getName()+ " , from argNames.length: " + argNames.length);
+                log.trace("JsonUtils.invokeServiceClass() completed processing on argNames: " +argNames[i]+ " , methodParam: " +methodParam[i].getClass().getName()+ " , from argNames.length: " + argNames.length);
                 jsonReader.endObject();
                 i++;
             }
