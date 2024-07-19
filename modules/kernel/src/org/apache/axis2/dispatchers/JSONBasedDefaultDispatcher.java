@@ -38,8 +38,8 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 /**
- * Dispatches based on the namespace URI of the first child of
- * the body.
+ * Dispatches based on JSON requests by using the first name of
+ * the message.
  */
 public class JSONBasedDefaultDispatcher extends AbstractDispatcher {
 
