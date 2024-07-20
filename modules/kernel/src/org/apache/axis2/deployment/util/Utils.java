@@ -426,7 +426,7 @@ public class Utils {
                 if (axisOperation == null) {
                     axisOperation = getAxisOperationForJmethod(method);
                     axisService.addOperation(axisOperation);
-                    log.warn("on methodName: " +methodName+ " , enableJSONOnly: " +enableJSONOnly+ " , axisOperation added to service: " +axisService.getName()+ " , operation: " + axisOperation.getName().getLocalPart());
+                    log.warn("on methodName: " +methodName+ " , enableJSONOnly: " +enableJSONOnly+ " , axisOperation added to service: " +axisService.getName());
                 }
                 // by now axis operation should be assigned but we better recheck & add the paramether
                 if (axisOperation != null) {
