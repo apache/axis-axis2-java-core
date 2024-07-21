@@ -504,6 +504,7 @@
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <maven-plugin-tools.version>3.13.1</maven-plugin-tools.version>
         <activemq.version>6.1.2</activemq.version>
+        <surefire.version>3.3.1</surefire.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
@@ -1146,11 +1147,11 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>${surefire.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>${surefire.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
