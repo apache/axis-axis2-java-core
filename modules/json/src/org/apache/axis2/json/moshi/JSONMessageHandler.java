@@ -97,7 +97,7 @@ public class JSONMessageHandler extends AbstractHandler {
         } else {
             String enableJSONOnly = (String) msgContext.getAxisService().getParameterValue("enableJSONOnly");
             if (enableJSONOnly !=null && enableJSONOnly.equalsIgnoreCase("true")) {
-                log.warn("On enableJSONOnly=true Axis operation is null on JSON request, message hasn't been dispatched to an operation, proceeding on JSON message name discovery and AxisOperation mapping");
+                log.debug("On enableJSONOnly=true Axis operation is null on JSON request, message hasn't been dispatched to an operation, proceeding on JSON message name discovery and AxisOperation mapping");
                 try{
                     Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
                     if (tempObj != null) {
@@ -112,7 +112,7 @@ public class JSONMessageHandler extends AbstractHandler {
                                 log.error("JSONMessageHandler can't find messageName: " +messageName);
                                 throw new IOException("Bad Request");
                             } else {
-                                log.warn("JSONMessageHandler found messageName: " +messageName);
+                                log.debug("JSONMessageHandler found messageName: " +messageName);
                                 msgContext.setProperty("jsonMessageName", messageName);
                             }
                         }
@@ -121,7 +121,7 @@ public class JSONMessageHandler extends AbstractHandler {
                    log.error("JSONMessageHandler error: " +e.getMessage());
                 }
             } else {
-                log.warn("On enableJSONOnly=false Axis operation is null, ignore it");
+                log.debug("On enableJSONOnly=false Axis operation is null, ignore it");
 	    }
         }
         return InvocationResponse.CONTINUE;
