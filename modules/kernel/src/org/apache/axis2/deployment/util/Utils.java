@@ -406,7 +406,7 @@ public class Utils {
         }
         String enableJSONOnly = (String) axisConfig.getParameterValue("enableJSONOnly");
 	if (enableJSONOnly !=null && enableJSONOnly.equalsIgnoreCase("true")) {
-            log.warn("on enableJSONOnly: " +enableJSONOnly+ " starting fillAxisService(), serviceClass.name: " + serviceClass.getName());
+            log.debug("on enableJSONOnly: " +enableJSONOnly+ " starting fillAxisService(), serviceClass.name: " + serviceClass.getName());
             List<Method> serviceMethods = new ArrayList<Method>();
             Map<String, Method> uniqueMethods = new LinkedHashMap<String, Method>();
             for (Method method : serviceClass.getMethods()) {
@@ -426,7 +426,7 @@ public class Utils {
                 if (axisOperation == null) {
                     axisOperation = getAxisOperationForJmethod(method);
                     axisService.addOperation(axisOperation);
-                    log.warn("on methodName: " +methodName+ " , enableJSONOnly: " +enableJSONOnly+ " , axisOperation added to service: " +axisService.getName());
+                    log.debug("on methodName: " +methodName+ " , enableJSONOnly: " +enableJSONOnly+ " , axisOperation added to service: " +axisService.getName());
                 }
                 // by now axis operation should be assigned but we better recheck & add the paramether
                 if (axisOperation != null) {
@@ -471,7 +471,7 @@ public class Utils {
                 axisService.addOperation(operation);
                 axisService.addJSONMessageNameToOperationMapping(opName, operation);
             }
-            log.warn("fillAxisService() completed on enableJSONOnly=true , axisService name: " + axisService.getName());
+            log.debug("fillAxisService() completed on enableJSONOnly=true , axisService name: " + axisService.getName());
 	    return;
 	}
 
