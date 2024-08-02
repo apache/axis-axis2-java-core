@@ -31,8 +31,8 @@
 	      years later. Moshi support is now included as an alternative to 
 	      GSON. For users of JSON seeking modern features, see the <a href=
 	      "json_support_gson.html">JSON Support Guide.</a>. For users of 
-              JSON and Spring Boot, see the sample application in the <a href=
-	      "json-springboot-userguide.html">JSON and Spring Boot User's Guide.</a> 
+              JSON and Spring Boot 3, see the sample application in the <a href=
+	      "json-springboot-userguide.html">JSON and Spring Boot 3 User's Guide.</a> 
 	    </p>
             <p>This document explains the JSON support implementation in Axis2.
             It includes an introduction to JSON, an outline as to why JSON

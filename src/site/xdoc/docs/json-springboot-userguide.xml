@@ -22,17 +22,17 @@
 <html>
 <head>
   <meta http-equiv="content-type" content=""/>
-  <title>Apache Axis2 JSON and REST with Spring Boot User's Guide</title>
+  <title>Apache Axis2 JSON and REST with Spring Boot 3 User's Guide</title>
 </head>
 
 <body dir="ltr" lang="en-US">
 <a name="_Toc96697849" id="_Toc96697849"></a>
 
-<h1 align="center">Apache Axis2 JSON and REST with Spring Boot User's Guide</h1>
+<h1 align="center">Apache Axis2 JSON and REST with Spring Boot 3 User's Guide</h1>
 
 <p>This guide will help you get started with Axis2 and JSON via REST, using 
 <a href="https://spring.io/projects/spring-security">Spring Security</a> with 
-<a href="https://spring.io/projects/spring-boot">Spring Boot!</a>
+<a href="https://spring.io/projects/spring-boot">Spring Boot 3!</a>
 It gives a detailed description on how to write JSON based REST Web services and also 
 Web service clients via JSON and Curl, how to write a custom login, and how to use them 
 in a token based Web service that also helps prevent cross site scripting (XSS). 
@@ -77,11 +77,11 @@ the <b>"samples/userguide/src/springbootdemo"</b> directory of <a
 href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
 <p>
-This quide supplies a pom.xml for building an exploded WAR with Spring Boot - 
+This quide supplies a pom.xml for building an exploded WAR with Spring Boot 3 - 
 however this WAR does not have an embedded web server such as Tomcat. 
 </p>
 <p>
-The testing was carried out on Wildfly 32, by installing the WAR in its app server. 
+The testing was carried out on Wildfly 32 with Jakarta, by installing the WAR in its app server. 
 </p>
 <p>Please deploy the result of the maven build via 'mvn clean install', axis2-json-api.war, into your servlet container and ensure that it installs without any errors.</p>
 
@@ -133,7 +133,7 @@ reflected XSS attack.
 </p>
 
 <p>
-Concerning Spring Security and Spring Boot, the Axis2Application class that 
+Concerning Spring Security and Spring Boot 3, the Axis2Application class that 
 extends <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/web/servlet/support/SpringBootServletInitializer.html">SpringBootServletInitializer</a> as typically 
 done utilizes a List of <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/SecurityFilterChain.html">SecurityFilterChain</a> as a 
 binary choice; A login url will match, otherwise invoke JWTAuthenticationFilter. All URL's 
@@ -146,7 +146,7 @@ the form of "Authorization: Bearer mytoken".
 </p>
 <p>
 The Axis2WebAppInitializer class supplied in this guide, is the config class 
-that registers AxisServlet with Spring Boot.
+that registers AxisServlet with Spring Boot 3.
 </p>
 <p>
 Axis2 web services are installed via a WEB-INF/services directory that contains
